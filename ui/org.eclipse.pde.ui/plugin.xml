@@ -474,11 +474,6 @@
             id="org.eclipse.pde.ui.category.source"
             name="%category.source.name"/> 
       <command
-            name="%command.name.0"
-            categoryId="org.eclipse.jdt.ui.category.source"
-            id="org.eclipse.pde.ui.showTooltip">
-      </command>
-      <command
             categoryId="org.eclipse.ui.category.navigate"
             description="%quick.outline.description"
             id="org.eclipse.pde.ui.quickOutline"
@@ -1292,12 +1287,6 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+F"/>
-      <key
-            sequence="F2"
-            contextId="org.eclipse.pde.ui.pdeEditorContext"
-            commandId="org.eclipse.pde.ui.showTooltip"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </key>
       <key
             commandId="org.eclipse.pde.ui.quickOutline"
             contextId="org.eclipse.pde.ui.pdeEditorContext"

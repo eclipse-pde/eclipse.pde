@@ -385,8 +385,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String PDESourcePage_actionTextQuickOutline;
 
-	public static String PDETextHover_0;
-	
 	public static String ProvisionerListSelectionPage_description;
 
 	public static String ProvisionerListSelectionPage_pageName;
@@ -923,7 +921,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_addNew;
 	public static String AdvancedLauncherTab_defaults;
 	public static String AdvancedLauncherTab_workingSet;
-	public static String AdvancedLauncherTab_noProblems;
 	public static String AdvancedFeatureExportPage_jnlp;
 	public static String AdvancedPluginExportPage_alias;
 	public static String AdvancedLauncherTab_includeOptional;
@@ -934,7 +931,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedPluginExportPage_signButton;
 	public static String AdvancedPluginExportPage_noKeystore;
 	public static String AdvancedPluginExportPage_noPassword;
-	public static String AdvancedLauncherTab_pluginValidation;
 	public static String AdvancedFeatureExportPage_createJNLP;
 	public static String AdvancedFeatureExportPage_jreVersion;
 	public static String AdvancedLauncherTab_error_featureSetup;
@@ -1335,8 +1331,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginSelectionDialog_message;
 	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
-	public static String PluginValidationOperation_invalidSingular;
-	public static String PluginValidationOperation_invalidPlural;
 
 	public static String ImportWizard_title;
 	public static String ImportWizard_noToAll;
@@ -1809,18 +1803,6 @@ public class PDEUIMessages extends NLS {
 	public static String ApplicationSelectionDialog_dtitle;
 	public static String ApplicationSelectionDialog_rtitle;
 
-	public static String PluginValidationOperation_missingCore;
-	public static String PluginValidationOperation_missingApp;
-	public static String PluginValidationOperation_missingApp2;
-	public static String PluginValidationOperation_missingProduct;
-	public static String PluginValidationOperation_missingProduct2;
-	public static String PluginValidationOperation_disableFragment;
-	public static String PluginValidationOperation_disablePlugin;
-	public static String PluginValidationOperation_missingRequired;
-	public static String PluginValidationOperation_disabledRequired;
-	public static String PluginValidationOperation_missingImport;
-	public static String PluginValidationOperation_missingParent;
-	public static String PluginValidationOperation_disabledParent;
 	public static String TargetPlatformPreferencePage_pluginsTab;
 	public static String TargetPlatformPreferencePage_sourceCode;
 	public static String TargetPlatformPreferencePage_environmentTab;
@@ -2134,8 +2116,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractPluginBlock_counter;
 
-	public static String EquinoxPluginBlock_pluginsColumn;
-
 	public static String EquinoxPluginBlock_levelColumn;
 
 	public static String EquinoxPluginBlock_autoColumn;
@@ -2259,20 +2239,6 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeExportPackageResolution_Label;
 
 	public static String PluginImportOperation_executionEnvironment;
-
-	public static String PluginValidationOperation_platformFilter;
-
-	public static String PluginValidationOperation_ee;
-
-	public static String PluginValidationOperation_singleton;
-
-	public static String PluginValidationOperation_bundle_uses;
-
-	public static String PluginValidationOperation_version;
-
-	public static String PluginValidationOperation_import_uses;
-
-	public static String PluginValidationOperation_hostVersion;
 
 	public static String LauncherUtils_title;
 

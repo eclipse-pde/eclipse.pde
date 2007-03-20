@@ -1,4 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
+
+import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -7,22 +26,10 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.keys.IBindingService;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
-
-	private static IBindingService fBindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 	
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return new Region(offset, 0);
@@ -35,22 +42,11 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 	public static IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new PDEDefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), getTooltipAffordanceString());
+				return new PDEDefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), EditorsUI.getTooltipAffordanceString());
 			}
 		};
 	}
-	
-	public static String getTooltipAffordanceString() {
-		if (fBindingService == null)
-			return null;
 
-		String keySequence = fBindingService.getBestActiveBindingFormattedFor(PDEActionConstants.DEFN_SRC_TOOLTIP);
-		if (keySequence == null)
-			return null;
-		
-		return NLS.bind(PDEUIMessages.PDETextHover_0, keySequence);
-	}
-	
 	/**
 	 * @param infoControl
 	 * @param control
