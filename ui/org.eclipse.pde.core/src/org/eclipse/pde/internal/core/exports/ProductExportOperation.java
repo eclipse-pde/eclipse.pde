@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
@@ -517,7 +518,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private void createMacScript(String[] config, IProgressMonitor monitor) {
-		URL url = PDECore.getDefault().getBundle().getEntry("macosx/Info.plist");  //$NON-NLS-1$
+		String entryName = TargetPlatformHelper.usesEquinoxStartup() ? "macosx/Info.plist" : //$NON-NLS-1$
+			"macosx/Info.plist.32"; //$NON-NLS-1$
+		URL url = PDECore.getDefault().getBundle().getEntry(entryName);  //$NON-NLS-1$
 		if (url == null)
 			return;
 
