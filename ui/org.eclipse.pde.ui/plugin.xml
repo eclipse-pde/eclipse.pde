@@ -939,11 +939,11 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="%launcher.junit.name"
-            icon="$nl$/icons/obj16/julaunchpgn.gif"
-            modes="run, debug"
             class="org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut"
-            id="org.eclipse.pde.ui.junitWorkbenchShortcut">
+            icon="$nl$/icons/obj16/julaunchpgn.gif"
+            id="org.eclipse.pde.ui.junitWorkbenchShortcut"
+            label="%launcher.junit.name"
+            modes="run, debug">
          <contextualLaunch>
             <enablement>
                <with variable="selection">
@@ -979,6 +979,14 @@
          <configurationType
                id="org.eclipse.pde.ui.JunitLaunchConfig">
          </configurationType>
+         <description
+               description="%RunJUnitPluginLaunchShortcut.description"
+               mode="run">
+         </description>
+         <description
+               description="%DebugJUnitPluginLaunchShortcut.description"
+               mode="debug">
+         </description>
       </shortcut>
       <shortcut
             label="%launcher.shortcut.label"
@@ -1024,6 +1032,14 @@
          <configurationType
                id="org.eclipse.pde.ui.RuntimeWorkbench">
          </configurationType>
+         <description
+               description="%RunPDELaunchShortcut.description"
+               mode="run">
+         </description>
+         <description
+               description="%DebugPDELaunchShortcut.description"
+               mode="debug">
+         </description>
       </shortcut>
       <shortcut
             label="%Equinox.shortcut.label"
@@ -1070,6 +1086,14 @@
          <configurationType
                id="org.eclipse.pde.ui.EquinoxLauncher">
          </configurationType>
+         <description
+               description="%RunOSGiLaunchShortcut.description"
+               mode="run">
+         </description>
+         <description
+               description="%DebugOSGiLaunchShortcut.description"
+               mode="debug">
+         </description>
       </shortcut>
    </extension>
    <extension
