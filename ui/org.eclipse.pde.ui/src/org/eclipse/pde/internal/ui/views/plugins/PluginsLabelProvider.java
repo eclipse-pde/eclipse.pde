@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.views.plugins;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJarEntryResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -124,6 +125,8 @@ public class PluginsLabelProvider extends LabelProvider {
 		}
 
 		if (obj instanceof IStorage) {
+			if (obj instanceof IJarEntryResource && ! ((IJarEntryResource) obj).isFile())
+				return folderImage;
 			return getFileImage(((IStorage) obj).getName());
 		}
 

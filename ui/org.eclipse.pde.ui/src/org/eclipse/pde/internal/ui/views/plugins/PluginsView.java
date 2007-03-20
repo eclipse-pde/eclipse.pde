@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IJarEntryResource;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
@@ -472,7 +473,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 				manager.add(openWithMenu);
 				addSeparator = true;
 			}
-			if (sobj instanceof IStorage) {
+			if (isOpenableStorage(sobj)) {
 				manager.add(fOpenAction);
 				addSeparator = true;
 			}
@@ -647,11 +648,17 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 				handleOpenTextEditor(adapter, editorId);
 		} else if (obj instanceof IClassFile) {
 			fOpenClassFileAction.run();
-		} else if (obj instanceof IStorage) {
+		} else if (isOpenableStorage(obj)) {
 			handleOpenStorage((IStorage) obj);
 		}
 	}
 
+	private static boolean isOpenableStorage(Object storage) {
+		if (storage instanceof IJarEntryResource)
+			return ((IJarEntryResource) storage).isFile();
+		return storage instanceof IStorage;
+	}
+	
 	private void handleOpenStorage(IStorage obj) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		IEditorInput input = new JarEntryEditorInput(obj);

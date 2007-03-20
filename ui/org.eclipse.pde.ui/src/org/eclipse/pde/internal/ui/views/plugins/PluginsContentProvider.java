@@ -12,7 +12,9 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJarEntryResource;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
@@ -74,7 +76,8 @@ public class PluginsContentProvider extends DefaultContentProvider
 		
 		if (parentElement instanceof IPackageFragmentRoot ||
 			parentElement instanceof IPackageFragment ||
-			parentElement instanceof ICompilationUnit) 
+			parentElement instanceof ICompilationUnit ||
+			parentElement instanceof IStorage) 
 			return fJavaProvider.getChildren(parentElement);
 		
 		return new Object[0];
@@ -96,6 +99,9 @@ public class PluginsContentProvider extends DefaultContentProvider
 		}
 		if (element instanceof FileAdapter) {
 			return ((FileAdapter) element).getParent();
+		}
+		if (element instanceof IJarEntryResource) {
+			return ((IJarEntryResource) element).getParent();
 		}
 		return null;
 	}
@@ -119,7 +125,8 @@ public class PluginsContentProvider extends DefaultContentProvider
 		}
 		if (element instanceof IPackageFragmentRoot ||
 			element instanceof IPackageFragment ||
-			element instanceof ICompilationUnit)
+			element instanceof ICompilationUnit ||
+			element instanceof IStorage)
 			return fJavaProvider.hasChildren(element);
 		return false;
 	}

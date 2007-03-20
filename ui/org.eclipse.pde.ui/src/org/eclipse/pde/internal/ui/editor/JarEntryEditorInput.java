@@ -76,7 +76,9 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	 */
 	public String getToolTipText() {
 		File file = (File) fJarEntryFile.getAdapter(File.class);
-		return file.getAbsolutePath();
+		if (file != null)
+			return file.getAbsolutePath();
+		return fJarEntryFile.getFullPath().toString();
 	}
 	
 	/*
