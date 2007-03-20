@@ -249,18 +249,20 @@ public class LaunchArgumentsHelper {
 					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
 						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
 						for (int j = 0; j < roots.length; j++) {
-							if (roots[i].getPackageFragment("org.eclipse.equinox.launcher").exists()) { //$NON-NLS-1$
-								IPath path;
+							if (roots[j].getPackageFragment("org.eclipse.equinox.launcher").exists()) { //$NON-NLS-1$
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
-									path = entries[i].getOutputLocation();
+									IPath path = entries[i].getOutputLocation();
 									if (path == null)
 										path = jProject.getOutputLocation();
-									// else if is a library jar, then get the location of the jar itself
-								} else 
-									path = entries[i].getPath();
-								path = path.removeFirstSegments(1);
-								return project.getLocation().append(path).toOSString();
+									path = path.removeFirstSegments(1);
+									return project.getLocation().append(path).toOSString();
+								}
+								// else if is a library jar, then get the location of the jar itself
+								IResource jar = roots[j].getResource();
+								if (jar != null) {
+									return jar.getLocation().toOSString();
+								}
 							}
 						}
 					}
