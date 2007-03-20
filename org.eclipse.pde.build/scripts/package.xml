@@ -34,6 +34,7 @@
 
 	<!-- Generate an assemble script (assemble.xml) for the given features -->
 	<target name="generateAssembleScripts">
+		<echo message="${target}"/>
 		<eclipse.assembler featureList="${featureList}" 
 									workingDirectory="${workingDirectory}" 
 									configInfo="${config}" 
@@ -47,16 +48,6 @@
 	<!-- Call the assemble.xml script -->
 	<target name="callAssembleScripts">
 		<ant antfile="package.all.xml" dir="${workingDirectory}"/>
-	</target>
-
-	<target name="compatibility">
-		<property name="filteredDependencyCheck" value="false"/>
-		<condition property="skipMaps" value="true">
-			<isset property="localMaps"/>
-		</condition>
-		<condition property="target" value="${tempDirectory}/${featurePaths}">
-			<isset property="featurePaths"/>
-		</condition>
 	</target>
 
 	<target name="main" description="Start the packager for a given config">
@@ -74,7 +65,16 @@
 			<isset property="prefilledTarget" />
 		</condition>
 		
-		<antcall target="compatibility"/>
+		<!-- Compatibility -->
+		<property name="filteredDependencyCheck" value="false"/>
+		<condition property="skipMaps" value="true">
+			<isset property="localMaps"/>
+		</condition>
+		<condition property="target" value="${tempDirectory}/${featurePaths}">
+			<isset property="featurePaths"/>
+		</condition>
+		<!-- End of compatibility -->
+			
 		<antcall target="init" />
 		<antcall target="retrieveMapFiles"/>
 		<antcall target="retrieveFiles"/>
