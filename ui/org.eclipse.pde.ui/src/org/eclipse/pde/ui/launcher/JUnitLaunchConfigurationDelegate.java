@@ -155,9 +155,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			programArgs.add(configuration.getAttribute(IPDELauncherConstants.PRODUCT, "")); //$NON-NLS-1$
 		} else {
 			// Specify the application to test
-			String testApplication = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, TargetPlatform.getDefaultApplication());
-			programArgs.add("-testApplication"); //$NON-NLS-1$
-			programArgs.add(testApplication);
+			String defaultApplication = IPDEUIConstants.CORE_TEST_APPLICATION.equals(application) ? null : TargetPlatform.getDefaultApplication();
+			String testApplication = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, defaultApplication);
+			if (testApplication != null) {
+				programArgs.add("-testApplication"); //$NON-NLS-1$
+				programArgs.add(testApplication);
+			}
 		}
 		
 		// Specify the location of the runtime workbench
