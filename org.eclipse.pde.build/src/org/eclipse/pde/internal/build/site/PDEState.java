@@ -350,19 +350,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			String ws = aConfig.getWs();
 			String arch = aConfig.getArch();
 			if (Config.ANY.equalsIgnoreCase(os))
-				prop.put(OSGI_OS, os);
-			else
 				prop.put(OSGI_OS, CatchAllValue.singleton);
+			else
+				prop.put(OSGI_OS, os);
 
 			if (Config.ANY.equalsIgnoreCase(ws))
-				prop.put(OSGI_WS, ws);
-			else
 				prop.put(OSGI_WS, CatchAllValue.singleton);
+			else
+				prop.put(OSGI_WS, ws);
 
 			if (Config.ANY.equalsIgnoreCase(arch))
-				prop.put(OSGI_ARCH, arch);
-			else
 				prop.put(OSGI_ARCH, CatchAllValue.singleton);
+			else
+				prop.put(OSGI_ARCH, arch);
 
 			// Set the JRE profile
 			if (systemPackages != null)
