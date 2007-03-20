@@ -265,7 +265,8 @@ public class PDEJavaHelper {
     		for (int i =0; i < packages.length; i++)
     			if (packages[i].getName().equals(packageName)) {
     				ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
-    				base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
+    				if (desc != null)
+    					base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
     				break;
     			}
     		if (base == null)
