@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -42,7 +43,7 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 
 		public boolean hasChildren(Object element) {
-			return fInput.containsKey(element);
+			return fInput.containsKey(element) && element instanceof BundleDescription;
 		}
 
 		public Object[] getElements(Object inputElement) {

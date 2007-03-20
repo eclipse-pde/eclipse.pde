@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -166,8 +165,8 @@ public abstract class AbstractLauncherToolbar {
 			if (fOperation.hasErrors()) {
 				fDialog = new PluginStatusDialog(fTab.getControl().getShell(), SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 				fDialog.setInput(fOperation.getInput());
-				if (fDialog.open() == IDialogConstants.OK_ID)
-					fDialog = null;
+				fDialog.open();
+				fDialog = null;
 			} else if (fOperation.isEmpty()) {
 				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), 
 											PDEUIMessages.PluginStatusDialog_pluginValidation, 

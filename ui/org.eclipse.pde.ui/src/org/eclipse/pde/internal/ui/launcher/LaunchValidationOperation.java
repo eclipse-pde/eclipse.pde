@@ -30,6 +30,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BundleValidationOperation;
@@ -160,6 +161,10 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 	
 	public boolean isEmpty() {
 		return fOperation.getState().getHighestBundleId() == -1;
+	}
+	
+	protected State getState() {
+		return fOperation.getState();
 	}
 
 }
