@@ -60,7 +60,6 @@ public class LaunchingPage extends PDEFormPage {
 		managedForm.addPart(new JRESection(this, body));
 		managedForm.addPart(new LauncherSection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
-
 	}
 
 

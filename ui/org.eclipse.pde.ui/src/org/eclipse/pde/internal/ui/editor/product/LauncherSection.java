@@ -150,7 +150,7 @@ public class LauncherSection extends PDESection {
 	public void createClient(Section section, FormToolkit toolkit) {
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		section.setLayoutData(data);	
 		
 		section.setText(PDEUIMessages.LauncherSection_title); 
@@ -158,7 +158,7 @@ public class LauncherSection extends PDESection {
 		
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 

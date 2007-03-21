@@ -45,7 +45,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class SplashProgressSection extends PDESection {
 
-	private static final int F_NUM_COLUMNS = 8;
+	private static final int F_NUM_COLUMNS = 10;
 	
 	private ColorSelector fColorSelector;
 	private boolean fBlockNotification;

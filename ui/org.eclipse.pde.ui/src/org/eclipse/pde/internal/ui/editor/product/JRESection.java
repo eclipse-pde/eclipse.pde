@@ -81,7 +81,7 @@ public class JRESection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);		
 		
@@ -90,7 +90,7 @@ public class JRESection extends PDESection {
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
-		client.setLayoutData(new GridData(GridData.FILL_BOTH));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		initializeValues();
 		

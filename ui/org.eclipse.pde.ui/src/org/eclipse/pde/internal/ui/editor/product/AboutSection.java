@@ -58,12 +58,9 @@ public class AboutSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
-	protected void createClient(Section section, FormToolkit toolkit) {
-		
+	protected void createClient(Section section, FormToolkit toolkit) {		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.verticalSpan = 2;
-		section.setLayoutData(data);			
+		section.setLayoutData(new GridData(GridData.FILL_BOTH));			
 		
 		section.setText(PDEUIMessages.AboutSection_title); 
 		section.setDescription(PDEUIMessages.AboutSection_desc); 
@@ -105,7 +102,7 @@ public class AboutSection extends PDESection {
 		gd.horizontalSpan = 2;
 		fTextEntry.getText().setLayoutData(gd);
 		fTextEntry.setEditable(isEditable());
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		fTextEntry.getLabel().setLayoutData(gd);
 		
 		toolkit.paintBordersFor(client);

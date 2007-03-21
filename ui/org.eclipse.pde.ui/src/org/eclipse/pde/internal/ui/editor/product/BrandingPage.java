@@ -55,13 +55,12 @@ public class BrandingPage extends PDEFormPage {
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
 		// Sections
 		managedForm.addPart(new WindowImagesSection(this, body));
 		managedForm.addPart(new AboutSection(this, body));	
 		managedForm.addPart(new IntroSection(this, body));
-
 	}
 
 
