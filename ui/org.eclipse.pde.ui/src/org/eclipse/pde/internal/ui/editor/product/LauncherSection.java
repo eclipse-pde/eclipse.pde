@@ -77,22 +77,20 @@ public class LauncherSection extends PDESection {
 	private static final String[] F_WIN_ICON_LABELS = new String[] {
 		PDEUIMessages.LauncherSection_Low16,
 		PDEUIMessages.LauncherSection_High16,
-		PDEUIMessages.LauncherSection_Low24,
 		PDEUIMessages.LauncherSection_32Low,
 		PDEUIMessages.LauncherSection_32High,
 		PDEUIMessages.LauncherSection_48Low,
 		PDEUIMessages.LauncherSection_48High
 	};
 	public static final int[] F_WIN_ICON_DEPTHS = new int[] {
-		8, 32, 8, 8, 32, 8, 32
+		8, 32, 8, 32, 8, 32
 	};
 	public static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] {
-		{16, 16}, {16, 16}, {24, 24}, {32, 32}, {32, 32}, {48, 48}, {48, 48}
+		{16, 16}, {16, 16}, {32, 32}, {32, 32}, {48, 48}, {48, 48}
 	};
 	private static final String[] F_WIN_ICON_IDS = new String[] {
 		ILauncherInfo.WIN32_16_LOW,
 		ILauncherInfo.WIN32_16_HIGH,
-		ILauncherInfo.WIN32_24_LOW,
 		ILauncherInfo.WIN32_32_LOW,
 		ILauncherInfo.WIN32_32_HIGH,
 		ILauncherInfo.WIN32_48_LOW,
@@ -157,7 +155,9 @@ public class LauncherSection extends PDESection {
 		section.setDescription(PDEUIMessages.LauncherSection_desc); 
 		
 		Composite container = toolkit.createComposite(section);
-		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		GridLayout layout = FormLayoutFactory.createSectionClientGridLayout(false, 2);
+		layout.verticalSpacing = 10;
+		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
@@ -168,7 +168,6 @@ public class LauncherSection extends PDESection {
 			}
 		});
 		
-		createLabel(container, toolkit, "", 2);	 //$NON-NLS-1$
 		createLabel(container, toolkit, PDEUIMessages.LauncherSection_label, 2); 
 		
 		fTabFolder = new CTabFolder(container, SWT.FLAT | SWT.TOP);
@@ -252,7 +251,7 @@ public class LauncherSection extends PDESection {
 	
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit);
-
+		
 		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
 		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
@@ -383,7 +382,7 @@ public class LauncherSection extends PDESection {
 	private Composite createComposite(Composite parent, FormToolkit toolkit) {
 		Composite comp = toolkit.createComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = 0;
+		layout.bottomMargin = layout.topMargin = layout.leftMargin = layout.rightMargin = 0;
 		layout.numColumns = 3;
 		comp.setLayout(layout);
 		return comp;
@@ -419,7 +418,6 @@ public class LauncherSection extends PDESection {
 				entry.setEditable(enabled);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
-					|| id.equals(ILauncherInfo.WIN32_24_LOW)
 					|| id.equals(ILauncherInfo.WIN32_32_HIGH)
 					|| id.equals(ILauncherInfo.WIN32_32_LOW)
 					|| id.equals(ILauncherInfo.WIN32_48_HIGH)

@@ -462,7 +462,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		} else {
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_HIGH));
-			append(buffer, info.getIconPath(ILauncherInfo.WIN32_24_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_HIGH));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_HIGH));
