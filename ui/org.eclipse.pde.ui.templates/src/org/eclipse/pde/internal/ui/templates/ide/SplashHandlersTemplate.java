@@ -296,7 +296,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		// TODO: MP: SPLASH: Revisit need for these dependencies
 		// Ensure schema version was defined
 		if (schemaVersion == null) {
 			return super.getDependencies(schemaVersion);

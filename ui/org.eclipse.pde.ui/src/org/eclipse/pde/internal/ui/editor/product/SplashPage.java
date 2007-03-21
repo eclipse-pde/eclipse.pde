@@ -55,8 +55,7 @@ public class SplashPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		// TODO: MP: SPLASH: Update splash page header icon
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING));
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_IMAGE_APPLICATION));
 		form.setText(PDEUIMessages.SplashPage_splashName);
 		fillBody(managedForm, toolkit);
 		// TODO: MP: SPLASH: Update help context ID
