@@ -570,7 +570,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (result == null) {
 				result = (String) directoryFile.get(elementName); //case 4
 				matchedVersion = Version.emptyVersion;
-				if (result != null && version.getQualifier().equalsIgnoreCase(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
+				if (result != null && version.getQualifier().endsWith(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
 					String message = NLS.bind(Messages.warning_fallBackVersion, elementName + ',' + version.toString(), elementName);
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 				}

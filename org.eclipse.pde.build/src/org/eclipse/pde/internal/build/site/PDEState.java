@@ -426,17 +426,20 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
 			return getResolvedBundle(bundleId);
 		}
-		BundleDescription description = getState().getBundle(bundleId, Version.parseVersion(version));
+		Version parsedVersion = Version.parseVersion(version);
+		BundleDescription description = getState().getBundle(bundleId, parsedVersion);
 		if (description != null && description.isResolved())
 			return description;
 
 		int qualifierIdx = -1;
-		if ((qualifierIdx = version.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
+		if ((qualifierIdx = parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
-			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx - 1));
+			
+			String qualifierPrefix = qualifierIdx > 0 ? parsedVersion.getQualifier().substring(0, qualifierIdx - 1) : ""; //$NON-NLS-1$
+
 			for (int i = 0; i < bundles.length; i++) {
 				Version bundleVersion = bundles[i].getVersion();
-				if (bundleVersion.getMajor() == versionToMatch.getMajor() && bundleVersion.getMinor() == versionToMatch.getMinor() && bundleVersion.getMicro() >= versionToMatch.getMicro() && bundleVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
+				if (bundleVersion.getMajor() == parsedVersion.getMajor() && bundleVersion.getMinor() == parsedVersion.getMinor() && bundleVersion.getMicro() >= parsedVersion.getMicro() && bundleVersion.getQualifier().compareTo(qualifierPrefix) >= 0)
 					return bundles[i];
 			}
 		}

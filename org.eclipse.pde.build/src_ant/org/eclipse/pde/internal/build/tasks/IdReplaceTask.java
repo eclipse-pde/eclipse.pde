@@ -49,7 +49,7 @@ public class IdReplaceTask extends Task {
 	private boolean contentChanged = false;
 
 	private final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
-	private final static String DOT_QUALIFIER = ".qualifier"; //$NON-NLS-1$
+	private final static String QUALIFIER = "qualifier"; //$NON-NLS-1$
 
 	/**
 	 * The location of a feature.xml file 
@@ -217,7 +217,7 @@ public class IdReplaceTask extends Task {
 			int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 			char[] versionId = new char[endVersionId - startVersionId - 1];
 			buffer.getChars(startVersionId + 1, endVersionId, versionId, 0);
-			if (!new String(versionId).equals(GENERIC_VERSION_NUMBER) && !new String(versionId).endsWith(DOT_QUALIFIER)) {
+			if (!new String(versionId).equals(GENERIC_VERSION_NUMBER) && !new String(versionId).endsWith(QUALIFIER)) {
 				startElement = startVersionId;
 				continue;
 			}

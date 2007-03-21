@@ -34,7 +34,7 @@ public class ReachablePlugin implements Comparable {
 		Version version = new Version(entry.getVersionedIdentifier().getVersion().toString());
 		if (version.equals(GENERIC_VERSION)) {
 			range = WIDEST_RANGE;
-		} else if (version.getQualifier().equals(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
+		} else if (version.getQualifier().endsWith(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
 			if (version.getMicro() == 0) {
 				range = new VersionRange(new Version(version.getMajor(), version.getMinor(), 0), true, new Version(version.getMajor(), version.getMinor() + 1, 0), false);
 			} else {
