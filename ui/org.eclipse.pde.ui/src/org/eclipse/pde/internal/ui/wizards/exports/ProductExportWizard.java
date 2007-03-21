@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -42,9 +43,11 @@ public class ProductExportWizard extends BaseExportWizard {
 	private WorkspaceProductModel fProductModel;
 	private CrossPlatformExportPage fPage2;
 	private ProductExportWizardPage fPage;
+	private IProject fProject;
 
-	public ProductExportWizard() {
+	public ProductExportWizard(IProject project) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_EXPORT_WIZ);
+		fProject = project;
 	}
 	
 	public void addPages() {
@@ -140,7 +143,7 @@ public class ProductExportWizard extends BaseExportWizard {
 
 		if (fPage.doSync()) {
 			try {
-				getContainer().run(false, false, new SynchronizationOperation(fProductModel.getProduct(), getContainer().getShell()));
+				getContainer().run(false, false, new SynchronizationOperation(fProductModel.getProduct(), getContainer().getShell(), fProject));
 			} catch (InvocationTargetException e) {
 				MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductExportWizard_syncTitle, e.getTargetException().getMessage()); 
 				return false;

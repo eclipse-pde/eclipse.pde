@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ public interface ISplashInfo extends IProductObject {
 	public static final String P_PROGRESS_GEOMETRY= "startupProgressRect"; //$NON-NLS-1$
 	public static final String P_MESSAGE_GEOMETRY = "startupMessageRect"; //$NON-NLS-1$
 	public static final String P_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
+	
+	public static final String F_ATTRIBUTE_HANDLER_TYPE = "handlerType";	 //$NON-NLS-1$
 	
 	void setLocation(String location, boolean blockNotification);
 	
@@ -53,4 +55,22 @@ public interface ISplashInfo extends IProductObject {
 	void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException;
 	
 	String getForegroundColor();
+	
+
+	/**
+	 * @param type
+	 * @param blockNotification
+	 */
+	public void setFieldSplashHandlerType(String type, boolean blockNotification);
+
+	/**
+	 * @return
+	 */
+	public String getFieldSplashHandlerType();
+	
+	/**
+	 * @return
+	 */
+	public boolean isDefinedSplashHandlerType();
+	
 }

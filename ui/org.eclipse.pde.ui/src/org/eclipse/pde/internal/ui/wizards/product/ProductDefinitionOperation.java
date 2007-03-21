@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.eclipse.pde.internal.ui.util.TemplateFileGenerator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
 
@@ -49,12 +50,183 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String fProductId;
 	private String fApplication;
 	private IProduct fProduct;
+	
+	protected IProject fProject;
+	
+	private UpdateSplashHandlerInModelAction fUpdateSplashAction;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
 		super(shell, pluginId);
 		fProductId = productId;
 		fApplication = application;
 		fProduct = product;
+		fProject = null;
+	}
+
+	/**
+	 * @param product
+	 * @param pluginId
+	 * @param productId
+	 * @param application
+	 * @param shell
+	 * @param project
+	 */
+	public ProductDefinitionOperation(IProduct product, String pluginId,
+			String productId, String application, Shell shell, IProject project) {
+		super(shell, pluginId);
+		fProductId = productId;
+		fApplication = application;
+		fProduct = product;
+		// Needed for splash handler updates (file copying)
+		fProject = project;
+	}
+	
+	/**
+	 * @return
+	 */
+	private String createTargetPackage() {
+		return fPluginId + 
+			   "." + //$NON-NLS-1$
+			   UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+	}
+	
+	/**
+	 * @return fully-qualified class (with package)
+	 */
+	private String createAttributeValueClass() {
+		String targetPackage = createTargetPackage();
+		String targetClass = createTargetClass();
+		// Ensure target class is defined
+		if (targetClass == null) {
+			return null;
+		}
+		
+		return targetPackage + 
+			   "." +  //$NON-NLS-1$
+			   targetClass;
+	}	
+	
+	/**
+	 * @return unqualified class
+	 */
+	private String createTargetClass() {
+		// Get the splash handler type
+		String splashHandlerType = getSplashHandlerType();
+		// Ensure splash handler type was specfied
+		if (splashHandlerType == null) {
+			return null;
+		}
+		// Update the class name depending on the splash screen type
+		for (int i = 0; i < UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
+			String choice = UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
+			if (splashHandlerType.equals(choice)) {
+				return UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_CLASSES[i];
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @return splash screen type qualified with package name
+	 */
+	private String createAttributeValueID() {
+		// Create the ID based on the splash screen type
+		return createTargetPackage() + 
+				"." +  //$NON-NLS-1$
+				getSplashHandlerType();
+	}	
+
+	/**
+	 * @return
+	 */
+	private String getSplashHandlerType() {
+		// Get the splash info from the model
+		ISplashInfo info = fProduct.getProduct().getSplashInfo();
+		// Ensure splash info was defined
+		if (info == null) {
+			return null;
+		}
+		// Ensure splash type was defined
+		if (info.isDefinedSplashHandlerType() == false) {
+			return null;
+		} 
+		return info.getFieldSplashHandlerType();	
+	}
+	
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void updateSplashHandler(IPluginModelBase model, 
+			IProgressMonitor monitor) throws CoreException {
+		// Copy the applicable splash handler artifacts and perform parameter
+		// substitution (like in templates plug-in)
+		// Artifacts may include code, images and extension point schemas
+		updateSplashHandlerFiles(model, monitor);
+		// Update the plug-in model with the applicable splash handler extension
+		// and extension point related mark-up
+		updateSplashHandlerModel(model, monitor);
+	}
+	
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void updateSplashHandlerFiles(IPluginModelBase model, 
+			IProgressMonitor monitor) throws CoreException {
+		// If the project is not defined, abort this operation
+		if (fProject == null) {
+			return;
+		}
+		// Get the splash handler type
+		String splashHandlerType = getSplashHandlerType();
+		// If the splash handler type was not defined, abort this operation
+		if (splashHandlerType == null) {
+			return;
+		}
+		// Create and configure the template file generator
+		// Note: Plug-in ID must be passed in separately from model, because
+		// the underlying model does not contain the ID (even when it is
+		// a workspace model)
+		TemplateFileGenerator generator = new TemplateFileGenerator(
+				fProject, model, fPluginId, createTargetPackage(), 
+				createTargetClass(), splashHandlerType);
+		// Generate the necessary files
+		generator.generateFiles(monitor);
+	}
+	
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void updateSplashHandlerModel(IPluginModelBase model, 
+			IProgressMonitor monitor) throws CoreException {
+		// Get the splash handler type
+		String splashHandlerType = getSplashHandlerType();
+		// If the splash handler type is not defined, abort this operation
+		if (splashHandlerType == null) {
+			return;
+		}
+		// Create the update splash handler action
+		fUpdateSplashAction =  new UpdateSplashHandlerInModelAction();
+		// Configure the action
+		String id = createAttributeValueID();
+		fUpdateSplashAction.setFieldID(id);
+		fUpdateSplashAction.setFieldClass(createAttributeValueClass());
+		fUpdateSplashAction.setFieldSplashID(id);
+		fUpdateSplashAction.setFieldProductID(fProduct.getId());
+		fUpdateSplashAction.setFieldTemplate(splashHandlerType);
+		fUpdateSplashAction.setFieldPluginID(fPluginId);
+
+		fUpdateSplashAction.setModel(model);
+		fUpdateSplashAction.setMonitor(monitor);
+		// Execute the action
+		fUpdateSplashAction.run();
+		// If an core exception was thrown and caught, release it
+		fUpdateSplashAction.hasException();			
 	}
 	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -62,7 +234,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		try {
 			IFile file = getFile();
 			if (!file.exists()) {
-				createNewFile(file);
+				createNewFile(file, monitor);
 			} else {
 				modifyExistingFile(file, monitor);
 			}
@@ -72,11 +244,14 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 	}
 	
-	private void createNewFile(IFile file) throws CoreException {
+	private void createNewFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
 		IPluginBase base = model.getPluginBase();
 		base.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		base.add(createExtension(model));
+		// Update the splash handler.  Update plug-in model and copy files
+		updateSplashHandler(model, monitor);
+		
 		model.save();
 	}
 	
@@ -212,6 +387,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 					insertNewExtension((IPluginModelBase)model);
 				else
 					modifyExistingExtension(extension);
+				// Update the splash handler.  Update plug-in model and copy files
+				updateSplashHandler((IPluginModelBase)model, monitor);
 			}
 		};
 		PDEModelUtility.modifyModel(mod, monitor);

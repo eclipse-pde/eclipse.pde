@@ -63,6 +63,20 @@ public class PDETemplateMessages extends NLS {
     public static String IntroTemplate_generateDynamicContent;
     public static String IntroTemplate_generateStaticContent;
 
+	public static String SplashHandlersTemplate_descSplashHandlerOptions;
+
+	public static String SplashHandlersTemplate_fieldAddSplash;
+
+	public static String SplashHandlersTemplate_fieldClassName;
+
+	public static String SplashHandlersTemplate_fieldJavaPackage;
+
+	public static String SplashHandlersTemplate_fieldProductID;
+
+	public static String SplashHandlersTemplate_fieldSplashScreenType;
+
+	public static String SplashHandlersTemplate_titleSplashHandlerOptions;
+
 	public static String ViewRCPNewWizard_title;
 	public static String ViewRCPTemplate_title;
 	public static String ViewRCPTemplate_desc;

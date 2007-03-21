@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,6 +106,24 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		registerOption(option, value, pageIndex);
 		return option;
 	}
+	
+	/**
+	 * Force a combo choice representation.
+	 * Radio buttons look bad - even if only two options specified.
+	 * @param name
+	 * @param label
+	 * @param choices
+	 * @param value
+	 * @param pageIndex
+	 * @return
+	 */
+	protected ComboChoiceOption addComboChoiceOption(String name, String label,
+			String[][] choices, String value, int pageIndex) {
+		ComboChoiceOption option = new ComboChoiceOption(this, name, label, choices);
+		registerOption(option, value, pageIndex);
+		return option;
+	}
+	
 	/**
 	 * Adds a blank field with a default height to provide spacing.
 	 * 

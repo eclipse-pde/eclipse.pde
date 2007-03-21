@@ -305,6 +305,18 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
 
+	public static String SplashPage_splashName;
+
+	public static String SplashProgressSection_progressName;
+
+	public static String SplashProgressSection_progressSectionDesc;
+
+	public static String SplashTemplatesSection_templatesName;
+
+	public static String SplashTemplatesSection_templatesSectionDesc;
+
+	public static String SplashTemplatesSection_typeName;
+
 	public static String TargetContentPage_title;
 	
 	public static String UpdateSiteProvisionerWizard_title;
@@ -592,6 +604,30 @@ public class PDEUIMessages extends NLS {
 	// Status text #####################################
 	public static String Errors_CreationError;
 	public static String Errors_CreationError_NoWizard;
+
+	public static String UpdateSplashHandlerInModelAction_msgAddingExtension;
+
+	public static String UpdateSplashHandlerInModelAction_msgAddingExtensionPoint;
+
+	public static String UpdateSplashHandlerInModelAction_msgModifyingExtension;
+
+	public static String UpdateSplashHandlerInModelAction_nameApplicationFramework;
+
+	public static String UpdateSplashHandlerInModelAction_nameEmbedded;
+
+	public static String UpdateSplashHandlerInModelAction_nameEnterprise;
+
+	public static String UpdateSplashHandlerInModelAction_nameLanguages;
+
+	public static String UpdateSplashHandlerInModelAction_nameRCP;
+
+	public static String UpdateSplashHandlerInModelAction_splashExtensionPointName;
+
+	public static String UpdateSplashHandlerInModelAction_templateTypeBrowser;
+
+	public static String UpdateSplashHandlerInModelAction_templateTypeExtensible;
+
+	public static String UpdateSplashHandlerInModelAction_templateTypeInteractive;
 
 	// Reusable Parts ################################
 	public static String WizardCheckboxTablePart_selectAll;

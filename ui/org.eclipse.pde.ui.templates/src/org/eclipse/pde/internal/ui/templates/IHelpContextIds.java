@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,5 +26,7 @@ public interface IHelpContextIds {
  	public static final String TEMPLATE_BUILDER = PREFIX + "template_builder"; //$NON-NLS-1$
  	public static final String TEMPLATE_RCP_MAIL = PREFIX + "rcp_mail"; //$NON-NLS-1$
  	public static final String TEMPLATE_UNIVERSAL_WELCOME = PREFIX + "template_universal_welcome"; //$NON-NLS-1$
+ 	// TODO: MP: SPLASH: Update help context ID
+ 	public static final String TEMPLATE_SPLASH_HANDLERS = PREFIX + "splash_handlers"; //$NON-NLS-1$
  	
 }

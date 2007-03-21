@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,14 @@ package org.eclipse.pde.internal.ui.editor.product;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ModifyEvent;
@@ -44,16 +38,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 
-public class SplashSection extends PDESection {
+public class SplashProgressSection extends PDESection {
 
-	private FormEntry fPluginEntry;
+	private static final int F_NUM_COLUMNS = 8;
+	
 	private ColorSelector fColorSelector;
 	private boolean fBlockNotification;
 	
@@ -69,7 +62,7 @@ public class SplashSection extends PDESection {
 	// all swt controls under the progress message checkbox
 	private Control[] fMessageControls = new Control[10];
 	
-	public SplashSection(PDEFormPage page, Composite parent) {
+	public SplashProgressSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
@@ -84,35 +77,19 @@ public class SplashSection extends PDESection {
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);			
 		
-		section.setText(PDEUIMessages.SplashSection_title); 
-		section.setDescription(PDEUIMessages.SplashSection_desc); 
+		section.setText(PDEUIMessages.SplashProgressSection_progressName); 
+		section.setDescription(PDEUIMessages.SplashProgressSection_progressSectionDesc); 
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 10));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, F_NUM_COLUMNS));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Label label = toolkit.createLabel(client, PDEUIMessages.SplashSection_label, SWT.WRAP); 
-		GridData gd = new GridData();
-		gd.horizontalSpan = 10;
-		label.setLayoutData(gd);
-		
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fPluginEntry = new FormEntry(client, toolkit, PDEUIMessages.SplashSection_plugin, PDEUIMessages.SplashSection_browse, false); // 
-		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getSplashInfo().setLocation(entry.getValue(), false);
-			}
-			public void browseButtonSelected(FormEntry entry) {
-				handleBrowse();
-			}
-		});
-		fPluginEntry.setEditable(isEditable());
 		
 		createProgressBarConfig(client, toolkit);
 		createProgressMessageConfig(client, toolkit);
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		
 		// Register to be notified when the model changes
 		getModel().addModelChangedListener(this);	
 	}
@@ -232,7 +209,7 @@ public class SplashSection extends PDESection {
 	private Button createButton(Composite parent, FormToolkit toolkit, String label) {
 		Button button = toolkit.createButton(parent, label, SWT.CHECK);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 10;
+		gd.horizontalSpan = F_NUM_COLUMNS;
 		button.setLayoutData(gd);
 		return button;
 	}
@@ -258,7 +235,6 @@ public class SplashSection extends PDESection {
 		ISplashInfo info = getSplashInfo();
 		fBlockNotification = true;
 		
-		fPluginEntry.setValue(info.getLocation(), true);
 		fColorSelector.setColorValue(hexToRGB(info.getForegroundColor()));
 		
 		int[] pgeo = info.getProgressGeometry();
@@ -299,16 +275,6 @@ public class SplashSection extends PDESection {
 		super.refresh();
 	}
 	
-	public void commit(boolean onSave) {
-		fPluginEntry.commit();
-		super.commit(onSave);
-	}
-	
-	public void cancelEdit() {
-		fPluginEntry.cancelEdit();
-		super.cancelEdit();
-	}
-	
 	private ISplashInfo getSplashInfo() {
 		ISplashInfo info = getProduct().getSplashInfo();
 		if (info == null) {
@@ -324,18 +290,6 @@ public class SplashSection extends PDESection {
 	
 	private IProductModel getModel() {
 		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
-	}
-	
-	private void handleBrowse() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		dialog.setElements(PluginRegistry.getActiveModels());
-		dialog.setMultipleSelection(false);
-		dialog.setTitle(PDEUIMessages.SplashSection_selection); 
-		dialog.setMessage(PDEUIMessages.SplashSection_message); 
-		if (dialog.open() == Window.OK) {
-			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
-			fPluginEntry.setValue(model.getPluginBase().getId());
-		}
 	}
 
 	public boolean canPaste(Clipboard clipboard) {

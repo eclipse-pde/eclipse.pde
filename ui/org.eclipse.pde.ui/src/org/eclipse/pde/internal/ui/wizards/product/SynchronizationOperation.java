@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,8 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SynchronizationOperation extends ProductDefinitionOperation {
 
-	public SynchronizationOperation(IProduct product, Shell shell) {
-		super(product, getPluginId(product), getProductId(product), product.getApplication(), shell);
+	public SynchronizationOperation(IProduct product, Shell shell, IProject project) {
+		super(product, getPluginId(product), getProductId(product), product.getApplication(), shell, project);
 	}
 	
 	private static String getProductId(IProduct product) {

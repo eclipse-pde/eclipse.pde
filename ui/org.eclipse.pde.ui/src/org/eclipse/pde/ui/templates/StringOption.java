@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,9 @@ public class StringOption extends TemplateOption {
 	private Text text;
 	private Label labelControl;
 	private boolean ignoreListener;
+	private int fStyle;
+	
+	private final static int F_DEFAULT_STYLE = SWT.SINGLE | SWT.BORDER;
 	/**
 	 * The constructor.
 	 * 
@@ -39,8 +42,23 @@ public class StringOption extends TemplateOption {
 	public StringOption(BaseOptionTemplateSection section, String name,
 			String label) {
 		super(section, name, label);
+		fStyle = F_DEFAULT_STYLE;
 		setRequired(true);
 	}
+	
+	/**
+	 * Update the text widget style to be read only
+	 * Added to default style (does not override)
+	 * @param readOnly
+	 */
+	public void setReadOnly(boolean readOnly) {
+		if (readOnly) {
+			fStyle = F_DEFAULT_STYLE | SWT.READ_ONLY;
+		} else {
+			fStyle = F_DEFAULT_STYLE;
+		}
+	}
+	
 	/**
 	 * A utility version of the <samp>getValue() </samp> method that converts
 	 * the current value into the String object.
@@ -90,7 +108,7 @@ public class StringOption extends TemplateOption {
 	public void createControl(Composite parent, int span) {
 		labelControl = createLabel(parent, 1);
 		labelControl.setEnabled(isEnabled());
-		text = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		text = new Text(parent, fStyle);
 		if (getValue() != null)
 			text.setText(getValue().toString());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

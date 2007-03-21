@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,8 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	private int[] fMessageGeometry;
 	private boolean fCustomizeForegroundColor;
 	private String fForegroundColor;
+	
+	private String fFieldSplashHandlerType;
 
 	public SplashInfo(IProductModel model) {
 		super(model);
@@ -56,6 +58,8 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			setProgressGeometry(getGeometryArray(element.getAttribute(P_PROGRESS_GEOMETRY)), true);
 			setMessageGeometry(getGeometryArray(element.getAttribute(P_MESSAGE_GEOMETRY)), true);
 			setForegroundColor(element.getAttribute(P_FOREGROUND_COLOR), true);
+			// Parse the splash handler type
+			setFieldSplashHandlerType(element.getAttribute(F_ATTRIBUTE_HANDLER_TYPE), true);
 		}
 	}
 
@@ -78,6 +82,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		
 		if (fCustomizeForegroundColor && isValidHexValue(fForegroundColor))
 			writeProperty(indent, writer, P_FOREGROUND_COLOR, getWritableString(fForegroundColor));
+		
+		// Write the splash handler type if it is defined
+		if (isDefinedSplashHandlerType()) {
+			writeProperty(indent, writer, F_ATTRIBUTE_HANDLER_TYPE, 
+					fFieldSplashHandlerType);
+		}
 		
 		writer.print(" />"); //$NON-NLS-1$
 	}
@@ -169,9 +179,21 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return	(fLocation != null && fLocation.length() > 0) || 
 				(fCustomizeForegroundColor && fForegroundColor != null && isValidHexValue(fForegroundColor)) ||
 				(fCustomizeProgressBar && fProgressGeometry != null) ||
-				(fCustomizeProgressMessage && fMessageGeometry != null);
+				(fCustomizeProgressMessage && fMessageGeometry != null) ||
+				isDefinedSplashHandlerType();
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isDefinedSplashHandlerType() {
+		if ((fFieldSplashHandlerType != null) && 
+				(fFieldSplashHandlerType.length() > 0)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public void addProgressBar(boolean add, boolean blockNotification) {
 		boolean old = fCustomizeProgressBar;
 		fCustomizeProgressBar = add;
@@ -194,5 +216,24 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 			setForegroundColor(foreground != null ? foreground : "000000", blockNotification); //$NON-NLS-1$
 		} else if (!blockNotification && isEditable())
 			firePropertyChanged("", Boolean.toString(mold || cold), Boolean.toString(add)); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#getFieldSplashHandlerType()
+	 */
+	public String getFieldSplashHandlerType() {
+		return fFieldSplashHandlerType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#setFieldSplashHandlerType(java.lang.String)
+	 */
+	public void setFieldSplashHandlerType(String type, boolean blockNotification) {
+		String old = fFieldSplashHandlerType;
+		fFieldSplashHandlerType = type;
+		if ((blockNotification == false) &&
+				isEditable()) {
+			firePropertyChanged(F_ATTRIBUTE_HANDLER_TYPE, old, fFieldSplashHandlerType);
+		}
 	}
 }

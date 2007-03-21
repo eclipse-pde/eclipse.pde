@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -186,7 +187,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void handleSynchronize(boolean alert) {
 		try {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
-			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
+			IProject project = getPDEEditor().getCommonProject();
+			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell(), project);
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		

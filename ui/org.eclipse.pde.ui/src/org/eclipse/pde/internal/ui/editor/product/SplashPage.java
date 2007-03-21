@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -24,22 +25,29 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
+/**
+ * SplashPage
+ *
+ */
+public class SplashPage extends PDEFormPage {
 
-public class BrandingPage extends PDEFormPage {
-	
-	public static final String PAGE_ID = "branding"; //$NON-NLS-1$
+	public static final String PAGE_ID = "splash"; //$NON-NLS-1$
 
-	public BrandingPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title); 
+	/**
+	 * @param editor
+	 */
+	public SplashPage(FormEditor editor) {
+		super(editor, PAGE_ID, PDEUIMessages.SplashPage_splashName); 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
+		// TODO: MP: SPLASH: Update help document reference in header
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/branding.htm"; //$NON-NLS-1$
-	}
-	
+	}	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -47,22 +55,25 @@ public class BrandingPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
+		// TODO: MP: SPLASH: Update splash page header icon
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING));
-		form.setText(PDEUIMessages.BrandingPage_title);
+		form.setText(PDEUIMessages.SplashPage_splashName);
 		fillBody(managedForm, toolkit);
+		// TODO: MP: SPLASH: Update help context ID
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BRANDING_PAGE);
 	}
 	
+	/**
+	 * @param managedForm
+	 * @param toolkit
+	 */
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
-
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		// Sections
-		managedForm.addPart(new WindowImagesSection(this, body));
-		managedForm.addPart(new AboutSection(this, body));	
-		managedForm.addPart(new IntroSection(this, body));
-
-	}
-
-
+		managedForm.addPart(new SplashLocationSection(this, body));	
+		managedForm.addPart(new SplashProgressSection(this, body));	
+		managedForm.addPart(new SplashTemplatesSection(this, body));	
+	}	
+	
 }
