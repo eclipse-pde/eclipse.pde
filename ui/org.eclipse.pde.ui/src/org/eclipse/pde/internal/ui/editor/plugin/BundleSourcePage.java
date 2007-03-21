@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.CompositeManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
@@ -56,12 +57,14 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
@@ -758,6 +761,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
+		StyledText text = getViewer().getTextWidget();
+		Point p = text.getSelection();
+		IDocumentRange element = getRangeElement(p.x, false);
+		// only activate rename when user is highlighting Bundle-SymbolicName header
+		if (!(element instanceof BundleSymbolicNameHeader) || !(((BundleSymbolicNameHeader)element).getModel().isEditable()))
+			return;
 		if (fRenameAction == null) {
 			IBaseModel base = ((PDEFormEditor)getEditor()).getAggregateModel();
 			if (base instanceof IPluginModelBase) {
@@ -767,7 +776,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			}
 		}
 		if (fRenameAction != null)
-			menu.prependToGroup(ITextEditorActionConstants.GROUP_EDIT, fRenameAction);
+			// add rename action after Outline. This is the same order as the hyperlink actions
+			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
 	}
 
 }
