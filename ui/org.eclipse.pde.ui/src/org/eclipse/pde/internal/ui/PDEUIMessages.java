@@ -974,8 +974,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TracingLauncherTab_name;
 	public static String TracingLauncherTab_tracing;
-	public static String TracingLauncherTab_plugins;
-	public static String TracingLauncherTab_options;
 	public static String TracingLauncherTab_selectAll;
 	public static String TracinglauncherTab_deselectAll;
 

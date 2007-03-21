@@ -49,7 +49,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 
@@ -62,7 +61,6 @@ public class TracingBlock {
 	private Properties fMasterOptions = new Properties();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-	private Label fPropertyLabel;
 	private Hashtable fPropertySources = new Hashtable();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
@@ -86,11 +84,7 @@ public class TracingBlock {
 			}
 		});
 
-		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		createSashSection(parent);
-
 		createButtonSection(parent);
 	}
 	
@@ -106,9 +100,6 @@ public class TracingBlock {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 1;
 		composite.setLayout(layout);
-		
-		Label label = new Label(composite, SWT.NULL);
-		label.setText(PDEUIMessages.TracingLauncherTab_plugins); 
 		
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
@@ -139,9 +130,6 @@ public class TracingBlock {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		tableChild.setLayout(layout);
-		fPropertyLabel = new Label(tableChild, SWT.NULL);
-		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		updatePropertyLabel(null);
 		int margin = createPropertySheet(tableChild);
 		layout.marginWidth = layout.marginHeight = margin;
 	}
@@ -315,14 +303,6 @@ public class TracingBlock {
 			}
 			fPageBook.showPage(model);
 		}
-		updatePropertyLabel(model);
-	}
-
-	private void updatePropertyLabel(IPluginModelBase model) {
-		String text = (model == null) 
-						? PDEUIMessages.TracingLauncherTab_options 
-						: PDEPlugin.getDefault().getLabelProvider().getText(model);
-		fPropertyLabel.setText(text);
 	}
 
 	private IPluginModelBase[] getTraceableModels() {

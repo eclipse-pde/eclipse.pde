@@ -81,7 +81,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public PluginsTab(boolean showFeatures) {
 		fShowFeatures = showFeatures;
-		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fPluginBlock = new PluginBlock(this);
 		fToolBar = new PluginsTabToolbar(this);
 	}
