@@ -453,7 +453,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			tablePart.setButtonEnabled(2, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 
 		// up/down buttons
-		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1;
+		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
 		tablePart.setButtonEnabled(
 				3,
 				canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
