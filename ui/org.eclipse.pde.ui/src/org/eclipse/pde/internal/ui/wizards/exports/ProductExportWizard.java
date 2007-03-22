@@ -45,6 +45,10 @@ public class ProductExportWizard extends BaseExportWizard {
 	private ProductExportWizardPage fPage;
 	private IProject fProject;
 
+	public ProductExportWizard() {
+		this(null);
+	}
+
 	public ProductExportWizard(IProject project) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_EXPORT_WIZ);
 		fProject = project;
