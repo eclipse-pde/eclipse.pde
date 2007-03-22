@@ -1944,6 +1944,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String Product_FeatureSection_remove;
 	public static String Product_FeatureSection_open;
+	public static String Product_FeatureSection_up;
+	public static String Product_FeatureSection_down;
+	public static String Product_FeatureSection_sortAlpha;
 
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;

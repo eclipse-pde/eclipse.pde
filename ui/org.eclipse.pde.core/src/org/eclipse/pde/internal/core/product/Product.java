@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -40,9 +42,9 @@ public class Product extends ProductObject implements IProduct {
 	private String fName;
 	private String fApplication;
 	private IAboutInfo fAboutInfo;
-	
+
 	private TreeMap fPlugins = new TreeMap();
-	private TreeMap fFeatures = new TreeMap();
+	private List fFeatures = new ArrayList();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -76,7 +78,7 @@ public class Product extends ProductObject implements IProduct {
 	public String getApplication() {
 		return fApplication;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getDefiningPluginId()
 	 */
@@ -86,7 +88,7 @@ public class Product extends ProductObject implements IProduct {
 		int dot = fId.lastIndexOf('.');
 		return (dot != -1) ? fId.substring(0, dot) : null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setId(java.lang.String)
 	 */
@@ -106,7 +108,7 @@ public class Product extends ProductObject implements IProduct {
 		if (isEditable())
 			firePropertyChanged(P_NAME, old, fName);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setAboutInfo(org.eclipse.pde.internal.core.iproduct.IAboutInfo)
 	 */
@@ -123,7 +125,7 @@ public class Product extends ProductObject implements IProduct {
 		if (isEditable())
 			firePropertyChanged(P_APPLICATION, old, fApplication);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -142,42 +144,42 @@ public class Product extends ProductObject implements IProduct {
 			writer.println();
 			fAboutInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fConfigIniInfo != null) {
 			writer.println();
 			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fLauncherArgs != null) {
 			writer.println();
 			fLauncherArgs.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fWindowImages != null) {
 			writer.println();
 			fWindowImages.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fSplashInfo != null) {
 			writer.println();
 			fSplashInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fLauncherInfo != null) {
 			writer.println();
 			fLauncherInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fIntroInfo != null) {
 			writer.println();
 			fIntroInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		if (fJVMInfo != null) {
 			writer.println();
 			fJVMInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
@@ -186,29 +188,29 @@ public class Product extends ProductObject implements IProduct {
 			plugin.write(indent + "      ", writer); //$NON-NLS-1$
 		}
 		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
-		
+
 		if (fFeatures.size() > 0) {
 			writer.println();
 			writer.println(indent + "   <features>"); //$NON-NLS-1$
-			iter = fFeatures.values().iterator();
+			iter = fFeatures.iterator();
 			while (iter.hasNext()) {
 				IProductFeature feature = (IProductFeature)iter.next();
 				feature.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </features>"); //$NON-NLS-1$
 		}
-		
+
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getAboutInfo()
 	 */
 	public IAboutInfo getAboutInfo() {
 		return fAboutInfo;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#reset()
 	 */
@@ -228,7 +230,7 @@ public class Product extends ProductObject implements IProduct {
 		fIntroInfo = null;
 		fJVMInfo = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
@@ -279,7 +281,7 @@ public class Product extends ProductObject implements IProduct {
 			}
 		}
 	}
-	
+
 	private void parsePlugins(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -292,7 +294,7 @@ public class Product extends ProductObject implements IProduct {
 			}
 		}
 	}
-	
+
 	private void parseFeatures(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -300,7 +302,7 @@ public class Product extends ProductObject implements IProduct {
 				if (child.getNodeName().equals("feature")) { //$NON-NLS-1$
 					IProductFeature feature = getModel().getFactory().createFeature();
 					feature.parse(child);
-					fFeatures.put(feature.getId(), feature);
+					fFeatures.add(feature);
 				}
 			}
 		}
@@ -319,7 +321,7 @@ public class Product extends ProductObject implements IProduct {
 				plugins[i] = null;
 				continue;
 			}
-			
+
 			plugins[i].setModel(getModel());
 			fPlugins.put(id, plugins[i]);
 			modified = true;
@@ -327,7 +329,7 @@ public class Product extends ProductObject implements IProduct {
 		if (modified && isEditable())
 			fireStructureChanged(plugins, IModelChangedEvent.INSERT);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
@@ -340,21 +342,21 @@ public class Product extends ProductObject implements IProduct {
 		if (modified && isEditable())
 			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
 	public IProductPlugin[] getPlugins() {
 		return (IProductPlugin[])fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo()
 	 */
 	public IConfigurationFileInfo getConfigurationFileInfo() {
 		return fConfigIniInfo;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setConfigurationFileInfo(org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo)
 	 */
@@ -376,9 +378,14 @@ public class Product extends ProductObject implements IProduct {
 	public boolean containsPlugin(String id) {
 		return fPlugins.containsKey(id);
 	}
-	
+
 	public boolean containsFeature(String id) {
-		return fFeatures.containsKey(id);
+		IProductFeature[] features = getFeatures();
+		for(int i = 0; i < features.length; i++) {
+			if(features[i].getId() == id)
+				return true;
+		}
+		return false;
 	}
 
 	public IWindowImages getWindowImages() {
@@ -411,16 +418,16 @@ public class Product extends ProductObject implements IProduct {
 			if (features[i] == null)
 				continue;
 			String id = features[i].getId();
-			if (fFeatures.containsKey(id)) {
+			if (fFeatures.contains((id))) {
 				features[i] = null;
 				continue;
 			}
-			
+
 			features[i].setModel(getModel());
-			fFeatures.put(id, features[i]);
+			fFeatures.add(features[i]);
 			modified = true;
 		}
-		
+
 		if (modified && isEditable())
 			fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
@@ -428,15 +435,17 @@ public class Product extends ProductObject implements IProduct {
 	public void removeFeatures(IProductFeature[] features) {
 		boolean modified = false;
 		for (int i = 0; i < features.length; i++) {
-			if (fFeatures.remove(features[i].getId()) != null)
+			if(features[i].getId() != null) {
+				fFeatures.remove(features[i]);
 				modified = true;
+			}
 		}
 		if (modified && isEditable())
 			fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
 	public IProductFeature[] getFeatures() {
-		return (IProductFeature[])fFeatures.values().toArray(new IProductFeature[fFeatures.size()]);
+		return (IProductFeature[])fFeatures.toArray(new IProductFeature[fFeatures.size()]);
 	}
 
 	public IArgumentsInfo getLauncherArguments() {
@@ -463,4 +472,16 @@ public class Product extends ProductObject implements IProduct {
 		fJVMInfo = info;
 	}
 
+	public void swap(IProductFeature feature1, IProductFeature feature2) {
+		int index1 = fFeatures.indexOf(feature1);
+		int index2 = fFeatures.indexOf(feature2);
+		if (index1 == -1 || index2 == -1)
+			return;
+
+		fFeatures.set(index2, feature1);
+		fFeatures.set(index1, feature2);
+
+		fireStructureChanged(feature1, IModelChangedEvent.CHANGE);
+	}
+	
 }

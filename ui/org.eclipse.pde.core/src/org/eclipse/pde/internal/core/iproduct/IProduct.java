@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 
+
 public interface IProduct extends IProductObject {
 	
 	String P_ID = "id"; //$NON-NLS-1$
@@ -83,6 +84,8 @@ public interface IProduct extends IProductObject {
 	void setUseFeatures(boolean use);
 	
 	void reset();
+	
+	void swap(IProductFeature feature1, IProductFeature feature2);
 	
 	boolean containsPlugin(String id);
 	
