@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			HashSet added = new HashSet();
 			
 			// to avoid cycles, e.g. when a bundle imports a package it exports
-			added.add(desc.getSymbolicName());
+			added.add(desc);
 			
 			HostSpecification host = desc.getHost();
 			if (host != null) {
@@ -155,10 +156,18 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addSecondaryDependencies(desc, added, entries);
 			
 			// add Import-Package
+			// sort by symbolicName_version to get a consistent order
+			Map sortedMap = new TreeMap();
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
-				String symbolicName = iter.next().toString();
-				IPluginModelBase model = PluginRegistry.findModel(symbolicName);
+				BundleDescription bundle = (BundleDescription)iter.next();
+				sortedMap.put(bundle.toString(), bundle);
+			}
+			
+			iter = sortedMap.values().iterator();
+			while (iter.hasNext()) {
+				BundleDescription bundle = (BundleDescription)iter.next();
+				IPluginModelBase model = PluginRegistry.findModel(bundle);
 				if (model != null && model.isEnabled())
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
 			}
@@ -172,7 +181,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private Map retrieveVisiblePackagesFromState(BundleDescription desc) {
-		Map visiblePackages = new TreeMap();
+		Map visiblePackages = new HashMap();
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null)
@@ -188,13 +197,13 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			BundleDescription exporter = exports[i].getExporter();
 			if (exporter == null)
 				continue;
-			ArrayList list = (ArrayList)visiblePackages.get(exporter.getSymbolicName());
+			ArrayList list = (ArrayList)visiblePackages.get(exporter);
 			if (list == null) 
 				list = new ArrayList();
 			Rule rule = getRule(helper, desc, exports[i]);
 			if (!list.contains(rule))
 				list.add(rule);
-			visiblePackages.put(exporter.getSymbolicName(), list);
+			visiblePackages.put(exporter, list);
 		}
 	}
 	
@@ -207,7 +216,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	protected void addDependencyViaImportPackage(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
-		if (desc == null || !added.add(desc.getSymbolicName()))
+		if (desc == null || !added.add(desc))
 			return;
 
 		addPlugin(desc, true, map, entries);
@@ -226,7 +235,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private void addDependency(BundleDescription desc, HashSet added, Map map, ArrayList entries, boolean useInclusion) throws CoreException {
-		if (desc == null || !added.add(desc.getSymbolicName()))
+		if (desc == null || !added.add(desc))
 			return;
 
 		BundleDescription[] fragments = hasExtensibleAPI(desc) ? desc.getFragments() : new BundleDescription[0];
@@ -289,17 +298,18 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private Rule[] getInclusions(Map map, BundleDescription desc) {
-		ArrayList list = (ArrayList)map.get(desc.getSymbolicName());
+		ArrayList list = (ArrayList)map.get(desc);
 		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : new Rule[0];		
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, HashSet added, Map map, ArrayList entries) throws CoreException {
 		BaseDescription desc = hostSpec.getSupplier();
 		
-		if (desc instanceof BundleDescription && added.add(desc.getName())) {
+		if (desc instanceof BundleDescription) {
 			BundleDescription host = (BundleDescription)desc;
+			
 			// add host plug-in
-			if (addPlugin(host, false, map, entries)) {			
+			if (added.add(host) && addPlugin(host, false, map, entries)) {			
 				BundleSpecification[] required = host.getRequiredBundles();
 				for (int i = 0; i < required.length; i++) {
 					addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
