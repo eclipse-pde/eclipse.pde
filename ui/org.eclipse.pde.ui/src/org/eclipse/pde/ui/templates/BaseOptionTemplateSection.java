@@ -115,7 +115,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @param choices
 	 * @param value
 	 * @param pageIndex
-	 * @return
+	 * @return the newly created option
 	 */
 	protected ComboChoiceOption addComboChoiceOption(String name, String label,
 			String[][] choices, String value, int pageIndex) {
