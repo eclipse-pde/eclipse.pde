@@ -25,6 +25,491 @@ charset=iso-8859-1 rel=stylesheet>
 <H1>Eclipse Platform Build Notes<BR>Plug-in Development Environment</H1>
 <HR>
 
+<p>Eclipse SDK 3.3 M6 - March 23, 2007</p>
+
+<p><b><font size="4">Problem Reports Fixed</font></b></p>
+<table class="bz_buglist" cellSpacing="0" cellPadding="4" width="100%">
+  <tr align="left">
+    <th class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/buglist.cgi?bug_file_loc=&bug_file_loc_type=allwordssubstr&bug_id=&bugidtype=include&chfieldfrom=&chfieldto=Now&chfieldvalue=&classification=Eclipse&component=UI&email1=&email2=&emailtype1=substring&emailtype2=substring&field-1-0-0=classification&field-1-1-0=component&field-1-2-0=product&field-1-3-0=resolution&field-1-4-0=target_milestone&field0-0-0=noop&keywords=&keywords_type=allwords&long_desc=&long_desc_type=allwordssubstr&product=PDE&query_format=advanced&remaction=&resolution=FIXED&short_desc=&short_desc_type=allwordssubstr&status_whiteboard=&status_whiteboard_type=allwordssubstr&target_milestone=3.3%20M6&type-1-0-0=anyexact&type-1-1-0=anyexact&type-1-2-0=anyexact&type-1-3-0=anyexact&type-1-4-0=anyexact&type0-0-0=noop&value-1-0-0=Eclipse&value-1-1-0=UI&value-1-2-0=PDE&value-1-3-0=FIXED&value-1-4-0=3.3%20M6&value0-0-0=&votes=&order=bugs.bug_id&query_based_on=M6">
+    ID</a> </th>
+    <th>
+    <a href="https://bugs.eclipse.org/bugs/buglist.cgi?bug_file_loc=&bug_file_loc_type=allwordssubstr&bug_id=&bugidtype=include&chfieldfrom=&chfieldto=Now&chfieldvalue=&classification=Eclipse&component=UI&email1=&email2=&emailtype1=substring&emailtype2=substring&field-1-0-0=classification&field-1-1-0=component&field-1-2-0=product&field-1-3-0=resolution&field-1-4-0=target_milestone&field0-0-0=noop&keywords=&keywords_type=allwords&long_desc=&long_desc_type=allwordssubstr&product=PDE&query_format=advanced&remaction=&resolution=FIXED&short_desc=&short_desc_type=allwordssubstr&status_whiteboard=&status_whiteboard_type=allwordssubstr&target_milestone=3.3%20M6&type-1-0-0=anyexact&type-1-1-0=anyexact&type-1-2-0=anyexact&type-1-3-0=anyexact&type-1-4-0=anyexact&type0-0-0=noop&value-1-0-0=Eclipse&value-1-1-0=UI&value-1-2-0=PDE&value-1-3-0=FIXED&value-1-4-0=3.3%20M6&value0-0-0=&votes=&order=bugs.short_desc%2Cbugs.bug_id&query_based_on=M6">
+    Summary</a> </th>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=79027">79027</a> </td>
+    <td>[Error reporting] nested extension elements don&#39;t get reported as errors
+    </td>
+  </tr>
+  <tr class="bz_trivial             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=99197">99197</a> </td>
+    <td>For plugin editor, Revert action doesn&#39;t work </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121413">121413</a>
+    </td>
+    <td>[Product Editor] Revert operation does not work </td>
+  </tr>
+  <tr class="bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123953">123953</a>
+    </td>
+    <td>Have Error Log view&#39;s Open Log use Eclipse&#39;s file association </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=130386">130386</a>
+    </td>
+    <td>Almost impossible to browse problems using plug-in validation </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=141607">141607</a>
+    </td>
+    <td>Unexpected unresolved dependancies error dialog </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=141671">141671</a>
+    </td>
+    <td>window with results of plug-in set validation is modal </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=148540">148540</a>
+    </td>
+    <td>&quot;Validate Plugin-Set&quot; does not work properly </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=151499">151499</a>
+    </td>
+    <td>[New Fragment Wizard] Vague and inconsistent error messages </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152073">152073</a>
+    </td>
+    <td>JUnit performance test for extension point schema loading </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164210">164210</a>
+    </td>
+    <td>FilteredTree on manifest editor looks ugly on Windows classic theme </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166493">166493</a>
+    </td>
+    <td>Revert in Schema Editor does nothing </td>
+  </tr>
+  <tr class="bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166819">166819</a>
+    </td>
+    <td>Renaming project&#39;s name won&#39;t be renamed Bundle-SymbolicName </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168335">168335</a>
+    </td>
+    <td>Product export does not set the correct permissions for the copied JRE
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171957">171957</a>
+    </td>
+    <td>[Templates] Splash not being generated for RCP apps when branding option 
+    is not selected </td>
+  </tr>
+  <tr class="bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172532">172532</a>
+    </td>
+    <td>[Product Editor] Integrate Kim&#39;s splash screen templates </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172774">172774</a>
+    </td>
+    <td>Save on real estate in the product editor </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173085">173085</a>
+    </td>
+    <td>Plug-in working set should make use of IWorkingSetElementAdapter API
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173205">173205</a>
+    </td>
+    <td>[Product Editor] Field validation regurgitates the erroneous value </td>
+  </tr>
+  <tr class="bz_major             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173393">173393</a>
+    </td>
+    <td>Missing Entries in Manifest generated by the Template Wizard </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173494">173494</a>
+    </td>
+    <td>PDE Junit launch config should check whether project is a PDE project
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173677">173677</a>
+    </td>
+    <td>[Cheat Sheet Editor] Revert operation not implemented / available </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173712">173712</a>
+    </td>
+    <td>Plug-in Project from jar wizard fails to enable the Finish button </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173715">173715</a>
+    </td>
+    <td>[Working Set] ClassCastException when trying to edit Working Set </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173741">173741</a>
+    </td>
+    <td>A project created without build.properties files causes errors to be 
+    logged </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173743">173743</a>
+    </td>
+    <td>Not possible to launch a RCP application when launcher is imported </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173763">173763</a>
+    </td>
+    <td>Do we really still need &#39;Convert to 3.0...&#39; in PDE Tools menu? </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173766">173766</a>
+    </td>
+    <td>Not all PDE Form pages comply with recommendations for spacing </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173791">173791</a>
+    </td>
+    <td>PDE Tools &gt; Organize Manifest... incorrectly identifes an externalized 
+    Bundle-Category value as unused </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173883">173883</a>
+    </td>
+    <td>Launching an eclipse product from eclipse causes incorrect vm arguments 
+    to be appended. </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173961">173961</a>
+    </td>
+    <td>NPE in new extension point wizard </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174080">174080</a>
+    </td>
+    <td>[Target Editor] Revert operation does not work </td>
+  </tr>
+  <tr class="bz_minor             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174168">174168</a>
+    </td>
+    <td>Wrong section name in the dialog to enter version number for an exported 
+    package </td>
+  </tr>
+  <tr class="bz_major             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174232">174232</a>
+    </td>
+    <td>macosx/Info.plist is out of date </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174242">174242</a>
+    </td>
+    <td>[Cheat Sheet Editor] Borders missing in enclosing text section when 
+    using Windows XP Classic theme </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174457">174457</a>
+    </td>
+    <td>The finish button state is not correct in the new plug-in project wizard 
+    the first time the Template Selection page is visible </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174598">174598</a>
+    </td>
+    <td>[Command Composer] Validation is too restrictive on file paths </td>
+  </tr>
+  <tr class="bz_major             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174640">174640</a>
+    </td>
+    <td>Finish button state should be based on the selected templates, not all 
+    templates </td>
+  </tr>
+  <tr class="bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174923">174923</a>
+    </td>
+    <td>Rename bundle id action </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174978">174978</a>
+    </td>
+    <td>ClassCastException in &#39;Edit Active Working Set&#39; </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174983">174983</a>
+    </td>
+    <td>[Product Editor] Product model object reset operation is not complete
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174998">174998</a>
+    </td>
+    <td>Show extension point description does not work when plugin.xml specifies 
+    Eclipse 3.2 format </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175042">175042</a>
+    </td>
+    <td>JRE is selected to be bundled but is not part of the export </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175060">175060</a>
+    </td>
+    <td>PDE welcome icon refresh </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175138">175138</a>
+    </td>
+    <td>Widget is disposed error </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175154">175154</a>
+    </td>
+    <td>enhancements to PDE launch shortcuts </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175364">175364</a>
+    </td>
+    <td>[Product Editor] IOOBE during validation </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175393">175393</a>
+    </td>
+    <td>Log view details dialog leaks images </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175437">175437</a>
+    </td>
+    <td>[Regression] Eclipse SDK splash screen appears in hello RCP template
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175536">175536</a>
+    </td>
+    <td>Manifest editor leaks six colors </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175566">175566</a>
+    </td>
+    <td>Manifest editor preference page leaks six images </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175756">175756</a>
+    </td>
+    <td>PDE imports signatures with source </td>
+  </tr>
+  <tr class="bz_major             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176045">176045</a>
+    </td>
+    <td>Extension editor doesn&#39;t remember field changes </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176289">176289</a>
+    </td>
+    <td>Multiple bundle versions in workspace does not work. </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176313">176313</a>
+    </td>
+    <td>regression: target plaform locations must have &quot;plugins&quot; </td>
+  </tr>
+  <tr class="bz_major             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176368">176368</a>
+    </td>
+    <td>Export product results in a bad launcher on OS X </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176509">176509</a>
+    </td>
+    <td>AssertionFailedException when clicking on dependencies link </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176613">176613</a>
+    </td>
+    <td>Load Target button not enabled until Pre-defined Target Platform is 
+    selected in the Combo </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176635">176635</a>
+    </td>
+    <td>Support the new IJarEntryResource </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176973">176973</a>
+    </td>
+    <td>LogView.readSettings() insufficiently robust </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177177">177177</a>
+    </td>
+    <td>Extension points from import-package dependencies are not shown </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177204">177204</a>
+    </td>
+    <td>PDE should add launch shortcut descriptions </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177212">177212</a>
+    </td>
+    <td>Dependency View does not update upon models being removed </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_VERIFIED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177354">177354</a>
+    </td>
+    <td>PDE hijacks text editing scope </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_CLOSED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177363">177363</a>
+    </td>
+    <td>NLS33:translation questions </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177379">177379</a>
+    </td>
+    <td>NPE when creating project from jar org.apache.oro </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177546">177546</a>
+    </td>
+    <td>[NLS] NLS33: Remove &quot;ReadOnly&quot; as a candidate for translation </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177590">177590</a>
+    </td>
+    <td>Adopt &quot;Show Tooltip&quot; / F2 support from Platform Text </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177697">177697</a>
+    </td>
+    <td>[Product Editor] Feature order matters </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177880">177880</a>
+    </td>
+    <td>Get rid of copied AbstractReusableInformationControlCreator </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177918">177918</a>
+    </td>
+    <td>Product Export Wizard does not export JRE </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178344">178344</a>
+    </td>
+    <td>NullPointerException while double clicking on imported package </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178491">178491</a>
+    </td>
+    <td>&quot;Rename Bundle-SymbolicName...&quot; is not context-sensitive </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178500">178500</a>
+    </td>
+    <td>24x24 image is not required </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178649">178649</a>
+    </td>
+    <td>chkpii error in I20070321-0800 </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178706">178706</a>
+    </td>
+    <td>Javadoc warnings in I20070321-1800 </td>
+  </tr>
+</table>
+<HR>
+
 <p>Eclipse SDK 3.3 M5 - February 9, 2007</p>
 
 <p><b><font size="4">Problem Reports Fixed</font></b></p>
