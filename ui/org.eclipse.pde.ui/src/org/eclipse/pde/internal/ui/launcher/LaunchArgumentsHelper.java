@@ -97,7 +97,7 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		StringBuffer buffer = getEclipseIniArguments();
+		//StringBuffer buffer = getEclipseIniArguments();
 		
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, 
@@ -118,13 +118,14 @@ public class LaunchArgumentsHelper {
 			}
 		}
 		
-		if(args != null && args.length() > 0)
-			buffer.append(" ").append(args); //$NON-NLS-1$
+		//if(args != null && args.length() > 0)
+			//buffer.append(" ").append(args); //$NON-NLS-1$
 		
-		return getSubstitutedString(buffer.toString());
+		//return getSubstitutedString(buffer.toString());
+		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
-	private static StringBuffer getEclipseIniArguments() {
+	protected static StringBuffer getEclipseIniArguments() {
 		// hack on the args from eclipse.ini
 		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
