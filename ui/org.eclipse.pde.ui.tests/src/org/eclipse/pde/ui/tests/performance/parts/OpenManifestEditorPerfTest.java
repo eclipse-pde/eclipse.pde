@@ -126,7 +126,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	 * @throws Exception
 	 */
 	public void testPluginEditorOpenXML() throws Exception {
-		tagAsGlobalSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
 	
@@ -134,7 +134,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	 * @throws Exception
 	 */
 	public void testPluginEditorOpenMF() throws Exception {
-		tagAsGlobalSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+		tagAsSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fManifestFile);
 	}	
 	
