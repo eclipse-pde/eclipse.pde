@@ -405,7 +405,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				  // Get PluginModelBase first to resolve system.bundle entry if it exists
 				  IPluginModelBase model = PluginRegistry.findModel(pluginId);
 				  if (model != null) {
-					  TreeMap rules = new TreeMap();
+					  Map rules = new HashMap();
 					  findExportedPackages(model.getBundleDescription(), desc, rules);
 					  if (model != null) {
 						  addDependency(model.getBundleDescription(), added, rules, entries, true);
