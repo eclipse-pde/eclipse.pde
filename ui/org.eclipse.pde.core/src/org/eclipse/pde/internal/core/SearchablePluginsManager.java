@@ -286,25 +286,21 @@ public class SearchablePluginsManager
 	}
 
 	public void modelsChanged(PluginModelDelta delta) {
-		boolean resetContainer = false;
-
-		ModelEntry[] entries = delta.getChangedEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (fPluginIdSet.contains(entries[i].getId())) {
-				resetContainer = true;
-				break;
-			}
+		if (delta.getChangedEntries().length > 0 || delta.getAddedEntries().length > 0) {
+			resetContainer();
+			return;
 		}
 
-		entries = delta.getRemovedEntries();
+		int size = fPluginIdSet.size();
+		ModelEntry[] entries = delta.getRemovedEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (fPluginIdSet.contains(entries[i].getId())) {
 				fPluginIdSet.remove(entries[i].getId());
 			}
 		}
 		
-		if (resetContainer || entries.length > 0 || delta.getAddedEntries().length > 0)
-			resetContainer();
+		if (size < fPluginIdSet.size())
+			resetContainer();		
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {
