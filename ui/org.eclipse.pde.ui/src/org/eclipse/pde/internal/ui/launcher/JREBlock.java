@@ -93,7 +93,7 @@ public class JREBlock {
 				String currentVM = fJreCombo.getText();
 				boolean useDefault = VMHelper.getDefaultVMInstallName().equals(currentVM);
 				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
-				if (PDEPreferencesUtil.showPreferencePage(pageIDs)) {
+				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
 					setJRECombo();
 					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
 						fJreCombo.setText(VMHelper.getDefaultVMInstallName());

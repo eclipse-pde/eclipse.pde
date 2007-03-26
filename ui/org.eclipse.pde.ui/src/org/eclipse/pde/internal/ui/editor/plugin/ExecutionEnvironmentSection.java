@@ -146,7 +146,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			public void linkExited(HyperlinkEvent e) {
 			}
 			public void linkActivated(HyperlinkEvent e) {
-				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
+				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, PDEPlugin.getActiveWorkbenchShell()); //$NON-NLS-1$
 			}
 		});
 		GridData gd = new GridData();

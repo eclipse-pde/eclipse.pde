@@ -22,7 +22,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
@@ -120,7 +119,7 @@ public abstract class BaseBlock {
 	protected void handleBrowseWorkspace() {
 		ContainerSelectionDialog dialog = 
 			new ContainerSelectionDialog(
-					PDEPlugin.getActiveWorkbenchShell(),
+					fTab.getControl().getShell(),
 					getContainer(), 
 					true,
 					PDEUIMessages.BaseBlock_relative); 
@@ -159,7 +158,7 @@ public abstract class BaseBlock {
 	
 	private void handleInsertVariable() {
 		StringVariableSelectionDialog dialog = 
-					new StringVariableSelectionDialog(PDEPlugin.getActiveWorkbenchShell());
+					new StringVariableSelectionDialog(fTab.getControl().getShell());
 		if (dialog.open() == Window.OK)
 			fLocationText.insert(dialog.getVariableExpression());
 	}

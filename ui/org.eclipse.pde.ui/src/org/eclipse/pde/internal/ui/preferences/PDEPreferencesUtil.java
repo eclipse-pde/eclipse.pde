@@ -21,8 +21,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class PDEPreferencesUtil {
 	
-	public static boolean showPreferencePage(String[] pageIds) {
-		final Shell shell = PDEPlugin.getActiveWorkbenchShell();
+	public static boolean showPreferencePage(String[] pageIds, final Shell shell) {
 		final PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell, pageIds[0], pageIds, null);
 		return dialog.open() == Window.OK;
 	}
