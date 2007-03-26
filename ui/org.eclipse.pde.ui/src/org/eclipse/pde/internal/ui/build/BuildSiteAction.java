@@ -54,7 +54,6 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		if (fModel == null)
 			return;
 		ISiteFeature[] sbFeatures = fModel.getSite().getFeatures();
-		sbFeatures[0].getModel().getSite().getFeatures();
 		IFeatureModel[] models = getFeatureModels(sbFeatures);
 
 		if (models.length > 0) {
@@ -73,7 +72,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
 					.findFeatureModelRelaxed(siteFeature.getId(),
 							siteFeature.getVersion());
-			if (model != null && model.getUnderlyingResource() != null)
+			if (model != null)
 				list.add(model);
 		}
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
@@ -87,7 +86,11 @@ public class BuildSiteAction implements IObjectActionDelegate {
 				fModel = new WorkspaceSiteModel(fSiteXML);
 				try {
 					fModel.load();
+					ISiteFeature[] features = fModel.getSite().getFeatures();
+					if(features.length <= 0 )
+						action.setEnabled(false);
 				} catch (CoreException e) {
+						action.setEnabled(false);
 				}
 			}
 		}
