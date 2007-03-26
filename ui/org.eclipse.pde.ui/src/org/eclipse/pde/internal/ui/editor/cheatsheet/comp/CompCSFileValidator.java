@@ -105,7 +105,7 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 		 * 
 		 */
 		public AbortParseException() {
-			super(PDEUIMessages.CompCSFileValidator_abortParseExceptionMessage);
+			super("Parsing operation forcibly aborted to save on performance time."); //$NON-NLS-1$
 		}
 	}
 	

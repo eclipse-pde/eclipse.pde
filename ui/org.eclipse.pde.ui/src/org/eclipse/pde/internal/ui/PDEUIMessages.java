@@ -145,8 +145,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompCSEnclosingTextDetails_SectionDescription;
 
-	public static String CompCSFileValidator_abortParseExceptionMessage;
-
 	public static String CompCSFileValidator_errorInvalidSimpleCS;
 
 	public static String CompCSGroupValidator_errorChildlessGroup;
