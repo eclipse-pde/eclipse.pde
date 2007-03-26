@@ -130,7 +130,14 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 *            progress monitor to use to indicate generation progress
 	 */
 	public void generateFiles(IProgressMonitor monitor) throws CoreException {
+		// Generate files using the default template location
 		generateFiles(monitor, getTemplateLocation());
+		// Generate files using the shared branding location (for splash screen)
+		Bundle templateBundle = Platform.getBundle("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
+		if (templateBundle == null) {
+			return;
+		}
+		generateFiles(monitor, templateBundle.getEntry("branding/")); //$NON-NLS-1$
 	}
 	
 	public URL getTemplateLocation() {
@@ -392,7 +399,6 @@ public class TemplateFileGenerator implements IVariableProvider {
 		boolean extensibleTemplateSelected = 
 			UpdateSplashHandlerInModelAction.isExtensibleTemplateSelected(fTemplate);
 		String sourceFolderString = sourceFolder.toString();
-		// Difference:  Not worrying about the branding directory
 		
 		if ((extensibleTemplateSelected == false) &&
 				sourceFolderString.endsWith("icons")) { //$NON-NLS-1$

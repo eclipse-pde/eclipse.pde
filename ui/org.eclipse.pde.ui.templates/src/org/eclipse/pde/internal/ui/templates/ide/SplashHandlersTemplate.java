@@ -392,14 +392,11 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	 */
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
-		String brandingFolder = "branding" + File.separatorChar + "bin"; //$NON-NLS-1$ //$NON-NLS-2$
 		boolean extensibleTemplateSelected = 
 			UpdateSplashHandlerInModelAction.isExtensibleTemplateSelected((String)fFieldTemplate.getValue());
 		String sourceFolderString = sourceFolder.toString();
 		
-		if (sourceFolderString.endsWith(brandingFolder)) {
-			return false;
-		} else if ((extensibleTemplateSelected == false) &&
+		if ((extensibleTemplateSelected == false) &&
 				sourceFolderString.endsWith("icons")) { //$NON-NLS-1$
 			return false;
 		} else if ((extensibleTemplateSelected == false) &&
