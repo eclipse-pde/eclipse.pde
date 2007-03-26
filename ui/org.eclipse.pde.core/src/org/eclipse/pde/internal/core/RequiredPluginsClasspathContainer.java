@@ -432,7 +432,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					rule.path = new Path(expkgs[i].getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					rules.add(rule);
 				}
-				map.put(bdesc.getSymbolicName(), rules);
+				map.put(bdesc, rules);
 			
 				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
