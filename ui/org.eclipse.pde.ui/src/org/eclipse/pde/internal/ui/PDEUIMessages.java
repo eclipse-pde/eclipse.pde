@@ -49,6 +49,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CheatSheetFileWizardPage_8;
 
+	public static String ContentSection_includeOptional;
+
 	public static String DependencyPropertiesDialog_exportGroupText;
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
@@ -246,6 +248,8 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_environmentTitle;
 
 	public static String PackageFinder_taskName;
+
+	public static String PluginSection_includeOptional;
 
 	public static String PluginsTab_allPlugins;
 

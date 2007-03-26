@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
@@ -228,7 +229,11 @@ public class IntroSection extends PDESection {
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(INTRO_PLUGIN_ID);
 			product.addPlugins(new IProductPlugin[] {plugin});
-			PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
+			boolean includeOptional = false;
+			IFormPage page = getPage().getEditor().findPage(ConfigurationPage.PLUGIN_ID);
+			if (page != null)
+					includeOptional = ((ConfigurationPage)page).includeOptionalDependencies();
+			PluginSection.handleAddRequired(new IProductPlugin[] {plugin}, includeOptional);
 		}
 		if (fManifest == null) loadManifestAndIntroIds(true);
 		if (fManifest != null) addRequiredBundle();

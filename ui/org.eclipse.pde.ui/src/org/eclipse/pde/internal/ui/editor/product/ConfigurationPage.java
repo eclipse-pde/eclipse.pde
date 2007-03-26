@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class ConfigurationPage extends PDEFormPage {
 	public static final String FEATURE_ID = "feature-configuration"; //$NON-NLS-1$
 
 	private boolean fUseFeatures;
+	private PluginSection fPluginSection = null;
 
 	public ConfigurationPage(FormEditor editor, boolean useFeatures) {
 		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_ConfigurationPage_title); 
@@ -65,9 +66,11 @@ public class ConfigurationPage extends PDEFormPage {
 		if (fUseFeatures)
 			managedForm.addPart(new FeatureSection(this, body));
 		else
-			managedForm.addPart(new PluginSection(this, body));	
+			managedForm.addPart(fPluginSection = new PluginSection(this, body));	
 		managedForm.addPart(new ConfigurationSection(this, body));
 	}
 	
-
+	public boolean includeOptionalDependencies() {
+		return (fPluginSection != null) ? fPluginSection.includeOptionalDependencies(): false;
+	}
 }

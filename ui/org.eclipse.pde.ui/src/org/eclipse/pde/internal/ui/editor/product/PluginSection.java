@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,15 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,8 +33,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -44,6 +44,7 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -52,15 +53,21 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.dependencies.CalculateDependenciesAction;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -80,6 +87,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 
 	private TableViewer fPluginTable;
+	private Button fIncludeOptionalButton;
+	public static final QualifiedName OPTIONAL_PROPERTY = new QualifiedName(IPDEUIConstants.PLUGIN_ID, "product.includeOptional"); //$NON-NLS-1$
 
 	public PluginSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
@@ -113,6 +122,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		createOptionalDependenciesButton(container);
+
 		TablePart tablePart = getTablePart();
 		fPluginTable = tablePart.getTableViewer();
 		fPluginTable.setContentProvider(new ContentProvider());
@@ -145,6 +156,35 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		getModel().addModelChangedListener(this);
 	}
 	
+	private void createOptionalDependenciesButton(Composite container) {
+		if (isEditable()) {
+			fIncludeOptionalButton = new Button(container, SWT.CHECK);
+			fIncludeOptionalButton.setText(PDEUIMessages.PluginSection_includeOptional);
+			// initialize value
+			IEditorInput input = getPage().getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput)input).getFile();
+				try {
+					fIncludeOptionalButton.setSelection("true".equals(file.getPersistentProperty(OPTIONAL_PROPERTY))); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
+			}
+			// create listener to save value when the checkbox is changed
+			fIncludeOptionalButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					IEditorInput input = getPage().getEditorInput();
+					if (input instanceof IFileEditorInput) {
+						IFile file = ((IFileEditorInput)input).getFile();
+						try {
+							file.setPersistentProperty(OPTIONAL_PROPERTY, fIncludeOptionalButton.getSelection() ? "true" : null); //$NON-NLS-1$
+						} catch (CoreException e1) {
+						}
+					}
+				}
+			});
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
@@ -157,7 +197,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			handleAddWorkingSet();
 			break;
 		case 2:
-			handleAddRequired(getProduct().getPlugins());
+			handleAddRequired(getProduct().getPlugins(), fIncludeOptionalButton.getSelection());
 			break;
 		case 3:
 			handleDelete();
@@ -283,78 +323,30 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 	}
 	
-	public static void handleAddRequired(IProductPlugin[] plugins) {
+	public static void handleAddRequired(IProductPlugin[] plugins, boolean includeOptional) {
 		if (plugins.length == 0)
 			return;
 		
-		HashSet set = new HashSet();
+		ArrayList list = new ArrayList(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
-			addDependencies(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null), set);
+			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
+		CalculateDependenciesAction action = new CalculateDependenciesAction(list.toArray(), includeOptional);
+		action.run();
+		Collection dependencies = action.getDependencies();
 		
 		IProduct product = plugins[0].getProduct();
-		BundleDescription[] fragments = getAllFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			String id = fragments[i].getSymbolicName();
-			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-				continue;
-			String host = fragments[i].getHost().getName();
-			if (set.contains(host) || product.containsPlugin(host)) {
-				addDependencies(fragments[i], set);
-			}
-		}
 		IProductModelFactory factory = product.getModel().getFactory();
-		IProductPlugin[] requiredPlugins = new IProductPlugin[set.size()];
+		IProductPlugin[] requiredPlugins = new IProductPlugin[dependencies.size()];
 		int i = 0;
-		Iterator iter = set.iterator();
+		Iterator iter = dependencies.iterator();
 		while (iter.hasNext()) {
-			String id = iter.next().toString();
+			String id = ((IPluginModelBase)iter.next()).getPluginBase().getId();
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
 			requiredPlugins[i++] = plugin;
 		}
 		product.addPlugins(requiredPlugins);
-	}
-	
-	private static void addDependencies(BundleDescription desc, Set set) {
-		if (desc == null)
-			return;
-		
-		String id = desc.getSymbolicName();
-		if (!set.add(id))
-			return;
-
-		
-		if (desc.getHost() != null) {
-			addDependencies((BundleDescription)desc.getHost().getSupplier(), set);
-		} else {
-			if (desc != null && !"org.eclipse.ui.workbench".equals(desc.getSymbolicName())) { //$NON-NLS-1$
-				BundleDescription[] fragments = desc.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					addDependencies(fragments[i], set);
-				}
-			}
-		}
-		
-		BundleSpecification[] requires = desc.getRequiredBundles();
-		for (int i = 0; i < requires.length; i++) {
-			addDependencies((BundleDescription)requires[i].getSupplier(), set);
-		}
-		
-		ExportPackageDescription[] imports = desc.getResolvedImports();
-		for (int i = 0; i < imports.length; i++) {
-			addDependencies(imports[i].getExporter(), set);
-		}
-	}
-	
-	private static BundleDescription[] getAllFragments() {
-		ArrayList list = new ArrayList();
-		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getHost() != null)
-				list.add(bundles[i]);
-		}
-		return (BundleDescription[])list.toArray(new BundleDescription[list.size()]);
 	}
 	
 	private void handleAddWorkingSet() {
@@ -577,4 +569,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 	
 	protected boolean createCount() { return true; }
+	
+	public boolean includeOptionalDependencies() {
+		return fIncludeOptionalButton.getSelection();
+	}
 }

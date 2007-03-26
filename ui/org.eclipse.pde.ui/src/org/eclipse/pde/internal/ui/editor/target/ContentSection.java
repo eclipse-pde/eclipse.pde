@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,16 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,8 +34,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -46,6 +47,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -57,6 +59,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.dependencies.CalculateDependenciesAction;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.swt.SWT;
@@ -71,6 +74,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -113,6 +118,8 @@ public class ContentSection extends TableSection {
 	private int fLastTab;
 	private Button fUseAllPlugins;
 	private Image[] fTabImages;
+	private Button fIncludeOptionalButton;
+	public static final QualifiedName OPTIONAL_PROPERTY = new QualifiedName(IPDEUIConstants.PLUGIN_ID, "target.includeOptional"); //$NON-NLS-1$
 	
 	public ContentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, BUTTONS);
@@ -184,6 +191,8 @@ public class ContentSection extends TableSection {
 			}
 		});
 		
+		createOptionalDependenciesButton(client);
+		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 		section.setText(PDEUIMessages.ContentSection_targetContent);
@@ -191,6 +200,36 @@ public class ContentSection extends TableSection {
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		updateButtons();
 		getModel().addModelChangedListener(this);
+	}
+	
+	private void createOptionalDependenciesButton(Composite client) {
+		if (isEditable()) {
+			fIncludeOptionalButton = new Button(client, SWT.CHECK);
+			fIncludeOptionalButton.setText(PDEUIMessages.ContentSection_includeOptional);
+			// initialize value
+			IEditorInput input = getPage().getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput)input).getFile();
+				try {
+					fIncludeOptionalButton.setSelection("true".equals(file.getPersistentProperty(OPTIONAL_PROPERTY))); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
+			}
+			fIncludeOptionalButton.setEnabled(!getTarget().useAllPlugins());
+			// create listener to save value when the checkbox is changed
+			fIncludeOptionalButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					IEditorInput input = getPage().getEditorInput();
+					if (input instanceof IFileEditorInput) {
+						IFile file = ((IFileEditorInput)input).getFile();
+						try {
+							file.setPersistentProperty(OPTIONAL_PROPERTY, fIncludeOptionalButton.getSelection() ? "true" : null); //$NON-NLS-1$
+						} catch (CoreException e1) {
+						}
+					}
+				}
+			});
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -211,7 +250,7 @@ public class ContentSection extends TableSection {
 			handleAddWorkingSet();
 			break;
 		case 4:
-			handleAddRequired(getTarget().getPlugins());
+			handleAddRequired(getTarget().getPlugins(), fIncludeOptionalButton.getSelection());
 		}
 	}
 	
@@ -452,78 +491,30 @@ public class ContentSection extends TableSection {
 		return null;
 	}
 	
-	public static void handleAddRequired(ITargetPlugin[] plugins) {
+	public static void handleAddRequired(ITargetPlugin[] plugins, boolean includeOptional) {
 		if (plugins.length == 0)
 			return;
 		
-		HashSet set = new HashSet();
+		ArrayList list = new ArrayList(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
-			addDependencies(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null), set);
+			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
+		CalculateDependenciesAction action = new CalculateDependenciesAction(list.toArray(), includeOptional);
+		action.run();
+		Collection dependencies = action.getDependencies();
 		
 		ITarget target = plugins[0].getTarget();
-		BundleDescription[] fragments = getAllFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			String id = fragments[i].getSymbolicName();
-			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-				continue;
-			String host = fragments[i].getHost().getName();
-			if (set.contains(host) || target.containsPlugin(host)) {
-				addDependencies(fragments[i], set);
-			}
-		}
 		ITargetModelFactory factory = target.getModel().getFactory();
-		ITargetPlugin[] pluginsToAdd = new ITargetPlugin[set.size()];
+		ITargetPlugin[] pluginsToAdd = new ITargetPlugin[dependencies.size()];
 		int i = 0;
-		Iterator iter = set.iterator();
+		Iterator iter = dependencies.iterator();
 		while (iter.hasNext()) {
-			String id = iter.next().toString();
+			String id = ((IPluginModelBase)iter.next()).getPluginBase().getId();
 			ITargetPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
 			pluginsToAdd[i++] = plugin;
 		}
 		target.addPlugins(pluginsToAdd);
-	}
-	
-	private static void addDependencies(BundleDescription desc, Set set) {
-		if (desc == null)
-			return;
-		
-		String id = desc.getSymbolicName();
-		if (!set.add(id))
-			return;
-
-		
-		if (desc.getHost() != null) {
-			addDependencies((BundleDescription)desc.getHost().getSupplier(), set);
-		} else {
-			if (desc != null && !"org.eclipse.ui.workbench".equals(desc.getSymbolicName())) { //$NON-NLS-1$
-				BundleDescription[] fragments = desc.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					addDependencies(fragments[i], set);
-				}
-			}
-		}
-		
-		BundleSpecification[] requires = desc.getRequiredBundles();
-		for (int i = 0; i < requires.length; i++) {
-			addDependencies((BundleDescription)requires[i].getSupplier(), set);
-		}
-		
-		ExportPackageDescription[] imports = desc.getResolvedImports();
-		for (int i = 0; i < imports.length; i++) {
-			addDependencies(imports[i].getExporter(), set);
-		}
-	}
-	
-	private static BundleDescription[] getAllFragments() {
-		ArrayList list = new ArrayList();
-		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getHost() != null)
-				list.add(bundles[i]);
-		}
-		return (BundleDescription[])list.toArray(new BundleDescription[list.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -567,8 +558,10 @@ public class ContentSection extends TableSection {
 			}	
 			
 		}
-		if (e.getChangedProperty() == ITarget.P_ALL_PLUGINS)
+		if (e.getChangedProperty() == ITarget.P_ALL_PLUGINS) {
 			refresh();
+			fIncludeOptionalButton.setEnabled(!((Boolean)e.getNewValue()).booleanValue());
+		}
 	}
 	
 	/**
