@@ -18,9 +18,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
@@ -164,6 +166,16 @@ public class SearchablePluginsManager
 			if (model != null && model.getUnderlyingResource() == null) {
 				ClasspathUtilCore.addLibraries(model, result);
 			}
+		}
+		
+		if (result.size() > 1) {
+			// sort
+			Map map = new TreeMap();
+			for (int i = 0; i < result.size(); i++) {
+				IClasspathEntry entry = (IClasspathEntry)result.get(i);
+				map.put(entry.getPath().lastSegment().toString(), entry);
+			}
+			return (IClasspathEntry[]) map.values().toArray(new IClasspathEntry[result.size()]);
 		}
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
