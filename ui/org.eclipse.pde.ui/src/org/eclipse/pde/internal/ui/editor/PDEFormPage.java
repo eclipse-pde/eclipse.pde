@@ -343,6 +343,16 @@ public abstract class PDEFormPage extends FormPage {
 				Text text = (Text)fLastFocusControl;
 				text.setSelection(0, text.getText().length());
 			}
+		} else {
+			// No focus control set
+			// Fallback on managed form selection mechanism by setting the 
+			// focus on this page itself.
+			// The managed form will set focus on the first managed part.
+			// Most likely this will turn out to be a section.
+			// In order for this to work properly, we must override the 
+			// sections setFocus() method and set focus on a child control
+			// (preferrably first) that can practically take focus.
+			setFocus();
 		}
 	}
 	

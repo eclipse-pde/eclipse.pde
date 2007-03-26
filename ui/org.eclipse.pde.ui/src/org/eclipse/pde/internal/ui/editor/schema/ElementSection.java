@@ -474,9 +474,14 @@ public class ElementSection extends TreeSection {
 		updateButtons();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#setFocus()
+	 */
 	public void setFocus() {
-		fTreeViewer.getTree().setFocus();
-		getPage().getPDEEditor().setSelection(fTreeViewer.getSelection());
+		if (fTreeViewer != null) {
+			fTreeViewer.getTree().setFocus();
+			getPage().getPDEEditor().setSelection(fTreeViewer.getSelection());
+		}
 	}
 
 	private void updateButtons() {
