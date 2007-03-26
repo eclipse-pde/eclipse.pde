@@ -19,8 +19,23 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
  */
 public class BrowserSplashHandler extends AbstractSplashHandler {
 
-	private boolean movieLoaded = false, done = false;
+	private final static String F_BROWSER_URL = "http://www.google.com";
+	
+	private Browser fBrowser;
+	
+	private Button fButton;
+	
+	private boolean fClose;
 
+	/**
+	 * 
+	 */
+	public BrowserSplashHandler() {
+		fBrowser = null;
+		fButton = null;
+		fClose = false;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -28,57 +43,134 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 	 *      org.eclipse.ui.IWorkbench)
 	 */
 	public void init(final Shell splash) {
+		// Store the shell
 		super.init(splash);
-		splash.setLayout(new GridLayout(1, true));
-		final Browser browser = new Browser(splash, SWT.NONE);
-		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		final Button button = new Button(splash, SWT.PUSH);
-		button.setText("Close"); //$NON-NLS-1$
-		button.setBounds(
-				570 / 2 - button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2,
-				splash.getSize().y - 20, splash.getSize().x, 20);
-		button.setVisible(false);
+		// Configure the shell layout
+		configureUISplash();
+		// Create UI
+		createUI();
+		// Create UI listeners
+		createUIListeners();
+		// Force the UI to layout
+		splash.layout(true);
+		// Keep the splash screen visible and prevent the RCP application from 
+		// loading until the close button is clicked.
+		doEventLoop();
+	}
+	
+	/**
+	 * 
+	 */
+	private void doEventLoop() {
+		while (fClose == false) {
+			while (getSplash().getDisplay().readAndDispatch()) {
+				// NO-OP
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void createUIListeners() {
+		// Create the browser listeners
+		createUIListenersBrowser();
+		// Create the button listeners
+		createUIListenersButton();
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIListenersButton() {
+		fButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// NO-OP
+			}
+			public void widgetSelected(SelectionEvent e) {
+				fClose = true;
+			}
+		});		
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIListenersBrowser() {
+		fBrowser.addProgressListener(new ProgressListener() {
+			public void changed(ProgressEvent event) {
+				// NO-OP
+			}
+			public void completed(ProgressEvent event) {
+				// Only show the UI when the URL is fully loaded into the 
+				// browser
+				fBrowser.setVisible(true);
+				fButton.setVisible(true);
+			}
+		});		
+	}
+	
+	/**
+	 * 
+	 */
+	private void createUI() {
+		// Create the web browser
+		createUIBrowser();
+		// Create the close button
+		createUIButton();
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIButton() {
+		Shell splash = getSplash();
+		fButton = new Button(splash, SWT.PUSH);
+		fButton.setText("Close"); //$NON-NLS-1$
+		fButton.setVisible(false);
+		// Configure the button bounds
+		configureUIButtonBounds();		
+		// Configure layout data
 		GridData data = new GridData(SWT.CENTER, SWT.FILL, false, false);
 		data.widthHint = 80;			
-		button.setLayoutData(data);
-		browser.addProgressListener(new ProgressListener() {
-
-			public void changed(ProgressEvent event) {
-			}
-
-			public void completed(ProgressEvent event) {
-				movieLoaded = true;
-				button.setVisible(true);
-				button.addSelectionListener(new SelectionListener() {
-
-					public void widgetDefaultSelected(SelectionEvent e) {
-						
-					}
-
-					public void widgetSelected(SelectionEvent e) {
-						done = true;
-					}
-				});
-			}
-		});
-		browser.setUrl("http://www.google.com"); //$NON-NLS-1$		
-		splash.layout(true);
-		while (!movieLoaded)
-			while (getSplash().getDisplay().readAndDispatch())
-				;
+		fButton.setLayoutData(data);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.eclipse.ui.internal.splash.AbstractSplashHandler#endSplash()
 	 */
-	public void dispose() {
-		getSplash().setActive();
-		if (movieLoaded) {
-			while (!done)
-				getSplash().getDisplay().readAndDispatch();
-		}
-		super.dispose();
+	private void configureUIButtonBounds() {
+		Shell splash = getSplash();
+		
+		int button_x_coord = (splash.getSize().x / 2)
+				- (fButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2);
+		int button_y_coord = splash.getSize().y
+				- fButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		int button_x_width = splash.getSize().x;
+		int button_y_width = fButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		
+		fButton.setBounds(button_x_coord, button_y_coord, button_x_width,
+				button_y_width);		
+	}	
+	
+	/**
+	 * 
+	 */
+	private void createUIBrowser() {
+		fBrowser = new Browser(getSplash(), SWT.NONE);
+		fBrowser.setUrl(F_BROWSER_URL);
+		fBrowser.setVisible(false);
+		// Configure layout data
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		fBrowser.setLayoutData(data);
 	}
+
+	/**
+	 * 
+	 */
+	private void configureUISplash() {
+		GridLayout layout = new GridLayout(1, true);
+		getSplash().setLayout(layout);
+	}
+
 }
