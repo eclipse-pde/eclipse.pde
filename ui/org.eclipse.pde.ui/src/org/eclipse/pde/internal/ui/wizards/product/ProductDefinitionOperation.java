@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -82,13 +83,38 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	}
 	
 	/**
+	 * @param id
 	 * @return
 	 */
-	private String createTargetPackage() {
-		return fPluginId + 
-			   "." + //$NON-NLS-1$
-			   UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
-	}
+	protected String getFormattedPackageName(String id){
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < id.length(); i++) {
+			char ch = id.charAt(i);
+			if (buffer.length() == 0) {
+				if (Character.isJavaIdentifierStart(ch))
+					buffer.append(Character.toLowerCase(ch));
+			} else {
+				if (Character.isJavaIdentifierPart(ch) || ch == '.')
+					buffer.append(ch);
+			}
+		}
+		return buffer.toString().toLowerCase(Locale.ENGLISH);
+	}	
+	
+	/**
+	 * @return
+	 */
+	protected String createTargetPackage() {
+		// Package name addition to create a location for containing
+		// any classes required by the splash handlers. 
+		String packageName = getFormattedPackageName(fPluginId);
+		// Unqualifed
+		if (packageName.length() == 0) {
+			return UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+		}
+		// Qualified
+		return packageName + '.' + UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+	}		
 	
 	/**
 	 * @return fully-qualified class (with package)
