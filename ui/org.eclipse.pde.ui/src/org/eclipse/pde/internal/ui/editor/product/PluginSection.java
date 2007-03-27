@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -53,7 +54,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.search.dependencies.CalculateDependenciesAction;
+import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
@@ -331,9 +332,19 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		for (int i = 0; i < plugins.length; i++) {
 			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
-		CalculateDependenciesAction action = new CalculateDependenciesAction(list.toArray(), includeOptional);
-		action.run();
-		Collection dependencies = action.getDependencies();
+		DependencyCalculator calculator = new DependencyCalculator(includeOptional);
+		calculator.findDependencies(list.toArray());
+		
+		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			HostSpecification host = bundles[i].getHost();
+			if (host != null && !("org.eclipse.ui.workbench.compatibility".equals(bundles[i].getSymbolicName())) 
+					&& calculator.containsPluginId(host.getName())) { //$NON-NLS-1$
+				calculator.findDependency(bundles[i]);
+			}
+		}
+		
+		Collection dependencies = calculator.getBundleIDs();
 		
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
@@ -341,7 +352,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		int i = 0;
 		Iterator iter = dependencies.iterator();
 		while (iter.hasNext()) {
-			String id = ((IPluginModelBase)iter.next()).getPluginBase().getId();
+			String id = iter.next().toString();
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
 			requiredPlugins[i++] = plugin;

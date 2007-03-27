@@ -59,7 +59,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.search.dependencies.CalculateDependenciesAction;
+import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.swt.SWT;
@@ -499,9 +499,9 @@ public class ContentSection extends TableSection {
 		for (int i = 0; i < plugins.length; i++) {
 			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
-		CalculateDependenciesAction action = new CalculateDependenciesAction(list.toArray(), includeOptional);
-		action.run();
-		Collection dependencies = action.getDependencies();
+		DependencyCalculator calculator = new DependencyCalculator(includeOptional);
+		calculator.findDependencies(list.toArray());
+		Collection dependencies = calculator.getBundleIDs();
 		
 		ITarget target = plugins[0].getTarget();
 		ITargetModelFactory factory = target.getModel().getFactory();
@@ -509,7 +509,7 @@ public class ContentSection extends TableSection {
 		int i = 0;
 		Iterator iter = dependencies.iterator();
 		while (iter.hasNext()) {
-			String id = ((IPluginModelBase)iter.next()).getPluginBase().getId();
+			String id = iter.next().toString();
 			ITargetPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
 			pluginsToAdd[i++] = plugin;
