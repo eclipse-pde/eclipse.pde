@@ -12,8 +12,13 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -204,6 +209,21 @@ public class OpenSchemaAction extends Action  {
 	 */
 	private void openSchemaFile(String path) {
 		// Open the schema in a new editor
+		try {
+			// see if schema URL is actually in workspace.  If so, open it as we would if users opened file directly
+			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+			IPath workspacePath = root.getLocation();
+			String workspaceLoc = workspacePath.toFile().toURL().getPath();
+			if (path.startsWith(workspaceLoc)) {
+				String relativeLocation = path.substring(workspaceLoc.length());
+				IResource res = root.findMember(relativeLocation);
+				if (res != null && res instanceof IFile && res.getProject().isOpen()) {
+					SchemaEditor.openSchema((IFile)res);
+					return;
+				}
+			}
+		} catch (MalformedURLException e) {
+		}
 		SchemaEditor.openSchema(new File(path));
 	}
 
