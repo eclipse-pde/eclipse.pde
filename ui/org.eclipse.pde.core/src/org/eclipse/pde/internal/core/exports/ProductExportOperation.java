@@ -238,6 +238,10 @@ public class ProductExportOperation extends FeatureExportOperation {
 			return;
 
 		File dir = new File(fFeatureLocation, "temp"); //$NON-NLS-1$
+		// need to place launcher.ini file in special directory for MacOSX (bug 164762)
+		if (Platform.OS_MACOSX.equals(os)) {
+			dir = new File(dir, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+		}
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 
@@ -615,3 +619,4 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 
 }
+ 
