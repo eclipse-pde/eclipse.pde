@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,12 +151,26 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	 */
 	public String getStringOption(String name) {
 		if (name.equals(KEY_EXTENSION_ID)) {
-			return pluginId + ".introExtension"; //$NON-NLS-1$
+			return stripNonAlphanumeric(pluginId) + "-introExtension"; //$NON-NLS-1$
 		}
 		if (name.equals(KEY_LINK_ID)) {
-			return pluginId + "-introLink"; //$NON-NLS-1$
+			return stripNonAlphanumeric(pluginId) + "-introLink"; //$NON-NLS-1$
 		}
 		return super.getStringOption(name);
+	}
+
+	/*
+	 * Strips any non alphanumeric characters from the string so as not to break the css
+	 */
+	private String stripNonAlphanumeric(String id) {
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < id.length(); i++) {
+			char next = id.charAt(i);
+			if (Character.isLetterOrDigit(next)) {
+				result.append(next);
+			}
+		}
+		return result.toString();
 	}
 
 	public String[] getNewFiles() {
