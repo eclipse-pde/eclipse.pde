@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -102,6 +103,8 @@ public class SplashProgressSection extends PDESection {
 				getSplashInfo().addProgressBar(enable, false);
 				for (int i = 0; i < fBarControls.length; i++)
 					fBarControls[i].setEnabled(enable);
+				// Update this sections enablement
+				updateSectionEnablement(false);
 			}
 		});
 		
@@ -139,6 +142,8 @@ public class SplashProgressSection extends PDESection {
 				getSplashInfo().addProgressMessage(enable, false);
 				for (int i = 0; i < fMessageControls.length; i++)
 					fMessageControls[i].setEnabled(enable);
+				// Update this sections enablement
+				updateSectionEnablement(false);
 			}
 		});
 		
@@ -273,6 +278,8 @@ public class SplashProgressSection extends PDESection {
 		
 		fBlockNotification = false;
 		super.refresh();
+		// Update this sections enablement
+		updateSectionEnablement(true);
 	}
 	
 	private ISplashInfo getSplashInfo() {
@@ -352,5 +359,36 @@ public class SplashProgressSection extends PDESection {
 		}
 		super.dispose();
 	}		
+	
+	/**
+	 * @param blockCrossSectionUpdate
+	 */
+	public void updateSectionEnablement(boolean blockCrossSectionUpdate) {
+		// Get the splash info if any
+		ISplashInfo info = getSplashInfo();
+		// Enable this section if a splash handler is defined and no
+		// progress geometry is specified
+		if ((info.isDefinedGeometry() == false) &&
+				(info.isDefinedSplashHandlerType())) {
+			fAddBarButton.setEnabled(false);
+			fAddMessageButton.setEnabled(false);
+		} else {
+			fAddBarButton.setEnabled(true);
+			fAddMessageButton.setEnabled(true);
+		}
+		// Do not update the template section if specified
+		if (blockCrossSectionUpdate) {
+			return;
+		}
+		// Update the template section enablement
+		IFormPart [] parts = getManagedForm().getParts();
+		for (int i = 0; i < parts.length; i++) {
+			IFormPart part = parts[i];
+			if (part instanceof SplashTemplatesSection) {
+				((SplashTemplatesSection)part).updateSectionEnablement(true);
+				break;
+			}
+		}
+	}	
 	
 }

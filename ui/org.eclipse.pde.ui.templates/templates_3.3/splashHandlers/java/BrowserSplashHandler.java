@@ -19,7 +19,7 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
  */
 public class BrowserSplashHandler extends AbstractSplashHandler {
 
-	private final static String F_BROWSER_URL = "http://www.google.com";
+	private final static String F_BROWSER_URL = "http://www.google.com"; //$NON-NLS-1$
 	
 	private Browser fBrowser;
 	

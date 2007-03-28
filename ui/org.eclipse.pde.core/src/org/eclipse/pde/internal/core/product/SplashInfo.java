@@ -178,8 +178,7 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	private boolean hasData() {
 		return	(fLocation != null && fLocation.length() > 0) || 
 				(fCustomizeForegroundColor && fForegroundColor != null && isValidHexValue(fForegroundColor)) ||
-				(fCustomizeProgressBar && fProgressGeometry != null) ||
-				(fCustomizeProgressMessage && fMessageGeometry != null) ||
+				isDefinedGeometry() ||
 				isDefinedSplashHandlerType();
 	}
 
@@ -235,5 +234,16 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 				isEditable()) {
 			firePropertyChanged(F_ATTRIBUTE_HANDLER_TYPE, old, fFieldSplashHandlerType);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.ISplashInfo#isDefinedGeometry()
+	 */
+	public boolean isDefinedGeometry() {
+		if ((fCustomizeProgressBar && fProgressGeometry != null) ||
+				(fCustomizeProgressMessage && fMessageGeometry != null)) {
+			return true;
+		}
+		return false;
 	}
 }

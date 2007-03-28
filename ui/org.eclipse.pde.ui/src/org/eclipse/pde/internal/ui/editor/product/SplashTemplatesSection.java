@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -87,6 +88,8 @@ public class SplashTemplatesSection extends PDESection {
 	 * 
 	 */
 	private void updateUIFieldTemplateCombo() {
+		// Update this sections enablement
+		updateSectionEnablement(true);
 		// Get the splash info if any
 		ISplashInfo info = getSplashInfo();
 		if (info.isDefinedSplashHandlerType() == false) {
@@ -133,10 +136,42 @@ public class SplashTemplatesSection extends PDESection {
 			return;
 		}
 		// Set the splash handler type in the model
-		getSplashInfo().setFieldSplashHandlerType(getSelectedTemplate(), false);
+		String template = getSelectedTemplate();
+		getSplashInfo().setFieldSplashHandlerType(template, false);
 		// TODO: MP: SPLASH: Implement functionality to remove existing splash handler type if "none" is selected
+		// Update this sections enablement
+		updateSectionEnablement(false);
 	}
 
+	/**
+	 * @param blockCrossSectionUpdate
+	 */
+	public void updateSectionEnablement(boolean blockCrossSectionUpdate) {
+		// Get the splash info if any
+		ISplashInfo info = getSplashInfo();
+		// Enable this section if a splash handler is not defined and 
+		// progress geometry is specified
+		if (info.isDefinedGeometry() &&
+				(info.isDefinedSplashHandlerType() == false)) {
+			fFieldTemplateCombo.setEnabled(false);
+		} else {
+			fFieldTemplateCombo.setEnabled(true);
+		}
+		// Do not update the progress section if specified
+		if (blockCrossSectionUpdate) {
+			return;
+		}
+		// Update the progress section enablement
+		IFormPart [] parts = getManagedForm().getParts();
+		for (int i = 0; i < parts.length; i++) {
+			IFormPart part = parts[i];
+			if (part instanceof SplashProgressSection) {
+				((SplashProgressSection)part).updateSectionEnablement(true);
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * @return the associated key of the item selected in the combo box
 	 */

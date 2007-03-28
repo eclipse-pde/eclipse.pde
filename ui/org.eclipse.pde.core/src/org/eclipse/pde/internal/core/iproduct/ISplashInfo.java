@@ -73,4 +73,9 @@ public interface ISplashInfo extends IProductObject {
 	 */
 	public boolean isDefinedSplashHandlerType();
 	
+	/**
+	 * @return
+	 */
+	public boolean isDefinedGeometry();	
+	
 }
