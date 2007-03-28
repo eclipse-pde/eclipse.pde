@@ -67,9 +67,8 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		createUI();		
 		// Create UI listeners
 		createUIListeners();
-
+		// Force the splash screen to layout
 		splash.layout(true);
-
 		// Keep the splash screen visible and prevent the RCP application from 
 		// loading until the close button is clicked.
 		doEventLoop();
@@ -79,9 +78,10 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	 * 
 	 */
 	private void doEventLoop() {
+		Shell splash = getSplash();
 		while (fAuthenticated == false) {
-			while (getSplash().getDisplay().readAndDispatch()) {
-				// NO-OP
+			if (splash.getDisplay().readAndDispatch() == false) {
+				splash.getDisplay().sleep();
 			}
 		}
 	}

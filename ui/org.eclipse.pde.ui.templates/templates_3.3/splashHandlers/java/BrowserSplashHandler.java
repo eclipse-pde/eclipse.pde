@@ -62,9 +62,10 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 	 * 
 	 */
 	private void doEventLoop() {
+		Shell splash = getSplash();
 		while (fClose == false) {
-			while (getSplash().getDisplay().readAndDispatch()) {
-				// NO-OP
+			if (splash.getDisplay().readAndDispatch() == false) {
+				splash.getDisplay().sleep();
 			}
 		}
 	}

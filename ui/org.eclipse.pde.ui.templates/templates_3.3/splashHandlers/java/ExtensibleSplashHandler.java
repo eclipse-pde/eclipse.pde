@@ -282,8 +282,9 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 	 * 
 	 */
 	private void doEventLoop() {
-		while (getSplash().getDisplay().readAndDispatch()) {
-			// NO-OP
+		Shell splash = getSplash();
+		if (splash.getDisplay().readAndDispatch() == false) {
+			splash.getDisplay().sleep();
 		}
 	}	
 	
