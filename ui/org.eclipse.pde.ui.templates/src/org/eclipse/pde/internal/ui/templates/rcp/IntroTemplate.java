@@ -292,6 +292,9 @@ public class IntroTemplate extends PDETemplateSection {
 		return new String[] {"icons/", "content/", "splash.bmp", "introContent.xml", "ext.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
+	 */
 	protected boolean copyBrandingDirectory() {
 		return true;
 	}

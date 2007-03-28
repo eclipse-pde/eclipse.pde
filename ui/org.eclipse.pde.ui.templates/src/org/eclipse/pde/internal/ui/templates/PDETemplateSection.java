@@ -94,7 +94,10 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		super.generateFiles(monitor);
-		super.generateFiles(monitor, Activator.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
+		// Copy the default splash screen if the branding option is selected
+		if (copyBrandingDirectory()) {
+			super.generateFiles(monitor, Activator.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
+		}
 	}
 	
 	protected boolean copyBrandingDirectory() {

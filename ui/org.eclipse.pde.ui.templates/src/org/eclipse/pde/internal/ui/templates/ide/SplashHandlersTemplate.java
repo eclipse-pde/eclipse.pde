@@ -379,12 +379,16 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		if (copyFile.endsWith(javaSuffix) &&
 				(copyFile.endsWith(targetFile) == false)) {
 			return false;
-		} else if ((isSplashFieldSelected() == false) && 
-				copyFile.endsWith(F_SPLASH_SCREEN_FILE)) {
-			return false;
 		}
 		
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
+	 */
+	protected boolean copyBrandingDirectory() {
+		return isSplashFieldSelected();
 	}
 	
 	/* (non-Javadoc)

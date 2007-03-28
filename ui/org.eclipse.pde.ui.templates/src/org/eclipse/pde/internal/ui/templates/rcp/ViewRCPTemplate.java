@@ -196,6 +196,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		return dep;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
+	 */
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
 			return new String[] { "icons/", "splash.bmp" }; //$NON-NLS-1$ //$NON-NLS-2$
