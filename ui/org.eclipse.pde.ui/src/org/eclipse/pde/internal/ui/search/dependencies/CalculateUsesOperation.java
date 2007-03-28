@@ -114,6 +114,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	}
 	
 	protected void findReferences(IType type, Set pkgs, boolean binary) throws JavaModelException {
+		if (type == null)
+			return;
 		// ignore private classes
 		if (Flags.isPrivate(type.getFlags()))
 			return;
