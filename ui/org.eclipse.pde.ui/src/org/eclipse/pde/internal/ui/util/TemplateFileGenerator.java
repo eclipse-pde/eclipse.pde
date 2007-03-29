@@ -49,7 +49,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerInModelAction;
+import org.eclipse.pde.internal.ui.wizards.product.ISplashHandlerConstants;
+import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerAction;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.osgi.framework.Bundle;
@@ -60,10 +61,8 @@ import org.osgi.framework.Bundle;
  */
 public class TemplateFileGenerator implements IVariableProvider {
 
-	// TODO: MP: SPLASH: Extracted from org.eclipse.pde.ui.templates.AbstractTemplateSection
-	// TODO: MP: SPLASH: Merge this utility back with template (maybe as an abstract base class?)
+	// TODO: MP: SPLASH: Merge this utility back with template (maybe as an abstract base class?) - Extracted from org.eclipse.pde.ui.templates.AbstractTemplateSection
 	// TODO: MP: SPLASH: Major code-clean-up required
-	// TODO: MP: SPLASH: Clean-up generated splash handler code in templates dir
 	
 	/**
 	 * The key for the main plug-in class of the plug-in that the template is
@@ -397,7 +396,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 */
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		boolean extensibleTemplateSelected = 
-			UpdateSplashHandlerInModelAction.isExtensibleTemplateSelected(fTemplate);
+			UpdateSplashHandlerAction.isExtensibleTemplateSelected(fTemplate);
 		String sourceFolderString = sourceFolder.toString();
 		
 		if ((extensibleTemplateSelected == false) &&
@@ -710,7 +709,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	}	
 	
 	public String getSectionId() {
-		return UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+		return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}	
 	
 	protected double getTargetVersion() {

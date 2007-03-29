@@ -269,6 +269,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PointSelectionPage_cannotFindTemplate;
 
+	public static String RemoveSplashHandlerBindingAction_msgProgressRemoveProductBindings;
+
 	public static String RenamePluginAction_label;
 
 	public static String RenamePluginProcessor_changeTitle;
@@ -307,15 +309,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
 
+	public static String SplashConfigurationSection_msgDecorationTemplateSupport;
+
+	public static String SplashConfigurationSection_sectionDescCustomization;
+
 	public static String SplashPage_splashName;
 
 	public static String SplashProgressSection_progressName;
 
 	public static String SplashProgressSection_progressSectionDesc;
-
-	public static String SplashTemplatesSection_templatesName;
-
-	public static String SplashTemplatesSection_templatesSectionDesc;
 
 	public static String SplashTemplatesSection_typeName;
 

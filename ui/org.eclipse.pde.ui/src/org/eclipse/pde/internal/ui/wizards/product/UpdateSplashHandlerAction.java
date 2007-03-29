@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * UpdateSplashHandlerInModelAction
  *
  */
-public class UpdateSplashHandlerInModelAction extends Action {
+public class UpdateSplashHandlerAction extends Action implements ISplashHandlerConstants {
 
 	private IPluginModelBase fModel;
 	
@@ -48,53 +48,10 @@ public class UpdateSplashHandlerInModelAction extends Action {
 
 	private String fFieldPluginID;	
 	
-	public final static String[] F_SPLASH_SCREEN_CLASSES = {
-		"InteractiveSplashHandler", //$NON-NLS-1$
-		"BrowserSplashHandler", //$NON-NLS-1$
-		"ExtensibleSplashHandler" //$NON-NLS-1$
-	};
-
-	public final static String F_UNQUALIFIED_EXTENSION_ID = "splashHandlers";	 //$NON-NLS-1$
-	
-	public final static String[][] F_SPLASH_SCREEN_TYPE_CHOICES = new String[3][2];
-
-	public final static String F_ATTRIBUTE_TOOLTIP = "tooltip"; //$NON-NLS-1$
-
-	public final static String F_ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
-
-	public final static String F_ELEMENT_SPLASH = "splashExtension"; //$NON-NLS-1$
-
-	public final static String F_ATTRIBUTE_SPLASH_ID = "splashId"; //$NON-NLS-1$
-
-	public final static String F_ATTRIBUTE_PRODUCT_ID = "productId"; //$NON-NLS-1$
-
-	public final static String F_ELEMENT_PRODUCT_BINDING = "splashHandlerProductBinding"; //$NON-NLS-1$
-
-	public final static String F_ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-
-	public final static String F_ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
-
-	public final static String F_ELEMENT_SPLASH_HANDLER = "splashHandler"; //$NON-NLS-1$
-
-	public final static String F_SPLASH_EXTENSION_POINT = "splashExtension"; //$NON-NLS-1$
-
-	public final static String F_SPLASH_HANDLERS_EXTENSION = "org.eclipse.ui.splashHandlers";	 //$NON-NLS-1$
-	
-	static {
-		F_SPLASH_SCREEN_TYPE_CHOICES[0][0] = "interactive"; //$NON-NLS-1$
-		F_SPLASH_SCREEN_TYPE_CHOICES[0][1] = PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeInteractive;
-	
-		F_SPLASH_SCREEN_TYPE_CHOICES[1][0] = "browser"; //$NON-NLS-1$
-		F_SPLASH_SCREEN_TYPE_CHOICES[1][1] = PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeBrowser;
-	
-		F_SPLASH_SCREEN_TYPE_CHOICES[2][0] = "extensible"; //$NON-NLS-1$
-		F_SPLASH_SCREEN_TYPE_CHOICES[2][1] = PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeExtensible;	
-	}		
-	
 	/**
 	 * 
 	 */
-	public UpdateSplashHandlerInModelAction() {
+	public UpdateSplashHandlerAction() {
 		reset();
 	}
 
@@ -195,10 +152,10 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	/**
 	 * @throws CoreException
 	 */
-	public void updateModel() throws CoreException {
+	private void updateModel() throws CoreException {
 		// Find the first splash handler extension
 		IPluginExtension extension = 
-			findFirstExtension(UpdateSplashHandlerInModelAction.F_SPLASH_HANDLERS_EXTENSION);
+			findFirstExtension(F_SPLASH_HANDLERS_EXTENSION);
 		// Check to see if one was found
 		if (extension == null) {
 			// None found, add a new splash handler extension
@@ -214,7 +171,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 			// Find the first spash extension point declaration (should only
 			// ever be one)
 			IPluginExtensionPoint extensionPoint = 
-				findFirstExtensionPoint(UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT);
+				findFirstExtensionPoint(F_SPLASH_EXTENSION_POINT);
 			// Check to see if one was found
 			// If one is found, just assume all its values are correct (no sync)
 			if (extensionPoint == null) {
@@ -223,7 +180,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 			}
 			// Find the first splash extension contribution
 			String fullExtensionPointID = fFieldPluginID + 
-				'.' + UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT;			
+				'.' + F_SPLASH_EXTENSION_POINT;			
 			IPluginExtension extensionSplash = 
 				findFirstExtension(fullExtensionPointID);
 			// Check to see if one was found
@@ -241,7 +198,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	private void addExtensionSplash() throws CoreException {
 		// Update progress work units
 		String fullExtensionPointID = fFieldPluginID + 
-			'.' + UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT;
+			'.' + F_SPLASH_EXTENSION_POINT;
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgAddingExtension, 
 				fullExtensionPointID), 1); 	
 		// Create the new extension
@@ -258,7 +215,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	private void addExtensionPointSplashExtension() throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgAddingExtensionPoint, 
-				UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT), 1); 	
+				F_SPLASH_EXTENSION_POINT), 1); 	
 		// Create the new extension point
 		IPluginExtensionPoint extensionPoint = createExtensionPointSplash();
 		// Add extension point to the model
@@ -277,7 +234,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		IPluginExtensionPoint extensionPoint = 
 			fModel.getFactory().createExtensionPoint();
 		// ID
-		extensionPoint.setId(UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT);
+		extensionPoint.setId(F_SPLASH_EXTENSION_POINT);
 		// Name
 		extensionPoint.setName(PDEUIMessages.UpdateSplashHandlerInModelAction_splashExtensionPointName);
 		// Schema
@@ -333,7 +290,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	private void addExtensionSplashHandlers() throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgAddingExtension, 
-				UpdateSplashHandlerInModelAction.F_SPLASH_HANDLERS_EXTENSION), 1); 	
+				F_SPLASH_HANDLERS_EXTENSION), 1); 	
 		// Create the new extension
 		IPluginExtension extension = createExtensionSplashHandlers();
 		fModel.getPluginBase().add(extension);
@@ -350,7 +307,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		// Create the extension
 		IPluginExtension extension = fModel.getFactory().createExtension();
 		// Point
-		extension.setPoint(UpdateSplashHandlerInModelAction.F_SPLASH_HANDLERS_EXTENSION);
+		extension.setPoint(F_SPLASH_HANDLERS_EXTENSION);
 		// NO id
 		// NO name 
 		// Create the extension's children
@@ -418,11 +375,11 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		IPluginElement element = 
 			extension.getModel().getFactory().createElement(extension);
 		// Element: Splash handler
-		element.setName(UpdateSplashHandlerInModelAction.F_ELEMENT_SPLASH_HANDLER);
+		element.setName(F_ELEMENT_SPLASH_HANDLER);
 		// Attribute: ID
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_ID, fFieldID);
+		element.setAttribute(F_ATTRIBUTE_ID, fFieldID);
 		// Attribute: Class
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_CLASS, fFieldClass);
+		element.setAttribute(F_ATTRIBUTE_CLASS, fFieldClass);
 		
 		return element;
 	}	
@@ -438,11 +395,11 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		IPluginElement element = 
 			extension.getModel().getFactory().createElement(extension);
 		// Element: Product binding
-		element.setName(UpdateSplashHandlerInModelAction.F_ELEMENT_PRODUCT_BINDING);
+		element.setName(F_ELEMENT_PRODUCT_BINDING);
 		// Attribute: Product ID
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_PRODUCT_ID, fFieldProductID);
+		element.setAttribute(F_ATTRIBUTE_PRODUCT_ID, fFieldProductID);
 		// Attribute: Splash ID
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_SPLASH_ID, fFieldSplashID);
+		element.setAttribute(F_ATTRIBUTE_SPLASH_ID, fFieldSplashID);
 		
 		return element;
 	}
@@ -454,7 +411,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	private void modifyExtensionSplashHandlers(IPluginExtension extension) throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgModifyingExtension, 
-				UpdateSplashHandlerInModelAction.F_SPLASH_HANDLERS_EXTENSION), 1); 
+				F_SPLASH_HANDLERS_EXTENSION), 1); 
 		// modify the existing extension children
 		modifyExtensionChildrenSplashHandlers(extension);
 		// Update progress work units
@@ -477,9 +434,16 @@ public class UpdateSplashHandlerInModelAction extends Action {
 			// One element found, synchronize it
 			syncSplashHandlerElement(splashHandlerElement);
 		}
-		
-		// Find a matching pre-generated product handler element
+		// Find a matching pre-generated product binding element
 		IPluginElement productBindingElement = findProductBindingElement(extension);
+		// Remove any product binding elements bound to the target product but 
+		// NOT bound to the target splash ID (if any elements are found)
+		// The splash handler extension provider uses the first product
+		// binding it finds in the extension.
+		// By removing all product bindings bound to a single product, we can 
+		// override an existing splash handler with another existing 
+		// splash handler.
+		removeMatchingProductBindingElements(extension);
 		// Check to see if one was found
 		if (productBindingElement == null) {
 			// No element found, add one
@@ -490,6 +454,49 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		}
 	}	
 	
+	/**
+	 * @param extension
+	 */
+	private void removeMatchingProductBindingElements(IPluginExtension extension)
+			throws CoreException {
+		// Check to see if the extension has any children
+		if (extension.getChildCount() == 0) {
+			// Extension has no children
+			return;
+		}
+		IPluginObject[] pluginObjects = extension.getChildren();
+		// Process all children
+		for (int j = 0; j < pluginObjects.length; j++) {
+			if (pluginObjects[j] instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement)pluginObjects[j];
+				// Find splash handler elements
+				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
+					// Get the splash ID attribute
+					IPluginAttribute splashIDAttribute = 
+						element.getAttribute(F_ATTRIBUTE_SPLASH_ID);
+					// Get the product ID attribute
+					IPluginAttribute productIDAttribute = 
+						element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
+					// (1) Remove any product binding that has an undefined
+					// product ID or splash ID
+					// (2) Remove any product binding bound to the target 
+					// product ID but NOT bound to the target splash ID
+					if ((productIDAttribute == null) || 
+							(PDETextHelper.isDefined(productIDAttribute.getValue()) == false) ||
+							(splashIDAttribute == null) ||  
+							(PDETextHelper.isDefined(splashIDAttribute.getValue()) == false)) {
+						// Remove product binding element 
+						extension.remove(element);
+					} else if (productIDAttribute.getValue().equals(fFieldProductID) &&
+							(splashIDAttribute.getValue().equals(fFieldSplashID) == false)) {
+						// Remove product binding element 
+						extension.remove(element);
+					}	
+				}					
+			}
+		}		
+	}
+
 	/**
 	 * @param extension
 	 * @return
@@ -576,7 +583,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		for (int j = 0; j < pluginObjects.length; j++) {
 			if (pluginObjects[j] instanceof IPluginElement) {
 				IPluginElement element = (IPluginElement)pluginObjects[j];
-				// Find splash handler elements
+				// Find product binding elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the id attribute
 					IPluginAttribute splashIDAttribute = 
@@ -601,7 +608,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	private IPluginExtension createExtensionSplash() throws CoreException {
 		
 		String fullExtensionPointID = fFieldPluginID + 
-			'.' + UpdateSplashHandlerInModelAction.F_SPLASH_EXTENSION_POINT;	
+			'.' + F_SPLASH_EXTENSION_POINT;	
 		// Create the extension
 		IPluginExtension extension = fModel.getFactory().createExtension();
 		// Point
@@ -669,13 +676,13 @@ public class UpdateSplashHandlerInModelAction extends Action {
 		IPluginElement element = 
 			extension.getModel().getFactory().createElement(extension);
 		// Element: Splash handler
-		element.setName(UpdateSplashHandlerInModelAction.F_ELEMENT_SPLASH);
+		element.setName(F_ELEMENT_SPLASH);
 		// Attribute: ID
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_ID, id);
+		element.setAttribute(F_ATTRIBUTE_ID, id);
 		// Attribute: Icon
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_ICON, icon);
+		element.setAttribute(F_ATTRIBUTE_ICON, icon);
 		// Attribute: Tooltip
-		element.setAttribute(UpdateSplashHandlerInModelAction.F_ATTRIBUTE_TOOLTIP, tooltip);		
+		element.setAttribute(F_ATTRIBUTE_TOOLTIP, tooltip);		
 		
 		return element;		
 	}	
@@ -685,7 +692,7 @@ public class UpdateSplashHandlerInModelAction extends Action {
 	 * @return true if the extension template was selected; false, otherwise
 	 */
 	public static boolean isExtensibleTemplateSelected(String template) {
-		if (template.equals(UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES[2][0])) {
+		if (template.equals(F_SPLASH_SCREEN_TYPE_CHOICES[2][0])) {
 			return true;
 		}
 		return false;

@@ -71,8 +71,7 @@ public class SplashPage extends PDEFormPage {
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		// Sections
 		managedForm.addPart(new SplashLocationSection(this, body));	
-		managedForm.addPart(new SplashProgressSection(this, body));	
-		managedForm.addPart(new SplashTemplatesSection(this, body));	
+		managedForm.addPart(new SplashConfigurationSection(this, body));	
 	}	
 	
 }

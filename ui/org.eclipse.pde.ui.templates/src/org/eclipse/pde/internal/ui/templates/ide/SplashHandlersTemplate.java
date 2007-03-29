@@ -24,7 +24,8 @@ import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 import org.eclipse.pde.internal.ui.templates.PluginReference;
-import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerInModelAction;
+import org.eclipse.pde.internal.ui.wizards.product.ISplashHandlerConstants;
+import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerAction;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ComboChoiceOption;
 import org.eclipse.pde.ui.templates.StringOption;
@@ -108,10 +109,10 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		String packageName = super.getFormattedPackageName(id);
 		// Unqualifed
 		if (packageName.length() == 0) {
-			return UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+			return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 		}
 		// Qualified
-		return packageName + '.' + UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+		return packageName + '.' + ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}	
 	
 	/* (non-Javadoc)
@@ -184,10 +185,10 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	 */
 	private void updateUIFieldClass() {
 		// Update the class name depending on the splash screen type
-		for (int i = 0; i < UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
-			String choice = UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
+		for (int i = 0; i < ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
+			String choice = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
 			if (fFieldTemplate.getValue().equals(choice)) {
-				fFieldClass.setValue(UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_CLASSES[i]);
+				fFieldClass.setValue(ISplashHandlerConstants.F_SPLASH_SCREEN_CLASSES[i]);
 				break;
 			}
 		}
@@ -227,7 +228,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		fFieldClass = (StringOption)addOption(
 				F_FIELD_CLASS,
 				PDETemplateMessages.SplashHandlersTemplate_fieldClassName,
-				UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_CLASSES[0],
+				ISplashHandlerConstants.F_SPLASH_SCREEN_CLASSES[0],
 				F_PAGE_INDEX);
 		fFieldClass.setReadOnly(true);
 	}
@@ -250,8 +251,8 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		fFieldTemplate = addOption(
 				F_FIELD_TEMPLATE,
 				PDETemplateMessages.SplashHandlersTemplate_fieldSplashScreenType,
-				UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES,
-				UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES[0][0],
+				ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES,
+				ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[0][0],
 				F_PAGE_INDEX);	
 	}
 
@@ -314,7 +315,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
-		return UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+		return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}
 
 	/* (non-Javadoc)
@@ -323,7 +324,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// Create the action to update the model with the associated 
 		// splash handler extensions, extension points, elements and attributes
-		UpdateSplashHandlerInModelAction action = new UpdateSplashHandlerInModelAction();
+		UpdateSplashHandlerAction action = new UpdateSplashHandlerAction();
 		// Configure the acation
 		String id = createAttributeValueID();
 		action.setFieldID(id);
@@ -364,7 +365,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return UpdateSplashHandlerInModelAction.F_SPLASH_HANDLERS_EXTENSION;
+		return ISplashHandlerConstants.F_SPLASH_HANDLERS_EXTENSION;
 	}
 	
 	/* (non-Javadoc)
@@ -397,7 +398,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
 		boolean extensibleTemplateSelected = 
-			UpdateSplashHandlerInModelAction.isExtensibleTemplateSelected((String)fFieldTemplate.getValue());
+			UpdateSplashHandlerAction.isExtensibleTemplateSelected((String)fFieldTemplate.getValue());
 		String sourceFolderString = sourceFolder.toString();
 		
 		if ((extensibleTemplateSelected == false) &&

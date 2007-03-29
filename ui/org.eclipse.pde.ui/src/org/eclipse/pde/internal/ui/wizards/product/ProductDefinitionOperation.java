@@ -54,7 +54,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	
 	protected IProject fProject;
 	
-	private UpdateSplashHandlerInModelAction fUpdateSplashAction;
+	private UpdateSplashHandlerAction fUpdateSplashAction;
+	
+	private RemoveSplashHandlerBindingAction fRemoveSplashAction;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
 		super(shell, pluginId);
@@ -110,10 +112,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		String packageName = getFormattedPackageName(fPluginId);
 		// Unqualifed
 		if (packageName.length() == 0) {
-			return UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+			return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 		}
 		// Qualified
-		return packageName + '.' + UpdateSplashHandlerInModelAction.F_UNQUALIFIED_EXTENSION_ID;
+		return packageName + '.' + ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}		
 	
 	/**
@@ -143,10 +145,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			return null;
 		}
 		// Update the class name depending on the splash screen type
-		for (int i = 0; i < UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
-			String choice = UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
+		for (int i = 0; i < ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
+			String choice = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[i][0];
 			if (splashHandlerType.equals(choice)) {
-				return UpdateSplashHandlerInModelAction.F_SPLASH_SCREEN_CLASSES[i];
+				return ISplashHandlerConstants.F_SPLASH_SCREEN_CLASSES[i];
 			}
 		}
 		return null;
@@ -234,10 +236,42 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		String splashHandlerType = getSplashHandlerType();
 		// If the splash handler type is not defined, abort this operation
 		if (splashHandlerType == null) {
-			return;
+			runRemoveSplashAction(model, monitor);
+		} else {
+			runUpdateSplashAction(model, monitor, splashHandlerType);
 		}
+	}
+
+	/**
+	 * @param model
+	 * @param monitor
+	 */
+	private void runRemoveSplashAction(IPluginModelBase model,
+			IProgressMonitor monitor) throws CoreException {
+		// Create the remove splash handler action
+		fRemoveSplashAction = new RemoveSplashHandlerBindingAction();
+		// Configure the action
+		fRemoveSplashAction.setFieldProductID(fProduct.getId());
+		
+		fRemoveSplashAction.setModel(model);
+		fRemoveSplashAction.setMonitor(monitor);
+		// Execute the action
+		fRemoveSplashAction.run();
+		// If an core exception was thrown and caught, release it
+		fRemoveSplashAction.hasException();		
+	}
+
+	/**
+	 * @param model
+	 * @param monitor
+	 * @param splashHandlerType
+	 * @throws CoreException
+	 */
+	private void runUpdateSplashAction(IPluginModelBase model,
+			IProgressMonitor monitor, String splashHandlerType)
+			throws CoreException {
 		// Create the update splash handler action
-		fUpdateSplashAction =  new UpdateSplashHandlerInModelAction();
+		fUpdateSplashAction =  new UpdateSplashHandlerAction();
 		// Configure the action
 		String id = createAttributeValueID();
 		fUpdateSplashAction.setFieldID(id);
@@ -252,7 +286,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Execute the action
 		fUpdateSplashAction.run();
 		// If an core exception was thrown and caught, release it
-		fUpdateSplashAction.hasException();			
+		fUpdateSplashAction.hasException();
 	}
 	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
