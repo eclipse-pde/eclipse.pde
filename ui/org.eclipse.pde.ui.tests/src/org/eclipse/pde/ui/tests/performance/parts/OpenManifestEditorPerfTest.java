@@ -42,7 +42,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		"/tests/performance/plugin/org.eclipse.jdt.ui/plugin.xml"; //$NON-NLS-1$
 
 	private static final String F_MANIFEST_FILE = 
-		"/tests/performance/plugin/org.eclipse.jdt.ui/META-INF/MANIFEST.MF"; //$NON-NLS-1$
+		"/tests/performance/manifest/org.eclipse.jdt.ui/MANIFEST.MF"; //$NON-NLS-1$
 	
 	private static final int F_TEST_ITERATIONS = 15;
 
