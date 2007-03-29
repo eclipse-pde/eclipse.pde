@@ -19,13 +19,13 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerInModelAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormColors;
@@ -43,7 +43,7 @@ public class SplashTemplatesSection extends PDESection {
 	
 	private FormToolkit fToolkit;
 	
-	private Combo fFieldTemplateCombo;
+	private ComboPart fFieldTemplateCombo;
 	
 	private boolean fBlockNotification;
 	
@@ -218,9 +218,10 @@ public class SplashTemplatesSection extends PDESection {
 	 */
 	private void createUIFieldTemplateCombo(Composite parent) {
 		int style = SWT.READ_ONLY | SWT.BORDER;
-		fFieldTemplateCombo = new Combo(parent, style);
+		fFieldTemplateCombo = new ComboPart();
+		fFieldTemplateCombo.createControl(parent, fToolkit, style);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		fFieldTemplateCombo.setLayoutData(data);
+		fFieldTemplateCombo.getControl().setLayoutData(data);
 		// Add "none" element
 		fFieldTemplateCombo.add(PDEUIMessages.SimpleCSCommandDetails_6, 0);
 		// Add all splash screen types in exact order found
