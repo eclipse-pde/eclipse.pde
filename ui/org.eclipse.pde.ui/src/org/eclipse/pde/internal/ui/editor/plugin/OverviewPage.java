@@ -10,18 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -39,15 +30,14 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.LaunchShortcutOverviewPage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
@@ -55,8 +45,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -67,7 +55,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.osgi.service.prefs.BackingStoreException;
 
 
-public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
+public class OverviewPage extends LaunchShortcutOverviewPage {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private PluginExportAction fExportAction;
 	private GeneralInfoSection fInfoSection;
@@ -119,8 +107,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		createContentSection(managedForm, right, toolkit);
 		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID))
 			createExtensionSection(managedForm, right, toolkit);
-		if (isEditable() )
+		if (isEditable()) {
     		createTestingSection(managedForm, isBundle() ? right : left, toolkit);
+		}
         if (isEditable())
     		createExportingSection(managedForm, right, toolkit);
 	}
@@ -180,7 +169,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		
 		Composite container = createStaticSectionClient(toolkit, section);
 		
-		FormText text = createClient(container, getLauncherText(!((ManifestEditor)getEditor()).showExtensionTabs()), toolkit);
+		String prefixText = (!((ManifestEditor)getEditor()).showExtensionTabs()) ? PDEUIMessages.OverviewPage_OSGiTesting :
+			isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing;
+		FormText text = createClient(container, getLauncherText(!((ManifestEditor)getEditor()).showExtensionTabs(), prefixText), toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.setImage("profile", lp.get(PDEPluginImages.DESC_PROFILE_EXC)); //$NON-NLS-1$
@@ -195,39 +186,18 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.setClient(container);
 	}
 	
-	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(text);
-		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
-		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
-		section.setLayoutData(data);
-		return section;
-	}
-	
 	/**
 	 * @param toolkit
 	 * @param parent
 	 * @return
 	 */
-	private Composite createStaticSectionClient(FormToolkit toolkit, 
+	protected Composite createStaticSectionClient(FormToolkit toolkit, 
 			Composite parent) {
 		Composite container = toolkit.createComposite(parent, SWT.NONE);
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		container.setLayoutData(data);
 		return container;
-	}
-	
-	private FormText createClient(Composite section, String content, FormToolkit toolkit) {
-		FormText text = toolkit.createFormText(section, true);
-		try {
-			text.setText(content, true, false);
-		} catch (SWTException e) {
-			text.setText(e.getMessage(), false, false);
-		}
-		text.addHyperlinkListener(this);
-		return text;
 	}
 	
 	private boolean isFragment() {
@@ -282,108 +252,12 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
 			organizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
 			organizeAction.run(null);
-		} else if (href.startsWith("launchShortcut.")) { //$NON-NLS-1$
-			href = href.substring(15);
-			int index = href.indexOf('.');
-			if (index < 0)
-				return;  // error.  Format of href should be launchShortcut.<mode>.<launchShortcutId>
-			String mode = href.substring(0, index);
-			String id = href.substring(index + 1); 
-			getEditor().doSave(null);
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
-			for (int i = 0; i < elements.length; i++) {
-				if (id.equals(elements[i].getAttribute("id"))) //$NON-NLS-1$
-					try {
-						ILaunchShortcut shortcut = (ILaunchShortcut)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
-						shortcut.launch(new StructuredSelection(getPDEEditor().getCommonProject()), mode);
-					} catch (CoreException e1) {
-					}
-			}
-		}
+		} else
+			super.linkActivated(e);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
-	public void linkEntered(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
-		mng.setMessage(e.getLabel());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
-	public void linkExited(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
-		mng.setMessage(null);
-	}
-	
-	private String getLauncherText(boolean osgi) {
-		IConfigurationElement[] elements = getLaunchers(osgi);
-		
-		StringBuffer buffer = new StringBuffer(osgi ? PDEUIMessages.OverviewPage_OSGiTesting : 
-			isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing);
-		
-		for (int i = 0; i < elements.length; i++) {
-			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
-			buffer.append("<li style=\"image\" value=\""); //$NON-NLS-1$
-			buffer.append(mode);
-			buffer.append("\" bindent=\"5\"><a href=\"launchShortcut."); //$NON-NLS-1$
-			buffer.append(mode);
-			buffer.append('.');
-			buffer.append(elements[i].getAttribute("id")); //$NON-NLS-1$
-			buffer.append("\">"); //$NON-NLS-1$
-			buffer.append(elements[i].getAttribute("label")); //$NON-NLS-1$
-			buffer.append("</a></li>"); //$NON-NLS-1$
-		}
-		buffer.append("</form>"); //$NON-NLS-1$
-		return buffer.toString();
-	}
-	
-	private IConfigurationElement[] getLaunchers(boolean osgi) {
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.ui.launchShortcuts"); //$NON-NLS-1$
-		// validate elements
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
-			if (mode != null && (mode.equals(ILaunchManager.RUN_MODE) || mode.equals(ILaunchManager.DEBUG_MODE) || mode.equals(ILaunchManager.PROFILE_MODE)) 
-					&& elements[i].getAttribute("label") != null && elements[i].getAttribute("id") != null &&  //$NON-NLS-1$ //$NON-NLS-2$
-					osgi == "true".equals(elements[i].getAttribute("osgi"))) //$NON-NLS-1$ //$NON-NLS-2$
-				list.add(elements[i]);
-		}
-		
-		// sort elements based on criteria specified in bug 172703
-		elements = (IConfigurationElement[])list.toArray(new IConfigurationElement[list.size()]);
-		Arrays.sort(elements, new Comparator() {
-
-			public int compare(Object arg0, Object arg1) {
-				int mode1 = getModeValue(((IConfigurationElement)arg0).getAttribute("mode")); //$NON-NLS-1$
-				int mode2 = getModeValue(((IConfigurationElement)arg1).getAttribute("mode")); //$NON-NLS-1$
-				if (mode1 != mode2)
-					return mode1 - mode2;
-				String label1 = ((IConfigurationElement)arg0).getAttribute("label"); //$NON-NLS-1$
-				String label2 = ((IConfigurationElement)arg1).getAttribute("label"); //$NON-NLS-1$
-				return label1.compareTo(label2);
-			}
-			
-			private int getModeValue(String value) {
-				if (value.equals(ILaunchManager.RUN_MODE))
-					return 0;
-				else if (value.equals(ILaunchManager.DEBUG_MODE))
-					return 1;
-				return 2; // has to be ILaunchManager.PROFILE_MODE
-			}
-			
-		});
-		return elements;
+	protected Object getLaunchObject() {
+		return getPDEEditor().getCommonProject();
 	}
 	
 	private PluginExportAction getExportAction() {
@@ -456,5 +330,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
     public void dispose() {
     	fDisposed = true;
     	super.dispose();
+    }
+    
+    protected short getIndent() {
+    	return 5;
     }
 }
