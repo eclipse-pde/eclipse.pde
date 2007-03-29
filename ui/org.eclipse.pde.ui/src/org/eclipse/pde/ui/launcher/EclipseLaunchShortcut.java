@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,8 +37,10 @@ import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
+import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.ui.IEditorPart;
 
@@ -78,11 +81,28 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			IStructuredSelection ssel = (IStructuredSelection)selection;
 			if (!ssel.isEmpty()) {
 				Object object = ssel.getFirstElement();
-				if (object instanceof IAdaptable) {
-					IProject project = (IProject)((IAdaptable)object).getAdapter(IProject.class);
-					if (project != null && project.isOpen())
-						model = PluginRegistry.findModel(project);
+				IProject project = null;
+				if (object instanceof IFile) {
+					// if instanceof Product model, we are launching from Product Editor.  Launch as Product
+					if ("product".equals(((IFile)object).getFileExtension())) { //$NON-NLS-1$
+						WorkspaceProductModel productModel =  new WorkspaceProductModel((IFile)object, false);
+						try {
+							productModel.load();
+							new LaunchAction(productModel.getProduct(),	((IFile)object).getFullPath().toOSString(),	mode).run();
+						} catch (CoreException e) {
+							PDEPlugin.log(e);
+						}
+						return;
+					}
+					// if it isn't a .product file, then find the project of the file inorder to launch using that project's corresponding plug-in
+					// bug 180043
+					project = ((IFile)object).getProject();
 				}
+				else if (object instanceof IAdaptable) {
+					project = (IProject)((IAdaptable)object).getAdapter(IProject.class);
+				}
+				if (project != null && project.isOpen())
+					model = PluginRegistry.findModel(project);
 			}
 		}
 		launch(model, mode);
