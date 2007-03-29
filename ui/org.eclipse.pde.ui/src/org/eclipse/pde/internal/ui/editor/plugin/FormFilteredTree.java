@@ -40,7 +40,9 @@ public class FormFilteredTree extends FilteredTree {
 
         if (showFilterControls){
         	filterComposite = new Composite(this, SWT.NONE);
-            filterComposite.setLayout(FormLayoutFactory.createClearGridLayout(false, 2));
+        	GridLayout filterLayout = FormLayoutFactory.createClearGridLayout(false, 2);
+        	filterLayout.horizontalSpacing = 5;
+        	filterComposite.setLayout(filterLayout);
             filterComposite.setFont(parent.getFont());
         	createFilterControls(filterComposite);
         	filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING,
