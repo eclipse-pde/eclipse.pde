@@ -17,10 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.test.performance.Dimension;
@@ -73,21 +70,8 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		fManifestFile = getFile(bundle, F_MANIFEST_FILE);
 		// Get the active workbench page
 		fActivePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		// Disable code folding feature
-		disableCodeFoldingFeature();
 	}		
-	
-	/**
-	 * @throws Exception
-	 */
-	private void disableCodeFoldingFeature() throws Exception {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED)) {
-			store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-			PDEPlugin.getDefault().savePluginPreferences();
-		}		
-	}
-	
+		
 	/**
 	 * @return
 	 * @throws Exception
