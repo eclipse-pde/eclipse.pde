@@ -232,7 +232,7 @@ public class IdReplaceTask extends Task {
 				replacementVersion = (String) featureIds.get(lookupKey);
 			}
 			if (replacementVersion == null) {
-				System.err.println("Could not find" + new String(elementId)); //$NON-NLS-1$
+				System.err.println("Could not find " + new String(elementId)); //$NON-NLS-1$
 			} else {
 				buffer.replace(startVersionId, endVersionId, replacementVersion);
 				contentChanged = true;
