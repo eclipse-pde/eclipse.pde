@@ -17,29 +17,12 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  */
 public interface ISimpleCSCommand extends ISimpleCSRunObject {
 
-	/**
-	 * Attribute: serialization
-	 * @see org.eclipse.core.commands.ParameterizedCommand#serialize()
-	 * @return
-	 */
 	public String getSerialization();
 	
-	/**
-	 * Attribute: serialization
-	 * @param serialization
-	 */
 	public void setSerialization(String serialization);			
 
-	/**
-	 * Attribute: returns
-	 * @return
-	 */
 	public String getReturns();
 	
-	/**
-	 * Attribute: returns
-	 * @param returns
-	 */
 	public void setReturns(String returns);		
 		
 	
