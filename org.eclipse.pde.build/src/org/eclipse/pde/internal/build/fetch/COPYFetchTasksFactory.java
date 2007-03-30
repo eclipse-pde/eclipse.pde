@@ -93,7 +93,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 		}
 
-		String overrideTag = overrideTags.getProperty(OVERRIDE_TAG);
+		String overrideTag = overrideTags != null ? overrideTags.getProperty(OVERRIDE_TAG) : null;
 		entryInfos.put(KEY_ROOT, (null == overrideTag || overrideTag.trim().length() == 0) ? arguments[0] : overrideTag);
 		entryInfos.put(KEY_PATH, (arguments.length > 1 && arguments[1].trim().length() > 0) ? arguments[1] : null);
 	}

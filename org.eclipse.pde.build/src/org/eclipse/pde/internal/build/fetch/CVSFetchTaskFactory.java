@@ -154,7 +154,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
  	 * <code>&lt;TAG&gt;,&lt;CVSROOT&gt;[,&lt;PASSWORD&gt;[,&lt;PATH&gt;[,&lt;CVSPASSFILE&gt;]]]</code>
 	 */
 	private void legacyParseMapFileEntry(String[] arguments, Properties overrideTags, Map entryInfos) {
-		String overrideTag = overrideTags.getProperty(OVERRIDE_TAG);
+		String overrideTag = overrideTags != null ? overrideTags.getProperty(OVERRIDE_TAG) : null;
 		entryInfos.put(KEY_CVSPASSFILE, (arguments.length > 4 && !arguments[4].equals("")) ? arguments[4] : null); //$NON-NLS-1$
 		entryInfos.put(IFetchFactory.KEY_ELEMENT_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : arguments[0]));
 		entryInfos.put(KEY_CVSROOT, arguments[1]);
@@ -189,7 +189,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		// in case we revert to legacy parsing in the middle of the loop (we
 		// don't want to contaminate entryInfos
 		entryInfos.put(KEY_CVSPASSFILE, table.get(KEY_CVSPASSFILE));
-		String overrideTag = overrideTags.getProperty(OVERRIDE_TAG);
+		String overrideTag = overrideTags != null ? overrideTags.getProperty(OVERRIDE_TAG) : null;
 		entryInfos.put(IFetchFactory.KEY_ELEMENT_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : table.get(IFetchFactory.KEY_ELEMENT_TAG)));
 		entryInfos.put(KEY_CVSROOT, table.get(KEY_CVSROOT));
 		entryInfos.put(KEY_PASSWORD, table.get(KEY_PASSWORD));
