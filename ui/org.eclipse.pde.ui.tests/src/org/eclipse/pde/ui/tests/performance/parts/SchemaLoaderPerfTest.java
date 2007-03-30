@@ -34,11 +34,11 @@ public class SchemaLoaderPerfTest extends PerformanceTestCase {
 	private static final String F_FILENAME = 
 		"/tests/performance/schema/navigatorContent.exsd"; //$NON-NLS-1$
 	
-	private static final int F_TEST_ITERATIONS = 20;
+	private static final int F_TEST_ITERATIONS = 3;
 
-	private static final int F_WARMUP_ITERATIONS = 50;
+	private static final int F_WARMUP_ITERATIONS = 5;
 	
-	private static final int F_RUNS = 15;
+	private static final int F_RUNS = 20;
 	
 	private static File fXSDFile;
 	
@@ -72,7 +72,7 @@ public class SchemaLoaderPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testSchemaLoaderUnabbreviated() throws Exception {
+	public void testSchemaUnabbreviated() throws Exception {
 		tagAsGlobalSummary("Loading Unabbreviated Schema", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		testSchemaLoader(false);
 	}
@@ -80,7 +80,7 @@ public class SchemaLoaderPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testSchemaLoaderAbbreviated() throws Exception {
+	public void testSchemaAbbreviated() throws Exception {
 		tagAsGlobalSummary("Loading Abbreviated Schema", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		testSchemaLoader(true);
 	}

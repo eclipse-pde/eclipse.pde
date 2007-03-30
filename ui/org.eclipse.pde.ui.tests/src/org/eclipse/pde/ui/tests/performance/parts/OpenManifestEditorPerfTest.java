@@ -44,9 +44,9 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	private static final String F_MANIFEST_FILE = 
 		"/tests/performance/manifest/org.eclipse.jdt.ui/MANIFEST.MF"; //$NON-NLS-1$
 	
-	private static final int F_TEST_ITERATIONS = 15;
+	private static final int F_TEST_ITERATIONS = 25;
 
-	private static final int F_WARMUP_ITERATIONS = 20;
+	private static final int F_WARMUP_ITERATIONS = 10;
 	
 	private static File fPluginFile;
 	
@@ -125,7 +125,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testPluginEditorOpenXML() throws Exception {
+	public void testEditorOpenXML() throws Exception {
 		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
@@ -133,7 +133,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testPluginEditorOpenMF() throws Exception {
+	public void testEditorOpenMF() throws Exception {
 		tagAsSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fManifestFile);
 	}	
