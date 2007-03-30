@@ -44,7 +44,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	protected boolean fetchChildren = true;
 
-	protected Properties fetchTags;
+	protected Properties fetchTags = null;
 
 	// The element (an entry of the map file) for which we create the script 
 	protected String element;
