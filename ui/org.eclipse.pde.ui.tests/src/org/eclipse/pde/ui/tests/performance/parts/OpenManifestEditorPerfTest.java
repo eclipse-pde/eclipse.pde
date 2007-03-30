@@ -17,7 +17,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.test.performance.Dimension;
@@ -41,9 +44,9 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	private static final String F_MANIFEST_FILE = 
 		"/tests/performance/manifest/org.eclipse.jdt.ui/MANIFEST.MF"; //$NON-NLS-1$
 	
-	private static final int F_TEST_ITERATIONS = 15;
+	private static final int F_TEST_ITERATIONS = 25;
 
-	private static final int F_WARMUP_ITERATIONS = 20;
+	private static final int F_WARMUP_ITERATIONS = 10;
 	
 	private static File fPluginFile;
 	
@@ -70,7 +73,20 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		fManifestFile = getFile(bundle, F_MANIFEST_FILE);
 		// Get the active workbench page
 		fActivePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		// Disable code folding feature
+		disableCodeFoldingFeature();
 	}		
+	
+	/**
+	 * @throws Exception
+	 */
+	private void disableCodeFoldingFeature() throws Exception {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED)) {
+			store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+			PDEPlugin.getDefault().savePluginPreferences();
+		}		
+	}
 	
 	/**
 	 * @return
@@ -109,7 +125,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testPluginEditorOpenXML() throws Exception {
+	public void testEditorOpenXML() throws Exception {
 		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
@@ -117,7 +133,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	/**
 	 * @throws Exception
 	 */
-	public void testPluginEditorOpenMF() throws Exception {
+	public void testEditorOpenMF() throws Exception {
 		tagAsSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fManifestFile);
 	}	
