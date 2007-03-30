@@ -504,8 +504,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
-			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
+			String includeSet = replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true); //$NON-NLS-1$
+			if(includeSet != null && includeSet.length() > 0) {
+				FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, includeSet, null, replaceVariables(exclude, true), null, null);
+				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
+			}
 		}
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
