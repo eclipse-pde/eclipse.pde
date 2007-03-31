@@ -89,13 +89,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		IPluginModelBase model =
 			PluginRegistry.findModel(javaProject.getProject());
 		if (model == null)
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					IPDEUIConstants.PLUGIN_ID,
-					IStatus.ERROR,
-					PDEUIMessages.JUnitLaunchConfiguration_error_notaplugin, 
-					null));
+			abort(NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_notaplugin, 
+							javaProject.getProject().getName()), 
+					null, IStatus.OK);
 		if (model instanceof IFragmentModel)
 			return ((IFragmentModel)model).getFragment().getPluginId();
 
