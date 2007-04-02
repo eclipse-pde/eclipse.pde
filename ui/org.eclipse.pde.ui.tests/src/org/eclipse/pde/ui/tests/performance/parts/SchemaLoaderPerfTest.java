@@ -36,9 +36,9 @@ public class SchemaLoaderPerfTest extends PerformanceTestCase {
 	
 	private static final int F_TEST_ITERATIONS = 3;
 
-	private static final int F_WARMUP_ITERATIONS = 5;
+	private static final int F_WARMUP_ITERATIONS = 20;
 	
-	private static final int F_RUNS = 20;
+	private static final int F_RUNS = 50;
 	
 	private static File fXSDFile;
 	
