@@ -114,6 +114,8 @@ public class TracingBlock {
 		});
 		fPluginViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				CheckboxTableViewer tableViewer = (CheckboxTableViewer) event.getSource();
+				tableViewer.setSelection(new StructuredSelection(event.getElement()));
 				pluginSelected(getSelectedModel(), event.getChecked());
 				fTab.updateLaunchConfigurationDialog();
 			}
