@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -203,7 +204,6 @@ public abstract class BuildContentsSection extends TableSection
 		gd.widthHint = 100;
 		fTreeViewer.getTree().setLayoutData(gd);
 		initialize();
-		initializeCheckState();
 		toolkit.paintBordersFor(container);
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -286,65 +286,75 @@ public abstract class BuildContentsSection extends TableSection
 	protected void initializeCheckState(final IBuildEntry includes,
 			final IBuildEntry excludes) {
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-
+		
 			public void run() {
-				if (fTreeViewer.getTree().isDisposed()) return;
-				Vector fileExt = new Vector();
-				String[] inclTokens, exclTokens = new String[0];
-				if (fProject == null || includes == null)
-					return;
-				inclTokens = includes.getTokens();
-				if (excludes != null)
-					exclTokens = excludes.getTokens();
-				Set temp = new TreeSet();
-				for (int i = 0; i < inclTokens.length; i++)
-					temp.add(inclTokens[i]);
-				for (int i = 0; i < exclTokens.length; i++)
-					temp.add(exclTokens[i]);
-				Iterator iter = temp.iterator();
-				while (iter.hasNext()) {
-					String resource = iter.next().toString();
-					boolean isIncluded = includes.contains(resource);
-					if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						// ignore - should be root directory
-					} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource
-							.length() - 1) {
-						IFolder folder = fProject.getFolder(resource);
-						fTreeViewer.setSubtreeChecked(folder, isIncluded);
-						fTreeViewer.setParentsGrayed(folder, true);
-						if (isIncluded && folder.exists()) {
-							setParentsChecked(folder);
-							fTreeViewer.setGrayed(folder, false);
+				// found slight improvements using Display.getCurrent() instead of fTreeViewer.getTree().getDisplay()
+				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+
+					public void run() {
+						if (fTreeViewer.getTree().isDisposed()) return;
+						Vector fileExt = new Vector();
+						String[] inclTokens, exclTokens = new String[0];
+						if (fProject == null || includes == null)
+							return;
+						inclTokens = includes.getTokens();
+						if (excludes != null)
+							exclTokens = excludes.getTokens();
+						Set temp = new TreeSet();
+						for (int i = 0; i < inclTokens.length; i++)
+							temp.add(inclTokens[i]);
+						for (int i = 0; i < exclTokens.length; i++)
+							temp.add(exclTokens[i]);
+						Iterator iter = temp.iterator();
+						while (iter.hasNext()) {
+							String resource = iter.next().toString();
+							boolean isIncluded = includes.contains(resource);
+							if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								// ignore - should be root directory
+							} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource
+									.length() - 1) {
+								IFolder folder = fProject.getFolder(resource);
+								if (!folder.exists())
+									continue;
+								fTreeViewer.setSubtreeChecked(folder, isIncluded);
+								fTreeViewer.setParentsGrayed(folder, true);
+								if (isIncluded) {
+									setParentsChecked(folder);
+									fTreeViewer.setGrayed(folder, false);
+								}
+							} else if (resource.startsWith("*.")) { //$NON-NLS-1$
+								if (isIncluded)
+									fileExt.add(resource.substring(2));
+							} else {
+								IFile file = fProject.getFile(resource);
+								if (!file.exists())
+									continue;
+								fTreeViewer.setChecked(file, isIncluded);
+								fTreeViewer.setParentsGrayed(file, true);
+								if (isIncluded) {
+									fTreeViewer.setGrayed(file, false);
+									setParentsChecked(file);
+								}
+							}
 						}
-					} else if (resource.startsWith("*.")) { //$NON-NLS-1$
-						if (isIncluded)
-							fileExt.add(resource.substring(2));
-					} else {
-						IFile file = fProject.getFile(resource);
-						fTreeViewer.setChecked(file, isIncluded);
-						fTreeViewer.setParentsGrayed(file, true);
-						if (isIncluded && file.exists()) {
-							fTreeViewer.setGrayed(file, false);
-							setParentsChecked(file);
+						if (fileExt.size() == 0)
+							return;
+						try {
+							IResource[] members = fProject.members();
+							for (int i = 0; i < members.length; i++) {
+								if (!(members[i] instanceof IFolder)
+										&& (fileExt.contains(members[i]
+										                             .getFileExtension()))) {
+									fTreeViewer.setChecked(members[i], includes
+											.contains("*." //$NON-NLS-1$
+													+ members[i].getFileExtension()));
+								}
+							}
+						} catch (CoreException e) {
+							PDEPlugin.logException(e);
 						}
 					}
-				}
-				if (fileExt.size() == 0)
-					return;
-				try {
-					IResource[] members = fProject.members();
-					for (int i = 0; i < members.length; i++) {
-						if (!(members[i] instanceof IFolder)
-								&& (fileExt.contains(members[i]
-										.getFileExtension()))) {
-							fTreeViewer.setChecked(members[i], includes
-									.contains("*." //$NON-NLS-1$
-											+ members[i].getFileExtension()));
-						}
-					}
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+				});
 			}
 		});
 	}
