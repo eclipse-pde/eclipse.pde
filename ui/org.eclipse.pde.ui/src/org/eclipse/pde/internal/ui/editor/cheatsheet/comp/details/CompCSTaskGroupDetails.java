@@ -152,6 +152,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fKindCombo = new ComboPart();
 		fKindCombo.createControl(parent, getToolkit(), SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		// Needed to align vertically with form entry field and allow space
+		// for a possible field decoration
+		data.horizontalIndent = 3;
 		fKindCombo.getControl().setLayoutData(data);
 		fKindCombo.add(F_KIND_VALUE_SET);
 		fKindCombo.add(F_KIND_VALUE_SEQUENCE);

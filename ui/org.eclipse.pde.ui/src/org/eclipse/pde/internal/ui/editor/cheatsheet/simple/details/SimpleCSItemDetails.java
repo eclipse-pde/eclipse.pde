@@ -130,6 +130,9 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fContent = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 90;
+		// Needed to align vertically with form entry field and allow space
+		// for a possible field decoration		
+		data.horizontalIndent = 3;
 		//data.horizontalSpan = 2;
 		fContent.getText().setLayoutData(data);	
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
