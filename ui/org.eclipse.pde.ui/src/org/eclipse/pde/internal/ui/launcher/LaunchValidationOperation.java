@@ -34,6 +34,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BundleValidationOperation;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Constants;
 
 
@@ -57,14 +58,14 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 	protected Dictionary[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
 		if (envs.length == 0)
-			return new Dictionary[] {BundleValidationOperation.getDefaultEnvironment()};
+			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 		
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			Properties profileProps = getJavaProfileProperties(envs[i].getId());
 			if (profileProps != null) {
-				Dictionary props = BundleValidationOperation.getDefaultEnvironment();
+				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -76,7 +77,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 		}
 		if (result.size() > 0)
 			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
-		return new Dictionary[] {BundleValidationOperation.getDefaultEnvironment()};
+		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
 	}
 	

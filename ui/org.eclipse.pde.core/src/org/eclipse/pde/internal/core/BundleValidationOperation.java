@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -23,7 +22,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
 
 public class BundleValidationOperation implements IWorkspaceRunnable {
 	
@@ -34,7 +32,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	private State fState;
 	
 	public BundleValidationOperation(IPluginModelBase[] models) {
-		this(models, new Dictionary[] { getDefaultEnvironment()});
+		this(models, new Dictionary[] { TargetPlatformHelper.getTargetEnvironment()});
 	}
 	
 	public BundleValidationOperation(IPluginModelBase[] models, Dictionary[] properties) {
@@ -42,17 +40,6 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		fProperties = properties;
 	}
 	
-	public static Dictionary getDefaultEnvironment() {
-		Dictionary result = new Hashtable();
-		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
-		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
-		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
-		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
-		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		result.put("osgi.resolverMode", "development"); //$NON-NLS-1$ //$NON-NLS-2$
-		return result;
-	}
-
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (FACTORY == null)
 			FACTORY = Platform.getPlatformAdmin().getFactory();
