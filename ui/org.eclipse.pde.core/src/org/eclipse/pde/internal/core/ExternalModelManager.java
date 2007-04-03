@@ -49,31 +49,6 @@ public class ExternalModelManager extends AbstractModelManager {
 		fModels = models;
 	}
 	
-	public void shutdown() {
-		int disabled = 0;
-		StringBuffer saved = new StringBuffer();
-		for (int i = 0; i < fModels.length; i++) {
-			IPluginModelBase model = fModels[i];
-			if (!model.isEnabled()) {
-				disabled += 1;
-				if (saved.length() > 0) saved.append(" "); //$NON-NLS-1$
-				saved.append(model.getPluginBase().getId());
-			}
-		}
-
-		Preferences pref= PDECore.getDefault().getPluginPreferences();
-		if (disabled == 0) {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		} else if (disabled == fModels.length) {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
-		} else {
-			pref.setValue(ICoreConstants.CHECKED_PLUGINS, saved.toString());
-		}
-		
-		PDECore.getDefault().savePluginPreferences();
-		super.shutdown();
-	}
-	
 	protected URL[] getPluginPaths() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		URL[] base = PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));
@@ -104,6 +79,4 @@ public class ExternalModelManager extends AbstractModelManager {
 		return result;
 	}
 
-
-	
 }

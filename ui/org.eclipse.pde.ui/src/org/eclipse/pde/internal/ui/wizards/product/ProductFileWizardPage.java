@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
@@ -104,7 +104,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		
 		fProductCombo = new Combo(fGroup, SWT.SINGLE|SWT.READ_ONLY);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fProductCombo.setItems(TargetPlatformHelper.getProductNames());
+		fProductCombo.setItems(TargetPlatform.getProducts());
 		
 		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
 		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); 

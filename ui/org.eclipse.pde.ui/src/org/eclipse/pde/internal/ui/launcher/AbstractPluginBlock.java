@@ -17,8 +17,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
@@ -35,6 +37,8 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -120,19 +124,47 @@ public abstract class AbstractPluginBlock {
 		}
 
 		public Object getParent(Object child) {
+			if (child instanceof IPluginModelBase) {
+				IResource resource = ((IPluginModelBase)child).getUnderlyingResource();
+				return resource == null ? fExternalPlugins : fWorkspacePlugins;
+			}
 			return null;
 		}
 
 		public Object[] getElements(Object input) {
-			return new Object[] { fWorkspacePlugins, fExternalPlugins };
+			ArrayList list = new ArrayList();
+			if (fWorkspaceModels.length > 0)
+				list.add(fWorkspacePlugins);
+			if (fExternalModels.length > 0)
+				list.add(fExternalPlugins);
+			return list.toArray();
 		}
 	}
 	
 	public AbstractPluginBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fExternalModels = PluginRegistry.getExternalModels();
+		fExternalModels = getExternalModels(); //PluginRegistry.getExternalModels(); //getExternalModels();
 		fWorkspaceModels = PluginRegistry.getWorkspaceModels();
+	}
+	
+	protected IPluginModelBase[] getExternalModels() {
+		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
+		if (saved.equals(ICoreConstants.VALUE_SAVED_NONE))
+			return new IPluginModelBase[0];
+
+		IPluginModelBase[] models = PluginRegistry.getExternalModels();
+		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
+			return models;
+		
+		ArrayList list = new ArrayList(models.length);
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].isEnabled()) {
+				list.add(models[i]);
+			}
+		}
+		return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
 	}
 	
 	protected void updateCounter() {
@@ -193,7 +225,7 @@ public abstract class AbstractPluginBlock {
 				return 0;
 			}
 		});
-
+		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;

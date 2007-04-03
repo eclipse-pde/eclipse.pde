@@ -20,6 +20,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -170,7 +171,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		
 		fApplicationCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fApplicationCombo.setItems(TargetPlatformHelper.getApplicationNames());
+		fApplicationCombo.setItems(TargetPlatform.getApplications());
 		if (fApplicationCombo.getItemCount() > 0)
 			fApplicationCombo.setText(fApplicationCombo.getItem(0));	
 	}

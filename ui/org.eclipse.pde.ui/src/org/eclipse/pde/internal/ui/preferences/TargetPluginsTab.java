@@ -87,6 +87,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -690,6 +691,25 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
 		preferences.setValue(ICoreConstants.PLATFORM_PATH, fPage.getPlatformPath());
+
+		if (fCounter == 0) {
+			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
+		} else if (fCounter == fPluginListViewer.getTable().getItemCount()) {
+			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);		
+		} else {
+			StringBuffer saved = new StringBuffer();
+			TableItem[] models = fPluginListViewer.getTable().getItems();
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].getChecked())
+					continue;
+				IPluginModelBase model = (IPluginModelBase)models[i].getData();
+				if (saved.length() > 0) 
+					saved.append(" "); //$NON-NLS-1$
+				saved.append(model.getPluginBase().getId());	
+			}
+			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, saved.toString());					
+		}
+		
 		String[] locations = fPage.getPlatformLocations();
 		for (int i = 0; i < locations.length && i < 5; i++) {
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);

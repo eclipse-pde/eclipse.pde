@@ -17,7 +17,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -74,7 +73,7 @@ public class ProgramBlock {
 		fProductButton.addSelectionListener(fListener);
 		
 		fProductCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
-		fProductCombo.setItems(TargetPlatformHelper.getProductNames());
+		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.addSelectionListener(fListener);
 	}
@@ -180,7 +179,7 @@ public class ProgramBlock {
 	}
 	
 	protected String[] getApplicationNames() {
-		return TargetPlatformHelper.getApplicationNames();
+		return TargetPlatform.getApplications();
 	}
 	
 	protected String getApplicationAttribute() {

@@ -174,7 +174,7 @@ public class TargetPlatformHelper {
     
     public static Set getApplicationNameSet() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
@@ -210,7 +210,7 @@ public class TargetPlatformHelper {
 
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
