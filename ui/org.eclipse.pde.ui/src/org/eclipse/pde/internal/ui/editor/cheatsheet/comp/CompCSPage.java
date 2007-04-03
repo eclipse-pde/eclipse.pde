@@ -20,11 +20,14 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -33,7 +36,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * CompCSPage
  *
  */
-public class CompCSPage extends PDEFormPage implements IModelChangedListener {
+public class CompCSPage extends CSAbstractPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
 
@@ -48,13 +51,19 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock = new CompCSBlock(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/composite_cs_editor/editor.htm"; //$NON-NLS-1$
+	}
+	
 	// TODO: MP: LOW: CompCS: Clean-up and reuse externalized strings
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
 		// Bug: Two veritical scrollbars appear when resizing the editor
 		// vertically
 		// Note: Scrolled form #1 created here
@@ -75,6 +84,10 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 					e);
 			return;
 		}
+		// Create the register cheat sheet link in the form title area
+		createUIFormTitleRegisterCSLink(managedForm, model);		
+		// Create the rest of the actions in the form title area
+		super.createFormContent(managedForm);
 		// Form image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_CHEATSHEET_OBJ));
@@ -94,6 +107,9 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.getMastersSection().fireSelection();
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
+		// Set context-sensitive help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), 
+				IHelpContextIds.COMPOSITE_CS_EDITOR);		
 	}	
 
 	/* (non-Javadoc)

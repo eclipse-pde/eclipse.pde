@@ -16,16 +16,12 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -41,8 +37,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	private FormEntry fTitle;
 	
 	private Section fMainSection;
-
-	private ICSDetails fRegisterCSArea;
 	
 	/**
 	 * 
@@ -53,24 +47,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		
 		fTitle = null;
 		fMainSection = null;
-		fRegisterCSArea = new CSRegisterCSDetails(fCheatSheet.getModel(), 
-				section, SimpleCSInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
-	public void initialize(IManagedForm form) {
-		super.initialize(form);
-		// Unfortunately this has to be explicitly called for sub detail
-		// sections through its main section parent; since, it never is 
-		// registered directly.
-		// Initialize managed form for register area
-		if (fRegisterCSArea instanceof IFormPart) {
-			((IFormPart)fRegisterCSArea).initialize(form);
-		}
-	}	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -103,9 +81,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		toolkit.paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);		
-		
-		// Create the register cheat sheet area
-		fRegisterCSArea.createDetails(parent);		
 	}
 
 	/* (non-Javadoc)
@@ -118,8 +93,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 				fCheatSheet.setTitle(fTitle.getValue());
 			}
 		});		
-		// Create the listeners within the register cheat sheet area
-		fRegisterCSArea.hookListeners();		
 	}
 
 	/* (non-Javadoc)
@@ -131,8 +104,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Attribute: title
 		fTitle.setValue(fCheatSheet.getTitle(), true);
 		fTitle.setEditable(editable);
-		// Update the fields within the register cheat sheet area
-		fRegisterCSArea.updateFields();			
 	}
 
 	/* (non-Javadoc)

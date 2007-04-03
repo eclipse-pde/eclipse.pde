@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
@@ -47,8 +46,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	private Section fMainSection;
 
 	private ICSDetails fCommandSection;
-
-	private ICSDetails fRegisterCSArea;
 	
 	// Not supporting when at this moment; since, we are not supporting
 	// conditional-subitem
@@ -69,8 +66,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fMainSection = null;
 		fCommandSection = new SimpleCSCommandDetails(fSubItem, 
 				masterTreeSection);		
-		fRegisterCSArea = new CSRegisterCSDetails(fSubItem.getModel(), 
-				masterTreeSection, SimpleCSInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -84,10 +79,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Initialize managed form for command section
 		if (fCommandSection instanceof IFormPart) {
 			((IFormPart)fCommandSection).initialize(form);
-		}
-		// Initialize managed form for register area
-		if (fRegisterCSArea instanceof IFormPart) {
-			((IFormPart)fRegisterCSArea).initialize(form);
 		}
 	}		
 	
@@ -136,13 +127,11 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 
 		fCommandSection.createDetails(parent);
-		// Create the register cheat sheet area
-		fRegisterCSArea.createDetails(parent);
 		// Attribute: when
 		// Not supporting when at this moment; since, we are not supporting
 		// conditional-subitem
 		//fWhen = new FormEntry(optionalSectionClient, toolkit, PDEUIMessages.SimpleCSSubItemDetails_2, SWT.NONE);
-		
+		// TODO: MP: SimpleCS: Get rid of all commented code
 		
 	}
 	
@@ -173,8 +162,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 //		});			
 		
 		fCommandSection.hookListeners();
-		// Create the listeners within the register cheat sheet area
-		fRegisterCSArea.hookListeners();		
 	}
 	
 	/* (non-Javadoc)
@@ -202,9 +189,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 //		fWhen.setEditable(editable);
 		
 		fCommandSection.updateFields();
-		// Update the fields within the register cheat sheet area
-		fRegisterCSArea.updateFields();			
-		
 	}
 
 	/* (non-Javadoc)

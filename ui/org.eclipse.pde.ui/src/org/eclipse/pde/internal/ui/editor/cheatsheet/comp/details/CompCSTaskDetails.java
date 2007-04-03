@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSFileValidator;
@@ -76,8 +75,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	
 	private ICSDetails fEnclosingTextSection;		
 	
-	private ICSDetails fRegisterCSArea;
-	
 	private final static String F_PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	
 	private final static String F_DOT_DOT = ".."; //$NON-NLS-1$
@@ -96,8 +93,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, section);
-		fRegisterCSArea = new CSRegisterCSDetails(fDataTask.getModel(), section,
-				CompCSInputContext.CONTEXT_ID);		
 	}
 
 	/* (non-Javadoc)
@@ -111,10 +106,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Initialize managed form for enclosing text section
 		if (fEnclosingTextSection instanceof IFormPart) {
 			((IFormPart)fEnclosingTextSection).initialize(form);
-		}
-		// Initialize managed form for register area
-		if (fRegisterCSArea instanceof IFormPart) {
-			((IFormPart)fRegisterCSArea).initialize(form);
 		}
 	}
 	
@@ -141,8 +132,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
-		// Create the register cheat sheet area
-		fRegisterCSArea.createDetails(parent);		
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
@@ -189,8 +178,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		createListenersSkipButton();
 		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
-		// Create the listeners within the register cheat sheet area
-		fRegisterCSArea.hookListeners();		
 	}
 
 	/**
@@ -523,8 +510,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		updateSkipButton(editable);
 		// Update fields within enclosing text section		
 		fEnclosingTextSection.updateFields();
-		// Update the fields within the register cheat sheet area
-		fRegisterCSArea.updateFields();		
 	}
 
 	/**

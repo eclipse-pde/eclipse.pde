@@ -51,6 +51,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_includeOptional;
 
+	public static String CSAbstractPage_msgRegisterThisCheatSheet;
+
 	public static String DependencyPropertiesDialog_exportGroupText;
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
@@ -202,8 +204,6 @@ public class PDEUIMessages extends NLS {
 	public static String ControlValidationUtility_errorMsgValueMustBeSpecified;
 
 	public static String ControlValidationUtility_errorMsgValueNotExternalized;
-
-	public static String CSRegisterCSDetails_linkFormattingTags;
 
 	public static String DirectorySelectionPage_add;
 

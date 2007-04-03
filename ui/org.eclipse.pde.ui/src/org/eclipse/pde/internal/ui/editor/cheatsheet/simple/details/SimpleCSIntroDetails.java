@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
@@ -43,8 +42,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	
 	private ICSDetails fHelpSection;
 	
-	private ICSDetails fRegisterCSArea;	
-	
 	/**
 	 * @param elementSection
 	 */
@@ -55,8 +52,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fContent = null;
 		fMainSection = null;
 		fHelpSection = new SimpleCSHelpDetails(fIntro, elementSection);
-		fRegisterCSArea = new CSRegisterCSDetails(fIntro.getModel(), 
-				elementSection, SimpleCSInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -70,10 +65,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		// Initialize managed form for help section
 		if (fHelpSection instanceof IFormPart) {
 			((IFormPart)fHelpSection).initialize(form);
-		}
-		// Initialize managed form for register area
-		if (fRegisterCSArea instanceof IFormPart) {
-			((IFormPart)fRegisterCSArea).initialize(form);
 		}
 	}		
 	
@@ -116,8 +107,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 		
 		fHelpSection.createDetails(parent);
-		// Create the register cheat sheet area
-		fRegisterCSArea.createDetails(parent);		
 	}
 
 	/* (non-Javadoc)
@@ -134,8 +123,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		});
 		
 		fHelpSection.hookListeners();
-		// Create the listeners within the register cheat sheet area
-		fRegisterCSArea.hookListeners();			
 	}
 
 	/* (non-Javadoc)
@@ -144,8 +131,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	public void updateFields() {
 
 		fHelpSection.updateFields();
-		// Update the fields within the register cheat sheet area
-		fRegisterCSArea.updateFields();	
 		
 		boolean editable = isEditableElement();
 		

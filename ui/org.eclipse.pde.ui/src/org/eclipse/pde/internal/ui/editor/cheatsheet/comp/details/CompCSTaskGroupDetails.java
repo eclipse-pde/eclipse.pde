@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
@@ -54,8 +53,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	
 	private ICSDetails fEnclosingTextSection;
 	
-	private ICSDetails fRegisterCSArea;
-	
 	private static final String F_KIND_VALUE_SET = PDEUIMessages.CompCSTaskGroupDetails_Set;
 	
 	private static final String F_KIND_VALUE_CHOICE = PDEUIMessages.CompCSTaskGroupDetails_Choice;
@@ -77,8 +74,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTaskGroup,
 				section);
-		fRegisterCSArea = new CSRegisterCSDetails(fDataTaskGroup.getModel(), 
-				section, CompCSInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -92,10 +87,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// Initialize managed form for enclosing text section
 		if (fEnclosingTextSection instanceof IFormPart) {
 			((IFormPart)fEnclosingTextSection).initialize(form);
-		}
-		// Initialize managed form for register area
-		if (fRegisterCSArea instanceof IFormPart) {
-			((IFormPart)fRegisterCSArea).initialize(form);
 		}
 	}	
 	
@@ -124,8 +115,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
-		// Create the register cheat sheet area
-		fRegisterCSArea.createDetails(parent);		
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
@@ -192,8 +181,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		createListenersSkipButton();
 		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
-		// Create the listeners within the register cheat sheet area
-		fRegisterCSArea.hookListeners();		
 	}
 
 	/**
@@ -253,8 +240,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		updateSkipButton(editable);
 		// Update fields within enclosing text section
 		fEnclosingTextSection.updateFields();
-		// Update the fields within the register cheat sheet area
-		fRegisterCSArea.updateFields();		
 	}
 
 	/**
