@@ -1039,7 +1039,7 @@
          </description>
       </shortcut>
       <shortcut
-            label="%Equinox.shortcut.label"
+            label="%shortcut.label.0"
             icon="$nl$/icons/obj16/bundle_obj.gif"
             modes="run, debug"
             class="org.eclipse.pde.ui.launcher.OSGiLaunchShortcut"
