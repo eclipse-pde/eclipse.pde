@@ -79,9 +79,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		
 		Composite composite = new Composite(scrollContainer, SWT.NONE);
 		scrollContainer.setContent(composite);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 15;
-		composite.setLayout(layout);
+		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fDataBlock.createControl(composite);		

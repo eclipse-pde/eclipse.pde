@@ -187,6 +187,7 @@ public class TargetPlatformHelper {
 				}
 			}
 		}
+		result.add("org.eclipse.ui.ide.workbench"); //$NON-NLS-1$
 		return result;
     }
 
