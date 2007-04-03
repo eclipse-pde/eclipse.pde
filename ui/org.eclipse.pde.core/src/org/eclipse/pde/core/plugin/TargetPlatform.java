@@ -190,11 +190,6 @@ public class TargetPlatform {
 			if (application != null && set.contains(application))
 				return application;
 		}
-
-		//TODO remove after 3.3M6
-		if (set.contains("org.eclipse.ui.ide.application.workbench")) //$NON-NLS-1$
-			return "org.eclipse.ui.ide.application.workbench"; //$NON-NLS-1$
-		
 		return IDE_APPLICATION;
 	}
 	
