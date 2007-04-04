@@ -41,4 +41,16 @@ public interface ISimpleCSRunObject extends ISimpleCSRunContainerObject {
 	 */
 	public void setWhen(String when);
 	
+	/**
+	 * Attribute: translate
+	 * @return
+	 */
+	public String getTranslate();
+	
+	/**
+	 * Attribute: translate
+	 * @param translate
+	 */
+	public void setTranslate(String translate);	
+	
 }

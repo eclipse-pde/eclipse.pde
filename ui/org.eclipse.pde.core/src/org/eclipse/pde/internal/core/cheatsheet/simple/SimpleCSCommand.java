@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 /**
@@ -47,6 +48,11 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 * Attribute:  when
 	 */
 	private String fWhen;
+	
+	/**
+	 * Attribute:  translate
+	 */
+	private String fTranslate;	
 	
 	/**
 	 * 
@@ -88,6 +94,13 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 */
 	public String getWhen() {
 		return fWhen;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
+	 */
+	public String getTranslate() {
+		return fTranslate;
 	}
 
 	/* (non-Javadoc)
@@ -135,6 +148,17 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
+	 */
+	public void setTranslate(String translate) {
+		String old = fTranslate;
+		fTranslate = translate;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_TRANSLATE, old, fTranslate);
+		}		
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Element element) {
@@ -152,6 +176,15 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 		// Process when attribute
 		// Read as is. Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
+		// Process translate attribute
+		// Read as is. Do not translate
+		// Need to be able to write out the empty string
+		Attr translateAttribute = element.getAttributeNode(ATTRIBUTE_TRANSLATE);
+		if (translateAttribute == null) {
+			fTranslate = null;
+		} else {
+			fTranslate = translateAttribute.getValue();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -187,6 +220,12 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
+			// Print translate attribute
+			if (fTranslate != null) {
+				// Write as is.  Do not translate				
+				buffer.append(XMLPrintHandler.wrapAttribute(
+						ATTRIBUTE_TRANSLATE, fTranslate));
+			}			
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
 					indent, false);
@@ -208,6 +247,7 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 		fReturns = null;
 		fConfirm = false;
 		fWhen = null;
+		fTranslate = null;
 	}
 
 	/* (non-Javadoc)

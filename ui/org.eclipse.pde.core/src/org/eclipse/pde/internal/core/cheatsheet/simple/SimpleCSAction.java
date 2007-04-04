@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 /**
@@ -49,6 +50,11 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	 */
 	private String fWhen;		
 
+	/**
+	 * Attribute:  translate
+	 */
+	private String fTranslate;	
+	
 	/**
 	 * Attributes:  param1, param2, ..., param9
 	 */
@@ -149,7 +155,15 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 		// Process when attribute
 		// Read as is. Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
-
+		// Process translate attribute
+		// Read as is. Do not translate
+		// Need to be able to write out the empty string
+		Attr translateAttribute = element.getAttributeNode(ATTRIBUTE_TRANSLATE);
+		if (translateAttribute == null) {
+			fTranslate = null;
+		} else {
+			fTranslate = translateAttribute.getValue();
+		}
 		// Process attributes:  param1, param2, ..., param9
 		for (int i = 0; i < F_MAX_PARAMS; i++) {
 			int adjustedIndex = i + 1;
@@ -194,6 +208,12 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
+			// Print translate attribute
+			if (fTranslate != null) {
+				// Write as is.  Do not translate				
+				buffer.append(XMLPrintHandler.wrapAttribute(
+						ATTRIBUTE_TRANSLATE, fTranslate));
+			}			
 			// Print attributes:  param1, param2, ..., param9
 			for (int i = 0; i < F_MAX_PARAMS; i++) {
 				int adjustedIndex = i + 1;
@@ -230,6 +250,7 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 		fConfirm = false;
 		fWhen = null;
 		fParams = new ArrayList(F_MAX_PARAMS);
+		fTranslate = null;
 	}
 
 	/* (non-Javadoc)
@@ -247,6 +268,13 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
+	 */
+	public String getTranslate() {
+		return fTranslate;
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
@@ -256,6 +284,17 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 			firePropertyChanged(ATTRIBUTE_WHEN, old, fWhen);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
+	 */
+	public void setTranslate(String translate) {
+		String old = fTranslate;
+		fTranslate = translate;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_TRANSLATE, old, fTranslate);
+		}		
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()

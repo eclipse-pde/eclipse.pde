@@ -59,6 +59,8 @@ public interface ISimpleCSConstants extends ICSConstants{
 
 	public static final String ATTRIBUTE_WHEN = "when"; //$NON-NLS-1$	
 
+	public static final String ATTRIBUTE_TRANSLATE = "translate"; //$NON-NLS-1$	
+	
 	public static final String ATTRIBUTE_CONDITION = "condition"; //$NON-NLS-1$	
 	
 	public static final String ATTRIBUTE_VALUES = "values"; //$NON-NLS-1$	
