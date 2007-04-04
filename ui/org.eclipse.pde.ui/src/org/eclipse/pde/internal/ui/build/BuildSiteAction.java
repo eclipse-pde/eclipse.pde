@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,15 @@
  */
 package org.eclipse.pde.internal.ui.build;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
@@ -25,9 +29,13 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressConstants;
 
 public class BuildSiteAction implements IObjectActionDelegate {
@@ -35,7 +43,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	private ISiteModel fModel;
 
 	private IFile fSiteXML;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -57,6 +65,12 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		IFeatureModel[] models = getFeatureModels(sbFeatures);
 
 		if (models.length > 0) {
+			try {
+				ensureContentSaved();
+				fModel.load();
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
 			BuildSiteJob job = new BuildSiteJob(models, fModel);
 			job.setUser(true);
 			job.schedule();
@@ -70,8 +84,8 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		for (int i = 0; i < sFeatures.length; i++) {
 			ISiteFeature siteFeature = sFeatures[i];
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-					.findFeatureModelRelaxed(siteFeature.getId(),
-							siteFeature.getVersion());
+			.findFeatureModelRelaxed(siteFeature.getId(),
+					siteFeature.getVersion());
 			if (model != null)
 				list.add(model);
 		}
@@ -90,7 +104,30 @@ public class BuildSiteAction implements IObjectActionDelegate {
 					if(features.length <= 0 )
 						action.setEnabled(false);
 				} catch (CoreException e) {
-						action.setEnabled(false);
+					action.setEnabled(false);
+				}
+			}
+		}
+	}
+
+	private void ensureContentSaved() {
+		if(fModel != null && fModel.getUnderlyingResource() != null) {
+			IProject project = fModel.getUnderlyingResource().getProject();
+			final BuildEditor editor = 
+				PDEModelUtility.getOpenBuildPropertiesEditor(project);
+			if (editor.isDirty()) {
+				try {
+					IRunnableWithProgress op = new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) {
+							editor.doSave(monitor);
+						}
+					};
+					PlatformUI.getWorkbench().getProgressService().runInUI(
+							PDEPlugin.getActiveWorkbenchWindow(), op,
+							PDEPlugin.getWorkspace().getRoot());
+				} catch (InvocationTargetException e) {
+					PDEPlugin.logException(e);
+				} catch (InterruptedException e) {
 				}
 			}
 		}
