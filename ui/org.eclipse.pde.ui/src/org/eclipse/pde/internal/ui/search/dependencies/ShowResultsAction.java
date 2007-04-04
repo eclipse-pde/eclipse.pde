@@ -49,8 +49,8 @@ public class ShowResultsAction extends Action {
 			} else {
 				dialog = new UnusedImportsDialog(PDEPlugin
 						.getActiveWorkbenchShell(), fModel, fUnusedImports);
+				dialog.create();
 			}
-			dialog.create();
 			dialog.getShell().setText(
 				PDEUIMessages.UnusedDependencies_title); 
 			dialog.open();
@@ -77,6 +77,7 @@ public class ShowResultsAction extends Action {
 		});
 		dialog.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		dialog.setInput(this);
+		dialog.create();
 		dialog.getTableViewer().setComparator(new UnusedImportsDialog.Comparator());
 		return dialog;
 	}
