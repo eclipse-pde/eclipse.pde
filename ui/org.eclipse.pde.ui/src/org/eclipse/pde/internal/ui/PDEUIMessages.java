@@ -940,6 +940,8 @@ public class PDEUIMessages extends NLS {
 	public static String WorkspaceDataBlock_location;
 	public static String WorkspaceDataBlock_clear;
 	public static String WorkspaceDataBlock_askClear;
+	public static String WorkspaceDataBlock_clearLog;
+	public static String WorkspaceDataBlock_clearWorkspace;
 	public static String BasicLauncherTab_javaExec;
 	public static String ProgramBlock_runProduct;
 	public static String BasicLauncherTab_jre;

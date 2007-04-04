@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -29,6 +30,8 @@ public class WorkspaceDataBlock extends BaseBlock {
 
 	private Button fClearWorkspaceCheck;
 	private Button fAskClearCheck;
+	private Button fClearWorkspaceRadio;
+	private Button fClearWorkspaceLogRadio;
 	
 	public WorkspaceDataBlock(AbstractLauncherTab tab) {
 		super(tab);
@@ -45,7 +48,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		createText(group, PDEUIMessages.WorkspaceDataBlock_location, 0);
 		
 		Composite buttons = new Composite(group, SWT.NONE);
-		layout = new GridLayout(4, false);
+		layout = new GridLayout(7, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		buttons.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -54,10 +57,29 @@ public class WorkspaceDataBlock extends BaseBlock {
 		
 		fClearWorkspaceCheck = new Button(buttons, SWT.CHECK);
 		fClearWorkspaceCheck.setText(PDEUIMessages.WorkspaceDataBlock_clear);	
-		fClearWorkspaceCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fClearWorkspaceCheck.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		fClearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
+				fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+				fClearWorkspaceLogRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+				fTab.updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fClearWorkspaceRadio = new Button(buttons, SWT.RADIO);
+		fClearWorkspaceRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearWorkspace);	
+		fClearWorkspaceRadio.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		fClearWorkspaceRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fTab.updateLaunchConfigurationDialog();
+			}
+		});
+		fClearWorkspaceLogRadio = new Button(buttons, SWT.RADIO);
+		fClearWorkspaceLogRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearLog);	
+		fClearWorkspaceLogRadio.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fClearWorkspaceLogRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
@@ -78,6 +100,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		config.setAttribute(IPDELauncherConstants.LOCATION, getLocation());
 		config.setAttribute(IPDELauncherConstants.DOCLEAR, fClearWorkspaceCheck.getSelection());
 		config.setAttribute(IPDELauncherConstants.ASKCLEAR, fAskClearCheck.getSelection());
+		config.setAttribute(IPDEUIConstants.DOCLEARLOG, fClearWorkspaceLogRadio.getSelection());
 	}
 	
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
@@ -86,6 +109,10 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
 		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
+		fClearWorkspaceLogRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+		fClearWorkspaceLogRadio.setSelection(configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false));
+		fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
+		fClearWorkspaceRadio.setSelection(!configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false));
 	}
 		
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {		
@@ -98,6 +125,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		}
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit);
+		configuration.setAttribute(IPDEUIConstants.DOCLEARLOG, false);
 	}
 
 	protected String getName() {

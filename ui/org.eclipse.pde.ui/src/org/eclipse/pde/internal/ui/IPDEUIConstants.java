@@ -50,4 +50,13 @@ public interface IPDEUIConstants {
 	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * whether the workspace log for an Eclipse application should be cleared
+	 * prior to launching.
+	 * 
+	 * TODO, move to IPDELauncherConstants in 3.4
+	 */
+	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$
+	
 }
