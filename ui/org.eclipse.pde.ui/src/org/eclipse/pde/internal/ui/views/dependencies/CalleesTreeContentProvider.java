@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -27,9 +26,6 @@ public class CalleesTreeContentProvider extends CalleesContentProvider
 		super(view);
 	}
 
-	/**
-	 * @see ITreeContentProvider#getChildren(Object)
-	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IPluginBase) {
 			parentElement = ((IPluginBase)parentElement).getModel();
