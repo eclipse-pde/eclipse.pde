@@ -13,8 +13,11 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -29,8 +32,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.runtime.logview.LogView;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
@@ -170,7 +176,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                             		errlog.handleImportPath(log.getAbsolutePath());
                             		errlog.sortByDateDescending();
                             	} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
-                            		openSystemEditor(log);
+                            		openInEditor(log);
                             	} 
                             }
                         } catch (CoreException e) {
@@ -181,21 +187,16 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
         }
     }
     
-    private void openSystemEditor(File log) {
-    	boolean canLaunch = false;
-    	if (log.length() <= MAX_FILE_LENGTH) {
-            canLaunch = Program.launch(log.getAbsolutePath());
-            if (!canLaunch) {
-                Program p = Program.findProgram(".txt"); //$NON-NLS-1$
-                if (p != null)
-                    canLaunch = p.execute(log.getAbsolutePath());
-            }
-    	}
-    	if (!canLaunch) {
-	        OpenLogDialog dialog = new OpenLogDialog(PDEPlugin.getActiveWorkbenchShell(), log);
-	        dialog.create();
-	        dialog.open();
-    	}
+    private void openInEditor(File log) {  	
+		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(log.getAbsolutePath()));
+		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+			IWorkbenchPage page = ww.getActivePage();
+			try {
+				IDE.openEditorOnFileStore(page, fileStore);
+			} catch (PartInitException e) {
+			}
+		}
     }
 
     private File getMostRecentLogFile(ILaunch launch) throws CoreException {
