@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.site.SiteEditor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -129,7 +130,16 @@ public class PDEModelUtility {
 	 * @return null if no BuildEditor is open for this project
 	 */
 	public static BuildEditor getOpenBuildPropertiesEditor(IProject project) {
-		return (BuildEditor)getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
+		return (BuildEditor) getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
+	}
+	
+	/**
+	 * Returns an open SiteEditor that is associated with this project.
+	 * @param project
+	 * @return null if no SiteEditor is open for this project
+	 */
+	public static SiteEditor getOpenUpdateSiteEditor(IProject project) {
+		return (SiteEditor) getOpenEditor(project, IPDEUIConstants.SITE_EDITOR_ID);
 	}
 	
 	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {

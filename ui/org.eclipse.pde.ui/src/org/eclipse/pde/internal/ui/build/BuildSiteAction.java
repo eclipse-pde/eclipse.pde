@@ -31,7 +31,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
+import org.eclipse.pde.internal.ui.editor.site.SiteEditor;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -113,9 +113,9 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	private void ensureContentSaved() {
 		if(fModel != null && fModel.getUnderlyingResource() != null) {
 			IProject project = fModel.getUnderlyingResource().getProject();
-			final BuildEditor editor = 
-				PDEModelUtility.getOpenBuildPropertiesEditor(project);
-			if (editor.isDirty()) {
+			final SiteEditor editor = 
+				PDEModelUtility.getOpenUpdateSiteEditor(project);
+			if (editor != null && editor.isDirty()) {
 				try {
 					IRunnableWithProgress op = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) {
