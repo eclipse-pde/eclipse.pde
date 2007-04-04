@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class CallersListContentProvider extends CallersContentProvider
@@ -30,22 +30,26 @@ public class CallersListContentProvider extends CallersContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 		// input IPluginModelBase
+		BundleDescription desc = null;
 		if (inputElement instanceof IPluginModelBase) {
-			IPluginBase pluginBase = ((IPluginModelBase) inputElement)
-					.getPluginBase();
-
+			desc = ((IPluginModelBase) inputElement)
+					.getBundleDescription();
+		} else if (inputElement instanceof BundleDescription) {
+			desc = (BundleDescription)inputElement;
+		}
+		if (desc != null) {
 			Set callers = new HashSet();
 			Set candidates = new HashSet();
-			candidates.addAll(findReferences(pluginBase.getId()));
+			candidates.addAll(findReferences(desc));
 			while (!candidates.isEmpty()) {
 				Set newCandidates = new HashSet();
 				for (Iterator it = candidates.iterator(); it.hasNext();) {
 					Object o = it.next();
 					it.remove();
-					IPluginBase caller = (IPluginBase) o;
+					BundleDescription caller = (BundleDescription) o;
 					if (!callers.contains(caller)) {
 						callers.add(caller);
-						newCandidates.addAll(findReferences(caller.getId()));
+						newCandidates.addAll(findReferences(caller));
 					}
 				}
 				candidates = newCandidates;

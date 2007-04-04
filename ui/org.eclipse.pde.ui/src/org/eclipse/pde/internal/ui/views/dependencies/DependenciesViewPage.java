@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -34,7 +36,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.plugin.PluginReference;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -130,32 +131,37 @@ public abstract class DependenciesViewPage extends Page {
 		Object selectionElement = selection.getFirstElement();
 
 		manager.add(new Separator());
-		if (selection.size() == 1) {
-			// Compute dep extent
-			// manager.add(new Separator());
-			// PluginSearchActionGroup actionGroup = new
-			// PluginSearchActionGroup();
-			// actionGroup.setContext(new ActionContext(selection));
-			// actionGroup.fillContextMenu(manager);
-			Object importObj = selectionElement;
-			if (importObj instanceof IPluginImport) {
-				String id = ((IPluginImport) importObj).getId();
-				IResource resource = ((IPluginImport) importObj).getModel()
-						.getUnderlyingResource();
-				if (resource != null) {
-					manager.add(new DependencyExtentAction(resource
-							.getProject(), id));
+		// only show Find Dependency Extent when in Callees view
+		if (selection.size() == 1 && fViewer.getContentProvider() instanceof CalleesContentProvider) {
+			String id = null;
+			if (selectionElement instanceof BundleSpecification) {
+				id = ((BundleSpecification)selectionElement).getName();
+			} else if (selectionElement instanceof BundleDescription) {
+				id = ((BundleDescription)selectionElement).getSymbolicName();
+			}
+			// don't include find dependency extent for unresolved imports or bundles
+			if (id != null && PluginRegistry.findModel(id) != null) {
+				Object input = fViewer.getInput();
+				if (input instanceof IPluginBase)
+					input = ((IPluginBase)input).getModel();
+				if (input instanceof IPluginModelBase) {
+					IPluginModelBase base = (IPluginModelBase)input;
+					IResource res = (base == null) ? null : base.getUnderlyingResource();
+					if (res != null)
+						manager.add(new DependencyExtentAction(res
+								.getProject(), id));
 				}
 			}
-
 		}
 		// Unused Dependencies Action, only for worskpace plug-ins
 		ISharedPluginModel model = null;
-		if (selectionElement instanceof PluginReference) {
-			selectionElement = ((PluginReference) selectionElement).getPlugin();
-		}
-		if (selectionElement instanceof IPluginObject) {
-			model = ((IPluginObject) selectionElement).getModel();
+		if (selectionElement instanceof BundleSpecification) {
+			model = PluginRegistry.findModel(((BundleSpecification)selectionElement).getName());
+		} else if (selectionElement instanceof BundleDescription) {
+			model = PluginRegistry.findModel((BundleDescription)selectionElement);
+		} else if (selectionElement instanceof IPluginBase) {
+			// root
+			model = ((IPluginBase)selectionElement).getModel();
 		}
 		if (model != null && model.getUnderlyingResource() != null) {
 			manager.add(new UnusedDependenciesAction(
@@ -165,7 +171,7 @@ public abstract class DependenciesViewPage extends Page {
 			manager.add(new Separator());
 			manager.add(fRefactorAction);
 		}
-		//
+
 		manager.add(new Separator());
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -204,11 +210,18 @@ public abstract class DependenciesViewPage extends Page {
 
 	private void handleDoubleClick() {
 		Object obj = getSelectedObject();
-		if (obj instanceof IPluginImport) {
-			ManifestEditor.openPluginEditor(((IPluginImport) obj).getId());
-		} else {
-			ManifestEditor.open(obj, false);
+		BundleDescription desc = null;
+		if (obj instanceof BundleSpecification) {
+			desc = (BundleDescription)((BundleSpecification)obj).getSupplier();
+		} else if (obj instanceof BundleDescription) {
+			desc = (BundleDescription)obj;
+			
+		} else if (obj instanceof IPluginBase) {
+			// root object
+			desc = ((IPluginModelBase)((IPluginBase)obj).getModel()).getBundleDescription();
 		}
+		if (desc != null)
+			ManifestEditor.openPluginEditor(desc.getSymbolicName());
 	}
 
 	private void handleFocusOn() {
@@ -237,6 +250,17 @@ public abstract class DependenciesViewPage extends Page {
 				fView.openTo(null);
 			}
 		}
+		BundleDescription desc = null;
+		if (newFocus instanceof BundleSpecification) {
+			desc = (BundleDescription)((BundleSpecification)newFocus).getSupplier();
+			if (desc == null)
+				fView.openTo(null);
+		}
+		if (newFocus instanceof BundleDescription) {
+			desc = (BundleDescription)newFocus;
+		}
+		if (desc != null)
+			fView.openTo(PluginRegistry.findModel(desc.getSymbolicName()));
 	}
 
 	private void hookContextMenu() {
@@ -326,6 +350,12 @@ public abstract class DependenciesViewPage extends Page {
 				base = PluginRegistry.findModel(id);
 			} else if (selectionElement instanceof IPluginObject) {
 				base = (IPluginModelBase)((IPluginObject) selectionElement).getModel();
+			} else if (selectionElement instanceof BundleSpecification) {
+				BundleDescription desc = (BundleDescription)((BundleSpecification)selectionElement).getSupplier();
+				if (desc != null)
+					base = PluginRegistry.findModel(desc);
+			} else if (selectionElement instanceof BundleDescription) {
+				base = PluginRegistry.findModel((BundleDescription)selectionElement);
 			}
 			if (base != null && base.getUnderlyingResource() != null) {
 				fRefactorAction.setPlugin(base);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,15 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
@@ -34,31 +34,34 @@ public class CalleesListContentProvider extends CalleesContentProvider
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		// input either IPluginModelBase or ImportObject
 		if (inputElement instanceof IPluginModelBase) {
-			IPluginBase pluginBase = ((IPluginModelBase) inputElement)
-					.getPluginBase();
-			Map elements = new Hashtable();
+			BundleDescription baseDesc = ((IPluginModelBase)inputElement).getBundleDescription();
+			Map elements = new HashMap();
 			Set candidates = new HashSet();
-			candidates.addAll(Arrays.asList(findCallees(pluginBase)));
-
+			candidates.addAll(Arrays.asList(findCallees(baseDesc)));
+			
 			while (!candidates.isEmpty()) {
 				Set newCandidates = new HashSet();
 				for (Iterator it = candidates.iterator(); it.hasNext();) {
 					Object candidate = it.next();
-					String id;
-					if(candidate instanceof IPluginImport){
-						id = ((IPluginImport)candidate).getId();
-					}else /*if (candidate instanceof IPluginBase)*/{
-						id = ((IPluginBase)candidate).getId();
+					BundleDescription desc = null;
+					if(candidate instanceof BundleSpecification){
+						desc = (BundleDescription)((BundleSpecification)candidate).getSupplier();
+						// include unresolved require-bundles
+						if (desc == null)
+							elements.put(((BundleSpecification)candidate).getName(), candidate);
+					} else if (candidate instanceof BundleDescription) {
+						desc = (BundleDescription)candidate;
 					}
-					IPluginModelBase callee = PluginRegistry.findModel(id);
 					it.remove();
-					if (!elements.containsKey(id)) {
-						elements.put(id, candidate);
+					if (desc == null)
+						continue;
+					IPluginModelBase callee = PluginRegistry.findModel(desc.getSymbolicName());
+					if (!elements.containsKey(desc.getSymbolicName())) {
+						elements.put(desc.getSymbolicName(), candidate);
 						if (callee != null) {
 							newCandidates.addAll(Arrays
-									.asList(findCallees(callee.getPluginBase())));
+									.asList(findCallees(desc)));
 						}
 					}
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -52,6 +55,11 @@ public class DependenciesLabelProvider extends LabelProvider {
 			return ((IPluginModelBase) obj).getPluginBase(false).getId();
 		} else if (obj instanceof IPluginBase) {
 			return ((IPluginBase) obj).getId();
+		} else  if (obj instanceof BundleDescription) {
+			return ((BundleDescription)obj).getSymbolicName();
+		} else if (obj instanceof VersionConstraint) {
+			// ImportPackageSpecification, BundleSpecification
+			return ((VersionConstraint)obj).getName();
 		}
 
 		return fSharedProvider.getText(obj);
@@ -93,6 +101,27 @@ public class DependenciesLabelProvider extends LabelProvider {
 			if (((IPluginBase) obj).getPluginModel().getUnderlyingResource() == null)
 				flags |= SharedLabelProvider.F_EXTERNAL;
 			if(obj instanceof IFragment)
+				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+		}
+		if (obj instanceof BundleDescription) {
+			id = ((BundleDescription)obj).getSymbolicName();
+		} else if (obj instanceof VersionConstraint) {
+			id = ((VersionConstraint)obj).getName();
+			if (obj instanceof BundleSpecification && fShowReexport) {
+				if (((BundleSpecification)obj).isExported())
+					flags |= SharedLabelProvider.F_EXPORT;
+			}
+		} 
+		if (id != null) {
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			if (model != null) {
+				if (model.getUnderlyingResource() == null)
+					flags |= SharedLabelProvider.F_EXTERNAL;
+			}
+			if (model == null)
+				flags = SharedLabelProvider.F_ERROR;
+			if(model != null && model instanceof IFragmentModel)
 				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}

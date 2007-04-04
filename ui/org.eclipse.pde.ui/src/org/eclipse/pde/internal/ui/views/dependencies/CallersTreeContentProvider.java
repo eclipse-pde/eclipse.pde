@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
-import java.util.Set;
-
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class CallersTreeContentProvider extends CallersContentProvider
@@ -33,22 +31,16 @@ public class CallersTreeContentProvider extends CallersContentProvider
 	 *      IPluginBase
 	 */
 	public Object[] getChildren(Object parentElement) {
-		String id = null;
-		if (parentElement instanceof IPluginModelBase) {
-			IPluginBase pluginBase = ((IPluginModelBase) parentElement)
-					.getPluginBase(false);
-			if (pluginBase != null)
-				id = pluginBase.getId();
-		} else if (parentElement instanceof IPlugin) {
-			id = ((IPlugin) parentElement).getId();
-		} else if (parentElement instanceof IPluginImport) {
-			id = ((IPluginImport) parentElement).getId();
+		if (parentElement instanceof IPluginBase) {
+			parentElement = ((IPluginBase)parentElement).getModel();
 		}
-		if (id == null) {
-			return new Object[0];
+		if (parentElement instanceof IPluginModelBase ) {
+			parentElement = ((IPluginModelBase)parentElement).getBundleDescription();
 		}
-		Set l = findReferences(id);
-		return l.toArray();
+		if (parentElement instanceof BundleDescription) {
+			return findReferences((BundleDescription)parentElement).toArray();
+		}
+		return new Object[0];
 	}
 
 	/**
