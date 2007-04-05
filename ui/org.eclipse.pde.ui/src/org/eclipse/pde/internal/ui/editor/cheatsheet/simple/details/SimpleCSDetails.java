@@ -39,16 +39,28 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	private Section fMainSection;
 	
 	/**
-	 * 
+	 * @param section
 	 */
-	public SimpleCSDetails(ISimpleCS cheatsheet, ICSMaster section) {
+	public SimpleCSDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
-		fCheatSheet = cheatsheet;
+		fCheatSheet = null;
 		
 		fTitle = null;
 		fMainSection = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCS) == false) {
+			return;
+		}
+		// Set data
+		fCheatSheet = (ISimpleCS)object;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -90,6 +102,10 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Attribute: title
 		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fCheatSheet == null) {
+					return;
+				}
 				fCheatSheet.setTitle(fTitle.getValue());
 			}
 		});		
@@ -99,7 +115,11 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-
+		// Ensure data object is defined
+		if (fCheatSheet == null) {
+			return;
+		}
+		
 		boolean editable = isEditableElement();
 		// Attribute: title
 		fTitle.setValue(fCheatSheet.getTitle(), true);
@@ -115,5 +135,5 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fTitle.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
-	
+
 }

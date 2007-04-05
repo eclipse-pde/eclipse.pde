@@ -57,13 +57,13 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	private ICSDetails fCommandSection;
 
 	private ControlDecoration fSkipInfoDecoration;
-	
+
 	/**
-	 * 
+	 * @param section
 	 */
-	public SimpleCSItemDetails(ISimpleCSItem item, ICSMaster section) {
+	public SimpleCSItemDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
-		fItem = item;
+		fItem = null;
 		
 		fTitle = null;
 		fSkip = null;
@@ -71,10 +71,26 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fContent = null;
 		fMainSection = null;
 		
-		fHelpSection = new SimpleCSHelpDetails(fItem, section);
-		fCommandSection = new SimpleCSCommandDetails(fItem, section);
+		fHelpSection = new SimpleCSHelpDetails(section);
+		fCommandSection = new SimpleCSCommandDetails(section);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCSItem) == false) {
+			return;
+		}
+		// Set data
+		fItem = (ISimpleCSItem)object;
+		// Update help details
+		fHelpSection.setData(object);
+		// Update command details
+		fCommandSection.setData(object);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -175,6 +191,11 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// description: Content (Element)
 		fContent.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fItem == null) {
+					return;
+				}
+				
 				if (fItem.getDescription() != null) {
 					fItem.getDescription().setContent(fContent.getValue());
 				}
@@ -183,12 +204,20 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// Attribute: title
 		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fItem == null) {
+					return;
+				}
 				fItem.setTitle(fTitle.getValue());
 			}
 		});
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fItem == null) {
+					return;
+				}
 				fItem.setSkip(fSkip.getSelection());
 				getMasterSection().updateButtons();
 			}
@@ -205,7 +234,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
-		
+		// Ensure data object is defined
 		if (fItem == null) {
 			return;
 		}
@@ -244,7 +273,10 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	 * 
 	 */
 	private void updateSkipEnablement() {
-
+		// Ensure data object is defined
+		if (fItem == null) {
+			return;
+		}
 		boolean editable = isEditableElement();
 		// Preserve cheat sheet validity
 		// Semantic Rule:  Specifying whether an item can be skipped or not has

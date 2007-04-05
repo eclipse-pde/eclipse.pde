@@ -45,15 +45,29 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	/**
 	 * @param elementSection
 	 */
-	public SimpleCSIntroDetails(ISimpleCSIntro intro, ICSMaster elementSection) {
+	public SimpleCSIntroDetails(ICSMaster elementSection) {
 		super(elementSection, SimpleCSInputContext.CONTEXT_ID);
-		fIntro = intro;
+		fIntro = null;
 		
 		fContent = null;
 		fMainSection = null;
-		fHelpSection = new SimpleCSHelpDetails(fIntro, elementSection);
+		fHelpSection = new SimpleCSHelpDetails(elementSection);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCSIntro) == false) {
+			return;
+		}
+		// Set data
+		fIntro = (ISimpleCSIntro)object;
+		// Update help details
+		fHelpSection.setData(object);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -116,6 +130,11 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		// description: Content (Element)
 		fContent.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fIntro == null) {
+					return;
+				}
+
 				if (fIntro.getDescription() != null) {
 					fIntro.getDescription().setContent(fContent.getValue());
 				}
@@ -129,7 +148,11 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-
+		// Ensure data object is defined
+		if (fIntro == null) {
+			return;
+		}
+		
 		fHelpSection.updateFields();
 		
 		boolean editable = isEditableElement();
@@ -153,6 +176,5 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fContent.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
-	
 	
 }

@@ -33,5 +33,9 @@ public interface ICSDetails {
 	 * 
 	 */
 	public void hookListeners();
-
+	
+	/**
+	 * @param object
+	 */
+	public void setData(Object object);
 }

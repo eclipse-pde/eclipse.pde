@@ -70,6 +70,10 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	 */
 	public abstract void hookListeners();
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#setData(java.lang.Object)
+	 */
+	public abstract void setData(Object object);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)

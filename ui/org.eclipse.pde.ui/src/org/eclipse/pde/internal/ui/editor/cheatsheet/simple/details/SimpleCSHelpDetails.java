@@ -57,13 +57,11 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	private static final String F_HELP_DOCUMENT_LINK = PDEUIMessages.SimpleCSHelpDetails_HelpDocumentLink;
 	
 	/**
-	 * @param helpObject
-	 * @param details
+	 * @param section
 	 */
-	public SimpleCSHelpDetails(ISimpleCSHelpObject helpObject,
-			ICSMaster section) {
+	public SimpleCSHelpDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
-		fHelpObject = helpObject;
+		fHelpObject = null;
 		
 		fHelpText = null;
 		fHelpCombo = null;
@@ -71,7 +69,19 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		
 		fHelpSection = null;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCSHelpObject) == false) {
+			return;
+		}
+		// Set data
+		fHelpObject = (ISimpleCSHelpObject)object;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -142,6 +152,10 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Attribute: contextId		
 		fHelpCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fHelpObject == null) {
+					return;
+				}	
 				String selection = fHelpCombo.getSelection();
 				if (selection.equals(F_NO_HELP) ==  false) {
 					// Help was selected
@@ -177,6 +191,10 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Attribute: contextId		
 		fHelpText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				// Ensure data object is defined
+				if (fHelpObject == null) {
+					return;
+				}	
 				String selection = fHelpCombo.getSelection();
 				if (selection.equals(F_HELP_CONTEXT_ID)) {
 					// Help context ID was selected, save the field contents
@@ -196,7 +214,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#updateFields()
 	 */
 	public void updateFields() {
-
+		// Ensure data object is defined
 		if (fHelpObject == null) {
 			return;
 		}			

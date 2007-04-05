@@ -54,9 +54,9 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	/**
 	 * @param elementSection
 	 */
-	public SimpleCSSubItemDetails(ISimpleCSSubItem subItem, ICSMaster masterTreeSection) {
+	public SimpleCSSubItemDetails(ICSMaster masterTreeSection) {
 		super(masterTreeSection, SimpleCSInputContext.CONTEXT_ID);
-		fSubItem = subItem;
+		fSubItem = null;
 
 		fLabel = null;
 		fSkip = null;
@@ -64,10 +64,23 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// conditional-subitem
 		//fWhen = null;
 		fMainSection = null;
-		fCommandSection = new SimpleCSCommandDetails(fSubItem, 
-				masterTreeSection);		
+		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCSSubItem) == false) {
+			return;
+		}
+		// Set data
+		fSubItem = (ISimpleCSSubItem)object;
+		// Update command details
+		fCommandSection.setData(object);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -131,7 +144,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Not supporting when at this moment; since, we are not supporting
 		// conditional-subitem
 		//fWhen = new FormEntry(optionalSectionClient, toolkit, PDEUIMessages.SimpleCSSubItemDetails_2, SWT.NONE);
-		// TODO: MP: SimpleCS: Get rid of all commented code
+		// TODO: MP: SimpleCS: WHEN: Get rid of all commented code
 		
 	}
 	
@@ -142,13 +155,19 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Attribute: label
 		fLabel.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				// TODO: MP: Can when ever be null?
+				// Ensure data object is defined
+				if (fSubItem == null) {
+					return;
+				}
 				fSubItem.setLabel(fLabel.getValue());
 			}
 		});	
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (fSubItem == null) {
+					return;
+				}
 				fSubItem.setSkip(fSkip.getSelection());
 			}
 		});
@@ -170,7 +189,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
-		
+		// Ensure data object is defined
 		if (fSubItem == null) {
 			return;
 		}
@@ -200,5 +219,5 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fLabel.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
-	
+
 }

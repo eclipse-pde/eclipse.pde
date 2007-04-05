@@ -73,18 +73,30 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	private static final String F_NO_COMMAND = PDEUIMessages.SimpleCSCommandDetails_6;
 	
 	/**
-	 * 
+	 * @param section
 	 */
-	public SimpleCSCommandDetails(ISimpleCSRun run, ICSMaster section) {
+	public SimpleCSCommandDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
-		fRun = run;
+		fRun = null;
 
 		fCommandTable = null;
 		fCommandCombo = null;
 		fCommandInfoDecoration = null;
 		fCommandBrowse = null;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	 */
+	public void setData(Object object) {
+		// Ensure we have the right type
+		if ((object instanceof ISimpleCSRun) == false) {
+			return;
+		}
+		// Set data
+		fRun = (ISimpleCSRun)object;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -179,6 +191,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Element: command
 		fCommandCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fRun == null) {
+					return;
+				}
 				String selection = fCommandCombo.getSelection();
 				if (selection.equals(F_NO_COMMAND) ==  false) {
 					// Get the associated serialization stored as data against the 
@@ -208,6 +224,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		
 		fCommandBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fRun == null) {
+					return;
+				}				
 				// Open the command composer dialog using the input from the
 				// currently selected command
 				CommandComposerDialog dialog = new CommandComposerDialog(
@@ -231,11 +251,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#updateFields()
 	 */
 	public void updateFields() {
-		
+		// Ensure data object is defined
 		if (fRun == null) {
 			return;
 		}
-		
 		// i.e. Action: class
 		updateCommandCombo(getParameterizedCommand(fRun), false);
 		updateCommandEnablement();
@@ -245,7 +264,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 * 
 	 */
 	private void updateCommandEnablement() {
-		
+		// Ensure data object is defined
+		if (fRun == null) {
+			return;
+		}
 		boolean editable = isEditableElement();
 		
 		if (fRun.getType() == ISimpleCSConstants.TYPE_ITEM) {
@@ -271,6 +293,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 * @param serialization
 	 */
 	private void createCommandInModel(String serialization) {
+		// Ensure data object is defined
+		if (fRun == null) {
+			return;
+		}
 		ISimpleCSCommand command = 
 			fRun.getModel().getFactory().createSimpleCSCommand(fRun);
 		command.setSerialization(serialization);
@@ -378,7 +404,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 * @param parameters
 	 */
 	private void updateCommandTable(Map parameters) {
-		// TODO: MP: LOW: Update table to resize to exact number of rows
 		// Clear the table contents
 		fCommandTable.clearAll();
 		

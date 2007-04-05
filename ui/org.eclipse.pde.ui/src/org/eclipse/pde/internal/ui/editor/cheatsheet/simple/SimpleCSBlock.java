@@ -41,7 +41,13 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 
 	private SimpleCSMasterTreeSection fMasterSection;
 
-	private IDetailsPage fCurrentDetailsSection;
+	private SimpleCSItemDetails fItemDetails;
+	
+	private SimpleCSSubItemDetails fSubItemDetails;
+	
+	private SimpleCSDetails fCheatSheetDetails;
+	
+	private SimpleCSIntroDetails fIntroDetails;
 	
 	/**
 	 * @param page
@@ -63,8 +69,21 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
-		// TODO: MP: HIGH: SimpleCS: Set limit to 4 and add update methods accordingly to reuse the section
+		// Only static pages to be defined.  Do not cache pages
 		detailsPart.setPageLimit(0); 
+		// Register static page:  item
+		fItemDetails = new SimpleCSItemDetails(fMasterSection);
+		detailsPart.registerPage(SimpleCSItemDetails.class, fItemDetails);		
+		// Register static page:  subitem
+		fSubItemDetails = new SimpleCSSubItemDetails(fMasterSection);
+		detailsPart.registerPage(SimpleCSSubItemDetails.class, fSubItemDetails);		
+		// Register static page:  cheatsheet
+		fCheatSheetDetails = new SimpleCSDetails(fMasterSection);
+		detailsPart.registerPage(SimpleCSDetails.class, fCheatSheetDetails);		
+		// Register static page:  intro
+		fIntroDetails = new SimpleCSIntroDetails(fMasterSection);
+		detailsPart.registerPage(SimpleCSIntroDetails.class, fIntroDetails);		
+		// Set this class as the page provider
 		detailsPart.setPageProvider(this);
 	}
 
@@ -74,22 +93,20 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	public IDetailsPage getPage(Object key) {
 
 		if (key instanceof ISimpleCSItem) {
-			fCurrentDetailsSection = new SimpleCSItemDetails(
-					(ISimpleCSItem) key, fMasterSection);
+			fItemDetails.setData(key);
+			return fItemDetails;
 		} else if (key instanceof ISimpleCSSubItem) {
-			fCurrentDetailsSection = new SimpleCSSubItemDetails(
-					(ISimpleCSSubItem) key, fMasterSection);
+			fSubItemDetails.setData(key);
+			return fSubItemDetails;
 		} else if (key instanceof ISimpleCS) {
-			fCurrentDetailsSection = new SimpleCSDetails((ISimpleCS) key,
-					fMasterSection);
+			fCheatSheetDetails.setData(key);
+			return fCheatSheetDetails;
 		} else if (key instanceof ISimpleCSIntro) {
-			fCurrentDetailsSection = new SimpleCSIntroDetails(
-					(ISimpleCSIntro) key, fMasterSection);
+			fIntroDetails.setData(key);
+			return fIntroDetails;
 		} else {
-			fCurrentDetailsSection = null;
+			return null;
 		}
-		
-		return fCurrentDetailsSection;
 	}
 
 	/* (non-Javadoc)
