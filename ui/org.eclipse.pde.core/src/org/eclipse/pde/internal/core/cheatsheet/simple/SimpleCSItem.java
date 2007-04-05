@@ -246,8 +246,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		fTitle = element.getAttribute(ATTRIBUTE_TITLE).trim();
 		// Process dialog attribute
 		if (element.getAttribute(ATTRIBUTE_DIALOG).compareTo(
-				ATTRIBUTE_VALUE_TRUE) == 0) {
-			fDialog = true;
+				ATTRIBUTE_VALUE_FALSE) == 0) {
+			fDialog = false;
 		}
 		// Process skip attribute
 		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(
@@ -379,7 +379,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		fOnCompletion = null;
 		fExecutable = null;
 		fSkip = false;
-		fDialog = false;
+		fDialog = true;
 		fDescription = null;
 		fTitle = null;
 		fContextId = null;

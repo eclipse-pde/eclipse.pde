@@ -46,8 +46,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	
 	private FormEntry fTitle;
 	
-	private Button fDialog;
-	
 	private Button fSkip;	
 	
 	private FormEntry fContent;
@@ -68,7 +66,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fItem = item;
 		
 		fTitle = null;
-		fDialog = null;
 		fSkip = null;
 		fSkipInfoDecoration = null;
 		fContent = null;
@@ -138,14 +135,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
 		fContent.getLabel().setLayoutData(data);
 
-		// Attribute: dialog
-		fDialog = getToolkit().createButton(mainSectionClient, PDEUIMessages.SimpleCSItemDetails_13, SWT.CHECK);
-														
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		fDialog.setLayoutData(data);
-		fDialog.setForeground(foreground);
-		
 		// Attribute: skip
 		fSkip = getToolkit().createButton(mainSectionClient, PDEUIMessages.SimpleCSItemDetails_14, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -197,12 +186,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 				fItem.setTitle(fTitle.getValue());
 			}
 		});
-		// Attribute: dialog
-		fDialog.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fItem.setDialog(fDialog.getSelection());
-			}
-		});	
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -233,10 +216,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		}
 		fTitle.setEditable(editable);
 
-		// Attribute: dialog
-		fDialog.setSelection(fItem.getDialog());
-		fDialog.setEnabled(editable);
-		
 		// Attribute: skip
 		fSkip.setSelection(fItem.getSkip());
 		updateSkipEnablement();

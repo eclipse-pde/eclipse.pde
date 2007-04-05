@@ -551,8 +551,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSItemDetails_12;
 
-	public static String SimpleCSItemDetails_13;
-
 	public static String SimpleCSItemDetails_14;
 
 	public static String SimpleCSItemDetails_5;
