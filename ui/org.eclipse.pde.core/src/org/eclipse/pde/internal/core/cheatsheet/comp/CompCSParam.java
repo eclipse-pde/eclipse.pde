@@ -122,7 +122,7 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_VALUE, 
 					PDETextHelper.translateWriteText(
-							fFieldValue.trim(), SUBSTITUTE_CHARS)));
+							fFieldValue.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}
 	}
 

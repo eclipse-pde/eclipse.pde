@@ -138,7 +138,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_NAME, 
 					PDETextHelper.translateWriteText(
-							fFieldName.trim(), SUBSTITUTE_CHARS)));
+							fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}		
 	}
 

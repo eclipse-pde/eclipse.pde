@@ -41,22 +41,29 @@ public abstract class CompCSObject extends PlatformObject implements
 	
 	private transient ICompCSObject fParent;	
 
-	protected static final HashSet TAG_EXCEPTIONS = new HashSet(3);
+	protected static final HashSet DEFAULT_TAG_EXCEPTIONS = new HashSet(12);
 	
-	protected static final HashMap SUBSTITUTE_CHARS = new HashMap(5);
+	protected static final HashMap DEFAULT_SUBSTITUTE_CHARS = new HashMap(5);
 	
 	static {
-		// TODO: MP: LOW: CompCS: Update with supported tags of formtext
-		// TODO: MP: LOW: CompCS: Update PDETextHelper to support attributes with tag exceptions
-		TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
-		TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
-		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("p"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("/p"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("li"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("/li"); //$NON-NLS-1$		
+		DEFAULT_TAG_EXCEPTIONS.add("a"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("/a"); //$NON-NLS-1$	
+		DEFAULT_TAG_EXCEPTIONS.add("span"); //$NON-NLS-1$
+		DEFAULT_TAG_EXCEPTIONS.add("/span"); //$NON-NLS-1$			
+		DEFAULT_TAG_EXCEPTIONS.add("img"); //$NON-NLS-1$	
 		
-		SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
+		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
 	}	
 	
 	/**

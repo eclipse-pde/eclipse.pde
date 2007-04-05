@@ -108,7 +108,7 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_TASK, 
 					PDETextHelper.translateWriteText(
-							fFieldTask.trim(), SUBSTITUTE_CHARS)));
+							fFieldTask.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}	
 	}
 

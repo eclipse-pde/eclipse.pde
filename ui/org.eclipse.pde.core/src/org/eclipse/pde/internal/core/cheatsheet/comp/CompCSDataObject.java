@@ -123,7 +123,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 			// Preserve tag exceptions
 			writer.write(newIndent
 					+ PDETextHelper.translateWriteText(fFieldContent.trim(),
-							TAG_EXCEPTIONS, SUBSTITUTE_CHARS) + "\n"); //$NON-NLS-1$
+							DEFAULT_TAG_EXCEPTIONS, DEFAULT_SUBSTITUTE_CHARS) + "\n"); //$NON-NLS-1$
 		}
 	}
 

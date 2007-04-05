@@ -262,7 +262,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_ID, 
 					PDETextHelper.translateWriteText(
-							fFieldId.trim(), SUBSTITUTE_CHARS)));
+							fFieldId.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}		
 		// Print kind attribute
 		if ((fFieldKind != null) && 
@@ -280,7 +280,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_NAME, 
 					PDETextHelper.translateWriteText(
-							fFieldName.trim(), SUBSTITUTE_CHARS)));
+							fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}		
 		// Print skip attribute
 		buffer.append(XMLPrintHandler.wrapAttribute(
