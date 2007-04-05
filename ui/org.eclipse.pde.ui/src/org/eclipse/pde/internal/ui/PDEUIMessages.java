@@ -53,6 +53,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String CSAbstractPage_msgRegisterThisCheatSheet;
 
+	public static String DependenciesViewPage_showFragments;
+
+	public static String DependenciesViewPage_showOptional;
+
 	public static String DependencyPropertiesDialog_exportGroupText;
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
