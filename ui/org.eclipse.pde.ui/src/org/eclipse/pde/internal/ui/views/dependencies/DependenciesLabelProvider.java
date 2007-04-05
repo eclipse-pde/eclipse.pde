@@ -11,8 +11,11 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -25,6 +28,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Version;
 
 public class DependenciesLabelProvider extends LabelProvider {
 	private PDELabelProvider fSharedProvider;
@@ -54,15 +58,27 @@ public class DependenciesLabelProvider extends LabelProvider {
 		} else if (obj instanceof IPluginModelBase) {
 			return ((IPluginModelBase) obj).getPluginBase(false).getId();
 		} else if (obj instanceof IPluginBase) {
-			return ((IPluginBase) obj).getId();
+			return fSharedProvider.getObjectText((IPluginBase) obj);
 		} else  if (obj instanceof BundleDescription) {
-			return ((BundleDescription)obj).getSymbolicName();
+			return getObjectText((BundleDescription)obj);
 		} else if (obj instanceof VersionConstraint) {
 			// ImportPackageSpecification, BundleSpecification
+			BaseDescription desc = ((VersionConstraint)obj).getSupplier();
+			if (desc instanceof BundleDescription)
+				return getObjectText((BundleDescription)desc);
+			else if (desc instanceof ExportPackageDescription) 
+				return getObjectText(((ExportPackageDescription)desc).getExporter());
+			// if unresolved, just show name
 			return ((VersionConstraint)obj).getName();
 		}
 
 		return fSharedProvider.getText(obj);
+	}
+	
+	public String getObjectText(BundleDescription obj) {
+		String name = fSharedProvider.getObjectText(obj);
+		Version version = obj.getVersion();
+		return name + " (" + version.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public Image getImage(Object obj) {
@@ -106,13 +122,16 @@ public class DependenciesLabelProvider extends LabelProvider {
 		}
 		if (obj instanceof BundleDescription) {
 			id = ((BundleDescription)obj).getSymbolicName();
-		} else if (obj instanceof VersionConstraint) {
+		} else if (obj instanceof BundleSpecification) {
 			id = ((VersionConstraint)obj).getName();
-			if (obj instanceof BundleSpecification && fShowReexport) {
+			if (fShowReexport) {
 				if (((BundleSpecification)obj).isExported())
 					flags |= SharedLabelProvider.F_EXPORT;
 			}
-		} 
+		} else if (obj instanceof ImportPackageSpecification) {
+			BaseDescription export = ((ImportPackageSpecification)obj).getSupplier();
+			id = ((ExportPackageDescription)export).getExporter().getSymbolicName();
+		}
 		if (id != null) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
