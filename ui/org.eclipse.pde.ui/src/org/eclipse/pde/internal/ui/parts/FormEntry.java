@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -143,7 +144,7 @@ public class FormEntry {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
 			if (fLabel != null) {
-				gd.horizontalIndent = 3;
+				gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 			}
 			gd.grabExcessHorizontalSpace = (tspan == 1);
 			gd.widthHint = 10;
@@ -168,7 +169,7 @@ public class FormEntry {
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
 			if (fLabel != null) {
-				td.indent = 3;
+				td.indent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 			}			
 			td.grabHorizontal = (tspan == 1);
 			td.valign = TableWrapData.MIDDLE;

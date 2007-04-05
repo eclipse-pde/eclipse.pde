@@ -129,7 +129,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		data.heightHint = 90;
 		// Needed to align vertically with form entry field and allow space
 		// for a possible field decoration		
-		data.horizontalIndent = 3;
+		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		//data.horizontalSpan = 2;
 		fContent.getText().setLayoutData(data);	
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
@@ -164,7 +164,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		updateSkipInfoDecoration(false);
 		fSkipInfoDecoration.setImage( 
 			FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
+				FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}
 	
 	/* (non-Javadoc)
@@ -263,7 +263,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	 * @param show
 	 */
 	private void updateSkipInfoDecoration(boolean show) {
-		//
 		if (show) {
 			fSkipInfoDecoration.show();
 		} else {

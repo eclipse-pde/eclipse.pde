@@ -30,6 +30,9 @@ public class FormLayoutFactory {
 	// borders are not painted by SWT.  See FormToolkit#paintBordersFor()
 	public static final int DEFAULT_CLEAR_MARGIN = 2;
 	
+	// Required to allow space for field decorations
+	public static final int CONTROL_HORIZONTAL_INDENT = 3;
+	
 	// UI Forms Standards
 	
 	// FORM BODY

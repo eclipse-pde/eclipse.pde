@@ -114,13 +114,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Label
 		label = toolkit.createLabel(commandSectionClient, PDEUIMessages.SimpleCSItemDetails_7, SWT.WRAP);
 		label.setForeground(foreground);
-		createCommandInfoDecoration(label);
 		// Combo box
 		fCommandCombo = new ComboPart();
 		fCommandCombo.createControl(commandSectionClient, toolkit, SWT.READ_ONLY);
-		fCommandCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+		fCommandCombo.getControl().setLayoutData(data);
 		fCommandCombo.add(F_NO_COMMAND);
 		fCommandCombo.setText(F_NO_COMMAND);
+		createCommandInfoDecoration();
 		// Button
 		fCommandBrowse = toolkit.createButton(commandSectionClient, PDEUIMessages.GeneralInfoSection_browse, SWT.PUSH);
 		
@@ -156,16 +158,17 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	/**
 	 * @param label
 	 */
-	private void createCommandInfoDecoration(Label label) {
+	private void createCommandInfoDecoration() {
 		// Command info decoration
 		int bits = SWT.TOP | SWT.LEFT;
-		fCommandInfoDecoration = new ControlDecoration(label, bits);
+		fCommandInfoDecoration = 
+			new ControlDecoration(fCommandCombo.getControl(), bits);
 		fCommandInfoDecoration.setMarginWidth(1);
 		fCommandInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSCommandDetails_msgFieldDisabledCommand);
 		updateCommandInfoDecoration(false);
 		fCommandInfoDecoration.setImage(
 			FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
+				FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}
 
 	/* (non-Javadoc)
@@ -438,7 +441,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 * 
 	 */
 	private void updateCommandInfoDecoration(boolean showDecoration) {
-		//
 		if (showDecoration) {
 			fCommandInfoDecoration.show();
 		} else {

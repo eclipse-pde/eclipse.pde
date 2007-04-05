@@ -235,7 +235,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		updateSubStepInfoDecoration(false, false, false);
 		fSubStepInfoDecoration.setImage(
 			FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
+				FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}	
 
 	/**

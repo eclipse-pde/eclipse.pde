@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
@@ -154,7 +155,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		// Needed to align vertically with form entry field and allow space
 		// for a possible field decoration
-		data.horizontalIndent = 3;
+		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		fKindCombo.getControl().setLayoutData(data);
 		fKindCombo.add(F_KIND_VALUE_SET);
 		fKindCombo.add(F_KIND_VALUE_SEQUENCE);
