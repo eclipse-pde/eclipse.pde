@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -26,9 +27,14 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -47,8 +53,10 @@ import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
+import org.osgi.framework.Constants;
 
 public abstract class DependenciesViewPage extends Page {
 	class FocusOnSelectionAction extends Action {
@@ -79,6 +87,51 @@ public abstract class DependenciesViewPage extends Page {
 	protected StructuredViewer fViewer;
 	
 	protected IContentProvider fContentProvider;
+	
+	private Action fHideFragmentFilterAction;
+	
+	private Action fHideOptionalFilterAction;
+	
+	private FragmentFilter fHideFragmentFilter = new FragmentFilter();
+	
+	private OptionalFilter fHideOptionalFilter = new OptionalFilter();
+	
+	private static final String HIDE_FRAGMENTS = "hideFrags"; //$NON-NLS-1$
+	
+	private static final String HIDE_OPTIONAL = "hideOptional"; //$NON-NLS-1$
+	
+	class FragmentFilter extends ViewerFilter {
+		
+		public boolean select(Viewer v, Object parent, Object element) {
+			BundleDescription desc = null;
+			if (element instanceof BundleSpecification) {
+				BaseDescription supplier = ((BundleSpecification)element).getSupplier();
+				if (supplier instanceof BundleDescription)
+					desc = (BundleDescription) supplier;
+			} else if (element instanceof BundleDescription) {
+				desc = (BundleDescription)element;
+			} else if (element instanceof ImportPackageSpecification) {
+				BaseDescription export = ((ImportPackageSpecification)element).getSupplier();
+				desc = ((ExportPackageDescription)export).getExporter();
+			}
+			if (desc != null) {
+				return desc.getHost() == null;
+			}
+			return true;
+		}
+	}
+	
+	class OptionalFilter extends ViewerFilter {
+		
+		public boolean select(Viewer v, Object parent, Object element) {
+			if (element instanceof BundleSpecification) {
+				return !((BundleSpecification)element).isOptional();
+			} else if (element instanceof ImportPackageSpecification)
+				return !Constants.RESOLUTION_OPTIONAL.equals(
+						((ImportPackageSpecification)element).getDirective(Constants.RESOLUTION_DIRECTIVE));
+			return true;
+		}
+	}
 
 	/**
 	 * 
@@ -132,7 +185,7 @@ public abstract class DependenciesViewPage extends Page {
 
 		manager.add(new Separator());
 		// only show Find Dependency Extent when in Callees view
-		if (selection.size() == 1 && fViewer.getContentProvider() instanceof CalleesContentProvider) {
+		if (selection.size() == 1 && !fView.isShowingCallers()) {
 			String id = null;
 			if (selectionElement instanceof BundleSpecification) {
 				id = ((BundleSpecification)selectionElement).getName();
@@ -219,6 +272,9 @@ public abstract class DependenciesViewPage extends Page {
 		} else if (obj instanceof IPluginBase) {
 			// root object
 			desc = ((IPluginModelBase)((IPluginBase)obj).getModel()).getBundleDescription();
+		} else if (obj instanceof ImportPackageSpecification) {
+			BaseDescription export = ((ImportPackageSpecification)obj).getSupplier();
+			desc = ((ExportPackageDescription)export).getExporter();
 		}
 		if (desc != null)
 			ManifestEditor.openPluginEditor(desc.getSymbolicName());
@@ -304,6 +360,30 @@ public abstract class DependenciesViewPage extends Page {
 		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); 
 		
 		fRefactorAction = new RenamePluginAction();
+		
+		fHideFragmentFilterAction = new Action() {
+			public void run() {
+				boolean checked = fHideFragmentFilterAction.isChecked();
+				if (checked)
+					fViewer.removeFilter(fHideFragmentFilter);
+				else
+					fViewer.addFilter(fHideFragmentFilter);
+				getSettings().put(HIDE_FRAGMENTS, !checked); 
+			}
+		};
+		fHideFragmentFilterAction.setText(PDEUIMessages.DependenciesViewPage_showFragments);
+		
+		fHideOptionalFilterAction = new Action() {
+			public void run() {
+				boolean checked = fHideOptionalFilterAction.isChecked();
+				if (checked)
+					fViewer.removeFilter(fHideOptionalFilter);
+				else
+					fViewer.addFilter(fHideOptionalFilter);
+				getSettings().put(HIDE_OPTIONAL, !checked);
+			}
+		};
+		fHideOptionalFilterAction.setText(PDEUIMessages.DependenciesViewPage_showOptional);
 	}
 
 	/*
@@ -319,6 +399,7 @@ public abstract class DependenciesViewPage extends Page {
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
+		contributeToActionBars(getSite().getActionBars());
 	}
 
 	/*
@@ -376,5 +457,40 @@ public abstract class DependenciesViewPage extends Page {
 				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
 				((DependenciesViewPageContentProvider)fContentProvider).removeModelListener();
 		}
+		if (fView.isShowingCallers()) {
+			fHideOptionalFilterAction.setChecked(true);
+			fHideOptionalFilterAction.setEnabled(false);
+		} else {
+			fHideOptionalFilterAction.setEnabled(true);
+			fHideOptionalFilterAction.setChecked(!getSettings().getBoolean(HIDE_OPTIONAL));
+		}
 	}
+
+	private void contributeToActionBars(IActionBars actionBars) {
+		contributeToDropDownMenu(actionBars.getMenuManager());
+	}
+	
+	private void contributeToDropDownMenu(IMenuManager manager) {
+		manager.add(fHideFragmentFilterAction);
+		manager.add(fHideOptionalFilterAction);
+		IDialogSettings settings = getSettings();
+		boolean hideFragments = settings.getBoolean(HIDE_FRAGMENTS);
+		boolean hideOptional = settings.getBoolean(HIDE_OPTIONAL);
+		if (hideFragments)
+			fViewer.addFilter(fHideFragmentFilter);
+		if (hideOptional)
+			fViewer.addFilter(fHideOptionalFilter);
+		fHideFragmentFilterAction.setChecked(!hideFragments);
+		fHideOptionalFilterAction.setChecked(!hideOptional);
+	}
+	
+	private IDialogSettings getSettings() {
+		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = master.getSection("dependenciesView");  //$NON-NLS-1$
+		if (section == null) {
+			section = master.addNewSection("dependenciesView");  //$NON-NLS-1$
+		}
+		return section;
+	}
+
 }

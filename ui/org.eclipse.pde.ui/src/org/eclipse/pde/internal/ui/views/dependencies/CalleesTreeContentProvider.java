@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -31,10 +33,13 @@ public class CalleesTreeContentProvider extends CalleesContentProvider
 			parentElement = ((IPluginBase)parentElement).getModel();
 		}
 		if (parentElement instanceof IPluginModelBase) {
-			parentElement = ((IPluginModelBase)parentElement).getBundleDescription();
+			return findCallees(((IPluginModelBase)parentElement));
 		}
 		if (parentElement instanceof BundleSpecification) {
 			parentElement = ((BundleSpecification)parentElement).getSupplier();
+		}
+		if (parentElement instanceof ImportPackageSpecification) {
+			parentElement = ((ExportPackageDescription)(((ImportPackageSpecification)parentElement).getSupplier())).getExporter();
 		}
 		if (parentElement instanceof BundleDescription) {
 			return findCallees((BundleDescription)parentElement);

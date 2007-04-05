@@ -18,33 +18,44 @@ import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.osgi.framework.Constants;
 
 public class CalleesContentProvider extends DependenciesViewPageContentProvider {
 	public CalleesContentProvider(DependenciesView view) {
 		super(view);
 	}
 	
-	protected Object[] findCallees(BundleDescription desc) {
+	protected Object[] findCallees(IPluginModelBase model) {
+		BundleDescription desc = model.getBundleDescription();
 		if (desc == null)
 			return new Object[0];
 		HostSpecification spec = desc.getHost();
 		if (spec != null) {
+			Object[] fragmentDependencies = getDependencies(desc);
 			BaseDescription host = spec.getSupplier();
 			if (host instanceof BundleDescription) {
 				BundleDescription hostDesc = (BundleDescription)host;
-				Object[] dependencies = getDependencies(hostDesc);
-				Object[] result = new Object[dependencies.length + 1];
+				Object[] result = new Object[fragmentDependencies.length + 1];
 				result[0] = hostDesc;
-				System.arraycopy(dependencies, 0, result, 1, dependencies.length);
+				System.arraycopy(fragmentDependencies, 0, result, 1, fragmentDependencies.length);
 				return result;
 			}
+			return fragmentDependencies;
 		}
+		return getDependencies(desc);
+	}
+	
+	protected Object[] findCallees(BundleDescription desc) {
+		if (desc == null)
+			return new Object[0];
 		return getDependencies(desc);
 	}
 	
 	private Object[] getDependencies(BundleDescription desc) {
 		// use map to store dependencies so if Import-Package is supplied by same BundleDescription as supplier of Require-Bundle, it only shows up once
 		// Also, have to use BundleSpecficiation instead of BundleDescroption to show re-exported icon on re-exported Required-Bundles
+		// Have to use ImportPackageSpecification to determine if an import is optional and should be filtered.
 		HashMap dependencies = new HashMap();
 		BundleSpecification[] requiredBundles = desc.getRequiredBundles();
 		for (int i = 0; i < requiredBundles.length; i++) {
@@ -60,13 +71,24 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 			if (bd != null && bd instanceof ExportPackageDescription) {
 				BundleDescription exporter = ((ExportPackageDescription)bd).getExporter();
 				if (exporter != null) {
-					if (!dependencies.containsKey(exporter)) {
-						dependencies.put(exporter, exporter);
-						continue;
+					Object obj = dependencies.get(exporter);
+					if (obj == null) {
+						dependencies.put(exporter, importedPkgs[i]);
+					} else if (!Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE))
+							&& obj instanceof ImportPackageSpecification &&
+							Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification)obj).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
+					// if we have a non-optional Import-Package dependency on a bundle which we already depend on, check to make sure our
+					// current dependency is not optional.  If it is, replace the optional dependency with the non-optional one
+						dependencies.put(exporter, importedPkgs[i]);
 					}
 				}
 			}
 			// ignore unresolved packages
+		}
+		// include fragments which are "linked" to this bundle
+		BundleDescription frags[] = desc.getFragments();
+		for (int i = 0; i < frags.length; i++) {
+			dependencies.put(frags[i], frags[i]);
 		}
 		return dependencies.values().toArray();
 	}

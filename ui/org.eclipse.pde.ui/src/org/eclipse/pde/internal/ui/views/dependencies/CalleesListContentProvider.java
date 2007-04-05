@@ -20,6 +20,8 @@ import java.util.Set;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
@@ -35,10 +37,9 @@ public class CalleesListContentProvider extends CalleesContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IPluginModelBase) {
-			BundleDescription baseDesc = ((IPluginModelBase)inputElement).getBundleDescription();
 			Map elements = new HashMap();
 			Set candidates = new HashSet();
-			candidates.addAll(Arrays.asList(findCallees(baseDesc)));
+			candidates.addAll(Arrays.asList(findCallees(((IPluginModelBase)inputElement))));
 			
 			while (!candidates.isEmpty()) {
 				Set newCandidates = new HashSet();
@@ -52,6 +53,8 @@ public class CalleesListContentProvider extends CalleesContentProvider
 							elements.put(((BundleSpecification)candidate).getName(), candidate);
 					} else if (candidate instanceof BundleDescription) {
 						desc = (BundleDescription)candidate;
+					} else if (candidate instanceof ImportPackageSpecification) {
+						desc = ((ExportPackageDescription)(((ImportPackageSpecification)candidate).getSupplier())).getExporter();
 					}
 					it.remove();
 					if (desc == null)
