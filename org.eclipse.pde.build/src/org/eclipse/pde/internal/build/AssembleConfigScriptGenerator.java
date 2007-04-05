@@ -254,7 +254,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
-		script.printZipTask(fileName + ".jar", fileName, false, false, null); //$NON-NLS-1$
+		script.printJarTask(fileName + ".jar", fileName, null, "merge"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(fileName, null, null);
 
 		script.printTargetEnd();

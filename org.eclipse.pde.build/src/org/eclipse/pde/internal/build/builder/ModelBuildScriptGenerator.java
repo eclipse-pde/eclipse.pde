@@ -607,7 +607,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Map params = new HashMap(1);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, params);
-		script.printZipTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null);
+		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars)
 			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + Utils.getPropertyFormat("sign.alias") + "\" keystore=\"" + Utils.getPropertyFormat("sign.keystore") + "\" storepass=\"" + Utils.getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 

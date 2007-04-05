@@ -90,13 +90,33 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param jarFile the destination file name
 	 * @param basedir the base directory
+	 * @param manifestAttribute the manifest file to use
 	 */
 	public void printJarTask(String jarFile, String basedir, String manifestAttribute) {
+		printJarTask(jarFile, basedir, manifestAttribute, null);
+	}
+
+	/**
+	 * Print a <code>jar</code> Ant task to this script. This jars together a group of 
+	 * files into a single file.
+	 * 
+	 * @param jarFile the destination file name
+	 * @param basedir the base directory
+	 * @param manifestAttribute the manifest file to use
+	 * @param filesetManifest behavior when a Manifest is found in a zipfileset or
+	 * 		  zipgroupfileset file is found. Valid values are "skip", "merge", and
+	 *        "mergewithoutmain". "merge" will merge all of the manifests together,
+	 *        and merge this into any other specified manifests. "mergewithoutmain"
+	 *        merges everything but the Main section of the manifests. Default value
+	 *        is "skip".
+	 */
+	public void printJarTask(String jarFile, String basedir, String manifestAttribute, String filesetManifest) {
 		printTab();
 		output.print("<jar"); //$NON-NLS-1$
 		printAttribute("destfile", jarFile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("manifest", manifestAttribute, false); //$NON-NLS-1$
+		printAttribute("filesetmanifest", filesetManifest, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
 
