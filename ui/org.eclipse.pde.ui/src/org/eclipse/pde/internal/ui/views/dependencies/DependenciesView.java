@@ -627,4 +627,8 @@ public class DependenciesView extends PageBookView implements
 		}
 		return null;
 	}
+	
+	public boolean isShowingCallers() {
+		return fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS);
+	}
 }
