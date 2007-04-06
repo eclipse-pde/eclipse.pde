@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.runtime.logview;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.IWorkbenchPage;
@@ -28,9 +28,15 @@ import org.eclipse.ui.ide.IDE;
  * LogView.getOpenLogJob() is called to open the file.
  */
 public class OpenIDELogFileAction extends Action {
+	
+	private LogView fView;
+	
+	public OpenIDELogFileAction (LogView logView) {
+		fView = logView;
+	}
 
 	public void run() {
-		IPath logPath = Platform.getLogFileLocation();
+		IPath logPath = new Path(fView.getLogFile().getAbsolutePath());
 		IFileStore fileStore= EFS.getLocalFileSystem().getStore(logPath);
 		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 			IWorkbenchWindow ww = PDERuntimePlugin.getActiveWorkbenchWindow();

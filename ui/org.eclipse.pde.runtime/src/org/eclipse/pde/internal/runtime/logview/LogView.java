@@ -331,7 +331,7 @@ public class LogView extends ViewPart implements ILogListener {
 			Class.forName("org.eclipse.ui.ide.IDE"); //$NON-NLS-1$
 			// check to see if org.eclipse.core.filesystem is available
 			Class.forName("org.eclipse.core.filesystem.IFileStore"); //$NON-NLS-1$
-			action = new OpenIDELogFileAction();
+			action = new OpenIDELogFileAction(this);
 		} catch (ClassNotFoundException e) {
 			action = new Action() {
 				public void run() {
@@ -1103,5 +1103,9 @@ public class LogView extends ViewPart implements ILogListener {
 				return Status.OK_STATUS;
 			}
 		};
+	}
+	
+	protected File getLogFile() {
+		return fInputFile;
 	}
 }
