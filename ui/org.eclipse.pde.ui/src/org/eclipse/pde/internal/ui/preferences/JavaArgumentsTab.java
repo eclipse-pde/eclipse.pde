@@ -34,6 +34,7 @@ public class JavaArgumentsTab {
 	private Text fProgramArgs;
 	private Text fVMArgs;
 	private TargetPlatformPreferencePage fPage;
+	private Button fAppendLauncherArgs;
 	
 	public JavaArgumentsTab(TargetPlatformPreferencePage page) {
 		fPage = page;
@@ -66,7 +67,7 @@ public class JavaArgumentsTab {
 		programVars.addSelectionListener(getListener(fProgramArgs));
 		
 		Group vmGroup = new Group(container, SWT.NONE);
-		vmGroup.setLayout(new GridLayout());
+		vmGroup.setLayout(new GridLayout(2, false));
 		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 		
@@ -74,7 +75,11 @@ public class JavaArgumentsTab {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 450;
 		gd.heightHint = 60;
+		gd.horizontalSpan = 2;
 		fVMArgs.setLayoutData(gd);
+		
+		fAppendLauncherArgs = new Button(vmGroup, SWT.CHECK);
+		fAppendLauncherArgs.setText(PDEUIMessages.JavaArgumentsTab_appendLauncherIni);
 		
 		Button vmVars = new Button(vmGroup, SWT.NONE);
 		vmVars.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -105,12 +110,14 @@ public class JavaArgumentsTab {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		fProgramArgs.setText(preferences.getString(ICoreConstants.PROGRAM_ARGS));
 		fVMArgs.setText(preferences.getString(ICoreConstants.VM_ARGS));
+		fAppendLauncherArgs.setSelection(preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI));
 	}
 
 	public void performOk() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.PROGRAM_ARGS, fProgramArgs.getText());
 		preferences.setValue(ICoreConstants.VM_ARGS, fVMArgs.getText());
+		preferences.setValue(ICoreConstants.VM_LAUNCHER_INI, fAppendLauncherArgs.getSelection());
 	}
 	
 	protected void performDefaults() {

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -40,6 +41,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
@@ -125,37 +127,47 @@ public class LaunchArgumentsHelper {
 		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
-	protected static StringBuffer getEclipseIniArguments() {
-		// hack on the args from eclipse.ini
-		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
-		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
-		BufferedReader in = null;
-		StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
-		if(eclipseIniFile.exists()) {
-			try {
-				in = new BufferedReader(new FileReader(eclipseIniFile));
-				String str;
-				boolean vmargs = false;
-				while ((str = in.readLine()) != null) {
-					if(vmargs) {
-						buffer.append(" "+str); //$NON-NLS-1$
+	public static String getInitialVMArguments() {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		StringBuffer result = new StringBuffer(preferences
+				.getString(ICoreConstants.VM_ARGS));
+
+		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
+			// hack on the args from eclipse.ini
+			File installDirectory = new File(Platform.getInstallLocation().getURL()
+					.getFile());
+			if (Platform.getOS().equals(Platform.OS_MACOSX))
+				installDirectory = new File(installDirectory,
+						"Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+			File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
+			BufferedReader in = null;
+			if (eclipseIniFile.exists()) {
+				try {
+					in = new BufferedReader(new FileReader(eclipseIniFile));
+					String str;
+					boolean vmargs = false;
+					while ((str = in.readLine()) != null) {
+						if (vmargs) {
+							result.append(" "); //$NON-NLS-1$
+							result.append(str);
+						}
+						// start concat'ng if we have vmargs
+						if (vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
+							vmargs = true;
 					}
-					// start concat'ng if we have vmargs
-					if(vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
-						vmargs = true;
+				} catch (IOException e) {
+					PDEPlugin.log(e);
+				} finally {
+					if (in != null)
+						try {
+							in.close();
+						} catch (IOException e) {
+							PDEPlugin.log(e);
+						}
 				}
-			} catch (IOException e) {
-				PDEPlugin.log(e);
-			} finally {
-				if(in != null)
-					try {
-						in.close();
-					} catch (IOException e) {
-						PDEPlugin.log(e);
-					}
 			}
 		}
-		return buffer;
+		return result.toString();
 	}
 
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {

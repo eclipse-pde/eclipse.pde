@@ -74,7 +74,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 
 		// VM arguments
-		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 

@@ -36,11 +36,15 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	}
 
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "-console"); //$NON-NLS-1$
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String progArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
-		if (progArgs.indexOf("-console") == -1) //$NON-NLS-1$
-			progArgs = "-console " + progArgs; //$NON-NLS-1$
+		if (progArgs.length() > 0) {
+			if (progArgs.indexOf("-console") == -1) { //$NON-NLS-1$
+				progArgs = "-console " + progArgs; //$NON-NLS-1$
+			} 
+		} else {
+			progArgs = "-console"; //$NON-NLS-1$
+		}
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, progArgs); //$NON-NLS-1$
 	}
 	

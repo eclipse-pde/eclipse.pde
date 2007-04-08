@@ -275,8 +275,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	}
 	
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy wc) {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
 		if (vmArgs.length() > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}	

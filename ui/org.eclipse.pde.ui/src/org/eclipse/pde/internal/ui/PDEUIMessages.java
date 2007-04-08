@@ -61,6 +61,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
 
+	public static String JavaArgumentsTab_appendLauncherIni;
+
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
 	public static String CommandComposerPart_formTitle;

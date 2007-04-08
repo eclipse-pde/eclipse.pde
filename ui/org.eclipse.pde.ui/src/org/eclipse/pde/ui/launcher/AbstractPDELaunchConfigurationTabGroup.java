@@ -20,6 +20,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -125,7 +126,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
 		if (programArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
-		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
