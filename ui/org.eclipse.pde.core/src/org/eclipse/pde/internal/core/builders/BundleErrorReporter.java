@@ -38,6 +38,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
@@ -49,7 +50,6 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.AbstractNLModel;
@@ -482,7 +482,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null)
 			return;
 
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null)
+			return;
+		
 		ManifestElement[] required = header.getElements();
+		BundleSpecification[] specs = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			checkCanceled(monitor);
 
@@ -498,32 +503,25 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			boolean optional = isOptional(required[i]);
 			int severity = getRequireBundleSeverity(required[i], optional);
 
-			IPluginModelBase model = PluginRegistry.findModel(bundleID);
-			if (!(model instanceof IPluginModel) || !model.isEnabled()) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistPDE, bundleID), 
-						getPackageLine(header, required[i]),
-						severity, 
-						PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE,
-						PDEMarkerFactory.CAT_FATAL);
-				try {
-					if (marker != null) {
-						marker.setAttribute("bundleId", required[i].getValue()); //$NON-NLS-1$
-						if (optional)
-							marker.setAttribute("optional", true); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-				}
-				continue;
-			}
-
-			String requiredRange = required[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
-			if (requiredRange != null && VersionUtil.validateVersionRange(requiredRange).isOK()) {
-				VersionRange versionRange = new VersionRange(requiredRange);
-				String version = model.getPluginBase().getVersion();
-				if (version != null && !versionRange.isIncluded(new Version(version))) {
-					report(NLS.bind(PDECoreMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, bundleID + ": " + versionRange.toString()),  //$NON-NLS-1$
-							getPackageLine(header, required[i]), severity,
+			if (specs[i].getSupplier() == null) {
+				if (desc.getContainingState().getBundle(specs[i].getName(), null) == null) {
+					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistPDE, bundleID), 
+							getPackageLine(header, required[i]),
+							severity, 
+							PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE,
 							PDEMarkerFactory.CAT_FATAL);
+					try {
+						if (marker != null) {
+							marker.setAttribute("bundleId", required[i].getValue()); //$NON-NLS-1$
+							if (optional)
+								marker.setAttribute("optional", true); //$NON-NLS-1$
+						}
+					} catch (CoreException e) {
+					}
+				} else {
+					report(NLS.bind(PDECoreMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, bundleID + ": " + specs[i].getVersionRange()),  //$NON-NLS-1$
+							getPackageLine(header, required[i]), severity,
+							PDEMarkerFactory.CAT_FATAL);					
 				}
 			}
 		}
