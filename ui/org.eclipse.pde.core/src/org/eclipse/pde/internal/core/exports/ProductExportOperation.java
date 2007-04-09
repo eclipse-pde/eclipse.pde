@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -250,22 +251,24 @@ public class ProductExportOperation extends FeatureExportOperation {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName() + ".ini"))); //$NON-NLS-1$
-			if (programArgs.length() > 0) {
-				StringTokenizer tokenizer = new StringTokenizer(programArgs);
-				while (tokenizer.hasMoreTokens()){
-					writer.print(tokenizer.nextToken());
-					writer.print(lineDelimiter);
-				}
+			ExecutionArguments args = new ExecutionArguments(vmArgs, programArgs);
+			
+			// add program arguments
+			String[] array = args.getProgramArgumentsArray();
+			for (int i = 0; i < array.length; i++) {
+				writer.print(array[i]);
+				writer.print(lineDelimiter);
 			}
-			if (vmArgs.length() > 0) {
+			
+			// add VM arguments
+			array = args.getVMArgumentsArray();
+			if (array.length > 0) {
 				writer.print("-vmargs"); //$NON-NLS-1$
 				writer.print(lineDelimiter);
-				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
-				while (tokenizer.hasMoreTokens()){
-					writer.print(tokenizer.nextToken());
+				for (int i = 0; i < array.length; i++) {
+					writer.print(array[i]);
 					writer.print(lineDelimiter);
 				}
-
 			}	
 		} catch (IOException e) {
 		} finally {
