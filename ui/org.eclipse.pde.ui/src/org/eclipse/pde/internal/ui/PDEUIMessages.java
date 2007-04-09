@@ -2156,8 +2156,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String WorkspaceDataBlock_name;
 
-	public static String ConfigurationAreaBlock_0;
-
 	public static String ConfigurationAreaBlock_name;
 
 	public static String AbstractPluginBlock_counter;

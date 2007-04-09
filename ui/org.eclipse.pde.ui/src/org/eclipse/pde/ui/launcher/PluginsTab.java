@@ -151,6 +151,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+		fToolBar.setDefaults(configuration);
 		fPluginBlock.setDefaults(configuration);
 	}
 	

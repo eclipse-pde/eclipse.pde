@@ -147,6 +147,10 @@ public abstract class AbstractLauncherToolbar {
 		//fFilterItem.setEnabled(custom);
 	}
 	
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+	}
+	
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidateItem.getSelection());
 	}

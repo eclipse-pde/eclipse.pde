@@ -96,22 +96,16 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, fUseDefaultLocationButton.getSelection());
-		if (!fUseDefaultLocationButton.getSelection()) {
-			fLastEnteredConfigArea = getLocation();
-			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, fLastEnteredConfigArea);
-		} else {
-			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, PDEUIMessages.ConfigurationAreaBlock_0);
-		}
+		fLastEnteredConfigArea = getLocation();
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, fLastEnteredConfigArea);
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, fClearConfig.getSelection());
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {		
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, !isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, isJUnit);
-		if (isJUnit) {
-			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, 
-										DEFAULT_DIR + "pde-junit");  //$NON-NLS-1$
-		}
+		String location = DEFAULT_DIR + (isJUnit ? "pde-junit" : configuration.getName()); //$NON-NLS-1$
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, location);
 	}
 	
 	protected String getName() {
