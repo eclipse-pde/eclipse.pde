@@ -364,7 +364,7 @@ public class ContentSection extends TableSection {
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
 			String id = desc.getSymbolicName();
-			if (!target.containsPlugin(id) && !used.containsKey(id))
+			if (id != null && !target.containsPlugin(id) && !used.containsKey(id))
 				map.put(id, desc);
 		}
 		return map;
