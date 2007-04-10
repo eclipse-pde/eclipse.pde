@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -354,19 +355,44 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 	
 	protected ICompletionProposal[] handleFragmentHostCompletion(String currentValue, int offset) {
-		ArrayList completions = new ArrayList();
-		String pluginStart = removeLeadingSpaces(currentValue);
-		int length = pluginStart.length();
-		IPluginModelBase [] bases = PluginRegistry.getActiveModels();
-		for (int i = 0; i < bases.length; i++) {
-			BundleDescription desc = bases[i].getBundleDescription();
-			if (desc != null && desc.getHost() == null) {
-				String pluginID = bases[i].getBundleDescription().getSymbolicName();
-				if (pluginID.regionMatches(true, 0, pluginStart, 0, length))
-					completions.add(new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
+		int index = currentValue.lastIndexOf(';');
+		if (index == -1) {
+			HashMap completions = new HashMap();
+			String pluginStart = removeLeadingSpaces(currentValue);
+			int length = pluginStart.length();
+			IPluginModelBase [] bases = PluginRegistry.getActiveModels();
+			for (int i = 0; i < bases.length; i++) {
+				BundleDescription desc = bases[i].getBundleDescription();
+				if (desc != null && desc.getHost() == null) {
+					String pluginID = bases[i].getBundleDescription().getSymbolicName();
+					if (!completions.containsKey(pluginID) && pluginID.regionMatches(true, 0, pluginStart, 0, length))
+						completions.put(pluginID, new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
+				}
 			}
+			return (ICompletionProposal[]) completions.values().toArray(new ICompletionProposal[completions.size()]);
 		}
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		int equals = currentValue.lastIndexOf('=');
+		if (equals == -1 || index > equals)
+			return matchValueCompletion(removeLeadingSpaces(currentValue.substring(index + 1)), new String[] {
+				Constants.BUNDLE_VERSION_ATTRIBUTE }, new int[] {F_TYPE_ATTRIBUTE}, offset);
+		String attributeValue = removeLeadingSpaces(currentValue.substring(index + 1));
+		if (Constants.BUNDLE_VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.BUNDLE_VERSION_ATTRIBUTE.length())) {
+			ModelEntry entry = PluginRegistry.findEntry(currentValue.substring(0, index).trim());
+			String currentVersion = removeLeadingSpaces(removeLeadingSpaces(currentValue.substring(equals + 1)));
+			if (entry != null) {
+				IPluginModelBase[] hosts = entry.getActiveModels();
+				ArrayList proposals = new ArrayList(hosts.length);
+				for (int i = 0; i < hosts.length; i++) {
+					String proposalValue = new StringBuffer("\"").append(hosts[i].getPluginBase().getVersion()).append('\"').toString(); //$NON-NLS-1$
+					if (proposalValue.regionMatches(0, currentVersion, 0, currentVersion.length()))
+						proposals.add(new TypeCompletionProposal(proposalValue.substring(currentVersion.length()), 
+								getImage(F_TYPE_VALUE), proposalValue, offset, 0));
+				}
+				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+			} else if (currentVersion.length() == 0)
+				return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return new ICompletionProposal[0];
 	}
 	
 	protected ICompletionProposal[] handleRequireBundleCompletion(String currentValue, int offset) {
