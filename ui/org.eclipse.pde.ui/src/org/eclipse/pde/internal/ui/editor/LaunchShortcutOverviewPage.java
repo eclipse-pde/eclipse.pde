@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -121,10 +122,10 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		mng.setMessage(null);
 	}
 	
-	protected final String getLauncherText(boolean osgi, String prefixText) {
+	protected final String getLauncherText(boolean osgi, String message) {
 		IConfigurationElement[] elements = getLaunchers(osgi);
 		
-		StringBuffer buffer = new StringBuffer(prefixText);
+		StringBuffer buffer = new StringBuffer();
 		String indent = Short.toString(getIndent());
 		
 		for (int i = 0; i < elements.length; i++) {
@@ -139,8 +140,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 			buffer.append(elements[i].getAttribute("label")); //$NON-NLS-1$
 			buffer.append("</a></li>"); //$NON-NLS-1$
 		}
-		buffer.append("</form>"); //$NON-NLS-1$
-		return buffer.toString();
+		return NLS.bind(message, buffer.toString());
 	}
 	
 	private IConfigurationElement[] getLaunchers(boolean osgi) {
