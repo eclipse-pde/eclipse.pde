@@ -215,6 +215,7 @@ public abstract class InputContext {
 	}
 	
 	protected void flushModel(IDocument doc) {
+		boolean flushed = true;
 		if (fEditOperations.size() > 0) {
 			try {
 				MultiTextEdit edit = new MultiTextEdit();
@@ -227,14 +228,22 @@ public abstract class InputContext {
 					((IEditingModel)fModel).setStale(true);				
 				edit.apply(doc);
 				fEditOperations.clear();
-				if (fModel instanceof IEditable)
-					((IEditable)fModel).setDirty(false);
 			} catch (MalformedTreeException e) {
 				PDEPlugin.logException(e);
+				flushed = false;
 			} catch (BadLocationException e) {
 				PDEPlugin.logException(e);
+				flushed = false;
 			}
-		}	
+		}
+		// If no errors were encountered flushing the model, then undirty the
+		// model.  This needs to be done regardless of whether there are any
+		// edit operations or not; since, the contributed actions need to be
+		// updated and the editor needs to be undirtied
+		if (flushed && 
+				(fModel instanceof IEditable)) {
+			((IEditable)fModel).setDirty(false);
+		}
 	}
 	
 	protected boolean isNewlineNeeded(IDocument doc) throws BadLocationException {
