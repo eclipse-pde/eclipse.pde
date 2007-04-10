@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -71,7 +70,6 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 				labelProvider.dispose();
 			}
 		});
-		fTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fTreeViewer.setAutoExpandLevel(2);
 
 		return fTreeViewer;
