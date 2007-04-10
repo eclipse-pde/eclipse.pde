@@ -22,6 +22,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
 
 public class CalleesContentProvider extends DependenciesViewPageContentProvider {
+	private BundleDescription fFragmentDescription;
+	
 	public CalleesContentProvider(DependenciesView view) {
 		super(view);
 	}
@@ -30,8 +32,10 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null)
 			return new Object[0];
+		fFragmentDescription = null;
 		HostSpecification spec = desc.getHost();
 		if (spec != null) {
+			fFragmentDescription = desc;
 			Object[] fragmentDependencies = getDependencies(desc);
 			BaseDescription host = spec.getSupplier();
 			if (host instanceof BundleDescription) {
@@ -88,7 +92,8 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		// include fragments which are "linked" to this bundle
 		BundleDescription frags[] = desc.getFragments();
 		for (int i = 0; i < frags.length; i++) {
-			dependencies.put(frags[i], frags[i]);
+			if (!frags[i].equals(fFragmentDescription))
+				dependencies.put(frags[i], frags[i]);
 		}
 		return dependencies.values().toArray();
 	}
