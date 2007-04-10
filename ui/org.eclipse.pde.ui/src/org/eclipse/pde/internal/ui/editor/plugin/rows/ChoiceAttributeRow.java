@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
@@ -61,6 +62,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		GridData gd = new GridData(span==2?GridData.FILL_HORIZONTAL:GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = 20;
 		gd.horizontalSpan = span-1;
+		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		combo.getControl().setLayoutData(gd);
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

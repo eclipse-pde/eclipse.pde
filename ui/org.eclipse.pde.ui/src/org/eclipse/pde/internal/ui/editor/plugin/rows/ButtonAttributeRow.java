@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -51,6 +52,7 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
+		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		return gd;
 	}	
 	
