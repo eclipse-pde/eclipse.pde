@@ -19,9 +19,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -86,39 +83,20 @@ public class Schema extends PlatformObject implements ISchema {
 	private boolean fValid;
 
 	private boolean fAbbreviated;
-	
-	private SAXParserWrapper fParser;
 
 	public Schema(String pluginId, String pointId, String name, boolean abbreviated) {
 		fPluginID = pluginId;
 		fPointID = pointId;
 		fName = name;
 		fAbbreviated = abbreviated;
-		initialize();
 	}
 
 	public Schema(ISchemaDescriptor schemaDescriptor, URL url, boolean abbreviated) {
 		fSchemaDescriptor = schemaDescriptor;
 		fURL = url;
 		fAbbreviated = abbreviated;
-		initialize();
 	}
 
-	/**
-	 * 
-	 */
-	private void initialize() {
-		try {
-			fParser = new SAXParserWrapper();
-		} catch (ParserConfigurationException e) {
-			// Ignore
-		} catch (SAXException e) {
-			// Ignore
-		} catch (FactoryConfigurationError e) {
-			// Ignore
-		}
-	}	
-	
 	public void addDocumentSection(IDocumentSection docSection) {
 		fDocSections.addElement(docSection);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
@@ -397,8 +375,9 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void load(InputStream stream) {
 		try {
+			SAXParserWrapper parser = new SAXParserWrapper();
 			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
-			fParser.parse(stream, handler);
+			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
 			// ignore parse errors - 'loaded' will be false anyway
