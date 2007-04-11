@@ -382,20 +382,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				Constants.BUNDLE_VERSION_ATTRIBUTE }, new int[] {F_TYPE_ATTRIBUTE}, offset);
 		String attributeValue = removeLeadingSpaces(currentValue.substring(index + 1));
 		if (Constants.BUNDLE_VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.BUNDLE_VERSION_ATTRIBUTE.length())) {
-			ModelEntry entry = PluginRegistry.findEntry(currentValue.substring(0, index).trim());
-			String currentVersion = removeLeadingSpaces(removeLeadingSpaces(currentValue.substring(equals + 1)));
-			if (entry != null) {
-				IPluginModelBase[] hosts = entry.getActiveModels();
-				ArrayList proposals = new ArrayList(hosts.length);
-				for (int i = 0; i < hosts.length; i++) {
-					String proposalValue = new StringBuffer("\"").append(hosts[i].getPluginBase().getVersion()).append('\"').toString(); //$NON-NLS-1$
-					if (proposalValue.regionMatches(0, currentVersion, 0, currentVersion.length()))
-						proposals.add(new TypeCompletionProposal(proposalValue.substring(currentVersion.length()), 
-								getImage(F_TYPE_VALUE), proposalValue, offset, 0));
-				}
-				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
-			} else if (currentVersion.length() == 0)
-				return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
+			return getBundleVersionCompletions(currentValue.substring(0, index).trim(), removeLeadingSpaces(currentValue.substring(equals + 1)), offset);
 		}
 		return new ICompletionProposal[0];
 	}
@@ -423,10 +410,27 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (Constants.RESOLUTION_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()))
 			return matchValueCompletion(currentValue.substring(equals + 1), new String[] {
 				Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL} , new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset, "RESOLUTION_"); //$NON-NLS-1$
-		if (Constants.BUNDLE_VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()) && 
-				removeLeadingSpaces(currentValue.substring(equals + 1)).length() == 0)
+		if (Constants.BUNDLE_VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length())) {
+			String pluginId = removeLeadingSpaces(currentValue.substring((comma == -1) ? 0 : comma + 1, semicolon));
+			return getBundleVersionCompletions(pluginId, removeLeadingSpaces(currentValue.substring(equals + 1)), offset);
+		}	
+		return new ICompletionProposal[0];
+	}
+	
+	private ICompletionProposal[] getBundleVersionCompletions(String pluginID, String existingValue, int offset) {
+		ModelEntry entry = PluginRegistry.findEntry(pluginID);
+		if (entry != null) {
+			IPluginModelBase[] hosts = entry.getActiveModels();
+			ArrayList proposals = new ArrayList(hosts.length);
+			for (int i = 0; i < hosts.length; i++) {
+				String proposalValue = new StringBuffer("\"").append(hosts[i].getPluginBase().getVersion()).append('\"').toString(); //$NON-NLS-1$
+				if (proposalValue.regionMatches(0, existingValue, 0, existingValue.length()))
+					proposals.add(new TypeCompletionProposal(proposalValue.substring(existingValue.length()), 
+							getImage(F_TYPE_VALUE), proposalValue, offset, 0));
+			}
+			return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+		} else if (existingValue.length() == 0)
 			return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
-			
 		return new ICompletionProposal[0];
 	}
 	
