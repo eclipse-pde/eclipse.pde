@@ -218,10 +218,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		createTreeListeners();		
-		// TODO: MP: LOW: SimpleCS: Implement drag and drop move feature
 		createSubStepInfoDecoration();		
 	}
-
 
 	/**
 	 * 
@@ -317,8 +315,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if (!fModel.isEditable()) {
 			return;
 		}
-		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
-		ISimpleCSObject csObject = (ISimpleCSObject)object;
+		ISimpleCSObject csObject = getCurrentSelection();
+		
+		boolean canAddItem = false;
 		boolean canAddSubItem = false;
 		boolean canRemove = false;
 		boolean canMoveUp = false;
@@ -329,7 +328,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		boolean showDecoration = false;
 		
 		if (csObject != null) {
-			if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			
+			if (csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				// Add item to end of cheat sheet child items
+				canAddItem = true;
+			} else if (csObject.getType() == ISimpleCSConstants.TYPE_INTRO) {
+				// Add item as the first cheat sheet child item
+				// which is right after the introduction node
+				canAddItem = true;
+			} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				ISimpleCSItem item = (ISimpleCSItem)csObject;
 				if (item.getSimpleCS().isFirstItem(item) == false) {
 					canMoveUp = true;
@@ -356,6 +363,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					canAddSubItem = true;
 				}
 				showDecoration = (canAddSubItem == false);
+				// Add item right after this item
+				canAddItem = true;
 				
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
@@ -398,6 +407,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					itemIsNotOptional);
 		}
 
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, canAddItem);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSubItem);
 		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
 		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
@@ -408,36 +418,48 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * 
 	 */
 	private void handleAddStepAction() {
-		fAddStepAction.setSimpleCS(fModel.getSimpleCS());
+		// Get the current selection
+		ISimpleCSObject csObject = getCurrentSelection();
+		// If nothing is selected add to the root cheat sheet node
+		if (csObject == null) {
+			fAddStepAction.setDataObject(fModel.getSimpleCS());
+		} else {
+			fAddStepAction.setDataObject(csObject);
+		}
+		// Execute the action
 		fAddStepAction.run();
+	}
+	
+	/**
+	 * @return
+	 */
+	private ISimpleCSObject getCurrentSelection() {
+		ISelection selection = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) selection).getFirstElement();
+		return (ISimpleCSObject)object;
 	}
 
 	/**
 	 * 
 	 */
 	private void handleAddSubStepAction() {
-		
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
-		if (object == null) {
+		// Get the current selection
+		ISimpleCSObject csObject = getCurrentSelection();
+		// Ensure the selection is defined
+		if (csObject == null) {
 			return;
 		}
-		if (object instanceof ISimpleCSItem) {
-			fAddSubStepAction.setParentObject((ISimpleCSObject)object);
-			fAddSubStepAction.run();
-		} else if (object instanceof ISimpleCSSubItem) {
-			fAddSubStepAction.setParentObject(((ISimpleCSObject)object).getParent());
-			fAddSubStepAction.run();
-		}
-		
+		// Set the selection object to operate on
+		fAddSubStepAction.setDataObject(csObject);
+		// Execute the action
+		fAddSubStepAction.run();
 	}	
 	
 	/**
 	 * 
 	 */
 	private void handleMoveStepAction(int positionFlag) {
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
 				ISimpleCSItem item = (ISimpleCSItem)object;
@@ -626,11 +648,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
-		ISelection selection = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
-		// Do blind cast - has to be a simple CS object
-		// Could be null
-		ISimpleCSObject csObject = (ISimpleCSObject)object;
+		ISimpleCSObject csObject = getCurrentSelection();
 		// Create the "New" submenu
 		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
 		// Add the "New" submenu to the main context menu
@@ -639,14 +657,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				(csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
 			// Add to the "New" submenu
 			// Add step action
-			fAddStepAction.setSimpleCS(fModel.getSimpleCS());
+			fAddStepAction.setDataObject(fModel.getSimpleCS());
 			fAddStepAction.setEnabled(fModel.isEditable());
 			submenu.add(fAddStepAction);
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			ISimpleCSItem item = (ISimpleCSItem)csObject;
 			// Add to the "New" submenu
 			// Add sub-step action
-			fAddSubStepAction.setParentObject(csObject);
+			fAddSubStepAction.setDataObject(csObject);
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a subitem and any of the following
 			// together:  perform-when, command, action			
@@ -717,8 +735,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @param object
 	 */
 	private void handleDeleteAction() {
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
 				ISimpleCSItem item = (ISimpleCSItem)object;

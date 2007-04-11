@@ -28,7 +28,9 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
  */
 public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
 
-	private ISimpleCSObject fParentObject;
+	private ISimpleCSItem fItem;
+	
+	private ISimpleCSSubItem fSubitem;
 	
 	/**
 	 * 
@@ -40,36 +42,73 @@ public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
 	/**
 	 * @param cheatsheet
 	 */
-	public void setParentObject(ISimpleCSObject object) {
-		fParentObject = object;
+	public void setDataObject(ISimpleCSObject csObject) {
+		// Determine input
+		if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			fSubitem = null;
+			fItem = (ISimpleCSItem)csObject;
+		} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			fSubitem = (ISimpleCSSubItem)csObject;
+			ISimpleCSObject parentObject = fSubitem.getParent();
+			// Determine input's parent object
+			if (parentObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				fItem = (ISimpleCSItem)parentObject;
+			} else if (parentObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
+				// Not supported by editor, action will not run
+				fItem = null;
+			} else if (parentObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
+				// Note supported by editor, action will not run
+				fItem = null;
+			}
+		} else {
+			// Invalid input, action will not run
+			fSubitem = null;
+			fItem = null;
+		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		
-		if (fParentObject == null) {
+		// Ensure we have valid input
+		if (fItem == null) {
 			return;
 		}
-		
-		ISimpleCSModelFactory factory = fParentObject.getModel().getFactory();
-		
-		// Element: subitem
-		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fParentObject);
-		// Set on the proper parent object
-		if (fParentObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem item = (ISimpleCSItem)fParentObject;
-			subitem.setLabel(generateSubItemLabel(item, PDEUIMessages.SimpleCSAddSubStepAction_1));
-
-			item.addSubItem(subitem);
-		} else if (fParentObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
-			// Not supported by editor
-		} else if (fParentObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
-			// Note supported by editor
-		}
-		
+		// Create the new subitem
+		ISimpleCSSubItem newSubItem = createNewSubItem();		
+		// Insert the new subitem
+		insertNewSubItem(newSubItem);
 	}
+
+	/**
+	 * @return
+	 */
+	private ISimpleCSSubItem createNewSubItem() {
+		ISimpleCSModelFactory factory = fItem.getModel().getFactory();
+		// Element: subitem
+		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fItem);
+		// Set on the proper parent object
+		subitem.setLabel(generateSubItemLabel(fItem, PDEUIMessages.SimpleCSAddSubStepAction_1));
+		return subitem;
+	}
+	
+	/**
+	 * @param newSubItem
+	 */
+	private void insertNewSubItem(ISimpleCSSubItem newSubItem) {
+		// Insert the new subitem depending on the input specfied
+		if (fSubitem != null) {
+			// Subitem input object
+			// Insert subitem right after the input item object
+			int index = fItem.indexOfSubItem(fSubitem) + 1;
+			fItem.addSubItem(index, newSubItem);
+		} else {
+			// Item input object
+			// Insert subitem as the last child subitem
+			fItem.addSubItem(newSubItem);
+		}
+	}	
 	
 	/**
 	 * @return
