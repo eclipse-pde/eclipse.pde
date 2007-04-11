@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
@@ -358,14 +359,18 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int index = currentValue.lastIndexOf(';');
 		if (index == -1) {
 			HashMap completions = new HashMap();
+			IPluginModelBase base = PluginRegistry.findModel(((ManifestEditor)fSourcePage.getEditor()).getCommonProject());
+			BundleDescription desc = base.getBundleDescription();
+			String currentId = desc != null ? desc.getSymbolicName() : null;
+
 			String pluginStart = removeLeadingSpaces(currentValue);
 			int length = pluginStart.length();
 			IPluginModelBase [] bases = PluginRegistry.getActiveModels();
 			for (int i = 0; i < bases.length; i++) {
-				BundleDescription desc = bases[i].getBundleDescription();
+				desc = bases[i].getBundleDescription();
 				if (desc != null && desc.getHost() == null) {
 					String pluginID = bases[i].getBundleDescription().getSymbolicName();
-					if (!completions.containsKey(pluginID) && pluginID.regionMatches(true, 0, pluginStart, 0, length))
+					if (!completions.containsKey(pluginID) && pluginID.regionMatches(true, 0, pluginStart, 0, length) && !pluginID.equals(currentId))
 						completions.put(pluginID, new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
 				}
 			}
