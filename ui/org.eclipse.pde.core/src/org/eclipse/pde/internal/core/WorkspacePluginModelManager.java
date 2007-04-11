@@ -31,6 +31,7 @@ import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
@@ -222,14 +223,22 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			if (model instanceof IBundlePluginModelBase) {
 				// check to see if localization changed (bug 146912)
 				String oldLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-				loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
+				IBundleModel bmodel = ((IBundlePluginModelBase)model).getBundleModel();
+				boolean wasFragment = bmodel.isFragmentModel();
+				loadModel(bmodel, true);
 				String newLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-				if (model instanceof AbstractNLModel && 
-						(oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) ||
-						(newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
-					((AbstractNLModel)model).resetNLResourceHelper();
 				
-				addChange(model, IModelProviderEvent.MODELS_CHANGED);
+				// Fragment-Host header was added or removed
+				if (wasFragment != bmodel.isFragmentModel()) {
+					removeModel(project);
+					createModel(project, true);
+				} else {			
+					if (model instanceof AbstractNLModel && 
+							(oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) ||
+							(newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
+						((AbstractNLModel)model).resetNLResourceHelper();
+					addChange(model, IModelProviderEvent.MODELS_CHANGED);
+				}
 			} 
 		}		
 	}

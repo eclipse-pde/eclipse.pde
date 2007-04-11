@@ -75,8 +75,10 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		
 		public boolean equals(Object obj) {
 			if (obj instanceof ModelChange) {
-				IProject project = ((ModelChange)obj).model.getUnderlyingResource().getProject();
-				return model.getUnderlyingResource().getProject().equals(project);
+				ModelChange change = (ModelChange)obj;
+				IProject project = change.model.getUnderlyingResource().getProject();
+				int type = change.type;
+				return model.getUnderlyingResource().getProject().equals(project) && this.type == type;
 			}
 			return false;
 		}
