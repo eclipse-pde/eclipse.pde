@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginDetailsSection extends PDESection implements IFormPart,
-		IPartSelectionListener {
+IPartSelectionListener {
 	protected IFeaturePlugin fInput;
 
 	private FormEntry fNameText;
@@ -75,12 +75,12 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_BEGINNING);
 		section.setLayoutData(data);		
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -173,15 +173,17 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			Object o = ((IStructuredSelection) selection).getFirstElement();
+		if (selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
+			IStructuredSelection s = ((IStructuredSelection) selection);
+			Object o = s.getFirstElement();
 			if (o instanceof IFeaturePlugin) {
 				fInput = (IFeaturePlugin) o;
 			} else {
 				fInput = null;
 			}
-		} else
+		} else {
 			fInput = null;
+		}
 		update();
 	}
 
@@ -194,11 +196,11 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 		if (fInput != null) {
 			fNameText.setValue(fInput.getLabel());
 			fdownloadSizeText
-					.setValue(
-							fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
+			.setValue(
+					fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
 			fInstallSizeText
-					.setValue(
-							fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
+			.setValue(
+					fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
 			fBlockNotification = true;
 			fUnpackButton.setSelection(fInput.isUnpack());
 			fBlockNotification = false;

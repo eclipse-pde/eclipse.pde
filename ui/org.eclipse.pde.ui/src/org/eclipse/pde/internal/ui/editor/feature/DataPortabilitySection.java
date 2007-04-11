@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -347,7 +347,7 @@ public class DataPortabilitySection extends PDESection implements IFormPart,
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+		if (selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();
 			if (o instanceof IFeatureData) {
 				fCurrentInput = (IFeatureData) o;
