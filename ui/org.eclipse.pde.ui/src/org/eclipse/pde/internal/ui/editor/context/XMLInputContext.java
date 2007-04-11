@@ -322,13 +322,34 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	private DeleteEdit getAttributeDeleteEditOperation(int offset, int length) {
 		try {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
-			for (;;) {
-				char ch = doc.getChar(offset + length);
-				if (!Character.isWhitespace(ch)) {
+			// Traverse backwards in the document starting at the attribute
+			// offset
+			// Goal: Delete all whitespace preceding the attribute name 
+			// including spaces, tabs and newlines 
+			// We want the next attribute (if defined) to be in the same 
+			// position as the deleted one and properly indented.  Otherwise,
+			// we want the open angle bracket to be adjacent to the start 
+			// element tag name or adjacent to the previous attribute (if
+			// defined) before the deleted one
+			// e.g.   _____\n________att1="value1"
+			// This is accomplished by growing the length and decrementing
+			// the offset in order to include the extra whitespace in the
+			// deletion operation
+			for (int i = (offset - 1); i >= 0; i--) {
+				// Get the character at the specified document index
+				char character = doc.getChar(i);
+				// If the character is whitespace, include it in the deletion
+				// operation
+				if (Character.isWhitespace(character)) {
+					// Grow length by one
+					length = length + 1;
+					// Decrement offset by one
+					offset = offset - 1;
+				} else {
+					// Non-whitespace character encountered, do not mark it 
+					// for deletion and we are done
 					break;
 				}
-				
-				length += 1;
 			}
 		} catch (BadLocationException e) {
 		}
