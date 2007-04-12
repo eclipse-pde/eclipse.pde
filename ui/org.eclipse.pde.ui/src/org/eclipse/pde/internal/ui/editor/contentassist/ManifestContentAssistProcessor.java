@@ -58,6 +58,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	protected PDESourcePage fSourcePage;
 	private IJavaProject fJP;
 	
+	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
 		Constants.BUNDLE_ACTIVATOR,
 		Constants.BUNDLE_CATEGORY,
@@ -76,7 +77,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		Constants.BUNDLE_VENDOR,
 		Constants.BUNDLE_VERSION,
 		Constants.DYNAMICIMPORT_PACKAGE,
+		ICoreConstants.EXTENSIBLE_API,
 		ICoreConstants.ECLIPSE_LAZYSTART,
+		ICoreConstants.PLATFORM_FILTER,
 		Constants.EXPORT_PACKAGE,
 		ICoreConstants.EXPORT_SERVICE,
 		Constants.IMPORT_PACKAGE,
@@ -251,6 +254,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleTrueFalseValue(value.substring(ICoreConstants.ECLIPSE_LAZYSTART.length() + 1), offset);
 		if (value.startsWith(Constants.BUNDLE_NAME))
 			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
+		if (value.startsWith(ICoreConstants.EXTENSIBLE_API))
+			return handleTrueFalseValue(value.substring(ICoreConstants.EXTENSIBLE_API.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}
 	
