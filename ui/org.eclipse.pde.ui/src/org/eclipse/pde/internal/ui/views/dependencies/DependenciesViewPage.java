@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BaseDescription;
@@ -101,8 +100,6 @@ public abstract class DependenciesViewPage extends Page {
 	
 	private static final String HIDE_OPTIONAL = "hideOptional"; //$NON-NLS-1$
 	
-	private static ViewerComparator fComparator = null;
-	
 	class FragmentFilter extends ViewerFilter {
 		
 		public boolean select(Viewer v, Object parent, Object element) {
@@ -135,26 +132,6 @@ public abstract class DependenciesViewPage extends Page {
 			return true;
 		}
 	}
-	
-	static class DependenciesComparator extends ViewerComparator {
-
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			return getId(e1).compareTo(getId(e2));
-		}
-		
-		private String getId(Object obj) {
-			BundleDescription desc = null;
-			if (obj instanceof ImportPackageSpecification) {
-				desc = ((ExportPackageDescription)((ImportPackageSpecification)obj).getSupplier()).getSupplier();
-			} else if (obj instanceof BundleSpecification) {
-				desc = (BundleDescription)((BundleSpecification)obj).getSupplier();
-			} else if (obj instanceof BundleDescription)
-				desc = (BundleDescription)obj;
-			if (desc != null)
-				return desc.getSymbolicName();
-			return ""; //$NON-NLS-1$
-		}
-	}
 
 	/**
 	 * 
@@ -179,16 +156,10 @@ public abstract class DependenciesViewPage extends Page {
 	 */
 	public void createControl(Composite parent) {
 		fViewer = createViewer(parent);
-		fViewer.setComparator(getComparator());
+		fViewer.setComparator(DependenciesViewComparator.getViewerComparator());
 		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
 				fPropertyListener);
 		getSite().setSelectionProvider(fViewer);
-	}
-	
-	private ViewerComparator getComparator() {
-		if (fComparator == null)
-			fComparator = new DependenciesComparator();
-		return fComparator;
 	}
 
 	protected abstract StructuredViewer createViewer(Composite parent);
