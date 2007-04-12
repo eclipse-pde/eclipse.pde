@@ -53,6 +53,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String CSAbstractPage_msgRegisterThisCheatSheet;
 
+	public static String DependenciesView_showStateAction_description;
+
+	public static String DependenciesView_showStateAction_label;
+
+	public static String DependenciesView_showStateAction_toolTip;
+
 	public static String DependenciesViewPage_showFragments;
 
 	public static String DependenciesViewPage_showOptional;
@@ -326,6 +332,16 @@ public class PDEUIMessages extends NLS {
 	public static String SplashProgressSection_progressSectionDesc;
 
 	public static String SplashTemplatesSection_typeName;
+
+	public static String StateViewPage_importedPackages;
+
+	public static String StateViewPage_requiredBundles;
+
+	public static String StateViewPage_showOnlyUnresolved_label;
+
+	public static String StateViewPage_suppliedBy;
+
+	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;
 	

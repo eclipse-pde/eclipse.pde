@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -204,6 +205,8 @@ public class DependenciesView extends PageBookView implements
 	protected static final IWorkbenchPart PART_CALLERS_LIST = new DummyPart();
 
 	protected static final IWorkbenchPart PART_CALLERS_TREE = new DummyPart();
+	
+	protected static final IWorkbenchPart PART_STATE_TREE = new DummyPart();
 
 	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
 	
@@ -236,6 +239,10 @@ public class DependenciesView extends PageBookView implements
 	private DependencyLoop[] fLoops;
 	
 	private HistoryDropDownAction fHistoryDropDownAction;
+	
+	private Action fShowState;
+	
+	private IWorkbenchPart fLastDependenciesPart = null;
 	/**
 	 * 
 	 */
@@ -263,6 +270,8 @@ public class DependenciesView extends PageBookView implements
 		manager.add(new Separator("history")); //$NON-NLS-1$
 		manager.add(fShowLoops);
 		manager.add(fHistoryDropDownAction);
+		manager.add(new Separator("state")); //$NON-NLS-1$
+		manager.add(fShowState);
 	}
 
 	/*
@@ -288,8 +297,8 @@ public class DependenciesView extends PageBookView implements
 	/**
 	 * part of the part constants
 	 */
-	private DependenciesViewPage createPage(IWorkbenchPart part) {
-		DependenciesViewPage page;
+	private IPageBookViewPage createPage(IWorkbenchPart part) {
+		IPageBookViewPage page;
 		if (part == PART_CALLEES_TREE) {
 			page = new DependenciesViewTreePage(this,
 					new CalleesTreeContentProvider(this));
@@ -299,9 +308,11 @@ public class DependenciesView extends PageBookView implements
 		} else if (part == PART_CALLERS_TREE) {
 			page = new DependenciesViewTreePage(this,
 					new CallersTreeContentProvider(this));
-		} else {
+		} else if (part == PART_CALLERS_LIST){
 			page = new DependenciesViewListPage(this,
 					new CallersListContentProvider(this));
+		} else {
+			page = new StateViewPage(this);
 		}
 
 		initPage(page);
@@ -335,6 +346,16 @@ public class DependenciesView extends PageBookView implements
 		
 		fHistoryDropDownAction= new HistoryDropDownAction(this);
 		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
+		
+		fShowState = new Action(PDEUIMessages.DependenciesView_showStateAction_label, IAction.AS_CHECK_BOX) {
+			public void run() {
+				enableStateView(isChecked());
+			}
+		};
+		fShowState.setDescription(PDEUIMessages.DependenciesView_showStateAction_description);
+		fShowState.setToolTipText(PDEUIMessages.DependenciesView_showStateAction_toolTip);
+		fShowState.setImageDescriptor(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+		fShowState.setEnabled(true);
 		
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
@@ -531,16 +552,21 @@ public class DependenciesView extends PageBookView implements
 			((DependenciesViewPage)currPage).setActive(false);
 		}
 		IPage p = pageRec.page;
-		((DependenciesViewPage) p).setInput(fInput);
+		if (p instanceof DependenciesViewPage)
+			((DependenciesViewPage) p).setInput(fInput);
 		super.showPageRec(pageRec);
-		((DependenciesViewPage) p).setActive(true);
-		updateTitle(fInput);
-		((DependenciesViewPage) p).setSelection(selection);
+		if (p instanceof DependenciesViewPage) {
+			((DependenciesViewPage) p).setActive(true);
+			updateTitle(fInput);
+			((DependenciesViewPage) p).setSelection(selection);
+		} else if (p instanceof StateViewPage){
+			((StateViewPage)p).setActive(true);
+		}
 	}
 
 	void updateTitle(Object newInput) {
 		if (newInput == null) {
-			setContentDescription(""); //$NON-NLS-1$
+			updateTitle(""); //$NON-NLS-1$
 		} else if (!newInput.equals(PDECore.getDefault().getModelManager())) {
 			String name = PDEPlugin.getDefault().getLabelProvider().getText(
 					newInput);
@@ -557,8 +583,12 @@ public class DependenciesView extends PageBookView implements
 			if(fLoops != NO_LOOPS){
 				title = title + " " + PDEUIMessages.DependenciesView_cycles_title; //$NON-NLS-1$
 			}
-			setContentDescription(title); 
+			updateTitle(title); 
 		}
+	}
+	
+	void updateTitle(String description) {
+		setContentDescription(description);
 		setTitleToolTip(getTitle());
 	}
 	
@@ -630,5 +660,24 @@ public class DependenciesView extends PageBookView implements
 	
 	public boolean isShowingCallers() {
 		return fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS);
+	}
+	
+	protected void enableStateView(boolean enabled) {
+		if (enabled) {
+			fLastDependenciesPart = getCurrentContributingPart();
+			partActivated(DependenciesView.PART_STATE_TREE);
+		} else {
+			partActivated(fLastDependenciesPart);
+			fLastDependenciesPart = null;
+		}
+		IToolBarManager manager = getViewSite().getActionBars().getToolBarManager();
+		manager.removeAll();
+		if (enabled) {
+			manager.add(new Separator());
+			manager.add(fShowState);
+		} else {
+			contributeToLocalToolBar(manager);
+		}
+		manager.update(false);
 	}
 }
