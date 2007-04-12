@@ -465,7 +465,9 @@ public class PluginModelManager implements IModelProviderListener {
 			// if a target model has went from an unchecked state to a checked state
 			// on the target platform preference page, re-add its bundle description
 			// to the state
-			fState.addBundleDescription(model.getBundleDescription());
+			BundleDescription desc = model.getBundleDescription();
+			if (desc.getContainingState().equals(fState))
+				fState.addBundleDescription(desc);
 		}
 	}
 	
