@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -96,6 +97,7 @@ public class PluginModelManager implements IModelProviderListener {
 	
 	private Map fEntries;  // a master table keyed by plugin ID and the value is a ModelEntry
 	private ArrayList fListeners; // a list of listeners interested in changes to the plug-in models
+	private ArrayList fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
 
 	/**
 	 * Initialize the workspace and external (target) model manager
@@ -159,6 +161,8 @@ public class PluginModelManager implements IModelProviderListener {
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
 			updateAffectedEntries(stateDelta);
+			fireStateDelta(stateDelta);
+			
 		}
 		
 		// notify all interested listeners in the changes made to the master table of entries
@@ -247,6 +251,32 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 	}
+	
+	/**
+	 * Notify all interested listeners in changes made to the resolver State
+	 * 
+	 * @param delta	the delta from the resolver State.
+	 */
+	private void fireStateDelta(StateDelta delta) {
+		if (fStateListeners != null) {
+			ListIterator li = fStateListeners.listIterator();
+			while (li.hasNext())
+				((IStateDeltaListener)li.next()).stateResolved(delta);
+		}
+	}
+	
+	/**
+	 * Notify all interested listeners the cached PDEState has changed
+	 * 
+	 * @param newState	the new PDEState.
+	 */
+	private void fireStateChanged(PDEState newState) {
+		if (fStateListeners != null) {
+			ListIterator li = fStateListeners.listIterator();
+			while (li.hasNext())
+				((IStateDeltaListener)li.next()).stateChanged(newState.getState());
+		}
+	}
 
 	/**
 	 * Add a listener to the model manager
@@ -261,6 +291,18 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 	
 	/**
+	 * Add a StateDelta listener to model manager
+	 * 
+	 * @param listener	the listener to be added
+	 */
+	public void addStateDeltaListener(IStateDeltaListener listener) {
+		if (fStateListeners == null)
+			fStateListeners = new ArrayList();
+		if (!fStateListeners.contains(listener))
+			fStateListeners.add(listener);
+	}	
+	
+	/**
 	 * Remove a listener from the model manager
 	 * 
 	 * @param listener the listener to be removed
@@ -268,6 +310,16 @@ public class PluginModelManager implements IModelProviderListener {
 	public void removePluginModelListener(IPluginModelListener listener) {
 		if (fListeners != null)
 			fListeners.remove(listener);
+	}
+	
+	/**
+	 * Remove a StateDelta listener from the model manager
+	 * 
+	 * @param listener the listener to be removed
+	 */
+	public void removeStateDeltaListener(IStateDeltaListener listener) {
+		if (fStateListeners != null)
+			fStateListeners.remove(listener);
 	}
 	
 	/**
@@ -761,6 +813,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public void setState(PDEState state) {
 		fState = state;
+		fireStateChanged(state);
 	}
 	
 	/**
@@ -773,6 +826,8 @@ public class PluginModelManager implements IModelProviderListener {
 			fState.shutdown();
 		if (fListeners != null)
 			fListeners.clear();
+		if (fStateListeners != null)
+			fStateListeners.clear();
 	}
 
 }
