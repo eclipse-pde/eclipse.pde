@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
@@ -20,6 +21,9 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 import org.eclipse.debug.ui.sourcelookup.WorkingSetSourceContainer;
+import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
 
 public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
@@ -47,11 +51,28 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		return !fFilteredTypes.contains(type.getId());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#getSourceElement(java.lang.Object)
+	 */
 	public Object getSourceElement(Object element) {
 		PDESourceLookupQuery query = new PDESourceLookupQuery(element);
 		SafeRunner.run(query);
 		Object result = query.getResult();
 		return result != null ? result : super.getSourceElement(element);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#findSourceElements(java.lang.Object)
+	 */
+	public Object[] findSourceElements(Object object) throws CoreException {
+		Object[] sourceElements = null;
+		if (object instanceof IJavaStackFrame || object instanceof IJavaObject || object instanceof IJavaReferenceType){
+			sourceElements = new Object[] {getSourceElement(object)};
+		}
+		if (sourceElements == null) {
+			sourceElements = super.findSourceElements(object);
+		}
+		return sourceElements;
 	}
 	
 }

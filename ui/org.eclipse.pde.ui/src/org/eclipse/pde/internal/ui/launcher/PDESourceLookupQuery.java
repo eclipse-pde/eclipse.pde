@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -43,9 +44,9 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.PDEClasspathContainer;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class PDESourceLookupQuery implements ISafeRunnable {
@@ -66,22 +67,41 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	}
 
 	public void run() throws Exception {
+		IJavaObject classLoaderObject = null;
+		String declaringTypeName = null;
+		String sourcePath = null;
 		if (fElement instanceof IJavaStackFrame) {
 			IJavaStackFrame stackFrame = (IJavaStackFrame)fElement;
-			String typeName = generateSourceName(stackFrame.getDeclaringTypeName());
-
-			IJavaObject object = stackFrame.getReferenceType().getClassLoaderObject();
-			if (object != null) {
-				IJavaClassType type = (IJavaClassType)object.getJavaType();
-				if (OSGI_CLASSLOADER.equals(type.getName())) {
-					fResult = findSourceElement(object, typeName);
-				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
-					fResult = findSourceElement_legacy(object, typeName);		
-				} else if (MAIN_CLASS.equals(stackFrame.getDeclaringTypeName())){
-					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
-					if (model != null)
-						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, typeName);
-				}
+			classLoaderObject = stackFrame.getReferenceType().getClassLoaderObject();
+			declaringTypeName = stackFrame.getDeclaringTypeName();
+			sourcePath = generateSourceName(declaringTypeName);
+		} else if (fElement instanceof IJavaObject){
+			IJavaObject object = (IJavaObject)fElement;
+			IJavaReferenceType type = (IJavaReferenceType)object.getJavaType();
+			classLoaderObject = type.getClassLoaderObject();
+			if (object.getJavaType() != null){
+				declaringTypeName = object.getJavaType().getName();
+			}
+			if (declaringTypeName != null){
+				sourcePath = generateSourceName(declaringTypeName);
+			}	
+		} else if (fElement instanceof IJavaReferenceType){
+			IJavaReferenceType type = (IJavaReferenceType)fElement;
+			classLoaderObject = type.getClassLoaderObject();
+			declaringTypeName = type.getName();
+			sourcePath = generateSourceName(declaringTypeName);
+		}
+			
+		if (classLoaderObject != null) {
+			IJavaClassType type = (IJavaClassType)classLoaderObject.getJavaType();
+			if (OSGI_CLASSLOADER.equals(type.getName())) {
+				fResult = findSourceElement(classLoaderObject, sourcePath);
+			} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
+				fResult = findSourceElement_legacy(classLoaderObject, sourcePath);		
+			} else if (MAIN_CLASS.equals(declaringTypeName)){
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
+				if (model != null)
+					fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath);
 			}
 		}
 	}
