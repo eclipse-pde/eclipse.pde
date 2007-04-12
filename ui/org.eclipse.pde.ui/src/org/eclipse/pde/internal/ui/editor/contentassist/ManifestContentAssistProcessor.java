@@ -352,7 +352,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
 			set.add(tokenizer.nextToken());
-		return handleBundleCompletions(value.substring((index == -1) ? 0 : index + 1), set, F_TYPE_VALUE, offset);
+		return handleBundleCompletions(value.substring((index == -1) ? 0 : index + 1), set, F_TYPE_VALUE, offset, true);
 	}
 	
 	protected ICompletionProposal[] handleFragmentHostCompletion(String currentValue, int offset) {
@@ -395,7 +395,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			HashSet set = (HashSet) fHeaders.get(Constants.REQUIRE_BUNDLE);
 			if (set == null)
 				set = parseHeaderForValues(currentValue, offset);
-			return handleBundleCompletions(value, set, F_TYPE_BUNDLE, offset);
+			return handleBundleCompletions(value, set, F_TYPE_BUNDLE, offset, false);
 		}
 		int equals = currentValue.lastIndexOf('=');
 		if (equals == -1 || semicolon > equals) {
@@ -434,7 +434,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		return new ICompletionProposal[0];
 	}
 	
-	private ICompletionProposal[] handleBundleCompletions(String value, Collection doNotInclude, int type, int offset) {
+	private ICompletionProposal[] handleBundleCompletions(String value, Collection doNotInclude, int type, int offset, boolean includeFragments) {
 		value = removeLeadingSpaces(value);
 		int length = value.length();
 		doNotInclude.remove(value);
@@ -442,7 +442,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		IPluginModelBase [] bases = PluginRegistry.getActiveModels();
 		for (int i = 0; i < bases.length; i++) {
 			BundleDescription desc = bases[i].getBundleDescription();
-			if (desc != null && desc.getHost() == null) {
+			if (desc != null) {
+				if (!includeFragments && desc.getHost() != null)
+					continue;
 				String bundleId = desc.getSymbolicName();
 				if (bundleId.regionMatches(true, 0, value, 0, value.length()) && 
 						!doNotInclude.contains(bundleId))
