@@ -94,15 +94,17 @@ public class BuildEditor extends MultiSourceEditor {
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
+	 */
 	protected String computeInitialPageId() {
+		// Retrieve the initial page
 		String firstPageId = super.computeInitialPageId();
+		// If none is defined, return the default
 		if (firstPageId == null) {
-			InputContext primary = fInputContextManager.getPrimaryContext();
-			if (primary.getId().equals(BuildInputContext.CONTEXT_ID))
-				firstPageId = BuildPage.PAGE_ID;
-			if (firstPageId == null)
-				firstPageId = BuildPage.PAGE_ID;
+			return BuildPage.PAGE_ID;
 		}
+		
 		return firstPageId;
 	}
 	

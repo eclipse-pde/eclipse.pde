@@ -32,10 +32,10 @@ public interface IPDEUIConstants {
 	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
 	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	QualifiedName DEFAULT_EDITOR_PAGE_KEY =
-		new QualifiedName(PLUGIN_ID, "default-editor-page");	 //$NON-NLS-1$
-	QualifiedName DEFAULT_EDITOR_PAGE_KEY_NEW =
-		new QualifiedName(PLUGIN_ID, "default-editor-page-new");	 //$NON-NLS-1$
+	QualifiedName PROPERTY_EDITOR_PAGE_KEY =
+		new QualifiedName(PLUGIN_ID, "editor-page-key");	 //$NON-NLS-1$
+	QualifiedName PROPERTY_MANIFEST_EDITOR_PAGE_KEY =
+		new QualifiedName(PLUGIN_ID, "manifest-editor-page-key");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_PRODUCT_EXPORT_LOCATION =
 		new QualifiedName(PLUGIN_ID, "product-export-location");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_PRODUCT_EXPORT_DIR =

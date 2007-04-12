@@ -450,32 +450,123 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
-
+	/**
+	 * @param pageID
+	 * @return
+	 */
+	private boolean isSourcePageID(String pageID) {
+		// Determine whether the page ID is a source page ID
+		if (pageID == null) {
+			return false;
+		} else if (pageID.equals(BuildInputContext.CONTEXT_ID)) {
+			// build.properites
+			return true;
+		} else if (pageID.equals(PluginInputContext.CONTEXT_ID)) {
+			// plugin.xml
+			return true;
+		} else if (pageID.equals(BundleInputContext.CONTEXT_ID)) {
+			// MANIFEST.MF
+			return true;
+		}
+		return false;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
+	 */
 	protected String computeInitialPageId() {
+		// Used by plug-in search view to open query results, etc.
 		if (SHOW_SOURCE) {
 			SHOW_SOURCE = false;
-			InputContext primary = fInputContextManager.getPrimaryContext();
-			if (primary != null)
-				return primary.getId();
+			return getPrimarySourceInputContextID();
+		}
+		// Retrieve the initial page
+		String firstPageId = super.computeInitialPageId();
+		// If none is defined, return the default
+		// If the initial page is a source page ID (e.g. build.properties,
+		// MANIFEST.MF, plugin.xml), then return the page ID belonging to the
+		// input context or file used to open this editor
+		if (firstPageId == null) {
+			return OverviewPage.PAGE_ID;
+		} else if (isSourcePageID(firstPageId)) {
+			return getPrimarySourceInputContextID();
 		}
 		
-		String firstPageId = super.computeInitialPageId();
-		if (firstPageId == null) {
-			InputContext primary = fInputContextManager.getPrimaryContext();
-			if (primary == null)
-				return null;
-			if (BuildInputContext.CONTEXT_ID.equals(primary.getId()))
-				firstPageId = BuildPage.PAGE_ID;
-			else if (PluginInputContext.CONTEXT_ID.equals(primary.getId())) {
-				if (fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
-					firstPageId = ExtensionsPage.PAGE_ID;
-				else
-					firstPageId = OverviewPage.PAGE_ID;
-			}
-			if (firstPageId == null)
-				firstPageId = OverviewPage.PAGE_ID;
-		}
 		return firstPageId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput)
+	 */
+	protected String getPropertyEditorPageKey(IFileEditorInput input) {
+		// We are using the project itself to persist the editor page key property
+		// The value persists even after the editor is closed
+		// The project is used rather than the file in this case because the
+		// manifest editor has 3 input files and only one build.properties,
+		// one MANIFEST.MF and one plugin.xml should exist for each project.
+		// We also want the last editor page to be shared between the two
+		// input contexts.  The build.properties file has its own editor.
+		IFile file = input.getFile();
+		IProject project = file.getProject();
+		// Ensure the project is defined
+		if (project == null) {
+			// Check the file for the key
+			return super.getPropertyEditorPageKey(input);
+		}
+		// Get the persistent editor page key from the project 
+		try {
+			return project.getPersistentProperty(
+					IPDEUIConstants.PROPERTY_MANIFEST_EDITOR_PAGE_KEY);
+		} catch (CoreException e) {
+			// Check the file for the key
+			return super.getPropertyEditorPageKey(input);
+		}		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#setPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput, java.lang.String)
+	 */
+	protected void setPropertyEditorPageKey(IFileEditorInput input,
+			String pageId) {
+		// We are using the project itself to persist the editor page key property
+		// The value persists even after the editor is closed
+		// The project is used rather than the file in this case because the
+		// manifest editor has 3 input files and only one build.properties,
+		// one MANIFEST.MF and one plugin.xml should exist for each project.
+		// We also want the last editor page to be shared between the two
+		// input contexts.  The build.properties file has its own editor.
+		IFile file = input.getFile();
+		IProject project = file.getProject();
+		// Ensure the project is defined
+		if (project == null) {
+			// Set the key on the file
+			super.setPropertyEditorPageKey(input, pageId);
+			return;
+		}
+		// Set the editor page ID as a persistent property on the project
+		try {
+			project.setPersistentProperty(
+					IPDEUIConstants.PROPERTY_MANIFEST_EDITOR_PAGE_KEY, 
+					pageId);
+		} catch (CoreException e) {
+			// Set the key on the file
+			super.setPropertyEditorPageKey(input, pageId);
+			return;
+		}		
+	}
+	
+	/**
+	 * @return
+	 */
+	private String getPrimarySourceInputContextID() {
+		// Get the input context used to open this editor
+		InputContext primary = fInputContextManager.getPrimaryContext();
+		// Ensure it is defined
+		if (primary == null) {
+			return null;
+		}
+		// Return its ID
+		return primary.getId();
 	}
 	
 	/* (non-Javadoc)

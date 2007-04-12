@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -502,21 +503,21 @@ public abstract class PDEFormEditor extends FormEditor
 		return false;
 	}
 
+	/**
+	 * 
+	 */
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
 		String pageId = fLastActivePageId;
 		if (pageId == null)
 			return;
 		if (input instanceof IFileEditorInput) {
-			IProject project = ((IFileEditorInput) input).getFile().getProject();
-			if (project != null) {
-				try {
-					project.setPersistentProperty(
-							IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW,
-							pageId);
-				} catch (CoreException e) {}
-			}
+			// Triggered by opening a file in the workspace
+			// e.g. From the Package Explorer View
+			setPropertyEditorPageKey((IFileEditorInput)input, pageId);
 		} else if (input instanceof IStorageEditorInput) {
+			// Triggered by opening a file NOT in the workspace
+			// e.g. From the Plug-in View
 			File file = (File) input.getAdapter(File.class);
 			if (file == null)
 				return;
@@ -527,17 +528,37 @@ public abstract class PDEFormEditor extends FormEditor
 			section.put(key, pageId);
 		}
 	}
+
+	/**
+	 * @param input
+	 * @param pageId
+	 */
+	protected void setPropertyEditorPageKey(IFileEditorInput input, String pageId) {
+		// We are using the file itself to persist the editor page key property
+		// The value persists even after the editor is closed
+		IFile file = input.getFile();
+		try {
+			// Set the editor page ID as a persistent property on the file
+			file.setPersistentProperty(
+					IPDEUIConstants.PROPERTY_EDITOR_PAGE_KEY, 
+					pageId);
+		} catch (CoreException e) {
+			// Ignore
+		}
+	}
+	
+	/**
+	 * @return
+	 */
 	private String loadDefaultPage() {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
-			IProject project = ((IFileEditorInput) input).getFile().getProject();
-			try {
-				return project.getPersistentProperty(
-						IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW);
-			} catch (CoreException e) {
-				return null;
-			}
+			// Triggered by opening a file in the workspace
+			// e.g. From the Package Explorer View
+			return getPropertyEditorPageKey((IFileEditorInput)input);
 		} else if (input instanceof IStorageEditorInput) {
+			// Triggered by opening a file NOT in the workspace
+			// e.g. From the Plug-in View
 			File file = (File) input.getAdapter(File.class);
 			if (file == null)
 				return null;
@@ -549,6 +570,24 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		return null;
 	}
+
+	/**
+	 * @param input
+	 * @return
+	 */
+	protected String getPropertyEditorPageKey(IFileEditorInput input) {
+		// We are using the file itself to persist the editor page key property
+		// The value persists even after the editor is closed
+		IFile file = input.getFile();
+		// Get the persistent editor page key from the file
+		try {
+			return file.getPersistentProperty(
+					IPDEUIConstants.PROPERTY_EDITOR_PAGE_KEY);
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+	
 	public void dispose() {
 		storeDefaultPage();
 		if (fEditorSelectionChangedListener != null)  {
@@ -903,6 +942,5 @@ public abstract class PDEFormEditor extends FormEditor
 	protected IStatusLineManager getStatusLineManager() {
 		return getEditorSite().getActionBars().getStatusLineManager();
 	}	
-
 
 }
