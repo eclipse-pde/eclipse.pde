@@ -51,6 +51,7 @@ import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 public class ManifestContentAssistProcessor extends TypePackageCompletionProcessor implements ICompletionListener {
 	
@@ -423,7 +424,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			IPluginModelBase[] hosts = entry.getActiveModels();
 			ArrayList proposals = new ArrayList(hosts.length);
 			for (int i = 0; i < hosts.length; i++) {
-				String proposalValue = new StringBuffer("\"").append(hosts[i].getPluginBase().getVersion()).append('\"').toString(); //$NON-NLS-1$
+				String proposalValue = getVersionProposal(hosts[i]);
 				if (proposalValue.regionMatches(0, existingValue, 0, existingValue.length()))
 					proposals.add(new TypeCompletionProposal(proposalValue.substring(existingValue.length()), 
 							getImage(F_TYPE_VALUE), proposalValue, offset, 0));
@@ -432,6 +433,31 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		} else if (existingValue.length() == 0)
 			return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
 		return new ICompletionProposal[0];
+	}
+	
+	private String getVersionProposal(IPluginModelBase base) {
+		StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+		BundleDescription desc = base.getBundleDescription();
+		if (desc != null) {
+			Version version = desc.getVersion();
+			buffer.append(version.getMajor());
+			buffer.append('.');
+			buffer.append(version.getMinor());
+			buffer.append('.');
+			buffer.append(version.getMicro());
+		} else {
+			char[] chars = base.getPluginBase().getVersion().toCharArray();
+			int periodCount = 0;
+			for (int i = 0; i < chars.length; i++) {
+				if (chars[i] == '.') {
+					if (periodCount == 2)
+						break;
+					++periodCount;
+				}
+				buffer.append(chars[i]);
+			}
+		}
+		return buffer.append('\"').toString();
 	}
 	
 	private ICompletionProposal[] handleBundleCompletions(String value, Collection doNotInclude, int type, int offset, boolean includeFragments) {
