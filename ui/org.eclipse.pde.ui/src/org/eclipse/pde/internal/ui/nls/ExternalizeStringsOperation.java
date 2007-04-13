@@ -33,7 +33,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.InsertEdit;
@@ -135,7 +134,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	
 	public static void checkPropertiesFile(IFile file) {
 		if (!file.exists()) {
-			String propertiesFileComment = NLS.bind(PDEUIMessages.ExternalizeStringsOperation_propertiesComment, file.getProject().getName());
+			String propertiesFileComment = NLS.bind("#Properties file for {0}", file.getProject().getName()); //$NON-NLS-1$
 			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
 			try {
 				IContainer container = file.getParent();

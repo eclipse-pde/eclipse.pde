@@ -485,8 +485,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeResolution_text;
 
-	public static String ExternalizeStringsOperation_propertiesComment;
-
 	public static String OpenManifestAction_noManifest;
 
 	public static String ProjectNamesPage_duplicateNames;
