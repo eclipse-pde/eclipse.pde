@@ -97,7 +97,7 @@ public abstract class AbstractLauncherToolbar {
 	private void createValidateItem(final ToolBar bar) {
 		fValidateItem = new ToolItem(bar, SWT.DROP_DOWN);
 		fValidateItem.setImage(fValidateImage);
-		fValidateItem.setToolTipText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName()));
+		fValidateItem.setToolTipText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
 		fValidateItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (event.detail == 0)
