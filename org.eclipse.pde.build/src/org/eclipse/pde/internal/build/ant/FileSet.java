@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
+import java.util.StringTokenizer;
+
 /**
  * Represents an Ant fileset.
  */
@@ -54,11 +56,29 @@ public class FileSet {
 		script.print("<fileset"); //$NON-NLS-1$
 		script.printAttribute("dir", dir, true); //$NON-NLS-1$
 		script.printAttribute("defaultexcludes", defaultexcludes, false); //$NON-NLS-1$
-		script.printAttribute("includes", includes, false); //$NON-NLS-1$
 		script.printAttribute("includesfile", includesfile, false); //$NON-NLS-1$
-		script.printAttribute("excludes", excludes, false); //$NON-NLS-1$
 		script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
 		script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
-		script.println("/>"); //$NON-NLS-1$
+		script.print(">"); //$NON-NLS-1$
+		script.println();
+
+		if (includes != null)
+			printNames(script, "include", includes); //$NON-NLS-1$
+		if (excludes != null)
+			printNames(script, "exclude", excludes); //$NON-NLS-1$
+		script.println("</fileset>"); //$NON-NLS-1$
+	}
+	
+	private void printNames(AntScript script, String tag, String names) {
+		script.indent++;
+		for (StringTokenizer tokenizer = new StringTokenizer(names, ","); tokenizer.hasMoreTokens(); ) { //$NON-NLS-1$
+			script.printTabs();
+			script.print("<"); //$NON-NLS-1$
+			script.print(tag);
+			script.printAttribute("name", tokenizer.nextToken(), true); //$NON-NLS-1$
+			script.print("/>"); //$NON-NLS-1$
+			script.println();
+		}
+		script.indent--;
 	}
 }
