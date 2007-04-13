@@ -41,9 +41,6 @@ import org.eclipse.swt.widgets.ToolItem;
 public abstract class AbstractLauncherToolbar {
 	
 	private Image fValidateImage;
-	private Image fFilterImage;
-	private Image fDisabledFilterImage;
-	private ToolItem fFilterItem;
 	private ToolItem fValidateItem;
 	
 	private MenuItem fAutoValidateItem;
@@ -51,49 +48,23 @@ public abstract class AbstractLauncherToolbar {
 	protected ILaunchConfiguration fLaunchConfiguration;
 	private LaunchValidationOperation fOperation;
 	private PluginStatusDialog fDialog;
+	private Menu menu;
 
 	public AbstractLauncherToolbar(AbstractLauncherTab tab) { 
 		fTab = tab;
 		fValidateImage = PDEPluginImages.DESC_VALIDATE_TOOL.createImage();	
-		fFilterImage = PDEPluginImages.DESC_FILTER.createImage();
-		fDisabledFilterImage = PDEPluginImages.DESC_FILTER_DISABLED.createImage();
 	}
 	
 	public void createContents(Composite parent) {
-		final ToolBar bar = new ToolBar(parent, SWT.FLAT);
+		ToolBar bar = new ToolBar(parent, SWT.FLAT);
 		bar.setBackground(parent.getBackground());
 		bar.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING|GridData.HORIZONTAL_ALIGN_END));
 
 		new ToolItem(bar, SWT.SEPARATOR);
-		//createFilterItem(bar);
 		createValidateItem(bar);
 		new ToolItem(bar, SWT.SEPARATOR);
 	}
 	
-	protected void createFilterItem(final ToolBar bar) {
-		fFilterItem = new ToolItem(bar, SWT.DROP_DOWN);
-		fFilterItem.setImage(fFilterImage);
-		fFilterItem.setDisabledImage(fDisabledFilterImage);
-		fFilterItem.setToolTipText(PDEUIMessages.PluginsTabToolBar_filter_options);
-
-		final Menu menu = new Menu (PDEPlugin.getActiveWorkbenchShell(), SWT.POP_UP);
-		MenuItem item = new MenuItem (menu, SWT.CHECK);
-		item.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_filter_disabled, fTab.getName().toLowerCase(Locale.ENGLISH)));
-		item.setSelection(true);
-		
-		fFilterItem.addListener (SWT.Selection, new Listener() {
-			public void handleEvent (Event event) {
-				if (event.detail == SWT.ARROW) {
-					Rectangle rect = fFilterItem.getBounds();
-					Point pt = new Point(rect.x, rect.y + rect.height);
-					pt = bar.toDisplay(pt);
-					menu.setLocation(pt.x, pt.y);
-					menu.setVisible(true);
-				}
-			}
-		});		
-	}
-
 	private void createValidateItem(final ToolBar bar) {
 		fValidateItem = new ToolItem(bar, SWT.DROP_DOWN);
 		fValidateItem.setImage(fValidateImage);
@@ -105,7 +76,7 @@ public abstract class AbstractLauncherToolbar {
 			}
 		});
 		
-		final Menu menu = new Menu (PDEPlugin.getActiveWorkbenchShell(), SWT.POP_UP);
+		menu = new Menu (PDEPlugin.getActiveWorkbenchShell(), SWT.POP_UP);
 		fAutoValidateItem = new MenuItem (menu, SWT.CHECK);
 		fAutoValidateItem.setText(PDEUIMessages.PluginsTabToolBar_auto_validate);
 		fAutoValidateItem.addSelectionListener(new SelectionAdapter() {
@@ -128,13 +99,9 @@ public abstract class AbstractLauncherToolbar {
 	}
 
 	public void dispose() {
+		if (menu != null)
+			menu.dispose();
 		fValidateImage.dispose();
-		fFilterImage.dispose();
-		fDisabledFilterImage.dispose();
-	}
-
-	public void enableFiltering(boolean enable) {
-		//fFilterItem.setEnabled(enable);
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration, boolean custom) {
@@ -144,7 +111,6 @@ public abstract class AbstractLauncherToolbar {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-		//fFilterItem.setEnabled(custom);
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {

@@ -58,7 +58,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
 			fPluginBlock.enableViewer(index == CUSTOM_SELECTION);
-			fToolBar.enableFiltering(index == CUSTOM_SELECTION);
 			updateLaunchConfigurationDialog();
 		}
 	}
