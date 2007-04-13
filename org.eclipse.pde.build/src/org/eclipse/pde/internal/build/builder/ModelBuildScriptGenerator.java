@@ -640,6 +640,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
 		script.println();
 
+		script.printTaskDef("eclipse.versionReplacer", "org.eclipse.pde.internal.build.tasks.GenericVersionReplacer"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println();
 		script.printProperty(PROPERTY_BASE_WS, Utils.getPropertyFormat(PROPERTY_WS));
 		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		script.printProperty(PROPERTY_BASE_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));

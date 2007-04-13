@@ -805,4 +805,9 @@ public class AntScript implements IAntScript {
 	public void printTabs() {
 		printTab();
 	}
+	
+	public void printTaskDef(String name, String classname) {
+		printTabs();
+		output.println("<taskdef name=\"" + name+ "\" classname=\"" + classname + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }

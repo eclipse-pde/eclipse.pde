@@ -844,6 +844,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generatePrologue() {
 		script.printProjectDeclaration(feature.getVersionedIdentifier().getIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
 		script.println();
+		script.printTaskDef("eclipse.idReplacer", "org.eclipse.pde.internal.build.tasks.IdReplaceTask"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println();
 		script.printTargetDeclaration(TARGET_INIT, null, null, null, null);
 		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER);
 		script.printProperty(PROPERTY_FEATURE_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
