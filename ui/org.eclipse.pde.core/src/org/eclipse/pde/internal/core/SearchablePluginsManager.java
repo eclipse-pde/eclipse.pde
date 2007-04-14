@@ -173,27 +173,30 @@ public class SearchablePluginsManager
 			Map map = new TreeMap();
 			for (int i = 0; i < result.size(); i++) {
 				IClasspathEntry entry = (IClasspathEntry)result.get(i);
-				map.put(entry.getPath().lastSegment().toString(), entry);
+				String key = entry.getPath().lastSegment().toString();
+				if (map.containsKey(key)) {
+					key += System.currentTimeMillis();
+				}
+				map.put(key, entry);
 			}
-			return (IClasspathEntry[]) map.values().toArray(new IClasspathEntry[result.size()]);
+			return (IClasspathEntry[]) map.values().toArray(new IClasspathEntry[map.size()]);
 		}
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
 	public Object createAdapterChild(FileAdapter parent, File file) {
-		if (file.isDirectory() == false) {
+		if (file.isDirectory())
+			return new FileAdapter(parent, file, this);
+		
+		IPackageFragmentRoot root = null;
+		try {
 			String name = file.getName().toLowerCase(Locale.ENGLISH);
-			try {
-				if (name.endsWith(".jar")) { //$NON-NLS-1$
-					IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
-					if (root != null)
-						return root;
-				}
-			} catch (CoreException e) {
-				PDECore.log(e);
-			}
+			if (name.endsWith(".jar"))  //$NON-NLS-1$
+				root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));		
+		} catch (CoreException e) {
+			PDECore.log(e);
 		}
-		return new FileAdapter(parent, file, this);
+		return root;
 	}
 
 	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) throws CoreException {
@@ -358,8 +361,7 @@ public class SearchablePluginsManager
 				properties.store(outStream, ""); //$NON-NLS-1$
 				outStream.flush();
 				outStream.close();
-				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
-						.toByteArray());
+				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 				if (file.exists())
 					file.setContents(inStream, true, false, new NullProgressMonitor());
 				else
