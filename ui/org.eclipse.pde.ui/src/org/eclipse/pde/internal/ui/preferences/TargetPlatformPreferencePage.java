@@ -101,7 +101,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private int fIndex;
 	private TabFolder fTabFolder;
 	private boolean fContainsWorkspaceProfile = false;
-	private boolean fFirstClick = true;
 	private Button fResetButton;
 	
 	/**
@@ -220,17 +219,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fNeedsReload = true;
-			}
-		});
-		fHomeText.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fFirstClick)
-					fFirstClick = false;
-				else {
-					fPluginsTab.handleReload(new ArrayList());
-					resetTargetProfile();
-					fNeedsReload = false;
-				}
 			}
 		});
 		
