@@ -162,9 +162,10 @@ public class SearchablePluginsManager
 		}
 		Iterator iter = fPluginIdSet.iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = PluginRegistry.findModel(iter.next().toString());
-			if (model != null && model.getUnderlyingResource() == null) {
-				ClasspathUtilCore.addLibraries(model, result);
+			ModelEntry entry = PluginRegistry.findEntry(iter.next().toString());
+			IPluginModelBase[] models = entry.getExternalModels();
+			for (int i = 0; i < models.length; i++) {
+				ClasspathUtilCore.addLibraries(models[i], result);
 			}
 		}
 		
