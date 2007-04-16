@@ -79,7 +79,7 @@ public class DependencyAnalysisSection extends PDESection {
 				else if (e.getHref().equals("references")) //$NON-NLS-1$
 					doFindReferences();
 				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
-					OpenDependenciesAction.openDependencies((IPluginModelBase)getPage().getModel());
+					OpenDependenciesAction.openDependencies(PluginRegistry.findModel(getProject()));
 			}
 		});
 		
