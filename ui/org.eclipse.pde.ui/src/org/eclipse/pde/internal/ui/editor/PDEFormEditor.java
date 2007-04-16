@@ -281,19 +281,28 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#pageChange(int)
+	 */
+	protected void pageChange(int newPageIndex) {
+		super.pageChange(newPageIndex);
+		IFormPage page = getActivePageInstance();
+		updateContentOutline(page);
+		if (page != null) {
+			fLastActivePageId = page.getId();
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
 	 */
 	public void setFocus() {
 		super.setFocus();
 		IFormPage page = getActivePageInstance();
-		updateContentOutline(page);
-		if (page != null) {
-			fLastActivePageId = page.getId();
-			if (page instanceof PDESourcePage) {
-				((PDESourcePage)page).updateTextSelection();
-			} else if (page instanceof PDEFormPage) {
-				((PDEFormPage)page).updateFormSelection();
-			}		
+		// Could be done on setActive in PDEFormPage;
+		// but setActive only handles page switches and not focus events
+		if ((page != null) && 
+				(page instanceof PDEFormPage)) {
+			((PDEFormPage)page).updateFormSelection();
 		}		
 	}
 	

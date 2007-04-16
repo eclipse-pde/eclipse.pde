@@ -313,5 +313,16 @@ public class ManifestSourcePage extends XMLSourcePage {
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		super.setActive(active);
+		// Update the text selection if this page is being activated
+		if (active) {
+			updateTextSelection();
+		}
+	}
 	
 }

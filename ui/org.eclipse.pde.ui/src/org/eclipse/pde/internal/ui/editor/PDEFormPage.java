@@ -62,12 +62,10 @@ public abstract class PDEFormPage extends FormPage {
 
 	private boolean fNewStyleHeader=true;
 	private Control fLastFocusControl;
-	private boolean fListenersAdded;
 
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fLastFocusControl = null;
-		fListenersAdded = false;
 	}
 
 	public PDEFormPage(FormEditor editor, String id, String title, boolean newStyleHeader) {
@@ -251,23 +249,20 @@ public abstract class PDEFormPage extends FormPage {
 				((IContextPart)part).cancelEdit();
 		}
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#setActive(boolean)
+	 * @see org.eclipse.ui.forms.editor.FormPage#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public void setActive(boolean active) {
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		// Dynamically add focus listeners to all the forms children in order
+		// to track the last focus control
 		IManagedForm managedForm = getManagedForm();
-		if (active && managedForm != null) {
-			if (fListenersAdded == false) {
-				// Dynamically add focus listeners all the forms children
-				// if it has not been done already
-				addLastFocusListeners(managedForm.getForm());
-				fListenersAdded = true;
-			}
-			super.setActive(active);
+		if (managedForm != null) {
+			addLastFocusListeners(managedForm.getForm());
 		}
 	}
-
+	
 	/**
 	 * Programatically and recursively add focus listeners to the specified
 	 * composite and its children that track the last control to have focus 
@@ -321,10 +316,10 @@ public abstract class PDEFormPage extends FormPage {
 	private void addLastFocusListener(final Control control) {
 		control.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				fLastFocusControl = control;
+				// NO-OP
 			}
 			public void focusLost(FocusEvent e) {
-				// NO-OP
+				fLastFocusControl = control;
 			}
 		});
 	}

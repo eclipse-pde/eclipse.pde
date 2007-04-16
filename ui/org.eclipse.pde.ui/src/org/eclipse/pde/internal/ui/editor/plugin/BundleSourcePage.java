@@ -779,5 +779,16 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			// add rename action after Outline. This is the same order as the hyperlink actions
 			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		super.setActive(active);
+		// Update the text selection if this page is being activated
+		if (active) {
+			updateTextSelection();
+		}
+	}
 
 }
