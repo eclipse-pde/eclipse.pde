@@ -185,18 +185,19 @@ public class SearchablePluginsManager
 	}
 
 	public Object createAdapterChild(FileAdapter parent, File file) {
-		if (file.isDirectory())
-			return new FileAdapter(parent, file, this);
-		
-		IPackageFragmentRoot root = null;
-		try {
+		if (!file.isDirectory()) {
 			String name = file.getName().toLowerCase(Locale.ENGLISH);
-			if (name.endsWith(".jar"))  //$NON-NLS-1$
-				root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));		
-		} catch (CoreException e) {
-			PDECore.log(e);
+			try {
+				if (name.endsWith(".jar")) { //$NON-NLS-1$
+					IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
+					if (root != null)
+						return root;
+				}
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
 		}
-		return root;
+		return new FileAdapter(parent, file, this);
 	}
 
 	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) throws CoreException {
