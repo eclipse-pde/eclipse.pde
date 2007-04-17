@@ -48,7 +48,7 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaTraverse() throws Exception {
-		tagAsGlobalSummary("Traversing Schema Model", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+		tagAsGlobalSummary("Retrieve editor hover descriptions", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun();
 	}	
 	
