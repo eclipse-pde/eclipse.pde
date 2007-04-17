@@ -344,6 +344,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (Iterator iter = configs.iterator(); iter.hasNext(); i++) {
 			Config aConfig = (Config) iter.next();
 			Dictionary prop = new Hashtable();
+			prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
 			String os = aConfig.getOs();
 			String ws = aConfig.getWs();
 			String arch = aConfig.getArch();

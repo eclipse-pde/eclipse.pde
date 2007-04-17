@@ -70,6 +70,9 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_SIGNIFICANT_VERSION_DIGITS = "significantVersionDigits";  //$NON-NLS-1$
 	public static final String PROPERTY_GENERATED_VERSION_LENGTH = "generatedVersionLength"; //$NON-NLS-1$
 
+	public static final String PROPERTY_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
+	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
+
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 }
