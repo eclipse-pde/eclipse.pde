@@ -991,27 +991,20 @@
             modes="run, debug"
             class="org.eclipse.pde.ui.launcher.EclipseLaunchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
-         <enablement>
-           <with variable="selection">
-             <count value="*"/>
-           </with>
-         </enablement>
          <contextualLaunch>
             <enablement>
                <with variable="selection">
-                  <or>
-                  	<and>
-	                  <count value="1"/>
+               		<count value="1"/>
 	                  <iterate>
-		                  <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
+                         <and>
+		                  <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
+                    	  <adapt type="org.eclipse.core.resources.IProject"/>
+                   		 </and>
 		              </iterate>
-		            </and>
-		            <count value="0"/>
-		          </or>
                </with>
            </enablement>
          </contextualLaunch>         
-         <perspective
+		 <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
          <perspective
@@ -1044,24 +1037,16 @@
             modes="run, debug"
             class="org.eclipse.pde.ui.launcher.OSGiLaunchShortcut"
             id="org.eclipse.pde.ui.EquinoxLaunchShortcut">
-         <enablement>
-           <with variable="selection">
-             <count value="*"/>
-           </with>
-         </enablement>
          <contextualLaunch>
             <enablement>
                <with variable="selection">
-                  <or>
-                  	<and>
 	                  <count value="1"/>
 	                  <iterate>
-		                  <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
-                   		  <adapt type="org.eclipse.core.resources.IProject"/>
+	                  	<and>
+		                  <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
+                    	  <adapt type="org.eclipse.core.resources.IProject"/>
+                   		</and>
 		              </iterate>
-		            </and>
-		            <count value="0"/>
-		          </or>
                </with>
            </enablement>
          </contextualLaunch>         
