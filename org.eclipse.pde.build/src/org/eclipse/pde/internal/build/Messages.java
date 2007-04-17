@@ -70,6 +70,7 @@ public class Messages extends NLS {
 	public static String build_feature_refresh;
 
 	public static String build_compilerSetting;
+	public static String invalid_archivesFormat;
 	
 	// assemble.xml
 	public static String assemble_jarUp;

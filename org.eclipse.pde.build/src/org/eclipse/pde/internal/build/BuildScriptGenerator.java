@@ -449,6 +449,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				throw new CoreException(error);
 			}
 			String[] archAndFormat = Utils.getArrayFromStringWithBlank(configElements[2], "-"); //$NON-NLS-1$
+			if (archAndFormat.length != 2) {
+				String message = NLS.bind(Messages.invalid_archivesFormat, archivesFormatAsString);
+				IStatus status = new Status(IStatus.ERROR,IPDEBuildConstants.PI_PDEBUILD , message);
+				throw new CoreException(status);
+			}
 
 			Config aConfig = new Config(configElements[0], configElements[1], archAndFormat[0]);
 			if (getConfigInfos().contains(aConfig)) {
