@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.*;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
@@ -227,34 +227,30 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 
 		//It is not a manifest, but a plugin or a fragment
-		Dictionary manifest = null;
-		if (manifestStream == null) {
-			manifest = convertPluginManifest(bundleLocation, true);
-			if (manifest == null)
-				return null;
-		}
+		if (manifestStream == null)
+			return convertPluginManifest(bundleLocation, true);
 
-		if (manifestStream != null) {
+		try {
+			Hashtable result = new Hashtable();
+			result.putAll(ManifestElement.parseBundleManifest(manifestStream, null));
+			return result;
+		} catch (IOException ioe) {
+			return null;
+		} catch (BundleException e) {
+			return null;
+		} finally {
 			try {
-				Manifest m = new Manifest(manifestStream);
-				manifest = manifestToProperties(m.getMainAttributes());
-			} catch (IOException ioe) {
-				return null;
-			} finally {
-				try {
-					manifestStream.close();
-				} catch (IOException e1) {
-					//Ignore
-				}
-				try {
-					if (jarFile != null)
-						jarFile.close();
-				} catch (IOException e2) {
-					//Ignore
-				}
+				manifestStream.close();
+			} catch (IOException e1) {
+				//Ignore
+			}
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
+				//Ignore
 			}
 		}
-		return manifest;
 	}
 
 	private void enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
@@ -308,16 +304,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}
-	}
-
-	private Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
 	}
 
 	public void addBundles(Collection bundles) {
