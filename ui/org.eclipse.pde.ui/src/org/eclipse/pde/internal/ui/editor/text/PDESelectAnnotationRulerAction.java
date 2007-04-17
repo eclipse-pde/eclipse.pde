@@ -67,9 +67,7 @@ public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		checkReadOnly();
 		
 		if (fIsEditable) {
-			setEnabled(true); // super.update() might change this later
 			initialize(fBundle, fPrefix + "QuickFix."); //$NON-NLS-1$
-			return;
 		}
 
 		super.update();
