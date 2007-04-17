@@ -164,6 +164,7 @@ public class IdReplaceTask extends Task {
 				int startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
 				int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 				buffer.replace(startVersionId + 1, endVersionId, selfVersion);
+				endFeature = endFeature + (selfVersion.length() - (endVersionId - startVersionId));
 				contentChanged = true;
 				versionFound = true;
 			}
