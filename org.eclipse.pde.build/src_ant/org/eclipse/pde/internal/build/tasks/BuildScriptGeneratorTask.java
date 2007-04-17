@@ -226,4 +226,11 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setFilteredDependencyCheck(boolean value) {
 		generator.setFilterState(value);
 	}
+	
+	/**
+	 * Set the filename to use for the platform properties that will be passed to the state.
+	 */
+	public void setPlatformProperties(String filename) {
+		generator.setPlatformProperties(filename);
+	}
 }

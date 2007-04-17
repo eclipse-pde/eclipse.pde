@@ -39,6 +39,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private Map patchBundles;
 	private List addedBundle;
 	private List unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
+	private Dictionary platformProperties;
 
 	private String javaProfile;
 	private String[] javaProfiles;
@@ -370,6 +371,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				prop.put(SYSTEM_PACKAGES, systemPackages);
 			if (ee != null)
 				prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+
+			// check the user-specified platform properties
+			if (platformProperties != null)  {
+				for (Enumeration e = platformProperties.keys(); e.hasMoreElements(); ) {
+					String key = (String) e.nextElement();	
+					prop.put(key, platformProperties.get(key));
+				}
+			}
 
 			properties[i] = prop;
 		}
@@ -739,5 +748,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 		}
 		state.resolve();
+	}
+	
+	public void setPlatformProperties(Dictionary platformProperties) {
+		this.platformProperties = platformProperties;
 	}
 }

@@ -31,6 +31,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
 	private boolean reportResolutionErrors;
+	private Properties platformProperties;
 
 	//Support for filtering what is added to the state
 	private List rootFeaturesForFilter;
@@ -39,6 +40,10 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
+	}
+	
+	public void setPlatformPropeties(Properties platformProperties) {
+		this.platformProperties  = platformProperties;
 	}
 
 	public Properties getFeatureVersions() {
@@ -76,6 +81,8 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				} else {
 					state = new PDEState();
 				}
+				if (platformProperties != null)
+					state.setPlatformProperties(platformProperties);
 			} else {
 				state = new PluginRegistryConverter();
 			}

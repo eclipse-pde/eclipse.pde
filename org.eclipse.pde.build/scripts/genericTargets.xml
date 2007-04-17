@@ -79,6 +79,7 @@
 		groupConfiguration="${groupConfigurations}"
 		pluginPath="${pluginPath}"
 		filteredDependencyCheck="${filteredDependencyCheck}"
+		platformProperties="${platformProperties}"
 	/>
 </target>
 

@@ -31,6 +31,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected AntScript script;
+	protected Properties platformProperties;
 
 	private static PDEUIStateWrapper pdeUIState;
 
@@ -241,7 +242,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		siteFactory.setSitePaths(getPaths());
 		siteFactory.setInitialState(pdeUIState);
-		return (BuildTimeSite) siteFactory.createSite();
+		BuildTimeSite result = (BuildTimeSite) siteFactory.createSite();
+		if (platformProperties != null)
+			result.setPlatformPropeties(platformProperties);
+		return result;
 	}
 
 	/**
@@ -360,4 +364,34 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void setFilterState(boolean filter) {
 		filterState = filter;
 	}
+
+	/*
+	 * If the user has specified a platform properties then load it.
+	 */
+	public void setPlatformProperties(String filename) {
+		if (filename == null || filename.trim().length() == 0)
+			return;
+		File file = new File(filename);
+		if (!file.exists())
+			return;
+		platformProperties = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(file));
+			platformProperties.load(input);
+		} catch (IOException e) {
+			platformProperties = null;
+			String message = NLS.bind(Messages.error_loading_platform_properties, filename);
+			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, message, e);
+			BundleHelper.getDefault().getLog().log(status);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+	}
+	
 }
