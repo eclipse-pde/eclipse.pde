@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -306,6 +308,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
+	private Properties manifestToProperties(Attributes d) {
+		Iterator iter = d.keySet().iterator();
+		Properties result = new Properties();
+		while (iter.hasNext()) {
+			Attributes.Name key = (Attributes.Name) iter.next();
+			result.put(key.toString(), d.get(key));
+		}
+		return result;
+	}
+
 	public void addBundles(Collection bundles) {
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
 			File bundle = (File) iter.next();
@@ -556,14 +568,39 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void setJavaProfiles(File bundleLocation) {
+		String[] foundProfiles = null;
 		if (bundleLocation == null)
-			return;
-		if (bundleLocation.isDirectory())
-			javaProfiles = getDirJavaProfiles(bundleLocation);
+			foundProfiles = getRuntimeJavaProfiles();
+		else if (bundleLocation.isDirectory())
+			foundProfiles = getDirJavaProfiles(bundleLocation);
 		else
-			javaProfiles = getJarJavaProfiles(bundleLocation);
+			foundProfiles = getJarJavaProfiles(bundleLocation);
+		javaProfiles = sortProfiles(foundProfiles);
 	}
 
+	private String[] getRuntimeJavaProfiles() {
+		BundleContext context = BundleHelper.getDefault().getBundle().getBundleContext();
+		Bundle systemBundle = context.getBundle(0);
+
+		URL url = systemBundle.getEntry("profile.list"); //$NON-NLS-1$
+		if (url != null) {
+			try {
+				return getJavaProfiles(new BufferedInputStream(url.openStream()));
+			} catch (IOException e) {
+				//no profile.list?
+			}
+		}
+
+		ArrayList results = new ArrayList(6);
+		Enumeration entries = systemBundle.findEntries("/", "*.profile", false); //$NON-NLS-1$ //$NON-NLS-2$
+		while (entries.hasMoreElements()) {
+			URL entryUrl = (URL) entries.nextElement();
+			results.add(entryUrl.getFile().substring(1));
+		}
+
+		return (String[]) results.toArray(new String[results.size()]);
+	}
+	
 	private String[] getDirJavaProfiles(File bundleLocation) {
 		// try the profile list first
 		File profileList = new File(bundleLocation, "profile.list");
@@ -578,7 +615,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				return name.endsWith(PROFILE_EXTENSION);
 			}
 		});
-		return sortProfiles(profiles);
+		return profiles;
 	}
 
 	private String[] getJarJavaProfiles(File bundleLocation) {
@@ -610,7 +647,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					// nothing to do
 				}
 		}
-		return sortProfiles((String[]) results.toArray(new String[results.size()]));
+		return (String[]) results.toArray(new String[results.size()]);
 	}
 
 	private String[] getJavaProfiles(InputStream is) throws IOException {
@@ -642,7 +679,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		InputStream is = null;
 		ZipFile zipFile = null;
 		try {
-			if (location.isDirectory()) {
+			if(location == null) {
+				BundleContext context = BundleHelper.getDefault().getBundle().getBundleContext();
+				Bundle systemBundle = context.getBundle(0);
+				
+				URL url = systemBundle.getEntry(javaProfile); 
+				is = new BufferedInputStream(url.openStream());
+			} else if (location.isDirectory()) {
 				is = new BufferedInputStream(new FileInputStream(new File(location, javaProfile)));
 			} else {
 				zipFile = null;
