@@ -294,7 +294,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			converter = acquirePluginConverter();
 			return converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false, null); //$NON-NLS-1$
 		} catch (PluginConversionException convertException) {
-			if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
+			if (bundleLocation.getName().equals(org.eclipse.pde.build.Constants.FEATURE_FILENAME_DESCRIPTOR)) //$NON-NLS-1$
+				return null;
+			if (! new File(bundleLocation, org.eclipse.pde.build.Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() && ! new File(bundleLocation, org.eclipse.pde.build.Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
 				return null;
 			if (logConversionException) {
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_errorConverting, bundleLocation.getAbsolutePath()), convertException);
