@@ -57,6 +57,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
 
+    private String archivesFormatAsString;
+    
 	/**
 	 * flag indicating if the assemble script should be generated
 	 */
@@ -75,6 +77,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	public void generate() throws CoreException {
+        
+        if (archivesFormatAsString != null) {
+            realSetArchivesFormat(archivesFormatAsString);
+            archivesFormatAsString = null;
+        }
+        
 		List plugins = new ArrayList(5);
 		List features = new ArrayList(5);
 		sortElements(features, plugins);
@@ -434,7 +442,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
+	
+    public void setArchivesFormat(String archivesFormatAsString) {
+        this.archivesFormatAsString = archivesFormatAsString;
+    }
+    
+    public void realSetArchivesFormat(String archivesFormatAsString) throws CoreException {
 		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) {
 			archivesFormat = new ArchiveTable(0);
 			return;
@@ -466,7 +479,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (archivesFormat == null) {
 			try {
 				//If not set, pass in the empty property to trigger the default value to be loaded
-				setArchivesFormat(Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT));
+				realSetArchivesFormat(Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT));
 			} catch (CoreException e) {
 				//ignore
 			}
