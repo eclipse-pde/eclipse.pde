@@ -441,7 +441,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			return result;
 		}
 	}
-
 	
     public void setArchivesFormat(String archivesFormatAsString) {
         this.archivesFormatAsString = archivesFormatAsString;
