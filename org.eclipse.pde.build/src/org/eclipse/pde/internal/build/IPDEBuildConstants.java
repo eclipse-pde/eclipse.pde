@@ -88,7 +88,8 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_CONFIG_FORMAT = 22;
 	public final static int EXCEPTION_PRODUCT_FORMAT = 23;
 	public final static int EXCEPTION_PRODUCT_FILE = 24;
-
+	public final static int WARNING_PLUGIN_ALTERED = 25;
+	
 	//User object keys. BundleDescription.getUserObject()
 	public final static String IS_COMPILED = "isCompiler"; //$NON-NLS-1$
 	public final static String PLUGIN_ENTRY = "pluginEntry"; //$NON-NLS-1$

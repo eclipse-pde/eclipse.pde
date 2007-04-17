@@ -54,7 +54,8 @@ public class Messages extends NLS {
 	public static String exception_errorConverting;
 	public static String exception_cannotAcquireService;
 	public static String exception_hostNotFound;
-
+	public static String exception_missing_pdebuild_folder;
+	
 	// build.xml
 	public static String build_plugin_buildJars;
 	public static String build_plugin_jar;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,13 @@
 package org.eclipse.pde.internal.build.properties;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.ant.core.IAntPropertyValueProvider;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.*;
 
 public class PDEProperties implements IAntPropertyValueProvider {
 	static private final String PREFIX = "eclipse.pdebuild"; //$NON-NLS-1$
@@ -41,9 +43,13 @@ public class PDEProperties implements IAntPropertyValueProvider {
 		try {
 			String result = (String) cache.get(searchedEntry);
 			if (result == null) {
-				result = FileLocator.toFileURL(Platform.getBundle("org.eclipse.pde.build").getEntry(searchedEntry)).getPath(); //$NON-NLS-1$
-				if (result != null)
+				URL foundEntry = Platform.getBundle(IPDEBuildConstants.PI_PDEBUILD).getEntry(searchedEntry);
+				if (foundEntry == null) {
+					BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.WARNING_PLUGIN_ALTERED, NLS.bind(Messages.exception_missing_pdebuild_folder, antPropertyName), null));
+				} else {
+					result = FileLocator.toFileURL(foundEntry).getPath();
 					cache.put(searchedEntry, result);
+				}
 			}
 			return result;
 		} catch (IOException e) {
