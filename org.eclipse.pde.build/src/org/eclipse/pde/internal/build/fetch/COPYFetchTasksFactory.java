@@ -78,7 +78,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 			} else {
 				filePath = filePath.append((String) entryInfos.get(KEY_ELEMENT_NAME)).append(file);
 			}
-			printCopyTask(filePath.toString(), destination.toString(), null, false, true, script);
+			printCopyTask(filePath.toString(), destination.toString(), null, true, true, script);
 		}
 	}
 

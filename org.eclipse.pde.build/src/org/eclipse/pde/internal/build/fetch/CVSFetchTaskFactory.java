@@ -137,8 +137,8 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
 			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.removeLastSegments(1).toString() : destination.toString();
-			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, script);  //$NON-NLS-1$//$NON-NLS-2$
-			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, "true", script);  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"true\" />");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
@@ -209,6 +209,22 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	 * @param passFile the name of the password file
 	 */
 	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile, String taskname, IAntScript script) {
+		printCVSTask(command, cvsRoot, dest, module, tag, quiet, passFile, taskname, null, script);
+	}
+
+	/**
+	 * Print a <code>cvs</code> task to the Ant script.
+	 * 
+	 * @param command the CVS command to run
+	 * @param cvsRoot value for the CVSROOT variable
+	 * @param dest the destination directory for the checked out resources
+	 * @param module the module name to check out
+	 * @param tag the tag of the module to check out
+	 * @param quiet whether or not to print informational messages to the output
+	 * @param passFile the name of the password file
+	 * @param failOnError whether or not to throw an exception if something goes wrong
+	 */
+	private void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile, String taskname, String failOnError, IAntScript script) {
 		script.printTabs();
 		script.print("<cvs"); //$NON-NLS-1$
 		script.printAttribute("command", command, false); //$NON-NLS-1$
@@ -219,9 +235,10 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		script.printAttribute("quiet", quiet, false); //$NON-NLS-1$
 		script.printAttribute("passfile", passFile, false); //$NON-NLS-1$
 		script.printAttribute("taskname", taskname, false); //$NON-NLS-1$
+		script.printAttribute("failonerror", failOnError, false); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Print a <code>cvspass</code> task to the Ant script.
 	 * 

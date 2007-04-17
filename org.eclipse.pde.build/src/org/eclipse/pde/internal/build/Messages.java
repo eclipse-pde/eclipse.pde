@@ -35,6 +35,7 @@ public class Messages extends NLS {
 	public static String error_missingCustomBuildFile;
 	public static String error_missingSourceFolder;
 	public static String error_noCorrespondingFactory;
+	public static String error_retrieveFailed;
 
 	// exception
 	public static String exception_missingElement;

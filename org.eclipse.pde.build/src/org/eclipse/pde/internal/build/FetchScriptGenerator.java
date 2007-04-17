@@ -476,13 +476,24 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(target.getAbsolutePath());
-			runner.run();
+			
+			//This has to be hardcoded here because of the way AntRunner stipulates that 
+			//loggers are passed in. Otherwise this would be a Foo.class.getName()
+			runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
+			
+			runner.run();	
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Messages.error_retrieveFailed, e));
+		}
+		
+		try {
 			FeatureExecutableFactory factory = new FeatureExecutableFactory();
 			File featureFolder = new File(destination.toString());
 			feature = factory.createFeature(featureFolder.toURL(), null, null);
 
 			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml 
 			target.delete();
+
 			featureProperties = new Properties();
 			InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureFolder, PROPERTIES_FILE)));
 			featureProperties.load(featureStream);

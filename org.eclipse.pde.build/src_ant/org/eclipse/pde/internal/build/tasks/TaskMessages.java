@@ -19,6 +19,7 @@ public class TaskMessages extends NLS {
 	public static String error_readingDirectory;
 	public static String error_missingElement;
 	public static String error_missingDirectoryEntry;
+	public static String error_runningRetrieve;
 
 	static {
 		// load message values from bundle file
