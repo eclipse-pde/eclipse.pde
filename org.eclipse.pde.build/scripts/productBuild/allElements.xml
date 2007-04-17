@@ -84,4 +84,10 @@
  			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.ppc.tar.gz"/>
 		</ant>
  	</target>
+	
+ 	<target name="assemble.org.eclipse.pde.build.container.feature.group.group.group">
+ 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
+ 			<property name="archiveName" value="${archiveNamePrefix}-group.zip"/>
+		</ant>
+ 	</target>
 </project>
