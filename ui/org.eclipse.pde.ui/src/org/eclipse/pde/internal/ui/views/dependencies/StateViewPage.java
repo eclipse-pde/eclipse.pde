@@ -67,16 +67,23 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 	private TreeViewer fTreeViewer = null;
 	private DependenciesView fView;
 	private Composite fComposite;
+	
 	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
-
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return ((element instanceof BundleDescription && !((BundleDescription)element).isResolved()) ||
 				parentElement instanceof BundleDescription && !((BundleDescription)parentElement).isResolved());
-		}
-		
+		}	
 	};
 	
+	private ViewerFilter fShowLeaves = new ViewerFilter() {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof BundleDescription) {
+				return ((BundleDescription)element).getDependents().length == 0;
+			}
+			return true;
+		}	
+	};
+
 	class DependencyGroup {
 		Object [] dependencies;
 		
@@ -285,6 +292,16 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 							fTreeViewer.addFilter(fHideResolvedFilter);
 						else
 							fTreeViewer.removeFilter(fHideResolvedFilter);
+					}
+				}
+		);
+		getSite().getActionBars().getMenuManager().add(
+				new Action(PDEUIMessages.StateViewPage_showLeaves, IAction.AS_CHECK_BOX) {
+					public void run() {
+						if (isChecked())
+							fTreeViewer.addFilter(fShowLeaves);
+						else
+							fTreeViewer.removeFilter(fShowLeaves);
 					}
 				}
 		);

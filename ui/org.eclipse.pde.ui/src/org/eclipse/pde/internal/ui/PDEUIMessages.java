@@ -337,6 +337,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String StateViewPage_requiredBundles;
 
+	public static String StateViewPage_showLeaves;
+
 	public static String StateViewPage_showOnlyUnresolved_label;
 
 	public static String StateViewPage_suppliedBy;
