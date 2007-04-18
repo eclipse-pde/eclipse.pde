@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -197,6 +199,25 @@ public class DependenciesView extends PageBookView implements
 			}
 		}
 	}
+	
+	class ShowStateAction extends Action {
+		
+		public ShowStateAction() {
+			super(PDEUIMessages.DependenciesView_showStateAction_label, IAction.AS_CHECK_BOX);
+			setDescription(PDEUIMessages.DependenciesView_showStateAction_description);
+			setToolTipText(PDEUIMessages.DependenciesView_showStateAction_toolTip);
+			setImageDescriptor(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+			setId(SHOW_STATE_ACTION_ID);
+		}
+		
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			fPreferences.setValue(DEPS_VIEW_SHOW_STATE, isChecked());
+			enableStateView(isChecked());
+		}
+	}
 
 	protected static final IWorkbenchPart PART_CALLEES_LIST = new DummyPart();
 
@@ -211,6 +232,8 @@ public class DependenciesView extends PageBookView implements
 	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
 	
 	protected static final String MEMENTO_KEY_INPUT = "inputPluginId"; //$NON-NLS-1$
+	
+	protected static final String SHOW_STATE_ACTION_ID = "show.state.action"; //$NON-NLS-1$
 
 	private static final DependencyLoop[] NO_LOOPS = new DependencyLoop[0];
 	
@@ -272,6 +295,8 @@ public class DependenciesView extends PageBookView implements
 		manager.add(fHistoryDropDownAction);
 		manager.add(new Separator("state")); //$NON-NLS-1$
 		manager.add(fShowState);
+		if (PART_STATE_TREE.equals(getCurrentContributingPart()))
+			enableDependenciesActions(false);
 	}
 
 	/*
@@ -280,18 +305,22 @@ public class DependenciesView extends PageBookView implements
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
 	protected IPage createDefaultPage(PageBook book) {
+		if (fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE))
+			return createPage(PART_STATE_TREE);
+		return createPage(getDefaultPart());
+	}
+	
+	private IWorkbenchPart getDefaultPart() {
 		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS)) {
 			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-				return createPage(PART_CALLERS_LIST);
-
+				return PART_CALLERS_LIST;
 			}
-			return createPage(PART_CALLERS_TREE);
+			return PART_CALLEES_TREE;
 		}
 		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-			return createPage(PART_CALLEES_LIST);
-
+			return PART_CALLEES_LIST;
 		}
-		return createPage(PART_CALLEES_TREE);
+		return PART_CALLEES_TREE;
 	}
 
 	/**
@@ -347,15 +376,8 @@ public class DependenciesView extends PageBookView implements
 		fHistoryDropDownAction= new HistoryDropDownAction(this);
 		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
 		
-		fShowState = new Action(PDEUIMessages.DependenciesView_showStateAction_label, IAction.AS_CHECK_BOX) {
-			public void run() {
-				enableStateView(isChecked());
-			}
-		};
-		fShowState.setDescription(PDEUIMessages.DependenciesView_showStateAction_description);
-		fShowState.setToolTipText(PDEUIMessages.DependenciesView_showStateAction_toolTip);
-		fShowState.setImageDescriptor(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-		fShowState.setEnabled(true);
+		fShowState = new ShowStateAction();
+		fShowState.setChecked(fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE));
 		
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
@@ -400,18 +422,9 @@ public class DependenciesView extends PageBookView implements
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
 	protected IWorkbenchPart getBootstrapPart() {
-		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS)) {
-			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-				return PART_CALLERS_LIST;
-
-			}
-			return PART_CALLERS_TREE;
-		}
-		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-			return PART_CALLEES_LIST;
-
-		}
-		return PART_CALLEES_TREE;
+		if (fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE))
+			return PART_STATE_TREE;
+		return getDefaultPart();
 	}
 
 	/*
@@ -546,6 +559,11 @@ public class DependenciesView extends PageBookView implements
 	 */
 	protected void showPageRec(PageRec pageRec) {
 		IPage currPage = getCurrentPage();
+		// if we try to show the same page, just call super and return, no use calling any custom functions
+		if (pageRec.page.equals(currPage)) {
+			super.showPageRec(pageRec);
+			return;
+		}
 		IStructuredSelection selection = null;
 		if (currPage instanceof DependenciesViewPage) {
 			selection = ((DependenciesViewPage)currPage).getSelection();
@@ -667,17 +685,23 @@ public class DependenciesView extends PageBookView implements
 			fLastDependenciesPart = getCurrentContributingPart();
 			partActivated(DependenciesView.PART_STATE_TREE);
 		} else {
-			partActivated(fLastDependenciesPart);
+			if (fLastDependenciesPart != null)
+				partActivated(fLastDependenciesPart);
+			else
+				partActivated(getDefaultPart());
 			fLastDependenciesPart = null;
 		}
-		IToolBarManager manager = getViewSite().getActionBars().getToolBarManager();
-		manager.removeAll();
-		if (enabled) {
-			manager.add(new Separator());
-			manager.add(fShowState);
-		} else {
-			contributeToLocalToolBar(manager);
+		enableDependenciesActions(!enabled);
+		getViewSite().getActionBars().getToolBarManager().update(true);
+	}
+	
+	// hide the table/tree, caller/callee, history and other action not applicable when showing the State view page
+	private void enableDependenciesActions(boolean enabled) {
+		IContributionItem[] items = getViewSite().getActionBars().getToolBarManager().getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (!(SHOW_STATE_ACTION_ID.equals(items[i].getId()) || "state".equals(items[i].getId())) 
+					&& !(items[i] instanceof SubContributionItem)) //$NON-NLS-1$
+				items[i].setVisible(enabled);
 		}
-		manager.update(false);
 	}
 }
