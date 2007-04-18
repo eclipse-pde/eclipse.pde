@@ -11,7 +11,10 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,6 +27,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class FormFilteredTree extends FilteredTree {
 	
 	private FormToolkit toolkit;
+	
+	private FormEntry fEntryFilter;
 	
 	public FormFilteredTree(Composite parent, int treeStyle,
 			PatternFilter filter) {
@@ -63,16 +68,29 @@ public class FormFilteredTree extends FilteredTree {
 	}
 
 	protected Text doCreateFilterText(Composite parent) {
-		Text text = new Text(parent, SWT.SINGLE | toolkit.getBorderStyle());
-		toolkit.paintBordersFor(text.getParent());
+		int style = SWT.SINGLE | toolkit.getBorderStyle();
+		fEntryFilter = new FormEntry(parent, toolkit, null, style);
+		// Needed otherwise borders are missing on Windows Classic Theme
+		toolkit.paintBordersFor(parent);
 		setBackground(toolkit.getColors().getBackground());
-		return text;
+		return fEntryFilter.getText();
 	}
 
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 		TreeViewer viewer = new TreeViewer(parent, toolkit.getBorderStyle());
 		toolkit.paintBordersFor(viewer.getTree().getParent());
 		return viewer;
+	}
+	
+	/**
+	 * @param part
+	 */
+	public void createUIListenerEntryFilter(IContextPart part) {
+		// Required to enable Ctrl-V initiated paste operation on first focus
+		// See Bug # 157973
+		fEntryFilter.setFormEntryListener(new FormEntryAdapter(part) {
+			// Use adapter defaults
+		});
 	}
 	
 }

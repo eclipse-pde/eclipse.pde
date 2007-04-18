@@ -79,7 +79,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -89,7 +88,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
-
+	private FormFilteredTree fFilteredTree;
 	private SchemaRegistry fSchemaRegistry;
 	private DrillDownAdapter fDrillDownAdapter;
 	private Action fNewExtensionAction;
@@ -207,6 +206,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		section.setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		initialize((IPluginModelBase) getPage().getModel());
 		createSectionToolbar(section, toolkit);
+		// Create the adapted listener for the filter entry field
+		fFilteredTree.createUIListenerEntryFilter(this);
 	}
 	
 	/**
@@ -869,9 +870,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
-		FilteredTree tree = new FormFilteredTree(parent, style, new PatternFilter());
+		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
-		return tree.getViewer();
+		return fFilteredTree.getViewer();
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {

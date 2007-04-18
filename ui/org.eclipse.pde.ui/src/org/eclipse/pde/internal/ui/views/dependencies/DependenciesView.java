@@ -699,7 +699,7 @@ public class DependenciesView extends PageBookView implements
 	private void enableDependenciesActions(boolean enabled) {
 		IContributionItem[] items = getViewSite().getActionBars().getToolBarManager().getItems();
 		for (int i = 0; i < items.length; i++) {
-			if (!(SHOW_STATE_ACTION_ID.equals(items[i].getId()) || "state".equals(items[i].getId())) 
+			if (!(SHOW_STATE_ACTION_ID.equals(items[i].getId()) || "state".equals(items[i].getId()))  //$NON-NLS-1$
 					&& !(items[i] instanceof SubContributionItem)) //$NON-NLS-1$
 				items[i].setVisible(enabled);
 		}
