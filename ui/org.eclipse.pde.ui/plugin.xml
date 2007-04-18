@@ -958,21 +958,6 @@
                </with>
             </enablement>
          </contextualLaunch>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.pde.PDEPerspective">
-         </perspective>
          <configurationType
                id="org.eclipse.pde.ui.JunitLaunchConfig">
          </configurationType>
@@ -997,28 +982,18 @@
                		<count value="1"/>
 	                  <iterate>
                          <and>
-		                  <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
-                    	  <adapt type="org.eclipse.core.resources.IProject"/>
+		                  	<test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
+                       		<or>
+                       		<adapt type="org.eclipse.core.resources.IProject"/>
+                        	<test property="org.eclipse.debug.ui.matchesPattern" value="plugin.xml"/>
+                       		<test property="org.eclipse.debug.ui.matchesPattern" value="MANIFEST.MF"/>
+                       		<test property="org.eclipse.debug.ui.matchesPattern" value="*.product"/>
+                       		</or>
                    		 </and>
 		              </iterate>
                </with>
            </enablement>
-         </contextualLaunch>         
-		 <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.pde.PDEPerspective">
-         </perspective>
+         </contextualLaunch>
          <configurationType
                id="org.eclipse.pde.ui.RuntimeWorkbench">
          </configurationType>
@@ -1043,28 +1018,17 @@
 	                  <count value="1"/>
 	                  <iterate>
 	                  	<and>
-		                  <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
-                    	  <adapt type="org.eclipse.core.resources.IProject"/>
-                   		</and>
+		                  	<test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
+                       		<or>
+                       		<adapt type="org.eclipse.core.resources.IProject"/>
+                        	<test property="org.eclipse.debug.ui.matchesPattern" value="plugin.xml"/>
+                       		<test property="org.eclipse.debug.ui.matchesPattern" value="MANIFEST.MF"/>
+                       		</or>
+                   		 </and>
 		              </iterate>
                </with>
            </enablement>
          </contextualLaunch>         
-         <perspective
-               id="org.eclipse.jdt.ui.JavaPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.pde.PDEPerspective">
-         </perspective>
          <configurationType
                id="org.eclipse.pde.ui.EquinoxLauncher">
          </configurationType>
