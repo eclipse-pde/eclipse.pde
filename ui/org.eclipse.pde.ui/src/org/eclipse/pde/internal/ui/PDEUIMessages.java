@@ -353,6 +353,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String StateViewPage_suppliedBy;
 
+	public static String StateViewPage_suppliedByJRE;
+
 	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;

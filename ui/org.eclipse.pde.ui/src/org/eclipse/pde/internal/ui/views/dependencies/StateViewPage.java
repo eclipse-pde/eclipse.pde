@@ -81,6 +81,7 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 	
 	private static final String HIDE_RESOLVED = "hideResolved"; //$NON-NLS-1$
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
+	private static final String FRAMEWORK_BUNDLE_SYMBOLICNAME = "org.eclipse.osgi"; //$NON-NLS-1$
 	
 	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -212,8 +213,15 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			StringBuffer buffer = new StringBuffer();
 			if (element instanceof ImportPackageSpecification) {
 				ImportPackageSpecification spec = (ImportPackageSpecification) element;
-				buffer.append(spec.getName()).append(PDEUIMessages.StateViewPage_suppliedBy);
+				buffer.append(spec.getName());
 				element = ((ExportPackageDescription)spec.getSupplier()).getSupplier();
+				if (((BundleDescription)element).getSymbolicName().equals(FRAMEWORK_BUNDLE_SYMBOLICNAME)) {
+					ExportPackageDescription[] desc = ((BundleDescription)element).getContainingState().getSystemPackages();
+					for (int i = 0; i < desc.length; i++) 
+						if (desc[i].equals(spec.getSupplier()))
+							return buffer.append(PDEUIMessages.StateViewPage_suppliedByJRE).toString();
+				}
+				buffer.append(PDEUIMessages.StateViewPage_suppliedBy);
 			}
 			if (element instanceof BundleSpecification)
 				element = ((BundleSpecification)element).getSupplier();
