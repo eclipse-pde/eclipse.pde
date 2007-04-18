@@ -333,7 +333,17 @@ public class PDEUIMessages extends NLS {
 
 	public static String SplashTemplatesSection_typeName;
 
+	public static String StateViewPage_focusActionDescription;
+
+	public static String StateViewPage_focusActionToolTip;
+
+	public static String StateViewPage_focusOnSelection;
+
+	public static String StateViewPage_focusOnTitle;
+
 	public static String StateViewPage_importedPackages;
+
+	public static String StateViewPage_openItem;
 
 	public static String StateViewPage_requiredBundles;
 

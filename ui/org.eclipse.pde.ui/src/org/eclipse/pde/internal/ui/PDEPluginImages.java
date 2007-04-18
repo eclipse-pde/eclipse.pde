@@ -150,6 +150,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PLUGINS_FRAGMENTS = create(PATH_OBJ, "plugins_and_fragments.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SITE_XML_OBJ = create(PATH_OBJ, "site_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMAGE_APPLICATION = create(PATH_OBJ, "image_application.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FOCUS_ON = create(PATH_OBJ, "focus.gif"); //$NON-NLS-1$
 	
 	/**
 	 * OVR16
