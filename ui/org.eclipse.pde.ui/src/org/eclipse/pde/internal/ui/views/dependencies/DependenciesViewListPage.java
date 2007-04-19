@@ -50,4 +50,19 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 
 		return fViewer;
 	}
+	
+	protected void handleShowOptional(boolean isChecked, boolean refreshIfNecessary) {
+		if (fContentProvider instanceof CalleesListContentProvider) {
+			((CalleesListContentProvider)fContentProvider).setShowOptional(isChecked);
+			if (refreshIfNecessary)
+				fViewer.refresh();
+		}
+	}
+	
+	protected boolean isShowingOptional() {
+		if (fContentProvider instanceof CalleesListContentProvider) {
+			return ((CalleesListContentProvider)fContentProvider).getShowOptional();
+		}
+		return true;
+	}
 }

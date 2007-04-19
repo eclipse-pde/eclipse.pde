@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
-import org.osgi.framework.Constants;
 
 public abstract class DependenciesViewPage extends Page {
 	class FocusOnSelectionAction extends Action {
@@ -90,11 +89,9 @@ public abstract class DependenciesViewPage extends Page {
 	
 	private Action fHideFragmentFilterAction;
 	
-	private Action fHideOptionalFilterAction;
+	protected Action fHideOptionalFilterAction;
 	
 	private FragmentFilter fHideFragmentFilter = new FragmentFilter();
-	
-	private OptionalFilter fHideOptionalFilter = new OptionalFilter();
 	
 	private static final String HIDE_FRAGMENTS = "hideFrags"; //$NON-NLS-1$
 	
@@ -117,18 +114,6 @@ public abstract class DependenciesViewPage extends Page {
 			if (desc != null) {
 				return desc.getHost() == null;
 			}
-			return true;
-		}
-	}
-	
-	class OptionalFilter extends ViewerFilter {
-		
-		public boolean select(Viewer v, Object parent, Object element) {
-			if (element instanceof BundleSpecification) {
-				return !((BundleSpecification)element).isOptional();
-			} else if (element instanceof ImportPackageSpecification)
-				return !Constants.RESOLUTION_OPTIONAL.equals(
-						((ImportPackageSpecification)element).getDirective(Constants.RESOLUTION_DIRECTIVE));
 			return true;
 		}
 	}
@@ -376,16 +361,17 @@ public abstract class DependenciesViewPage extends Page {
 		
 		fHideOptionalFilterAction = new Action() {
 			public void run() {
-				boolean checked = fHideOptionalFilterAction.isChecked();
-				if (checked)
-					fViewer.removeFilter(fHideOptionalFilter);
-				else
-					fViewer.addFilter(fHideOptionalFilter);
+				boolean checked = isChecked();
+				handleShowOptional(isChecked(), true);
 				getSettings().put(HIDE_OPTIONAL, !checked);
 			}
 		};
 		fHideOptionalFilterAction.setText(PDEUIMessages.DependenciesViewPage_showOptional);
 	}
+	
+	protected abstract void handleShowOptional(boolean checked, boolean refreshIfNecessary);
+	
+	protected abstract boolean isShowingOptional();
 
 	/*
 	 * (non-Javadoc)
@@ -447,7 +433,41 @@ public abstract class DependenciesViewPage extends Page {
 		return false;
 	}
 	
-	public void setActive(boolean active) {
+	public void setActive(boolean active) {		
+		if (active) {
+			// update filter actions before updating filters because the filters depend on the state of the filter actions
+			// update filter actions - both filter actions are specific to each Page instance
+			if (fView.isShowingCallers()) {
+				// deactive show optional on Callers view.  
+				fHideOptionalFilterAction.setChecked(true);
+				fHideOptionalFilterAction.setEnabled(false);
+			} else {
+				fHideOptionalFilterAction.setEnabled(true);
+				fHideOptionalFilterAction.setChecked(!getSettings().getBoolean(HIDE_OPTIONAL));
+			}
+			fHideFragmentFilterAction.setChecked(!getSettings().getBoolean(HIDE_FRAGMENTS));
+
+			// update viewer's fragment filter
+			boolean showFragments = fHideFragmentFilterAction.isChecked();
+			boolean containsFragments = true;
+			ViewerFilter[] filters = fViewer.getFilters();
+			for (int i = 0; i < filters.length; i++) {
+				if (filters[i].equals(fHideFragmentFilter)) { 
+					containsFragments = false;
+					break;
+				}
+			}
+			if (showFragments != containsFragments)
+				if (showFragments)
+					fViewer.removeFilter(fHideFragmentFilter);
+				else
+					fViewer.addFilter(fHideFragmentFilter); 
+			
+			// update viewer's optional filtering
+			if (fHideOptionalFilterAction.isChecked() != isShowingOptional())
+				handleShowOptional(fHideOptionalFilterAction.isChecked(), false);
+		}
+		
 		if (fContentProvider instanceof DependenciesViewPageContentProvider) {
 			if (active) {
 				// when a page is activated, we need to have the content provider listen for changes and refresh the view to get current data
@@ -457,13 +477,6 @@ public abstract class DependenciesViewPage extends Page {
 				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all 
 				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
 				((DependenciesViewPageContentProvider)fContentProvider).removeModelListener();
-		}
-		if (fView.isShowingCallers()) {
-			fHideOptionalFilterAction.setChecked(true);
-			fHideOptionalFilterAction.setEnabled(false);
-		} else {
-			fHideOptionalFilterAction.setEnabled(true);
-			fHideOptionalFilterAction.setChecked(!getSettings().getBoolean(HIDE_OPTIONAL));
 		}
 	}
 
@@ -477,12 +490,9 @@ public abstract class DependenciesViewPage extends Page {
 		IDialogSettings settings = getSettings();
 		boolean hideFragments = settings.getBoolean(HIDE_FRAGMENTS);
 		boolean hideOptional = settings.getBoolean(HIDE_OPTIONAL);
-		if (hideFragments)
-			fViewer.addFilter(fHideFragmentFilter);
-		if (hideOptional)
-			fViewer.addFilter(fHideOptionalFilter);
 		fHideFragmentFilterAction.setChecked(!hideFragments);
 		fHideOptionalFilterAction.setChecked(!hideOptional);
+		// The filtering will be executed in the setActive function when the viewer is displayed
 	}
 	
 	private IDialogSettings getSettings() {

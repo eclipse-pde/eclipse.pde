@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,17 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.framework.Constants;
 
 public class DependenciesViewTreePage extends DependenciesViewPage {
 	class CollapseAllAction extends Action {
@@ -45,8 +50,21 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 			fTreeViewer.collapseAll();
 		}
 	}
+	
+	class OptionalFilter extends ViewerFilter {
+		
+		public boolean select(Viewer v, Object parent, Object element) {
+			if (element instanceof BundleSpecification) {
+				return !((BundleSpecification)element).isOptional();
+			} else if (element instanceof ImportPackageSpecification)
+				return !Constants.RESOLUTION_OPTIONAL.equals(
+						((ImportPackageSpecification)element).getDirective(Constants.RESOLUTION_DIRECTIVE));
+			return true;
+		}
+	}
 
 	TreeViewer fTreeViewer;
+	private OptionalFilter fHideOptionalFilter = new OptionalFilter();
 
 	public DependenciesViewTreePage(DependenciesView view,
 			ITreeContentProvider contentProvider) {
@@ -90,6 +108,22 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 					new CollapseAllAction());
 		else
 			toolBarManager.add(new CollapseAllAction());
+	}
+	
+	protected void handleShowOptional(boolean isChecked, boolean refreshIfNecessary) {
+		if (isChecked)
+			fTreeViewer.removeFilter(fHideOptionalFilter);
+		else
+			fTreeViewer.addFilter(fHideOptionalFilter);
+		// filter automatically refreshes tree, therefore can ignore refreshIfNecessary
+	}
+	
+	protected boolean isShowingOptional() {
+		ViewerFilter[] filters = fTreeViewer.getFilters();
+		for (int i = 0; i < filters.length; i++)
+			if (filters[i].equals(fHideOptionalFilter)) 
+				return false;
+		return true;
 	}
 
 }

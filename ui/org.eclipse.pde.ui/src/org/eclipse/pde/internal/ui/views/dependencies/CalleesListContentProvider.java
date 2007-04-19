@@ -24,12 +24,23 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.osgi.framework.Constants;
 
 public class CalleesListContentProvider extends CalleesContentProvider
 		implements IStructuredContentProvider {
-
+	
+	boolean fShowOptional;
+	
 	public CalleesListContentProvider(DependenciesView view) {
 		super(view);
+	}
+	
+	public void setShowOptional(boolean showOptional) {
+		fShowOptional = showOptional;
+	}
+	
+	public boolean getShowOptional() {
+		return fShowOptional;
 	}
 
 	/**
@@ -46,7 +57,10 @@ public class CalleesListContentProvider extends CalleesContentProvider
 				for (Iterator it = candidates.iterator(); it.hasNext();) {
 					Object candidate = it.next();
 					BundleDescription desc = null;
+					it.remove();
 					if(candidate instanceof BundleSpecification){
+						if (!fShowOptional && ((BundleSpecification)candidate).isOptional())
+							continue;
 						desc = (BundleDescription)((BundleSpecification)candidate).getSupplier();
 						// include unresolved require-bundles
 						if (desc == null)
@@ -54,9 +68,11 @@ public class CalleesListContentProvider extends CalleesContentProvider
 					} else if (candidate instanceof BundleDescription) {
 						desc = (BundleDescription)candidate;
 					} else if (candidate instanceof ImportPackageSpecification) {
+						if (!fShowOptional && Constants.RESOLUTION_OPTIONAL.equals(
+						((ImportPackageSpecification)candidate).getDirective(Constants.RESOLUTION_DIRECTIVE)))
+							continue;
 						desc = ((ExportPackageDescription)(((ImportPackageSpecification)candidate).getSupplier())).getExporter();
 					}
-					it.remove();
 					if (desc == null)
 						continue;
 					IPluginModelBase callee = PluginRegistry.findModel(desc.getSymbolicName());

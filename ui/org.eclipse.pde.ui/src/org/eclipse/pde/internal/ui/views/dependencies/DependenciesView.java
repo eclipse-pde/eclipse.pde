@@ -570,11 +570,13 @@ public class DependenciesView extends PageBookView implements
 			((DependenciesViewPage)currPage).setActive(false);
 		}
 		IPage p = pageRec.page;
-		if (p instanceof DependenciesViewPage)
+		if (p instanceof DependenciesViewPage) {
 			((DependenciesViewPage) p).setInput(fInput);
+			// configure view before actually showing it
+			((DependenciesViewPage) p).setActive(true);
+		}
 		super.showPageRec(pageRec);
 		if (p instanceof DependenciesViewPage) {
-			((DependenciesViewPage) p).setActive(true);
 			updateTitle(fInput);
 			((DependenciesViewPage) p).setSelection(selection);
 		} else if (p instanceof StateViewPage){
