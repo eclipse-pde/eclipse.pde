@@ -313,6 +313,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RenameProjectChange_taskTitle;
 
+	public static String RequiresSection_sortAlpha;
+
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
 	public static String SimpleCSItemDetails_msgFieldDisabledOptional;

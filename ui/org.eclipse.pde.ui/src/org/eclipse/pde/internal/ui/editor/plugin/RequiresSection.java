@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,12 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -52,6 +56,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
@@ -59,11 +64,16 @@ import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -71,7 +81,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection
 	extends TableSection
-	implements IModelChangedListener, IPluginModelListener {
+	implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
     
     private static final int ADD_INDEX = 0;
     private static final int REMOVE_INDEX = 1;
@@ -85,6 +95,7 @@ public class RequiresSection
 	private Action fAddAction;
 	private Action fRemoveAction;
     private Action fPropertiesAction;
+    private Action fSortAction;
 
 	class ImportContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -121,7 +132,33 @@ public class RequiresSection
 		gd.grabExcessVerticalSpace = true;
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(gd);
+		createSectionToolbar(section, toolkit);
 		initialize();
+	}
+	
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) &&
+						(handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});	
+		
+		// Add sort action to the tool bar
+		fSortAction = new SortAction(fImportViewer, 
+				PDEUIMessages.RequiresSection_sortAlpha, null, null, this);
+		toolBarManager.add(fSortAction);
+		
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
@@ -133,20 +170,38 @@ public class RequiresSection
 		Table table = getTablePart().getTableViewer().getTable();
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
-		boolean canMove = table.getItemCount() > 1 && selection.length == 1;
 		TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
-		tablePart.setButtonEnabled(
-			UP_INDEX,
-			canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(
-			DOWN_INDEX,
-			canMove
-				&& hasSelection && isEditable()
-				&& table.getSelectionIndex() < table.getItemCount() - 1);
+        updateUpDownButtons();
         if (isBundle())
             tablePart.setButtonEnabled(PROPERTIES_INDEX, selection.length == 1);
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
+	}
+	
+	private void updateUpDownButtons() {
+		TablePart tablePart = getTablePart();
+		if (fSortAction.isChecked()) {
+			tablePart.setButtonEnabled(UP_INDEX, false);
+			tablePart.setButtonEnabled(DOWN_INDEX, false);
+			return;
+		}
+		Table table = getTablePart().getTableViewer().getTable();
+		TableItem[] selection = table.getSelection();
+		boolean hasSelection = selection.length > 0;
+		boolean canMove = table.getItemCount() > 1 && selection.length == 1;
+		
+		tablePart.setButtonEnabled(
+				UP_INDEX,
+				canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(
+				DOWN_INDEX,
+				canMove
+					&& hasSelection && isEditable()
+					&& table.getSelectionIndex() < table.getItemCount() - 1);
+		// table.getSelecitonIndex does not work when returning form sorted action
+		int index = table.getSelectionIndex();
+		int count = table.getItemCount();
+		if (index == count) {}
 	}
 
 	protected void handleDoubleClick(IStructuredSelection sel) {
@@ -599,4 +654,10 @@ public class RequiresSection
 	}
 */
 	protected boolean createCount() { return true; }
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
+			updateUpDownButtons();
+		}
+	}
 }

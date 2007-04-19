@@ -87,6 +87,7 @@ public class SortAction extends Action {
 			fViewer.setComparator(fComparator);
 			fSorted = true;
 		}
+		notifyResult(true);
 	}
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -872,7 +873,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
-		if (fSortAction.equals(event.getSource())) {
+		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			StructuredViewer viewer = getStructuredViewerPart().getViewer();
 			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 			updateUpDownButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
