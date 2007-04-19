@@ -395,6 +395,8 @@ public class JNLPGenerator extends DefaultHandler {
 	 *         translateable key
 	 */
 	private String processNLS(String string) {
+		if (string == null)
+			return null;
 		string = string.trim();
 		if (!string.startsWith("%")) { //$NON-NLS-1$
 			return string;
