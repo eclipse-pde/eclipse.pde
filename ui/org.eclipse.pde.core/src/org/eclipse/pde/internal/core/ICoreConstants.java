@@ -14,11 +14,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Constants;
 
-public interface ICoreConstants {
-
-	
-	
-	
+public interface ICoreConstants {	
 	// Target Platform
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
 	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
@@ -88,19 +84,25 @@ public interface ICoreConstants {
 	public final static String REQUIRE_PACKAGES_ATTRIBUTE = "require-packages"; //$NON-NLS-1$
 	public final static String SINGLETON_ATTRIBUTE = "singleton"; //$NON-NLS-1$
 	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
+	public static final String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
+	public static final String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$
+	
+	// Equinox-specific headers
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
 	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
 	public final static String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
 	public final static String ECLIPSE_LAZYSTART = "Eclipse-LazyStart"; //$NON-NLS-1$
 	public final static String ECLIPSE_JREBUNDLE = "Eclipse-JREBundle"; //$NON-NLS-1$
-	
-	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
-	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
+	public static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
+	public static final String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
+	public static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapabilty"; //$NON-NLS-1$
+	public static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	
-	public static final String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
-	public static final String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$
+	// Equinox-specifid directives
+	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
+	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 	
 	public static final String[] TRANSLATABLE_HEADERS = new String[] {
 		Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME,

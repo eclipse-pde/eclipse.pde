@@ -59,10 +59,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	private IJavaProject fJP;
 	
 	// Eclipse specific headers
-	private static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
-	private static final String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
-	private static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapabilty"; //$NON-NLS-1$
-	private static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
 	
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
@@ -84,13 +80,13 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		Constants.BUNDLE_VENDOR,
 		Constants.BUNDLE_VERSION,
 		Constants.DYNAMICIMPORT_PACKAGE,
-		ECLIPSE_BUDDY_POLICY,
-		ECLIPSE_GENERIC_CAPABILITY,
-		ECLIPSE_GENERIC_REQUIRED,
+		ICoreConstants.ECLIPSE_BUDDY_POLICY,
+		ICoreConstants.ECLIPSE_GENERIC_CAPABILITY,
+		ICoreConstants.ECLIPSE_GENERIC_REQUIRED,
 		ICoreConstants.ECLIPSE_LAZYSTART,
 		Constants.EXPORT_PACKAGE,
 		ICoreConstants.PLATFORM_FILTER,
-		ECLIPSE_REGISTER_BUDDY,
+		ICoreConstants.ECLIPSE_REGISTER_BUDDY,
 		ICoreConstants.EXPORT_SERVICE,
 		Constants.IMPORT_PACKAGE,
 		ICoreConstants.IMPORT_SERVICE,
@@ -266,8 +262,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
 		if (value.startsWith(Constants.BUNDLE_ACTIVATIONPOLICY))
 			return handleBundleActivationPolicyCompletion(value.substring(Constants.BUNDLE_ACTIVATIONPOLICY.length() + 1), offset);
-		if (value.startsWith(ECLIPSE_BUDDY_POLICY))
-			return handleBuddyPolicyCompletion(value.substring(ECLIPSE_BUDDY_POLICY.length() + 1), offset);
+		if (value.startsWith(ICoreConstants.ECLIPSE_BUDDY_POLICY))
+			return handleBuddyPolicyCompletion(value.substring(ICoreConstants.ECLIPSE_BUDDY_POLICY.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}
 	
