@@ -98,7 +98,6 @@ public interface ICoreConstants {
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
-	public static final String BUNDLE_ACTIVATION_POLICY = "Bundle-ActivationPolicy"; //$NON-NLS-1$
 	
 	public static final String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
 	public static final String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$

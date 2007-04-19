@@ -67,7 +67,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
 		Constants.BUNDLE_ACTIVATOR,
-		ICoreConstants.BUNDLE_ACTIVATION_POLICY,
+		Constants.BUNDLE_ACTIVATIONPOLICY,
 		Constants.BUNDLE_CATEGORY,
 		Constants.BUNDLE_CLASSPATH,
 		Constants.BUNDLE_CONTACTADDRESS,
@@ -264,8 +264,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleTrueFalseValue(value.substring(ICoreConstants.ECLIPSE_LAZYSTART.length() + 1), offset);
 		if (value.startsWith(Constants.BUNDLE_NAME))
 			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
-		if (value.startsWith(ICoreConstants.BUNDLE_ACTIVATION_POLICY))
-			return handleBundleActivationPolicyCompletion(value.substring(ICoreConstants.BUNDLE_ACTIVATION_POLICY.length() + 1), offset);
+		if (value.startsWith(Constants.BUNDLE_ACTIVATIONPOLICY))
+			return handleBundleActivationPolicyCompletion(value.substring(Constants.BUNDLE_ACTIVATIONPOLICY.length() + 1), offset);
 		if (value.startsWith(ECLIPSE_BUDDY_POLICY))
 			return handleBuddyPolicyCompletion(value.substring(ECLIPSE_BUDDY_POLICY.length() + 1), offset);
 		return new ICompletionProposal[0];
