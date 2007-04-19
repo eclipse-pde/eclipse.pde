@@ -587,10 +587,12 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int comma = currentValue.lastIndexOf(',');
 		int semicolon = currentValue.lastIndexOf(';');
 		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
-			ArrayList values = initializeNewList(new String[] {"include", "exclude"}); //$NON-NLS-1$ //$NON-NLS-2$
-			ArrayList types = initializeNewList(new Object[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)});
-			return handleAttrsAndDirectives(currentValue, values, types, offset);
-		}
+			String value = removeLeadingSpaces(currentValue);
+			String lazyValue = "lazy";
+			int length = value.length();
+			if (lazyValue.regionMatches(0, value, 0, length))
+				return new ICompletionProposal[] {new TypeCompletionProposal(lazyValue, null, lazyValue, offset - length, length)};
+		} 
 		return new ICompletionProposal[0];
 	}
 		
