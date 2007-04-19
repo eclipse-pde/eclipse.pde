@@ -382,7 +382,7 @@ public class Product extends ProductObject implements IProduct {
 	public boolean containsFeature(String id) {
 		IProductFeature[] features = getFeatures();
 		for(int i = 0; i < features.length; i++) {
-			if(features[i].getId() == id)
+			if(features[i].getId().equals(id))
 				return true;
 		}
 		return false;
