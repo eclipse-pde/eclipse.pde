@@ -82,7 +82,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.part.DrillDownAdapter;
 
 public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
 	private TreeViewer fExtensionTree;
@@ -90,7 +89,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private Image fGenericElementImage;
 	private FormFilteredTree fFilteredTree;
 	private SchemaRegistry fSchemaRegistry;
-	private DrillDownAdapter fDrillDownAdapter;
 	private Action fNewExtensionAction;
 	private Hashtable fEditorWizards;
 	private SortAction fSortAction;
@@ -198,7 +196,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
-		fDrillDownAdapter = new DrillDownAdapter(fExtensionTree);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		section.setDescription(PDEUIMessages.ExtensionsSection_sectionDescExtensionsMaster);
@@ -349,7 +346,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			newMenu.add(new Separator());
 		newMenu.add(fNewExtensionAction);
 		manager.add(new Separator());
-		fDrillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
 		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
