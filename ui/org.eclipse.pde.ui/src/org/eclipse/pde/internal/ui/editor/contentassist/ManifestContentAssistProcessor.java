@@ -58,9 +58,16 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	protected PDESourcePage fSourcePage;
 	private IJavaProject fJP;
 	
+	// Eclipse specific headers
+	private static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
+	private static final String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
+	private static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapabilty"; //$NON-NLS-1$
+	private static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
+	
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
 		Constants.BUNDLE_ACTIVATOR,
+		ICoreConstants.BUNDLE_ACTIVATION_POLICY,
 		Constants.BUNDLE_CATEGORY,
 		Constants.BUNDLE_CLASSPATH,
 		Constants.BUNDLE_CONTACTADDRESS,
@@ -77,10 +84,13 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		Constants.BUNDLE_VENDOR,
 		Constants.BUNDLE_VERSION,
 		Constants.DYNAMICIMPORT_PACKAGE,
-		ICoreConstants.EXTENSIBLE_API,
+		ECLIPSE_BUDDY_POLICY,
+		ECLIPSE_GENERIC_CAPABILITY,
+		ECLIPSE_GENERIC_REQUIRED,
 		ICoreConstants.ECLIPSE_LAZYSTART,
-		ICoreConstants.PLATFORM_FILTER,
 		Constants.EXPORT_PACKAGE,
+		ICoreConstants.PLATFORM_FILTER,
+		ECLIPSE_REGISTER_BUDDY,
 		ICoreConstants.EXPORT_SERVICE,
 		Constants.IMPORT_PACKAGE,
 		ICoreConstants.IMPORT_SERVICE,
@@ -254,8 +264,10 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleTrueFalseValue(value.substring(ICoreConstants.ECLIPSE_LAZYSTART.length() + 1), offset);
 		if (value.startsWith(Constants.BUNDLE_NAME))
 			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
-		if (value.startsWith(ICoreConstants.EXTENSIBLE_API))
-			return handleTrueFalseValue(value.substring(ICoreConstants.EXTENSIBLE_API.length() + 1), offset);
+		if (value.startsWith(ICoreConstants.BUNDLE_ACTIVATION_POLICY))
+			return handleBundleActivationPolicyCompletion(value.substring(ICoreConstants.BUNDLE_ACTIVATION_POLICY.length() + 1), offset);
+		if (value.startsWith(ECLIPSE_BUDDY_POLICY))
+			return handleBuddyPolicyCompletion(value.substring(ECLIPSE_BUDDY_POLICY.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}
 	
@@ -330,7 +342,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (equals == -1 || semicolon > equals) {
 			String[] validAtts = new String[] {Constants.RESOLUTION_DIRECTIVE, Constants.VERSION_ATTRIBUTE};
 			Integer[] validTypes = new Integer[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_ATTRIBUTE)};
-			return handleAttrsAndDirectives(value, intializeNewList(validAtts), intializeNewList(validTypes), offset);
+			return handleAttrsAndDirectives(value, initializeNewList(validAtts), initializeNewList(validTypes), offset);
 		} 
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
 		if (Constants.RESOLUTION_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()))
@@ -407,7 +419,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (equals == -1 || semicolon > equals) {
 			String[] validAttrs = new String[] {Constants.BUNDLE_VERSION_ATTRIBUTE, Constants.RESOLUTION_DIRECTIVE, Constants.VISIBILITY_DIRECTIVE};
 			Integer[] validTypes = new Integer[] {new Integer(F_TYPE_ATTRIBUTE), new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
-			return handleAttrsAndDirectives(value, intializeNewList(validAttrs), intializeNewList(validTypes),	offset);
+			return handleAttrsAndDirectives(value, initializeNewList(validAttrs), initializeNewList(validTypes),	offset);
 		} 
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
 		if (Constants.VISIBILITY_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.VISIBILITY_DIRECTIVE.length()))
@@ -523,7 +535,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				String[] validAttrs = new String[] {Constants.VERSION_ATTRIBUTE, ICoreConstants.INTERNAL_DIRECTIVE, 
 						ICoreConstants.FRIENDS_DIRECTIVE};
 				Integer[] validTypes = new Integer[] {new Integer(F_TYPE_ATTRIBUTE), new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
-				return handleAttrsAndDirectives(value, intializeNewList(validAttrs), intializeNewList(validTypes), offset);
+				return handleAttrsAndDirectives(value, initializeNewList(validAttrs), initializeNewList(validTypes), offset);
 			}
 			String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
 			if (ICoreConstants.FRIENDS_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, ICoreConstants.FRIENDS_DIRECTIVE.length()))
@@ -569,6 +581,27 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				return handleTrueFalseValue(currentValue.substring(equals + 1), offset);
 		}
 		return new ICompletionProposal[0];
+	}
+
+	protected ICompletionProposal[] handleBundleActivationPolicyCompletion(final String currentValue, final int offset) {
+		int comma = currentValue.lastIndexOf(',');
+		int semicolon = currentValue.lastIndexOf(';');
+		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
+			ArrayList values = initializeNewList(new String[] {"include", "exclude"}); //$NON-NLS-1$ //$NON-NLS-2$
+			ArrayList types = initializeNewList(new Object[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)});
+			return handleAttrsAndDirectives(currentValue, values, types, offset);
+		}
+		return new ICompletionProposal[0];
+	}
+		
+	protected ICompletionProposal[] handleBuddyPolicyCompletion(String currentValue, int offset) {
+		String value = removeLeadingSpaces(currentValue);
+		// values from bug 178517 comment #7
+		ArrayList validValues = initializeNewList(new String[] {"dependent", "global", "registered", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"app", "ext", "boot", "parent"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		ArrayList types = initializeNewList(new Object[] {new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE),
+				new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE), new Integer(F_TYPE_VALUE)});
+		return handleAttrsAndDirectives(value, validValues, types, offset);
 	}
 	
 	protected ICompletionProposal[] handleRequiredExecEnv(String currentValue, int offset) {
@@ -704,7 +737,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		return result;
 	}
 	
-	protected final ArrayList intializeNewList(Object[] values) {
+	// if you use java.util.Arrays.asList(), we get an UnsupportedOperation later in the code
+	protected final ArrayList initializeNewList(Object[] values) {
 		ArrayList list = new ArrayList(values.length);
 		for (int i = 0; i < values.length; i++) 
 			list.add(values[i]);
