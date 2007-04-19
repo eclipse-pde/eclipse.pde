@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
@@ -491,7 +492,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (fSortAction.equals(event.getSource())) {
+		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateButtons(true, true);
 		}
 	}
