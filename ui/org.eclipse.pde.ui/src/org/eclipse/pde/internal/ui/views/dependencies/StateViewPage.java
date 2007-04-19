@@ -81,7 +81,6 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 	
 	private static final String HIDE_RESOLVED = "hideResolved"; //$NON-NLS-1$
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
-	private static final String FRAMEWORK_BUNDLE_SYMBOLICNAME = "org.eclipse.osgi"; //$NON-NLS-1$
 	
 	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -214,13 +213,10 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			if (element instanceof ImportPackageSpecification) {
 				ImportPackageSpecification spec = (ImportPackageSpecification) element;
 				buffer.append(spec.getName());
-				element = ((ExportPackageDescription)spec.getSupplier()).getSupplier();
-				if (((BundleDescription)element).getSymbolicName().equals(FRAMEWORK_BUNDLE_SYMBOLICNAME)) {
-					ExportPackageDescription[] desc = ((BundleDescription)element).getContainingState().getSystemPackages();
-					for (int i = 0; i < desc.length; i++) 
-						if (desc[i].equals(spec.getSupplier()))
-							return buffer.append(PDEUIMessages.StateViewPage_suppliedByJRE).toString();
-				}
+				ExportPackageDescription supplier = (ExportPackageDescription) spec.getSupplier();
+				if (isJREPackage(supplier))
+					return buffer.append(PDEUIMessages.StateViewPage_suppliedByJRE).toString();
+				element = supplier.getSupplier();
 				buffer.append(PDEUIMessages.StateViewPage_suppliedBy);
 			}
 			if (element instanceof BundleSpecification)
@@ -233,6 +229,11 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			return element.toString();
 		}
 		
+	}
+	
+	private boolean isJREPackage(ExportPackageDescription supplier) {
+		// check for runtime's non-API directive.  This may change in the future
+		return (((Integer) supplier.getDirective("x-equinox-ee")).intValue() > 0); //$NON-NLS-1$
 	}
 	
 	public StateViewPage(DependenciesView view) {
