@@ -588,7 +588,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int semicolon = currentValue.lastIndexOf(';');
 		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
 			String value = removeLeadingSpaces(currentValue);
-			String lazyValue = "lazy";
+			String lazyValue = "lazy"; //$NON-NLS-1$
 			int length = value.length();
 			if (lazyValue.regionMatches(0, value, 0, length))
 				return new ICompletionProposal[] {new TypeCompletionProposal(lazyValue, null, lazyValue, offset - length, length)};
