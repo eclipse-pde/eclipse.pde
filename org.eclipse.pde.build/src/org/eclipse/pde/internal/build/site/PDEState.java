@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.build.site;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -309,16 +308,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}
-	}
-
-	private Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
 	}
 
 	public void addBundles(Collection bundles) {
