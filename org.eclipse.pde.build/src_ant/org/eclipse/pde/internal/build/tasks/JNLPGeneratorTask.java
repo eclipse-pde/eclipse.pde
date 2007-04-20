@@ -23,7 +23,8 @@ public class JNLPGeneratorTask extends Task {
 	private String codebase = null;
 	private String j2se;
 	private Locale locale = Locale.getDefault();
-
+	private boolean generateOfflineAllowed = true;
+	
 	/**
 	 * The URL location of a feature.xml file.  This can be either a jar: URL to the feature.xml,
 	 * or a file: url to the feature.
@@ -91,7 +92,15 @@ public class JNLPGeneratorTask extends Task {
 	}
 
 	public void execute() throws BuildException {
-		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se, locale);
+		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se, locale, generateOfflineAllowed);
 		generator.process();
 	}
+	
+	public void setGenerateOfflineAllowed(String generateOfflineAllowed) {
+		if (generateOfflineAllowed.equalsIgnoreCase("false")) //$NON-NLS-1$
+			this.generateOfflineAllowed = false;
+		if (generateOfflineAllowed.equalsIgnoreCase("true")) //$NON-NLS-1$
+			this.generateOfflineAllowed = false;
+	}
+	 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class JNLPGenerator extends DefaultHandler {
 	private String currentArch = null;
 	private Locale locale = null;
 	private PropertyResourceBundle nlsBundle = null;
+	private boolean generateOfflineAllowed;
 
 	/**
 	 * For testing purposes only.
@@ -68,19 +69,20 @@ public class JNLPGenerator extends DefaultHandler {
 	 * Constructs a feature parser.
 	 */
 	public JNLPGenerator(String feature, String destination, String codebase, String j2se) {
-		this(feature, destination, codebase, j2se, Locale.getDefault());
+		this(feature, destination, codebase, j2se, Locale.getDefault(), true);
 	}
 
 	/**
 	 * Constructs a feature parser.
 	 */
-	public JNLPGenerator(String feature, String destination, String codebase, String j2se, Locale locale) {
+	public JNLPGenerator(String feature, String destination, String codebase, String j2se, Locale locale, boolean generateOfflineAllowed) {
 		super();
 		this.featureRoot = new File(feature);
 		this.destination = destination;
 		this.codebase = codebase;
 		this.j2se = j2se;
 		this.locale = locale;
+		this.generateOfflineAllowed = generateOfflineAllowed;
 		try {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
@@ -440,7 +442,8 @@ public class JNLPGenerator extends DefaultHandler {
 			out.println("\t\t<vendor>" + provider + "</vendor>"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (description != null)
 			out.println("\t\t<description>" + description + "</description>"); //$NON-NLS-1$ //$NON-NLS-2$
-		out.println("\t\t<offline-allowed/>"); //$NON-NLS-1$
+		if (generateOfflineAllowed)
+			out.println("\t\t<offline-allowed/>"); //$NON-NLS-1$
 		out.println("\t</information>"); //$NON-NLS-1$
 		out.println("\t<security>"); //$NON-NLS-1$
 		out.println("\t\t<all-permissions/>"); //$NON-NLS-1$
