@@ -68,14 +68,14 @@ public class FileSet {
 			printNames(script, "exclude", excludes); //$NON-NLS-1$
 		script.println("</fileset>"); //$NON-NLS-1$
 	}
-	
+
 	private void printNames(AntScript script, String tag, String names) {
 		script.indent++;
-		for (StringTokenizer tokenizer = new StringTokenizer(names, ","); tokenizer.hasMoreTokens(); ) { //$NON-NLS-1$
+		for (StringTokenizer tokenizer = new StringTokenizer(names, ","); tokenizer.hasMoreTokens();) { //$NON-NLS-1$
 			script.printTabs();
 			script.print("<"); //$NON-NLS-1$
 			script.print(tag);
-			script.printAttribute("name", tokenizer.nextToken(), true); //$NON-NLS-1$
+			script.printAttribute("name", tokenizer.nextToken().trim(), true); //$NON-NLS-1$
 			script.print("/>"); //$NON-NLS-1$
 			script.println();
 		}
