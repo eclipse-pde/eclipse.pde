@@ -131,12 +131,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private String fillPatchData(Dictionary manifest) {
-		if (manifest.get("Eclipse-ExtensibleAPI") != null) {
-			return "Eclipse-ExtensibleAPI: true";
+		if (manifest.get("Eclipse-ExtensibleAPI") != null) { //$NON-NLS-1$
+			return "Eclipse-ExtensibleAPI: true"; //$NON-NLS-1$
 		}
 
-		if (manifest.get("Eclipse-PatchFragment") != null) {
-			return "Eclipse-PatchFragment: true";
+		if (manifest.get("Eclipse-PatchFragment") != null) { //$NON-NLS-1$
+			return "Eclipse-PatchFragment: true"; //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -294,9 +294,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			converter = acquirePluginConverter();
 			return converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false, null); //$NON-NLS-1$
 		} catch (PluginConversionException convertException) {
-			if (bundleLocation.getName().equals(org.eclipse.pde.build.Constants.FEATURE_FILENAME_DESCRIPTOR)) //$NON-NLS-1$
+			if (bundleLocation.getName().equals(org.eclipse.pde.build.Constants.FEATURE_FILENAME_DESCRIPTOR))
 				return null;
-			if (! new File(bundleLocation, org.eclipse.pde.build.Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() && ! new File(bundleLocation, org.eclipse.pde.build.Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
+			if (!new File(bundleLocation, org.eclipse.pde.build.Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, org.eclipse.pde.build.Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
 				return null;
 			if (logConversionException) {
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_errorConverting, bundleLocation.getAbsolutePath()), convertException);
@@ -362,9 +362,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
 
 			// check the user-specified platform properties
-			if (platformProperties != null)  {
-				for (Enumeration e = platformProperties.keys(); e.hasMoreElements(); ) {
-					String key = (String) e.nextElement();	
+			if (platformProperties != null) {
+				for (Enumeration e = platformProperties.keys(); e.hasMoreElements();) {
+					String key = (String) e.nextElement();
 					prop.put(key, platformProperties.get(key));
 				}
 			}
@@ -433,7 +433,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		int qualifierIdx = -1;
 		if ((qualifierIdx = parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
-			
+
 			String qualifierPrefix = qualifierIdx > 0 ? parsedVersion.getQualifier().substring(0, qualifierIdx - 1) : ""; //$NON-NLS-1$
 
 			for (int i = 0; i < bundles.length; i++) {
@@ -576,7 +576,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			foundProfiles = getDirJavaProfiles(bundleLocation);
 		else
 			foundProfiles = getJarJavaProfiles(bundleLocation);
-		javaProfiles = sortProfiles(foundProfiles);
+		javaProfiles = foundProfiles;
 	}
 
 	private String[] getRuntimeJavaProfiles() {
@@ -599,12 +599,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			results.add(entryUrl.getFile().substring(1));
 		}
 
-		return (String[]) results.toArray(new String[results.size()]);
+		return sortProfiles((String[]) results.toArray(new String[results.size()]));
 	}
-	
+
 	private String[] getDirJavaProfiles(File bundleLocation) {
 		// try the profile list first
-		File profileList = new File(bundleLocation, "profile.list");
+		File profileList = new File(bundleLocation, "profile.list"); //$NON-NLS-1$
 		if (profileList.exists())
 			try {
 				return getJavaProfiles(new BufferedInputStream(new FileInputStream(profileList)));
@@ -616,7 +616,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				return name.endsWith(PROFILE_EXTENSION);
 			}
 		});
-		return profiles;
+		return sortProfiles(profiles);
 	}
 
 	private String[] getJarJavaProfiles(File bundleLocation) {
@@ -624,7 +624,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		ArrayList results = new ArrayList(6);
 		try {
 			zipFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-			ZipEntry profileList = zipFile.getEntry("profile.list");
+			ZipEntry profileList = zipFile.getEntry("profile.list"); //$NON-NLS-1$
 			if (profileList != null)
 				try {
 					return getJavaProfiles(zipFile.getInputStream(profileList));
@@ -648,7 +648,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					// nothing to do
 				}
 		}
-		return (String[]) results.toArray(new String[results.size()]);
+		return sortProfiles((String[]) results.toArray(new String[results.size()]));
 	}
 
 	private String[] getJavaProfiles(InputStream is) throws IOException {
@@ -660,12 +660,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private String[] sortProfiles(String[] profiles) {
 		Arrays.sort(profiles, new Comparator() {
 			public int compare(Object profile1, Object profile2) {
-				// need to make sure J2SE profiles are sorted ahead of all other profiles
+				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
 				String p1 = (String) profile1;
 				String p2 = (String) profile2;
-				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE"))
+				if (p1.startsWith("JavaSE") && !p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
 					return -1;
-				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE"))
+				if (!p1.startsWith("JavaSE") && p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
+					return 1;
+				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
+					return -1;
+				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
 					return 1;
 				return -p1.compareTo(p2);
 			}
@@ -680,11 +684,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		InputStream is = null;
 		ZipFile zipFile = null;
 		try {
-			if(location == null) {
+			if (location == null) {
 				BundleContext context = BundleHelper.getDefault().getBundle().getBundleContext();
 				Bundle systemBundle = context.getBundle(0);
-				
-				URL url = systemBundle.getEntry(javaProfile); 
+
+				URL url = systemBundle.getEntry(javaProfile);
 				is = new BufferedInputStream(url.openStream());
 			} else if (location.isDirectory()) {
 				is = new BufferedInputStream(new FileInputStream(new File(location, javaProfile)));
@@ -738,7 +742,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		state.resolve();
 	}
-	
+
 	public void setPlatformProperties(Dictionary platformProperties) {
 		this.platformProperties = platformProperties;
 	}
