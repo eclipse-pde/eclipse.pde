@@ -132,6 +132,7 @@ public class RequiresSection
 		gd.grabExcessVerticalSpace = true;
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(gd);
+		section.setText(PDEUIMessages.RequiresSection_title);
 		createSectionToolbar(section, toolkit);
 		initialize();
 	}
