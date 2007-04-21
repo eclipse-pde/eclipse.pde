@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -72,7 +72,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 				if (attribute != null) {
 					IRegion region = getAttributeRegion(attName, attValue, nodeOffset);
 					if (region == null) {
-						attValue = CoreUtility.getWritableString(attValue);
+						attValue = PDEXMLHelper.getWritableString(attValue);
 						region = getAttributeRegion(attName, attValue, nodeOffset);
 					}
 					if (region != null) {

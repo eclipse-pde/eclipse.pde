@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.StringReader;
 import java.util.Stack;
 
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -91,7 +91,7 @@ public class ExtensionsHandler extends DefaultHandler {
 
 		fParent.appendChild(extension);
 		
-		if (CoreUtility.isInterestingExtensionPoint(point))
+		if (IdUtil.isInterestingExtensionPoint(point))
 			fOpenElements.push(extension);
 	}
 

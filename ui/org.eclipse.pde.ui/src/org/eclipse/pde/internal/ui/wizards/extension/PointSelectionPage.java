@@ -53,6 +53,7 @@ import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
@@ -64,12 +65,11 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
-import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
@@ -164,7 +164,7 @@ public class PointSelectionPage
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint){
 				IPluginExtensionPoint point = (IPluginExtensionPoint)inputElement;
-				String pointID = PDEJavaHelper.getFullId(point, fModel);
+				String pointID = IdUtil.getFullId(point, fModel);
 				ArrayList result = new ArrayList();
 				if (fTemplateCollection.getWizards() != null) {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
@@ -217,7 +217,7 @@ public class PointSelectionPage
 			if (provider.isFullNameModeEnabled())
 				return provider.getText(extPoint);
 			
-			return PDEJavaHelper.getFullId(extPoint, fModel);
+			return IdUtil.getFullId(extPoint, fModel);
 		}
 		
 		public Image getImage(Object obj) {
@@ -478,7 +478,7 @@ public class PointSelectionPage
 	}
 
 	public boolean finish() {
-		String point = PDEJavaHelper.getFullId(fCurrentPoint, fModel);
+		String point = IdUtil.getFullId(fCurrentPoint, fModel);
 		
 		try {
 			IPluginExtension extension =
@@ -572,7 +572,7 @@ public class PointSelectionPage
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
-		String fullPointID = PDEJavaHelper.getFullId(fCurrentPoint, fModel); 
+		String fullPointID = IdUtil.getFullId(fCurrentPoint, fModel); 
 		
 		String description = 
 			XMLComponentRegistry.Instance().getDescription(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);

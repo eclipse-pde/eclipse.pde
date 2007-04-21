@@ -24,7 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -91,7 +91,7 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 					IPluginExtension ext = extensions[i];
 					String point = ext.getPoint();
 					if ("org.eclipse.core.runtime.products".equals(point)  //$NON-NLS-1$
-							&& product.equals(TargetPlatformHelper.getFullId(ext))) { 
+							&& product.equals(IdUtil.getFullId(ext))) { 
 						if (ext.getChildCount() == 1) {
 							IPluginElement prod = (IPluginElement)ext.getChildren()[0];
 							if (prod.getName().equals("product")) { //$NON-NLS-1$

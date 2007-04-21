@@ -23,7 +23,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
@@ -502,7 +502,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	
 	
 	public String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 	
 	protected HashMap getOperationTable() {

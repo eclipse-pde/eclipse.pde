@@ -32,7 +32,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -64,6 +63,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -447,12 +447,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			try {
 				if (fProject.hasNature(JavaCore.NATURE_ID)) {
 					IJavaProject javaProject = JavaCore.create(fProject);
-					if (activator.indexOf('$') != -1)
-						activator = activator.replace('$', '.');
 
 					// Look for this activator in the project's classpath
-					IType type = javaProject.findType(activator);
-					if (type == null || !type.exists()) {
+					if (!PDEJavaHelper.isOnClasspath(activator, javaProject)) {
 						report(NLS.bind(PDECoreMessages.BundleErrorReporter_NoExist, activator), 
 								getLine(header, activator),
 								CompilerFlags.P_UNKNOWN_CLASS,

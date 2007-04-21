@@ -16,7 +16,7 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetObject;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public abstract class TargetObject extends PlatformObject implements ITargetObject {
 
@@ -67,7 +67,7 @@ public abstract class TargetObject extends PlatformObject implements ITargetObje
 	}
 
 	public String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 
 }

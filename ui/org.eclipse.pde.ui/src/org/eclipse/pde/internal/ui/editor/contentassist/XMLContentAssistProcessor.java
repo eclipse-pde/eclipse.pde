@@ -49,12 +49,12 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.forms.editor.FormEditor;
 
@@ -666,7 +666,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			// Process each extension point
 			for (int j = 0; j < points.length; j++) {
 				VirtualSchemaObject vObject = new VirtualSchemaObject(
-						PDEJavaHelper.getFullId(points[j], model),
+						IdUtil.getFullId(points[j], model),
 						points[j], 
 						vSchemaType);
 				// Add the proposal to the list
@@ -724,7 +724,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Process each extension point
 		for (int j = 0; j < points.length; j++) {
 			VirtualSchemaObject vObject = new VirtualSchemaObject(
-					PDEJavaHelper.getFullId(points[j], model), 
+					IdUtil.getFullId(points[j], model), 
 					points[j], 
 					vSchemaType);
 			// Add the proposal to the list

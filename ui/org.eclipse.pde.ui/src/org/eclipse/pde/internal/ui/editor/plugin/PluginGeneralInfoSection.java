@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -125,7 +125,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fClassEntry.getValue();
 				IProject project = getPage().getPDEEditor().getCommonProject();
-				value = PDEJavaHelper.createClass(value, project, createJavaAttributeValue(), false);
+				value = PDEJavaHelperUI.createClass(value, project, createJavaAttributeValue(), false);
 				if (value != null)
 					fClassEntry.setValue(value);
 			}
@@ -143,7 +143,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		};
 		
 		if (isEditable) {
-			fTypeFieldAssistDisposer = PDEJavaHelper.addTypeFieldAssistToText(
+			fTypeFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(
 					fClassEntry.getText(), 
 					getProject(),
 					IJavaSearchConstants.CLASS);
@@ -167,7 +167,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	private void doOpenSelectionDialog(String className) {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
 		String type = 
-			PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className);
+			PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className);
 		if (type != null)
 			fClassEntry.setValue(type);
 	}

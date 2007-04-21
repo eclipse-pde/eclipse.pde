@@ -42,12 +42,13 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -803,7 +804,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			IProject project = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
 			fJP = JavaCore.create(project);
 		}
-		return PDEJavaHelper.getOSGIConstantJavaDoc(constant, fJP);
+		return PDEJavaHelperUI.getOSGIConstantJavaDoc(constant, fJP);
 	}
 
 }

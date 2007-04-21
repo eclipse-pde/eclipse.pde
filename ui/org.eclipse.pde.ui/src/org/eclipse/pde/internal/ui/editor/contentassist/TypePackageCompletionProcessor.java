@@ -37,8 +37,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class TypePackageCompletionProcessor implements IContentAssistProcessor {
@@ -212,6 +212,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	    	// bad compared to the searchAllTypeNames() method
 	    	fSearchEngine.searchAllTypeNames(
 	    			packageName,
+	    			SearchPattern.R_EXACT_MATCH,
 	    			typeName,
                     SearchPattern.R_PREFIX_MATCH,
                     typeScope,

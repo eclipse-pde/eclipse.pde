@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
 
 public abstract class FeatureObject
@@ -167,6 +167,6 @@ public abstract class FeatureObject
 	}
 	
 	protected String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 }

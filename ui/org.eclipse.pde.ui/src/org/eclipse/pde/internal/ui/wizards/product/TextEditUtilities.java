@@ -15,7 +15,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -42,7 +42,7 @@ public class TextEditUtilities {
 	public static TextEdit addAttributeOperation(IDocumentAttribute attr, String newValue, IDocument doc) {
 		int offset = attr.getValueOffset();
 		if (offset > -1)
-			return new ReplaceEdit(offset, attr.getValueLength(), CoreUtility.getWritableString(newValue));
+			return new ReplaceEdit(offset, attr.getValueLength(), PDEXMLHelper.getWritableString(newValue));
 
 		IDocumentNode node = attr.getEnclosingElement();
 		if (node.getOffset() > -1) {

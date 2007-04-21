@@ -40,7 +40,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.w3c.dom.NamedNodeMap;
@@ -987,7 +987,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private String getWritableDescription() {
 		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
-		String description = CoreUtility.getWritableString(getDescription());
+		String description = PDEXMLHelper.getWritableString(getDescription());
 		String platformDescription = description.replaceAll(
 				"\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 

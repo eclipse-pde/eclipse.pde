@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -25,6 +24,7 @@ import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.InvalidSyntaxException;
@@ -157,14 +157,8 @@ public class ControlValidationUtility {
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
-				// Replace all inner class name prefixes with dots
-				if (value.indexOf('$') != -1) {
-					value = value.replace('$', '.');
-				}
 				// Look for this activator in the project's classpath
-				IType type = javaProject.findType(value);
-				if ((type == null) || 
-						(type.exists() == false)) {
+				if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
 					validator.addMessage(
 							PDEUIMessages.ControlValidationUtility_errorMsgNotOnClasspath, 
 							messageType);

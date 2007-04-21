@@ -12,7 +12,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 
 public class ManifestTextHover extends PDETextHover {
 
@@ -34,7 +34,7 @@ public class ManifestTextHover extends PDETextHover {
 			if (offset >= header.getOffset() + headerName.length())
 				return checkForTranslatable(header);
 			if (fJP != null)
-				return PDEJavaHelper.getOSGIConstantJavaDoc(headerName, fJP);
+				return PDEJavaHelperUI.getOSGIConstantJavaDoc(headerName, fJP);
 		}
 		return null;
 	}

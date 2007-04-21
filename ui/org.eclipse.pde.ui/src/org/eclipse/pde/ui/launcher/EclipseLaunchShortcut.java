@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
 import org.eclipse.pde.internal.ui.launcher.LaunchAction;
@@ -140,7 +141,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			if ("org.eclipse.core.runtime.applications".equals(extension.getPoint())) { //$NON-NLS-1$
 				String extensionID = extension.getId();
 				if (extensionID != null) {
-					result.add(TargetPlatformHelper.getFullId(extensions[i]));
+					result.add(IdUtil.getFullId(extensions[i]));
 				}
 			}
 		}
@@ -161,7 +162,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 						if (prod.getName().equals("product")) { //$NON-NLS-1$
 							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
 							if (attr != null && appName.equals(attr.getValue())) {
-								return TargetPlatformHelper.getFullId(ext);
+								return IdUtil.getFullId(ext);
 							}
 						}
 					}

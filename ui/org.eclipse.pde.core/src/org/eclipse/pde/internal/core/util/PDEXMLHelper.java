@@ -103,6 +103,36 @@ public class PDEXMLHelper {
 		}
 	}
 
+	public static String getWritableString(String source) {
+		if (source == null)
+			return ""; //$NON-NLS-1$
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < source.length(); i++) {
+			char c = source.charAt(i);
+			switch (c) {
+				case '&' :
+					buf.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buf.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buf.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buf.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buf.append("&quot;"); //$NON-NLS-1$
+					break;
+				default :
+					buf.append(c);
+					break;
+			}
+		}
+		return buf.toString();
+	}
+
 	public static int getSAXPoolLimit() {
 		return fSAXPoolLimit;
 	}

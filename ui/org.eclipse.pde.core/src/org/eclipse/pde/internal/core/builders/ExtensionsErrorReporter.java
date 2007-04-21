@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -54,6 +52,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -586,27 +585,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		String value = attr.getValue();
 		IJavaProject javaProject = JavaCore.create(fFile.getProject());
-		try {
-			// be careful: people have the option to use the format:
-			// fullqualifiedName:staticMethod
-			int index = value.indexOf(":"); //$NON-NLS-1$
-			if (index != -1)
-				value = value.substring(0, index);
 
-			if (value.indexOf('$') != -1)
-				value = value.replace('$', '.');
-			IType javaType = javaProject.findType(value);
+		// be careful: people have the option to use the format:
+		// fullqualifiedName:staticMethod
+		int index = value.indexOf(":"); //$NON-NLS-1$
+		if (index != -1)
+			value = value.substring(0, index);
 
-			if (javaType == null) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] { value, attr.getName() })), getLine(
-						element, attr.getName()), severity,
-						PDEMarkerFactory.P_UNKNOWN_CLASS,
-						element,
-						attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(),
-						PDEMarkerFactory.CAT_FATAL);
-			} 
-		} catch (JavaModelException e) {
-		}
+		if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
+			report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] { value, attr.getName() })), getLine(
+					element, attr.getName()), severity,
+					PDEMarkerFactory.P_UNKNOWN_CLASS,
+					element,
+					attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(),
+					PDEMarkerFactory.CAT_FATAL);
+		} 
 	}
 	
 	protected void validateRestrictionAttribute(Element element, Attr attr, ISchemaRestriction restriction) {

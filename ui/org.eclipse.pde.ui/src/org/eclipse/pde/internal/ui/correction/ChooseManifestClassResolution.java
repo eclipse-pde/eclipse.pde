@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 
 public class ChooseManifestClassResolution extends AbstractManifestMarkerResolution {
 
@@ -28,7 +28,7 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
-		String type = PDEJavaHelper.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES);
+		String type = PDEJavaHelperUI.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES);
 		if (type != null)
 			header.setValue(type);
 	}

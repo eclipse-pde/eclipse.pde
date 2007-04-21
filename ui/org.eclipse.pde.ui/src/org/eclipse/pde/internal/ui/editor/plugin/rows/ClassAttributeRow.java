@@ -21,7 +21,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -42,8 +43,8 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
 	 */
 	protected void openReference() {
-		String name = PDEJavaHelper.trimNonAlphaChars(text.getText()).replace('$', '.');
-		name = PDEJavaHelper.createClass(
+		String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
+		name = PDEJavaHelperUI.createClass(
 				name, getProject(),
 				createJavaAttributeValue(name), true);
 		if (name != null)
@@ -60,7 +61,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 
 		if (part.isEditable()) {
 			fTypeFieldAssistDisposer = 
-				PDEJavaHelper.addTypeFieldAssistToText(text, 
+				PDEJavaHelperUI.addTypeFieldAssistToText(text, 
 						getProject(),
 						IJavaSearchConstants.CLASS_AND_INTERFACE);			
 		}
@@ -85,7 +86,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	}
 	private void doOpenSelectionDialog() {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelper.selectType(
+		String type = PDEJavaHelperUI.selectType(
 				resource, 
 				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, 
 				text.getText());

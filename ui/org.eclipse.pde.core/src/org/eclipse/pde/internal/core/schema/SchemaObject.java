@@ -15,7 +15,7 @@ import java.io.Serializable;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public abstract class SchemaObject extends PlatformObject implements
 		ISchemaObject, Serializable {
@@ -57,7 +57,7 @@ public abstract class SchemaObject extends PlatformObject implements
 
 	public String getWritableDescription() {
 		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
-		String description = CoreUtility.getWritableString(getDescription());
+		String description = PDEXMLHelper.getWritableString(getDescription());
 		String platformDescription = description.replaceAll(
 				"\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 

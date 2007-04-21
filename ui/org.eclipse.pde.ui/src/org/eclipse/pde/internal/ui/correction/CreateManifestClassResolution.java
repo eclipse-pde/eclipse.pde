@@ -18,7 +18,8 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 
 public class CreateManifestClassResolution extends AbstractManifestMarkerResolution {
 
@@ -32,7 +33,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
 		
-		String name = PDEJavaHelper.trimNonAlphaChars(header.getValue()).replace('$', '.');
+		String name = TextUtil.trimNonAlphaChars(header.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 		
 		IPluginModelBase modelBase = PluginRegistry.findModel(project);
@@ -40,7 +41,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 			return;
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, modelBase, null, name);
-		name = PDEJavaHelper.createClass(name, project, value, true);
+		name = PDEJavaHelperUI.createClass(name, project, value, true);
 		if (name != null && !name.equals(header.getValue())) 
 			header.setValue(name);
 	}

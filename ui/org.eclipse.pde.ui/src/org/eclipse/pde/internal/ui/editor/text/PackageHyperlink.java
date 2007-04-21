@@ -16,8 +16,8 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 

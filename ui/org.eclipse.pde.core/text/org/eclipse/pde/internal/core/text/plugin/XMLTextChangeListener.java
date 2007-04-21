@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
@@ -415,7 +415,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 	
 	private String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {

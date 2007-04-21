@@ -16,7 +16,7 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductObject;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 
 public abstract class ProductObject extends PlatformObject implements IProductObject {
@@ -81,7 +81,7 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 	}
 	
 	public String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 
 

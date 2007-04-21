@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends PluginDocumentNode
 		implements
@@ -209,7 +209,7 @@ public class PluginObjectNode extends PluginDocumentNode
 	}
 
 	public String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 	/*
 	 * (non-Javadoc)

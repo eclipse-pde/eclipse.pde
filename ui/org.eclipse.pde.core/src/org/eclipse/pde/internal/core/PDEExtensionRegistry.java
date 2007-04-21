@@ -40,7 +40,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -215,11 +215,11 @@ public class PDEExtensionRegistry {
 	public static Element writeExtensionPoint(Document doc, IPluginExtensionPoint extPoint) {
 		Element child = doc.createElement("extension-point"); //$NON-NLS-1$
 		if (extPoint.getId() != null)
-			child.setAttribute("id", CoreUtility.getWritableString(extPoint.getId())); //$NON-NLS-1$
+			child.setAttribute("id", PDEXMLHelper.getWritableString(extPoint.getId())); //$NON-NLS-1$
 		if (extPoint.getName() != null)
-			child.setAttribute("name", CoreUtility.getWritableString(extPoint.getName())); //$NON-NLS-1$
+			child.setAttribute("name", PDEXMLHelper.getWritableString(extPoint.getName())); //$NON-NLS-1$
 		if (extPoint.getSchema() != null)
-			child.setAttribute("schema", CoreUtility.getWritableString(extPoint.getSchema())); //$NON-NLS-1$
+			child.setAttribute("schema", PDEXMLHelper.getWritableString(extPoint.getSchema())); //$NON-NLS-1$
 		if (extPoint instanceof PluginExtensionPoint)
 			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine())); //$NON-NLS-1$
 		return child;	
@@ -228,11 +228,11 @@ public class PDEExtensionRegistry {
 	public static Element writeExtension(Document doc, IPluginExtension extension) {
 		Element child = doc.createElement("extension"); //$NON-NLS-1$
 		if (extension.getPoint() != null)
-			child.setAttribute("point", CoreUtility.getWritableString(extension.getPoint())); //$NON-NLS-1$
+			child.setAttribute("point", PDEXMLHelper.getWritableString(extension.getPoint())); //$NON-NLS-1$
 		if (extension.getName() != null)
-			child.setAttribute("name", CoreUtility.getWritableString(extension.getName())); //$NON-NLS-1$
+			child.setAttribute("name", PDEXMLHelper.getWritableString(extension.getName())); //$NON-NLS-1$
 		if (extension.getId() != null)
-			child.setAttribute("id", CoreUtility.getWritableString(extension.getId())); //$NON-NLS-1$
+			child.setAttribute("id", PDEXMLHelper.getWritableString(extension.getId())); //$NON-NLS-1$
 		if (extension instanceof PluginExtension)
 			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine())); //$NON-NLS-1$
 		IPluginObject[] children = extension.getChildren();
@@ -246,7 +246,7 @@ public class PDEExtensionRegistry {
 		Element child = doc.createElement(element.getName());
 		IPluginAttribute[] attrs = element.getAttributes();
 		for (int i = 0; i < attrs.length; i++) {
-			child.setAttribute(attrs[i].getName(), CoreUtility.getWritableString(attrs[i].getValue()));
+			child.setAttribute(attrs[i].getName(), PDEXMLHelper.getWritableString(attrs[i].getValue()));
 		}
 		IPluginObject[] elements = element.getChildren();
 		for (int i = 0; i < elements.length; i++) {

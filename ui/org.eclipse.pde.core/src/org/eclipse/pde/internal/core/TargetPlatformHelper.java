@@ -30,8 +30,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -40,6 +38,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -180,9 +179,9 @@ public class TargetPlatformHelper {
 			for (int j = 0; j < extensions.length; j++) {
 				if ("org.eclipse.core.runtime.applications".equals(extensions[j].getPoint())) { //$NON-NLS-1$
 					if (extensions[j].getId() != null) {
-						String id = getFullId(extensions[j]);
+						String id = IdUtil.getFullId(extensions[j]);
 					    if (!id.startsWith("org.eclipse.pde.junit.runtime"))  //$NON-NLS-1$
-					    	result.add(getFullId(extensions[j]));		
+					    	result.add(IdUtil.getFullId(extensions[j]));		
 					}
 				}
 			}
@@ -196,19 +195,6 @@ public class TargetPlatformHelper {
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
-	public static String getFullId(IPluginExtension extension) {
-		String id = extension.getId();
-		IPluginBase plugin = extension.getPluginBase();
-		if ("3.2".equals(plugin.getSchemaVersion())) { //$NON-NLS-1$
-			if (id.indexOf('.') > 0)
-				return id;
-		}
-		
-		if (plugin instanceof IFragment)
-			return ((IFragment) plugin).getPluginId() + '.' + id;
-		return plugin.getId() + '.' + id;
-	}
-
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
@@ -223,7 +209,7 @@ public class TargetPlatformHelper {
 						continue;
 					String id = extensions[j].getId();
 					if (id != null && id.trim().length() > 0) {
-						result.add(getFullId(extensions[j]));	
+						result.add(IdUtil.getFullId(extensions[j]));	
 					}
 				}
 			}

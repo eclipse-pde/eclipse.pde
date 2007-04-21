@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.text;
+package org.eclipse.pde.internal.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
@@ -134,6 +134,18 @@ public abstract class TextUtil {
 			}
 		}
 		return fJavaDocStyleSheet;
+	}
+	
+	public static String trimNonAlphaChars(String value) {
+		value = value.trim();
+		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
+			value = value.substring(1, value.length());
+		int loc = value.indexOf(":"); //$NON-NLS-1$
+		if (loc != -1 && loc > 0)
+			value = value.substring(0, loc);
+		else if (loc == 0)
+			value = ""; //$NON-NLS-1$
+		return value;
 	}
 	
 }

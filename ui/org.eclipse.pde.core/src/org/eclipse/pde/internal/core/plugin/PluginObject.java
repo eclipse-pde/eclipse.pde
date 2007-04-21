@@ -30,7 +30,7 @@ import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
@@ -223,7 +223,7 @@ public abstract class PluginObject
 	}
 
 	public String getWritableString(String source) {
-		return CoreUtility.getWritableString(source);
+		return PDEXMLHelper.getWritableString(source);
 	}
 
 	public int getStartLine() {
