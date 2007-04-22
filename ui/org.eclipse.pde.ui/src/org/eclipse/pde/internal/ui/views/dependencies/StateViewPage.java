@@ -416,7 +416,8 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 					BundleDelta[] deltas = delta.getChanges();
 					for (int i = 0; i < deltas.length; i++) {
 						int type = deltas[i].getType();
-						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED || type == BundleDelta.ADDED) {
+						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED 
+								|| type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
 							fTreeViewer.refresh();
 							break;
 						}
@@ -426,11 +427,15 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 		});
 	}
 	
-	public void stateChanged(State newState) {
+	public void stateChanged(final State newState) {
 		if (!fView.getCurrentPage().equals(this) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			// if this page is not active, then wait until we call refresh on next activation
 			return;
-		fTreeViewer.setInput(newState);
+		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				fTreeViewer.setInput(newState);
+			}
+		});
 	}
 	
 	// Changes State view to dependencies view and sets the input as the corresponding selected item in the tree viewer.

@@ -262,7 +262,7 @@ public class TargetPlatformHelper {
 	}
 	
 	public static void setState(PDEState state) {
-		PDECore.getDefault().getModelManager().setState(state);
+		PDECore.getDefault().getModelManager().resetState(state);
 	}
 
 	public static State getState() {

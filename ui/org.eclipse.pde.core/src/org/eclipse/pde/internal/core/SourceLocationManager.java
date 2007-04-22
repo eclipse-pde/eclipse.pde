@@ -36,6 +36,10 @@ public class SourceLocationManager implements ICoreConstants {
 		SourceLocation loc;
 		File file;
 	}
+	
+	public void reset() {
+		fExtensionLocations = null;
+	}
 
 	public SourceLocation[] getUserLocations() {
 		ArrayList userLocations = new ArrayList();

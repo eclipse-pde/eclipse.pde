@@ -129,6 +129,14 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 		
+		// reset the state
+		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
+			Object newState = e.getEventSource();
+			if (newState instanceof PDEState) {
+				fState = (PDEState)newState;
+			}
+		}
+		
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -140,6 +148,17 @@ public class PluginModelManager implements IModelProviderListener {
 				if (id != null)
 					handleAdd(id, model, delta);
 			}
+		}
+		
+		// add workspace plug-ins to the new state
+		// and remove their target counterparts from the state.
+		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
+			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();		
+			for (int i = 0; i < models.length; i++) {
+				addWorkspaceBundleToState(models[i]);
+			}	
+			if (models.length > 0)
+				fState.resolveState(true);
 		}
 		
 		// Update the bundle description of plug-ins whose state has changed.
@@ -811,8 +830,22 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 * @param state  the new state
 	 */
-	public void setState(PDEState state) {
-		fState = state;
+	public void resetState(PDEState state) {
+		// clear all models and add new ones
+		int type = IModelProviderEvent.TARGET_CHANGED;
+		IModel[] removed = fState.getTargetModels();
+		if (removed.length > 0)
+			type |= IModelProviderEvent.MODELS_REMOVED;
+		IModel[] added = state.getTargetModels();
+		if (added.length > 0)
+			type |= IModelProviderEvent.MODELS_ADDED;
+		modelsChanged(new ModelProviderEvent(
+						state,
+						type,
+						added,
+						removed,
+						new IModel[0]));
+
 		fireStateChanged(state);
 	}
 	

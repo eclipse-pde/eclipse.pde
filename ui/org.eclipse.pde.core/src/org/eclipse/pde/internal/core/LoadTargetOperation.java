@@ -29,15 +29,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -287,21 +286,8 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		
 		handlePluginSelection(state, features, pref, new SubProgressMonitor(monitor,25));
 		
-		IPluginModelBase[] targetModels = state.getTargetModels();
-		ExternalModelManager pluginManager = PDECore.getDefault().getModelManager().getExternalModelManager();
-		pluginManager.fireModelProviderEvent(
-				new ModelProviderEvent(
-					pluginManager,
-					IModelProviderEvent.MODELS_REMOVED | IModelProviderEvent.MODELS_ADDED | IModelProviderEvent.TARGET_CHANGED,
-					targetModels,
-					PluginRegistry.getExternalModels(),
-					null));
-		pluginManager.setModels(targetModels);
-		addProjectsToState(state);
-		TargetPlatformHelper.setState(state);
-		PDECore.getDefault().getFeatureModelManager().targetReloaded();	
-		
-		PDECore.getDefault().getSourceLocationManager().setExtensionLocations(SourceLocationManager.computeSourceLocations(targetModels));
+		Job job = new TargetPlatformResetJob("Reset Target Platform", state);
+		job.schedule();		
 		monitor.done();
 	}
 	
@@ -331,21 +317,6 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		ExternalFeatureModelManager featureManager = new ExternalFeatureModelManager();
 		featureManager.loadModels(targetLocation, buffer.toString());
 		return featureManager;
-	}
-	
-	private void addProjectsToState(PDEState state) {
-		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		for (int i = 0; i < models.length; i++) {
-			BundleDescription bundle = models[i].getBundleDescription();
-			if (bundle == null)
-				continue;
-			BundleDescription[] conflicts = state.getState().getBundles(bundle.getSymbolicName());
-			for (int j = 0; j < conflicts.length; j++)
-				state.getState().removeBundle(conflicts[j]);
-			state.addBundle(models[i], false);
-		}
-		if (models.length > 0)
-			state.resolveState(true);
 	}
 	
 	protected IPluginModelBase[] handlePluginSelection(PDEState state, Map featureMap, Preferences pref, IProgressMonitor monitor) {

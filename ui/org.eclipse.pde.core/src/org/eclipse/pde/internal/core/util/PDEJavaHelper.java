@@ -67,15 +67,15 @@ public class PDEJavaHelper {
 			Requestor requestor = new Requestor();
 			new SearchEngine().searchAllTypeNames(
 					fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf('.')).toCharArray(), 
-					SearchPattern.R_FULL_MATCH, 
+					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE, 
 					fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1).toCharArray(), 
-					SearchPattern.R_EXACT_MATCH, 
-					IJavaSearchConstants.CLASS, 
-					getSearchScope(project), 
+					SearchPattern.R_EXACT_MATCH|SearchPattern.R_CASE_SENSITIVE, 
+					IJavaSearchConstants.TYPE, 
+					SearchEngine.createJavaSearchScope(new IJavaElement[] {project}), 
 					requestor,
-					IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, 
+					IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH, 
 					new NullProgressMonitor());
-			return true;
+			return requestor.hasMatches();
 		} catch (JavaModelException e) {
 		}
 		return false;*/

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -48,7 +49,6 @@ import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.EclipseHomeInitializer;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
@@ -58,6 +58,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.TargetPlatformResetJob;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -77,7 +78,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.provisioner.AddTargetPluginsWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -94,6 +94,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.progress.IProgressConstants;
 
 public class TargetPluginsTab extends SharedPartWithButtons{
 	private CheckboxTableViewer fPluginListViewer;
@@ -239,16 +240,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 
 	void computeDelta() {
 		int type = 0;
-		IModel[] addedArray = null;
-		IModel[] removedArray = null;
 		IModel[] changedArray = null;
-		if (fReloaded) {
-			type =
-				IModelProviderEvent.MODELS_REMOVED
-					| IModelProviderEvent.MODELS_ADDED | IModelProviderEvent.TARGET_CHANGED;
-			removedArray = PDECore.getDefault().getModelManager().getExternalModels();
-			addedArray = getCurrentModels();
-		} else if (fChangedModels.size() > 0) {
+		if (fChangedModels.size() > 0) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
 			changedArray = (IModel[]) fChangedModels.toArray(new IModel[fChangedModels.size()]);
 		}
@@ -260,8 +253,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				new ModelProviderEvent(
 					registry,
 					type,
-					addedArray,
-					removedArray,
+					null,
+					null,
 					changedArray);
 			registry.fireModelProviderEvent(event);
 		}
@@ -651,34 +644,16 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	}
 	
 	public void performOk() {
-		BusyIndicator.showWhile(fPage.getShell().getDisplay(), new Runnable() {
-			public void run() {
-				savePreferences();
-				if (fReloaded) {
-					EclipseHomeInitializer.resetEclipseHomeVariable();
-					IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
-					for (int i = 0; i < models.length; i++) {
-						BundleDescription bundle = models[i].getBundleDescription();
-						if (bundle == null)
-							continue;
-						BundleDescription[] conflicts = fCurrentState.getState().getBundles(bundle.getSymbolicName());
-						for (int j = 0; j < conflicts.length; j++)
-							fCurrentState.getState().removeBundle(conflicts[j]);
-						fCurrentState.addBundle(models[i], false);
-					}
-					if (models.length > 0)
-						fCurrentState.resolveState(true);
-					updateModels();
-					computeDelta();
-					PDECore.getDefault().getModelManager().getExternalModelManager().setModels(fCurrentState.getTargetModels());
-					PDECore.getDefault().getModelManager().setState(fCurrentState);
-					PDECore.getDefault().getFeatureModelManager().targetReloaded();				
-				} else {
-					updateModels();
-					computeDelta();
-				}
-			}
-		});
+		savePreferences();
+		if (fReloaded) {
+			updateModels();
+			Job job = new TargetPlatformResetJob("Reset Target Platform", fCurrentState);
+			job.schedule();
+			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
+		} else {
+			updateModels();
+			computeDelta();
+		}		
 	}
 	
 	private void savePreferences() {
