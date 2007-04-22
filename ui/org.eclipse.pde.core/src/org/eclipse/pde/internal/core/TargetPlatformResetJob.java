@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,21 +20,26 @@ public class TargetPlatformResetJob extends Job {
 	
 	private PDEState fState;
 
-	public TargetPlatformResetJob(String name, PDEState newState) {
-		super(name);
+	public TargetPlatformResetJob(PDEState newState) {
+		super(PDECoreMessages.TargetPlatformResetJob_resetTarget);
 		fState = newState;
 	}
 	
-	public boolean belongsTo(Object family) {
-		return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
-	}
-
 	protected IStatus run(IProgressMonitor monitor) {
 		EclipseHomeInitializer.resetEclipseHomeVariable();
 		PDECore.getDefault().getSourceLocationManager().reset();
 		PDECore.getDefault().getJavadocLocationManager().reset();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase[] models = fState.getTargetModels();
+		removeDisabledBundles(models);
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		manager.getExternalModelManager().setModels(models);
+		manager.resetState(fState);
+		PDECore.getDefault().getFeatureModelManager().targetReloaded();
+		monitor.done();
+		return Status.OK_STATUS;
+	}
+	
+	private void removeDisabledBundles(IPluginModelBase[] models) {
 		int number = models.length;
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].isEnabled()) {
@@ -44,11 +48,7 @@ public class TargetPlatformResetJob extends Job {
 			}
 		}
 		if (number < models.length)
-			fState.resolveState(true);
-		manager.getExternalModelManager().setModels(models);
-		manager.resetState(fState);
-		PDECore.getDefault().getFeatureModelManager().targetReloaded();				
-		return Status.OK_STATUS;
+			fState.resolveState(true);		
 	}
 
 }

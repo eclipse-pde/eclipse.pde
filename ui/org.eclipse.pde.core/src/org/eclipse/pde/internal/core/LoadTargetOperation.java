@@ -286,7 +286,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		
 		handlePluginSelection(state, features, pref, new SubProgressMonitor(monitor,25));
 		
-		Job job = new TargetPlatformResetJob("Reset Target Platform", state);
+		Job job = new TargetPlatformResetJob(state);
 		job.schedule();		
 		monitor.done();
 	}

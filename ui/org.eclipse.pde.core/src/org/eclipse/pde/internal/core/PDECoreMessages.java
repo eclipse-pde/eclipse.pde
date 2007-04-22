@@ -224,6 +224,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String FeatureExportJob_taskName;
 
+	public static String TargetPlatformResetJob_resetTarget;
+
 	public static String XMLErrorReporter_ExternalEntityResolution;
 	
 	public static String ExtensionsErrorReporter_InvalidSchema;

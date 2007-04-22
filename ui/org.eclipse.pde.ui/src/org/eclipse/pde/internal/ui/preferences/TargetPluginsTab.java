@@ -647,7 +647,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		savePreferences();
 		if (fReloaded) {
 			updateModels();
-			Job job = new TargetPlatformResetJob("Reset Target Platform", fCurrentState);
+			Job job = new TargetPlatformResetJob(fCurrentState);
 			job.schedule();
 			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
 		} else {
