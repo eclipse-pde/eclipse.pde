@@ -658,7 +658,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 		script.printConditionIsSet(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION, PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BASEDIR));
-		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment(), PROPERTY_BUILD_TEMP);
+		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + model.getSymbolicName() + '_' + model.getVersion(), PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 
 		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
