@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -105,8 +106,10 @@ public class RenamePluginWizardPage extends UserInputWizardPage {
 			errorMessage = PDEUIMessages.RenamePluginWizardPage_idNotSet;
 		else if (!IdUtil.isValidCompositeID(text)) 
 			errorMessage = PDEUIMessages.RenamePluginWizardPage_invalidId;
-		setErrorMessage(errorMessage);
-		setPageComplete(errorMessage == null && !text.equals(fInfo.getCurrentID()));
+		if (errorMessage == null && text.equals(fInfo.getCurrentID()))
+			setPageComplete(false);
+		else
+			setPageComplete(errorMessage == null ? new RefactoringStatus() : RefactoringStatus.createFatalErrorStatus(errorMessage));
 	}
 
 }

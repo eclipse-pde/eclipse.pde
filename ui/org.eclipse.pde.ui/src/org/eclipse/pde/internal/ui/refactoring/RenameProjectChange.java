@@ -63,7 +63,7 @@ public final class RenameProjectChange extends Change {
 	}
 
 	public String getName() {
-		return MessageFormat.format(PDEUIMessages.RenameProjectChange_name, new String[] { fResourcePath.toString(), fNewName});
+		return MessageFormat.format(PDEUIMessages.RenameProjectChange_name, new String[] { fResourcePath.lastSegment(), fNewName});
 	}
 
 	public String getNewName() {
@@ -79,7 +79,7 @@ public final class RenameProjectChange extends Change {
 		if (resource == null || !resource.exists()) 
 			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_projectDoesNotExist, new String[] {fResourcePath.toString()}));
 		if (ResourcesPlugin.getWorkspace().getRoot().getProject(fNewName).exists())
-			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new String[] {fResourcePath.lastSegment()}));
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new String[] {fNewName}));
 		return new RefactoringStatus();
 	}
 

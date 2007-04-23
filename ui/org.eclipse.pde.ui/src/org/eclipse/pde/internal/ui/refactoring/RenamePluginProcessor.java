@@ -17,6 +17,7 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -68,18 +69,25 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
 			CheckConditionsContext context) throws CoreException,
 			OperationCanceledException {
-		return null;
-	}
-
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IResource res = fInfo.getBase().getUnderlyingResource();
 		if (res == null)
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
 		else if (!res.getProject().getFile("META-INF/MANIFEST.MF").exists())  //$NON-NLS-1$
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
+		if (fInfo.isRenameProject()) {
+			String newName = fInfo.getNewID();
+			IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
+			// if destination exists and it is not the same project we are currently trying to rename, show error message
+			if (newProject.exists() && !(res.getProject().equals(newProject)))
+				status.addFatalError(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new String[] {newName}));
+		}
 		return status;
+	}
+
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
+		return null;
 	}
 
 	public Object[] getElements() {
@@ -179,6 +187,9 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		RenameResourceDescriptor descriptor= new RenameResourceDescriptor();
 		IProject project = fInfo.getBase().getUnderlyingResource().getProject();
 		String newName = fInfo.getNewID();
+		// if project's name is already the same as the destintation, then we don't have to do anything to rename project
+		if (project.getName().equals(newName))
+			return null;
 		descriptor.setDescription(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_renameProjectDesc, new String[] { project.getName(), newName }));
 		descriptor.setComment(""); //$NON-NLS-1$
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
