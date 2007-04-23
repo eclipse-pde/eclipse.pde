@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		
 		protected void initialize() {
 			fToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_OSGI));
-			WordRule rule = new WordRule(new KeywordDetector());
+			WordRule rule = new WordRule(new KeywordDetector(), Token.UNDEFINED, true);
 			rule.addWord(Constants.BUNDLE_ACTIVATOR, fToken);
 			rule.addWord(Constants.BUNDLE_CATEGORY, fToken);
 			rule.addWord(Constants.BUNDLE_CLASSPATH, fToken);

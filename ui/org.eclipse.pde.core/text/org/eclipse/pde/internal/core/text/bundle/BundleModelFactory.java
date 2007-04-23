@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,31 +40,31 @@ public class BundleModelFactory implements IBundleModelFactory {
         else
         	newLine = System.getProperty("line.separator"); //$NON-NLS-1$
         
-        if (key.equals(Constants.BUNDLE_ACTIVATOR)) {
+        if (key.equalsIgnoreCase(Constants.BUNDLE_ACTIVATOR)) {
  			header = new BundleActivatorHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_LOCALIZATION)){
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_LOCALIZATION)){
  			header = new BundleLocalizationHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_NAME)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_NAME)) {
         	header = new BundleNameHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
         	header = new RequiredExecutionEnvironmentHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_SYMBOLICNAME)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_SYMBOLICNAME)) {
         	header = new BundleSymbolicNameHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_VENDOR)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_VENDOR)) {
         	header = new BundleVendorHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_VERSION)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_VERSION)) {
         	header = new BundleVersionHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.BUNDLE_CLASSPATH)) {
+        } else if (key.equalsIgnoreCase(Constants.BUNDLE_CLASSPATH)) {
         	header = new BundleClasspathHeader(key, value, bundle, newLine);
-        } else if (key.equals(ICoreConstants.ECLIPSE_LAZYSTART) || key.equals(ICoreConstants.ECLIPSE_AUTOSTART)) {
+        } else if (key.equalsIgnoreCase(ICoreConstants.ECLIPSE_LAZYSTART) || key.equalsIgnoreCase(ICoreConstants.ECLIPSE_AUTOSTART)) {
         	header = new LazyStartHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.EXPORT_PACKAGE) || key.equals(ICoreConstants.PROVIDE_PACKAGE)) {
+        } else if (key.equalsIgnoreCase(Constants.EXPORT_PACKAGE) || key.equalsIgnoreCase(ICoreConstants.PROVIDE_PACKAGE)) {
  			header = new ExportPackageHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.FRAGMENT_HOST)) {
+        } else if (key.equalsIgnoreCase(Constants.FRAGMENT_HOST)) {
         	header = new FragmentHostHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.IMPORT_PACKAGE)){
+        } else if (key.equalsIgnoreCase(Constants.IMPORT_PACKAGE)){
  			header = new ImportPackageHeader(key, value, bundle, newLine);
-        } else if (key.equals(Constants.REQUIRE_BUNDLE)) {
+        } else if (key.equalsIgnoreCase(Constants.REQUIRE_BUNDLE)) {
         	header = new RequireBundleHeader(key, value, bundle, newLine);
         } else {
             header = new ManifestHeader(key, value, bundle, newLine);

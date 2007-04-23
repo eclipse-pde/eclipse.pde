@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					}
 					/* flush last line */
 					if (header != null) {
-						fHeaders.put(header.getName(), header);
+						fHeaders.put(header.getName().toLowerCase(), header);
 						header = null;
 					}
 					break; /* done processing main attributes */
@@ -182,7 +182,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				}
 				// Expecting New Header
 				if (header != null) {
-					fHeaders.put(header.getName(), header);
+					fHeaders.put(header.getName().toLowerCase(), header);
 					header = null;
 				}
 
@@ -218,7 +218,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				}
 				header = new JarManifestHeader(headerName, line
 						.substring(colon + 2), l, this);
-				if (fHeaders.containsKey(header.getName())) {
+				if (fHeaders.containsKey(header.getName().toLowerCase())) {
 					report(
 							PDECoreMessages.BundleErrorReporter_duplicateHeader, 
 							l + 1, CompilerFlags.WARNING,
@@ -334,13 +334,17 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 	
 	protected IHeader validateRequiredHeader(String name) {
-		IHeader header = (IHeader) fHeaders.get(name);
+		IHeader header = (IHeader) fHeaders.get(name.toLowerCase());
 		if (header == null) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, 
 					CompilerFlags.ERROR,
 					PDEMarkerFactory.CAT_FATAL);		
 		}
 		return header;
+	}
+	
+	protected IHeader getHeader(String key) {
+		return (IHeader) fHeaders.get(key.toLowerCase());
 	}
 	
 	protected void checkCanceled(IProgressMonitor monitor)

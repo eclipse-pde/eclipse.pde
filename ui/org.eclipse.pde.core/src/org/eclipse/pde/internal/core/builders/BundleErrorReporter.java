@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateExportPackages() {
-		IHeader header = (IHeader) fHeaders.get(Constants.EXPORT_PACKAGE);
+		IHeader header = getHeader(Constants.EXPORT_PACKAGE);
 
 		// check for missing exported packages
 		if(fModel instanceof IBundlePluginModelBase) {
@@ -164,7 +164,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void setOsgiR4() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_MANIFESTVERSION);
+		IHeader header = getHeader(Constants.BUNDLE_MANIFESTVERSION);
 		if (header != null) {		
 			String version = header.getValue();
 			try {
@@ -258,7 +258,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateFragmentHost() {
-		IHeader header = (IHeader) fHeaders.get(Constants.FRAGMENT_HOST);
+		IHeader header = getHeader(Constants.FRAGMENT_HOST);
 		if (header == null) {
 			if (isCheckNoRequiredAttr() && fProject.getFile("fragment.xml").exists()) {  //$NON-NLS-1$
 				report(PDECoreMessages.BundleErrorReporter_HostNeeded, 1, CompilerFlags.P_NO_REQUIRED_ATT, PDEMarkerFactory.CAT_FATAL);
@@ -354,7 +354,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (bundleEnvs == null || bundleEnvs.length == 0)
 			return;
 
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		IHeader header = getHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header == null)
 			return;
 
@@ -402,7 +402,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateEclipsePlatformFilter() {
-		IHeader header = (IHeader) fHeaders.get(ICoreConstants.PLATFORM_FILTER);
+		IHeader header = getHeader(ICoreConstants.PLATFORM_FILTER);
 		if (header == null)
 			return;
 
@@ -430,7 +430,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateBundleActivator() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_ACTIVATOR);
+		IHeader header = getHeader(Constants.BUNDLE_ACTIVATOR);
 		if (header == null)
 			return;
 
@@ -463,7 +463,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateBundleClasspath() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_CLASSPATH);
+		IHeader header = getHeader(Constants.BUNDLE_CLASSPATH);
 		if (header != null && header.getElements().length == 0) {
 			report(PDECoreMessages.BundleErrorReporter_ClasspathNotEmpty, 
 					header.getLineNumber() + 1, CompilerFlags.ERROR, 
@@ -475,7 +475,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (!isCheckUnresolvedImports())
 			return;
 
-		IHeader header = (IHeader) fHeaders.get(Constants.REQUIRE_BUNDLE);
+		IHeader header = getHeader(Constants.REQUIRE_BUNDLE);
 		if (header == null)
 			return;
 
@@ -601,7 +601,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (desc == null)
 			return;
 
-		IHeader header = (IHeader) fHeaders.get(Constants.IMPORT_PACKAGE);
+		IHeader header = getHeader(Constants.IMPORT_PACKAGE);
 		if (header == null)
 			return;
 
@@ -643,7 +643,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				ImportPackageSpecification importSpec = imports[index++];
 				String name = importSpec.getName();
 				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
-					IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+					IHeader jreHeader = getHeader(ICoreConstants.ECLIPSE_JREBUNDLE);
 					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
 						report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, elements[i]), CompilerFlags.ERROR, 
 								PDEMarkerFactory.M_JAVA_PACKAGE__PORTED,
@@ -713,7 +713,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	protected void validateExportPackage(IProgressMonitor monitor) {
-		IHeader header = (IHeader) fHeaders.get(Constants.EXPORT_PACKAGE);
+		IHeader header = getHeader(Constants.EXPORT_PACKAGE);
 		if (header == null)
 			return;
 
@@ -732,7 +732,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			for (int j = 0; j < valueComps.length; j++) {
 				String name = valueComps[j];
 				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
-					IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+					IHeader jreHeader = getHeader(ICoreConstants.ECLIPSE_JREBUNDLE);
 					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
 						message = PDECoreMessages.BundleErrorReporter_exportNoJRE;
 						report(message, getPackageLine(header, elements[i]), 
@@ -873,7 +873,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 
 		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			IHeader header = (IHeader) fHeaders.get(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+			IHeader header = getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
 			if (header != null) {
 				String value = header.getValue();
 				if (!value.startsWith("%")) { //$NON-NLS-1$
@@ -959,7 +959,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateAutoStart() {
-		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_AUTOSTART);
+		IHeader header = getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 		if (!validateStartHeader(header))
 			return; // valid start header problems already reported
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
@@ -972,7 +972,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateLazyStart() {
-		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_LAZYSTART);
+		IHeader header = getHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (header != null && TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
 			report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported,
@@ -1019,7 +1019,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateExtensibleAPI(){
-		IHeader header = (IHeader) fHeaders.get(ICoreConstants.EXTENSIBLE_API);
+		IHeader header = getHeader(ICoreConstants.EXTENSIBLE_API);
 		if (header != null)
 			validateBooleanValue(header);		
 	}
@@ -1036,8 +1036,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateImportExportServices() {
 		if(fOsgiR4) {
-			IHeader importHeader = (IHeader) fHeaders.get(ICoreConstants.IMPORT_SERVICE);
-			IHeader exportHeader = (IHeader) fHeaders.get(ICoreConstants.EXPORT_SERVICE);
+			IHeader importHeader = getHeader(ICoreConstants.IMPORT_SERVICE);
+			IHeader exportHeader = getHeader(ICoreConstants.EXPORT_SERVICE);
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 
 			if (severity == CompilerFlags.IGNORE)
@@ -1062,7 +1062,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateBundleLocalization() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_LOCALIZATION);
+		IHeader header = getHeader(Constants.BUNDLE_LOCALIZATION);
 		if (header == null)
 			return;
 		String location = header.getValue();
@@ -1099,7 +1099,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateFragmentHost(IHeader requireBundleHeader, ManifestElement element) {
-		IHeader header = (IHeader) fHeaders.get(Constants.FRAGMENT_HOST);
+		IHeader header = getHeader(Constants.FRAGMENT_HOST);
 		if(header == null)
 			return;
 

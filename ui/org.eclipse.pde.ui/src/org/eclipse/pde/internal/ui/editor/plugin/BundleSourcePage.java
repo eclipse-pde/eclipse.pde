@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
@@ -131,10 +131,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
-				Dictionary manifest = ((Bundle)model.getBundle()).getHeaders();
+				Map manifest = ((Bundle)model.getBundle()).getHeaders();
 				ArrayList keys = new ArrayList();
-				for (Enumeration elements = manifest.keys(); elements.hasMoreElements();) {
-					IDocumentKey key = (IDocumentKey) manifest.get(elements.nextElement());
+				for (Iterator elements = manifest.keySet().iterator(); elements.hasNext();) {
+					IDocumentKey key = (IDocumentKey) manifest.get(elements.next());
 					if (key.getOffset() > -1)
 						keys.add(key);
 				}
@@ -313,12 +313,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
-		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
+		Map manifest = ((Bundle) model.getBundle()).getHeaders();
 		// Reset
 		resetTargetOutlineSelection();		
 		// Search each manifest header
-		for (Enumeration elements = manifest.elements(); elements.hasMoreElements();) {
-		    IDocumentRange node = (IDocumentRange) elements.nextElement();
+		for (Iterator elements = manifest.values().iterator(); elements.hasNext();) {
+		    IDocumentRange node = (IDocumentRange) elements.next();
 		    // Check to see if the parent is within range
 		    if (isWithinCurrentRange(offset, node)) {
 			    // Search the children of composite manifest headers first if
@@ -482,7 +482,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	private void setChildTargetOutlineSelection(String headerName,
 			PDEManifestElement element) {
 		// Use for setting the outline view selection
-		if (headerName.equals(Constants.BUNDLE_CLASSPATH)) {
+		if (headerName.equalsIgnoreCase(Constants.BUNDLE_CLASSPATH)) {
 			setTargetOutlineSelection(
 					getBundleClasspathOutlineSelection(element));
 		} else {

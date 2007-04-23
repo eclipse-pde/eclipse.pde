@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
@@ -28,7 +28,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 */
 	public void setHeader(String key, String value) {
         if (fProperties == null)
-            fProperties = new Properties();
+            fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
 		Object oldValue = fProperties.get(key);
 		if (value == null || value.trim().length() == 0)
 			fProperties.remove(key);
@@ -48,7 +48,7 @@ public class Bundle extends BundleObject implements IBundle {
 	
 	public void load(Map properties) {
 		// Passed dictionary is read-only
-		fProperties = new Properties();
+		fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
 		Iterator it = properties.keySet().iterator();
 		while (it.hasNext()) {
 			Object o = it.next();
@@ -66,7 +66,7 @@ public class Bundle extends BundleObject implements IBundle {
 	
 	public void renameHeader(String key, String newKey) {
 		if (fProperties == null)
-			fProperties = new Properties();
+			fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
 		if (fProperties.get(key) != null) {
 			fProperties.put(newKey, fProperties.remove(key));
 		}

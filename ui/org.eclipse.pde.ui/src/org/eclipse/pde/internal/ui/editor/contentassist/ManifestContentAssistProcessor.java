@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
@@ -42,6 +43,7 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -58,8 +60,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	
 	protected PDESourcePage fSourcePage;
 	private IJavaProject fJP;
-	
-	// Eclipse specific headers
 	
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
@@ -136,7 +136,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		});
 	}
 	
-	HashMap fHeaders;
+	Map fHeaders;
 		
 	public ManifestContentAssistProcessor(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
@@ -158,7 +158,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 	
 	protected final void parseDocument(IDocument doc) {
-		fHeaders = new HashMap();
+		fHeaders = new HeaderMap();
 		int numLines = doc.getNumberOfLines();
 		int offset = 0;
 		for (int i = 0; i < numLines; i++) {
@@ -243,27 +243,29 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			lineNum--;
 		}
 				
-		if (value.startsWith(Constants.IMPORT_PACKAGE))
+		int length = value.length();
+		if (value.regionMatches(true, 0, Constants.IMPORT_PACKAGE, 0, Math.min(length, Constants.IMPORT_PACKAGE.length())))
 			return handleImportPackageCompletion(value.substring(Constants.IMPORT_PACKAGE.length() + 1), offset);
-		if (value.startsWith(Constants.FRAGMENT_HOST))
+		if (value.regionMatches(true, 0, Constants.FRAGMENT_HOST, 0, Math.min(length, Constants.FRAGMENT_HOST.length())))
 			return handleFragmentHostCompletion(value.substring(Constants.FRAGMENT_HOST.length() + 1), offset);
-		if (value.startsWith(Constants.REQUIRE_BUNDLE))
+		if (value.regionMatches(true, 0, Constants.REQUIRE_BUNDLE, 0, Math.min(length, Constants.REQUIRE_BUNDLE.length())))
 			return handleRequireBundleCompletion(value.substring(Constants.REQUIRE_BUNDLE.length() + 1), offset);
-		if (value.startsWith(Constants.EXPORT_PACKAGE))
+		if (value.regionMatches(true, 0, Constants.EXPORT_PACKAGE, 0, Math.min(length, Constants.EXPORT_PACKAGE.length())))
 			return handleExportPackageCompletion(value.substring(Constants.EXPORT_PACKAGE.length() + 1), offset);
-		if (value.startsWith(Constants.BUNDLE_ACTIVATOR))
+		if (value.regionMatches(true, 0, Constants.BUNDLE_ACTIVATOR, 0, Math.min(length, Constants.BUNDLE_ACTIVATOR.length())))
 			return handleBundleActivatorCompletion(removeLeadingSpaces(value.substring(Constants.BUNDLE_ACTIVATOR.length() + 1)), offset);
-		if (value.startsWith(Constants.BUNDLE_SYMBOLICNAME))
+		if (value.regionMatches(true, 0, Constants.BUNDLE_SYMBOLICNAME, 0, Math.min(length, Constants.BUNDLE_SYMBOLICNAME.length())))
 			return handleBundleSymbolicNameCompletion(value.substring(Constants.BUNDLE_SYMBOLICNAME.length() + 1), offset);
-		if (value.startsWith(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT))
+		if (value.regionMatches(true, 0, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, 0, 
+				Math.min(length, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT.length())))
 			return handleRequiredExecEnv(value.substring(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT.length() + 1), offset);
-		if (value.startsWith(ICoreConstants.ECLIPSE_LAZYSTART))
+		if (value.regionMatches(true, 0, ICoreConstants.ECLIPSE_LAZYSTART, 0, Math.min(length, ICoreConstants.ECLIPSE_LAZYSTART.length())))
 			return handleTrueFalseValue(value.substring(ICoreConstants.ECLIPSE_LAZYSTART.length() + 1), offset);
-		if (value.startsWith(Constants.BUNDLE_NAME))
+		if (value.regionMatches(true, 0, Constants.BUNDLE_NAME, 0, Math.min(length, Constants.BUNDLE_NAME.length())))
 			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
-		if (value.startsWith(Constants.BUNDLE_ACTIVATIONPOLICY))
+		if (value.regionMatches(true, 0, Constants.BUNDLE_ACTIVATIONPOLICY, 0, Math.min(length, Constants.BUNDLE_ACTIVATIONPOLICY.length())))
 			return handleBundleActivationPolicyCompletion(value.substring(Constants.BUNDLE_ACTIVATIONPOLICY.length() + 1), offset);
-		if (value.startsWith(ICoreConstants.ECLIPSE_BUDDY_POLICY))
+		if (value.regionMatches(true, 0, ICoreConstants.ECLIPSE_BUDDY_POLICY, 0, Math.min(length, ICoreConstants.ECLIPSE_BUDDY_POLICY.length())))
 			return handleBuddyPolicyCompletion(value.substring(ICoreConstants.ECLIPSE_BUDDY_POLICY.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}

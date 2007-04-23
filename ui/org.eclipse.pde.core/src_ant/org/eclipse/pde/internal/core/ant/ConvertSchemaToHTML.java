@@ -37,6 +37,7 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.osgi.framework.Constants;
 
@@ -116,7 +117,7 @@ public class ConvertSchemaToHTML extends Task {
 
 		if (OSGiFile.exists()) {
 			try {
-				Map headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), null);
+				Map headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), new HeaderMap());
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME).toString();
 				if (value == null)
 					return null;

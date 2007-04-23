@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -22,12 +20,13 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle implements IBundle {
 	
 	private BundleModel fModel;
-	private Hashtable fDocumentHeaders = new Hashtable();
+	private Map fDocumentHeaders = new HeaderMap(); 
 	
 	public Bundle(BundleModel model) {
 		fModel = model;
@@ -133,7 +132,7 @@ public class Bundle implements IBundle {
         return (ManifestHeader)fDocumentHeaders.get(key);
     }
 	
-	public Dictionary getHeaders() {
+	public Map getHeaders() {
 		return fDocumentHeaders;
 	}
 

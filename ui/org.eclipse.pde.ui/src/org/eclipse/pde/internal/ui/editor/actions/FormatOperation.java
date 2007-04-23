@@ -1,7 +1,17 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Enumeration;
+/*******************************************************************************
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -66,9 +76,9 @@ public class FormatOperation implements IRunnableWithProgress {
 	}
 	
 	private static void formatBundle(Bundle bundle) {
-		Enumeration headers = bundle.getHeaders().elements();
-		while (headers.hasMoreElements())
-			((IManifestHeader)headers.nextElement()).update(true);
+		Iterator headers = bundle.getHeaders().values().iterator();
+		while (headers.hasNext())
+			((IManifestHeader)headers.next()).update(true);
 		BundleModel model = (BundleModel)bundle.getModel();
 		model.adjustOffsets(model.getDocument());
 	}
