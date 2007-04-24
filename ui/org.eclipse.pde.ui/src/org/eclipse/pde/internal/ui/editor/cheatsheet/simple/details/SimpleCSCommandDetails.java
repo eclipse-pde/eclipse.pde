@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.window.Window;
@@ -53,6 +54,8 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.HandlerService;
 
 /**
  * SimpleCSCommandDetailsSection
@@ -233,7 +236,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				CommandComposerDialog dialog = new CommandComposerDialog(
 						fCommandBrowse.getShell(),
 						CommandComposerPart.F_CHEATSHEET_FILTER,
-						getParameterizedCommand(fRun));
+						getParameterizedCommand(fRun),
+						getSnapshotContext());
 				// Check result of dialog
 				if (dialog.open() == Window.OK) {
 					// Command composer exited successfully
@@ -460,7 +464,27 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	private static ICommandService getCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		return (ICommandService)workbench.getAdapter(ICommandService.class);
-	}	
+	}
+	
+	/**
+	 * @return
+	 */
+	private static IHandlerService getGlobalHandlerService() {
+		return (IHandlerService) PlatformUI.getWorkbench().getService(
+				IHandlerService.class);
+	}
+	
+	/**
+	 * @return
+	 */
+	private static IEvaluationContext getSnapshotContext() {
+		IHandlerService service = getGlobalHandlerService();
+		// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
+		if (service instanceof HandlerService) {
+			return ((HandlerService)service).getContextSnapshot();
+		}
+		return null;
+	}
 	
 	/**
 	 * 

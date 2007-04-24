@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.commands;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -32,12 +33,14 @@ public class CommandComposerDialog extends FormDialog {
 	private ParameterizedCommand fPC;
 	private Button fOKButton;
 	
-	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand) {
+	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand,
+			IEvaluationContext snapshot) {
 		super(parentShell);
 		setShellStyle(SWT.MODELESS | SWT.SHELL_TRIM | SWT.BORDER);
 		fCCP = new CommandComposerPart();
 		fCCP.setFilterType(filterType);
 		fCCP.setPresetCommand(preselectedCommand);
+		fCCP.setSnapshotContext(snapshot);
 	}
 	
 	protected void createFormContent(IManagedForm mform) {

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.commands;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,10 +34,12 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * This class is meant to be used to integrate the Command Composer into a UI (View, Dialog)
- * 
- * setFilterType(int)
- * setButtonCreator(IDialogButtonCreator)
- * setPresetCommand(ParameterizedCommand)
+ * <ul>
+ * <li>setFilterType(int)</li>
+ * <li>setButtonCreator(IDialogButtonCreator)</li>
+ * <li>setPresetCommand(ParameterizedCommand)</li>
+ * <li>setSnapshotContext(IEvaluationContext) - optional</li>
+ * </ul>
  * 
  * should all be called before creating the actual control:
  * 
@@ -61,6 +64,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	private int fFilterType = F_FILTER_NOT_SET;
 	private ParameterizedCommand fPC;
 	private Image fCommandImage;
+	private IEvaluationContext fSnapshotContext;
 	
 	private static ICommandService initCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -76,6 +80,25 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	
 	public int getFilterType() {
 		return fFilterType;
+	}
+	
+	/**
+	 * Set a snapshot context to be used by the command details section of this
+	 * part.
+	 * 
+	 * @param context
+	 *            the context to use. May be <code>null</code>.
+	 * @since 3.3
+	 */
+	public void setSnapshotContext(IEvaluationContext context) {
+		fSnapshotContext = context;
+	}
+	
+	/**
+	 * @return
+	 */
+	public IEvaluationContext getSnapshotContext() {
+		return fSnapshotContext;
 	}
 	
 	protected void createCC(ScrolledForm form, FormToolkit toolkit, ISelectionChangedListener listener) {
@@ -97,6 +120,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		fCommandList = new CommandList(this, sashForm);
 		if (listener != null)
 			fCommandList.addTreeSelectionListener(listener);
+		
 		fCommandDetails = new CommandDetails(this, sashForm);
 		
 		sashForm.setWeights(new int[] {4,5});

@@ -26,6 +26,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -50,12 +51,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.HandlerService;
 
 public class CommandDetails {
 	
@@ -200,7 +204,19 @@ public class CommandDetails {
 		public void linkActivated(HyperlinkEvent e) {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
 			try {
-				Object obj = pCommand.executeWithChecks(null, null);
+				Object obj = null;
+				IHandlerService service = getGlobalHandlerService();
+				IEvaluationContext context = fCCP.getSnapshotContext();
+				// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
+				if ((service instanceof HandlerService) && 
+						(context != null)) {
+					obj = ((HandlerService) service).executeCommandInContext(
+							pCommand, null, context);
+				} else {
+					// the default is just to execute within the global application
+					// context
+					obj = service.executeCommand(pCommand, null);
+				}
 				String resultString = null;
 				if (obj instanceof String) {
 					resultString = (String)obj;
@@ -569,5 +585,13 @@ public class CommandDetails {
 			return fParameterToValue;
 		
 		return null;
+	}
+	
+	/**
+	 * @return
+	 */
+	private IHandlerService getGlobalHandlerService() {
+		return (IHandlerService) PlatformUI.getWorkbench().getService(
+				IHandlerService.class);
 	}
 }
