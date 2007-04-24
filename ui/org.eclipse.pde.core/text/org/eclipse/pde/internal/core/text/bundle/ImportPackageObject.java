@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.io.PrintWriter;
+
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -63,4 +66,21 @@ public class ImportPackageObject extends PackageObject {
     	firePropertyChanged(this, Constants.RESOLUTION_DIRECTIVE, Boolean.toString(old), Boolean.toString(optional));
     }
 
+	public void reconnect(IBundleModel model, ImportPackageHeader header, 
+			String versionAttribute) {
+		// TODO: MP: CCP TOUCH
+		
+		super.reconnect(model, header, versionAttribute);
+		// No transient fields
+	}    
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+		// Used for text transfers for copy, cut, paste operations
+		writer.write(write());		
+	}
+	
 }

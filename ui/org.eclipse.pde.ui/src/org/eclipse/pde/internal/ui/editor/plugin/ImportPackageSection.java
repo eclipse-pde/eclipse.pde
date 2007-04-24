@@ -263,6 +263,17 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         return false;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+     */
+    protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+    	// TODO: MP: CCP TOUCH
+    	if (sourceObjects[0] instanceof ImportPackageObject) {
+    		return true;
+    	}
+    	return false;
+    }
+    
     public void dispose() {
         IBundleModel model = getBundleModel();
         if (model != null)
@@ -270,8 +281,48 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         super.dispose();
     }
     
-    protected void doPaste() {
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+     */
+    protected void doPaste(Object targetObject, Object[] sourceObjects) {
+    	// TODO: MP: CCP TOUCH
+		// Get the model
+    	IBundleModel model = getBundleModel();
+		if (model == null) {
+			return;
+		}
+		// Get the bundle
+		IBundle bundle = model.getBundle();
+		// Paste all source objects
+		for (int i = 0; i < sourceObjects.length; i++) {
+			Object sourceObject = sourceObjects[i];
+			if (sourceObject instanceof ImportPackageObject) {
+				ImportPackageObject importPackageObject = 
+					(ImportPackageObject)sourceObject;
+				// Import package object
+				// Adjust all the source object transient field values to
+				// acceptable values
+				importPackageObject.reconnect(model, fHeader, getVersionAttribute());
+				// Add the object to the header
+				if (fHeader == null) {
+					// Import package header not defined yet
+					// Define one
+					// Value will get inserted into a new import package object
+					// created by a factory
+					// Value needs to be empty string so no import package
+					// object is created as the initial value
+					bundle.setHeader(getImportedPackageHeader(), ""); //$NON-NLS-1$
+				}
+				// Add the import package to the header
+				fHeader.addPackage(importPackageObject);
+			}
+		}
     }
+    
+	private String getImportedPackageHeader() {
+		// TODO: MP: CCP TOUCH
+		return Constants.IMPORT_PACKAGE;
+	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
         getPage().getPDEEditor().setSelection(sel);
@@ -411,39 +462,46 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				getBundle().setHeader(Constants.IMPORT_PACKAGE, getValue(selected));
 			}
 			
-			//export all package fragments that are not exported already
-			Set keys = exportMap.keySet();
-			for (Iterator it = keys.iterator(); it.hasNext();) {
-				final IFile underlying = (IFile)it.next();
-				final ArrayList fragmentList = (ArrayList)exportMap.get(underlying);
-				ModelModification mod = new ModelModification(underlying) {
-					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-						if (!(model instanceof IBundlePluginModelBase))
-							return;
-						IBundlePluginModelBase bundleBase = (IBundlePluginModelBase)model;
-						IBundle bundle = bundleBase.getBundleModel().getBundle();
-						IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-						if (header instanceof ExportPackageHeader) {
-							for (int i = 0; i < fragmentList.size(); i++) {
-								((ExportPackageHeader)header).addPackage(
-										new ExportPackageObject(
-												(ExportPackageHeader)header,
-												((IPackageFragment)fragmentList.get(i)),
-												getVersionAttribute(bundle)));
-							}
-						} else {
-							StringBuffer buffer = new StringBuffer();
-							for (int i = 0; i < fragmentList.size(); i++) {
-								if (i > 0)
-									buffer.append(", "); //$NON-NLS-1$
-								buffer.append(((IPackageFragment)fragmentList.get(i)).getElementName());
-							}
-							bundle.setHeader(Constants.EXPORT_PACKAGE, buffer.toString());
+			exportPackageFragments(exportMap);
+		}
+	}
+
+	/**
+	 * @param exportMap
+	 */
+	private void exportPackageFragments(HashMap exportMap) {
+		//export all package fragments that are not exported already
+		Set keys = exportMap.keySet();
+		for (Iterator it = keys.iterator(); it.hasNext();) {
+			final IFile underlying = (IFile)it.next();
+			final ArrayList fragmentList = (ArrayList)exportMap.get(underlying);
+			ModelModification mod = new ModelModification(underlying) {
+				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+					if (!(model instanceof IBundlePluginModelBase))
+						return;
+					IBundlePluginModelBase bundleBase = (IBundlePluginModelBase)model;
+					IBundle bundle = bundleBase.getBundleModel().getBundle();
+					IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+					if (header instanceof ExportPackageHeader) {
+						for (int i = 0; i < fragmentList.size(); i++) {
+							((ExportPackageHeader)header).addPackage(
+									new ExportPackageObject(
+											(ExportPackageHeader)header,
+											((IPackageFragment)fragmentList.get(i)),
+											getVersionAttribute(bundle)));
 						}
+					} else {
+						StringBuffer buffer = new StringBuffer();
+						for (int i = 0; i < fragmentList.size(); i++) {
+							if (i > 0)
+								buffer.append(", "); //$NON-NLS-1$
+							buffer.append(((IPackageFragment)fragmentList.get(i)).getElementName());
+						}
+						bundle.setHeader(Constants.EXPORT_PACKAGE, buffer.toString());
 					}
-				};
-				PDEModelUtility.modifyModel(mod, null);
-			}
+				}
+			};
+			PDEModelUtility.modifyModel(mod, null);
 		}
 	}
 

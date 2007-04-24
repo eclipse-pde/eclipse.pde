@@ -15,21 +15,30 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public abstract class PluginDocumentNode implements IDocumentNode {
 	
-	private IDocumentNode fParent;
+	// TODO: MP: CCP TOUCH
+	private transient IDocumentNode fParent;
+	// TODO: MP: CCP TOUCH
+	private transient boolean fIsErrorNode;
+	// TODO: MP: CCP TOUCH
+	private transient int fLength = -1;
+	// TODO: MP: CCP TOUCH
+	private transient int fOffset = -1;
+	// TODO: MP: CCP TOUCH
+	private transient IDocumentNode fPreviousSibling;
+	// TODO: MP: CCP TOUCH
+	private transient int fIndent = 0;
+	
 	private ArrayList fChildren = new ArrayList();
-	private boolean fIsErrorNode;
-	private int fLength = -1;
-	private int fOffset = -1;
 	protected Map fAttributes = new TreeMap();
 	private String fTag;
-	private int fIndent = 0;
-	private IDocumentNode fPreviousSibling;
 	protected IDocumentTextNode fTextNode;
 
 	/* (non-Javadoc)
@@ -263,6 +272,89 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 */
 	public void removeDocumentAttribute(IDocumentAttribute attr) {
 		fAttributes.remove(attr.getAttributeName());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#reconnectRoot(org.eclipse.pde.core.plugin.ISharedPluginModel)
+	 */
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		// Reconnect XML document characteristics
+		reconnectDocument();
+		// Reconnect parent
+		reconnectParent(parent);
+		// Reconnect previous sibling
+		reconnectPreviousSibling(parent);
+		// Reconnect text node
+		reconnectText();
+		// Reconnect attribute nodes
+		reconnectAttributes(model, schema);
+		// Reconnect children nodes
+		reconnectChildren(model, schema);
+	}
+	
+	private void reconnectAttributes(ISharedPluginModel model, ISchema schema) {
+		// TODO: MP: CCP TOUCH
+		// Get all attributes
+		Iterator keys = fAttributes.keySet().iterator();
+		// Fill in appropriate transient field values for all attributes
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			IDocumentAttribute attribute = (IDocumentAttribute)fAttributes.get(key);
+			attribute.reconnect(model, schema, this);
+		}
+	}
+	
+	private void reconnectChildren(ISharedPluginModel model, ISchema schema) {
+		// TODO: MP: CCP TOUCH
+		// Fill in appropriate transient field values
+		for (int i = 0; i < fChildren.size(); i++) {
+			IDocumentNode child = (IDocumentNode)fChildren.get(i);
+			// Reconnect child
+			child.reconnect(model, schema, this);
+		}
+	}
+	
+	private void reconnectDocument() {
+		// TODO: MP: CCP TOUCH
+		// Transient field:  Indent
+		fIndent = 0;
+		// Transient field:  Error Node
+		fIsErrorNode = false;
+		// Transient field:  Length
+		fLength = -1;
+		// Transient field:  Offset
+		fOffset = -1;
+	}
+	
+	private void reconnectParent(IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		// Transient field:  Parent
+		fParent = parent;		
+	}
+	
+	private void reconnectPreviousSibling(IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		// Transient field:  Previous Sibling
+		int childCount = parent.getChildCount();
+		if (childCount <= 1) {
+			fPreviousSibling = null;
+		} else {
+			fPreviousSibling = (IDocumentNode)parent.getChildAt(childCount - 2);
+		}				
+	}
+	
+	private void reconnectText() {
+		// TODO: MP: CCP TOUCH
+		// Transient field:  Text Node
+		if (fTextNode != null) {
+			fTextNode.reconnect(this);
+		}		
+	}
+	
+	public int getChildCount() {
+		// TODO: MP: CCP TOUCH
+		return fChildren.size();
 	}
 	
 }

@@ -30,15 +30,12 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
@@ -199,11 +196,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	
 	private int getMatch() {
 		return fMatchCombo.getSelectionIndex();
-	}
-	
-	public boolean canPaste(Clipboard clipboard) {
-		Display d = getSection().getDisplay();
-		return (d.getFocusControl() instanceof Text);
 	}
 	
 	public void dispose() {

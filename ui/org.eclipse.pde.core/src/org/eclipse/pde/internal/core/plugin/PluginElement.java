@@ -150,21 +150,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 	}
 
-	public void reconnect() {
-		super.reconnect();
-		reconnectAttributes();
-	}
-
-	private void reconnectAttributes() {
-		for (Enumeration elements = fAttributes.elements(); elements
-				.hasMoreElements();) {
-			PluginAttribute att = (PluginAttribute) elements.nextElement();
-			att.setModel(getModel());
-			att.setParent(this);
-			att.setInTheModel(true);
-		}
-	}
-
 	void load(Node node) {
 		fName = node.getNodeName();
 		NamedNodeMap attributes = node.getAttributes();

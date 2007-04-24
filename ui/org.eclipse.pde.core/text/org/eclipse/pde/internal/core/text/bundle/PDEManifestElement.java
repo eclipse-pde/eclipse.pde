@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.BundleException;
 
 public class PDEManifestElement extends BundleObject {
@@ -28,7 +29,8 @@ public class PDEManifestElement extends BundleObject {
 	protected String[] fValueComponents;
 	protected TreeMap fAttributes;
 	protected TreeMap fDirectives;
-	protected ManifestHeader fHeader;
+	// TODO: MP: CCP TOUCH
+	protected transient ManifestHeader fHeader;
 	
 	public PDEManifestElement(ManifestHeader header, String value) {
 		setHeader(header);
@@ -257,4 +259,12 @@ public class PDEManifestElement extends BundleObject {
     	fHeader = header;
     }
    
+    public void reconnect(IBundleModel model, ManifestHeader header) {
+    	// TODO: MP: CCP TOUCH
+
+    	super.reconnect(model);
+    	// Transient Field:  Header
+    	fHeader = header;
+    }
+    
 }

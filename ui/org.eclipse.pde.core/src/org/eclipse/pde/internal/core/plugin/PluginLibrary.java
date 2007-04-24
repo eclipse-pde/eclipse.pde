@@ -20,6 +20,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
@@ -181,29 +183,16 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent);
-		writer.print("<library name=\"" + PDEXMLHelper.getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fType != null)
-			writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!isExported()) {
-			writer.println("/>"); //$NON-NLS-1$
-		} else {
-			writer.println(">"); //$NON-NLS-1$
-			String indent2 = indent + "   "; //$NON-NLS-1$
-			if (isExported()) {
-				if (isFullyExported()) {
-					writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
-				} else {
-					for (int i = 0; i < fContentFilters.length; i++) {
-						writer.println(
-							indent2
-								+ "<export name=\"" //$NON-NLS-1$
-								+ fContentFilters[i]
-								+ "\"/>"); //$NON-NLS-1$
-					}
-				}
-			}
-			writer.println(indent + "</library>"); //$NON-NLS-1$
-		}
+		// TODO: MP: CCP TOUCH
+
+		writer.println(PDEXMLHelper.getWritableString(getName()));
 	}
+	
+	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
+		// TODO: MP: CCP TOUCH
+		
+		super.reconnect(model, parent);
+		// No transient fields
+	}	
+	
 }

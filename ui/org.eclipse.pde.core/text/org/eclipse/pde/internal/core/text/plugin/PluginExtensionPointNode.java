@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.plugin;
 
+import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-public class PluginExtensionPointNode extends PluginObjectNode implements IPluginExtensionPoint {
+public class PluginExtensionPointNode extends PluginObjectNode implements
+		IPluginExtensionPoint, IDocumentExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
 
@@ -90,5 +95,18 @@ public class PluginExtensionPointNode extends PluginObjectNode implements IPlugi
 		return buffer.toString();
 	}
 	
+	public void reconnect(ISharedPluginModel model, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, null, parent);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+		// Used for text transfers for copy, cut, paste operations
+		writer.write(write(true));
+	}
 	
 }

@@ -82,5 +82,10 @@ public class BundleObject implements Serializable, IWritable {
 		writer.print(toString());
 	}
 
-
+	public void reconnect(IBundleModel model) {
+		// TODO: MP: CCP TOUCH
+		// Transient Field:  Model
+		this.model = model;
+	}
+	
 }

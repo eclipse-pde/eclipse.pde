@@ -11,12 +11,13 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 
 public class PackageObject extends PDEManifestElement {
 
     private static final long serialVersionUID = 1L;
 
-    private String fVersionAttribute;
+    private transient String fVersionAttribute;
     
     public PackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
     	super(header, element);
@@ -69,4 +70,11 @@ public class PackageObject extends PDEManifestElement {
         firePropertyChanged(this, fVersionAttribute, old, version);
     }
 
+	public void reconnect(IBundleModel model, ManifestHeader header, 
+			String versionAttribute) {
+		super.reconnect(model, header);
+		// Transient Field:  Version Attribute
+		fVersionAttribute = versionAttribute;
+	}
+    
 }

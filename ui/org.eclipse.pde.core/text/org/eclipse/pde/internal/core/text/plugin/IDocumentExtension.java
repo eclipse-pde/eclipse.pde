@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,40 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.text;
+
+package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.Serializable;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-public interface IDocumentAttribute extends Serializable {
-	
-	void setEnclosingElement(IDocumentNode node);	
-	IDocumentNode getEnclosingElement();
-	
-	void setNameOffset(int offset);
-	int getNameOffset();
-	
-	void setNameLength(int length);
-	int getNameLength();
-	
-	void setValueOffset(int offset);
-	int getValueOffset();
-	
-	void setValueLength(int length);
-	int getValueLength();
-	
-	String getAttributeName();
-	String getAttributeValue();
-	
-	void setAttributeName(String name) throws CoreException;
-	void setAttributeValue(String value) throws CoreException;
-	
-	String write();
-
+/**
+ * IDocumentExtension
+ *
+ */
+public interface IDocumentExtension extends Serializable {
 	// TODO: MP: CCP TOUCH
+
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
 	
 }

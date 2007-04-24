@@ -258,7 +258,8 @@ public class RequiresSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		
+		// TODO: MP: CCP TOUCH
+		// TODO: MP: CCP: Consider moving this to the super class for all
 		if (!isEditable()) { return false; }
 		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -279,11 +280,52 @@ public class RequiresSection
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
-	protected void doPaste() {
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		if (sourceObjects[0] instanceof ImportObject) {
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		IPluginModelBase model = getModel();
+		IPluginBase plugin = model.getPluginBase();
+		
+		if ((model instanceof IPluginModel) == false) {
+			return;
+		}
+		
+		try {
+			// Paste all source objects
+			for (int i = 0; i < sourceObjects.length; i++) {
+				Object sourceObject = sourceObjects[i];
+				if (sourceObject instanceof ImportObject) {
+					// Import object
+					ImportObject importObject = (ImportObject) sourceObject;
+					// Adjust all the source object transient field values to
+					// acceptable values
+					importObject.reconnect(((IPluginModel) model).getPlugin());
+					// Add the import object to the plugin
+					plugin.add(importObject.getImport());
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
+	private IPluginModelBase getModel() {
+		// TODO: MP: CCP TOUCH
+		return (IPluginModelBase)getPage().getModel();
+	}
+	
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginImport) {
 			ImportObject iobj = new ImportObject((IPluginImport) object);
@@ -611,49 +653,6 @@ public class RequiresSection
 		return getPage().getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
 	}
 
-/*
-	protected void doPaste(Object target, Object[] objects) {
-		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-		IPluginBase plugin = model.getPluginBase();
-
-		try {
-			for (int i = 0; i < objects.length; i++) {
-				Object obj = objects[i];
-				if (obj instanceof ImportObject) {
-					ImportObject iobj = (ImportObject) obj;
-					PluginImport iimport = (PluginImport) iobj.getImport();
-					iimport.setModel(model);
-					iimport.setParent(plugin);
-					plugin.add(iimport);
-				}
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-	}
-	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ImportObject))
-				return false;
-		}
-		return true;
-	}
-	public boolean canPaste(Clipboard clipboard) {
-		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
-		if (objects!=null && objects.length>0) {
-			return canPaste(null, objects);
-		}
-		return false;
-	}
-	protected void doPaste() {
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
-		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
-		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
-		if (objects!=null) {
-			doPaste(null, objects);
-		}
-	}
-*/
 	protected boolean createCount() { return true; }
 
 	public void propertyChange(PropertyChangeEvent event) {

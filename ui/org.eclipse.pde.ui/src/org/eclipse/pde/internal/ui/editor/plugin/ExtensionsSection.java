@@ -44,12 +44,16 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.plugin.IDocumentElement;
+import org.eclipse.pde.internal.core.text.plugin.IDocumentExtension;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -189,6 +193,21 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return null;
 	}
+	
+	private static ISchema getSchema(IPluginElement element) {
+		// TODO: MP: CCP TOUCH
+		// TODO: MP: CCP: Merge with getSchemaElement
+		IPluginObject parent = element.getParent();
+		while (parent != null && !(parent instanceof IPluginExtension)) {
+			parent = parent.getParent();
+		}
+		if (parent != null) {
+			return getSchema((IPluginExtension) parent);
+		}
+		return null;		
+	}
+	
+	
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -279,6 +298,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
+		
+		// TODO: MP: CCP: Check if editor is editable here
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
@@ -293,6 +314,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			doPaste();
 			return true;
 		}
+		
 		return false;
 	}
 	public boolean setFormInput(Object object) {
@@ -779,28 +801,83 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return true;
 		return false;
 	}
-	protected void doPaste(Object target, Object[] objects) {
-		/*IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase plugin = model.getPluginBase();
+
+	private IPluginModelBase getPluginModelBase() {
+		// TODO: MP: CCP TOUCH
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if ((model instanceof IBundlePluginModelBase) == false) {
+			return null;
+		}
+		ISharedExtensionsModel extensionModel = 
+			((IBundlePluginModelBase)model).getExtensionsModel();
+		if ((extensionModel == null) || 
+				((extensionModel instanceof IPluginModelBase) == false)) {
+			return null;
+		}
+		return ((IPluginModelBase)extensionModel);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		// Get the model
+		IPluginModelBase model = getPluginModelBase();
+		if (model == null) {
+			return;
+		}
+		
+		IPluginBase pluginBase = model.getPluginBase();
+		// TODO: MP: CCP: Use schema in canPaste() to prevent pasting in
+		// arbitrary location / target ??
+		// TODO: MP: CCP: How to handle where object gets pasted?  Always as child? As sibling? Depend on schema?
+		// TODO: MP: Allow XML text to be pasted to clipboard for text transfer of plain name? Source Page?  Any other text editor
 		try {
-			for (int i = 0; i < objects.length; i++) {
-				Object obj = objects[i];
-				if (obj instanceof IPluginExtension) {
-					IPluginExtension extension = (IPluginExtension) obj;
-					plugin.add(extension);
-					((PluginParent) extension).reconnect();
-				} else if (obj instanceof IPluginElement
-						&& target instanceof IPluginParent) {
-					IPluginElement element = (IPluginElement) obj;
-					((IPluginParent) target).add(element);
-					if (element instanceof PluginParent)
-						((PluginParent) element).reconnect();
+			// Paste all source objects into the target object
+			for (int i = 0; i < sourceObjects.length; i++) {
+				Object sourceObject = sourceObjects[i];
+				
+				if ((sourceObject instanceof IDocumentExtension) &&
+						(sourceObject instanceof IPluginExtension) &&
+						(pluginBase instanceof IDocumentNode)) {
+					// Extension object
+					IDocumentExtension extension = (IDocumentExtension)sourceObject;
+					// Retrieve the associated schema if there is one
+					ISchema schema = getSchema((IPluginExtension)extension);
+					// Retrieve
+
+					
+					// Adjust all the source object transient field values to
+					// acceptable values
+					extension.reconnect(model, schema, (IDocumentNode)pluginBase);
+					// TODO: MP: CCP: Determine what whould happen if schema was null
+					// TODO: MP: CCP: Ensure this is proper add method
+					pluginBase.add((IPluginExtension)extension);
+
+				} else if ((sourceObject instanceof IDocumentElement) &&
+						(sourceObject instanceof IPluginElement) &&
+						(targetObject instanceof IPluginParent) &&
+						(targetObject instanceof IDocumentNode)) {
+					// Element object
+					IDocumentElement element = (IDocumentElement)sourceObject;
+					// Retrieve the associated schema if there is one
+					ISchema schema = getSchema((IPluginElement)element);
+					// Adjust all the source object transient field values to
+					// acceptable values
+					element.reconnect(model, schema, (IDocumentNode)targetObject);
+					// Add the element to the plugin parent (extension or
+					// element)
+					// TODO: MP: CCP: Trace add to see what properties set
+					((IPluginParent)targetObject).add((IPluginElement)element);
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}*/
+		}
 	}
+	
 	private void handleMove(boolean up) {
 		IStructuredSelection sel = (IStructuredSelection) fExtensionTree
 		.getSelection();

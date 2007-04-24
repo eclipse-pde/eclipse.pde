@@ -157,6 +157,10 @@ public class ExportPackageVisibilitySection extends TableSection
     }
 
 	protected void selectionChanged(IStructuredSelection selection) {
+		// TODO: MP: CCP TOUCH
+		// Update global selection
+		getPage().getPDEEditor().setSelection(selection);
+		
 		Object item = selection.getFirstElement();
 		getTablePart().setButtonEnabled(1, item != null);
 	}
@@ -169,13 +173,75 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
     
 	public boolean doGlobalAction(String actionId) {
+		// TODO: MP: CCP TOUCH
+		
+    	if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
 		}
+        if (actionId.equals(ActionFactory.CUT.getId())) {
+            // delete here and let the editor transfer
+            // the selection to the clipboard
+            handleRemove();
+            return false;
+        }
+        if (actionId.equals(ActionFactory.PASTE.getId())) {
+            doPaste();
+            return true;
+        }
 		return false;
 	}
-    
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		// TODO: MP: CCP: Should test for duplicates and disable - Check add
+		// One export package object must be selected
+		if (isOneSelectedObject() == false) {
+			return false;
+		}
+    	// All source objects have to be package friend objects
+    	for (int i = 0; i < sourceObjects.length; i++) {
+	    	if ((sourceObjects[i] instanceof PackageFriend) == false) {
+	    		return false;
+	    	}
+    	}
+    	return true;
+	}
+	
+	private boolean isOneSelectedObject() {
+		// TODO: MP: CCP TOUCH
+		if ((fSelectedObjects == null) || (fSelectedObjects.length != 1)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		// Paste all source objects
+		for (int i = 0; i < sourceObjects.length; i++) {
+			Object sourceObject = sourceObjects[i];
+			if ((sourceObject instanceof PackageFriend) &&
+					isOneSelectedObject()) {
+				// Package friend object
+				PackageFriend friend = (PackageFriend)sourceObject;
+				// Adjust all the source object transient field values to
+				// acceptable values
+				friend.reconnect(fSelectedObjects[0]);
+				// Add the package friend to the export package object
+				fSelectedObjects[0].addFriend(friend);
+			}
+		}		
+	}
+	
 	public void dispose() {
 		IBundleModel model = getBundleModel();
 		if (model != null)
@@ -294,4 +360,5 @@ public class ExportPackageVisibilitySection extends TableSection
         BundleInputContext context = getBundleContext();
         return (context != null) ? (IBundleModel)context.getModel() : null;       
     }
+    
 }

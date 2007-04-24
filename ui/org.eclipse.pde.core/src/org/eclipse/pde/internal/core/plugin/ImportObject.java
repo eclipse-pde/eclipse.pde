@@ -16,9 +16,12 @@ import java.io.Serializable;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable {
+
 	private static final long serialVersionUID = 1L;
 	private IPluginImport iimport;
 	
@@ -44,9 +47,14 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
 		iimport.write(indent, writer);
 	}
+	
 	public Object getAdapter(Class key) {
 		if (key.equals(ISourceObject.class)) {
 			if (iimport instanceof ISourceObject)
@@ -54,4 +62,18 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		}
 		return super.getAdapter(key);
 	}
+	
+	public void reconnect(IPlugin plugin) {
+		// TODO: MP: CCP TOUCH
+
+		super.reconnect(plugin);
+		// Field that has transient fields:  Import
+		IPluginModelBase model = plugin.getPluginModel();
+		IPluginBase parent = model.getPluginBase();
+		// TODO: MP: CCP: Make into interface?
+		if (iimport instanceof PluginImport) {
+			((PluginImport)iimport).reconnect(model, parent);
+		}
+	}
+	
 }

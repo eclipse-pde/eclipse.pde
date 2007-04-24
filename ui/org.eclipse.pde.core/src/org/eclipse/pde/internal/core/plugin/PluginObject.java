@@ -34,15 +34,17 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
-public abstract class PluginObject
-	extends PlatformObject
-	implements IPluginObject, ISourceObject, Serializable {
+public abstract class PluginObject extends PlatformObject implements
+		IPluginObject, ISourceObject, Serializable {
+	
 	protected String fName;
-	private String fTranslatedName;
+	// TODO: MP: CCP TOUCH
+	private transient String fTranslatedName;
 	private transient IPluginObject fParent;
 	private transient ISharedPluginModel fModel;
 	protected int fStartLine = 1;
-	private boolean fInTheModel;
+	// TODO: MP: CCP TOUCH
+	private transient boolean fInTheModel;
 
 	public PluginObject() {
 	}
@@ -239,6 +241,19 @@ public abstract class PluginObject
 			return getPluginModel();
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
+		// TODO: MP: CCP TOUCH
+		
+		// Transient Field:  In The Model
+		fInTheModel = false;
+		// Transient Field:  Model
+		fModel = model;
+		// Transient Field:  Parent
+		fParent = parent;
+		// Transient Field:  Translated Name
+		fTranslatedName = null;
 	}
 
 	

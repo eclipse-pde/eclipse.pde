@@ -10,23 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.plugin;
 
+import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-public class PluginAttribute extends PluginObjectNode
-		implements
-			IPluginAttribute , IDocumentAttribute{
+public class PluginAttribute extends PluginObjectNode implements
+		IPluginAttribute, IDocumentAttribute {
 	
 	private static final long serialVersionUID = 1L;
 
-	private IDocumentNode fEnclosingElement;
+	
+	// TODO: MP: CCP TOUCH
+	private transient IDocumentNode fEnclosingElement;
+	// TODO: MP: CCP TOUCH
+	private transient int fNameOffset = -1;
+	// TODO: MP: CCP TOUCH
+	private transient int fNameLength = -1;
+	// TODO: MP: CCP TOUCH
+	private transient int fValueOffset = -1;
+	// TODO: MP: CCP TOUCH
+	private transient int fValueLength = -1;
+	// TODO: MP: CCP TOUCH
 	private String fValue;
-	private int fNameOffset = -1;
-	private int fNameLength = -1;
-	private int fValueOffset = -1;
-	private int fValueLength = -1;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()
@@ -133,6 +143,35 @@ public class PluginAttribute extends PluginObjectNode
 	
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#reconnectAttribute()
+	 */
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, schema, parent);
+		// Transient field:  Enclosing element
+		// Essentially is the parent (an element)
+		// Note: Parent field from plugin document node parent seems to be 
+		// null; but, we will set it any ways
+		fEnclosingElement = parent;
+		// Transient field:  Name Length
+		fNameLength = -1;
+		// Transient field:  Name Offset
+		fNameOffset = -1;
+		// Transient field:  Value Length
+		fValueLength = -1;
+		// Transient field:  Value Offset
+		fValueOffset = -1;
+	}
+	
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+
+		// Used for text transfers for copy, cut, paste operations
+		// Although attributes cannot be copied directly
+		writer.write(write());
 	}
 	
 }

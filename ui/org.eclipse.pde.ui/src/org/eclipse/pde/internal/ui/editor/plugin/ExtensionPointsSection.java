@@ -33,8 +33,12 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.plugin.IDocumentExtensionPoint;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -273,20 +277,67 @@ public class ExtensionPointsSection extends TableSection {
 				 ? new SystemFileEditorInput(file)
 				 : null;
 	}
+
+	private IPluginModelBase getPluginModelBase() {
+		// TODO: MP: CCP TOUCH
+		// TODO: MP: CCP: Does this work for fragments?
+		// TODO: MP: CCP: Duplicate method with extensions sections.  Make utility method?
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if ((model instanceof IBundlePluginModelBase) == false) {
+			return null;
+		}
+		ISharedExtensionsModel extensionModel = 
+			((IBundlePluginModelBase)model).getExtensionsModel();
+		if ((extensionModel == null) || 
+				((extensionModel instanceof IPluginModelBase) == false)) {
+			return null;
+		}
+		return ((IPluginModelBase)extensionModel);
+	}	
 	
-	protected void doPaste(Object target, Object[] objects) {
-		/*
-		 * IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		 * IPluginBase plugin = model.getPluginBase(); try { for (int i = 0; i <
-		 * objects.length; i++) { Object obj = objects[i]; if (obj instanceof
-		 * IPluginExtensionPoint) { PluginExtensionPoint point =
-		 * (PluginExtensionPoint) obj; point.setModel(model);
-		 * point.setParent(plugin); plugin.add(point); } } } catch
-		 * (CoreException e) { PDEPlugin.logException(e); }
-		 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		// Get the model
+		IPluginModelBase model = getPluginModelBase();
+		// Ensure an editable model was actually retrieved
+		if (model == null) {
+			return;
+		}
+		
+		IPluginBase pluginBase = model.getPluginBase();
+		try {
+			// Paste all source objects 
+			// Since, the extension points are a flat non-hierarchical list, 
+			// the target object is not needed
+			for (int i = 0; i < sourceObjects.length; i++) {
+				Object sourceObject = sourceObjects[i];
+				
+				if ((sourceObject instanceof IDocumentExtensionPoint) &&
+						(sourceObject instanceof IPluginExtensionPoint) &&
+						(pluginBase instanceof IDocumentNode)) {
+					// Extension point object
+					IDocumentExtensionPoint extensionPoint = 
+						(IDocumentExtensionPoint)sourceObject;
+					// Adjust all the source object transient field values to
+					// acceptable values
+					extensionPoint.reconnect(model, (IDocumentNode)pluginBase);
+					pluginBase.add((IPluginExtensionPoint)extensionPoint);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
 	protected boolean canPaste(Object target, Object[] objects) {
+		// TODO: MP: CCP TOUCH
+		
 		if (objects[0] instanceof IPluginExtensionPoint)
 			return true;
 		return false;

@@ -50,6 +50,9 @@ public class RuntimePage extends PDEFormPage {
             	mform.addPart(new ExportPackageVisibilitySection(this, form.getBody()));
             mform.addPart(new LibrarySection(this, form.getBody()));
         } else {
+        	// No MANIFEST.MF (not a Bundle)
+        	// Create a new plug-in project targeted for 3.0 using the hello 
+			// world template to see this section (no MANIFEST.MF is created)			
             mform.addPart(new LibrarySection(this, form.getBody()));		
             mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
         }

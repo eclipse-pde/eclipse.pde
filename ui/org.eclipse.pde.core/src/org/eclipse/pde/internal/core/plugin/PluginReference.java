@@ -55,4 +55,12 @@ public class PluginReference extends PlatformObject {
 	public boolean isResolved() {
 		return getPlugin() != null;
 	}
+	
+	public void reconnect(IPlugin plugin) {
+		// TODO: MP: CCP TOUCH
+		
+		// Transient Field:  Plugin
+		fPlugin = plugin;
+	}
+	
 }

@@ -281,10 +281,12 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		manager.add(fNewAction);
 		manager.add(fOpenAction);
 		manager.add(new Separator());
-		getPage().contextMenuAboutToShow(manager);
 		
 		if (!selection.isEmpty())
 			manager.add(fRemoveAction);
+
+		// TODO: MP: CCP TOUCH
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 	
 	public void refresh() {
@@ -431,6 +433,10 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
+		// Update global selection
+		// TODO: MP: CCP TOUCH
+		getPage().getPDEEditor().setSelection(sel);
+
 		Object item = sel.getFirstElement();
 		if (item == null) {
 			getTablePart().setButtonEnabled(1, false);
@@ -450,14 +456,71 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
+		// TODO: MP: CCP TOUCH
+		
+		if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
 		}
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleRemove();
+			return false;
+		}
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
 		return false;
+		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		if (sourceObjects[0] instanceof String) {
+			return true;
+		}
+		return false;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		IBuildModel buildModel = getBuildModel(true);
+	    IBuild build = buildModel.getBuild();
+		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);		
+
+		try {
+		    if (entry == null) {
+		        entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		        build.add(entry);
+		    }
+		
+			// Paste all source objects
+			for (int i = 0; i < sourceObjects.length; i++) {
+				Object sourceObject = sourceObjects[i];
+				if (sourceObject instanceof String) {
+					// Import object
+					entry.addToken((String)sourceObject);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		// TODO: MP: CCP: When selecting multiple items and pasting as text, newline needs to be in between- check for all
+	}	
 	
 	protected void doAddDependencies() {
 		IBaseModel model = getPage().getModel();

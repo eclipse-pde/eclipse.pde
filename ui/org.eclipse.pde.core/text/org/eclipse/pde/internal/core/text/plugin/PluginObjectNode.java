@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
@@ -22,20 +23,24 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-public class PluginObjectNode extends PluginDocumentNode
-		implements
-			IPluginObject {
+public class PluginObjectNode extends PluginDocumentNode implements
+		IPluginObject, IDocumentObject {
 
+	// TODO: MP: CCP TOUCH
+	private transient boolean fInTheModel;
+	// TODO: MP: CCP TOUCH
+	private transient ISharedPluginModel fModel;
+	
 	private static final long serialVersionUID = 1L;
 	private String fName;
-	private boolean fInTheModel;
-	private transient ISharedPluginModel fModel;
 
 	/*
 	 * (non-Javadoc)
@@ -243,7 +248,10 @@ public class PluginObjectNode extends PluginDocumentNode
 	}
 	
 	public String getLineDelimiter() {
-		return TextUtilities.getDefaultLineDelimiter(((IEditingModel)getModel()).getDocument());
+		// TODO: MP: CCP TOUCH
+		ISharedPluginModel model = getModel();
+		IDocument document = ((IEditingModel)model).getDocument();
+		return TextUtilities.getDefaultLineDelimiter(document);
 	}
 	
 	public void addChildNode(IDocumentNode child, int position) {
@@ -258,5 +266,14 @@ public class PluginObjectNode extends PluginDocumentNode
 	public boolean isRoot() {
 		return false;
 	}
-
+	
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, schema, parent);
+		// Transient field:  In The Model
+		fInTheModel = false;
+		// Transient field:  Model
+		fModel = model;
+	}
+	
 }

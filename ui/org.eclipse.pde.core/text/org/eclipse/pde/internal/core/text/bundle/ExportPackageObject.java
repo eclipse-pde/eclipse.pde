@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -18,6 +19,7 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.Constants;
 
 public class ExportPackageObject extends PackageObject {
@@ -183,4 +185,34 @@ public class ExportPackageObject extends PackageObject {
 		sb.append("\""); //$NON-NLS-1$
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+
+		// Used for text transfers for copy, cut, paste operations
+		writer.write(write());
+	}    
+    
+	public void reconnect(IBundleModel model, ExportPackageHeader header, 
+			String versionAttribute) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, header, versionAttribute);
+		// Non-Transient Field:  Friends
+		reconnectFriends();
+	}
+
+	private void reconnectFriends() {
+		// TODO: MP: CCP TOUCH
+		// Get all the friends
+		Iterator keys = fFriends.keySet().iterator();
+		// Fill in appropriate transient field values for all friends
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			PackageFriend friend = (PackageFriend)fFriends.get(key);
+			friend.reconnect(this);
+		}
+	}
+	
 }

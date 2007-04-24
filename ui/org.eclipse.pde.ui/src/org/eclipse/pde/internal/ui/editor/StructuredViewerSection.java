@@ -74,7 +74,7 @@ public abstract class StructuredViewerSection extends PDESection {
 	
 	protected void buttonSelected(int index) {
 	}
-
+	
 	protected void doPaste() {
 		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
@@ -89,7 +89,13 @@ public abstract class StructuredViewerSection extends PDESection {
 			doPaste(target, objects);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canPaste(org.eclipse.swt.dnd.Clipboard)
+	 */
 	public boolean canPaste(Clipboard clipboard) {
+		// TODO: MP: CCP: Checking clipboard data done incorrectly
+		// Bug 37223
 		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return false;
@@ -105,10 +111,10 @@ public abstract class StructuredViewerSection extends PDESection {
 	protected ISelection getViewerSelection() {
 		return fViewerPart.getViewer().getSelection();
 	}
-	protected void doPaste(Object target, Object[] objects) {
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 	}
 	
-	protected boolean canPaste(Object target, Object [] objects) {
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return false;
 	}
 	public void setFocus() {

@@ -21,14 +21,22 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Node;
 
-public class PluginImport
-	extends IdentifiablePluginObject
-	implements IPluginImport, Serializable {
+public class PluginImport extends IdentifiablePluginObject implements
+		IPluginImport, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private int match = NONE;
@@ -203,18 +211,75 @@ public class PluginImport
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent);
-		writer.print("<import plugin=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (isReexported())
-			writer.print(" export=\"true\""); //$NON-NLS-1$
-		if (isOptional())
-			writer.print(" optional=\"true\""); //$NON-NLS-1$
-		if (version != null && version.length() > 0)
-			writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (match != NONE && match != COMPATIBLE) {
-			String matchValue = RULE_NAME_TABLE[match];
-			writer.print(" match=\"" + matchValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		// TODO: MP: CCP TOUCH
+
+		// This is a round-about way to do this; but, leveraging existing
+		// functionality is key.  The fact we have to do this suggests a model 
+		// limitation. 
+		// Emulating the behaviour of the text edit operations.  
+		// RequireBundleObjects are created from PluginImport objects and have
+		// access to the MANIFEST.MF write mechanism 
+
+		// Get the model
+		IPluginModelBase modelBase = getPluginModel();
+		// Ensure the model is a bundle model
+		if ((modelBase instanceof IBundlePluginModelBase) == false) {
+			return;
 		}
-		writer.println("/>"); //$NON-NLS-1$
+		IBundleModel bundleModel = ((IBundlePluginModelBase)modelBase).getBundleModel();
+		// Ensure the bundle manifest is present
+		if (bundleModel == null) {
+			return;
+		}
+		// Get the bundle
+		IBundle bundle = bundleModel.getBundle();
+		// Get the require bundle manifest header
+		IManifestHeader manifestHeader = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
+		// Ensure the header was found (it has to be there since the calling
+		// of this method is a result of a copy operation)
+		if ((manifestHeader instanceof ManifestHeader) == false) {
+			return;
+		}
+		ManifestHeader header = (ManifestHeader)manifestHeader;
+		// Create the new temporary require bundle object (used only for 
+		// writing)
+		RequireBundleObject element = new RequireBundleObject(header, fID);
+		// Get the manifest version for backwards compatibility
+		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(bundle);
+		// Configure its properties using the values of this object
+		// Field:  Optional
+		if (optional) {
+			if (bundleManifestVersion > 1) {
+				element.setDirective(Constants.RESOLUTION_DIRECTIVE, Constants.RESOLUTION_OPTIONAL); 
+			} else {
+				element.setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, "true");  //$NON-NLS-1$
+			}
+		}
+		// Field:  Re-exported
+		if (reexported) {
+			if (bundleManifestVersion > 1) {
+				element.setDirective(Constants.VISIBILITY_DIRECTIVE, Constants.VISIBILITY_REEXPORT); 
+			} else {
+				element.setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
+		}
+		// Field:  Version
+		if ((version != null) && 
+				(version.trim().length() > 0)) {
+			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version.trim());
+		}
+		// Write the textual representation
+		writer.println(element.write());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.IdentifiablePluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
+	 */
+	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
+		// TODO: MP: CCP TOUCH
+
+		super.reconnect(model, parent);
+		// No transient fields
+	}
+	
 }

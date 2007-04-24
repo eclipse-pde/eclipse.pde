@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -204,7 +205,10 @@ public class LibraryVisibilitySection extends TableSection
         if (!fPackageExportViewer.getSelection().isEmpty()) {
             manager.add(fRemoveAction);
         }
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		// Copy, cut, and paste operations not supported for plug-ins that do 
+        // not have a MANIFEST.MF
+    	// TODO: MP: CCP TOUCH
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
 	}
     
 	private void handleAdd() {
@@ -303,5 +307,14 @@ public class LibraryVisibilitySection extends TableSection
     		getTablePart().setButtonEnabled(ADD_INDEX, isEditable() && fSelectedExportButton.getSelection());
         }
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(org.eclipse.swt.dnd.Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		// TODO: MP: CCP TOUCH
+		// Paste not supported for plug-ins that do not have a MANIFEST.MF
+		return false;
+	}
 	
 }

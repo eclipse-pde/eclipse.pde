@@ -46,6 +46,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -255,6 +256,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
 
 	public boolean doGlobalAction(String actionId) {
+		// TODO: MP: CCP TOUCH
+
+		if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
@@ -287,7 +292,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			manager.add(fRenameAction);			
 			manager.add(fRemoveAction);
 		}
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		// TODO: MP: CCP TOUCH
+		// Copy, cut, and paste operations not supported for plug-ins that do 
+        // not have a MANIFEST.MF (not a Bundle)		
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, isBundle());
 	}
     
 	private void handleRemove() {
@@ -631,26 +639,41 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fLibraryTable.getTable().setFocus();
 	}
     
-	protected void doPaste(Object target, Object[] objects) {
-		/*IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		IPluginModelBase model = getModel();
 		IPluginBase plugin = model.getPluginBase();
 		try {
-			for (int i = 0; i < objects.length; i++) {
-				Object obj = objects[i];
-				if (obj instanceof IPluginLibrary) {
-					PluginLibrary library = (PluginLibrary) obj;
-					library.setModel(model);
-					library.setParent(plugin);
+			// Paste all source objects
+			for (int i = 0; i < sourceObjects.length; i++) {
+				Object sourceObject = sourceObjects[i];
+				if (sourceObject instanceof PluginLibrary) {
+					// Plugin library object
+					PluginLibrary library = (PluginLibrary) sourceObject;
+					// Adjust all the source object transient field values to
+					// acceptable values
+					library.reconnect(model, plugin);
+					// Add the library to the plug-in
 					plugin.add(library);
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}*/
+		}
 	}
     
-	protected boolean canPaste(Object target, Object[] objects) {
-		return (objects[0] instanceof IPluginLibrary);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// TODO: MP: CCP TOUCH
+		if (sourceObjects[0] instanceof IPluginLibrary) {
+			return true;
+		}
+		return false;
 	}
     
     protected void entryModified(Object entry, String value) {

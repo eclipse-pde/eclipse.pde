@@ -73,6 +73,9 @@ public class DependenciesPage extends PDEFormPage {
 				gd.horizontalSpan = 2;
 			section = new DependencyAnalysisSection(this, right, ExpandableComposite.COMPACT);
 		} else {
+        	// No MANIFEST.MF (not a Bundle)
+        	// Create a new plug-in project targeted for 3.0 using the hello 
+			// world template to see this section (no MANIFEST.MF is created)			
 			managedForm.addPart(new MatchSection(this, right, true));
 			section = new DependencyAnalysisSection(this, right, ExpandableComposite.EXPANDED);
 		}

@@ -813,6 +813,10 @@ public abstract class PDEFormEditor extends FormEditor
 					return;
 				if (obj instanceof IWritable) {
 					((IWritable) obj).write("", pwriter); //$NON-NLS-1$
+				} else if (obj instanceof String) {
+					// TODO: MP: CCP TOUCH
+					
+					pwriter.println((String)obj);
 				}
 			}
 			pwriter.flush();

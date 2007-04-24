@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.plugin;
 
+import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-public class PluginExtensionNode extends PluginParentNode
-		implements
-			IPluginExtension {
+public class PluginExtensionNode extends PluginParentNode implements
+		IPluginExtension, IDocumentExtension {
+	
 	private static final long serialVersionUID = 1L;
 	private transient ISchema fSchema;
 
@@ -94,6 +97,15 @@ public class PluginExtensionNode extends PluginParentNode
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+		// Used for text transfers for copy, cut, paste operations
+		writer.write(write(true));
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
@@ -127,4 +139,12 @@ public class PluginExtensionNode extends PluginParentNode
 		}
 		return fSchema;
 	}
+	
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, schema, parent);
+		// Transient Field:  Schema
+		fSchema = schema;
+	}
+
 }

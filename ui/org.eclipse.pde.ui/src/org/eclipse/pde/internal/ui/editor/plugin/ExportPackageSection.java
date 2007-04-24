@@ -204,8 +204,62 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             model.removeModelChangedListener(this);
         super.dispose();
     }
-        
-    protected void doPaste() {
+
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+     */
+    protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+    	// TODO: MP: CCP TOUCH
+    	// TODO: MP: CCP: Check all objects? For all?
+    	// A paste operation is possible if all the source objects are 
+    	// export package objects
+    	for (int i = 0; i < sourceObjects.length; i++) {
+	    	if ((sourceObjects[i] instanceof ExportPackageObject) == false) {
+	    		return false;
+	    	}
+    	}
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+     */
+    protected void doPaste(Object targetObject, Object[] sourceObjects) {
+    	// TODO: MP: CCP TOUCH
+		// Get the model
+    	IBundleModel model = getBundleModel();
+		if (model == null) {
+			return;
+		}
+		// Get the bundle
+		IBundle bundle = model.getBundle();
+		// Paste all source objects
+		for (int i = 0; i < sourceObjects.length; i++) {
+			Object sourceObject = sourceObjects[i];
+			if (sourceObject instanceof ExportPackageObject) {
+				ExportPackageObject exportPackageObject = 
+					(ExportPackageObject)sourceObject;
+				// Export package object
+				// Adjust all the source object transient field values to
+				// acceptable values
+				exportPackageObject.reconnect(model, fHeader, getVersionAttribute());
+				// Add the object to the header
+				if (fHeader == null) {
+					// Export package header not defined yet
+					// Define one
+					// Value will get inserted into a new export package object
+					// created by a factory
+					// Value needs to be empty string so no export package
+					// object is created as the initial value
+					bundle.setHeader(getExportedPackageHeader(), ""); //$NON-NLS-1$
+				}
+				// Add the export package to the header
+				fHeader.addPackage(exportPackageObject);
+			}
+		}
+		// TODO: MP: CCP: Investigate why revert does not undo pasted element
+		// TODO: MP: CCP: Prevent duplicates from being pasted in all sections - CHECK ADD BUTTON HOW IT DOES IT
+		// TODO: MP: CCP: In imported packages, more complicated check ADD BUTTON - don't see packages that are exported
     }
 
 	protected void selectionChanged(IStructuredSelection sel) {

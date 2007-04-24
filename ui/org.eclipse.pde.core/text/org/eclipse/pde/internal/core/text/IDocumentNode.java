@@ -12,6 +12,9 @@ package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
 
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+
 public interface IDocumentNode extends Serializable, IDocumentRange {
 		
 	IDocumentNode getParentNode();	
@@ -58,4 +61,11 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	
 	String write(boolean indent);
 	String writeShallow(boolean terminate);
+	
+	// TODO: MP: CCP TOUCH
+	public int getChildCount();
+	
+	// TODO: MP: CCP TOUCH
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
+	
 }

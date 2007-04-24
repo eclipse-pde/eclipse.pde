@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.plugin;
 
+import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
@@ -21,9 +24,8 @@ import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
-public class PluginElementNode extends PluginParentNode
-		implements
-			IPluginElement {
+public class PluginElementNode extends PluginParentNode implements
+		IPluginElement, IDocumentElement {
 
 	private static final long serialVersionUID = 1L;
 
@@ -166,6 +168,26 @@ public class PluginElementNode extends PluginParentNode
 			}
 		}
 		return elementInfo;
+	}
+	
+	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP TOUCH
+		super.reconnect(model, schema, parent);
+		// TODO: MP: CCP: Is okay if schema is null?
+		// Transient Field:  Element Info
+		elementInfo = null;
+		if (schema != null) {
+			elementInfo = schema.findElement(getXMLTagName());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+		// TODO: MP: CCP TOUCH
+		// Used for text transfers for copy, cut, paste operations
+		writer.write(write(true));
 	}
 	
 }

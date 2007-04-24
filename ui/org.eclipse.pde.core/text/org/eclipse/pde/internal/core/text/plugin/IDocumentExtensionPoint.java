@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.text;
+
+package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.Serializable;
 
-public interface IDocumentTextNode extends IDocumentRange, Serializable {
-	
-	void setEnclosingElement(IDocumentNode node);	
-	IDocumentNode getEnclosingElement();
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-	void setText(String text);
-	String getText();
-	
-	void setOffset(int offset);
-	void setLength(int length);
-	
+/**
+ * IDocumentExtensionPoint
+ *
+ */
+public interface IDocumentExtensionPoint extends Serializable {
 	// TODO: MP: CCP TOUCH
-	public void reconnect(IDocumentNode parent);
+
+	public void reconnect(ISharedPluginModel model, IDocumentNode parent);
 	
 }

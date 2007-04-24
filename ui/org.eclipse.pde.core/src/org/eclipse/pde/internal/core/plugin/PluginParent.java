@@ -99,14 +99,4 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 		fireStructureChanged(child, IModelChangedEvent.REMOVE);
 	}
 
-	public void reconnect() {
-		for (int i = 0; i < fChildren.size(); i++) {
-			PluginObject child = (PluginObject) fChildren.get(i);
-			child.setModel(getModel());
-			child.setParent(this);
-			if (child instanceof PluginParent) {
-				((PluginParent) child).reconnect();
-			}
-		}
-	}
 }
