@@ -11,10 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import java.io.File;
+import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -28,6 +32,17 @@ import org.eclipse.ui.PartInitException;
 
 
 public class TargetEditor extends PDEFormEditor {
+	
+	protected static String LAST_PATH;
+	
+	static {
+		Location installLoc = Platform.getInstallLocation();
+		if (installLoc == null) {
+			LAST_PATH = ""; //$NON-NLS-1$
+		}
+		URL url = installLoc.getURL();
+		LAST_PATH = new Path(url.getPath()).toOSString();
+	}
 
 	public TargetEditor() {
 		super();

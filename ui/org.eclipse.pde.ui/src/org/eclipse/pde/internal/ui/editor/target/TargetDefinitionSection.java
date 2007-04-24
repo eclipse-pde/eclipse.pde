@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class TargetDefinitionSection extends PDESection {
 	private Button fCustomPath;
 	private Button fFileSystem;
 	private Button fVariable;
-	private static int NUM_COLUMNS = 5;
+	private static int NUM_COLUMNS = 5; 
 	
 	public TargetDefinitionSection(PDEFormPage page, Composite parent) {
 		super(page, parent, ExpandableComposite.TITLE_BAR);
@@ -238,13 +238,17 @@ public class TargetDefinitionSection extends PDESection {
 	
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getSection().getShell());
-		dialog.setFilterPath(fPath.getValue());
+		String text = fPath.getValue();
+		if (text.length() == 0)
+			text = TargetEditor.LAST_PATH;
+		dialog.setFilterPath(text);
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();
 		if (result != null) {
 			fPath.setValue(result);
 			getLocationInfo().setPath(result);
+			TargetEditor.LAST_PATH = result;
 		}
 	}
 	
