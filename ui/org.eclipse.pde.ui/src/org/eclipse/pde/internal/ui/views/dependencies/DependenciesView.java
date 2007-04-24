@@ -315,7 +315,7 @@ public class DependenciesView extends PageBookView implements
 			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
 				return PART_CALLERS_LIST;
 			}
-			return PART_CALLEES_TREE;
+			return PART_CALLERS_TREE;
 		}
 		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
 			return PART_CALLEES_LIST;
@@ -458,6 +458,11 @@ public class DependenciesView extends PageBookView implements
 	}
 
 	public void openTo(Object object) {
+		// if we are suppose to open to a element and we are in state mode, disable state mode and set focus
+		if (getCurrentContributingPart() == PART_STATE_TREE) {
+			fShowState.setChecked(false);
+			fShowState.run();
+		}
 		if (object != null && !object.equals(fInput)) {
 			if(object instanceof IPluginModelBase){
 				String id =((IPluginModelBase)object).getPluginBase().getId();
