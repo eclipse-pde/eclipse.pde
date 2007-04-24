@@ -89,8 +89,10 @@ public class TargetOutlinePage extends FormOutlinePage {
 			if (target.useAllPlugins())
 				return new Object[0];
 			
-			pNode = new TargetContentNode(target, false);
-			fNode = new TargetContentNode(target, true);
+			if (pNode == null)
+				pNode = new TargetContentNode(target, false);
+			if (fNode == null)
+				fNode = new TargetContentNode(target, true);
 			return new Object[] {pNode, fNode};
 		}
 		if (parent instanceof TargetContentNode)
