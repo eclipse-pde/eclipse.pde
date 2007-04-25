@@ -19,13 +19,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PartInitException;
 
 public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 	private ISelection fSelection;
@@ -53,18 +48,7 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 			el = ((IPluginObject)el).getModel();
 		}
 		if (el instanceof IPluginModelBase) {
-			openDependencies((IPluginModelBase)el);
-		}
-	}
-	
-	public static void openDependencies(IPluginModelBase model) {
-		IWorkbenchPage page = PDEPlugin.getActivePage();
-		try {
-			IViewPart view = page.showView(IPDEUIConstants.DEPENDENCIES_VIEW_ID);
-			((DependenciesView)view).openTo(model);
-		}
-		catch (PartInitException e) {
-			PDEPlugin.logException(e);
+			new OpenPluginDependenciesAction((IPluginModelBase)el).run();
 		}
 	}
 

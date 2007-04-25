@@ -471,6 +471,30 @@ public class DependenciesView extends PageBookView implements
 		}
 		updateInput(object);
 	}
+	
+	public void openCallersFor(Object object) {
+		if (getCurrentContributingPart() == PART_STATE_TREE)
+			fLastDependenciesPart = (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) ? PART_CALLERS_LIST :
+				PART_CALLERS_TREE;
+		else if (!fShowCallers.isChecked() && fShowCallees.isChecked()) {
+			fShowCallers.setChecked(true);
+			fShowCallees.setChecked(false);
+			fShowCallers.run();
+		}
+		openTo(object);
+	}
+	
+	public void openCalleesFor(Object object) {
+		if (getCurrentContributingPart() == PART_STATE_TREE)
+			fLastDependenciesPart = (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) ? PART_CALLEES_LIST :
+				PART_CALLEES_TREE;
+		else if (!fShowCallees.isChecked() && fShowCallers.isChecked()) {
+			fShowCallees.setChecked(true);
+			fShowCallers.setChecked(false);
+			fShowCallees.run();
+		}
+		openTo(object);
+	}
 
 	private void updateInput(Object object) {
 		fInput = object;

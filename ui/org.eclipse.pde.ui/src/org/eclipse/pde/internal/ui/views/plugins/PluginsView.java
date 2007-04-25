@@ -69,8 +69,8 @@ import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
-import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
-import org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction;
+import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
+import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginReferencesAction;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -112,8 +112,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private Action fOpenSchemaAction;
 	private Action fOpenSystemEditorAction;
 	private Action fOpenClassFileAction;
-	private Action fOpenDependenciesAdapter;
-	private OpenDependenciesAction fOpenDependenciesAction;
 	private Action fOpenTextEditorAction;
 	private Action fSelectDependentAction;
 	private Action fSelectInJavaSearchAction;
@@ -206,7 +204,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		PDECore.getDefault().getSearchablePluginsManager().removePluginModelListener(this);
 		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
 				fPropertyListener);
-		fOpenDependenciesAction.dispose();
 		if (fClipboard != null) {
 			fClipboard.dispose();
 			fClipboard = null;
@@ -295,18 +292,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 			}
 		};
 		fOpenAction.setText(PDEUIMessages.PluginsView_open); 
-
-		fOpenDependenciesAction = new OpenDependenciesAction();
-		fOpenDependenciesAction.init(PDEPlugin.getActiveWorkbenchWindow());
-		fOpenDependenciesAdapter = new Action() {
-			public void run() {
-				IPluginModelBase model = getEnclosingModel();
-				fOpenDependenciesAction.selectionChanged(
-					this, new StructuredSelection(model));
-				fOpenDependenciesAction.run(this);
-			}
-		};
-		fOpenDependenciesAdapter.setText(PDEUIMessages.PluginsView_openDependencies); 
 		
 		fHideExtDisabledFilterAction = new Action() {
 			public void run() {
@@ -483,12 +468,16 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 			}
 			IPluginModelBase entry = getEnclosingModel();
 			if (entry != null) {
-				manager.add(fOpenDependenciesAdapter);
+				Action action = new OpenPluginDependenciesAction(entry);
+				action.setText(PDEUIMessages.PluginsView_openDependencies);
+				action.setImageDescriptor(PDEPluginImages.DESC_CALLEES);
+				manager.add(action);
 				manager.add(new Separator());
-				PluginSearchActionGroup actionGroup =
-					new PluginSearchActionGroup();
-				actionGroup.setContext(new ActionContext(selection));
-				actionGroup.fillContextMenu(manager);
+				
+				action = new OpenPluginReferencesAction(entry);
+				action.setText(PDEUIMessages.SearchAction_references);
+				action.setImageDescriptor(PDEPluginImages.DESC_CALLERS);
+				manager.add(action);
 				addSeparator = true;
 			}
 			if (addSeparator)

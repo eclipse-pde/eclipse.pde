@@ -12,8 +12,6 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -26,10 +24,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
-import org.eclipse.pde.internal.ui.search.FindReferencesAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
-import org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction;
+import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
+import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginReferencesAction;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -69,7 +66,8 @@ public class DependencyAnalysisSection extends PDESection {
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
 		formText.setImage("search", lp.get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
-		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT)); //$NON-NLS-1$
+		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_CALLEES)); //$NON-NLS-1$
+		formText.setImage("dependencies", lp.get(PDEPluginImages.DESC_CALLERS)); //$NON-NLS-1$
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("unused")) //$NON-NLS-1$
@@ -77,9 +75,9 @@ public class DependencyAnalysisSection extends PDESection {
 				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
 				else if (e.getHref().equals("references")) //$NON-NLS-1$
-					doFindReferences();
+					new OpenPluginReferencesAction(PluginRegistry.findModel(getProject())).run();
 				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
-					OpenDependenciesAction.openDependencies(PluginRegistry.findModel(getProject()));
+					new OpenPluginDependenciesAction(PluginRegistry.findModel(getProject())).run();
 			}
 		});
 		
@@ -105,25 +103,6 @@ public class DependencyAnalysisSection extends PDESection {
 		if (model instanceof IPluginModelBase) {
 			new UnusedDependenciesAction((IPluginModelBase)model, false).run();
 		}		
-	}
-	
-	private void doFindReferences() {
-		IBaseModel model = getPage().getModel();
-		if (model instanceof IPluginModel) {
-			new FindReferencesAction(((IPluginModel)model).getPlugin()).run();
-		} else if (model instanceof IFragmentModel){
-			IFragment fragment = ((IFragmentModel)model).getFragment();
-			String id = fragment.getPluginId();
-			IPluginModelBase host = PluginRegistry.findModel(id);
-			if (host != null) {
-				new FindDeclarationsAction(host.getPluginBase()).run();
-			} else {
-				MessageDialog.openInformation(
-						PDEPlugin.getActiveWorkbenchShell(), 
-						PDEUIMessages.DependencyAnalysisSection_references,  
-						PDEUIMessages.DependencyAnalysisSection_noReferencesFound);  
-			}
-		}
 	}
 
 }
