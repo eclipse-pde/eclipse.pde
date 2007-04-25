@@ -476,7 +476,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(target.getAbsolutePath());
-			
+			Map retrieveProp = new HashMap();
+			retrieveProp.put("fetch.failonerror", "true");
+			runner.addUserProperties(retrieveProp);
 			//This has to be hardcoded here because of the way AntRunner stipulates that 
 			//loggers are passed in. Otherwise this would be a Foo.class.getName()
 			runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
