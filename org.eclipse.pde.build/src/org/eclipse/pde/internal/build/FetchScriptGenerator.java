@@ -477,7 +477,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(target.getAbsolutePath());
 			Map retrieveProp = new HashMap();
-			retrieveProp.put("fetch.failonerror", "true");
+			retrieveProp.put("fetch.failonerror", "true");  //$NON-NLS-1$//$NON-NLS-2$
 			runner.addUserProperties(retrieveProp);
 			//This has to be hardcoded here because of the way AntRunner stipulates that 
 			//loggers are passed in. Otherwise this would be a Foo.class.getName()
