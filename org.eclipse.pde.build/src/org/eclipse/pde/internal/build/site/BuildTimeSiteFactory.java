@@ -32,7 +32,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	// URLs from the the site will be built
 	private String[] sitePaths;
 
-	//	adress of the site used as a base
+	//	address of the site used as a base
 	private static String installedBaseLocation = null;
 
 	private boolean reportResolutionErrors;
