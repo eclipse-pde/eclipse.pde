@@ -24,6 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.plugin.IWritableDelimeter;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentObject;
@@ -32,7 +33,7 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends PluginDocumentNode implements
-		IPluginObject, IDocumentObject {
+		IPluginObject, IDocumentObject, IWritableDelimeter {
 
 	// TODO: MP: CCP TOUCH
 	private transient boolean fInTheModel;
@@ -267,6 +268,9 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
 		// TODO: MP: CCP TOUCH
 		super.reconnect(model, schema, parent);
@@ -274,6 +278,14 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		fInTheModel = false;
 		// Transient field:  Model
 		fModel = model;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		// NO-OP
+		// Child classes to override
 	}
 	
 }

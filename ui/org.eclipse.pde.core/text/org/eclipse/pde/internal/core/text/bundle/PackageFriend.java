@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.io.PrintWriter;
+
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 
 public class PackageFriend extends BundleObject {
@@ -38,10 +40,19 @@ public class PackageFriend extends BundleObject {
         return fPackageObject.getHeader();
     }
 
+    /**
+     * @param object
+     */
     public void reconnect(PackageObject object) {
     	// TODO: MP: CCP TOUCH
-    	
     	fPackageObject = object;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.core.bundle.BundleObject#writeDelimeter(java.io.PrintWriter)
+     */
+    public void writeDelimeter(PrintWriter writer) {
+    	writer.print(',');
     }
     
 }

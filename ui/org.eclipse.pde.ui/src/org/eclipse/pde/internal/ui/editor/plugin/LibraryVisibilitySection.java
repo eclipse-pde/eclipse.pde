@@ -182,7 +182,13 @@ public class LibraryVisibilitySection extends TableSection
 			handleRemove();
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
+		
+		if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
@@ -312,7 +318,6 @@ public class LibraryVisibilitySection extends TableSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(org.eclipse.swt.dnd.Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		// TODO: MP: CCP TOUCH
 		// Paste not supported for plug-ins that do not have a MANIFEST.MF
 		return false;
 	}

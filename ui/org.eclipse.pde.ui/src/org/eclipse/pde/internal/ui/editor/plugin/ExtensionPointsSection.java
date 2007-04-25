@@ -299,14 +299,12 @@ public class ExtensionPointsSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure an editable model was actually retrieved
 		if (model == null) {
 			return;
 		}
-		
 		IPluginBase pluginBase = model.getPluginBase();
 		try {
 			// Paste all source objects 
@@ -324,6 +322,7 @@ public class ExtensionPointsSection extends TableSection {
 					// Adjust all the source object transient field values to
 					// acceptable values
 					extensionPoint.reconnect(model, (IDocumentNode)pluginBase);
+					// Add the extension point to the plug-in
 					pluginBase.add((IPluginExtensionPoint)extensionPoint);
 				}
 			}
@@ -335,12 +334,15 @@ public class ExtensionPointsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
-	protected boolean canPaste(Object target, Object[] objects) {
-		// TODO: MP: CCP TOUCH
-		
-		if (objects[0] instanceof IPluginExtensionPoint)
-			return true;
-		return false;
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// All source objects must be extension points
+		// No restriction on duplicates
+		for (int i = 0; i < sourceObjects.length; i++) {
+			if ((sourceObjects[i] instanceof IPluginExtensionPoint) == false) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	protected void selectExtensionPoint(ISelection selection) {

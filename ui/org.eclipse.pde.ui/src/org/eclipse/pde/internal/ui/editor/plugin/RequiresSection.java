@@ -257,9 +257,12 @@ public class RequiresSection
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: CCP TOUCH
-		// TODO: MP: CCP: Consider moving this to the super class for all
+
 		if (!isEditable()) { return false; }
 		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -283,25 +286,40 @@ public class RequiresSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
-		if (sourceObjects[0] instanceof ImportObject) {
-			return true;
-		}
-		return false;
+		HashSet existingImportsSet = null;
+		// Only import objects that are not already existing imports can be
+		// pasted
+	   	for (int i = 0; i < sourceObjects.length; i++) {
+	   		// Only import objects allowed
+			if ((sourceObjects[i] instanceof ImportObject) == false) {
+				return false;
+			}
+			// Get the current import objects and store them for searching
+			// purposes
+			if (existingImportsSet == null) {
+				existingImportsSet = 
+					PluginSelectionDialog.getExistingImports(getModel(), false);
+			}
+			// Only import object that do not exist are allowed
+			ImportObject importObject = (ImportObject)sourceObjects[i];
+			if (existingImportsSet.contains(importObject.getImport().getId())) {
+				return false;
+			}
+	   	}
+		return true;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
+		// Get the model
 		IPluginModelBase model = getModel();
 		IPluginBase plugin = model.getPluginBase();
-		
+		// Ensure the model is a plugin model
 		if ((model instanceof IPluginModel) == false) {
 			return;
 		}
-		
 		try {
 			// Paste all source objects
 			for (int i = 0; i < sourceObjects.length; i++) {
@@ -321,8 +339,10 @@ public class RequiresSection
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	private IPluginModelBase getModel() {
-		// TODO: MP: CCP TOUCH
 		return (IPluginModelBase)getPage().getModel();
 	}
 	

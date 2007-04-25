@@ -269,7 +269,7 @@ public class PluginImport extends IdentifiablePluginObject implements
 			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version.trim());
 		}
 		// Write the textual representation
-		writer.println(element.write());
+		writer.print(element.write());
 	}
 	
 	/* (non-Javadoc)
@@ -277,9 +277,16 @@ public class PluginImport extends IdentifiablePluginObject implements
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		// TODO: MP: CCP TOUCH
-
 		super.reconnect(model, parent);
 		// No transient fields
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		writer.println(',');
+		writer.print(' ');
 	}
 	
 }

@@ -11,10 +11,13 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.ISharedImages;
@@ -209,25 +212,106 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
      * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
      */
     protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-    	// TODO: MP: CCP TOUCH
-    	// TODO: MP: CCP: Check all objects? For all?
-    	// A paste operation is possible if all the source objects are 
-    	// export package objects
+    	HashMap currentPackageFragments = null;
+    	// Only export package objects that represent existing package 
+    	// fragments within the Java project that this plugin.xml is stored
+    	// can be pasted
     	for (int i = 0; i < sourceObjects.length; i++) {
+    		// Only export package objects are allowed
 	    	if ((sourceObjects[i] instanceof ExportPackageObject) == false) {
+	    		return false;
+	    	}
+	    	// Get the package fragments that are allowed and store them to 
+	    	// assist in searching
+	    	if (currentPackageFragments == null) {
+	    		currentPackageFragments = createCurrentExportPackageMap();
+	    	}
+	    	// Only export packages that are in the list of allowed package
+	    	// fragments are allowed
+	    	ExportPackageObject exportPackageObject = 
+	    		(ExportPackageObject)sourceObjects[i];
+	    	if (currentPackageFragments.containsKey(exportPackageObject.getName()) == false) {
 	    		return false;
 	    	}
     	}
     	return true;
     }
     
+    /**
+     * @return
+     */
+    private HashMap createCurrentExportPackageMap() {
+    	// Dummy hash map created in order to return a defined but empty map
+    	HashMap packageFragments = new HashMap(0);
+    	// Get the model
+    	IPluginModelBase model = getModel();
+        // Ensure model is defined
+        if (model == null) {
+        	return packageFragments;
+        }
+        // Get the underlying resource
+        IResource resource = model.getUnderlyingResource();
+        // Ensure resource is defined
+        if (resource == null) {
+        	return packageFragments;
+        }
+        // Get the project
+        IProject project = resource.getProject();
+        // Ensure the project is defined
+        if (project == null) {
+        	return packageFragments;
+        }
+        // Ensure the project is a Java project
+        try {
+			if (project.hasNature(JavaCore.NATURE_ID) == false) {
+				return packageFragments;
+			}
+		} catch (CoreException e) {
+			return packageFragments;
+		}
+    	// Get the Java project
+    	IJavaProject javaProject = JavaCore.create(project);
+    	// Ensure the Java project is defined
+    	if (javaProject == null) {
+    		return packageFragments;
+    	}
+    	// Get the current packages associated with the export package header
+    	Vector currentExportPackages = null;
+    	if (fHeader == null) {
+    		currentExportPackages = new Vector();
+    	} else {
+    		currentExportPackages = fHeader.getPackageNames();
+    	}
+        // Get a hashtable of all the package fragments that are allowed to
+    	// be added to the current export package header
+    	// Generally, all package fragments contained in the same Java project
+    	// as the plugin manifest file
+    	// No duplicates are allowed and all current packages are excluded
+    	return PDEJavaHelper.getPackageFragmentsHash(
+    				javaProject, currentExportPackages, allowJavaPackages());    	
+    }
+    
+    /**
+     * @return
+     */
+    private IPluginModelBase getModel() {
+    	return (IPluginModelBase) getPage().getModel();
+    }
+            
+    /**
+     * @return
+     */
+    private boolean allowJavaPackages() {
+    	return "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
      */
     protected void doPaste(Object targetObject, Object[] sourceObjects) {
-    	// TODO: MP: CCP TOUCH
 		// Get the model
     	IBundleModel model = getBundleModel();
+    	// Ensure the model is defined
 		if (model == null) {
 			return;
 		}
@@ -257,9 +341,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				fHeader.addPackage(exportPackageObject);
 			}
 		}
-		// TODO: MP: CCP: Investigate why revert does not undo pasted element
-		// TODO: MP: CCP: Prevent duplicates from being pasted in all sections - CHECK ADD BUTTON HOW IT DOES IT
-		// TODO: MP: CCP: In imported packages, more complicated check ADD BUTTON - don't see packages that are exported
     }
 
 	protected void selectionChanged(IStructuredSelection sel) {

@@ -267,11 +267,32 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
      * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
      */
     protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-    	// TODO: MP: CCP TOUCH
-    	if (sourceObjects[0] instanceof ImportPackageObject) {
-    		return true;
+    	// Only non-duplicate import packages can be pasted 
+    	for (int i = 0; i < sourceObjects.length; i++) {
+    		// Only import package objects are allowed
+	    	if ((sourceObjects[i] instanceof ImportPackageObject) == false) {
+	    		return false;
+	    	}
+	    	// Note:  Should check if the package fragment represented by the
+	    	// import package object exists 
+	    	// (like in org.eclipse.pde.internal.ui.editor.plugin.ImportPackageSection.setElements(ConditionalListSelectionDialog))
+	    	// However, the operation is too performance intensive as it 
+	    	// requires searching all workspace and target plug-in
+	    	
+	    	// If the import package header is not defined, no import packages
+	    	// have been defined yet
+	    	if (fHeader == null) {
+	    		continue;
+	    	}
+	    	// Only import package objects that have not already been 
+	    	// specified are allowed (no duplicates)
+	    	ImportPackageObject importPackageObject = 
+	    		(ImportPackageObject)sourceObjects[i];
+	    	if (fHeader.hasPackage(importPackageObject.getName())) {
+	    		return false;
+	    	}
     	}
-    	return false;
+    	return true;
     }
     
     public void dispose() {
@@ -285,9 +306,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
      * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
      */
     protected void doPaste(Object targetObject, Object[] sourceObjects) {
-    	// TODO: MP: CCP TOUCH
 		// Get the model
     	IBundleModel model = getBundleModel();
+    	// Ensure the model is defined
 		if (model == null) {
 			return;
 		}
@@ -319,8 +340,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
     }
     
+	/**
+	 * @return
+	 */
 	private String getImportedPackageHeader() {
-		// TODO: MP: CCP TOUCH
 		return Constants.IMPORT_PACKAGE;
 	}
 

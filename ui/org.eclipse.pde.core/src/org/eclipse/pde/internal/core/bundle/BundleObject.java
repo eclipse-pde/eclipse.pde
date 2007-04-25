@@ -22,8 +22,9 @@ import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.plugin.IWritableDelimeter;
 
-public class BundleObject implements Serializable, IWritable {
+public class BundleObject implements Serializable, IWritable, IWritableDelimeter {
     private static final long serialVersionUID = 1L;
     
     private transient IBundleModel model;
@@ -86,6 +87,14 @@ public class BundleObject implements Serializable, IWritable {
 		// TODO: MP: CCP TOUCH
 		// Transient Field:  Model
 		this.model = model;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		writer.println(',');
+		writer.print(' ');
 	}
 	
 }

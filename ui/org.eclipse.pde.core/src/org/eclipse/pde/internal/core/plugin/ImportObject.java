@@ -20,7 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class ImportObject extends PluginReference implements IWritable, Serializable {
+public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimeter {
 
 	private static final long serialVersionUID = 1L;
 	private IPluginImport iimport;
@@ -63,9 +63,10 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		return super.getAdapter(key);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.PluginReference#reconnect(org.eclipse.pde.core.plugin.IPlugin)
+	 */
 	public void reconnect(IPlugin plugin) {
-		// TODO: MP: CCP TOUCH
-
 		super.reconnect(plugin);
 		// Field that has transient fields:  Import
 		IPluginModelBase model = plugin.getPluginModel();
@@ -73,6 +74,16 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		// TODO: MP: CCP: Make into interface?
 		if (iimport instanceof PluginImport) {
 			((PluginImport)iimport).reconnect(model, parent);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		// TODO: MP: CCP: Make into interface?
+		if (iimport instanceof PluginImport) {
+			((PluginImport)iimport).writeDelimeter(writer);
 		}
 	}
 	

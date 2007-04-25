@@ -175,6 +175,21 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}			
 		}
 	}
+
+	/**
+	 * @param parent
+	 * @return
+	 */
+	private static ISchema getSchema(IPluginParent parent) {
+		if (parent instanceof IPluginExtension) {
+			return getSchema((IPluginExtension)parent);
+		} else if (parent instanceof IPluginElement) {
+			return getSchema((IPluginElement)parent);
+		} else {
+			return null;
+		}
+	}
+	
 	private static ISchema getSchema(IPluginExtension extension) {
 		String point = extension.getPoint();
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -194,6 +209,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return null;
 	}
 	
+	/**
+	 * @param element
+	 * @return
+	 */
 	private static ISchema getSchema(IPluginElement element) {
 		// TODO: MP: CCP TOUCH
 		// TODO: MP: CCP: Merge with getSchemaElement
@@ -297,9 +316,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
 		
-		// TODO: MP: CCP: Check if editor is editable here
+		if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
@@ -317,6 +341,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		
 		return false;
 	}
+	
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginExtension
 				|| object instanceof IPluginElement) {
@@ -793,15 +818,148 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return output.toString();
 	}
-	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof IPluginExtension)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// Note:  Multi-select in tree viewer is disabled; but, this function
+		// can support multiple source objects
+		// Rule:  Element source objects are always pasted as children of the
+		// target object (if allowable)
+		// Rule:  Extension source objects are always pasted and are independent
+		// of the target object
+		// Ensure all the sourceObjects are either extensions or elements
+		boolean allExtensions = true;
+		boolean allElements = true;
+		for (int i = 0; i < sourceObjects.length; i++) {
+			if (sourceObjects[i] instanceof IPluginExtension) {
+				allElements = false;
+			} else if (sourceObjects[i] instanceof IPluginElement) {
+				allExtensions = false;
+			} else {
+				return false;
+			}
+		}
+		// Because of the extension rule, we can paste all extension source
+		// objects
+		if (allExtensions) {
 			return true;
-		if (objects[0] instanceof IPluginElement
-				&& target instanceof IPluginParent)
+		}
+		// Pasting a mixture of elements and extensions is not supported
+		// (or wise from the users perspective)
+		if (allElements == false) {
+			return false;
+		}
+		// Ensure the target object can have children 
+		if ((targetObject instanceof IPluginParent) == false) {
+			return false;
+		} else if ((targetObject instanceof IDocumentNode) == false) {
+			return false;
+		}
+		// Retrieve the schema corresponding to the target object		
+		IPluginParent targetParent = (IPluginParent)targetObject;
+		ISchema schema = getSchema(targetParent);
+		// If there is no schema, then a source object can be pasted as a 
+		// child of any target object
+		if (schema == null) {
 			return true;
-		return false;
+		}
+		// Determine the element name of the target object
+		// getName() does not work for extensions for some reason
+		String tagName = null;
+		if (targetParent instanceof IPluginExtension) {
+			tagName = "extension"; //$NON-NLS-1$
+		} else {
+			tagName = targetParent.getName();
+		}
+		// Retrieve the element schema for the target object
+		ISchemaElement schemaElement = schema.findElement(tagName);
+		// Ensure we found a schema element and it is a schema complex type
+		if (schemaElement == null) {
+			// Something is seriously wrong, we have a schema
+			return false;
+		} else if ((schemaElement.getType() instanceof ISchemaComplexType) == false) {
+			// Something is seriously wrong, we are a plugin parent
+			return false;
+		}
+		// We have a schema complex type.  Either the target object has 
+		// attributes or the element has children.
+		// Generate the list of element proposals
+		HashSet elementSet = 
+			XMLElementProposalComputer.computeElementProposal(
+					schemaElement, (IDocumentNode)targetObject);
+		// Determine whether we can paste the source elements as children of
+		// the target object
+		if (sourceObjects.length > 1) {
+			return canPasteSourceElements((IPluginElement[])sourceObjects, elementSet);
+		}
+		return canPasteSourceElement((IPluginElement)sourceObjects[0], elementSet);
 	}
 
+	/**
+	 * @param sourceElements
+	 * @param targetElementSet
+	 * @return
+	 */
+	private boolean canPasteSourceElements(IPluginElement[] sourceElements,
+			HashSet targetElementSet) {
+		// Performance optimization
+		// HashSet of schema elements is not comparable for the source
+		// objects (schema elements are transient)
+		// Create a new HashSet with element names for comparison		
+		HashSet targetElementNameSet = new HashSet();
+		Iterator iterator = targetElementSet.iterator();
+		while (iterator.hasNext()) {
+			targetElementNameSet.add(((ISchemaElement)iterator.next()).getName());
+		}
+		// Paste will be enabled only if all source objects can be pasted 
+		// as children into the target element
+		// Limitation:  Multiplicity checks will be compromised because we
+		// are pasting multiple elements as a single transaction.  The 
+		// mulitplicity check is computed on the current static state of the
+		// target object with the assumption one new element will be added.
+		// Obviously, adding more than one element can invalidate the check
+		// due to choice, sequence multiplicity constraints.  Even if source
+		// elements that are pasted violate multiplicity constraints the 
+		// extensions builder will flag them with errors
+		for (int i = 0; i < sourceElements.length; i++) {
+			String sourceTagName = sourceElements[i].getName();
+			if (targetElementNameSet.contains(sourceTagName) == false) {
+				return false;
+			}
+		}		
+		return true;
+	}
+	
+	/**
+	 * @param sourceElement
+	 * @param targetElementSet
+	 * @return
+	 */
+	private boolean canPasteSourceElement(IPluginElement sourceElement, 
+			HashSet targetElementSet) {
+		boolean canPaste = false;
+		// Get the source element tag name
+		String sourceTagName = sourceElement.getName();
+		// Iterate over set of valid element proposals
+		Iterator iterator = targetElementSet.iterator();
+		while (iterator.hasNext()) {
+			// Get the proposal element tag name
+			String targetTagName = ((ISchemaElement)iterator.next()).getName();
+			// Only a source element that is found ithin the set of element 
+			// proposals can be pasted
+			if (sourceTagName.equals(targetTagName)) {
+				canPaste = true;
+				break;
+			}
+		}			
+		return canPaste;
+	}
+	
+	/**
+	 * @return
+	 */
 	private IPluginModelBase getPluginModelBase() {
 		// TODO: MP: CCP TOUCH
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -822,18 +980,15 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
+		// Note:  Multi-select in tree viewer is disabled; but, this function
+		// can support multiple source objects
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
+		// Ensure the model is defined
 		if (model == null) {
 			return;
 		}
-		
 		IPluginBase pluginBase = model.getPluginBase();
-		// TODO: MP: CCP: Use schema in canPaste() to prevent pasting in
-		// arbitrary location / target ??
-		// TODO: MP: CCP: How to handle where object gets pasted?  Always as child? As sibling? Depend on schema?
-		// TODO: MP: Allow XML text to be pasted to clipboard for text transfer of plain name? Source Page?  Any other text editor
 		try {
 			// Paste all source objects into the target object
 			for (int i = 0; i < sourceObjects.length; i++) {
@@ -846,9 +1001,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					IDocumentExtension extension = (IDocumentExtension)sourceObject;
 					// Retrieve the associated schema if there is one
 					ISchema schema = getSchema((IPluginExtension)extension);
-					// Retrieve
-
-					
 					// Adjust all the source object transient field values to
 					// acceptable values
 					extension.reconnect(model, schema, (IDocumentNode)pluginBase);

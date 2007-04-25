@@ -95,6 +95,9 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 		return buffer.toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.IDocumentExtensionPoint#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
 	public void reconnect(ISharedPluginModel model, IDocumentNode parent) {
 		// TODO: MP: CCP TOUCH
 		super.reconnect(model, null, parent);
@@ -107,6 +110,13 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 		// TODO: MP: CCP TOUCH
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		writer.println(getIndent());
 	}
 	
 }

@@ -255,8 +255,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		super.dispose();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: CCP TOUCH
 
 		if (!isEditable()) { return false; }
 		
@@ -643,7 +645,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
+		// Get the model
 		IPluginModelBase model = getModel();
 		IPluginBase plugin = model.getPluginBase();
 		try {
@@ -669,14 +671,43 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
-		if (sourceObjects[0] instanceof IPluginLibrary) {
-			return true;
-		}
-		return false;
+		HashSet librarySet = null;
+		// Only source objects that are plugin libraries that have not already
+		// been specified can be pasted
+	   	for (int i = 0; i < sourceObjects.length; i++) {
+	   		// Only plugin libraries are allowed
+	    	if ((sourceObjects[i] instanceof IPluginLibrary) == false) {
+	    		return false;
+	    	}
+	    	// We have a plugin library
+	    	// Get the current libraries already specified and store them in
+	    	// a set to assist with searching
+	    	if (librarySet == null) {
+	    		librarySet = createPluginLibrarySet();
+	    	}
+	    	// No duplicate libraries are allowed
+	    	IPluginLibrary library = (IPluginLibrary)sourceObjects[i];
+	    	if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(library.getName())))) {
+	    		return false;
+	    	}
+    	}
+    	return true;
 	}
     
-    protected void entryModified(Object entry, String value) {
+    /**
+     * @return
+     */
+    private HashSet createPluginLibrarySet() {
+    	// Get the current libraries and add them to a set for easy searching
+		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
+		HashSet librarySet = new HashSet();
+		for (int i = 0; i < libraries.length; i++) {
+			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
+		}
+		return librarySet;
+	}
+
+	protected void entryModified(Object entry, String value) {
 		try {
 			IPluginModelBase model = getModel();
 			IProject project = model.getUnderlyingResource().getProject();
@@ -694,6 +725,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 	
+    /**
+     * @return
+     */
     private IPluginModelBase getModel() {
     	return (IPluginModelBase)getPage().getModel();
     }

@@ -444,6 +444,9 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		markDirty();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	protected void selectionChanged(IStructuredSelection sel) {
 		// Update global selection
 		// TODO: MP: CCP TOUCH
@@ -479,7 +482,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: CCP TOUCH
 		
 		if (!isEditable()) { return false; }
 		
@@ -505,33 +507,85 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
-		if (sourceObjects[0] instanceof String) {
-			return true;
-		}
-		return false;
+		HashSet secondaryDepSet = null;
+		// Only String objects representing non-duplicate secondary 
+		// dependencies can be pasted
+	   	for (int i = 0; i < sourceObjects.length; i++) {
+	   		// Only String objects are allowed
+			if ((sourceObjects[i] instanceof String) == false) {
+				return false;
+			}
+			// Get the current secondary dependencies and store them to 
+			// assist in searching
+			if (secondaryDepSet == null) {
+				secondaryDepSet = createSecondaryDepSet();
+			}
+			// No duplicate secondary dependencies allowed
+			String secondaryDep = (String)sourceObjects[i];
+			if (secondaryDepSet.contains(secondaryDep)) {
+				return false;
+			}
+	   	}
+		return true;
 	}	
+	
+	/**
+	 * @return
+	 */
+	private HashSet createSecondaryDepSet() {
+		HashSet secondaryDepSet = new HashSet();
+		// Get the build model
+		IBuildModel buildModel = getBuildModel(true);
+		// Ensure the build model is defined
+		if (buildModel == null) {
+			return secondaryDepSet;
+		}
+		// Get the root build object
+	    IBuild build = buildModel.getBuild();
+	    // Get the secondary dependencies build entry
+		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		// Ensure the build entry is defined
+		if (entry == null) {
+			return secondaryDepSet;
+		}
+		// Get the token values for the build entry
+		String[] tokens = entry.getTokens();
+		// Ensure we have token values
+		if (tokens.length == 0) {
+			return secondaryDepSet;
+		}
+		// Add all token values to the dependencies set
+		for (int i = 0; i < tokens.length; i++) {
+			secondaryDepSet.add(tokens[i]);
+		}
+		return secondaryDepSet;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
+		// Get the build model
 		IBuildModel buildModel = getBuildModel(true);
+		// Ensure the build model is defined
+		if (buildModel == null) {
+			return;
+		}
+		// Get the root build object
 	    IBuild build = buildModel.getBuild();
+	    // Get the secondary dependencies build entry
 		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);		
-
 		try {
-		    if (entry == null) {
-		        entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-		        build.add(entry);
-		    }
-		
 			// Paste all source objects
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
 				if (sourceObject instanceof String) {
-					// Import object
+					// If the build entry is not defined, create one
+				    if (entry == null) {
+				        entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+				        build.add(entry);
+				    }
+				    // Add the source object token value to the build entry
 					entry.addToken((String)sourceObject);
 				}
 			}

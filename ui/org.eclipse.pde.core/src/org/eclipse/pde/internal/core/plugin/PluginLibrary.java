@@ -182,17 +182,29 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		return list;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
 		// TODO: MP: CCP TOUCH
-
-		writer.println(PDEXMLHelper.getWritableString(getName()));
+		writer.print(PDEXMLHelper.getWritableString(getName()));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
+	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		// TODO: MP: CCP TOUCH
-		
 		super.reconnect(model, parent);
 		// No transient fields
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		writer.println(',');
+		writer.print(' ');
 	}	
 	
 }

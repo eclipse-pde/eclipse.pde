@@ -124,7 +124,7 @@ public class ExportPackageVisibilitySection extends TableSection
 
         EditableTablePart tablePart = getTablePart();
         tablePart.setEditable(getPage().getModel().isEditable());
-        createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
+        createViewerPartControl(container, SWT.MULTI, 2, toolkit);
         fFriendViewer = tablePart.getTableViewer();
         fFriendViewer.setContentProvider(new TableContentProvider());
         fFriendViewer.setLabelProvider(new TableLabelProvider());
@@ -172,8 +172,10 @@ public class ExportPackageVisibilitySection extends TableSection
 			handleRemove();
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: CCP TOUCH
 		
     	if (!isEditable()) { return false; }
 		
@@ -198,24 +200,32 @@ public class ExportPackageVisibilitySection extends TableSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
-		// TODO: MP: CCP: Should test for duplicates and disable - Check add
 		// One export package object must be selected
-		if (isOneSelectedObject() == false) {
+		if (isOneObjectSelected() == false) {
 			return false;
 		}
-    	// All source objects have to be package friend objects
+    	// All source objects have to be package friend objects and not already
+		// be a friend of the selected export package object
     	for (int i = 0; i < sourceObjects.length; i++) {
+    		// Only package friends allowed
 	    	if ((sourceObjects[i] instanceof PackageFriend) == false) {
+	    		return false;
+	    	}
+	    	// No duplicate package friends allowed
+	    	PackageFriend friend = (PackageFriend)sourceObjects[i];
+	    	if (fSelectedObjects[0].hasFriend(friend.getName())) {
 	    		return false;
 	    	}
     	}
     	return true;
 	}
 	
-	private boolean isOneSelectedObject() {
-		// TODO: MP: CCP TOUCH
-		if ((fSelectedObjects == null) || (fSelectedObjects.length != 1)) {
+	/**
+	 * @return
+	 */
+	private boolean isOneObjectSelected() {
+		if ((fSelectedObjects == null) || 
+				(fSelectedObjects.length != 1)) {
 			return false;
 		}
 		return true;
@@ -225,12 +235,11 @@ public class ExportPackageVisibilitySection extends TableSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
-		// TODO: MP: CCP TOUCH
 		// Paste all source objects
 		for (int i = 0; i < sourceObjects.length; i++) {
 			Object sourceObject = sourceObjects[i];
 			if ((sourceObject instanceof PackageFriend) &&
-					isOneSelectedObject()) {
+					isOneObjectSelected()) {
 				// Package friend object
 				PackageFriend friend = (PackageFriend)sourceObject;
 				// Adjust all the source object transient field values to

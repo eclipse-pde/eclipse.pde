@@ -35,7 +35,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
 public abstract class PluginObject extends PlatformObject implements
-		IPluginObject, ISourceObject, Serializable {
+		IPluginObject, ISourceObject, Serializable, IWritableDelimeter {
 	
 	protected String fName;
 	// TODO: MP: CCP TOUCH
@@ -243,9 +243,12 @@ public abstract class PluginObject extends PlatformObject implements
 		return super.getAdapter(adapter);
 	}
 	
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		// TODO: MP: CCP TOUCH
-		
 		// Transient Field:  In The Model
 		fInTheModel = false;
 		// Transient Field:  Model
@@ -256,5 +259,12 @@ public abstract class PluginObject extends PlatformObject implements
 		fTranslatedName = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		// NO-OP
+		// Child classes to override
+	}
 	
 }

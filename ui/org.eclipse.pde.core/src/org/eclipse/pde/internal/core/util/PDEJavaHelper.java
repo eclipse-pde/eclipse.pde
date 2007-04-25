@@ -239,7 +239,26 @@ public class PDEJavaHelper {
 		return null;
     }
     
+    /**
+     * @param jProject
+     * @param existingPackages
+     * @param allowJava
+     * @return
+     */
     public static IPackageFragment[] getPackageFragments (IJavaProject jProject, Collection existingPackages, boolean allowJava) {
+		HashMap map = getPackageFragmentsHash(jProject, existingPackages,
+				allowJava);
+		return (IPackageFragment[]) map.values().toArray(new IPackageFragment[map.size()]);
+	}
+
+	/**
+	 * @param jProject
+	 * @param existingPackages
+	 * @param allowJava
+	 * @return
+	 */
+	public static HashMap getPackageFragmentsHash(IJavaProject jProject,
+			Collection existingPackages, boolean allowJava) {
 		HashMap map = new HashMap();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
@@ -258,7 +277,7 @@ public class PDEJavaHelper {
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragment[]) map.values().toArray(new IPackageFragment[map.size()]);
+		return map;
 	}
 	
 	private static IPackageFragmentRoot[] getRoots(IJavaProject jProject) {

@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -106,17 +105,32 @@ public abstract class StructuredViewerSection extends PDESection {
 		if (objects!=null && objects.length>0) {
 			return canPaste(target, objects);
 		}
-		return clipboard.getContents(TextTransfer.getInstance()) != null;
+		// TODO: MP: CCP TOUCH		
+		return false;
 	}
+	
 	protected ISelection getViewerSelection() {
 		return fViewerPart.getViewer().getSelection();
 	}
+	
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// NO-OP
+		// Children will override to provide fuctionality
 	}
 	
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return false;
 	}
+	
 	public void setFocus() {
 		fViewerPart.getControl().setFocus();
 	}
