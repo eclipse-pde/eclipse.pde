@@ -71,6 +71,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -95,6 +96,8 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	private static String ADD = PDEUIMessages.RequiresSection_add;
 	private static String REMOVE = PDEUIMessages.RequiresSection_delete;
 	private static String OPEN = PDEUIMessages.RequiresSection_open;
+	private static String UP = PDEUIMessages.RequiresSection_up;
+	private static String DOWN = PDEUIMessages.RequiresSection_down;
 	
 	class ContentProvider extends DefaultTableProvider {
 
@@ -162,7 +165,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	}
 
 	public DependencyManagementSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT, new String[] { ADD, REMOVE});
+		super(formPage, parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT, new String[] { ADD, REMOVE, UP, DOWN});
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
 		IBuildModel model = getBuildModel(false);
 		if (model != null) {
@@ -253,8 +256,11 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		try {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			fAdditionalTable.setInput(model.getPluginBase());
-			getTablePart().setButtonEnabled(0, model.isEditable());
-			getTablePart().setButtonEnabled(1, false);
+			TablePart part = getTablePart();
+			part.setButtonEnabled(0, model.isEditable());
+			part.setButtonEnabled(1, false);
+			part.setButtonEnabled(2, false);
+			part.setButtonEnabled(3, false);
 			
 			IBuildModel build = getBuildModel(false);
 			if (build != null) 
@@ -303,6 +309,12 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				break;
 			case 1:
 				handleRemove();
+				break;
+			case 2:
+				handleUp();
+				break;
+			case 3:
+				handleDown();
 				break;
 		}
 	}
@@ -436,12 +448,19 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		// Update global selection
 		// TODO: MP: CCP TOUCH
 		getPage().getPDEEditor().setSelection(sel);
+		updateButtons();
+	}
+	
+	private void updateButtons() {
+		TablePart part = getTablePart();
+		Table table = fAdditionalTable.getTable();
+		int index = table.getSelectionIndex();
+		part.setButtonEnabled(1, index != -1);
 
-		Object item = sel.getFirstElement();
-		if (item == null) {
-			getTablePart().setButtonEnabled(1, false);
-		} else 
-			getTablePart().setButtonEnabled(1, true); 
+		int totalElems = table.getItemCount();
+		boolean canMove = totalElems > 1 && table.getSelectionCount() == 1;
+		part.setButtonEnabled(2, index != -1 && canMove &&  index > 0);
+		part.setButtonEnabled(3, index != -1 && canMove && index < totalElems - 1);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -551,6 +570,28 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				}
 			});
 		}
+	}
+	
+	private void handleUp() {
+		movePlugins(-1);
+	}
+
+	private void handleDown() {
+		movePlugins(1);
+	}
+
+	private void movePlugins(int newOffset) {
+		int index = fAdditionalTable.getTable().getSelectionIndex();
+		if (index == -1)
+			return;	// saftey check
+		IBuildModel model = getBuildModel(false);
+		if (model != null) {
+			IBuild build = model.getBuild();
+			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			if (entry instanceof org.eclipse.pde.internal.core.text.build.BuildEntry)
+				((org.eclipse.pde.internal.core.text.build.BuildEntry)entry).swap(index, index + newOffset);
+		}
+		updateButtons();
 	}
 	
 	protected boolean createCount() { return true; }

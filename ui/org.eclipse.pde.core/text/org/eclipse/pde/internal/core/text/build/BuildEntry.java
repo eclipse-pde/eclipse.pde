@@ -176,4 +176,12 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		return buffer.toString();
 	}
 
+	public void swap(int index1, int index2) {
+		Object obj1 = fTokens.get(index1);
+		Object obj2 = fTokens.set(index2, obj1);
+		fTokens.set(index1, obj2);
+		getModel().fireModelObjectChanged(this, getName(), 
+				new Object[] {obj1, obj2}, new Object[] {obj2, obj1});
+	}
+
 }
