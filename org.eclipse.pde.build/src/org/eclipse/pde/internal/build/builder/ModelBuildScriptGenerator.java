@@ -521,14 +521,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void genarateIdReplacementCall(String location) {
+		if (hasQualifier())
+			script.println("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
+
+	private boolean hasQualifier() {
 		Properties bundleProperties = (Properties) model.getUserObject();
 		if (bundleProperties == null)
-			return;
+			return false;
 
-		String qualifier = bundleProperties.getProperty(PROPERTY_QUALIFIER);
-		if (qualifier == null)
-			return;
-		script.println("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		if (bundleProperties.getProperty(PROPERTY_QUALIFIER) == null)
+			return false;
+		return true;
 	}
 
 	private void generatePermissionProperties(String directory) throws CoreException {
@@ -640,7 +644,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
 		script.println();
 
-		script.printTaskDef("eclipse.versionReplacer", "org.eclipse.pde.internal.build.tasks.GenericVersionReplacer"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (hasQualifier())		
+			script.printTaskDef("eclipse.versionReplacer", "org.eclipse.pde.internal.build.tasks.GenericVersionReplacer"); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		script.println();
 		script.printProperty(PROPERTY_BASE_WS, Utils.getPropertyFormat(PROPERTY_WS));
 		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
