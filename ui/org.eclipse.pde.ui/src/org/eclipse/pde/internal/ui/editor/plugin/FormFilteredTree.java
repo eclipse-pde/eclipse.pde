@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class FormFilteredTree extends FilteredTree {
@@ -89,7 +90,29 @@ public class FormFilteredTree extends FilteredTree {
 		// Required to enable Ctrl-V initiated paste operation on first focus
 		// See Bug # 157973
 		fEntryFilter.setFormEntryListener(new FormEntryAdapter(part) {
-			// Use adapter defaults
+			// Override all callback methods except focusGained
+			// See Bug # 184085
+			public void browseButtonSelected(FormEntry entry) {
+				// NO-OP
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				// NO-OP
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				// NO-OP
+			}
+			public void linkExited(HyperlinkEvent e) {
+				// NO-OP
+			}
+			public void selectionChanged(FormEntry entry) {
+				// NO-OP
+			}
+			public void textDirty(FormEntry entry) {
+				// NO-OP
+			}
+			public void textValueChanged(FormEntry entry) {
+				// NO-OP
+			}
 		});
 	}
 	
