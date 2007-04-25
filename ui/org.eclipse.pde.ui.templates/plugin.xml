@@ -18,6 +18,16 @@
          </description>
       </wizard>
       <wizard
+            name="%newExtension.templates.helloCmd.name"
+            template="org.eclipse.pde.ui.templates.helloWorldCmd"
+            icon="$nl$/icons/etool16/newex_wiz.gif"
+            category="templates"
+            id="org.eclipse.pde.ui.newExtension.helloCmd">
+         <description>
+            %newExtension.templates.helloCmd.desc
+         </description>
+      </wizard>
+      <wizard
             name="%newExtension.templates.view.name"
             template="org.eclipse.pde.ui.templates.view"
             icon="$nl$/icons/etool16/newex_wiz.gif"
@@ -179,6 +189,12 @@
             id="org.eclipse.pde.ui.templates.helloWorld">
       </template>
       <template
+            contributingId="org.eclipse.ui.commands"
+            name="%template.helloWorldCmd.name"
+            class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldCmdTemplate"
+            id="org.eclipse.pde.ui.templates.helloWorldCmd">
+      </template>
+      <template
             contributingId="org.eclipse.ui.propertyPages"
             name="%template.propertyPages.name"
             class="org.eclipse.pde.internal.ui.templates.ide.PropertyPageTemplate"
@@ -267,6 +283,15 @@
             id="org.eclipse.pde.ui.pluginContent.helloWorld">
          <description>
             %pluginContent.helloWorld.description
+         </description>
+      </wizard>
+      <wizard
+            name="%pluginContent.helloWorldCmd.name"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldCmdNewWizard"
+            id="org.eclipse.pde.ui.pluginContent.helloWorldCmd">
+         <description>
+            %pluginContent.helloWorldCmd.description
          </description>
       </wizard>
       <wizard
