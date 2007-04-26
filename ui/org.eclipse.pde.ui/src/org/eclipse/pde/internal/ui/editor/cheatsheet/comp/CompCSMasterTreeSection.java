@@ -464,6 +464,7 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			// file
 			fModel = ((ICompCS)object).getModel();
 			// Reset the treeviewer using the new model as input
+			// TODO: MP: CompCS:  This is redundant and should be deleted
 			fTreeViewer.setInput(fModel);
 			// Re-initialize the tree viewer.  Makes a details page selection
 			initializeTreeViewer();

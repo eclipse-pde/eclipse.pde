@@ -779,7 +779,11 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 				if (entry != null && entry.contains(libName))
 					entry.removeToken(libName);
 				
-				build.remove(build.getEntry(IBuildEntry.JAR_PREFIX + libName));
+				String entryName = IBuildEntry.JAR_PREFIX + libName;
+				entry = build.getEntry(entryName);
+				if (entry != null) {
+					build.remove(entry);
+				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
