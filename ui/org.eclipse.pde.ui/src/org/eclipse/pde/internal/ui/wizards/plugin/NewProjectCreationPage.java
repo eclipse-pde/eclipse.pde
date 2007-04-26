@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -52,6 +53,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Combo fTargetCombo;
 	private Combo fOSGiCombo;
 	private Button fOSGIButton;
+	
+	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
+	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment){
 		super(pageName);
@@ -123,10 +127,13 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
+		
+		IDialogSettings settings = getDialogSettings();
+		boolean osgiProject = (settings == null) ? false : settings.getBoolean(S_OSGI_PROJECT);
 		    
 		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
     	fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);	    
-	    fEclipseButton.setSelection(fData.getOSGiFramework() == null);
+	    fEclipseButton.setSelection(!osgiProject);
 	    fEclipseButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
@@ -135,18 +142,35 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
-		if (PDECore.getDefault().areModelsInitialized())
-			fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
-		else
-			fTargetCombo.setText(ICoreConstants.TARGET33);
+		boolean comboInitialized = false;
+		if (settings != null && !osgiProject) {
+			String text = settings.get(S_TARGET_NAME);
+			comboInitialized = (text != null && fTargetCombo.indexOf(text) >= 0);
+			if (comboInitialized)
+				fTargetCombo.setText(text);
+		}
+		if (!comboInitialized) {
+			if (PDECore.getDefault().areModelsInitialized())
+				fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
+			else
+				fTargetCombo.setText(ICoreConstants.TARGET33);
+		}
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   
-	    fOSGIButton.setSelection(fData.getOSGiFramework() != null);
+	    fOSGIButton.setSelection(osgiProject);
 	    
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard}); 
-		fOSGiCombo.setText(ICoreConstants.EQUINOX);	
+		comboInitialized = false;
+		if (settings != null && osgiProject) {
+			String text = settings.get(S_TARGET_NAME);
+			comboInitialized = (text != null && fOSGiCombo.indexOf(text) >= 0);
+			if (comboInitialized)
+				fOSGiCombo.setText(text);
+		}
+		if (!comboInitialized)
+			fOSGiCombo.setText(ICoreConstants.EQUINOX);	
 		
 	}
 	
@@ -235,6 +259,12 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     	setErrorMessage(null);
     	setMessage(null);
     	return true;
+    }
+    
+    protected void saveSettings(IDialogSettings settings) {
+    	String targetName = fEclipseButton.getSelection() ? fTargetCombo.getText() : fOSGiCombo.getText();
+		settings.put(S_TARGET_NAME, targetName);
+    	settings.put(S_OSGI_PROJECT, !fEclipseButton.getSelection()); 	
     }
 	
 }

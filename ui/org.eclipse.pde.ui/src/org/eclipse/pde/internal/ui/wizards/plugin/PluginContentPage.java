@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Locale;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
@@ -47,6 +48,10 @@ public class PluginContentPage extends ContentPage {
 	private Label fLabel;
     private Button fYesButton;
     private Button fNoButton;
+    
+    private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
+    private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
+    private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
     
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -115,10 +120,12 @@ public class PluginContentPage extends ContentPage {
 		gd.horizontalSpan = 2;
 		classGroup.setLayoutData(gd);
 		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup); 
+		
+		IDialogSettings settings = getDialogSettings();
 
 		fGenerateClass = new Button(classGroup, SWT.CHECK);
 		fGenerateClass.setText(PDEUIMessages.ContentPage_generate); 
-		fGenerateClass.setSelection(true);
+		fGenerateClass.setSelection((settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fGenerateClass.setLayoutData(gd);
@@ -140,7 +147,7 @@ public class PluginContentPage extends ContentPage {
 
 		fUIPlugin = new Button(classGroup, SWT.CHECK);
 		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); 
-		fUIPlugin.setSelection(true);
+		fUIPlugin.setSelection((settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fUIPlugin.setLayoutData(gd);
@@ -158,7 +165,7 @@ public class PluginContentPage extends ContentPage {
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
-		data.setRCPApplicationPlugin(!fData.isSimple() && fYesButton.getSelection());
+		data.setRCPApplicationPlugin(!fData.isSimple() && fRCPGroup.isVisible() && fYesButton.getSelection());
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -183,9 +190,12 @@ public class PluginContentPage extends ContentPage {
 	    fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion); 
 	    fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    
+	    IDialogSettings settings = getDialogSettings();
+	    boolean rcpApp = (settings != null) ? settings.getBoolean(S_RCP_PLUGIN) : false;
+	    
 	    fYesButton = new Button(comp, SWT.RADIO);
 	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); 
-	    fYesButton.setSelection(false);
+	    fYesButton.setSelection(rcpApp);
 	    gd = new GridData();
 	    gd.widthHint = getButtonWidthHint(fYesButton);
 	    fYesButton.setLayoutData(gd);
@@ -198,7 +208,7 @@ public class PluginContentPage extends ContentPage {
 	    
 	    fNoButton = new Button(comp, SWT.RADIO);
 	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); 
-	    fNoButton.setSelection(true);
+	    fNoButton.setSelection(!rcpApp);
 	    gd = new GridData();
 	    gd.widthHint = getButtonWidthHint(fNoButton);
 	    fNoButton.setLayoutData(gd);		
@@ -215,7 +225,8 @@ public class PluginContentPage extends ContentPage {
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fUIPlugin.setEnabled(!fData.isSimple() && !pureOSGi);
-			if (pureOSGi)
+			// if fUIPlugin is disabled, set selection to false
+			if (!fUIPlugin.isEnabled())
 				fUIPlugin.setSelection(false);
 
 			// plugin class group
@@ -261,5 +272,12 @@ public class PluginContentPage extends ContentPage {
 			button.setFont(JFaceResources.getDialogFont());
 		return Math.max(50,
 				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	}
+	
+	protected void saveSettings(IDialogSettings settings) {
+		settings.put(S_GENERATE_ACTIVATOR, !fGenerateClass.getSelection());
+		if (fUIPlugin.isEnabled())
+			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
+		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
 }

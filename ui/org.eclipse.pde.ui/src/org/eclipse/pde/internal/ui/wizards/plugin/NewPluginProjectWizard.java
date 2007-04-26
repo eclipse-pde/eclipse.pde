@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -44,7 +45,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private PluginFieldData fPluginData;
 	private IProjectProvider fProjectProvider;
 	private NewProjectCreationPage fMainPage;
-	private ContentPage fContentPage;
+	private PluginContentPage fContentPage;
 	private TemplateListSelectionPage fWizardListPage;
 	private boolean fPureOSGi;
 
@@ -114,6 +115,11 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		try {
 			fMainPage.updateData();
 			fContentPage.updateData();
+			IDialogSettings settings = getDialogSettings();
+			if (settings != null) {
+				fMainPage.saveSettings(settings);
+				fContentPage.saveSettings(settings);
+			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true,
