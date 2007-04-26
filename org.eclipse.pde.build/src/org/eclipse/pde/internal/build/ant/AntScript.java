@@ -327,7 +327,7 @@ public class AntScript implements IAntScript {
 	 */
 	public void printString(String string) {
 		printTab();
-		output.println(string);
+		output.println(getEscaped(string));
 	}
 
 	/**
@@ -338,7 +338,7 @@ public class AntScript implements IAntScript {
 	public void printComment(String comment) {
 		printTab();
 		output.print("<!-- "); //$NON-NLS-1$
-		output.print(comment);
+		output.print(getEscaped(comment));
 		output.println(" -->"); //$NON-NLS-1$
 	}
 
@@ -357,7 +357,7 @@ public class AntScript implements IAntScript {
 			value = ""; //$NON-NLS-1$
 		if (value != null) {
 			output.print(" "); //$NON-NLS-1$
-			output.print(name);
+			output.print(getEscaped(name));
 			output.print("="); //$NON-NLS-1$
 			printQuotes(value);
 		}
@@ -527,9 +527,9 @@ public class AntScript implements IAntScript {
 	 */
 	public void printPathStructure(String tag, String id, List paths) {
 		printTab();
-		print("<" + tag); //$NON-NLS-1$
+		print("<" + getEscaped(tag)); //$NON-NLS-1$
 		if (id != null)
-			print(" id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			print(" id=\"" + getEscaped(id) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		print(">"); //$NON-NLS-1$
 		println();
 
@@ -554,6 +554,7 @@ public class AntScript implements IAntScript {
 	 * @param name the parameter name
 	 * @param value the parameter value
 	 */
+	
 	protected void printParam(String name, String value) {
 		printTab();
 		output.print("<param"); //$NON-NLS-1$
@@ -615,7 +616,7 @@ public class AntScript implements IAntScript {
 	 */
 	protected void printQuotes(String message) {
 		output.print("\""); //$NON-NLS-1$
-		output.print(message);
+		output.print(getEscaped(message));
 		output.print("\""); //$NON-NLS-1$
 	}
 
@@ -658,7 +659,7 @@ public class AntScript implements IAntScript {
 	 */
 	public void println(String message) {
 		printTab();
-		output.println(message);
+		output.println(getEscaped(message));
 	}
 
 	/**
@@ -667,7 +668,7 @@ public class AntScript implements IAntScript {
 	 * @param message
 	 */
 	public void print(String message) {
-		output.print(message);
+		output.print(getEscaped(message));
 	}
 
 	/**
@@ -735,8 +736,8 @@ public class AntScript implements IAntScript {
 	public void printChmod(String dir, String rights, String files) {
 		printTab();
 		output.print("<chmod perm=\"" + rights + "\" "); //$NON-NLS-1$//$NON-NLS-2$
-		output.print("dir=\"" + dir + "\" "); //$NON-NLS-1$//$NON-NLS-2$
-		output.print("includes=\"" + files + "\" /> "); //$NON-NLS-1$ //$NON-NLS-2$
+		output.print("dir=\"" + getEscaped(dir) + "\" "); //$NON-NLS-1$//$NON-NLS-2$
+		output.print("includes=\"" + getEscaped(files) + "\" /> "); //$NON-NLS-1$ //$NON-NLS-2$
 		output.println();
 	}
 
@@ -753,7 +754,7 @@ public class AntScript implements IAntScript {
 
 	public void printGZip(String source, String destination) {
 		printTab();
-		output.println("<gzip src=\"" + source + "\" zipfile=\"" + destination + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		output.println("<gzip src=\"" + getEscaped(source) + "\" zipfile=\"" + getEscaped(destination) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -809,5 +810,35 @@ public class AntScript implements IAntScript {
 	public void printTaskDef(String name, String classname) {
 		printTabs();
 		output.println("<taskdef name=\"" + name+ "\" classname=\"" + classname + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	public static String getEscaped(String s) {
+		StringBuffer result = new StringBuffer(s.length() + 10);
+		for (int i = 0; i < s.length(); ++i)
+			appendEscapedChar(result, s.charAt(i));
+		return result.toString();
+	}
+
+	private static void appendEscapedChar(StringBuffer buffer, char c) {
+		buffer.append(getReplacement(c));
+	}
+	
+	private static String getReplacement(char c) {
+		// Encode special XML characters into the equivalent character references.
+		// These five are defined by default for all XML documents.
+		switch (c) {
+			case '<' :
+				return "&lt;"; //$NON-NLS-1$
+			case '>' :
+				return "&gt;"; //$NON-NLS-1$
+			case '"' :
+				return "&quot;"; //$NON-NLS-1$
+			case '\'' :
+				return "&apos;"; //$NON-NLS-1$
+			case '&' :
+				return "&amp;"; //$NON-NLS-1$
+			default :
+				return String.valueOf(c);
+		}
 	}
 }
