@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,10 +134,13 @@ public interface IXMLConstants {
 	public static final String PROPERTY_RUN_PACKAGER = "runPackager"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
 
-	//Jar signing properties
+	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore";  //$NON-NLS-1$
 	public static final String PROPERTY_SIGN_STOREPASS ="sign.storepass"; //$NON-NLS-1$
+	public static final String PROPERTY_PACK = "jarProcessor.pack200"; //$NON-NLS-1$
+	public static final String PROPERTY_UNSIGN = "jarProcessor.unsign"; //$NON-NLS-1$
+	public static final String PROPERTY_SIGN = "jarProcessor.sign"; //$NON-NLS-1$
 	
 	//JNLP generation properties
 	public static final String PROPERTY_JNLP_CODEBASE = "jnlp.codebase"; //$NON-NLS-1$
