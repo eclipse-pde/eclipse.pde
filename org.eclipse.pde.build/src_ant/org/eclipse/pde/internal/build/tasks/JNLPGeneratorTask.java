@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public class JNLPGeneratorTask extends Task {
 	private String j2se;
 	private Locale locale = Locale.getDefault();
 	private boolean generateOfflineAllowed = true;
+	private String configs = null;
 	
 	/**
 	 * The URL location of a feature.xml file.  This can be either a jar: URL to the feature.xml,
@@ -92,7 +93,7 @@ public class JNLPGeneratorTask extends Task {
 	}
 
 	public void execute() throws BuildException {
-		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se, locale, generateOfflineAllowed);
+		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se, locale, generateOfflineAllowed, configs);
 		generator.process();
 	}
 	
@@ -102,5 +103,9 @@ public class JNLPGeneratorTask extends Task {
 		if (generateOfflineAllowed.equalsIgnoreCase("true")) //$NON-NLS-1$
 			this.generateOfflineAllowed = false;
 	}
-	 
+	
+	public void setConfigInfo(String configs) {
+		this.configs = configs;
+	}
+	
 }

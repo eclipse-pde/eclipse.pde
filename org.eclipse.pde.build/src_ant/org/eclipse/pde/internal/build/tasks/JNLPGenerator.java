@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
  *     IBM Corporation - initial API and implementation
  *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.pde.internal.build.tasks;
 
@@ -56,6 +55,7 @@ public class JNLPGenerator extends DefaultHandler {
 	private Locale locale = null;
 	private PropertyResourceBundle nlsBundle = null;
 	private boolean generateOfflineAllowed;
+	private Config[] configs;
 
 	/**
 	 * For testing purposes only.
@@ -69,13 +69,13 @@ public class JNLPGenerator extends DefaultHandler {
 	 * Constructs a feature parser.
 	 */
 	public JNLPGenerator(String feature, String destination, String codebase, String j2se) {
-		this(feature, destination, codebase, j2se, Locale.getDefault(), true);
+		this(feature, destination, codebase, j2se, Locale.getDefault(), true, null);
 	}
 
 	/**
 	 * Constructs a feature parser.
 	 */
-	public JNLPGenerator(String feature, String destination, String codebase, String j2se, Locale locale, boolean generateOfflineAllowed) {
+	public JNLPGenerator(String feature, String destination, String codebase, String j2se, Locale locale, boolean generateOfflineAllowed, String configs) {
 		super();
 		this.featureRoot = new File(feature);
 		this.destination = destination;
@@ -91,6 +91,7 @@ public class JNLPGenerator extends DefaultHandler {
 		} catch (SAXException e) {
 			System.out.println(e);
 		}
+		setConfigInfo(configs);
 	}
 
 	/**
@@ -267,8 +268,10 @@ public class JNLPGenerator extends DefaultHandler {
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		String arch = attributes.getValue("arch"); //$NON-NLS-1$
-		writeResourcePrologue(os, ws, arch);
-		out.println("\t\t<jar href=\"plugins/" + pluginId + "_" + pluginVersion + ".jar\"/>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		if (isValidEnvironment(os, ws, arch)) {
+			writeResourcePrologue(os, ws, arch);
+			out.println("\t\t<jar href=\"plugins/" + pluginId + "_" + pluginVersion + ".jar\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 	private void writeResourceEpilogue() {
@@ -288,7 +291,7 @@ public class JNLPGenerator extends DefaultHandler {
 			return;
 		if (resourceWritten)
 			writeResourceEpilogue();
-		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">");    //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$
+		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$
 		resourceWritten = true;
 		currentOS = os;
 		currentArch = arch;
@@ -367,17 +370,19 @@ public class JNLPGenerator extends DefaultHandler {
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		String arch = attributes.getValue("arch"); //$NON-NLS-1$
-		writeResourcePrologue(os, ws, arch);
-		out.print("\t\t<extension ");//$NON-NLS-1$
-		if (name != null)
-			out.print("name=\"" + name + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		if (inclusionId != null) {
-			out.print("href=\"features/" + inclusionId); //$NON-NLS-1$
-			if (inclusionVersion != null)
-				out.print('_' + inclusionVersion);
-			out.print(".jnlp\" "); //$NON-NLS-1$
+		if (isValidEnvironment(os, ws, arch)) {
+			writeResourcePrologue(os, ws, arch);
+			out.print("\t\t<extension ");//$NON-NLS-1$
+			if (name != null)
+				out.print("name=\"" + name + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+			if (inclusionId != null) {
+				out.print("href=\"features/" + inclusionId); //$NON-NLS-1$
+				if (inclusionVersion != null)
+					out.print('_' + inclusionVersion);
+				out.print(".jnlp\" "); //$NON-NLS-1$
+			}
+			out.println("/>"); //$NON-NLS-1$
 		}
-		out.println("/>"); //$NON-NLS-1$
 	}
 
 	private void processFeature(Attributes attributes) {
@@ -456,5 +461,62 @@ public class JNLPGenerator extends DefaultHandler {
 
 	private void writeEpilogue() {
 		out.println("</jnlp>"); //$NON-NLS-1$
+	}
+
+	private boolean isMatching(String candidateValues, String siteValues) {
+		if (candidateValues == null)
+			return true;
+		if (siteValues == null)
+			return false;
+		if ("*".equals(candidateValues))return true; //$NON-NLS-1$
+		if ("".equals(candidateValues))return true; //$NON-NLS-1$
+		StringTokenizer siteTokens = new StringTokenizer(siteValues, ","); //$NON-NLS-1$
+		//$NON-NLS-1$	
+		while (siteTokens.hasMoreTokens()) {
+			StringTokenizer candidateTokens = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
+			String siteValue = siteTokens.nextToken();
+			while (candidateTokens.hasMoreTokens()) {
+				if (siteValue.equalsIgnoreCase(candidateTokens.nextToken()))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isValidEnvironment(String os, String ws, String arch) {
+		if (configs.length==0)
+			return true;
+		for (int i = 0; i < configs.length; i++) {
+			if (isMatching(os, configs[i].getOs()) && isMatching(ws, configs[i].getWs()) && isMatching(arch, configs[i].getArch()))
+				return true;
+		}
+		return false;
+	}
+
+	private void setConfigInfo(String spec) {
+		if (spec != null && spec.startsWith("$")) { //$NON-NLS-1$
+			configs = new Config[0];
+			return;
+		}
+		if (spec == null) {
+			configs = new Config[] {Config.genericConfig()};
+			return;
+		}
+		StringTokenizer tokens = new StringTokenizer(spec, "&"); //$NON-NLS-1$
+		int configNbr = tokens.countTokens();
+		ArrayList configInfos = new ArrayList(configNbr);
+		while (tokens.hasMoreElements()) {
+			String aConfig = tokens.nextToken();
+			StringTokenizer configTokens = new StringTokenizer(aConfig, ","); //$NON-NLS-1$
+			if (configTokens.countTokens() == 3) {
+				Config toAdd = new Config(configTokens.nextToken().trim(), configTokens.nextToken().trim(), configTokens.nextToken().trim());
+				if (toAdd.equals(Config.genericConfig()))
+					toAdd = Config.genericConfig();
+				configInfos.add(toAdd);
+			}
+		}
+		if (configInfos.size() == 0)
+			configInfos.add(Config.genericConfig());
+		configs = (Config[]) configInfos.toArray(new Config[configInfos.size()]);
 	}
 }

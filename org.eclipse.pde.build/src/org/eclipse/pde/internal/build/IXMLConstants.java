@@ -57,7 +57,7 @@ public interface IXMLConstants {
 	public static final String TARGET_EFFECTIVE_FETCH = "effectiveFetch"; //$NON-NLS-1$
 	public static final String TARGET_JARUP = "jarUp"; //$NON-NLS-1$
 	public static final String TARGET_JARING = "jarIng"; //$NON-NLS-1$
-	public static final String TARGET_JARSIGNING = "jarSigning";  //$NON-NLS-1$
+	public static final String TARGET_JARSIGNING = "jarSigning"; //$NON-NLS-1$
 	public static final String TARGET_ROOTFILES_PREFIX = "rootFiles"; //$NON-NLS-1$
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
@@ -87,8 +87,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_LOCATION = "baseLocation"; //$NON-NLS-1$
 	public static final String PROPERTY_LOG_EXTENSION = "logExtension"; //$NON-NLS-1$
-	
-	//public static final String PROPERTY_INSTALL = "install"; //$NON-NLS-1$
+
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_NL = "basenl"; //$NON-NLS-1$ 
 	public static final String PROPERTY_OS = "os"; //$NON-NLS-1$
@@ -133,7 +132,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_CLASSPATH = ".classpath"; //$NON-NLS-1$
 	public static final String PROPERTY_RUN_PACKAGER = "runPackager"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
-
+	
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore";  //$NON-NLS-1$
@@ -147,6 +146,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JNLP_J2SE = "jnlp.j2se";  //$NON-NLS-1$
 	public static final String PROPERTY_JNLP_LOCALE = "jnlp.locale"; //$NON-NLS-1$
 	public static final String PROPERTY_JNLP_GENOFFLINE = "jnlp.generateOfflineAllowed";  //$NON-NLS-1$
+	public static final String PROPERTY_JNLP_CONFIGS = "jnlp.configs";  //$NON-NLS-1$
 	
 	//Output format supported
 	public static final String FORMAT_TAR = "tar"; //$NON-NLS-1$
