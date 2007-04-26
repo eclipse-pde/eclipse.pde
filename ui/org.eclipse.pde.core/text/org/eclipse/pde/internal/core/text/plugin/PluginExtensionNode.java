@@ -100,7 +100,6 @@ public class PluginExtensionNode extends PluginParentNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
 	}
@@ -140,8 +139,10 @@ public class PluginExtensionNode extends PluginParentNode implements
 		return fSchema;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, schema, parent);
 		// Transient Field:  Schema
 		fSchema = schema;

@@ -195,16 +195,15 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		return registry.getSchema(point);
 	}
+	
+	/**
+	 * @param element
+	 * @return
+	 */
 	static ISchemaElement getSchemaElement(IPluginElement element) {
-		IPluginObject parent = element.getParent();
-		while (parent != null && !(parent instanceof IPluginExtension)) {
-			parent = parent.getParent();
-		}
-		if (parent != null) {
-			ISchema schema = getSchema((IPluginExtension) parent);
-			if (schema != null) {
-				return schema.findElement(element.getName());
-			}
+		ISchema schema = getSchema(element);
+		if (schema != null) {
+			return schema.findElement(element.getName());
 		}
 		return null;
 	}
@@ -214,8 +213,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @return
 	 */
 	private static ISchema getSchema(IPluginElement element) {
-		// TODO: MP: CCP TOUCH
-		// TODO: MP: CCP: Merge with getSchemaElement
 		IPluginObject parent = element.getParent();
 		while (parent != null && !(parent instanceof IPluginExtension)) {
 			parent = parent.getParent();
@@ -225,7 +222,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return null;		
 	}
-	
 	
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
@@ -961,25 +957,34 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @return
 	 */
 	private IPluginModelBase getPluginModelBase() {
-		// TODO: MP: CCP TOUCH
+		// Note:  This method will work with fragments as long as a fragment.xml
+		// is defined first.  Otherwise, paste will not work out of the box.
+		// Get the model
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		// Ensure the model is a bundle plugin model
 		if ((model instanceof IBundlePluginModelBase) == false) {
 			return null;
 		}
+		// Get the extension model
 		ISharedExtensionsModel extensionModel = 
 			((IBundlePluginModelBase)model).getExtensionsModel();
+		// Ensure the extension model is defined
 		if ((extensionModel == null) || 
 				((extensionModel instanceof IPluginModelBase) == false)) {
 			return null;
 		}
 		return ((IPluginModelBase)extensionModel);
-	}
-	
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// By default, fragment.xml does not exist until the first extension
+		// or extension point is created.  
+		// Ensure the file exists before pasting because the model will be 
+		// null and the paste will fail if it does not exist
+		((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
 		// Note:  Multi-select in tree viewer is disabled; but, this function
 		// can support multiple source objects
 		// Get the model
@@ -1004,8 +1009,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					// Adjust all the source object transient field values to
 					// acceptable values
 					extension.reconnect(model, schema, (IDocumentNode)pluginBase);
-					// TODO: MP: CCP: Determine what whould happen if schema was null
-					// TODO: MP: CCP: Ensure this is proper add method
 					pluginBase.add((IPluginExtension)extension);
 
 				} else if ((sourceObject instanceof IDocumentElement) &&
@@ -1021,7 +1024,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					element.reconnect(model, schema, (IDocumentNode)targetObject);
 					// Add the element to the plugin parent (extension or
 					// element)
-					// TODO: MP: CCP: Trace add to see what properties set
 					((IPluginParent)targetObject).add((IPluginElement)element);
 				}
 			}

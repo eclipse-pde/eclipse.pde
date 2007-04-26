@@ -46,8 +46,6 @@ public abstract class IdentifiablePluginObject extends PluginObject implements
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
-		// TODO: MP: CCP TOUCH
-
 		super.reconnect(model, parent);
 		// No transient fields
 	}

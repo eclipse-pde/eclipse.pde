@@ -294,7 +294,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			manager.add(fRenameAction);			
 			manager.add(fRemoveAction);
 		}
-		// TODO: MP: CCP TOUCH
 		// Copy, cut, and paste operations not supported for plug-ins that do 
         // not have a MANIFEST.MF (not a Bundle)		
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, isBundle());

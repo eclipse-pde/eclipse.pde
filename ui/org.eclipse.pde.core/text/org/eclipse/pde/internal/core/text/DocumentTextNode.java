@@ -14,11 +14,8 @@ public class DocumentTextNode implements IDocumentTextNode {
 	
 	private static final long serialVersionUID = 1L;
 	
-	// TODO: MP: CCP TOUCH
 	private transient int fOffset = -1;
-	// TODO: MP: CCP TOUCH
 	private transient int fLength = 0;
-	// TODO: MP: CCP TOUCH
 	private transient IDocumentNode fEnclosingElement;
 	
 	private String fText;
@@ -78,8 +75,6 @@ public class DocumentTextNode implements IDocumentTextNode {
 	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#reconnectText(org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
 	public void reconnect(IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
-		
 		// Transient field:  Enclosing Element
 		// Essentially the parent (an element)
 		fEnclosingElement = parent;

@@ -66,10 +66,13 @@ public class ImportPackageObject extends PackageObject {
     	firePropertyChanged(this, Constants.RESOLUTION_DIRECTIVE, Boolean.toString(old), Boolean.toString(optional));
     }
 
+	/**
+	 * @param model
+	 * @param header
+	 * @param versionAttribute
+	 */
 	public void reconnect(IBundleModel model, ImportPackageHeader header, 
 			String versionAttribute) {
-		// TODO: MP: CCP TOUCH
-		
 		super.reconnect(model, header, versionAttribute);
 		// No transient fields
 	}    
@@ -78,7 +81,6 @@ public class ImportPackageObject extends PackageObject {
 	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write());		
 	}

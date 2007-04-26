@@ -21,8 +21,11 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
  *
  */
 public interface IDocumentExtensionPoint extends Serializable {
-	// TODO: MP: CCP TOUCH
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public void reconnect(ISharedPluginModel model, IDocumentNode parent);
 	
 }

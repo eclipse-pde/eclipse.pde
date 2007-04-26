@@ -170,11 +170,14 @@ public class PluginElementNode extends PluginParentNode implements
 		return elementInfo;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, schema, parent);
-		// TODO: MP: CCP: Is okay if schema is null?
 		// Transient Field:  Element Info
+		// This may not be necessary.  getElementInfo will retrieve the schema
+		// on demand if it is null
 		elementInfo = null;
 		if (schema != null) {
 			elementInfo = schema.findElement(getXMLTagName());
@@ -185,7 +188,6 @@ public class PluginElementNode extends PluginParentNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
 	}

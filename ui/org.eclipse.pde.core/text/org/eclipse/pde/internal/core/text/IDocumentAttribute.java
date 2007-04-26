@@ -41,7 +41,6 @@ public interface IDocumentAttribute extends Serializable {
 	
 	String write();
 
-	// TODO: MP: CCP TOUCH
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
 	
 }

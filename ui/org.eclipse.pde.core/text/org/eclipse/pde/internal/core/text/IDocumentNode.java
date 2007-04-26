@@ -62,10 +62,8 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	String write(boolean indent);
 	String writeShallow(boolean terminate);
 	
-	// TODO: MP: CCP TOUCH
 	public int getChildCount();
 	
-	// TODO: MP: CCP TOUCH
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
 	
 }

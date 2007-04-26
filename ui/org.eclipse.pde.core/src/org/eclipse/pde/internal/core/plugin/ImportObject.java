@@ -20,7 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimeter {
+public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimiter {
 
 	private static final long serialVersionUID = 1L;
 	private IPluginImport iimport;
@@ -71,7 +71,8 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		// Field that has transient fields:  Import
 		IPluginModelBase model = plugin.getPluginModel();
 		IPluginBase parent = model.getPluginBase();
-		// TODO: MP: CCP: Make into interface?
+		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
+		// is usually done by the '*Node' classes; but, it is the opposite here
 		if (iimport instanceof PluginImport) {
 			((PluginImport)iimport).reconnect(model, parent);
 		}
@@ -81,7 +82,8 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
 	public void writeDelimeter(PrintWriter writer) {
-		// TODO: MP: CCP: Make into interface?
+		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
+		// is usually done by the '*Node' classes; but, it is the opposite here
 		if (iimport instanceof PluginImport) {
 			((PluginImport)iimport).writeDelimeter(writer);
 		}

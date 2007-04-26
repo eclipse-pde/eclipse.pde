@@ -186,7 +186,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
 		writer.print(PDEXMLHelper.getWritableString(getName()));
 	}
 	
@@ -194,7 +193,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, parent);
 		// No transient fields
 	}	

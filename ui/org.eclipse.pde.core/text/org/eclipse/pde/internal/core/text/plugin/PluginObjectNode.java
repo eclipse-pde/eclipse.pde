@@ -24,7 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.plugin.IWritableDelimeter;
+import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentObject;
@@ -33,11 +33,9 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends PluginDocumentNode implements
-		IPluginObject, IDocumentObject, IWritableDelimeter {
+		IPluginObject, IDocumentObject, IWritableDelimiter {
 
-	// TODO: MP: CCP TOUCH
 	private transient boolean fInTheModel;
-	// TODO: MP: CCP TOUCH
 	private transient ISharedPluginModel fModel;
 	
 	private static final long serialVersionUID = 1L;
@@ -248,8 +246,10 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getLineDelimiter() {
-		// TODO: MP: CCP TOUCH
 		ISharedPluginModel model = getModel();
 		IDocument document = ((IEditingModel)model).getDocument();
 		return TextUtilities.getDefaultLineDelimiter(document);
@@ -272,11 +272,13 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, schema, parent);
 		// Transient field:  In The Model
+		// Value set to true when added to the parent
 		fInTheModel = false;
 		// Transient field:  Model
+		// This may not be necessary.  When this node is added to the parent,
+		// the parent takes care of this
 		fModel = model;
 	}
 	

@@ -147,4 +147,5 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();		
 	}
+	
 }

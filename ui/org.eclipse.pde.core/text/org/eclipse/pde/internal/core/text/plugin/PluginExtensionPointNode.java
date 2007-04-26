@@ -99,7 +99,6 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.IDocumentExtensionPoint#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
 	public void reconnect(ISharedPluginModel model, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, null, parent);
 	}
 	
@@ -107,7 +106,6 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
 	}

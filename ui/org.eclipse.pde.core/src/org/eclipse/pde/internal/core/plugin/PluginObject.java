@@ -35,16 +35,16 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
 public abstract class PluginObject extends PlatformObject implements
-		IPluginObject, ISourceObject, Serializable, IWritableDelimeter {
+		IPluginObject, ISourceObject, Serializable, IWritableDelimiter {
 	
 	protected String fName;
-	// TODO: MP: CCP TOUCH
+
 	private transient String fTranslatedName;
 	private transient IPluginObject fParent;
 	private transient ISharedPluginModel fModel;
-	protected int fStartLine = 1;
-	// TODO: MP: CCP TOUCH
 	private transient boolean fInTheModel;
+
+	protected int fStartLine = 1;
 
 	public PluginObject() {
 	}
@@ -248,7 +248,6 @@ public abstract class PluginObject extends PlatformObject implements
 	 * @param parent
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
-		// TODO: MP: CCP TOUCH
 		// Transient Field:  In The Model
 		fInTheModel = false;
 		// Transient Field:  Model

@@ -157,7 +157,6 @@ public class ExportPackageVisibilitySection extends TableSection
     }
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		// TODO: MP: CCP TOUCH
 		// Update global selection
 		getPage().getPDEEditor().setSelection(selection);
 		

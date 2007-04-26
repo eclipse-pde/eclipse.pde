@@ -291,7 +291,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		if (!selection.isEmpty())
 			manager.add(fRemoveAction);
 
-		// TODO: MP: CCP TOUCH
+		// Add clipboard operations
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 	
@@ -449,7 +449,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	 */
 	protected void selectionChanged(IStructuredSelection sel) {
 		// Update global selection
-		// TODO: MP: CCP TOUCH
 		getPage().getPDEEditor().setSelection(sel);
 		updateButtons();
 	}
@@ -592,7 +591,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		// TODO: MP: CCP: When selecting multiple items and pasting as text, newline needs to be in between- check for all
 	}	
 	
 	protected void doAddDependencies() {

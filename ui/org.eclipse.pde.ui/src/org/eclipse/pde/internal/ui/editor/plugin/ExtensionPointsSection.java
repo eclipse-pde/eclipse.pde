@@ -278,16 +278,22 @@ public class ExtensionPointsSection extends TableSection {
 				 : null;
 	}
 
+	/**
+	 * @return
+	 */
 	private IPluginModelBase getPluginModelBase() {
-		// TODO: MP: CCP TOUCH
-		// TODO: MP: CCP: Does this work for fragments?
-		// TODO: MP: CCP: Duplicate method with extensions sections.  Make utility method?
+		// Note:  This method will work with fragments as long as a fragment.xml
+		// is defined first.  Otherwise, paste will not work out of the box.
+		// Get the model
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		// Ensure the model is a bundle plugin model
 		if ((model instanceof IBundlePluginModelBase) == false) {
 			return null;
 		}
+		// Get the extension model
 		ISharedExtensionsModel extensionModel = 
 			((IBundlePluginModelBase)model).getExtensionsModel();
+		// Ensure the extension model is defined
 		if ((extensionModel == null) || 
 				((extensionModel instanceof IPluginModelBase) == false)) {
 			return null;
@@ -299,6 +305,11 @@ public class ExtensionPointsSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// By default, fragment.xml does not exist until the first extension
+		// or extension point is created.  
+		// Ensure the file exists before pasting because the model will be 
+		// null and the paste will fail if it does not exist
+		((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure an editable model was actually retrieved

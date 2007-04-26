@@ -42,7 +42,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.IWorkspaceModel;
-import org.eclipse.pde.internal.core.plugin.IWritableDelimeter;
+import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -817,14 +817,15 @@ public abstract class PDEFormEditor extends FormEditor
 				else if (objClass.equals(obj.getClass()) == false)
 					return;
 				if (obj instanceof IWritable) {
-					// TODO: MP: CCP TOUCH
+					// Add a customized delimiter in between all serialized
+					// objects to format the text representation
 					if ((i != 0) &&
-							(obj instanceof IWritableDelimeter)) {
-						((IWritableDelimeter)obj).writeDelimeter(pwriter);
+							(obj instanceof IWritableDelimiter)) {
+						((IWritableDelimiter)obj).writeDelimeter(pwriter);
 					}
 					((IWritable) obj).write("", pwriter); //$NON-NLS-1$
 				} else if (obj instanceof String) {
-					// TODO: MP: CCP TOUCH
+					// Delimiter is always a newline
 					pwriter.println((String)obj);
 				}
 			}

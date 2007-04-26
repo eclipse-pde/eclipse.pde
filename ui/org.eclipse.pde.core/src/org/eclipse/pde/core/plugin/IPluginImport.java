@@ -56,4 +56,5 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * @param value true if import is optional
 	 */
 	void setOptional(boolean value) throws CoreException;
+
 }

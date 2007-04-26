@@ -23,7 +23,6 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable {
 	void setOffset(int offset);
 	void setLength(int length);
 	
-	// TODO: MP: CCP TOUCH
 	public void reconnect(IDocumentNode parent);
 	
 }

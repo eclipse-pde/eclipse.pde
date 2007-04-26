@@ -213,7 +213,6 @@ public class LibraryVisibilitySection extends TableSection
         }
 		// Copy, cut, and paste operations not supported for plug-ins that do 
         // not have a MANIFEST.MF
-    	// TODO: MP: CCP TOUCH
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
 	}
     

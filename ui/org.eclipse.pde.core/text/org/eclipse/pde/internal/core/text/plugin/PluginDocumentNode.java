@@ -23,17 +23,11 @@ import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public abstract class PluginDocumentNode implements IDocumentNode {
 	
-	// TODO: MP: CCP TOUCH
 	private transient IDocumentNode fParent;
-	// TODO: MP: CCP TOUCH
 	private transient boolean fIsErrorNode;
-	// TODO: MP: CCP TOUCH
 	private transient int fLength = -1;
-	// TODO: MP: CCP TOUCH
 	private transient int fOffset = -1;
-	// TODO: MP: CCP TOUCH
 	private transient IDocumentNode fPreviousSibling;
-	// TODO: MP: CCP TOUCH
 	private transient int fIndent = 0;
 	
 	private ArrayList fChildren = new ArrayList();
@@ -278,12 +272,15 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#reconnectRoot(org.eclipse.pde.core.plugin.ISharedPluginModel)
 	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		// Reconnect XML document characteristics
 		reconnectDocument();
 		// Reconnect parent
+		// This may not be necessary.  When this node is added to the parent,
+		// the parent takes care of this
 		reconnectParent(parent);
 		// Reconnect previous sibling
+		// This may not be necessary.  When this node is added to the parent,
+		// the parent takes care of this
 		reconnectPreviousSibling(parent);
 		// Reconnect text node
 		reconnectText();
@@ -293,8 +290,11 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		reconnectChildren(model, schema);
 	}
 	
+	/**
+	 * @param model
+	 * @param schema
+	 */
 	private void reconnectAttributes(ISharedPluginModel model, ISchema schema) {
-		// TODO: MP: CCP TOUCH
 		// Get all attributes
 		Iterator keys = fAttributes.keySet().iterator();
 		// Fill in appropriate transient field values for all attributes
@@ -305,8 +305,11 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		}
 	}
 	
+	/**
+	 * @param model
+	 * @param schema
+	 */
 	private void reconnectChildren(ISharedPluginModel model, ISchema schema) {
-		// TODO: MP: CCP TOUCH
 		// Fill in appropriate transient field values
 		for (int i = 0; i < fChildren.size(); i++) {
 			IDocumentNode child = (IDocumentNode)fChildren.get(i);
@@ -315,8 +318,10 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void reconnectDocument() {
-		// TODO: MP: CCP TOUCH
 		// Transient field:  Indent
 		fIndent = 0;
 		// Transient field:  Error Node
@@ -327,33 +332,43 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		fOffset = -1;
 	}
 	
+	/**
+	 * @param parent
+	 */
 	private void reconnectParent(IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		// Transient field:  Parent
 		fParent = parent;		
 	}
 	
+	/**
+	 * @param parent
+	 */
 	private void reconnectPreviousSibling(IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		// Transient field:  Previous Sibling
 		int childCount = parent.getChildCount();
-		if (childCount <= 1) {
+		if (childCount < 1) {
 			fPreviousSibling = null;
 		} else {
-			fPreviousSibling = (IDocumentNode)parent.getChildAt(childCount - 2);
+			// The last item is the previous sibling; since, we have not added
+			// overselves to the end of the parents children yet
+			fPreviousSibling = (IDocumentNode)parent.getChildAt(childCount - 1);
 		}				
 	}
 	
+	/**
+	 * 
+	 */
 	private void reconnectText() {
-		// TODO: MP: CCP TOUCH
 		// Transient field:  Text Node
 		if (fTextNode != null) {
 			fTextNode.reconnect(this);
 		}		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getChildCount()
+	 */
 	public int getChildCount() {
-		// TODO: MP: CCP TOUCH
 		return fChildren.size();
 	}
 	

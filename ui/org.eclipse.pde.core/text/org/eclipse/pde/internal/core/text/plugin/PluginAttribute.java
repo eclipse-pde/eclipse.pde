@@ -24,18 +24,12 @@ public class PluginAttribute extends PluginObjectNode implements
 	
 	private static final long serialVersionUID = 1L;
 
-	
-	// TODO: MP: CCP TOUCH
 	private transient IDocumentNode fEnclosingElement;
-	// TODO: MP: CCP TOUCH
 	private transient int fNameOffset = -1;
-	// TODO: MP: CCP TOUCH
 	private transient int fNameLength = -1;
-	// TODO: MP: CCP TOUCH
 	private transient int fValueOffset = -1;
-	// TODO: MP: CCP TOUCH
 	private transient int fValueLength = -1;
-	// TODO: MP: CCP TOUCH
+
 	private String fValue;
 	
 	/* (non-Javadoc)
@@ -149,7 +143,6 @@ public class PluginAttribute extends PluginObjectNode implements
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#reconnectAttribute()
 	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, schema, parent);
 		// Transient field:  Enclosing element
 		// Essentially is the parent (an element)
@@ -166,9 +159,10 @@ public class PluginAttribute extends PluginObjectNode implements
 		fValueOffset = -1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
-
 		// Used for text transfers for copy, cut, paste operations
 		// Although attributes cannot be copied directly
 		writer.write(write());

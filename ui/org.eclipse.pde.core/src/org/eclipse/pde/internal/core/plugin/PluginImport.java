@@ -210,9 +210,10 @@ public class PluginImport extends IdentifiablePluginObject implements
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CCP TOUCH
-
 		// This is a round-about way to do this; but, leveraging existing
 		// functionality is key.  The fact we have to do this suggests a model 
 		// limitation. 
@@ -276,7 +277,6 @@ public class PluginImport extends IdentifiablePluginObject implements
 	 * @see org.eclipse.pde.internal.core.plugin.IdentifiablePluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
-		// TODO: MP: CCP TOUCH
 		super.reconnect(model, parent);
 		// No transient fields
 	}

@@ -29,7 +29,7 @@ public class PDEManifestElement extends BundleObject {
 	protected String[] fValueComponents;
 	protected TreeMap fAttributes;
 	protected TreeMap fDirectives;
-	// TODO: MP: CCP TOUCH
+
 	protected transient ManifestHeader fHeader;
 	
 	public PDEManifestElement(ManifestHeader header, String value) {
@@ -259,9 +259,11 @@ public class PDEManifestElement extends BundleObject {
     	fHeader = header;
     }
    
+    /**
+     * @param model
+     * @param header
+     */
     public void reconnect(IBundleModel model, ManifestHeader header) {
-    	// TODO: MP: CCP TOUCH
-
     	super.reconnect(model);
     	// Transient Field:  Header
     	fHeader = header;

@@ -17,11 +17,15 @@ import java.io.PrintWriter;
  * IWritableDelimeter
  *
  */
-public interface IWritableDelimeter {
+public interface IWritableDelimiter {
 
-	// TODO: MP: CCP: Add comment
 	/**
-	 * @param writer
+	 * Write a customized delimeter to the serialized stream that delimits the
+	 * text representation of multiple model objects selected.
+	 * This is applicable when serializing multiple objects for copy, cut and
+	 * paste operations.
+	 * @param writer the print writer
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor.copyToClipboard(ISelection)
 	 */
 	public void writeDelimeter(PrintWriter writer);
 	

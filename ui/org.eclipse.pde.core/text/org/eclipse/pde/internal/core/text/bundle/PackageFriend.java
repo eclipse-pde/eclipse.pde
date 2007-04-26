@@ -20,7 +20,6 @@ public class PackageFriend extends BundleObject {
 
     private String fName;
 
-	// TODO: MP: CCP TOUCH
     private transient PackageObject fPackageObject;
     
     public PackageFriend(PackageObject object, String name) {
@@ -44,7 +43,6 @@ public class PackageFriend extends BundleObject {
      * @param object
      */
     public void reconnect(PackageObject object) {
-    	// TODO: MP: CCP TOUCH
     	fPackageObject = object;
     }
 

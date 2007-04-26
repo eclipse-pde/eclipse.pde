@@ -93,8 +93,7 @@ public abstract class StructuredViewerSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canPaste(org.eclipse.swt.dnd.Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		// TODO: MP: CCP: Checking clipboard data done incorrectly
-		// Bug 37223
+		// TODO: MP: CCP: Checking clipboard data done incorrectly.  See Bug 37223
 		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return false;
@@ -105,7 +104,6 @@ public abstract class StructuredViewerSection extends PDESection {
 		if (objects!=null && objects.length>0) {
 			return canPaste(target, objects);
 		}
-		// TODO: MP: CCP TOUCH		
 		return false;
 	}
 	
