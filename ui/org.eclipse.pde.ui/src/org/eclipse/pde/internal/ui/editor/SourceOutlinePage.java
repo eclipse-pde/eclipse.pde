@@ -105,13 +105,19 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			}
 		});
 	}
-	public void sort (boolean sorting){
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage#sort(boolean)
+	 */
+	public void sort (boolean sorting) {
 		sorted = sorting;
-		if(viewer!=null)
-			if(sorting)
+		if (isViewerDefined()) {
+			if (sorting) {
 				viewer.setComparator(fViewerComparator);
-			else
+			} else {
 				viewer.setComparator(fDefaultComparator);
+			}
+		}
 	}
 	
 	/**
@@ -119,8 +125,10 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	 */
 	public void addAllSelectionChangedListeners() {
 		// Re-add the tree listener added by our parent for our parent:
-		// org.eclipse.ui.views.contentoutline.ContentOutlinePage		
-		viewer.addSelectionChangedListener(this);
+		// org.eclipse.ui.views.contentoutline.ContentOutlinePage
+		if (isViewerDefined()) {
+			viewer.addSelectionChangedListener(this);
+		}
 		// Add all current listeners
 		for (int i = 0; i < fListenerList.size(); i++) {
 			super.addSelectionChangedListener(
@@ -129,13 +137,26 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	}
 	
 	/**
+	 * @return
+	 */
+	private boolean isViewerDefined() {
+		if (viewer == null) {
+			return false;
+		} else if (viewer.getTree().isDisposed()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Used for temporary removal.  Listeners cached.
 	 */
 	public void removeAllSelectionChangedListeners() {
 		// Remove the tree listener added by our parent for our parent:
 		// org.eclipse.ui.views.contentoutline.ContentOutlinePage
-		if (viewer != null)
+		if (isViewerDefined()) {
 			viewer.removeSelectionChangedListener(this);
+		}
 		// Remove all current listeners
 		for (int i = 0; i < fListenerList.size(); i++) {
 			super.removeSelectionChangedListener(
