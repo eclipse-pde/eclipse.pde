@@ -59,8 +59,16 @@ public class PluginReference extends PlatformObject {
 	/**
 	 * @param plugin
 	 */
-	public void reconnect(IPlugin plugin) {
+	public void reconnect(IPluginModelBase model) {
 		// Transient Field:  Plugin
+		IPlugin plugin = null;
+		if (model instanceof IPluginModel) {
+			plugin = ((IPluginModel) model).getPlugin();
+		}
+		// It could also be an IFragmentModel
+		// Having IPlugin has an instance variable for both models does not
+		// make sense
+		// If we have a fragment model, leave the plugin as null
 		fPlugin = plugin;
 	}
 	

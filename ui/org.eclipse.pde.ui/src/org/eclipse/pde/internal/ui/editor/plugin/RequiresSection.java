@@ -315,11 +315,7 @@ public class RequiresSection
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
 		IPluginModelBase model = getModel();
-		IPluginBase plugin = model.getPluginBase();
-		// Ensure the model is a plugin model
-		if ((model instanceof IPluginModel) == false) {
-			return;
-		}
+		IPluginBase pluginBase = model.getPluginBase();
 		try {
 			// Paste all source objects
 			for (int i = 0; i < sourceObjects.length; i++) {
@@ -330,9 +326,12 @@ public class RequiresSection
 					// Adjust all the source object transient field values to
 					// acceptable values
 					// TODO: MP: CCP: Remove unnecessary reconnected Plugin attributes
-					importObject.reconnect(((IPluginModel) model).getPlugin());
+					// This may not be necessary.  The model object is discarded when
+					// the import object wrapping the plugin import object is converted 
+					// into a require bundle object					
+					importObject.reconnect(model);
 					// Add the import object to the plugin
-					plugin.add(importObject.getImport());
+					pluginBase.add(importObject.getImport());
 				}
 			}
 		} catch (CoreException e) {

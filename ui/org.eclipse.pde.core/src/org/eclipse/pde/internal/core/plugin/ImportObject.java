@@ -66,10 +66,9 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginReference#reconnect(org.eclipse.pde.core.plugin.IPlugin)
 	 */
-	public void reconnect(IPlugin plugin) {
-		super.reconnect(plugin);
+	public void reconnect(IPluginModelBase model) {
+		super.reconnect(model);
 		// Field that has transient fields:  Import
-		IPluginModelBase model = plugin.getPluginModel();
 		IPluginBase parent = model.getPluginBase();
 		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
 		// is usually done by the '*Node' classes; but, it is the opposite here
