@@ -1607,6 +1607,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription effectivePlugin = getSite(false).getRegistry().getResolvedBundle(plugin.getVersionedIdentifier().getIdentifier(), plugin.getPluginVersion());
 			beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), effectivePlugin.getVersion().toString());
+			// Set the platform filter of the fragment
+			beginId = scan(buffer, beginId, REPLACED_PLATFORM_FILTER);
+			buffer.replace(beginId, beginId + REPLACED_PLATFORM_FILTER.length(), "(& (osgi.ws=" + fragment.getWS() + ") (osgi.os=" + fragment.getOS() +  ") (osgi.arch=" + fragment.getOSArch() + "))");
+			
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
 			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {

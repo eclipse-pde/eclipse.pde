@@ -5,3 +5,4 @@ Bundle-Version: FRAGMENT_VERSION
 Fragment-Host: PLUGIN_ID;bundle-version="PLUGIN_VERSION"
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
+Eclipse-PlatformFilter: PLATFORM_FILTER

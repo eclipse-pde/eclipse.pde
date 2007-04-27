@@ -64,7 +64,8 @@ public interface IPDEBuildConstants {
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
 	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$ 
 	public final static String REPLACED_FRAGMENT_ID = "FRAGMENT_ID"; //$NON-NLS-1$
-
+	public final static String REPLACED_PLATFORM_FILTER = "PLATFORM_FILTER"; //$NON-NLS-1$
+	
 	// status constants	
 	public final static int EXCEPTION_FEATURE_MISSING = 1;
 	public final static int EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING = 2;
