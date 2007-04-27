@@ -194,8 +194,17 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				if (property != null) {
 					for (int i = 0; i < rows.size(); i++) {
 						ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
-						if (row.getAttribute().getName().equals(property))
+						ISchemaAttribute attribute = row.getAttribute();
+						if (attribute == null) {
+							continue;
+						}
+						String name = attribute.getName();
+						if (name == null) {
+							continue;
+						}
+						if (name.equals(property)) {
 							row.setInput(input);
+						}
 					}
 				} else 
 					refresh();
