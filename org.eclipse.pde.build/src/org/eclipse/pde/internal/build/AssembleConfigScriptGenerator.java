@@ -111,8 +111,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			String location = findFile(icons[i], true);
 			if (location != null)
 				result +=  ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
-			else
-				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/plugins/" + icons[i];  //$NON-NLS-1$//$NON-NLS-2$
+			else {
+				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + icons[i];  //$NON-NLS-1$
+				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_FEATURE_LOCATION + '/' + icons[i];  //$NON-NLS-1$
+			}
 		}
 		return result;
 	}
