@@ -44,7 +44,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	// The 64 characters that are legal in a version qualifier, in lexicographical order.
 	private static final String BASE_64_ENCODING = "-0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 
-	private static final int QUALIFIER_SUFFIX_VERSION = 0;
+	private static final int QUALIFIER_SUFFIX_VERSION = 1;
 
 	// GENERATION FLAGS
 	/**
@@ -862,7 +862,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateChildrenScripts() throws CoreException {
 		List plugins = computeElements();
-		String suffix = generateFeatureVersionSuffix((BuildTimeFeature) feature, plugins);
+		String suffix = generateFeatureVersionSuffix((BuildTimeFeature) feature);
 		if (suffix != null) {
 			PluginVersionIdentifier versionId = feature.getVersionedIdentifier().getVersion();
 			String qualifier = versionId.getQualifierComponent();
@@ -955,7 +955,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return result;
 	}
 
-	private String generateFeatureVersionSuffix(BuildTimeFeature buildFeature, List plugins) throws CoreException {
+	private String generateFeatureVersionSuffix(BuildTimeFeature buildFeature) throws CoreException {
 		if (!generateVersionSuffix || buildFeature.getContextQualifierLength() == -1) {
 			return null; // do nothing
 		}
@@ -974,7 +974,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		majorSum += QUALIFIER_SUFFIX_VERSION;
 
 		IIncludedFeatureReference[] referencedFeatures = buildFeature.getIncludedFeatureReferences();
-		int numElements = plugins.size() + referencedFeatures.length;
+		IPluginEntry[] pluginList = buildFeature.getRawPluginEntries();
+		int numElements = pluginList.length + referencedFeatures.length;
 		if (numElements == 0) {
 			// Empty feature.
 			return null;
@@ -1012,11 +1013,27 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 		}
 
-		// Loop through the included plugins and fragmnets, adding the version
+		// Loop through the included plug-ins and fragments, adding the version
 		// number parts to the running totals and storing the qualifiers.
-		for (Iterator iterator = plugins.iterator(); iterator.hasNext();) {
-			BundleDescription model = (BundleDescription) iterator.next();
-			Version version = model.getVersion();
+		
+		for (int i = 0; i < pluginList.length; i++) {
+			IPluginEntry entry = pluginList[i];
+			VersionedIdentifier identifier = entry.getVersionedIdentifier();
+			String versionRequested = identifier.getVersion().toString();
+			BundleDescription model = getSite(false).getRegistry().getBundle(identifier.getIdentifier(), versionRequested, false);
+			Version version = null;
+			if (model != null) {
+				version = model.getVersion();
+			} else {
+				if (versionRequested.endsWith(PROPERTY_QUALIFIER)) {
+					int resultingLength = versionRequested.length() - PROPERTY_QUALIFIER.length();
+					if (versionRequested.charAt(resultingLength - 1) == '.')
+						resultingLength--;
+					versionRequested = versionRequested.substring(0, resultingLength);
+				}
+				version = new Version(versionRequested);
+			}
+			
 			majorSum += version.getMajor();
 			minorSum += version.getMinor();
 			serviceSum += version.getMicro();
@@ -1052,15 +1069,17 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			// Normalize the sums to be base 65.
 			int carry = 0;
-			for (int k = longestQualifier - 1; k >= 0; --k) {
+			for (int k = longestQualifier - 1; k >= 1; --k) {
 				qualifierSums[k] += carry;
 				carry = qualifierSums[k] / 65;
 				qualifierSums[k] = qualifierSums[k] % 65;
 			}
+			qualifierSums[0] += carry;
+			
 			// Always use one character for overflow.  This will be handled
 			// correctly even when the overflow character itself overflows.
-			appendEncodedCharacter(result, carry);
-			for (int m = 0; m < longestQualifier; ++m) {
+			result.append(lengthPrefixBase64(qualifierSums[0]));
+			for (int m = 1; m < longestQualifier; ++m) {
 				appendEncodedCharacter(result, qualifierSums[m]);
 			}
 		}

@@ -422,12 +422,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
+		return getBundle(bundleId, version, true);
+	}
+	
+	public BundleDescription getBundle(String bundleId, String version, boolean resolved) {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
-			return getResolvedBundle(bundleId);
+			BundleDescription bundle = getResolvedBundle(bundleId);
+			if(bundle == null && !resolved)
+				bundle = getState().getBundle(bundleId, null);
+			return bundle;
 		}
 		Version parsedVersion = Version.parseVersion(version);
 		BundleDescription description = getState().getBundle(bundleId, parsedVersion);
-		if (description != null && description.isResolved())
+		if (description != null && (!resolved || description.isResolved()))
 			return description;
 
 		int qualifierIdx = -1;
