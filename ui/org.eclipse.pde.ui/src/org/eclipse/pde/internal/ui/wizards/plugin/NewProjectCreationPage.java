@@ -262,9 +262,10 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     }
     
     protected void saveSettings(IDialogSettings settings) {
-    	String targetName = fEclipseButton.getSelection() ? fTargetCombo.getText() : fOSGiCombo.getText();
-		settings.put(S_TARGET_NAME, targetName);
-    	settings.put(S_OSGI_PROJECT, !fEclipseButton.getSelection()); 	
+    	boolean eclipseSelected = fEclipseButton.getSelection();
+    	String targetName = eclipseSelected ? fTargetCombo.getText() : fOSGiCombo.getText();
+		settings.put(S_TARGET_NAME, (eclipseSelected && ICoreConstants.TARGET33.equals(targetName)) ? null : targetName);
+    	settings.put(S_OSGI_PROJECT, !eclipseSelected); 	
     }
 	
 }
