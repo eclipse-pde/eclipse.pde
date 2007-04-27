@@ -757,7 +757,11 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 						entry.removeToken(tokens[i]);
 					
 					for (int i = 0; i < numLib; i++) {
-						String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
+						Object element = fLibraryViewer.getElementAt(i);
+						if (element == null) {
+							continue;
+						}
+						String lib = ((IBuildEntry)element).getName().substring(7);
 						entry.addToken(lib);
 					}
 				} 
