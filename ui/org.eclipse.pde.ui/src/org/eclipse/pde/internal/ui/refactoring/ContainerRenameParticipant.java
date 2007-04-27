@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.refactoring;
 import java.util.HashMap;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -71,7 +73,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 	protected Change createManifestChange(IProgressMonitor monitor) throws CoreException {
 		IFile manifest = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (manifest.exists()) {
-			monitor.beginTask("", 2); //$NON-NLS-1$
+			monitor.beginTask("", 4); //$NON-NLS-1$
 			try {
 				String newText = (String)fElements.get(fProject);
 				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
@@ -99,13 +101,18 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 					edit.addChildren(listener.getTextOperations());
 					change.setEdit(edit);
 					result.add(change);
+					
+					// find all the references to the changing Bundle-SymbolicName and update all references to it
+					FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
+					op.run(new SubProgressMonitor(monitor, 2));
+					result.addAll(op.getChanges());
 					return result;
 				}
 			} catch (CoreException e) {
 			} catch (MalformedTreeException e) {
 			} catch (BadLocationException e) {
 			} finally {
-				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), new SubProgressMonitor(monitor, 1));
+				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE, new SubProgressMonitor(monitor, 1));
 				monitor.done();
 			}
 		}
