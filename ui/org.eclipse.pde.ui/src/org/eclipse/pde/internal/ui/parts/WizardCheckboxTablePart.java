@@ -77,12 +77,16 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	}
 
 	public void createControl(Composite parent) {
-		createControl(parent, SWT.NULL, 2, null);
+		createControl(parent, 2);
+	}
+	
+	public void createControl(Composite parent, int span) {
+		createControl(parent, SWT.NULL, span, null);
 		counterLabel = new Label(parent, SWT.NULL);
 		GridData gd =
 			new GridData(
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = span;
 		counterLabel.setLayoutData(gd);
 		updateCounter(0);
 	}
@@ -159,5 +163,9 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected void elementChecked(Object element, boolean checked) {
 		int count = getSelectionCount();
 		updateCounter(checked ? count + 1 : count - 1);
+	}
+	
+	public Label getCounterLabel() {
+		return counterLabel;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -54,11 +55,19 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 		FeatureData data = fProvider.getFeatureData();
 		fId = data.id;
 		fVersion = data.version;
-		return new CreateFeatureProjectOperation(
+		ILaunchConfiguration config= fProvider.getLaunchConfiguration();
+		if (config == null)
+			return new CreateFeatureProjectOperation(
+					fProvider.getProject(),
+					fProvider.getLocationPath(),
+					data,
+					fProvider.getPluginListSelection(),
+					getShell());
+		return new CreateFeatureProjectFromLaunchOperation(
 				fProvider.getProject(),
 				fProvider.getLocationPath(),
 				data,
-				fProvider.getPluginListSelection(),
+				config,
 				getShell());
 	}
 

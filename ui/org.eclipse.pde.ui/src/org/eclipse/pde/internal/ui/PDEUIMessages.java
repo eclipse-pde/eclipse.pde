@@ -261,6 +261,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PackageFinder_taskName;
 
+	public static String PluginListPage_initializeFromLaunch;
+
+	public static String PluginListPage_initializeFromPlugins;
+
 	public static String PluginSection_includeOptional;
 
 	public static String PluginsTab_allPlugins;

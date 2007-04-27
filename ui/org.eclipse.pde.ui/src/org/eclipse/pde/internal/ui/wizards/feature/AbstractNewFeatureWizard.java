@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -63,6 +65,10 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 			return fSecondPage != null ?
 					fSecondPage.getSelectedPlugins() : null;
 		}
+		public ILaunchConfiguration getLaunchConfiguration() {
+			return fSecondPage != null ?
+					fSecondPage.getSelectedLaunchConfiguration() : null;
+		}
 	}
 
 	public AbstractNewFeatureWizard() {
@@ -97,6 +103,10 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 	
 	public boolean performFinish() {
 		try {
+			IDialogSettings settings = getDialogSettings();
+			if (settings != null && fSecondPage != null)
+				fSecondPage.saveSettings(settings);
+			
 			getContainer().run(false, true, getOperation());
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 		} catch (InvocationTargetException e) {
