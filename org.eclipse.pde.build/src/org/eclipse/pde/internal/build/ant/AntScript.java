@@ -659,7 +659,7 @@ public class AntScript implements IAntScript {
 	 */
 	public void println(String message) {
 		printTab();
-		output.println(getEscaped(message));
+		output.println(message);
 	}
 
 	/**
@@ -668,7 +668,7 @@ public class AntScript implements IAntScript {
 	 * @param message
 	 */
 	public void print(String message) {
-		output.print(getEscaped(message));
+		output.print(message);
 	}
 
 	/**

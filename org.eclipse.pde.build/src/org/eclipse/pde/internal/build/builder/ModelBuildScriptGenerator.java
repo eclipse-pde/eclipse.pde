@@ -522,7 +522,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void genarateIdReplacementCall(String location) {
 		if (hasQualifier())
-			script.println("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			script.println("<eclipse.versionReplacer path=\"" + script.getEscaped(location) + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	private boolean hasQualifier() {
@@ -614,7 +614,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars)
-			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
+			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + script.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
 		script.printTargetEnd();
 	}
 
