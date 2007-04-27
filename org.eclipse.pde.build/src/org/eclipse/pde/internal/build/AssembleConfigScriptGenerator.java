@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
+ *     Prosyst - create proper OSGi bundles (bug 174157)
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 

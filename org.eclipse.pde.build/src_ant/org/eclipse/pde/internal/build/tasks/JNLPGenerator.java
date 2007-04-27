@@ -7,6 +7,7 @@
  * Contributors: 
  *     IBM Corporation - initial API and implementation
  *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
+ *     Michael Seele -  remove offline-allowed  (bug 153403)
  ******************************************************************************/
 
 package org.eclipse.pde.internal.build.tasks;

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Ben Pryor - Bug 148288
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 

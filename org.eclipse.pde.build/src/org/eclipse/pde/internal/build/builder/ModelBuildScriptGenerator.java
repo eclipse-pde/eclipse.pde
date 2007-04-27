@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Prosyst - create proper OSGi bundles (bug 174157)
  *******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
