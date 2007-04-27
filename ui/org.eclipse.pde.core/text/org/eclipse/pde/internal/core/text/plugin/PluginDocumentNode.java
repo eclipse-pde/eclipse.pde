@@ -272,6 +272,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#reconnectRoot(org.eclipse.pde.core.plugin.ISharedPluginModel)
 	 */
 	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
+		// TODO: MP: CCP: Remove all unnecessary reconnected attributes:  parent, sibling, model, element schema (investigate)
 		// Reconnect XML document characteristics
 		reconnectDocument();
 		// Reconnect parent

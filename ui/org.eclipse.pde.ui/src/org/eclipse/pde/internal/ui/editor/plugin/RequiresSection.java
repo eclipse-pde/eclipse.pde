@@ -329,6 +329,7 @@ public class RequiresSection
 					ImportObject importObject = (ImportObject) sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
+					// TODO: MP: CCP: Remove unnecessary reconnected Plugin attributes
 					importObject.reconnect(((IPluginModel) model).getPlugin());
 					// Add the import object to the plugin
 					plugin.add(importObject.getImport());
