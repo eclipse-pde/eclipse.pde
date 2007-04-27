@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
@@ -43,7 +41,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private List rootFeaturesForFilter;
 	private List rootPluginsForFilter;
 	private boolean filterState;
-	
+
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
 	 * Note that the site object is not recomputed if no change has been done.
@@ -70,12 +68,12 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 			}
 
 			installedBaseURL = installedBaseLocation;
-			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+			Collection installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
 
 			//Search the features in the links
-			String[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
+			File[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
 			for (int i = 0; i < linkPaths.length; i++) {
 				Collection foundFeatures = Utils.findFiles(linkPaths[i], DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 				if (foundFeatures != null)
@@ -164,7 +162,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private Collection findFeatureXMLs() {
 		Collection features = new ArrayList();
 		for (int i = 0; i < sitePaths.length; i++) {
-			Collection foundFeatures = Utils.findFiles(sitePaths[i], DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+			Collection foundFeatures = Utils.findFiles(new File(sitePaths[i]), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);
 		}
@@ -187,5 +185,5 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		this.rootFeaturesForFilter = featuresForFilterRoots;
 		this.rootPluginsForFilter = pluginsForFilterRoots;
 	}
-	
+
 }

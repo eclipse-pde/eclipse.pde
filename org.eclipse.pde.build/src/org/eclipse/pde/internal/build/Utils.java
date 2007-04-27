@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,26 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 	}
 
+	public static File[] asFile(String[] target) {
+		if (target == null)
+			return new File[0];
+		File[] result = new File[target.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new File(target[i]);
+		}
+		return result;
+	}
+	
+	public static File[] asFile(URL[] target) {
+		if (target == null)
+			return new File[0];
+		File[] result = new File[target.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new File(target[i].getFile());
+		}
+		return result;
+	}
+	
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.
@@ -230,20 +250,19 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	// Return a collection of File, the result can be null
-	public static Collection findFiles(String from, String foldername, final String filename) {
+	public static Collection findFiles(File from, String foldername, final String filename) {
 		// if from is a file which name match filename, then simply return the
 		// file
-		File root = new File(from);
+		File root = from;
 		if (root.isFile() && root.getName().equals(filename)) {
 			Collection coll = new ArrayList(1);
 			coll.add(root);
 			return coll;
 		}
 
-		String featureDirectory = from + '/' + foldername; 
 		Collection collectedElements = new ArrayList(10);
 
-		File[] featureDirectoryContent = new File(featureDirectory).listFiles();
+		File[] featureDirectoryContent = new File(from, foldername).listFiles();
 		if (featureDirectoryContent == null)
 			return null;
 

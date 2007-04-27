@@ -1,64 +1,165 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
 
 public class PluginPathFinder {
-	public static File[] getLinkFiles(String platformHome) {
-		File file = new File(platformHome + IPath.SEPARATOR + "links"); //$NON-NLS-1$
-		File[] linkFiles = null;
-		if (file.exists() && file.isDirectory()) {
-			linkFiles = file.listFiles();
-		}
-		return linkFiles;
+	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	}
-
-	public static String getPath(String platformHome, File file) {
+	/**
+	 * 
+	 * @param platformHome
+	 * @param linkFile
+	 * @param features false for plugins, true for features
+	 * @return path of plugins or features directory of an extension site
+	 */
+	private static String getSitePath(String platformHome, File linkFile, boolean features) {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
 		try {
-			InputStream fis = new BufferedInputStream(new FileInputStream(file));
+			FileInputStream fis = new FileInputStream(linkFile);
 			properties.load(fis);
 			fis.close();
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
 					path = prefix + IPath.SEPARATOR + path;
-				path += IPath.SEPARATOR + "eclipse"; //$NON-NLS-1$
+				path += IPath.SEPARATOR + "eclipse" + IPath.SEPARATOR; //$NON-NLS-1$
+				if (features)
+					path += "features"; //$NON-NLS-1$
+				else
+					path += "plugins"; //$NON-NLS-1$
 				if (new File(path).exists()) {
 					return path;
 				}
 			}
 		} catch (IOException e) {
-			//ignore
 		}
 		return null;
 	}
 
-	public static String[] getPluginPaths(String platformHome) {
-		ArrayList result = new ArrayList();
-		File[] linkFiles = getLinkFiles(platformHome);
+	/**
+	 * 
+	 * @param platformHome
+	 * @param features false for plugin sites, true for feature sites
+	 * @return array of ".../plugins" or ".../features" Files
+	 */
+	private static File[] getSites(String platformHome, boolean features) {
+		ArrayList sites = new ArrayList();
+
+		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!features && !file.exists())
+			file = new File(platformHome);
+		if (file.exists())
+			sites.add(file);
+
+		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
 		if (linkFiles != null) {
 			for (int i = 0; i < linkFiles.length; i++) {
-				String path = getPath(platformHome, linkFiles[i]);
-				if (path != null)
-					result.add(path);
+				String path = getSitePath(platformHome, linkFiles[i], features);
+				if (path != null) {
+					sites.add(new File(path));
+				}
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return (File[]) sites.toArray(new File[sites.size()]);
+	}
+
+	public static File[] getPluginPaths(String platformHome) {
+		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		if (file.exists()) {
+			try {
+				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				System.setProperty(URL_PROPERTY, value);
+				try {
+					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
+					return Utils.asFile(getConfiguredSitesPaths(platformHome, config, false));
+				} finally {
+					System.setProperty(URL_PROPERTY, EMPTY_STRING);
+				}
+			} catch (MalformedURLException e) {
+			} catch (IOException e) {
+			}
+		}
+
+		return Utils.asFile(scanLocations(getSites(platformHome, false)));
+	}
+
+	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
+		URL[] installPlugins = scanLocations(new File[] {new File(platformHome, features ? "features" : "plugins")}); //$NON-NLS-1$ //$NON-NLS-2$
+		URL[] extensionPlugins = getExtensionPluginURLs(configuration, features);
+
+		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
+		System.arraycopy(installPlugins, 0, all, 0, installPlugins.length);
+		System.arraycopy(extensionPlugins, 0, all, installPlugins.length, extensionPlugins.length);
+		return all;
+	}
+
+	/**
+	 * 
+	 * @param config
+	 * @param features true for features false for plugins
+	 * @return URLs for features or plugins on the site
+	 */
+	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
+		ArrayList extensionPlugins = new ArrayList();
+		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			URL url = sites[i].getURL();
+			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
+				String[] entries;
+				if (features)
+					entries = sites[i].getFeatures();
+				else
+					entries = sites[i].getPlugins();
+				for (int j = 0; j < entries.length; j++) {
+					try {
+						extensionPlugins.add(new File(url.getFile(), entries[j]).toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+		return (URL[]) extensionPlugins.toArray(new URL[extensionPlugins.size()]);
+	}
+
+	/**
+	 * Scan given plugin/feature directories or jars for existence
+	 * @param sites
+	 * @return URLs to plugins/features
+	 */
+	private static URL[] scanLocations(File[] sites) {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < sites.length; i++) {
+			if (!sites[i].exists())
+				continue;
+			File[] children = sites[i].listFiles();
+			if (children != null) {
+				for (int j = 0; j < children.length; j++) {
+					try {
+						result.add(children[j].toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 }
