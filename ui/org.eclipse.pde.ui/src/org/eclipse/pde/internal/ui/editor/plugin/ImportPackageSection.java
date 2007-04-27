@@ -11,16 +11,12 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -59,11 +55,7 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
@@ -78,8 +70,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
-import org.eclipse.pde.internal.ui.util.ModelModification;
-import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
@@ -456,7 +446,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		BusyIndicator.showWhile(Display.getCurrent(), runnable);
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
-			HashMap exportMap = new HashMap();
 			if (fHeader != null) {
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
@@ -469,14 +458,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						// non exported package
 						IPackageFragment fragment = ((IPackageFragment) selected[i]);
 						impObject = new ImportPackageObject(fHeader, fragment.getElementName(), null, getVersionAttribute());
-						IProject project = fragment.getJavaProject().getProject();
-						IFile file = project.getFile(PDEModelUtility.F_MANIFEST_FP);
-						ArrayList list = (ArrayList)exportMap.get(file);
-						if (list == null) {
-							list = new ArrayList();
-							exportMap.put(file, list);
-						}
-						list.add(fragment);
 					}
 					if (impObject != null)
 						fHeader.addPackage(impObject);
@@ -484,47 +465,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			} else {
 				getBundle().setHeader(Constants.IMPORT_PACKAGE, getValue(selected));
 			}
-			
-			exportPackageFragments(exportMap);
-		}
-	}
-
-	/**
-	 * @param exportMap
-	 */
-	private void exportPackageFragments(HashMap exportMap) {
-		//export all package fragments that are not exported already
-		Set keys = exportMap.keySet();
-		for (Iterator it = keys.iterator(); it.hasNext();) {
-			final IFile underlying = (IFile)it.next();
-			final ArrayList fragmentList = (ArrayList)exportMap.get(underlying);
-			ModelModification mod = new ModelModification(underlying) {
-				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IBundlePluginModelBase))
-						return;
-					IBundlePluginModelBase bundleBase = (IBundlePluginModelBase)model;
-					IBundle bundle = bundleBase.getBundleModel().getBundle();
-					IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-					if (header instanceof ExportPackageHeader) {
-						for (int i = 0; i < fragmentList.size(); i++) {
-							((ExportPackageHeader)header).addPackage(
-									new ExportPackageObject(
-											(ExportPackageHeader)header,
-											((IPackageFragment)fragmentList.get(i)),
-											getVersionAttribute(bundle)));
-						}
-					} else {
-						StringBuffer buffer = new StringBuffer();
-						for (int i = 0; i < fragmentList.size(); i++) {
-							if (i > 0)
-								buffer.append(", "); //$NON-NLS-1$
-							buffer.append(((IPackageFragment)fragmentList.get(i)).getElementName());
-						}
-						bundle.setHeader(Constants.EXPORT_PACKAGE, buffer.toString());
-					}
-				}
-			};
-			PDEModelUtility.modifyModel(mod, null);
 		}
 	}
 
