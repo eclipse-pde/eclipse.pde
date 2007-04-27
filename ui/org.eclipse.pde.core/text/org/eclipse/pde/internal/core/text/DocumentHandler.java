@@ -215,6 +215,14 @@ public abstract class DocumentHandler extends DefaultHandler {
 			// last char of text node
 			int relativeEndOffset = text.lastIndexOf('<') - 1;
 			
+			if ((relativeStartOffset < 0) ||
+					(relativeStartOffset >= text.length())) {
+				return;
+			} else if ((relativeEndOffset < 0) ||
+					(relativeEndOffset >= text.length())) {
+				return;
+			}
+			
 			// trim whitespace
 			while (Character.isWhitespace(text.charAt(relativeStartOffset)))
 				relativeStartOffset += 1;
