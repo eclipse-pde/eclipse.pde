@@ -63,6 +63,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -407,6 +408,11 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected final void addImportPackages(final Collection depsToAdd, final IBundle bundle) {
 		Iterator it = depsToAdd.iterator();
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
+		// always create header.  When available, ImportPackageHeader will help with formatting (see bug 149976)
+		if (mheader == null) {
+			bundle.setHeader(Constants.IMPORT_PACKAGE, new String());
+			mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
+		}
 		if (mheader instanceof ImportPackageHeader) {
 			ImportPackageHeader header = (ImportPackageHeader) mheader;
 			String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? 
@@ -422,10 +428,11 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				ExportPackageDescription desc = (ExportPackageDescription)it.next();
 				String value = (desc.getVersion().equals(Version.emptyVersion)) ? desc.getName() : 
 					desc.getName() + "; version=\"" + desc.getVersion() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-				buffer.append(value).append(", "); //$NON-NLS-1$
+				// use same separator as used when writing out Manifest
+				buffer.append(value).append(PluginConverter.LIST_SEPARATOR);
 			}	
 			if (buffer.length() > 0) 
-				buffer.setLength(buffer.length() - 2);
+				buffer.setLength(buffer.length() - PluginConverter.LIST_SEPARATOR.length());
 			bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
 		}
 	}
@@ -456,14 +463,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				String pluginId = (String) it.next();
 				if (!added.contains(pluginId))
 					try {
-						buffer.append(pluginId).append(", "); //$NON-NLS-1$
+						buffer.append(pluginId).append(PluginConverter.LIST_SEPARATOR);
 						added.add(pluginId);
 						entry.removeToken(pluginId);
 					} catch (CoreException e) {
 					}
 			}
 			if (buffer.length() > 0) 
-				buffer.setLength(buffer.length() - 2);
+				buffer.setLength(buffer.length() - PluginConverter.LIST_SEPARATOR.length());
 			bundle.setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
 		} 
 	}

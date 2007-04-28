@@ -56,8 +56,8 @@ public class PluginConverter {
 	
 	private static final String SEMICOLON = "; "; //$NON-NLS-1$
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	private static final String LIST_SEPARATOR = ",\n "; //$NON-NLS-1$
-	private static final String LINE_SEPARATOR = "\n "; //$NON-NLS-1$
+	public static final String LIST_SEPARATOR = ",\n "; //$NON-NLS-1$
+	public static final String LINE_SEPARATOR = "\n "; //$NON-NLS-1$
 	private static int MAXLINE = 511;
 	private BundleContext context;
 	private PluginInfo pluginInfo;
