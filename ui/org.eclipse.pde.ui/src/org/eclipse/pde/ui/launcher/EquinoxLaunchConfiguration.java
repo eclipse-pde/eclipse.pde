@@ -140,12 +140,12 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 		
-		if (!fAllBundles.containsKey("org.eclipse.osgi")) {
+		if (!fAllBundles.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
 			// implicitly add it
-			IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi");
+			IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
 			if (model != null) {
-				fModels.put(model, "default:default");
-				fAllBundles.put("org.eclipse.osgi", model);
+				fModels.put(model, "default:default"); //$NON-NLS-1$
+				fAllBundles.put("org.eclipse.osgi", model); //$NON-NLS-1$
 			} else {
 				String message = PDEUIMessages.EquinoxLaunchConfiguration_oldTarget;
 				throw new CoreException(LauncherUtils.createErrorStatus(message));				
