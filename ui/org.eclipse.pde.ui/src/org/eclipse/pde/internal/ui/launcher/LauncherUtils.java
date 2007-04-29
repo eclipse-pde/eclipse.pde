@@ -29,7 +29,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -395,6 +397,15 @@ public class LauncherUtils {
 			return logFile.delete();
 		}
 		return true;
+	}
+
+	public static IStatus createErrorStatus(String message) {
+		return new Status(
+				IStatus.ERROR,
+				PDEPlugin.getPluginId(),
+				IStatus.OK,
+				message,
+				null);
 	}
 
 }

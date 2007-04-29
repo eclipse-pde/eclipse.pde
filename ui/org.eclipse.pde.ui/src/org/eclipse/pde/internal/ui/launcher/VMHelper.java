@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -22,7 +20,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
@@ -87,11 +84,11 @@ public class VMHelper {
 		IVMInstall launcher = getVMInstall(vm);
 		if (launcher == null) 
 			throw new CoreException(
-					createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
+					LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
 
 		if (!launcher.getInstallLocation().exists()) 
 			throw new CoreException(
-					createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
+					LauncherUtils.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 
 		return launcher;
 	}
@@ -100,15 +97,6 @@ public class VMHelper {
 		IExecutionEnvironmentsManager manager = 
 			JavaRuntime.getExecutionEnvironmentsManager();
 		return manager.getExecutionEnvironments();
-	}
-
-	public static IStatus createErrorStatus(String message) {
-		return new Status(
-				IStatus.ERROR,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				message,
-				null);
 	}
 
 }

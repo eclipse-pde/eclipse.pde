@@ -30,6 +30,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -88,9 +89,15 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			else
 				monitor.setCanceled(true);
 			monitor.done();
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			monitor.setCanceled(true);
-			throw e;
+			LauncherUtils.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					MessageDialog.openError(LauncherUtils.getActiveShell(), 
+											PDEUIMessages.Launcher_error_title, 
+											e.getMessage());
+				}
+			});
 		}
 	}
 	
@@ -150,7 +157,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
 			String message = PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noStartup;
-			throw new CoreException(VMHelper.createErrorStatus(message));
+			throw new CoreException(LauncherUtils.createErrorStatus(message));
 		}
 		return classpath;
 	}

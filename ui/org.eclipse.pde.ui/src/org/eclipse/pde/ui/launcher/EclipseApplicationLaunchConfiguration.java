@@ -36,7 +36,6 @@ import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -154,7 +153,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 					|| !featuresPath.toFile().exists();
 		}
 		if (badStructure) {
-			throw new CoreException(VMHelper.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
+			throw new CoreException(LauncherUtils.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
 		}
 		// Ensure important files are present
 		ensureProductFilesExist(getProductPath());		

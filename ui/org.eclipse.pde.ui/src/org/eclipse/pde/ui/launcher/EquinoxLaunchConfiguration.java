@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -34,7 +34,6 @@ import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.OSGiValidationOperation;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -140,6 +139,18 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			IPluginModelBase model = (IPluginModelBase)iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
+		
+		if (!fAllBundles.containsKey("org.eclipse.osgi")) {
+			// implicitly add it
+			IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi");
+			if (model != null) {
+				fModels.put(model, "default:default");
+				fAllBundles.put("org.eclipse.osgi", model);
+			} else {
+				String message = PDEUIMessages.EquinoxLaunchConfiguration_oldTarget;
+				throw new CoreException(LauncherUtils.createErrorStatus(message));				
+			}
+		}
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 	
@@ -148,16 +159,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#validatePluginDependencies(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		if (!fAllBundles.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
-			final Display display = LauncherUtils.getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					MessageDialog.openError(display.getActiveShell(), 
-							PDEUIMessages.LauncherUtils_title, 
-							PDEUIMessages.EquinoxLaunchConfiguration_oldTarget);
-				}
-			});
-		}
 		OSGiValidationOperation op = new OSGiValidationOperation(configuration);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}	
