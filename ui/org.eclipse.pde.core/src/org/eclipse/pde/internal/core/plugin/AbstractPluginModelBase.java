@@ -132,7 +132,7 @@ public abstract class AbstractPluginModelBase
 	public String toString() {
 		IPluginBase pluginBase = getPluginBase();
 		if (pluginBase != null)
-			return pluginBase.getTranslatedName();
+			return pluginBase.getId();
 		return super.toString();
 	}
 

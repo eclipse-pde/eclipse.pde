@@ -387,4 +387,11 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public void setDirty(boolean dirty) {
 		//does nothing
 	}
+	
+	public String toString() {
+		IPluginBase base = getPluginBase();
+		if (base != null)
+			return base.getId();
+		return super.toString();
+	}
 }

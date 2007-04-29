@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -21,7 +19,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -206,40 +203,6 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		buffer.append(item.getText(2));
 	}
 	
-	private static Map retrieveMap(ILaunchConfiguration configuration, String attribute) {
-		Map map = new TreeMap();
-		try {
-			String value = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-			StringTokenizer tok = new StringTokenizer(value, ","); //$NON-NLS-1$
-			while (tok.hasMoreTokens()) {
-				String token = tok.nextToken();
-				int index = token.indexOf('@');
-				map.put(token.substring(0, index), token.substring(index + 1));
-			}
-		} catch (CoreException e) {
-		}	
-		return map;
-	}
-	
-	public static Map retrieveTargetMap(ILaunchConfiguration configuration) {
-		return retrieveMap(configuration, IPDELauncherConstants.TARGET_BUNDLES);
-	}
-	
-	public static Map retrieveWorkspaceMap(ILaunchConfiguration configuration) throws CoreException {
-		Map map = retrieveMap(configuration, IPDELauncherConstants.WORKSPACE_BUNDLES);
-		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			TreeSet deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
-			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id != null && !map.containsKey(id) && !deselectedPlugins.contains(id)) {
-					map.put(id, "default:default"); //$NON-NLS-1$
-				}
-			}
-		}
-		return map;
-	}
-
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		super.initializeFrom(configuration);
 		initWorkspacePluginsState(configuration);
@@ -249,20 +212,15 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		
 	private void initExternalPluginsState(ILaunchConfiguration configuration)
 			throws CoreException {
-		fNumExternalChecked = 0;
-		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		
-		Map map = retrieveTargetMap(configuration);
-		for (int i = 0; i < fExternalModels.length; i++) {
-			IPluginModelBase model = fExternalModels[i];
-			if (map.containsKey(model.getPluginBase().getId())) {
-				if (fPluginTreeViewer.setChecked(model, true)) {
-					fNumExternalChecked += 1;
-					setText(model, (String)map.get(model.getPluginBase().getId()));
-				}
+		Map map = BundleLauncherHelper.getTargetBundleMap(configuration);
+		Iterator iter = map.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase)iter.next();
+			if (fPluginTreeViewer.setChecked(model, true)) {
+				setText(model, map.get(model).toString());
 			}
 		}
-		
+		fNumExternalChecked = map.size();	
 		resetGroup(fExternalPlugins);
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
 		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0
@@ -283,21 +241,15 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	private void initWorkspacePluginsState(ILaunchConfiguration configuration)
 			throws CoreException {
-		fNumWorkspaceChecked = 0;
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
-		
-		Map map = retrieveWorkspaceMap(configuration);
-		for (int i = 0; i < fWorkspaceModels.length; i++) {
-			IPluginModelBase model = fWorkspaceModels[i];
-			String id = model.getPluginBase().getId();
-			if (id != null && map.containsKey(id)) {
-				if (fPluginTreeViewer.setChecked(model, true)) {
-					fNumWorkspaceChecked += 1;
-					setText(model, (String)map.get(model.getPluginBase().getId()));
-				}
+		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
+		Iterator iter = map.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase)iter.next();
+			if (fPluginTreeViewer.setChecked(model, true)) {
+				setText(model, map.get(model).toString());
 			}
 		}
-		
+		fNumWorkspaceChecked = map.size();
 		resetGroup(fWorkspacePlugins);
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);

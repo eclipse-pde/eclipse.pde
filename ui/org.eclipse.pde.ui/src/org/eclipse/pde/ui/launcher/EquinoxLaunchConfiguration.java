@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,17 +22,16 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.OSGiValidationOperation;
 import org.eclipse.swt.widgets.Display;
 
@@ -45,9 +43,6 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  */
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
-	
-	private Map fWorskspaceBundles;
-	private Map fTargetBundles;
 	
 	protected Map fAllBundles;
 
@@ -64,9 +59,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		saveConfigurationFile(configuration);	
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
-
-		if (fAllBundles.containsKey("org.eclipse.pde.core")) //$NON-NLS-1$
-			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
 		for (int i = 0; i < args.length; i++) {
@@ -93,7 +85,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	
 	private String getBundles(boolean defaultAuto) {
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fAllBundles.values().iterator();
+		Iterator iter = fAllBundles.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase)iter.next();
 			String id = model.getPluginBase().getId();
@@ -103,9 +95,11 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				buffer.append("reference:"); //$NON-NLS-1$
 				buffer.append(LaunchConfigurationHelper.getBundleURL(id, fAllBundles));
 				
-				String data = model.getUnderlyingResource() == null 
-							? fTargetBundles.get(id).toString() 
-							: fWorskspaceBundles.get(id).toString();
+				// fragments must not be started or have a start level
+				if (model instanceof IFragmentModel)
+					continue;
+				
+				String data = fAllBundles.get(model).toString();
 				int index = data.indexOf(':');
 				String level = index > 0 ? data.substring(0, index) : "default"; //$NON-NLS-1$
 				String auto = index > 0 && index < data.length() - 1 ? data.substring(index + 1) : "default"; //$NON-NLS-1$
@@ -126,44 +120,14 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		}
 		return buffer.toString();
 	}
-		
-	private Map getBundlesToRun(Map workspace, Map target) {
-		Map plugins = new TreeMap();
-		Iterator iter = workspace.keySet().iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model != null && model.getUnderlyingResource() != null) {
-				plugins.put(id, model);
-			}
-		}
 			
-		iter = target.keySet().iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			if (!plugins.containsKey(id)) {
-				ModelEntry entry = PluginRegistry.findEntry(id);
-				if (entry != null) {
-					IPluginModelBase[] models = entry.getExternalModels();
-					for (int i = 0; i < models.length; i++) {
-						if (models[i].isEnabled() || i == models.length - 1)
-							plugins.put(id, models[i]);
-					}
-				}
-			}
-		}		
-		return plugins;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch,
 			IProgressMonitor monitor) throws CoreException {
-		fWorskspaceBundles = OSGiBundleBlock.retrieveWorkspaceMap(configuration);
-		fTargetBundles = OSGiBundleBlock.retrieveTargetMap(configuration);	
-		fAllBundles = getBundlesToRun(fWorskspaceBundles, fTargetBundles);
+		fAllBundles = BundleLauncherHelper.getMergedMap(configuration);
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 	

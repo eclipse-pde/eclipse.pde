@@ -21,7 +21,7 @@ public class OSGiValidationOperation extends LaunchValidationOperation {
 	}
 
 	protected IPluginModelBase[] getModels() throws CoreException {
-		return new IPluginModelBase[0];
+		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration);
 	}
 
 }
