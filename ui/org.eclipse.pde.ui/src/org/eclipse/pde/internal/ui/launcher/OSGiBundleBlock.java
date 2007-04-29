@@ -345,9 +345,4 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		return super.getTreeViewerStyle() | SWT.FULL_SELECTION;
 	}
 	
-	protected boolean includeDefaultButton() {
-		return false;
-	}
-
-
 }

@@ -257,16 +257,11 @@ public abstract class AbstractPluginBlock {
 		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll); 		
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet); 
 		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName())); 
-		if (includeDefaultButton())
-			fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
+		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
 		
 		fCounter = new Label(composite, SWT.NONE);
 		fCounter.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_END));
 		updateCounter();
-	}
-	
-	protected boolean includeDefaultButton() {
-		return true;
 	}
 	
 	protected int getTreeViewerStyle() {
@@ -512,8 +507,7 @@ public abstract class AbstractPluginBlock {
 	public void enableViewer(boolean enable) {
 		fPluginTreeViewer.getTree().setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
-		if (includeDefaultButton())
-			fDefaultsButton.setEnabled(enable);
+		fDefaultsButton.setEnabled(enable);
 		fWorkingSetButton.setEnabled(enable);
 		fSelectAllButton.setEnabled(enable);
 		fDeselectButton.setEnabled(enable);
