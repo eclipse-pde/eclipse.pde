@@ -46,9 +46,9 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			configuration.setAttribute("pde.version", "3.3"); //$NON-NLS-1$ //$NON-NLS-2$
+			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
-			configuration.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);		

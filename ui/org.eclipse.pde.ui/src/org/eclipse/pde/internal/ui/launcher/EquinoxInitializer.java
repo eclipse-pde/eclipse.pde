@@ -21,6 +21,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer;
 
@@ -49,10 +50,18 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	}
 	
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
-		if (vmArgs.length() > 0)
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);	
+		StringBuffer vmArgs = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
+		if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
+			if (vmArgs.length() > 0)
+				vmArgs.append(" "); //$NON-NLS-1$
+			vmArgs.append("-Declipse.ignoreApp=true"); //$NON-NLS-1$
+		}
+		if (vmArgs.indexOf("-Dosgi.noShutdown") == -1) { //$NON-NLS-1$
+			vmArgs.append(" -Dosgi.noShutdown=true"); //$NON-NLS-1$
+		}
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());	
 	}
 	
 	private void initializeTracing(ILaunchConfigurationWorkingCopy configuration) {

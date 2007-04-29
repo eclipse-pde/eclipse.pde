@@ -28,6 +28,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
@@ -83,8 +84,10 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		String bundles = getBundles(autostart);
 		if (bundles.length() > 0)
 			properties.put("osgi.bundles", bundles); //$NON-NLS-1$
-		properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("osgi.noShutdown", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!"3.3".equals(configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, ""))) { //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("osgi.noShutdown", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		LaunchConfigurationHelper.save(new File(getConfigDir(configuration), "config.ini"), properties); //$NON-NLS-1$
 	}
 	

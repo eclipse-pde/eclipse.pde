@@ -39,6 +39,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
 import org.eclipse.pde.internal.ui.launcher.LaunchAction;
@@ -215,9 +216,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			wc.setAttribute("pde.version", "3.3"); //$NON-NLS-1$ //$NON-NLS-2$
+			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
-			wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName())); //$NON-NLS-1$
 		initializeProgramArguments(wc);
 		initializeVMArguments(wc);

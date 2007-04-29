@@ -861,6 +861,7 @@
             delegateDescription="%OSGiLaunchDelegate.description"
             delegateName="%OSGiLaunchDelegate.name"
             id="org.eclipse.pde.ui.EquinoxLauncher"
+            migrationDelegate="org.eclipse.pde.internal.ui.launcher.OSGiMigrationDelegate"
             modes="run, debug"
             name="%launcher.framework.name"
             public="true"

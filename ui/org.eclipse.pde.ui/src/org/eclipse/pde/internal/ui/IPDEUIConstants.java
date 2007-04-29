@@ -58,5 +58,6 @@ public interface IPDEUIConstants {
 	 * TODO, move to IPDELauncherConstants in 3.4
 	 */
 	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$
+	String LAUNCHER_PDE_VERSION = "pde.version"; //$NON-NLS-1$
 	
 }
