@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -44,7 +45,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	
+	// used to generate the dev classpath entries
+	// key is bundle ID, value is a model
 	protected Map fAllBundles;
+	
+	// key is a model, value is startLevel:autoStart
+	private Map fModels;
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +91,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	
 	private String getBundles(boolean defaultAuto) {
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fAllBundles.keySet().iterator();
+		Iterator iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase)iter.next();
 			String id = model.getPluginBase().getId();
@@ -93,13 +99,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append("reference:"); //$NON-NLS-1$
-				buffer.append(LaunchConfigurationHelper.getBundleURL(id, fAllBundles));
+				buffer.append(LaunchConfigurationHelper.getBundleURL(model));
 				
 				// fragments must not be started or have a start level
 				if (model instanceof IFragmentModel)
 					continue;
 				
-				String data = fAllBundles.get(model).toString();
+				String data = fModels.get(model).toString();
 				int index = data.indexOf(':');
 				String level = index > 0 ? data.substring(0, index) : "default"; //$NON-NLS-1$
 				String auto = index > 0 && index < data.length() - 1 ? data.substring(index + 1) : "default"; //$NON-NLS-1$
@@ -127,7 +133,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch,
 			IProgressMonitor monitor) throws CoreException {
-		fAllBundles = BundleLauncherHelper.getMergedMap(configuration);
+		fModels = BundleLauncherHelper.getMergedMap(configuration);
+		fAllBundles = new HashMap(fModels.size());
+		Iterator iter = fModels.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase)iter.next();
+			fAllBundles.put(model.getPluginBase().getId(), model);
+		}
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 	

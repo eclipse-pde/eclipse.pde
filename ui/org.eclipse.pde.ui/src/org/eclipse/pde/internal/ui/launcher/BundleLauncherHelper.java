@@ -30,7 +30,7 @@ public class BundleLauncherHelper {
 	}
 	
 	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
-		String selected = configuration.getAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, "");
+		String selected = configuration.getAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
@@ -58,7 +58,7 @@ public class BundleLauncherHelper {
 				if (set != null)
 					set.add(id);
 				if (!map.containsKey(models[i]) && !deselectedPlugins.contains(id)) {
-					map.put(models[i], "default:default");
+					map.put(models[i], "default:default"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -75,7 +75,7 @@ public class BundleLauncherHelper {
 	}
 	
 	public static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set) throws CoreException {
-		String selected = configuration.getAttribute(IPDELauncherConstants.TARGET_BUNDLES, "");
+		String selected = configuration.getAttribute(IPDELauncherConstants.TARGET_BUNDLES, ""); //$NON-NLS-1$
 		Map map = new HashMap();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {

@@ -255,10 +255,13 @@ public class LaunchConfigurationHelper {
 	
 	public static String getBundleURL(String id, Map pluginMap) {
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id.trim());
+		return getBundleURL(model);
+	}
+	
+	public static String getBundleURL(IPluginModelBase model) {
 		if (model == null)
 			return null;
-		
-		return "file:" + new Path(model.getInstallLocation()).removeTrailingSeparator().toString(); //$NON-NLS-1$
+		return "file:" + new Path(model.getInstallLocation()).removeTrailingSeparator().toString(); //$NON-NLS-1$		
 	}
 		
 	private static void setBundleLocations(Map map, Properties properties) {
