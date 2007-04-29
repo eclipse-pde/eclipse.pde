@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -47,6 +49,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.osgi.framework.Bundle;
 
 public class LaunchArgumentsHelper {
 
@@ -99,8 +102,6 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		//StringBuffer buffer = getEclipseIniArguments();
-		
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, 
 				(String)null);
@@ -119,11 +120,6 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		
-		//if(args != null && args.length() > 0)
-			//buffer.append(" ").append(args); //$NON-NLS-1$
-		
-		//return getSubstitutedString(buffer.toString());
 		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
@@ -233,7 +229,13 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
-		String jarPath = TargetPlatformHelper.usesEquinoxStartup() ? getEquinoxStartupPath() : getStartupJarPath();
+		double targetVersion = TargetPlatformHelper.getTargetVersion();
+		String jarPath =  targetVersion >= 3.3
+								? getEquinoxStartupPath("org.eclipse.equinox.launcher")  //$NON-NLS-1$
+								: getStartupJarPath();
+		if (jarPath == null && targetVersion < 3.3)
+			jarPath = getEquinoxStartupPath("org.eclipse.core.launcher"); //$NON-NLS-1$
+		
 		if (jarPath == null)
 			return null;
 
@@ -247,12 +249,15 @@ public class LaunchArgumentsHelper {
 		return (String[])entries.toArray(new String[entries.size()]);
 	}
 
-	private static String getEquinoxStartupPath() throws CoreException {
+	private static String getEquinoxStartupPath(String packageName) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
+			// found in the target
 			if (resource == null) 
 				return model.getInstallLocation();
+			
+			// find it in the workspace
 			IProject project = resource.getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
@@ -262,7 +267,7 @@ public class LaunchArgumentsHelper {
 					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
 						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
 						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getPackageFragment("org.eclipse.equinox.launcher").exists()) { //$NON-NLS-1$
+							if (roots[j].getPackageFragment(packageName).exists()) { //$NON-NLS-1$
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
 									IPath path = entries[i].getOutputLocation();
@@ -280,6 +285,21 @@ public class LaunchArgumentsHelper {
 						}
 					}
 				}
+			}
+		}
+		Bundle bundle = Platform.getBundle("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		if (bundle != null) {
+			try {
+				URL url = FileLocator.resolve(bundle.getEntry("/")); //$NON-NLS-1$
+				url = FileLocator.toFileURL(url);
+				String path = url.getFile();
+				if (path.startsWith("file:")) //$NON-NLS-1$
+					path = path.substring(5);
+				path = new File(path).getAbsolutePath();
+				if (path.endsWith("!")) //$NON-NLS-1$
+					path = path.substring(0, path.length() - 1);
+				return path;
+			} catch (IOException e) {
 			}
 		}
 		return null;

@@ -78,7 +78,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		if (TargetPlatformHelper.usesEquinoxStartup())
+		if (TargetPlatformHelper.getTargetVersion() >= 3.3)
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}

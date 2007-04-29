@@ -338,10 +338,5 @@ public class TargetPlatformHelper {
 	public static boolean usesNewApplicationModel() {
 		return PluginRegistry.findModel("org.eclipse.equinox.app") != null; //$NON-NLS-1$
 	}
-	
-	public static boolean usesEquinoxStartup() {
-		return PluginRegistry.findModel("org.eclipse.equinox.launcher") != null; //$NON-NLS-1$
-	}	
-
-	
+		
 }

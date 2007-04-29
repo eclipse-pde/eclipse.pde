@@ -524,8 +524,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private void createMacScript(String[] config, IProgressMonitor monitor) {
-		String entryName = TargetPlatformHelper.usesEquinoxStartup() ? "macosx/Info.plist" : //$NON-NLS-1$
-			"macosx/Info.plist.32"; //$NON-NLS-1$
+		String entryName = TargetPlatformHelper.getTargetVersion() >= 3.3 
+								? "macosx/Info.plist"  //$NON-NLS-1$
+								: "macosx/Info.plist.32"; //$NON-NLS-1$
 		URL url = PDECore.getDefault().getBundle().getEntry(entryName);  //$NON-NLS-1$
 		if (url == null)
 			return;
