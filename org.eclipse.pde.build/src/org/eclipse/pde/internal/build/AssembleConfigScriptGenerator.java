@@ -224,8 +224,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				String targetLocationSrc = targetLocation +  "/src"; //$NON-NLS-1$
 				
 				//Find the source zip where it has been gathered and extract it in a folder  
-				script.println("<unzip dest=\"" +   script.getEscaped(targetLocationSrc) + "\">");  //$NON-NLS-1$//$NON-NLS-2$
-				script.println("\t<fileset dir=\"" +  script.getEscaped(targetLocation)  + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>");  //$NON-NLS-1$//$NON-NLS-2$
+				script.println("<unzip dest=\"" +   AntScript.getEscaped(targetLocationSrc) + "\">");  //$NON-NLS-1$//$NON-NLS-2$
+				script.println("\t<fileset dir=\"" +  AntScript.getEscaped(targetLocation)  + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>");  //$NON-NLS-1$//$NON-NLS-2$
 				script.println("</unzip>"); //$NON-NLS-1$
 				
 				//	Delete the source zip where it has been gathered since we extracted it
@@ -407,7 +407,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
-		script.println("<eclipse.jnlpGenerator feature=\"" +  script.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		script.println("<eclipse.jnlpGenerator feature=\"" +  AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
