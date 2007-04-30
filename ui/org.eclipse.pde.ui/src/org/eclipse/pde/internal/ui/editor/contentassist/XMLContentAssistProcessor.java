@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -174,6 +175,27 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 
+	/**
+	 * @param proposals
+	 * @param id
+	 * @param print
+	 * @return
+	 */
+	protected ICompletionProposal[] debugPrintProposals(ICompletionProposal[] proposals, String id, boolean print) {
+		if (proposals == null) {
+			System.out.println("[0] " + id); //$NON-NLS-1$
+			return proposals;
+		}
+		System.out.println("[" + proposals.length + "] " + id); //$NON-NLS-1$ //$NON-NLS-2$
+		if (print == false) {
+			return proposals;
+		}
+		for (int i = 0; i < proposals.length; i++) {
+			System.out.println(proposals[i].getDisplayString());
+		}
+		return proposals;
+	}
+	
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);
 		if (fRange == null)
@@ -223,8 +245,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		IPluginObject obj = XMLUtil.getTopLevelParent((IDocumentNode)attr);
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
-					offset >= attr.getValueOffset())
-				return computeAttributeProposal(attr, offset, attrValue, getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE));
+					offset >= attr.getValueOffset()) {
+				return computeExtPointAttrProposals(attr, offset, attrValue);
+			}
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension)obj).getPoint());
 			if (sAttr == null)
 				return null;
@@ -275,6 +298,117 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @param attribute
+	 * @param offset
+	 * @param currentAttributeValue
+	 * @return
+	 */
+	private ICompletionProposal[] computeExtPointAttrProposals(
+			IDocumentAttribute attribute, int offset, String currentAttributeValue) {
+		// Get all the applicable extension points
+		ArrayList allExtensionPoints = 
+			getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+		// Ensure we found extension points
+		if ((allExtensionPoints == null) ||
+				(allExtensionPoints.size() == 0)) {
+			return null;
+		}
+		// If there is no current attribute value, then the applicable extension
+		// points do not need to be filtered.  Return the list as is
+		if ((currentAttributeValue == null) || 
+				(currentAttributeValue.length() == 0)) {
+			return convertListToProposal(allExtensionPoints, (IDocumentRange)attribute, offset);
+		}
+		// Create the filtered proposal list
+		ArrayList filteredProposalList = new ArrayList();
+		// Filter the applicable extension points by the current attribute
+		// value
+		filterExtPointAttrProposals(filteredProposalList, allExtensionPoints, currentAttributeValue);
+		// Convert into a digestable list of proposals
+		return convertListToProposal(filteredProposalList, (IDocumentRange)attribute, offset);
+	}
+	
+	/**
+	 * @param node
+	 * @param offset
+	 * @param filter
+	 * @return
+	 */
+	private ICompletionProposal[] computeRootNodeProposals(
+			IDocumentNode node, int offset, String filter) {
+		// Create the filtered proposal list
+		ArrayList filteredProposalList = new ArrayList();
+		// Add extension to the list
+		addToList(
+				filteredProposalList, 
+				filter, 
+				new VirtualSchemaObject(F_STR_EXT, 
+						PDEUIMessages.XMLContentAssistProcessor_extensions, 
+						F_EXTENSION));
+		// Add extension point to the list
+		addToList(
+				filteredProposalList, 
+				filter, 
+				new VirtualSchemaObject(F_STR_EXT_PT, 
+						PDEUIMessages.XMLContentAssistProcessor_extensionPoints, 
+						F_EXTENSION_POINT));
+		// Get all avaliable extensions with point attribute values
+		ArrayList allExtensionPoints = 
+			getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
+		// Ensure we found extension points
+		if ((allExtensionPoints == null) ||
+				(allExtensionPoints.size() == 0)) {
+			// Return the current proposal list without extension points
+			return convertListToProposal(filteredProposalList, node, offset);
+		}
+		// If there is no current value, then the applicable extension
+		// points do not need to be filtered.  Merge the list as is with the
+		// existing proposals
+		if ((filter == null) || 
+				(filter.length() == 0)) {
+			filteredProposalList.addAll(allExtensionPoints);
+			return convertListToProposal(filteredProposalList, node, offset);
+		}
+		// Filter the applicable extension points by the current value
+		filterExtPointAttrProposals(filteredProposalList, allExtensionPoints, filter);
+		// Convert into a digestable list of proposals
+		return convertListToProposal(filteredProposalList, node, offset);
+	}	
+	
+	/**
+	 * @param filteredProposalList - Must not be NULL
+	 * @param allExtensionPoints - Must not be NULL
+	 * @param filter - Must not be NULL
+	 */
+	private void filterExtPointAttrProposals(
+			ArrayList filteredProposalList, ArrayList allExtensionPoints,
+			String filter) {
+		// Create a regex pattern out of the current attribute value
+		// Ignore case
+		String patternString = "(?i)" + filter; //$NON-NLS-1$
+		// Compile the pattern
+		Pattern pattern = Pattern.compile(patternString);
+		// Iterate over the applicable extension points and add extension points
+		// matching the pattern to the filtered proposal list
+		Iterator iterator = allExtensionPoints.iterator();
+		while (iterator.hasNext()) {
+			// Get the schema object
+			ISchemaObject schemaObject = (ISchemaObject)iterator.next();
+			// Ensure the schema object is defined
+			if (schemaObject == null) {
+				continue;
+			}
+			// Get the name of the schema object
+			String name = schemaObject.getName();
+			// If the current attribute value matches some part of the name
+			// add it to the list
+			if (pattern.matcher(name).find()) {
+				filteredProposalList.add(schemaObject);
+			}
+		}
 	}
 	
 	private ICompletionProposal[] computeAttributeProposal(IDocumentAttribute attr, int offset, String currValue, ArrayList validValues) {
@@ -340,16 +474,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
-			// Add extension to the list
-			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EXTENSION));
-			// Add extension point to the list
-			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EXTENSION_POINT));
-			// Add all avaliable extensions with point attribute values to the list
-			ArrayList allExtPts = getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
-			Iterator proposals = allExtPts.iterator();
-			while (proposals.hasNext()) {
-				addToList(propList, filter, (ISchemaObject)proposals.next());
-			}
+			return computeRootNodeProposals(node, offset, filter);	
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
