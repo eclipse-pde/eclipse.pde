@@ -617,7 +617,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}	
 	}
 
-	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
+	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {	
+		// always make sure launcher fragments are flat; or else you will have launching problems
 		HostSpecification host = bundle.getHost();
 		boolean unpack = (host != null && host.getName().equals("org.eclipse.equinox.launcher")) //$NON-NLS-1$
 							? true : CoreUtility.guessUnpack(bundle);
