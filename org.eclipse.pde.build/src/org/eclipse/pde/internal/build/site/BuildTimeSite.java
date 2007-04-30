@@ -118,7 +118,8 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 						errors.add(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IStatus.WARNING, errorMessage, null));
 					}
 				}
-				BundleHelper.getDefault().getLog().log(errors);
+				if (errors.getChildren().length > 0)
+					BundleHelper.getDefault().getLog().log(errors);
 			}
 		}
 		if (!state.getState().isResolved())
