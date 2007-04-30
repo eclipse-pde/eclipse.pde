@@ -9,16 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
  
- package org.eclipse.pde.internal.ui.wizards.feature;
+package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.swt.widgets.Shell;
 
@@ -42,7 +44,14 @@ public class CreateFeatureProjectFromLaunchOperation extends
 	private IPluginBase[] getPlugins() {
 		IPluginModelBase[] models = null;
 		try {
-			models = LaunchPluginValidator.getPluginList(fLaunchConfig);
+			ILaunchConfigurationType type =fLaunchConfig.getType();
+			String id = type.getIdentifier();
+			// if it is an Eclipse launch
+			if (id.equals("org.eclipse.pde.ui.RuntimeWorkbench")) //$NON-NLS-1$
+				models = LaunchPluginValidator.getPluginList(fLaunchConfig);
+			// else if it is an OSGi launch
+			else if (id.equals("org.eclipse.pde.ui.EquinoxLauncher")) //$NON-NLS-1$
+				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig);
 		} catch (CoreException e) {
 		}
 		IPluginBase[] result = new IPluginBase[models == null ? 0 : models.length];

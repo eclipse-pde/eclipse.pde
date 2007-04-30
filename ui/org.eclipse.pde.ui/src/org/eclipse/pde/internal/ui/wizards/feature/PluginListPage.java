@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.Collator;
 
 public class PluginListPage extends BasePluginListPage {
 	class PluginContentProvider
@@ -88,7 +90,7 @@ public class PluginListPage extends BasePluginListPage {
 				
 			});
 		
-			fLaunchConfigsCombo = new Combo(container, SWT.NONE);
+			fLaunchConfigsCombo = new Combo(container, SWT.READ_ONLY);
 			fLaunchConfigsCombo.setItems(launchConfigs);
 			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 			gd.horizontalSpan = 2;
@@ -142,18 +144,21 @@ public class PluginListPage extends BasePluginListPage {
 	}
 	
 	private String[] getLaunchConfigurations() {
-		ArrayList list = new ArrayList();
+		TreeSet launcherNames = new TreeSet(Collator.getInstance());
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
-			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configs.length; i++) {
-				if (!DebugUITools.isPrivate(configs[i]))
-					list.add(configs[i].getName());
+			String [] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			for (int j  = 0; j < 2; j++) {
+				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
+				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
+				for (int i = 0; i < configs.length; i++) {
+					if (!DebugUITools.isPrivate(configs[i]))
+						launcherNames.add(configs[i].getName());
+				}
 			}
 		} catch (CoreException e) {
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[])launcherNames.toArray(new String[launcherNames.size()]);
 	}
 	
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
@@ -163,11 +168,14 @@ public class PluginListPage extends BasePluginListPage {
 		String configName = fLaunchConfigsCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
-			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configs.length; i++) {
-				if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))
-					return configs[i];
+			String [] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			for (int j  = 0; j < 2; j++) {
+				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
+				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
+				for (int i = 0; i < configs.length; i++) {
+					if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))
+						return configs[i];
+				}
 			}
 		} catch (CoreException e) {
 		}
