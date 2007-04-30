@@ -71,6 +71,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/** flag indicating if we should generate the plugin & feature versions lists */
 	private boolean generateVersionsList = false;
 
+	private Properties antProperties = null;
+	
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
 	/**
@@ -86,18 +88,24 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
         
 		List plugins = new ArrayList(5);
 		List features = new ArrayList(5);
-		sortElements(features, plugins);
-		pluginsForFilterRoots = plugins;
-		featuresForFilterRoots = features;
-		getSite(true); //This forces the creation of the siteFactory which contains all the parameters necessary to initialize.
-		//TODO To avoid this. What would be necessary is use the BuildTimeSiteFactory to store the values that are stored in the AbstractScriptGenerator and to pass the parameters to a new BuildTimeSiteFacotry when created.
-		//More over this would allow us to remove some of the setters when creating a new featurebuildscriptgenerator.
-
-		// It is not required to filter in the two first generateModels, since
-		// it is only for the building of a single plugin
-		generateModels(plugins);
-		generateFeatures(features);
-		flushState();
+		try {
+			AbstractScriptGenerator.setStaticAntProperties(antProperties);
+			
+			sortElements(features, plugins);
+			pluginsForFilterRoots = plugins;
+			featuresForFilterRoots = features;
+			getSite(true); //This forces the creation of the siteFactory which contains all the parameters necessary to initialize.
+			//TODO To avoid this. What would be necessary is use the BuildTimeSiteFactory to store the values that are stored in the AbstractScriptGenerator and to pass the parameters to a new BuildTimeSiteFacotry when created.
+			//More over this would allow us to remove some of the setters when creating a new featurebuildscriptgenerator.
+	
+			// It is not required to filter in the two first generateModels, since
+			// it is only for the building of a single plugin
+			generateModels(plugins);
+			generateFeatures(features);
+			flushState();
+		} finally {
+			AbstractScriptGenerator.setStaticAntProperties(null);
+		}
 	}
 
 	/**
@@ -495,4 +503,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		groupConfigs = value;
 	}
 
+	public void setImmutableAntProperties(Properties properties) {
+		antProperties = properties;
+	}
 }

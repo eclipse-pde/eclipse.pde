@@ -75,6 +75,8 @@
 		generateJnlp="${generateJnlp}"
 		signJars="${signJars}"
 		generateFeatureVersionSuffix="${generateFeatureVersionSuffix}"
+		significantVersionDigits="${significantVersionDigits}"
+		generatedVersionLength="${generatedVersionLength}"
 		generateVersionsLists="${generateVersionsLists}"
 		groupConfiguration="${groupConfigurations}"
 		pluginPath="${pluginPath}"

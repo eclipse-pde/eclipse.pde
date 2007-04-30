@@ -25,6 +25,7 @@ import org.eclipse.update.core.*;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
+	private static Properties immutableAntProperties = null;
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
@@ -67,6 +68,21 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 */
 	public abstract void generate() throws CoreException;
 
+	protected static void setStaticAntProperties(Properties properties) {
+		immutableAntProperties = properties;
+	}
+
+	public static String getImmutableAntProperty(String key) {
+		return getImmutableAntProperty(key, null);
+	}
+
+	public static String getImmutableAntProperty(String key, String defaultValue) {
+		if (immutableAntProperties == null || !immutableAntProperties.containsKey(key))
+			return defaultValue;
+		Object obj = immutableAntProperties.get(key);
+		return (obj instanceof String) ? (String) obj : null;
+	}
+	
 	public static void setConfigInfo(String spec) throws CoreException {
 		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$

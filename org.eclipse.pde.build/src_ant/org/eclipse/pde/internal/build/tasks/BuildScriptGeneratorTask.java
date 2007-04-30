@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
+import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -22,7 +23,7 @@ import org.eclipse.pde.internal.build.site.QualifierReplacer;
  * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.
  */
 public class BuildScriptGeneratorTask extends Task {
-
+	private Properties antProperties = new Properties();
 	/**
 	 * The application associated with this Ant task.
 	 */
@@ -67,6 +68,14 @@ public class BuildScriptGeneratorTask extends Task {
 		generator.setElements(Utils.getArrayFromString(elements));
 	}
 
+	public void setSignificantVersionDigits(String significantDigits) {
+		antProperties.put(IBuildPropertiesConstants.PROPERTY_SIGNIFICANT_VERSION_DIGITS, significantDigits);
+	}
+	
+	public void setGeneratedVersionLength(String generatedLength) {
+		antProperties.put(IBuildPropertiesConstants.PROPERTY_GENERATED_VERSION_LENGTH, generatedLength);
+	}
+	
 	public void execute() throws BuildException {
 		try {
 			run();
@@ -77,6 +86,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	public void run() throws CoreException {
 		generator.setReportResolutionErrors(true);
+		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();
 		BundleHelper.getDefault().setLog(null);
