@@ -17,12 +17,9 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.osgi.framework.internal.core.Msg;
-import org.eclipse.osgi.util.NLS;
-
 /**
  * Headers classes. This class implements a Dictionary that has
- * the following behaviour:
+ * the following behavior:
  * <ul>
  * <li>put and remove clear throw UnsupportedOperationException.
  * The Dictionary is thus read-only to others.
@@ -164,7 +161,7 @@ public class Headers extends Dictionary implements Map {
 		} else { /* put */
 			if (i != -1) { /* duplicate key */
 				if (!replace)
-					throw new IllegalArgumentException(NLS.bind(Msg.HEADER_DUPLICATE_KEY_EXCEPTION, key));
+					throw new IllegalArgumentException();
 				Object oldVal = values[i];
 				values[i] = value;
 				return oldVal;
