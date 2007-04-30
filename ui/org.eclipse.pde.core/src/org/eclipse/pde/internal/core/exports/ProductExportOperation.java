@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -617,7 +618,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
-		boolean unpack = CoreUtility.guessUnpack(bundle);
+		HostSpecification host = bundle.getHost();
+		boolean unpack = (host != null && host.getName().equals("org.eclipse.equinox.launcher")) //$NON-NLS-1$
+							? true : CoreUtility.guessUnpack(bundle);
 		plugin.setAttribute("unpack", Boolean.toString(unpack)); //$NON-NLS-1$
 	}
 
