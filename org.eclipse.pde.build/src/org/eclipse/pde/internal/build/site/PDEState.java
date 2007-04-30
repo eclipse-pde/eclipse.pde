@@ -39,7 +39,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private List addedBundle;
 	private List unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
 	private Dictionary platformProperties;
-
+	private List sortedBundles = null;
+	private long lastSortingDate = 0L;
+	
 	private String javaProfile;
 	private String[] javaProfiles;
 
@@ -541,9 +543,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public List getSortedBundles() {
-		BundleDescription[] toSort = getState().getResolvedBundles();
-		Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
-		return Arrays.asList(toSort);
+		if (lastSortingDate != getState().getTimeStamp()) {
+			lastSortingDate = getState().getTimeStamp();
+			BundleDescription[] toSort = getState().getResolvedBundles();
+			Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
+			sortedBundles = Arrays.asList(toSort);
+		}
+		return sortedBundles;
 	}
 
 	public void cleanupOriginalState() {
