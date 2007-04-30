@@ -37,7 +37,6 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaUnabbreviated() throws Exception {
-		tagAsSummary("Loading Unabbreviated Schema", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		fAbbreviated = false;
 		fTestIterations = 5;
 		fWarmupIterations = 50;
