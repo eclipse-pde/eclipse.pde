@@ -62,7 +62,10 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			if (node != null) {
 				IDocumentNode[] children = node.getChildNodes();
 				int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
-				node = children[childIndex];
+				if ((childIndex >= 0) || 
+						(childIndex < children.length)) {
+					node = children[childIndex];
+				}
 			// when externalizing Strings in plugin.xml, we pass in both Manifest and plug-in file (bug 172080 comment #1)
 			} else if (base instanceof IBundlePluginModelBase) {
 				ISharedExtensionsModel sharedModel = ((IBundlePluginModelBase)base).getExtensionsModel();
