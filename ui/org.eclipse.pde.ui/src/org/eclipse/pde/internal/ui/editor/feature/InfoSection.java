@@ -21,7 +21,6 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -70,7 +69,7 @@ public class InfoSection extends PDESection {
 
 	private IDocumentPartitioner fPartitioner;
 
-	private SourceViewerConfiguration fSourceConfiguration;
+	private XMLConfiguration fSourceConfiguration;
 
 	private SourceViewer fSourceViewer;
 
@@ -357,7 +356,14 @@ public class InfoSection extends PDESection {
 		updateEditorInput(featureModel.getFeature().getFeatureInfo(0), false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
 	public void dispose() {
+		// Dispose of the source configuration
+		if (fSourceConfiguration != null) {
+			fSourceConfiguration.dispose();
+		}		
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		if (featureModel != null)
 			featureModel.removeModelChangedListener(this);
