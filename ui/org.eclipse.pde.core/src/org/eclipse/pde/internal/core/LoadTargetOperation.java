@@ -20,7 +20,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +34,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -178,7 +176,8 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			}			
 		}
 		monitor.worked(10);
-		if (!new Path(path).equals(new Path(currentPath)) || !areAdditionalLocationsEqual(pref)) {
+		// TODO in 3.4, check timestamp of plug-ins to see if anything changed and a reload is required (bug 181659)
+//		if (!new Path(path).equals(new Path(currentPath)) || !areAdditionalLocationsEqual(pref)) {
 			// reload required
 			List additional = getAdditionalLocs();
 			handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
@@ -208,21 +207,21 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 				else
 					break;
 			}	
-		} else {
-			PDECore core = PDECore.getDefault();
-			IPluginModelBase[] changed = handlePluginSelection(TargetPlatformHelper.getPDEState(), core.getFeatureModelManager(),
-					pref, new SubProgressMonitor(monitor,85));
-			if (changed.length > 0) {
-				ExternalModelManager pluginManager = core.getModelManager().getExternalModelManager();
-				pluginManager.fireModelProviderEvent(
-						new ModelProviderEvent(
-							pluginManager,
-							IModelProviderEvent.MODELS_CHANGED,
-							null,
-							null,
-							changed));
-			}
-		}
+//		} else {
+//			PDECore core = PDECore.getDefault();
+//			IPluginModelBase[] changed = handlePluginSelection(TargetPlatformHelper.getPDEState(), core.getFeatureModelManager(),
+//					pref, new SubProgressMonitor(monitor,85));
+//			if (changed.length > 0) {
+//				ExternalModelManager pluginManager = core.getModelManager().getExternalModelManager();
+//				pluginManager.fireModelProviderEvent(
+//						new ModelProviderEvent(
+//							pluginManager,
+//							IModelProviderEvent.MODELS_CHANGED,
+//							null,
+//							null,
+//							changed));
+//			}
+//		}
 		monitor.done();
 	}
 	
@@ -233,26 +232,26 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		pref.setValue(ICoreConstants.TARGET_PROFILE, newValue);
 	}
 	
-	private boolean areAdditionalLocationsEqual(Preferences pref) {
-		IAdditionalLocation[] addtionalLocs = fTarget.getAdditionalDirectories();
-		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
-		StringTokenizer tokenzier = new StringTokenizer(value);
-		if (addtionalLocs.length != tokenzier.countTokens()) 
-			return false;
-		while (tokenzier.hasMoreTokens()) {
-			boolean found = false;
-			String location = tokenzier.nextToken();
-			for (int i = 0; i < addtionalLocs.length; i++) {
-				if (addtionalLocs[i].getPath().equals(location)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) 
-				return false;
-		}
-		return true;
-	}
+//	private boolean areAdditionalLocationsEqual(Preferences pref) {
+//		IAdditionalLocation[] addtionalLocs = fTarget.getAdditionalDirectories();
+//		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+//		StringTokenizer tokenzier = new StringTokenizer(value);
+//		if (addtionalLocs.length != tokenzier.countTokens()) 
+//			return false;
+//		while (tokenzier.hasMoreTokens()) {
+//			boolean found = false;
+//			String location = tokenzier.nextToken();
+//			for (int i = 0; i < addtionalLocs.length; i++) {
+//				if (addtionalLocs[i].getPath().equals(location)) {
+//					found = true;
+//					break;
+//				}
+//			}
+//			if (!found) 
+//				return false;
+//		}
+//		return true;
+//	}
 	
 	private List getAdditionalLocs() {
 		ArrayList additional = new ArrayList();
