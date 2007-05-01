@@ -18,7 +18,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -56,7 +55,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class DocSection extends PDESection {
 	private IDocument fDocument;
-	private SourceViewerConfiguration fSourceConfiguration;
+	private XMLConfiguration fSourceConfiguration;
 	private SourceViewer fSourceViewer;
 	private CTabFolder fTabFolder;
 	private ISchema fSchema;
@@ -241,7 +240,14 @@ public class DocSection extends PDESection {
 		fSchema.addModelChangedListener(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
 	public void dispose() {
+		// Dispose of the source configuration
+		if (fSourceConfiguration != null) {
+			fSourceConfiguration.dispose();
+		}
 		fSchema.removeModelChangedListener(this);
 		super.dispose();
 	}

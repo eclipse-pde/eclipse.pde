@@ -50,11 +50,11 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	private IDocument fDocument;
 	private ISchemaObject fElement;
 	private boolean fIgnoreChange;
-	private IColorManager fColorManager;
+	private XMLConfiguration fSourceConfiguration;
 
 	public DescriptionSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
 		super(page, parent, Section.DESCRIPTION);
-		fColorManager = colorManager;
+		fSourceConfiguration = new XMLConfiguration(colorManager);
 		getSection().setText(PDEUIMessages.SchemaEditor_DescriptionSection_title);
 		getSection().setDescription(PDEUIMessages.SchemaEditor_DescriptionSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
@@ -76,7 +76,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		
 		GridData gd;
 		fSourceViewer = new SourceViewer(container, null, SWT.MULTI|SWT.WRAP|SWT.V_SCROLL| SWT.H_SCROLL);
-		fSourceViewer.configure(new XMLConfiguration(fColorManager));
+		fSourceViewer.configure(fSourceConfiguration);
 		fDocument = new Document();
 		new XMLDocumentSetupParticpant().setup(fDocument);
 		fSourceViewer.setDocument(fDocument);
@@ -195,4 +195,16 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	public boolean canPaste(Clipboard clipboard) {
 		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		// Dispose of the source configuration
+		if (fSourceConfiguration != null) {
+			fSourceConfiguration.dispose();
+		}
+		super.dispose();
+	}
+	
 }
