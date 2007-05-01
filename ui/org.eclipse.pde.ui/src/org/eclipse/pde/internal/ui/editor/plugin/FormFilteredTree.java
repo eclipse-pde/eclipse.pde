@@ -62,9 +62,14 @@ public class FormFilteredTree extends FilteredTree {
         createTreeControl(treeComposite, treeStyle); 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
 	public void dispose() {
-		toolkit.dispose();
-		toolkit = null;
+		if (toolkit != null) {
+			toolkit.dispose();
+			toolkit = null;
+		}
 		super.dispose();
 	}
 

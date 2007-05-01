@@ -304,7 +304,15 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			break;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
 	public void dispose() {
+		// Explicitly call the dispose method on the extensions tree
+		if (fFilteredTree != null) {
+			fFilteredTree.dispose();
+		}
 		fEditorWizards = null;
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 		.getAggregateModel();
@@ -1097,6 +1105,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		getTreePart().setButtonEnabled(4, downEnabled);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse.swt.widgets.Composite, int)
+	 */
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
