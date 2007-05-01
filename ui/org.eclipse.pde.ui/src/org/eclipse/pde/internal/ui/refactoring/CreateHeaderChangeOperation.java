@@ -27,7 +27,10 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -86,6 +89,17 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 						}
 					} else if (mHeader instanceof FragmentHostHeader) {
 						((FragmentHostHeader)mHeader).setHostId(fNewValue);
+					} else if (mHeader instanceof ExportPackageHeader) {
+						ExportPackageObject[] packages = ((ExportPackageHeader)mHeader).getPackages();
+						for (int i = 0; i < packages.length; i++) {
+							PackageFriend[] friends = packages[i].getFriends();
+							for (int j = 0; j < friends.length; j++) {
+								if (friends[j].getName().equals(fOldValue)) {
+									packages[i].removeFriend(friends[j]);
+									packages[i].addFriend(new PackageFriend(packages[i], fNewValue));
+								}
+							}
+						}
 					}
 					
 					return getTextChange(listener, manifest);
