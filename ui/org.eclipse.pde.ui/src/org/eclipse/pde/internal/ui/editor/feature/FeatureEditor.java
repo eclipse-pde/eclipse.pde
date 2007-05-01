@@ -57,6 +57,13 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.FEATURE_EDITOR_ID;
+	}
+	
 	public static void openFeatureEditor(IFeature feature) {
 		if(feature!=null){
 			IFeatureModel model = feature.getModel();

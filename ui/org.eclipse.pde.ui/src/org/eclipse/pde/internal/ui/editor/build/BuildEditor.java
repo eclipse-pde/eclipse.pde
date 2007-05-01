@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
@@ -35,8 +36,17 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class BuildEditor extends MultiSourceEditor {
+	
 	public BuildEditor() {
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.BUILD_EDITOR_ID;
+	}
+	
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();

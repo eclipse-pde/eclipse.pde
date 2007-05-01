@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -39,7 +40,14 @@ public class CompCSEditor extends PDEFormEditor {
 	public CompCSEditor() {
 		super();
 	}
- 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.COMPOSITE_CHEAT_SHEET_EDITOR_ID;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */

@@ -48,6 +48,13 @@ public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction fPreviewAction;
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.SCHEMA_EDITOR_ID;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {

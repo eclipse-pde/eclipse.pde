@@ -18,6 +18,7 @@ import java.util.Locale;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
@@ -33,6 +34,14 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SiteEditor extends MultiSourceEditor {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.SITE_EDITOR_ID;
+	}
+	
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();

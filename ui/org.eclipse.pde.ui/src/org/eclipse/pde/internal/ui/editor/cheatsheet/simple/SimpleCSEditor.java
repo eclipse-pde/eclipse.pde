@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -40,6 +41,13 @@ public class SimpleCSEditor extends PDEFormEditor {
 		super();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+	 */
+	protected String getEditorID() {
+		return IPDEUIConstants.SIMPLE_CHEAT_SHEET_EDITOR_ID;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */

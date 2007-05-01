@@ -80,6 +80,13 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     private boolean fEquinox = true;
     private boolean fShowExtensions = true;
     private IEclipsePreferences fPrefs;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
+     */
+    protected String getEditorID() {
+    	return IPDEUIConstants.MANIFEST_EDITOR_ID;
+    }
     
 	public static IEditorPart openPluginEditor(String id) {
 		return openPluginEditor(PluginRegistry.findModel(id));

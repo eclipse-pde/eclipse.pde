@@ -149,6 +149,8 @@ public abstract class PDEFormEditor extends FormEditor
 
 	}
 
+	private static final String F_DIALOG_EDITOR_SECTION_KEY = "pde-form-editor"; //$NON-NLS-1$
+	
 	/**
 	 * The editor selection changed listener.
 	 * 
@@ -528,17 +530,41 @@ public abstract class PDEFormEditor extends FormEditor
 		} else if (input instanceof IStorageEditorInput) {
 			// Triggered by opening a file NOT in the workspace
 			// e.g. From the Plug-in View
-			File file = (File) input.getAdapter(File.class);
-			if (file == null)
-				return;
-			IDialogSettings section = getSettingsSection();
-			String key = file.getPath();
-			if(input instanceof SystemFileEditorInput)
-				key = file.getParent();
-			section.put(key, pageId);
+			setDialogEditorPageKey(pageId);
 		}
 	}
 
+	/**
+	 * @param pageID
+	 */
+	protected void setDialogEditorPageKey(String pageID) {
+		// Use one global setting for all files belonging to a given editor
+		// type.  Use the editor ID as the key.
+		// Could use the storage editor input to get the underlying file
+		// and use it as a unique key; but, the dialog settings file will
+		// grow out of control and we do not need that level of granularity
+		IDialogSettings section = getSettingsSection();
+		section.put(getEditorID(), pageID);		
+	}
+	
+	/**
+	 * 
+	 */
+	protected String getDialogEditorPageKey() {
+		// Use one global setting for all files belonging to a given editor
+		// type.  Use the editor ID as the key.
+		// Could use the storage editor input to get the underlying file
+		// and use it as a unique key; but, the dialog settings file will
+		// grow out of control and we do not need that level of granularity
+		IDialogSettings section = getSettingsSection();
+		return section.get(getEditorID());		
+	}
+	
+	/**
+	 * @return
+	 */
+	protected abstract String getEditorID();
+	
 	/**
 	 * @param input
 	 * @param pageId
@@ -569,14 +595,7 @@ public abstract class PDEFormEditor extends FormEditor
 		} else if (input instanceof IStorageEditorInput) {
 			// Triggered by opening a file NOT in the workspace
 			// e.g. From the Plug-in View
-			File file = (File) input.getAdapter(File.class);
-			if (file == null)
-				return null;
-			IDialogSettings section = getSettingsSection();
-			String key = file.getPath();
-			if(input instanceof SystemFileEditorInput)
-				key = file.getParent();
-			return section.get(key);
+			return getDialogEditorPageKey();
 		}
 		return null;
 	}
@@ -663,14 +682,24 @@ public abstract class PDEFormEditor extends FormEditor
 			});
 		}
 	}
+	
+	/**
+	 * @return
+	 */
 	private IDialogSettings getSettingsSection() {
-		// store the setting in dialog settings
+		// Store global settings that will persist when the editor is closed
+		// in the dialog settings (This is cheating)
+		// Get the dialog settings
 		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = root.getSection("multi-page-editor"); //$NON-NLS-1$
-		if (section == null)
-			section = root.addNewSection("multi-page-editor"); //$NON-NLS-1$
+		// Get the dialog section reserved for PDE form editors
+		IDialogSettings section = root.getSection(F_DIALOG_EDITOR_SECTION_KEY);
+		// If the section is not defined, define it
+		if (section == null) {
+			section = root.addNewSection(F_DIALOG_EDITOR_SECTION_KEY); 
+		}
 		return section;
 	}
+	
 	public void gotoMarker(IMarker marker) {
 		IResource resource = marker.getResource();
 		InputContext context = fInputContextManager.findContext(resource);
