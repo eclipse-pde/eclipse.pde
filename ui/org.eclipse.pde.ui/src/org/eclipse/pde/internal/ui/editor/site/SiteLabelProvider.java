@@ -72,10 +72,32 @@ class SiteLabelProvider extends LabelProvider {
 		return fSharedProvider.getText(element);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+	 */
 	public void dispose() {
 		fSharedProvider.disconnect(this);
+		// Dispose of images
+		if ((fCatDefImage != null) &&
+				(fCatDefImage.isDisposed() == false)) {
+			fCatDefImage.dispose();
+			fCatDefImage = null;
+		}
+		if ((fSiteFeatureImage != null) &&
+				(fSiteFeatureImage.isDisposed() == false)) {
+			fSiteFeatureImage.dispose();
+			fSiteFeatureImage = null;
+		}
+		if ((fMissingSiteFeatureImage != null) &&
+				(fMissingSiteFeatureImage.isDisposed() == false)) {
+			fMissingSiteFeatureImage.dispose();
+			fMissingSiteFeatureImage = null;
+		}
+		if ((fPageImage != null) &&
+				(fPageImage.isDisposed() == false)) {
+			fPageImage.dispose();
+			fPageImage = null;
+		}
 		super.dispose();
-		fCatDefImage.dispose();
-		fSiteFeatureImage.dispose();
 	}
 }
