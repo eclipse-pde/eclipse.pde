@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.Page;
@@ -396,6 +397,9 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			menu.add(new Separator());
 			String name = ((LabelProvider)fTreeViewer.getLabelProvider()).getText(desc);
 			menu.add(new FocusOnAction(NLS.bind(PDEUIMessages.StateViewPage_focusOnSelection, name)));
+			
+			menu.add(new Separator());
+			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 	}
 	
