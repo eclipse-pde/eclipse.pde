@@ -597,6 +597,8 @@ public class DependenciesView extends PageBookView implements
 		if (currPage instanceof DependenciesViewPage) {
 			selection = ((DependenciesViewPage)currPage).getSelection();
 			((DependenciesViewPage)currPage).setActive(false);
+		} else if (currPage instanceof StateViewPage) {
+			((StateViewPage)currPage).setActive(false);
 		}
 		IPage p = pageRec.page;
 		if (p instanceof DependenciesViewPage) {

@@ -47,8 +47,10 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -71,7 +73,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.Page;
 import org.osgi.framework.Version;
 
-public class StateViewPage extends Page implements IStateDeltaListener {
+public class StateViewPage extends Page implements IStateDeltaListener, IPluginModelListener {
 	
 	private IPropertyChangeListener fPropertyListener;
 	private FilteredTree fFilteredTree = null;
@@ -327,6 +329,9 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			State state = PDECore.getDefault().getModelManager().getState().getState();
 			state.resolve(true);
 			fTreeViewer.setInput(state);
+			PDECore.getDefault().getModelManager().addPluginModelListener(this);
+		} else {
+			PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		}
 	}
 	
@@ -458,7 +463,7 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 				action.setChecked(false);
 				// run the action to change the view back to traditional dependencies view
 				action.run();
-				// set the tradtional view to focus on selected object from state view
+				// set the traditional view to focus on selected object from state view
 				fView.openTo(PluginRegistry.findModel(desc));
 			}
 		}
@@ -471,6 +476,17 @@ public class StateViewPage extends Page implements IStateDeltaListener {
 			section = master.addNewSection("dependenciesView");  //$NON-NLS-1$
 		}
 		return section;
+	}
+	
+	public void modelsChanged(PluginModelDelta delta) {
+		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
+			return;
+		if (delta.getAddedEntries().length > 0 || delta.getChangedEntries().length > 0 || delta.getRemovedEntries().length > 0) 
+			fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					fTreeViewer.refresh();
+				}
+			});
 	}
 
 }
