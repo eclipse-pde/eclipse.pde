@@ -199,10 +199,6 @@ public class RequiresSection
 				canMove
 					&& hasSelection && isEditable()
 					&& table.getSelectionIndex() < table.getItemCount() - 1);
-		// table.getSelecitonIndex does not work when returning form sorted action
-		int index = table.getSelectionIndex();
-		int count = table.getItemCount();
-		if (index == count) {}
 	}
 
 	protected void handleDoubleClick(IStructuredSelection sel) {
@@ -595,7 +591,7 @@ public class RequiresSection
 				if (event.getChangeType() == IModelChangedEvent.INSERT) {
 					ImportObject iobj = new ImportObject(iimport);
 					if (fImports == null)
-						// creatImportObjects method will find new addition
+						// createImportObjects method will find new addition
 						createImportObjects();
 					else
 						fImports.add(iobj);
