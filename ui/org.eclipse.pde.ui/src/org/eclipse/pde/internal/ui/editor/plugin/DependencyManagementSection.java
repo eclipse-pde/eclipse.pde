@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -55,6 +59,7 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -63,15 +68,20 @@ import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -82,16 +92,22 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener {
+public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
 	
 	private TableViewer fAdditionalTable;
 	private Vector fAdditionalBundles;
 	private Action fNewAction;
 	private Action fRemoveAction;
 	private Action fOpenAction;
+	private Action fSortAction;
 	private Button fRequireBundleButton;
 	private Button fImportPackageButton;
 	private IProject fProject;
+	
+    private static final int ADD_INDEX = 0;
+    private static final int REMOVE_INDEX = 1;
+    private static final int UP_INDEX = 2;
+    private static final int DOWN_INDEX = 3;
 	
 	private static String ADD = PDEUIMessages.RequiresSection_add;
 	private static String REMOVE = PDEUIMessages.RequiresSection_delete;
@@ -228,9 +244,35 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		section.setClient(container);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createSectionToolbar(section, toolkit);
 		initialize();
 	}
-	
+
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) &&
+						(handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});
+		
+		// Add sort action to the tool bar
+		fSortAction = new SortAction(getTablePart().getTableViewer(), 
+				PDEUIMessages.RequiresSection_sortAlpha, null, null, this);
+		toolBarManager.add(fSortAction);
+		
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}
+
 	private void savePreferences() {
 		if (fProject == null) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -304,16 +346,16 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	
 	protected void buttonSelected(int index) {
 		switch (index){
-			case 0:
+			case ADD_INDEX:
 				handleNew();
 				break;
-			case 1:
+			case REMOVE_INDEX:
 				handleRemove();
 				break;
-			case 2:
+			case UP_INDEX:
 				handleUp();
 				break;
-			case 3:
+			case DOWN_INDEX:
 				handleDown();
 				break;
 		}
@@ -458,11 +500,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		Table table = fAdditionalTable.getTable();
 		int index = table.getSelectionIndex();
 		part.setButtonEnabled(1, index != -1);
-
-		int totalElems = table.getItemCount();
-		boolean canMove = totalElems > 1 && table.getSelectionCount() == 1;
-		part.setButtonEnabled(2, index != -1 && canMove &&  index > 0);
-		part.setButtonEnabled(3, index != -1 && canMove && index < totalElems - 1);
+		updateUpDownButtons();
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -632,10 +670,25 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		movePlugins(1);
 	}
 
+	private void updateUpDownButtons() {
+		TablePart tablePart = getTablePart();
+		if (fSortAction.isChecked()) {
+			tablePart.setButtonEnabled(UP_INDEX, false);
+			tablePart.setButtonEnabled(DOWN_INDEX, false);
+			return;
+		}
+		Table table = fAdditionalTable.getTable();
+		int index = table.getSelectionIndex();
+		int totalElems = table.getItemCount();
+		boolean canMove = totalElems > 1 && table.getSelectionCount() == 1;
+		tablePart.setButtonEnabled(2, canMove && index > 0);
+		tablePart.setButtonEnabled(3, canMove && index >= 0 && index < totalElems - 1);
+	}
+	
 	private void movePlugins(int newOffset) {
 		int index = fAdditionalTable.getTable().getSelectionIndex();
 		if (index == -1)
-			return;	// saftey check
+			return;	// safety check
 		IBuildModel model = getBuildModel(false);
 		if (model != null) {
 			IBuild build = model.getBuild();
@@ -644,6 +697,12 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				((org.eclipse.pde.internal.core.text.build.BuildEntry)entry).swap(index, index + newOffset);
 		}
 		updateButtons();
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
+			updateUpDownButtons();
+		}
 	}
 	
 	protected boolean createCount() { return true; }
