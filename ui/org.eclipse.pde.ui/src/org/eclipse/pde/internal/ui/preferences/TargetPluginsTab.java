@@ -648,8 +648,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		if (fReloaded) {
 			updateModels();
 			Job job = new TargetPlatformResetJob(fCurrentState);
-			job.schedule();
 			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
+			job.schedule();
 		} else {
 			updateModels();
 			computeDelta();
