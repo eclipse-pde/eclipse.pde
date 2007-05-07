@@ -143,12 +143,14 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		
 		String task =
 			NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name);
-		monitor.beginTask(task, 8);
+		monitor.beginTask(task, 9);
 		try {
 			IProject project = fRoot.getProject(name);
 
-			if (project.exists()) {
+			if (project.exists() || new File(project.getParent().getLocation().toFile(), name).exists()) {
 				if (queryReplace(project)) {
+					if (!project.exists())
+						project.create(new SubProgressMonitor(monitor, 1));
 					project.delete(true, true, new SubProgressMonitor(monitor, 1));
 					try {
 						RepositoryProvider.unmap(project);

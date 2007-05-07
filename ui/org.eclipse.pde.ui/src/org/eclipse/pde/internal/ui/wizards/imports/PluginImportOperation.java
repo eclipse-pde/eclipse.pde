@@ -204,13 +204,15 @@ public class PluginImportOperation extends JarImportOperation {
 				}
 			}
 			
-			IProject project = findProject(model.getPluginBase().getId());
+			IProject project = findProject(id);
 
-			if (project.exists()) {
+			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
 				if (!queryReplace(project))
 					return;
 				if (RepositoryProvider.isShared(project))
 					RepositoryProvider.unmap(project);
+				if (!project.exists())
+					project.create(new SubProgressMonitor(monitor, 1));
 				project.delete(true, true, monitor);
 			}
 
@@ -224,7 +226,7 @@ public class PluginImportOperation extends JarImportOperation {
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_BINARY_WITH_LINKS:
-					if (model.getPluginBase().getId().startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
+					if (id.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
 						importAsBinary(project, model, true, monitor);
 					} else {
 						importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
