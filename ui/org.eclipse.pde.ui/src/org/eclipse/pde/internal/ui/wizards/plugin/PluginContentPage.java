@@ -165,7 +165,7 @@ public class PluginContentPage extends ContentPage {
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
-		data.setRCPApplicationPlugin(!fData.isSimple() && fRCPGroup.isVisible() && fYesButton.getSelection());
+		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -220,11 +220,10 @@ public class PluginContentPage extends ContentPage {
     public void setVisible(boolean visible) {
     	if (visible) {
     		fMainPage.updateData();
-    		boolean pureOSGi = ((PluginFieldData)fData).getOSGiFramework() != null;
-			fGenerateClass.setEnabled(!fData.isSimple());
+    		fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
-			fUIPlugin.setEnabled(!fData.isSimple() && !pureOSGi);
+			fUIPlugin.setEnabled(!fData.isSimple() && !isPureOSGi());
 			// if fUIPlugin is disabled, set selection to false
 			if (!fUIPlugin.isEnabled())
 				fUIPlugin.setSelection(false);
@@ -235,10 +234,14 @@ public class PluginContentPage extends ContentPage {
 				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
-			fRCPGroup.setVisible(!fData.isSimple() && !pureOSGi);
+			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());
     	}
         super.setVisible(visible);
     }
+
+	private boolean isPureOSGi() {
+		return ((PluginFieldData)fData).getOSGiFramework() != null;
+	}
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
