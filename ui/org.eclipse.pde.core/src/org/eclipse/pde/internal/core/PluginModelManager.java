@@ -219,11 +219,13 @@ public class PluginModelManager implements IModelProviderListener {
 					// Java project hand have been affected by the processd model changes.
 					IPluginModelBase model = findModel(deltas[i].getBundle());
 					IResource resource = model == null ? null : model.getUnderlyingResource();
-					if (resource != null && resource.getProject().hasNature(JavaCore.NATURE_ID)) {
+					if (resource != null) {
 						IProject project = resource.getProject();
-						if (!map.containsKey(project)) {
-							map.put(JavaCore.create(project), 
-									new RequiredPluginsClasspathContainer(model));
+						if (project.hasNature(JavaCore.NATURE_ID)) {
+							IJavaProject jProject = JavaCore.create(project);
+							if (!map.containsKey(jProject)) {
+								map.put(jProject, new RequiredPluginsClasspathContainer(model));
+							}
 						}
 					}
 				} catch (CoreException e) {
@@ -233,12 +235,15 @@ public class PluginModelManager implements IModelProviderListener {
 			IPluginModelBase[] models = getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				IProject project = models[i].getUnderlyingResource().getProject();
-				if (map.containsKey(project))
-					continue;			
 				try {
+					if (!project.hasNature(JavaCore.NATURE_ID))
+						continue;
+					IJavaProject jProject = JavaCore.create(project);
+					if (map.containsKey(jProject))
+						continue;			
 					IBuild build = ClasspathUtilCore.getBuild(models[i]);
 					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
-						map.put(JavaCore.create(project), 
+						map.put(jProject, 
 								new RequiredPluginsClasspathContainer(models[i], build));
 					}
 				} catch (CoreException e) {
