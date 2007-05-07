@@ -143,7 +143,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			fLocation = fPage1.getDropLocation();
 			return true;
 		}
-		return false;	
+		return fPage1.isRefreshNeeded();
 	}
 	
 	private IPluginModelBase findModel(String id) {

@@ -119,6 +119,9 @@ public class PDEState extends MinimalState {
 		for (int i = 0; i < urls.length; i++) {
 			File file = new File(urls[i].getFile());
 			try {
+				if (monitor.isCanceled())
+					// if canceled, stop loading bundles
+					return;
 				monitor.subTask(file.getName());
 				addBundle(file, -1);
 			} catch (PluginConversionException e) {

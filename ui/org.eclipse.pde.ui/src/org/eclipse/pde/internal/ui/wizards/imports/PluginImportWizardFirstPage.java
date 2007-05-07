@@ -85,6 +85,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	//private String currentLocation;
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
+	private boolean canceled = false;
 	
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
@@ -423,11 +424,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				PDEState state = new PDEState(all, false, monitor);
 				models = state.getTargetModels();
+				canceled = monitor.isCanceled();
 				monitor.done();
 			}
 		};
 		try {
-			getContainer().run(true, false, op);
+			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
 			PDEPlugin.log(e);
 		} catch (InterruptedException e) {
@@ -447,5 +449,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();
+	}
+	
+	public boolean isRefreshNeeded() {
+		if (canceled) {
+			canceled = false;
+			return true;
+		}
+		return false;	
 	}
 }
