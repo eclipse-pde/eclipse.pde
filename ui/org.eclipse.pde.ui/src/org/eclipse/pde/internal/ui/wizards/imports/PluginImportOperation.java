@@ -257,7 +257,8 @@ public class PluginImportOperation extends JarImportOperation {
 					model,
 					monitor);
 		} else {
-			File[] items = new File(model.getInstallLocation()).listFiles();
+			File installLocation = new File(model.getInstallLocation());
+			File[] items = installLocation.listFiles();
 			if (items != null) {
 				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1); 
 				for (int i = 0; i < items.length; i++) {
@@ -274,6 +275,12 @@ public class PluginImportOperation extends JarImportOperation {
 								new Path(sourceFile.getPath()),
 								IResource.NONE,
 								new SubProgressMonitor(monitor, 1));
+						} else {
+							// if the binary project with links has a .project file, copy it instead of linking (allows us to edit it)
+							ArrayList filesToImport = new ArrayList(1);
+							filesToImport.add(sourceFile);
+							importContent(installLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, 
+									filesToImport, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				}
@@ -752,11 +759,10 @@ public class PluginImportOperation extends JarImportOperation {
 	private void setProjectDescription(IProject project, IPluginModelBase model)
 			throws CoreException {
 		IProjectDescription desc = project.getDescription();
-		if (needsJavaNature(project, model))
-			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDE.PLUGIN_NATURE });
-		else
-			desc.setNatureIds(new String[] { PDE.PLUGIN_NATURE });
-		project.setDescription(desc, null);
+		if (!desc.hasNature(PDE.PLUGIN_NATURE))
+			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
+		if (needsJavaNature(project, model) && !desc.hasNature(JavaCore.NATURE_ID))
+			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
 	}
 
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
