@@ -749,8 +749,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					continue;
 				}
 
-				/* The exported package does not exist in the bundle */
-				if (!getExportedPackages().contains(name)) {
+				/* The exported package does not exist in the bundle.  Allow project folders to be packages (see bug 166680 comment 17)*/
+				if (!getExportedPackages().contains(name)  && !(fProject.getFolder(name.replace('.', '/')).exists())) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
 					IMarker marker = report(message, getPackageLine(header, elements[i]),
 							CompilerFlags.P_UNRESOLVED_IMPORTS, 
