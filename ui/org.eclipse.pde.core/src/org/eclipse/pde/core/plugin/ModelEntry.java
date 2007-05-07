@@ -166,17 +166,14 @@ public class ModelEntry extends PlatformObject {
 		if (desc == null)
 			return null;
 		
-		long bundleId = desc.getBundleId();
 		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
 			IPluginModelBase model = (IPluginModelBase)fWorkspaceEntries.get(i);
-			BundleDescription bundle = model.getBundleDescription();
-			if (bundle != null && bundle.getBundleId() == bundleId)
+			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}
 		for (int i = 0; i < fExternalEntries.size(); i++) {
 			IPluginModelBase model = (IPluginModelBase)fExternalEntries.get(i);
-			BundleDescription bundle = model.getBundleDescription();
-			if (bundle != null && bundle.getBundleId() == bundleId)
+			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}
 		return null;			
