@@ -91,13 +91,6 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		
 		defineTaskObjectLabelName();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
-	public void setData(Object object) {
-		// TODO: MP: COMPCS: Set data
-	}	
 	
 	/**
 	 * 
@@ -344,8 +337,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Update conclusion text
 		updateConclusionText(editable);
 		
-		// TODO: MP: LOW: CompCS: Visually indicate which tab has contents
-		// specified (perhaps using different image?
+		// TODO: MP: CompCS: Visually indicate which tab has contents specified (perhaps using different image?
 	}
 
 	/**

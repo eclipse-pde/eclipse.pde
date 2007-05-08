@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -94,13 +95,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, section);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
-	public void setData(Object object) {
-		// TODO: MP: COMPCS: Set data
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -555,5 +549,12 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fNameEntry.commit();
 		fPathEntry.commit();
 		// No need to call for sub details, because they contain no form entries
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// TODO: MP: CompCS: IMPLEMENT
 	}
 }

@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
-import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -67,13 +66,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	private Table fCommandTable;
 	
-	private ComboPart fCommandCombo;
+	private SimpleCSCommandComboPart fCommandCombo;
 	
 	private ControlDecoration fCommandInfoDecoration;
 	
 	private Button fCommandBrowse;
 
 	private static final String F_NO_COMMAND = PDEUIMessages.SimpleCSCommandDetails_6;
+	
+	private static final int F_COMMAND_INSERTION_INDEX = 1;
 	
 	/**
 	 * @param section
@@ -91,13 +92,9 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
-	public void setData(Object object) {
-		// Ensure we have the right type
-		if ((object instanceof ISimpleCSRun) == false) {
-			return;
-		}
+	public void setData(ISimpleCSRun object) {
 		// Set data
-		fRun = (ISimpleCSRun)object;
+		fRun = object;
 	}	
 	
 	/* (non-Javadoc)
@@ -130,13 +127,23 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		label = toolkit.createLabel(commandSectionClient, PDEUIMessages.SimpleCSItemDetails_7, SWT.WRAP);
 		label.setForeground(foreground);
 		// Combo box
-		fCommandCombo = new ComboPart();
+		fCommandCombo = new SimpleCSCommandComboPart();
 		fCommandCombo.createControl(commandSectionClient, toolkit, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		fCommandCombo.getControl().setLayoutData(data);
+		// Insertion index is 0 for no command combo box entry
+		// Always keep this entry as the first entry
 		fCommandCombo.add(F_NO_COMMAND);
 		fCommandCombo.setText(F_NO_COMMAND);
+		fCommandCombo.populate();
+		// Always insert new command keys obtained from other combo boxes in 
+		// the position after the no command entry
+		fCommandCombo.setNewCommandKeyIndex(F_COMMAND_INSERTION_INDEX);
+		// Limit the combo box to the 11 most recent entries (includes no 
+		// command entry)
+		fCommandCombo.setComboEntryLimit(11);
+		
 		createCommandInfoDecoration();
 		// Button
 		fCommandBrowse = toolkit.createButton(commandSectionClient, PDEUIMessages.GeneralInfoSection_browse, SWT.PUSH);
@@ -202,8 +209,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				if (selection.equals(F_NO_COMMAND) ==  false) {
 					// Get the associated serialization stored as data against the 
 					// command name
-					String serialization = (String) fCommandCombo.getControl()
-							.getData(selection);
+					String serialization = fCommandCombo.getValue(selection);
 					if (PDETextHelper.isDefined(serialization)) {
 						// Create the new command in the model
 						createCommandInModel(serialization);
@@ -260,10 +266,27 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			return;
 		}
 		// i.e. Action: class
-		updateCommandCombo(getParameterizedCommand(fRun), false);
+		ParameterizedCommand command = getParameterizedCommand(fRun);
+		if (command == null) {
+			// Since, this page is static the command combo and command table
+			// must be reset
+			clearCommandUI();
+		} else {
+			updateCommandCombo(command, false);
+		}
 		updateCommandEnablement();
 	}
 
+	/**
+	 * 
+	 */
+	private void clearCommandUI() {
+		// Clear the command combo
+		fCommandCombo.setText(F_NO_COMMAND);
+		// Clear the command table
+		fCommandTable.clearAll();
+	}
+	
 	/**
 	 * 
 	 */
@@ -344,12 +367,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				nameToUse = commandId;
 			}
 			// Add new selection to the combo box if it is not already there
-			if (fCommandCombo.indexOf(nameToUse) == -1) {
-				fCommandCombo.add(nameToUse);
-			}
 			// Associate the serialization with the command name
 			// in the widget to retrieve for later use
-			fCommandCombo.getControl().setData(nameToUse, serialization);
+			fCommandCombo.putValue(nameToUse, serialization, 
+					F_COMMAND_INSERTION_INDEX);
 			// Select it
 			fCommandCombo.setText(nameToUse);
 			// Update the command table parameters
@@ -497,5 +518,13 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		}
 		fCommandInfoDecoration.setShowHover(showDecoration);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// NO-OP
+		// No form entries
+	}		
 }

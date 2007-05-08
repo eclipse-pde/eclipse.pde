@@ -20,7 +20,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class ComboPart {
-	private Control combo;
+	
+	protected Control combo;
 
 	public ComboPart() {
 	}
@@ -71,6 +72,23 @@ public class ComboPart {
 			((Combo) combo).add(item);
 		else
 			((CCombo) combo).add(item);
+	}
+	
+	/**
+	 * @param index
+	 */
+	public void remove(int index) {
+		// Ensure the index is valid
+		if ((index < 0) || 
+				(index >= getItemCount())) {
+			return;
+		}
+		// Remove the item from the specified index
+		if (combo instanceof Combo) {
+			((Combo)combo).remove(index);
+		} else {
+			((CCombo)combo).remove(index);
+		}
 	}
 	
 	public void select(int index) {

@@ -11,12 +11,12 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -45,11 +45,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	
 	private Section fMainSection;
 
-	private ICSDetails fCommandSection;
-	
-	// Not supporting when at this moment; since, we are not supporting
-	// conditional-subitem
-	//private FormEntry fWhen;	
+	private SimpleCSCommandDetails fCommandSection;
 	
 	/**
 	 * @param elementSection
@@ -60,9 +56,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 		fLabel = null;
 		fSkip = null;
-		// Not supporting when at this moment; since, we are not supporting
-		// conditional-subitem
-		//fWhen = null;
 		fMainSection = null;
 		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);		
 	}
@@ -70,16 +63,29 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
-	public void setData(Object object) {
+	public void setData(ISimpleCSSubItem object) {
+		// Set data
+		fSubItem = object;
+		// Set data on command section
+		fCommandSection.setData(object);
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object instanceof ISimpleCSSubItem) == false) {
+		if ((object == null) ||
+				(object instanceof ISimpleCSSubItem) == false) {
 			return;
 		}
 		// Set data
-		fSubItem = (ISimpleCSSubItem)object;
-		// Update command details
-		fCommandSection.setData(object);
-	}	
+		setData((ISimpleCSSubItem)object);
+		// Update the UI given the new data
+		updateFields();	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -90,9 +96,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// sections through its main section parent; since, it never is 
 		// registered directly.
 		// Initialize managed form for command section
-		if (fCommandSection instanceof IFormPart) {
-			((IFormPart)fCommandSection).initialize(form);
-		}
+		fCommandSection.initialize(form);
 	}		
 	
 	/* (non-Javadoc)
@@ -140,12 +144,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 
 		fCommandSection.createDetails(parent);
-		// Attribute: when
-		// Not supporting when at this moment; since, we are not supporting
-		// conditional-subitem
-		//fWhen = new FormEntry(optionalSectionClient, toolkit, PDEUIMessages.SimpleCSSubItemDetails_2, SWT.NONE);
-		// TODO: MP: SimpleCS: WHEN: Get rid of all commented code
-		
 	}
 	
 	/* (non-Javadoc)
@@ -171,14 +169,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 				fSubItem.setSkip(fSkip.getSelection());
 			}
 		});
-		// Attribute: when
-		// Not supporting when at this moment; since, we are not supporting
-		// conditional-subitem
-//		fWhen.setFormEntryListener(new FormEntryAdapter(this) {
-//			public void textValueChanged(FormEntry entry) {
-//				fSubItem.setWhen(fWhen.getValue());
-//			}
-//		});			
 		
 		fCommandSection.hookListeners();
 	}
@@ -200,12 +190,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Attribute: skip
 		fSkip.setSelection(fSubItem.getSkip());
 		fSkip.setEnabled(editable);
-		
-		// Attribute: when
-		// Not supporting when at this moment; since, we are not supporting
-		// conditional-subitem
-//		fWhen.setValue(fSubItem.getWhen(), true);
-//		fWhen.setEditable(editable);
 		
 		fCommandSection.updateFields();
 	}

@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
@@ -37,13 +38,14 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 		fMasterSection = masterSection;
 		fContextID = contextID;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
 		configureParentLayout(parent);
 		createDetails(parent);
+		// TODO: MP: CompCS:  With new selection changed listeners this call is redundant - change after compcs changed to static
 		updateFields();
 		hookListeners();
 	}
@@ -71,15 +73,11 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	public abstract void hookListeners();
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#setData(java.lang.Object)
-	 */
-	public abstract void setData(Object object);
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// NO-OP
+		// Children to override
 	}
 
 	/* (non-Javadoc)
@@ -137,6 +135,20 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	 */
 	public ICSMaster getMasterSection() {
 		return fMasterSection;
+	}
+	
+	/**
+	 * @param selection
+	 * @return
+	 */
+	protected Object getFirstSelectedObject(ISelection selection) {
+		// Get the structured selection (obtained from the master tree viewer)
+		IStructuredSelection structuredSel = ((IStructuredSelection)selection);
+		// Ensure we have a selection
+		if (structuredSel == null) {
+			return null;
+		}
+		return structuredSel.getFirstElement();
 	}
 	
 }

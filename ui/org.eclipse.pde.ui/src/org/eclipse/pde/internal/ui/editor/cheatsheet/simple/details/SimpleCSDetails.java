@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -22,6 +23,7 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -52,14 +54,27 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
-	public void setData(Object object) {
+	public void setData(ISimpleCS object) {
+		// Set data
+		fCheatSheet = object;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object instanceof ISimpleCS) == false) {
+		if ((object == null) ||
+				(object instanceof ISimpleCS) == false) {
 			return;
 		}
 		// Set data
-		fCheatSheet = (ISimpleCS)object;
-	}	
+		setData((ISimpleCS)object);
+		// Update the UI given the new data
+		updateFields();	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)

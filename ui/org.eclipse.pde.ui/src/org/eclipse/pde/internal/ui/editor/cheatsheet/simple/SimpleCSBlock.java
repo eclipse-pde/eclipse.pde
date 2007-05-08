@@ -88,32 +88,33 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
-	 */
-	public IDetailsPage getPage(Object key) {
-
-		if (key instanceof ISimpleCSItem) {
-			fItemDetails.setData(key);
-			return fItemDetails;
-		} else if (key instanceof ISimpleCSSubItem) {
-			fSubItemDetails.setData(key);
-			return fSubItemDetails;
-		} else if (key instanceof ISimpleCS) {
-			fCheatSheetDetails.setData(key);
-			return fCheatSheetDetails;
-		} else if (key instanceof ISimpleCSIntro) {
-			fIntroDetails.setData(key);
-			return fIntroDetails;
-		} else {
-			return null;
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
 	 */
 	public Object getPageKey(Object object) {
-		return object;
+		// Get static page key
+		if (object instanceof ISimpleCSItem) {
+			// Static page:  item
+			return SimpleCSItemDetails.class;
+		} else if (object instanceof ISimpleCSSubItem) {
+			// Static page:  subitem
+			return SimpleCSSubItemDetails.class;
+		} else if (object instanceof ISimpleCS) {
+			// Static page:  cheatsheet
+			return SimpleCSDetails.class;
+		} else if (object instanceof ISimpleCSIntro) {
+			// Static page:  intro
+			return SimpleCSIntroDetails.class;
+		}	
+		// Should never reach here
+		return object.getClass();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
+	 */
+	public IDetailsPage getPage(Object key) {
+		// No dynamic pages.  Static pages already registered
+		return null;
 	}
 
 	/* (non-Javadoc)

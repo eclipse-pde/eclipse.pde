@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -76,13 +77,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTaskGroup,
 				section);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
-	public void setData(Object object) {
-		// TODO: MP: COMPCS: Set data
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -296,6 +290,13 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// Only required for form entries
 		fNameEntry.commit();
 		// No need to call for sub details, because they contain no form entries
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// TODO: MP: CompCS: IMPLEMENT
 	}
 	
 }

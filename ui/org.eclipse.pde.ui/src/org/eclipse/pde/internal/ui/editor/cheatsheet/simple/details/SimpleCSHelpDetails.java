@@ -49,6 +49,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	private ISimpleCSHelpObject fHelpObject;
 	
 	private Section fHelpSection;
+	
+	private boolean fBlockListeners;
 
 	private static final String F_NO_HELP = PDEUIMessages.SimpleCSCommandDetails_6;
 	
@@ -62,6 +64,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	public SimpleCSHelpDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fHelpObject = null;
+		fBlockListeners = false;
 		
 		fHelpText = null;
 		fHelpCombo = null;
@@ -73,13 +76,9 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
-	public void setData(Object object) {
-		// Ensure we have the right type
-		if ((object instanceof ISimpleCSHelpObject) == false) {
-			return;
-		}
+	public void setData(ISimpleCSHelpObject object) {
 		// Set data
-		fHelpObject = (ISimpleCSHelpObject)object;
+		fHelpObject = object;
 	}
 	
 	/* (non-Javadoc)
@@ -191,6 +190,10 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Attribute: contextId		
 		fHelpText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				// Block UI updates
+				if (fBlockListeners) {
+					return;
+				}
 				// Ensure data object is defined
 				if (fHelpObject == null) {
 					return;
@@ -222,6 +225,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		boolean editable = isEditableElement();
 		boolean expanded = false;
 		
+		// Block model updates
+		fBlockListeners = true;
 		// Attribute: contextId
 		// Attribute: href		
 		if (PDETextHelper.isDefined(fHelpObject.getContextId())) {
@@ -233,6 +238,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 			fHelpCombo.setText(F_HELP_DOCUMENT_LINK);
 			expanded = true;
 		}
+		// Unblock model updates
+		fBlockListeners = false;
 
 		fHelpSection.setExpanded(expanded);
 		fHelpText.setEnabled(editable);
@@ -241,4 +248,14 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpCombo.setEnabled(editable);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// NO-OP
+		// No form entries
+	}	
+	
 }

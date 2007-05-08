@@ -11,12 +11,12 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -40,7 +40,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	
 	private Section fMainSection;	
 	
-	private ICSDetails fHelpSection;
+	private SimpleCSHelpDetails fHelpSection;
 	
 	/**
 	 * @param elementSection
@@ -57,16 +57,29 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
-	public void setData(Object object) {
+	public void setData(ISimpleCSIntro object) {
+		// Set data
+		fIntro = object;
+		// Set data on help section
+		fHelpSection.setData(object);
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object instanceof ISimpleCSIntro) == false) {
+		if ((object == null) ||
+				(object instanceof ISimpleCSIntro) == false) {
 			return;
 		}
 		// Set data
-		fIntro = (ISimpleCSIntro)object;
-		// Update help details
-		fHelpSection.setData(object);
-	}	
+		setData((ISimpleCSIntro)object);
+		// Update the UI given the new data
+		updateFields();	
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -77,9 +90,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		// sections through its main section parent; since, it never is 
 		// registered directly.
 		// Initialize managed form for help section
-		if (fHelpSection instanceof IFormPart) {
-			((IFormPart)fHelpSection).initialize(form);
-		}
+		fHelpSection.initialize(form);
 	}		
 	
 	/* (non-Javadoc)

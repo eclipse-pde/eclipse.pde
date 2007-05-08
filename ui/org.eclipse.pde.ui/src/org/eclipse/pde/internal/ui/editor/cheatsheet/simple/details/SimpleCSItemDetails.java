@@ -13,13 +13,13 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -52,9 +52,9 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 	private Section fMainSection;	
 
-	private ICSDetails fHelpSection;	
+	private SimpleCSHelpDetails fHelpSection;	
 	
-	private ICSDetails fCommandSection;
+	private SimpleCSCommandDetails fCommandSection;
 
 	private ControlDecoration fSkipInfoDecoration;
 
@@ -74,22 +74,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fHelpSection = new SimpleCSHelpDetails(section);
 		fCommandSection = new SimpleCSCommandDetails(section);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
-	public void setData(Object object) {
-		// Ensure we have the right type
-		if ((object instanceof ISimpleCSItem) == false) {
-			return;
-		}
-		// Set data
-		fItem = (ISimpleCSItem)object;
-		// Update help details
-		fHelpSection.setData(object);
-		// Update command details
-		fCommandSection.setData(object);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -100,13 +84,9 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// sections through its main section parent; since, it never is 
 		// registered directly.
 		// Initialize managed form for help section
-		if (fHelpSection instanceof IFormPart) {
-			((IFormPart)fHelpSection).initialize(form);
-		}
+		fHelpSection.initialize(form);
 		// Initialized managed form for command section
-		if (fCommandSection instanceof IFormPart) {
-			((IFormPart)fCommandSection).initialize(form);
-		}
+		fCommandSection.initialize(form);
 	}	
 	
 	/* (non-Javadoc)
@@ -238,7 +218,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		if (fItem == null) {
 			return;
 		}
-		// TODO: MP: Check isdefined for all parameters in updateFields methods
+		// TODO: MP: SimpleCS:  Check isdefined for all parameters in updateFields methods
 		// Attribute: title
 		if (PDETextHelper.isDefined(fItem.getTitle())) {
 			fTitle.setValue(fItem.getTitle(), true);
@@ -248,14 +228,12 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// Attribute: skip
 		fSkip.setSelection(fItem.getSkip());
 		updateSkipEnablement();
+		// TODO: MP: SimpleCS:  Revist all parameters and check we are simply looking for null - okay for non-String types
+		// TODO: MP: SimpleCS:  Reevaluate write methods and make sure not writing empty string
 		
 		fHelpSection.updateFields();
 
 		fCommandSection.updateFields();
-		// TODO: MP: Important: revist all parameters and check we are simply
-		// looking for null - okay for non-String types
-		// TODO: MP: Reevaluate write methods and make sure not writing empty string
-		
 		
 		if (fItem.getDescription() == null) {
 			return;
@@ -314,4 +292,32 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// No need to call for sub details, because they contain no form entries
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
+		// Ensure we have the right type
+		if ((object == null) ||
+				(object instanceof ISimpleCSItem) == false) {
+			return;
+		}
+		// Set data
+		setData((ISimpleCSItem)object);
+		// Update the UI given the new data
+		updateFields();	
+	}
+	
+	/**
+	 * @param object
+	 */
+	public void setData(ISimpleCSItem object) {
+		// Set data
+		fItem = object;
+		// Set data on commands section
+		fCommandSection.setData(object);
+		// Set data on help section
+		fHelpSection.setData(object);
+	}	
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -46,13 +48,6 @@ public class CompCSDetails extends CSAbstractDetails {
 		fNameEntry = null;
 		fMainSection = null;		
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
-	 */
-	public void setData(Object object) {
-		// TODO: MP: COMPCS: Set data
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
@@ -127,6 +122,13 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Only required for form entries
 		fNameEntry.commit();
 		// No need to call for sub details, because they contain no form entries
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		// TODO: MP: CompCS: IMPLEMENT
 	}
 
 }
