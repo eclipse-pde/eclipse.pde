@@ -23,6 +23,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -186,7 +187,36 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		writer.print(PDEXMLHelper.getWritableString(getName()));
+		// Get the model
+		IPluginModelBase modelBase = getPluginModel();
+		// check to see if the model is a bundle model
+		if ((modelBase instanceof IBundlePluginModelBase) == false) {
+			writer.print(indent);
+			writer.print("<library name=\"" + PDEXMLHelper.getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (fType != null)
+				writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!isExported()) {
+				writer.println("/>"); //$NON-NLS-1$
+			} else {
+				writer.println(">"); //$NON-NLS-1$
+				String indent2 = indent + "   "; //$NON-NLS-1$
+				if (isExported()) {
+					if (isFullyExported()) {
+						writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
+					} else {
+						for (int i = 0; i < fContentFilters.length; i++) {
+							writer.println(
+									indent2
+									+ "<export name=\"" //$NON-NLS-1$
+									+ fContentFilters[i]
+									                  + "\"/>"); //$NON-NLS-1$
+						}
+					}
+				}
+				writer.println(indent + "</library>"); //$NON-NLS-1$
+			}
+		} else 
+			writer.print(PDEXMLHelper.getWritableString(getName()));
 	}
 	
 	/* (non-Javadoc)

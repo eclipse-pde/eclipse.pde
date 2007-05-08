@@ -225,6 +225,19 @@ public class PluginImport extends IdentifiablePluginObject implements
 		IPluginModelBase modelBase = getPluginModel();
 		// Ensure the model is a bundle model
 		if ((modelBase instanceof IBundlePluginModelBase) == false) {
+			writer.print(indent);
+			writer.print("<import plugin=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (isReexported())
+				writer.print(" export=\"true\""); //$NON-NLS-1$
+			if (isOptional())
+				writer.print(" optional=\"true\""); //$NON-NLS-1$
+			if (version != null && version.length() > 0)
+				writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (match != NONE && match != COMPATIBLE) {
+				String matchValue = RULE_NAME_TABLE[match];
+				writer.print(" match=\"" + matchValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			writer.println("/>"); //$NON-NLS-1$
 			return;
 		}
 		IBundleModel bundleModel = ((IBundlePluginModelBase)modelBase).getBundleModel();

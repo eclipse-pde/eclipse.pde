@@ -172,15 +172,17 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private void createManifest(IProject project) throws CoreException {
 		if (fData.hasBundleStructure()) {
 			if (fData instanceof IFragmentFieldData) {
-				fModel = new WorkspaceBundleFragmentModel(project.getFile("META-INF/MANIFEST.MF"), project.getFile("fragment.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+				fModel = new WorkspaceBundleFragmentModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
+						project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
 			} else {
-				fModel = new WorkspaceBundlePluginModel(project.getFile("META-INF/MANIFEST.MF"), project.getFile("plugin.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+				fModel = new WorkspaceBundlePluginModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
+						project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
 			}
 		} else {
 			if (fData instanceof IFragmentFieldData) {
-				fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml"), false); //$NON-NLS-1$
+				fModel = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), false);
 			} else {
-				fModel = new WorkspacePluginModel(project.getFile("plugin.xml"), false); //$NON-NLS-1$
+				fModel = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false);
 			}
 		}
 		IPluginBase pluginBase = fModel.getPluginBase();
@@ -373,8 +375,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			throws CoreException {
 		if ((!fData.hasBundleStructure() || fContentWizard != null)
 			 && ((AbstractFieldData)fData).getOSGiFramework() == null)
-			binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
-							: "plugin.xml"); //$NON-NLS-1$
+			binEntry.addToken(fData instanceof IFragmentFieldData ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
+							: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		if (fData.hasBundleStructure())
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
 		if (!fData.isSimple()) {
