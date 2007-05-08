@@ -26,7 +26,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		ColorManager.initializeDefaults(store);
 		store.setDefault(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_IDS);
-		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, true);
+		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, OSGiFrameworkManager.DEFAULT_FRAMEWORK);
 	}
 
