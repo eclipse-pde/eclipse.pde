@@ -144,7 +144,7 @@ public class PointSelectionPage
 		private String wMatch = "*"; //$NON-NLS-1$
 		protected void setMatchText(String match) {
 			if (match.indexOf("*") < 0 & match.indexOf("?") < 0 & match.indexOf(".") < 0) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				match = "*." + match; //$NON-NLS-1$
+				match = "*" + match; //$NON-NLS-1$
 			}
 			wMatch = match + "*"; //$NON-NLS-1$
 		}
