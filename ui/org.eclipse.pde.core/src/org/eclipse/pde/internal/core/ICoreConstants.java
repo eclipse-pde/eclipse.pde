@@ -119,6 +119,7 @@ public interface ICoreConstants {
 	public static IPath PLUGIN_PATH = new Path("plugin.xml"); //$NON-NLS-1$
 	public static IPath FRAGMENT_PATH = new Path("fragment.xml"); //$NON-NLS-1$
 	public static IPath FEATURE_PATH = new Path("feature.xml"); //$NON-NLS-1$
+	public static IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
 	
 
 }

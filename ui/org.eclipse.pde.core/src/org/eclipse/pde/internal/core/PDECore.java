@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
+import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
@@ -42,7 +43,8 @@ public class PDECore extends Plugin {
 	public static final String BINARY_REPOSITORY_PROVIDER = PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported"); //$NON-NLS-1$
-
+	public static final QualifiedName TOUCH_PROJECT = new QualifiedName(PLUGIN_ID, "TOUCH_PROJECT"); //$NON-NLS-1$
+	
 	// Shared instance
 	private static PDECore inst;
 	
@@ -132,6 +134,8 @@ public class PDECore extends Plugin {
 	private JavaElementChangeListener fJavaElementChangeListener;
 
 	private FeatureRebuilder fFeatureRebuilder;
+
+	private PluginRebuilder fPluginRebuilder;
 
 	public PDECore() {
 		inst = this;
@@ -227,6 +231,8 @@ public class PDECore extends Plugin {
 		CompilerFlags.initializeDefaults();
 		fJavaElementChangeListener = new JavaElementChangeListener();
 		fJavaElementChangeListener.start();
+		fPluginRebuilder = new PluginRebuilder();
+		fPluginRebuilder.start();
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
 	}
@@ -239,6 +245,7 @@ public class PDECore extends Plugin {
 		PDECore.getDefault().savePluginPreferences();
 		
 		fJavaElementChangeListener.shutdown();
+		fPluginRebuilder.stop();
 		fFeatureRebuilder.stop();
 		
 		if (fSchemaRegistry != null) {
