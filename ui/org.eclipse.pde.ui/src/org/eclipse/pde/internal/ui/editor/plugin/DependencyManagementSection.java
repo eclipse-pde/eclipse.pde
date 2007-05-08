@@ -182,7 +182,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 
 	public DependencyManagementSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT, new String[] { ADD, REMOVE, UP, DOWN});
-		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
 		IBuildModel model = getBuildModel(false);
 		if (model != null) {
 			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
@@ -244,6 +243,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		section.setClient(container);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		section.setText(PDEUIMessages.SecondaryBundlesSection_title);
 		createSectionToolbar(section, toolkit);
 		initialize();
 	}
