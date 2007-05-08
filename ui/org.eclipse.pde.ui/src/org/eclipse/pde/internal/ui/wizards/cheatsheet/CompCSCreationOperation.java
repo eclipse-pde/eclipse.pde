@@ -86,11 +86,13 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 		// Configure Task
 		// Element: intro
 		ICompCSIntro taskIntro = factory.createCompCSIntro(task);
-		taskIntro.setFieldContent(PDEUIMessages.CompCSCreationOperation_introduction);
+		taskIntro.setFieldContent(
+				formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
 		// Element: onCompletion
 		ICompCSOnCompletion taskConclusion = 
 			factory.createCompCSOnCompletion(task);
-		taskConclusion.setFieldContent(PDEUIMessages.CompCSCreationOperation_conclusion);
+		taskConclusion.setFieldContent(
+				formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
 		// Attribute: name
 		task.setFieldName(PDEUIMessages.CompCSCreationOperation_task);
 		// Attribute: kind
@@ -99,6 +101,19 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 		task.setFieldOnCompletion(taskConclusion);		
 		
 		return task;
+	}
+	
+	/**
+	 * @param text
+	 * @return
+	 */
+	private static String formatTextBold(String text) {
+		// TODO: MP: CompCS:  Create generalized HTML formatter utility
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<b>"); //$NON-NLS-1$
+		buffer.append(text);
+		buffer.append("</b>"); //$NON-NLS-1$
+		return buffer.toString();
 	}
 	
 	/**
@@ -113,11 +128,13 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 		// Configure Task Group
 		// Element: intro
 		ICompCSIntro taskGroupIntro = factory.createCompCSIntro(taskGroup);
-		taskGroupIntro.setFieldContent(PDEUIMessages.CompCSCreationOperation_introduction);
+		taskGroupIntro.setFieldContent(
+				formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
 		// Element: onCompletion
 		ICompCSOnCompletion taskGroupConclusion = 
 			factory.createCompCSOnCompletion(taskGroup);
-		taskGroupConclusion.setFieldContent(PDEUIMessages.CompCSCreationOperation_conclusion);
+		taskGroupConclusion.setFieldContent(
+				formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
 		// Attribute: name
 		taskGroup.setFieldName(PDEUIMessages.CompCSCreationOperation_group);
 		// Attribute: kind

@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -53,7 +52,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	
 	private ICompCSTaskGroup fDataTaskGroup;
 	
-	private ICSDetails fEnclosingTextSection;
+	private CompCSEnclosingTextDetails fEnclosingTextSection;
 	
 	private static final String F_KIND_VALUE_SET = PDEUIMessages.CompCSTaskGroupDetails_Set;
 	
@@ -298,5 +297,17 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// TODO: MP: CompCS: IMPLEMENT
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		// Dispose of the enclosing text section
+		if (fEnclosingTextSection != null) {
+			fEnclosingTextSection.dispose();
+			fEnclosingTextSection = null;
+		}
+		super.dispose();
+	}	
 	
 }

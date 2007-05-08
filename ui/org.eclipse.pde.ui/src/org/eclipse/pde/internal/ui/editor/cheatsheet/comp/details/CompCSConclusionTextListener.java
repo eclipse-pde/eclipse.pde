@@ -11,19 +11,19 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * CompCSEnclosingTextModifyListener
  *
  */
-public class CompCSConclusionTextListener implements ModifyListener {
+public class CompCSConclusionTextListener implements IDocumentListener {
 
 	private ICompCSTaskObject fDataTaskObject;	
 	
@@ -35,15 +35,22 @@ public class CompCSConclusionTextListener implements ModifyListener {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
+	public void documentAboutToBeChanged(DocumentEvent e) {
+		// NO-OP
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
-	public void modifyText(ModifyEvent event) {
+	public void documentChanged(DocumentEvent event) {
 		// Get the text from the event
-		if ((event.widget == null) ||
-				(event.widget instanceof Text) == false) {
+		IDocument document = event.getDocument();
+		if (document == null) {
 			return;
 		}
-		String text = ((Text)event.widget).getText().trim();
+		String text = document.get().trim();
 		// Determine whether a conclusion was specified
 		boolean hasText = PDETextHelper.isDefined(text);
 		if (hasText) {

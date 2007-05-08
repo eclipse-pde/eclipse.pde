@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSFileValidator;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
@@ -74,7 +73,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	
 	private ICompCSTask fDataTask;
 	
-	private ICSDetails fEnclosingTextSection;		
+	private CompCSEnclosingTextDetails fEnclosingTextSection;		
 	
 	private final static String F_PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	
@@ -556,5 +555,18 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// TODO: MP: CompCS: IMPLEMENT
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		// Dispose of the enclosing text section
+		if (fEnclosingTextSection != null) {
+			fEnclosingTextSection.dispose();
+			fEnclosingTextSection = null;
+		}
+		super.dispose();
 	}
+
 }

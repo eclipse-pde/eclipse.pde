@@ -11,6 +11,13 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
@@ -23,10 +30,18 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -35,10 +50,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
@@ -51,9 +67,17 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	
 	private Section fEnclosingTextSection;		
 	
-	private Text fIntroductionText;
+	private SourceViewer fIntroductionViewer;
+
+	private SourceViewer fConclusionViewer;
+
+	private XMLConfiguration fSourceConfiguration;
 	
-	private Text fConclusionText;
+	private IColorManager fColorManager;
+	
+	private IDocument fIntroductionDocument;
+
+	private IDocument fConclusionDocument;
 	
 	private CTabFolder fTabFolder;
 	
@@ -67,7 +91,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	
 	private Composite fIntroductionComposite;
 	
-	private Composite fCompositeConclusion;		
+	private Composite fConclusionComposite;		
 	
 	private String fTaskObjectLabelName;	
 	
@@ -81,15 +105,31 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fDataTaskObject = taskObject;
 		
 		fEnclosingTextSection = null;
-		fIntroductionText = null;
-		fConclusionText = null;
+		
+		fIntroductionViewer = null;
+		fIntroductionDocument = null;
+		fConclusionViewer = null;
+		fConclusionDocument = null;
+		
 		fTabFolder = null;
 		fNotebookComposite = null;
 		fNotebookLayout = null;
+		
 		fIntroductionComposite = null;
-		fCompositeConclusion = null;
+		fConclusionComposite = null;
 		
 		defineTaskObjectLabelName();
+		setupSourceViewerConfiguration();
+	}
+
+	/**
+	 * 
+	 */
+	private void setupSourceViewerConfiguration() {
+		// Get the color manager
+		fColorManager = ColorManager.getDefault();
+		// Create the source configuration
+		fSourceConfiguration = new XMLConfiguration(fColorManager);		
 	}
 	
 	/**
@@ -116,9 +156,15 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fEnclosingTextSection = getPage().createUISection(parent,
 				PDEUIMessages.CompCSEnclosingTextDetails_EnclosingText,
 				description, style);
+		// Configure the section
+		// The source viewers get clipped when the label above it wraps.
+		// Prevent this by making the section fill vertically in addition to
+		// horizontally
+		GridData data = new GridData(GridData.FILL_BOTH);
+		fEnclosingTextSection.setLayoutData(data);
 		// Create the container for the main section
 		Composite sectionClient = getPage().createUISectionContainer(
-				fEnclosingTextSection, 1);		
+				fEnclosingTextSection, 1);
 		// Create the tab folder
 		createUITabFolder(sectionClient);
 		// Create the introduction folder tab
@@ -128,9 +174,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Create the notebook composite
 		createUINotebookComposite(sectionClient);
 		// Create the introduction text
-		createUIIntroductionText();
+		createUIIntroductionViewer();
 		// Create the conclusion text
-		createUIConclusionText();	
+		createUIConclusionViewer();	
 		// Bind widgets
 		getToolkit().paintBordersFor(sectionClient);
 		fEnclosingTextSection.setClient(sectionClient);		
@@ -191,61 +237,132 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	/**
 	 * 
 	 */
-	private void createUIIntroductionText() {
-		GridData data = null;
-		int columns = 1;
+	private void createUIIntroductionViewer() {
 		// Create composite
-		fIntroductionComposite = createUIContainer(fNotebookComposite, columns);
+		fIntroductionComposite = createUIContainer(fNotebookComposite, 1);
 		// Create label
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_IntroductionDescription,
 				fTaskObjectLabelName);			
 		final Label label = getToolkit().createLabel(
 				fIntroductionComposite, description, SWT.WRAP);
-		data = new GridData();
-		data.horizontalSpan = columns;
-		label.setLayoutData(data);		
-		// Create text
-		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
-		fIntroductionText = getToolkit().createText(
-				fIntroductionComposite, "", style); //$NON-NLS-1$
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = 60;
-		fIntroductionText.setLayoutData(data);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
+		// Create the underlying document
+		fIntroductionDocument = new Document();
+		// Create the source viewer
+		fIntroductionViewer = createUISourceViewer(fIntroductionComposite, fIntroductionDocument);
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
 		// theme
 		getToolkit().paintBordersFor(fIntroductionComposite);
 	}
+
+	/**
+	 * 
+	 */
+	private SourceViewer createUISourceViewer(Composite parent, IDocument document) {
+		// Create the source viewer
+		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
+		SourceViewer viewer = 
+			new SourceViewer(parent, null, style);
+		// Configure the source viewer
+		viewer.configure(fSourceConfiguration);
+		// Setup the underlying document
+		IDocumentSetupParticipant participant = 
+			new XMLDocumentSetupParticpant();
+		participant.setup(document);
+		// Set the document on the source viewer
+		viewer.setDocument(document);
+		// Configure the underlying styled text widget
+		StyledText styledText = viewer.getTextWidget();
+		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 60;
+		data.widthHint = 60;
+		styledText.setLayoutData(data);
+		
+		return viewer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#doGlobalAction(java.lang.String)
+	 */
+	public boolean doGlobalAction(String actionId) {
+		// Determine which tab is selected
+		int index = fTabFolder.getSelectionIndex();
+		// Do the global action on the source viewer on that tab
+		SourceViewer viewer = null;
+		
+		if (index == F_INTRODUCTION_TAB) {
+			viewer = fIntroductionViewer;
+		} else if (index == F_CONCLUSION_TAB) {
+			viewer = fConclusionViewer;
+		}
+		
+		return doGlobalActionViewer(actionId, viewer);
+	}
+	
+	/**
+	 * @param actionId
+	 * @param viewer
+	 * @return
+	 */
+	private boolean doGlobalActionViewer(String actionId, SourceViewer viewer) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			viewer.doOperation(ITextOperationTarget.CUT);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.COPY.getId())) {
+			viewer.doOperation(ITextOperationTarget.COPY);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.PASTE.getId())) {
+			viewer.doOperation(ITextOperationTarget.PASTE);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			viewer.doOperation(ITextOperationTarget.SELECT_ALL);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.DELETE.getId())) {
+			viewer.doOperation(ITextOperationTarget.DELETE);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.UNDO.getId())) {
+			viewer.doOperation(ITextOperationTarget.UNDO);
+			return true;
+		} else if (
+			actionId.equals(ActionFactory.REDO.getId())) {
+			viewer.doOperation(ITextOperationTarget.REDO);
+			return true;
+		}
+		return false;		
+	}
 	
 	/**
 	 * 
 	 */
-	private void createUIConclusionText() {
-		GridData data = null;
-		int columns = 1;
+	private void createUIConclusionViewer() {
 		// Create composite
-		fCompositeConclusion = createUIContainer(fNotebookComposite, columns);
+		fConclusionComposite = createUIContainer(fNotebookComposite, 1);
 		// Create label
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_ConclusionDescription,
 				fTaskObjectLabelName);		
 		final Label label = getToolkit().createLabel(
-				fCompositeConclusion, description, SWT.WRAP);
-		data = new GridData();
-		data.horizontalSpan = columns;
+				fConclusionComposite, description, SWT.WRAP);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);		
-		// Create text
-		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;		
-		fConclusionText = getToolkit().createText(
-				fCompositeConclusion, "", style); //$NON-NLS-1$
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = 60;
-		fConclusionText.setLayoutData(data);
+		// Create the underlying document
+		fConclusionDocument = new Document();
+		// Create the source viewer
+		fConclusionViewer = createUISourceViewer(fConclusionComposite, fConclusionDocument);		
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
 		// theme
-		getToolkit().paintBordersFor(fCompositeConclusion);
+		getToolkit().paintBordersFor(fConclusionComposite);
 	}	
 
 	/**
@@ -268,9 +385,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 */
 	public void hookListeners() {
 		// Create the listeners for the introduction text
-		createListenersIntroductionText();
+		createListenersIntroductionViewer();
 		// Create the listeners for the conclusion text
-		createListenersConclusionText();
+		createListenersConclusionViewer();
 		// Create the listeners for the tab folder
 		createListenersTabFolder();
 	}
@@ -278,17 +395,43 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	/**
 	 * 
 	 */
-	private void createListenersIntroductionText() {
-		fIntroductionText.addModifyListener(
-				new CompCSIntroductionTextListener(fDataTaskObject));
+	private void createListenersIntroductionViewer() {
+		// Create selection listener
+		fIntroductionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				getPage().getPDEEditor().setSelection(event.getSelection());
+			}
+		});
+		// Create focus listener
+		fIntroductionViewer.getTextWidget().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
+			}
+		});
+		// Create document listener
+		fIntroductionDocument.addDocumentListener(
+				new CompCSIntroductionTextListener(fDataTaskObject));		
 	}
-
+	
 	/**
 	 * 
 	 */
-	private void createListenersConclusionText() {
-		fConclusionText.addModifyListener(
-				new CompCSConclusionTextListener(fDataTaskObject));
+	private void createListenersConclusionViewer() {
+		// Create selection listener
+		fConclusionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				getPage().getPDEEditor().setSelection(event.getSelection());
+			}
+		});
+		// Create focus listener
+		fConclusionViewer.getTextWidget().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
+			}
+		});
+		// Create document listener
+		fConclusionDocument.addDocumentListener(
+				new CompCSConclusionTextListener(fDataTaskObject));				
 	}
 
 	/**
@@ -313,7 +456,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		if (index == F_INTRODUCTION_TAB) {
 			fNotebookLayout.topControl = fIntroductionComposite;
 		} else if (index == F_CONCLUSION_TAB) {
-			fNotebookLayout.topControl = fCompositeConclusion;
+			fNotebookLayout.topControl = fConclusionComposite;
 		}
 
 		if (oldControl != fNotebookLayout.topControl) {
@@ -326,42 +469,88 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#updateFields()
 	 */
 	public void updateFields() {
-
 		boolean editable = isEditableElement();
 		// Select the introduction tab
 		fTabFolder.setSelection(F_INTRODUCTION_TAB);
 		// Update tab folder
 		updateTabFolder();
 		// Update introduction text
-		updateIntroductionText(editable);
+		updateIntroductionViewer(editable);
 		// Update conclusion text
-		updateConclusionText(editable);
-		
-		// TODO: MP: CompCS: Visually indicate which tab has contents specified (perhaps using different image?
+		updateConclusionViewer(editable);
 	}
 
 	/**
 	 * @param editable
 	 */
-	private void updateIntroductionText(boolean editable) {
+	private void updateIntroductionViewer(boolean editable) {
 		ICompCSIntro intro = fDataTaskObject.getFieldIntro();
 		if ((intro != null) &&
 				PDETextHelper.isDefined(intro.getFieldContent())) {
-			fIntroductionText.setText(intro.getFieldContent());
+			fIntroductionDocument.set(intro.getFieldContent());
 		}
-		fIntroductionText.setEditable(editable);
+		fIntroductionViewer.setEditable(editable);
 	}
 
 	/**
 	 * @param editable
 	 */
-	private void updateConclusionText(boolean editable) {
+	private void updateConclusionViewer(boolean editable) {
 		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
 		if ((conclusion != null) &&
 				PDETextHelper.isDefined(conclusion.getFieldContent())) {
-			fConclusionText.setText(conclusion.getFieldContent());
+			fConclusionDocument.set(conclusion.getFieldContent());
 		}
-		fConclusionText.setEditable(editable);		
+		fConclusionViewer.setEditable(editable);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		// TODO: MP: CompCS: Profile Sleek when making static to ensure no leaks
+		// TODO: MP: CompCS: Add check to intro viewer if null when making stack - ensure no NPEs
+		// Set the context menu to null to prevent the editor context menu
+		// from being disposed along with the source viewer
+		StyledText styledText = null;
+		styledText = fIntroductionViewer.getTextWidget();
+		if ((styledText != null) &&
+				(styledText.isDisposed() == false)) {
+			styledText.setMenu(null);
+		}
+		styledText = fConclusionViewer.getTextWidget();
+		if ((styledText != null) &&
+				(styledText.isDisposed() == false)) {
+			styledText.setMenu(null);
+		}
+		// Dispose of the color manager
+		if (fColorManager != null) {
+			fColorManager.dispose();
+			fColorManager = null;
+		}
+		// Dispose of the source configuration
+		if (fSourceConfiguration != null) {
+			fSourceConfiguration.dispose();
+			fSourceConfiguration = null;
+		}
+		super.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#canPaste(org.eclipse.swt.dnd.Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		// Determine which tab is selected
+		int index = fTabFolder.getSelectionIndex();
+		// Check if the source viewer on that tab can paste
+		SourceViewer viewer = null;
+		
+		if (index == F_INTRODUCTION_TAB) {
+			viewer = fIntroductionViewer;
+		} else if (index == F_CONCLUSION_TAB) {
+			viewer = fConclusionViewer;
+		}		
+		
+		return viewer.canDoOperation(ITextOperationTarget.PASTE);
+	}
 }
