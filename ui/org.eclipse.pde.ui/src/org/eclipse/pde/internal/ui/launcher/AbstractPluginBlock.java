@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,9 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
@@ -30,13 +31,11 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -370,16 +369,27 @@ public abstract class AbstractPluginBlock {
 	
 	private void computeSubset() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
-		TreeMap map = new TreeMap();
-		for (int i = 0; i < checked.length; i++) {
-			if (checked[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) checked[i];
-				addPluginAndDependencies(model, map);
+		ArrayList toCheck = new ArrayList(checked.length);
+		for (int i = 0; i < checked.length; i++)
+			if (checked[i] instanceof IPluginModelBase)
+				toCheck.add(checked[i]);
+		
+		Set additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection());
+		
+		Iterator it = additionalIds.iterator();
+		while (it.hasNext()) {
+			String id = (String)it.next();
+			if (findPlugin(id) == null) {
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					IPluginModelBase model = entry.getModel();
+					if (model != null)
+						toCheck.add(model);
+				}
 			}
 		}
-
-		checked = map.values().toArray();
-
+		
+		checked = toCheck.toArray();
 		setCheckedElements(checked);
 		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
@@ -394,36 +404,6 @@ public abstract class AbstractPluginBlock {
 	
 	protected void setCheckedElements(Object[] checked) {
 		fPluginTreeViewer.setCheckedElements(checked);
-	}
-
-	private void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {
-		if (model == null)
-			return;
-
-		String id = model.getPluginBase().getId();
-		if (map.containsKey(id))
-			return;
-
-		map.put(id, model);
-
-		if (model instanceof IFragmentModel) {
-			IPluginModelBase parent =
-				findPlugin(((IFragmentModel) model).getFragment().getPluginId());
-			addPluginAndDependencies(parent, map);
-		} else {
-			IFragmentModel[] fragments = findFragments(model);
-			for (int i = 0; i < fragments.length; i++) {
-				addPluginAndDependencies(fragments[i], map);
-			}
-		}
-
-		IPluginImport[] imports = model.getPluginBase().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			if (imports[i].isOptional() && !fIncludeOptionalButton.getSelection())
-				continue;
-			addPluginAndDependencies(findPlugin(imports[i].getId()), map);
-		}
-		
 	}
 
 	private IPluginModelBase findPlugin(String id) {
@@ -444,39 +424,9 @@ public abstract class AbstractPluginBlock {
 				if (fPluginTreeViewer.getChecked(models[i]))
 					return models[i];
 			}
-			return entry.getModel();
+			return null;
 		}
 		return null;
-	}
-
-	private IFragmentModel[] findFragments(IPluginModelBase model) {
-		BundleDescription desc = model.getBundleDescription();
-		BundleDescription[] fragments = desc.getFragments();
-		ArrayList result = new ArrayList(fragments.length);
-		for (int i = 0; i < fragments.length; i++) {
-			String id = fragments[i].getSymbolicName();
-			if (!fragments[i].isResolved() ||
-					"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-				continue;
-			IPluginModelBase fragment = PluginRegistry.findModel(fragments[i]);
-			if (fragment instanceof IFragmentModel ) {
-				if (fPluginTreeViewer.getChecked(fragment)) {
-					result.add(fragment);
-				} else {
-					ModelEntry entry = PluginRegistry.findEntry(id);
-					if (entry != null) {
-						IPluginModelBase[] candidates = entry.getExternalModels();
-						for (int j = 0; j < candidates.length; j++) {
-							if (j == candidates.length - 1 
-								|| fPluginTreeViewer.getChecked(candidates[j])) {
-								result.add(candidates[j]);
-							}
-						}
-					}
-				}
-			}
-		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
 	protected void adjustGroupState() {
