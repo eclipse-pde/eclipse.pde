@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -40,7 +43,20 @@ public class OpenReferenceAction extends SelectionProviderAction {
 		if (obj instanceof FeaturePlugin) {
 			FeaturePlugin reference = (FeaturePlugin) obj;
 			String pluginId = reference.getId();
-			ManifestEditor.openPluginEditor(pluginId);
+			String version = reference.getVersion();
+			if (version == null || version.equals("0.0.0")) //$NON-NLS-1$
+				ManifestEditor.openPluginEditor(pluginId);
+			else {
+				ModelEntry entry = PluginRegistry.findEntry(pluginId);
+				IPluginModelBase bases[] = entry.getActiveModels();
+				for (int i = 0; i < bases.length; i++) {
+					if (bases[i].getPluginBase().getVersion().equals(version)) {
+						ManifestEditor.openPluginEditor(bases[i]);
+						break;
+					}
+				}
+			}
+				
 		} else if (obj instanceof IFeatureData) {
 			IFeatureData data = (IFeatureData) obj;
 			String id = data.getId();
