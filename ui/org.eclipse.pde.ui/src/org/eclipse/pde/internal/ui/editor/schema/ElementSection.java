@@ -187,6 +187,10 @@ public class ElementSection extends TreeSection {
 	public void refresh() {
 		fTreeViewer.refresh();
 		super.refresh();
+		
+		if (fTreeViewer.getSelection().isEmpty() && fSchema.getElementCount() > 0)
+		{  fTreeViewer.setSelection(new StructuredSelection(fSchema.getElements()[0]));
+		}
 	}
 	
 	protected void buttonSelected(int index) {
