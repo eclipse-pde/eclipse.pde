@@ -168,10 +168,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return null;
 	}
 		
-	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		return XMLPartitionScanner.XML_TAG;
-	}
-	
 	public void dispose() {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();

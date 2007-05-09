@@ -34,6 +34,7 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 			fContentAssistant = new ContentAssistant();
 			fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 			fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+			fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, XMLPartitionScanner.XML_TAG);
 			fContentAssistant.setInformationControlCreator(getInformationControlCreator(true));
 			fContentAssistant.setShowEmptyList(false);
 			fContentAssistant.addCompletionListener(fContentAssistProcessor);
