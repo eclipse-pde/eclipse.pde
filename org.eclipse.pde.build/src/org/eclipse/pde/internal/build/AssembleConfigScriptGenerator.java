@@ -48,8 +48,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private static final byte BUNDLE = 0;
 	private static final byte FEATURE = 1;
 
-	private static final String FOLDER = "folder"; //$NON-NLS-1$
-	private static final String FILE = "file"; //$NON-NLS-1$
+	protected static final String FOLDER = "folder"; //$NON-NLS-1$
+	protected static final String FILE = "file"; //$NON-NLS-1$
 	protected String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	protected String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 	private boolean signJars;
@@ -556,7 +556,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
 	}
 
-	//TODO this code andn the generateAntTarTarget() should be refactored using a factory or something like that.
+	//TODO this code and the generateAntTarTarget() should be refactored using a factory or something like that.
 	protected void generateAntZipTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {

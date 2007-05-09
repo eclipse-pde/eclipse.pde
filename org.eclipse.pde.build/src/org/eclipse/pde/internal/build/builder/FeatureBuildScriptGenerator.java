@@ -1178,7 +1178,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		initializeFeatureNames();
 
 		if (feature instanceof BuildTimeFeature) {
-			if (getBuildProperties() == MissingProperties.getInstance()) {
+			if (getBuildProperties() == MissingProperties.getInstance() || AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE)) {
 				BuildTimeFeature buildFeature = (BuildTimeFeature) feature;
 				scriptGeneration = false;
 				buildFeature.setBinary(true);

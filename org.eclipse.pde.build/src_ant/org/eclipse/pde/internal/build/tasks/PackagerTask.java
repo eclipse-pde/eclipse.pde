@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
+import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +26,8 @@ import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 public class PackagerTask extends Task {
 
 	protected PackagerGenerator generator;
-
+	private Properties antProperties = new Properties();
+	
 	{
 		generator = new PackagerGenerator();
 		generator.setReportResolutionErrors(true);
@@ -79,6 +81,8 @@ public class PackagerTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			generator.setImmutableAntProperties(antProperties);
+			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "true"); //$NON-NLS-1$
 			BundleHelper.getDefault().setLog(this);
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);
@@ -102,5 +106,12 @@ public class PackagerTask extends Task {
 	
 	public void setFilteredDependencyCheck(boolean value) {
 		generator.setFilterState(value);
+	}
+	
+	public void setNormalize(boolean value) {
+		if (value)
+			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
+		else
+			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "false"); //$NON-NLS-1$
 	}
 }

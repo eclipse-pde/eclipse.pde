@@ -49,7 +49,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected List pluginsForFilterRoots = new ArrayList();
 
 	protected boolean reportResolutionErrors;
-
+	
 	static {
 		// By default, a generic configuration is set
 		configInfos = new ArrayList(1);
@@ -69,20 +69,38 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public abstract void generate() throws CoreException;
 
 	protected static void setStaticAntProperties(Properties properties) {
-		immutableAntProperties = properties;
+		if (properties == null)
+			immutableAntProperties = new Properties();
+		else
+			immutableAntProperties = properties;
+		if (getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == null) {
+			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "false"); //$NON-NLS-1$
+		}
+		//When we are generating build scripts, the normalization needs to be set, and when doing packaging the default is to set normalization to true for backward compatibility 
+		if (!getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) || getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER) == null) {
+			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
+		}
 	}
 
 	public static String getImmutableAntProperty(String key) {
 		return getImmutableAntProperty(key, null);
 	}
 
+	public static boolean getPropertyAsBoolean(String key) {
+		String booleanValue = getImmutableAntProperty(key, null);
+		if ("true".equalsIgnoreCase(booleanValue))
+			return true;
+		else
+			return false;
+	}
+	
 	public static String getImmutableAntProperty(String key, String defaultValue) {
 		if (immutableAntProperties == null || !immutableAntProperties.containsKey(key))
 			return defaultValue;
 		Object obj = immutableAntProperties.get(key);
 		return (obj instanceof String) ? (String) obj : null;
 	}
-	
+
 	public static void setConfigInfo(String spec) throws CoreException {
 		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$

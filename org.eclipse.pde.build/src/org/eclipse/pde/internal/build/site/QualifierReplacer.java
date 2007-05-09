@@ -12,14 +12,17 @@ package org.eclipse.pde.internal.build.site;
 
 import com.ibm.icu.util.Calendar;
 import java.util.Properties;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.osgi.framework.Version;
 
 public class QualifierReplacer implements IBuildPropertiesConstants {
 	//	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
 	private static String globalQualifier = null;
-
+	
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
+		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
+			return version;
 		if (!version.endsWith(PROPERTY_QUALIFIER))
 			return version;
 

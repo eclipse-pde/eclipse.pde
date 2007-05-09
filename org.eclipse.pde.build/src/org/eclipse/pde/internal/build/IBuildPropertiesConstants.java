@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,5 +75,8 @@ public interface IBuildPropertiesConstants {
 
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
+	
+	public static final String PROPERTY_PACKAGER_MODE = "packagerMode"; //$NON-NLS-1$
+	public static final String PROPERTY_PACKAGER_AS_NORMALIZER = "packagerAsNormalizer"; //$NON-NLS-1$
 }
 

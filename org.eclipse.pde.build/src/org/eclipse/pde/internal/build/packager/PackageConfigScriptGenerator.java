@@ -1,32 +1,56 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteContentProvider;
+import org.eclipse.update.core.IFeature;
 
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
-	
+
 	private Properties packagingProperties;
 
+	private String getFinalName(BundleDescription bundle, String shape) {
+		final String JAR = "jar"; //$NON-NLS-1$
+		final String DOT_JAR = '.' + JAR;
+		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
+			Path path = new Path(bundle.getLocation());
+			if (shape.equals(FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
+				return path.lastSegment().concat(DOT_JAR);
+			return path.lastSegment();
+		}
+		if (shape.equals(FILE))
+			return ModelBuildScriptGenerator.getNormalizedName(bundle) + DOT_JAR;
+		return ModelBuildScriptGenerator.getNormalizedName(bundle);
+	}
+
+	private String getFinalName(IFeature feature) {
+		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
+			Path featurePath = new Path(feature.getURL().getPath());
+			return featurePath.segment(featurePath.segmentCount() - 2);
+		}
+		return FeatureBuildScriptGenerator.getNormalizedName(feature);
+	}
+
 	protected void generateGatherBinPartsCalls() { //TODO Here we should try to use cp because otherwise we will loose the permissions
-		String excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
+		String excludedFiles = null;
+		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
+			excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
 		IPath baseLocation = null;
 		try {
 			String url = ((BuildTimeSiteContentProvider) getSite(false).getSiteContentProvider()).getInstalledBaseURL();
@@ -39,16 +63,16 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			String location = pluginLocation.toOSString();
 			boolean isFolder = isFolder(pluginLocation);
-			
+
 			//try to relate the plugin location to the ${baseLocation} property
 			if (baseLocation != null && baseLocation.isPrefixOf(pluginLocation)) {
 				IPath relative = pluginLocation.removeFirstSegments(baseLocation.segmentCount());
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
 			if (isFolder) {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugins[i]), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), false);
+				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + getFinalName(plugins[i], FILE), false);
 			}
 		}
 
@@ -60,42 +84,42 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
 				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
 		}
-		
+
 		if (packagingProperties.size() != 0) {
 			String filesToPackage = null;
 			filesToPackage = packagingProperties.getProperty(ROOT, null);
 			if (filesToPackage != null)
 				filesToPackage += ',';
-			
+
 			String tmp = packagingProperties.getProperty(ROOT_PREFIX + configInfo.toString("."), null); //$NON-NLS-1$
 			if (tmp != null)
 				filesToPackage += tmp;
-			
+
 			if (filesToPackage == null)
 				filesToPackage = "**/**"; //$NON-NLS-1$
-			
-			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, filesToPackage, null, null, null, null);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, filesToPackage, null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
-			script.printCopyTask(null, target, new FileSet[] { rootFiles }, false, false);
-			
+			script.printCopyTask(null, target, new FileSet[] {rootFiles}, false, false);
+
 			Utils.generatePermissions(packagingProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
-			
+
 			//This is need so that the call in assemble config script generator gather the root files 
 			rootFileProviders = new ArrayList(1);
 			rootFileProviders.add("elt"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public String getTargetName() {
 		return "package" + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
 	}
-	
+
 	private boolean isFolder(Path pluginLocation) {
 		return pluginLocation.toFile().isDirectory();
 	}
-	
+
 	public void setPackagingPropertiesLocation(String packagingPropertiesLocation) throws CoreException {
 		packagingProperties = new Properties();
 		if (packagingPropertiesLocation == null || packagingPropertiesLocation.equals("")) //$NON-NLS-1$
@@ -117,21 +141,35 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		}
 	}
-	
+
 	protected void generateGatherSourceCalls() {
 		//In the packager, we do not gather source
 	}
-	
+
 	protected FileSet[] generatePermissions(boolean zip) {
 		//In the packager there is nothing to do since, the features we are packaging are pre-built and do not have a build.properties
 		return new FileSet[0];
 	}
-	
-	protected void generateGZipTarget(boolean assembling){
+
+	protected void generateGZipTarget(boolean assembling) {
 		super.generateGZipTarget(false);
 	}
-	
+
 	public void generateTarGZTasks(boolean assembling) {
 		super.generateTarGZTasks(false);
+	}
+
+	protected Object[] getFinalShape(BundleDescription bundle) {
+		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true) {
+			String shape = isFolder(new Path(bundle.getLocation())) ? FOLDER : FILE;
+			return new Object[] {getFinalName(bundle, shape), shape};
+		}
+		return super.getFinalShape(bundle);
+	}
+
+	protected Object[] getFinalShape(IFeature feature) {
+		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true)
+			return new Object[] {getFinalName(feature), FOLDER};
+		return super.getFinalShape(feature);
 	}
 }
