@@ -84,6 +84,8 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	private final static int F_INTRODUCTION_TAB = 0;
 
 	private final static int F_CONCLUSION_TAB = 1;
+
+	private final static int F_NO_TAB = -1;
 	
 	private Composite fNotebookComposite;
 	
@@ -95,14 +97,18 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	
 	private String fTaskObjectLabelName;	
 	
+	private CompCSIntroductionTextListener fIntroductionListener;
+	
+	private CompCSConclusionTextListener fConclusionListener;
+	
 	/**
 	 * 
 	 */
-	public CompCSEnclosingTextDetails(ICompCSTaskObject taskObject, 
+	public CompCSEnclosingTextDetails(int type, 
 			ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
 		
-		fDataTaskObject = taskObject;
+		fDataTaskObject = null;
 		
 		fEnclosingTextSection = null;
 		
@@ -118,10 +124,33 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fIntroductionComposite = null;
 		fConclusionComposite = null;
 		
-		defineTaskObjectLabelName();
+		fIntroductionListener = new CompCSIntroductionTextListener();
+		fConclusionListener = new CompCSConclusionTextListener();
+		
+		defineTaskObjectLabelName(type);
 		setupSourceViewerConfiguration();
 	}
 
+	/**
+	 * @param object
+	 */
+	public void setData(ICompCSTaskObject object) {
+		// Set data
+		fDataTaskObject = object;
+		// Set data on introduction text listener
+		fIntroductionListener.setData(object);
+		// Set data on conclusion text listener
+		fConclusionListener.setData(object);
+	}		
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+	}	
+	
 	/**
 	 * 
 	 */
@@ -135,8 +164,8 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	/**
 	 * 
 	 */
-	private void defineTaskObjectLabelName() {
-		if (fDataTaskObject.getType() == ICompCSConstants.TYPE_TASK) {
+	private void defineTaskObjectLabelName(int type) {
+		if (type == ICompCSConstants.TYPE_TASK) {
 			fTaskObjectLabelName = PDEUIMessages.CompCSDependenciesDetails_task;
 		} else {
 			fTaskObjectLabelName = PDEUIMessages.CompCSDependenciesDetails_group;
@@ -147,7 +176,6 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
-
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
 		String description = NLS.bind(
@@ -409,8 +437,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 			}
 		});
 		// Create document listener
-		fIntroductionDocument.addDocumentListener(
-				new CompCSIntroductionTextListener(fDataTaskObject));		
+		fIntroductionDocument.addDocumentListener(fIntroductionListener);		
 	}
 	
 	/**
@@ -430,8 +457,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 			}
 		});
 		// Create document listener
-		fConclusionDocument.addDocumentListener(
-				new CompCSConclusionTextListener(fDataTaskObject));				
+		fConclusionDocument.addDocumentListener(fConclusionListener);				
 	}
 
 	/**
@@ -453,7 +479,13 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		int index = fTabFolder.getSelectionIndex();
 		Control oldControl = fNotebookLayout.topControl;
 		
-		if (index == F_INTRODUCTION_TAB) {
+		if (index == F_NO_TAB) {
+			// Select the introduction contents by default
+			fNotebookLayout.topControl = fIntroductionComposite;
+			// Select the introduction tab by default to match
+			// Does not trigger selection adapter (only user UI selections do)
+			fTabFolder.setSelection(F_INTRODUCTION_TAB);
+		} else if (index == F_INTRODUCTION_TAB) {
 			fNotebookLayout.topControl = fIntroductionComposite;
 		} else if (index == F_CONCLUSION_TAB) {
 			fNotebookLayout.topControl = fConclusionComposite;
@@ -469,9 +501,11 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#updateFields()
 	 */
 	public void updateFields() {
+		// Ensure data object is defined
+		if (fDataTaskObject == null) {
+			return;
+		}			
 		boolean editable = isEditableElement();
-		// Select the introduction tab
-		fTabFolder.setSelection(F_INTRODUCTION_TAB);
 		// Update tab folder
 		updateTabFolder();
 		// Update introduction text
@@ -485,10 +519,18 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 */
 	private void updateIntroductionViewer(boolean editable) {
 		ICompCSIntro intro = fDataTaskObject.getFieldIntro();
+		
+		// Block listener from handling this update
+		fIntroductionListener.setBlockEvents(true);
 		if ((intro != null) &&
 				PDETextHelper.isDefined(intro.getFieldContent())) {
 			fIntroductionDocument.set(intro.getFieldContent());
+		} else {
+			fIntroductionDocument.set(""); //$NON-NLS-1$
 		}
+		// Unblock for user updates
+		fIntroductionListener.setBlockEvents(false);
+		
 		fIntroductionViewer.setEditable(editable);
 	}
 
@@ -497,10 +539,18 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 */
 	private void updateConclusionViewer(boolean editable) {
 		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
+		
+		// Block listener from handling this update
+		fConclusionListener.setBlockEvents(true);
 		if ((conclusion != null) &&
 				PDETextHelper.isDefined(conclusion.getFieldContent())) {
 			fConclusionDocument.set(conclusion.getFieldContent());
+		} else {
+			fConclusionDocument.set(""); //$NON-NLS-1$
 		}
+		// Unblock for user updates
+		fConclusionListener.setBlockEvents(false);		
+		
 		fConclusionViewer.setEditable(editable);		
 	}
 
@@ -509,20 +559,10 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 */
 	public void dispose() {
 		// TODO: MP: CompCS: Profile Sleek when making static to ensure no leaks
-		// TODO: MP: CompCS: Add check to intro viewer if null when making stack - ensure no NPEs
 		// Set the context menu to null to prevent the editor context menu
 		// from being disposed along with the source viewer
-		StyledText styledText = null;
-		styledText = fIntroductionViewer.getTextWidget();
-		if ((styledText != null) &&
-				(styledText.isDisposed() == false)) {
-			styledText.setMenu(null);
-		}
-		styledText = fConclusionViewer.getTextWidget();
-		if ((styledText != null) &&
-				(styledText.isDisposed() == false)) {
-			styledText.setMenu(null);
-		}
+		unsetSourceViewerMenu(fIntroductionViewer);
+		unsetSourceViewerMenu(fConclusionViewer);
 		// Dispose of the color manager
 		if (fColorManager != null) {
 			fColorManager.dispose();
@@ -534,6 +574,22 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 			fSourceConfiguration = null;
 		}
 		super.dispose();
+	}
+
+	/**
+	 * @param viewer
+	 */
+	private void unsetSourceViewerMenu(SourceViewer viewer) {
+		if (viewer == null) {
+			return;
+		}
+		StyledText styledText = viewer.getTextWidget();
+		if (styledText == null) {
+			return;
+		} else if (styledText.isDisposed()) {
+			return;
+		}
+		styledText.setMenu(null);
 	}
 	
 	/* (non-Javadoc)

@@ -60,8 +60,8 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	/**
+	 * @param object
 	 */
 	public void setData(ISimpleCSSubItem object) {
 		// Set data

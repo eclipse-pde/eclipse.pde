@@ -237,6 +237,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 			fHelpText.setText(fHelpObject.getHref());
 			fHelpCombo.setText(F_HELP_DOCUMENT_LINK);
 			expanded = true;
+		} else {
+			fHelpCombo.setText(F_NO_HELP);
 		}
 		// Unblock model updates
 		fBlockListeners = false;

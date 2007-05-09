@@ -51,8 +51,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fMainSection = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	/**
+	 * @param object
 	 */
 	public void setData(ISimpleCS object) {
 		// Set data

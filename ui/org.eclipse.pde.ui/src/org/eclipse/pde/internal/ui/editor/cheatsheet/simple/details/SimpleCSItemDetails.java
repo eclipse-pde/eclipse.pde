@@ -15,7 +15,6 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -218,11 +217,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		if (fItem == null) {
 			return;
 		}
-		// TODO: MP: SimpleCS:  Check isdefined for all parameters in updateFields methods
 		// Attribute: title
-		if (PDETextHelper.isDefined(fItem.getTitle())) {
-			fTitle.setValue(fItem.getTitle(), true);
-		}
+		fTitle.setValue(fItem.getTitle(), true);
 		fTitle.setEditable(editable);
 
 		// Attribute: skip
@@ -240,9 +236,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		}
 
 		// description:  Content (Element)
-		if (PDETextHelper.isDefined(fItem.getDescription().getContent())) {
-			fContent.setValue(fItem.getDescription().getContent(), true);
-		}
+		fContent.setValue(fItem.getDescription().getContent(), true);
 		fContent.setEditable(editable);			
 
 	}

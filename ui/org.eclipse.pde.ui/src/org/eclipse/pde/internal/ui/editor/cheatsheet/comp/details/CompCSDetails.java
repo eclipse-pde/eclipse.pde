@@ -39,15 +39,22 @@ public class CompCSDetails extends CSAbstractDetails {
 	
 	/**
 	 * @param masterSection
-	 * @param contextID
 	 */
-	public CompCSDetails(ICompCS dataCheatSheet, ICSMaster masterSection) {
+	public CompCSDetails(ICSMaster masterSection) {
 		super(masterSection, CompCSInputContext.CONTEXT_ID);
-		
-		fDataCheatSheet = dataCheatSheet;
+		fDataCheatSheet = null;
+
 		fNameEntry = null;
-		fMainSection = null;		
+		fMainSection = null;
 	}
+	
+	/**
+	 * @param object
+	 */
+	public void setData(ICompCS object) {
+		// Set data
+		fDataCheatSheet = object;
+	}		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
@@ -93,6 +100,10 @@ public class CompCSDetails extends CSAbstractDetails {
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataCheatSheet == null) {
+					return;
+				}				
 				fDataCheatSheet.setFieldName(fNameEntry.getValue());
 			}
 		});			
@@ -102,6 +113,10 @@ public class CompCSDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
+		// Ensure data object is defined
+		if (fDataCheatSheet == null) {
+			return;
+		}				
 		// Update name entry
 		updateNameEntry(isEditableElement());
 	}
@@ -128,7 +143,17 @@ public class CompCSDetails extends CSAbstractDetails {
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		// TODO: MP: CompCS: IMPLEMENT
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
+		// Ensure we have the right type
+		if ((object == null) ||
+				(object instanceof ICompCS) == false) {
+			return;
+		}
+		// Set data
+		setData((ICompCS)object);
+		// Update the UI given the new data
+		updateFields();
 	}
 
 }

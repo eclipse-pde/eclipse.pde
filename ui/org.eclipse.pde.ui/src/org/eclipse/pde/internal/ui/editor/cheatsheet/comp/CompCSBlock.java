@@ -37,8 +37,12 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 		IModelChangedListener, IDetailsPageProvider {
 
 	private CompCSMasterTreeSection fMasterSection;	
+
+	private CompCSDetails fDetails;
 	
-	private IDetailsPage fCurrentDetailsSection;	
+	private CompCSTaskGroupDetails fTaskGroupDetails;
+	
+	private CompCSTaskDetails fTaskDetails;
 	
 	/**
 	 * @param page
@@ -60,11 +64,48 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
-		// TODO: MP: HIGH: CompCS: Set limit to 4 and add update methods accordingly to reuse the section
+		// Only static pages to be defined.  Do not cache pages
 		detailsPart.setPageLimit(0); 
+		// Register static page:  compositeCheatsheet
+		fDetails = new CompCSDetails(fMasterSection);
+		detailsPart.registerPage(CompCSDetails.class, fDetails);				
+		// Register static page:  taskGroup
+		fTaskGroupDetails = new CompCSTaskGroupDetails(fMasterSection);
+		detailsPart.registerPage(CompCSTaskGroupDetails.class, fTaskGroupDetails);		
+		// Register static page:  task
+		fTaskDetails = new CompCSTaskDetails(fMasterSection);
+		detailsPart.registerPage(CompCSTaskDetails.class, fTaskDetails);		
+		// Set this class as the page provider
 		detailsPart.setPageProvider(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
+	 */
+	public Object getPageKey(Object object) {
+		// Get static page key
+		if (object instanceof ICompCS) {
+			// Static page:  compositeCheatsheet
+			return CompCSDetails.class;
+		} else if (object instanceof ICompCSTaskGroup) {
+			// Static page:  taskGroup
+			return CompCSTaskGroupDetails.class;
+		} else if (object instanceof ICompCSTask) {
+			// Static page:  task
+			return CompCSTaskDetails.class;
+		}	
+		// Should never reach here
+		return object.getClass();
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
+	 */
+	public IDetailsPage getPage(Object key) {
+		// No dynamic pages.  Static pages already registered
+		return null;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -78,34 +119,6 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 		//if (fCurrentDetailsSection != null) {
 		//	fCurrentDetailsSection.modelChanged(event);
 		//}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
-	 */
-	public IDetailsPage getPage(Object key) {
-
-		if (key instanceof ICompCS) {
-			fCurrentDetailsSection = new CompCSDetails((ICompCS) key,
-					fMasterSection);
-		} else if (key instanceof ICompCSTaskGroup) {
-			fCurrentDetailsSection = new CompCSTaskGroupDetails(
-					(ICompCSTaskGroup) key, fMasterSection);
-		} else if (key instanceof ICompCSTask) {
-			fCurrentDetailsSection = new CompCSTaskDetails(
-					(ICompCSTask) key, fMasterSection);
-		} else {
-			fCurrentDetailsSection = null;
-		}		
-		
-		return fCurrentDetailsSection;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPageKey(java.lang.Object)
-	 */
-	public Object getPageKey(Object object) {
-		return object;
 	}
 
 	/**

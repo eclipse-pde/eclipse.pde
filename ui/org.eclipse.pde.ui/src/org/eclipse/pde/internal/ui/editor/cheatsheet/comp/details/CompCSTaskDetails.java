@@ -80,20 +80,30 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	private final static String F_DOT_DOT = ".."; //$NON-NLS-1$
 	
 	/**
-	 * @param masterSection
-	 * @param contextID
+	 * @param section
 	 */
-	public CompCSTaskDetails(ICompCSTask task, ICSMaster section) {
+	public CompCSTaskDetails(ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
+		fDataTask = null;
 
-		fDataTask = task;
 		fNameEntry = null;
 		fPathEntry = null;
 		fSkip = null;
 
 		fDefinitionSection = null;
-		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, section);
+		fEnclosingTextSection = 
+			new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASK, section);
 	}
+	
+	/**
+	 * @param object
+	 */
+	public void setData(ICompCSTask object) {
+		// Set data
+		fDataTask = object;
+		// Set data on the enclosing text section
+		fEnclosingTextSection.setData(object);
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -104,9 +114,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// sections through its main section parent; since, it never is 
 		// registered directly.
 		// Initialize managed form for enclosing text section
-		if (fEnclosingTextSection instanceof IFormPart) {
-			((IFormPart)fEnclosingTextSection).initialize(form);
-		}
+		fEnclosingTextSection.initialize(form);
 	}
 	
 	/* (non-Javadoc)
@@ -186,6 +194,10 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTask == null) {
+					return;
+				}				
 				fDataTask.setFieldName(fNameEntry.getValue());
 			}
 		});			
@@ -197,15 +209,27 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	private void createListenersPathEntry() {
 		fPathEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void browseButtonSelected(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTask == null) {
+					return;
+				}				
 				handleButtonEventPathEntry(entry);
 			}
 			public void linkActivated(HyperlinkEvent e) {
+				// Ensure data object is defined
+				if (fDataTask == null) {
+					return;
+				}				
 				handleLinkEventPathEntry(convertPathRelativeToAbs(fPathEntry
 						.getValue(), fDataTask.getModel()
 						.getUnderlyingResource().getFullPath()
 						.toPortableString()));
 			}
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTask == null) {
+					return;
+				}				
 				// TODO: MP: LOW: CompCS: Could validate manual input
 				handleTextEventPathEntry(entry.getValue());
 			}
@@ -491,6 +515,10 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fDataTask == null) {
+					return;
+				}				
 				fDataTask.setFieldSkip(fSkip.getSelection());
 			}
 		});		
@@ -500,7 +528,10 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-
+		// Ensure data object is defined
+		if (fDataTask == null) {
+			return;
+		}				
 		boolean editable = isEditableElement();
 		// Update name entry
 		updateNameEntry(editable);
@@ -528,6 +559,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
 		if (parameter != null) {
 			fPathEntry.setValue(parameter.getFieldValue(), true);
+		} else {
+			fPathEntry.setValue("", true); //$NON-NLS-1$
 		}
 	}	
 
@@ -554,7 +587,17 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		// TODO: MP: CompCS: IMPLEMENT
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
+		// Ensure we have the right type
+		if ((object == null) ||
+				(object instanceof ICompCSTask) == false) {
+			return;
+		}
+		// Set data
+		setData((ICompCSTask)object);
+		// Update the UI given the new data
+		updateFields();
 	}	
 	
 	/* (non-Javadoc)

@@ -45,8 +45,6 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	public void createContents(Composite parent) {
 		configureParentLayout(parent);
 		createDetails(parent);
-		// TODO: MP: CompCS:  With new selection changed listeners this call is redundant - change after compcs changed to static
-		updateFields();
 		hookListeners();
 	}
 

@@ -54,8 +54,8 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fHelpSection = new SimpleCSHelpDetails(elementSection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	/**
+	 * @param object
 	 */
 	public void setData(ISimpleCSIntro object) {
 		// Set data

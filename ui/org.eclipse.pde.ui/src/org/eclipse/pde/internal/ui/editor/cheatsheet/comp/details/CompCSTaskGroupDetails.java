@@ -61,21 +61,30 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	private static final String F_KIND_VALUE_SEQUENCE = PDEUIMessages.CompCSTaskGroupDetails_Sequence;
 	
 	/**
-	 * @param masterSection
-	 * @param contextID
+	 * @param section
 	 */
-	public CompCSTaskGroupDetails(ICompCSTaskGroup taskGroup, ICSMaster section) {
+	public CompCSTaskGroupDetails(ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);
-		
-		fDataTaskGroup = taskGroup;
+		fDataTaskGroup = null;
+
 		fNameEntry = null;
 		fKindCombo = null;
 		fSkip = null;
 
 		fDefinitionSection = null;
-		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTaskGroup,
-				section);
+		fEnclosingTextSection = 
+			new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASKGROUP, section);
 	}
+	
+	/**
+	 * @param object
+	 */
+	public void setData(ICompCSTaskGroup object) {
+		// Set data
+		fDataTaskGroup = object;
+		// Set data on the enclosing text section
+		fEnclosingTextSection.setData(object);
+	}		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
@@ -86,9 +95,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// sections through its main section parent; since, it never is 
 		// registered directly.
 		// Initialize managed form for enclosing text section
-		if (fEnclosingTextSection instanceof IFormPart) {
-			((IFormPart)fEnclosingTextSection).initialize(form);
-		}
+		fEnclosingTextSection.initialize(form);
 	}	
 	
 	/* (non-Javadoc)
@@ -193,6 +200,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	private void createListenersNameEntry() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTaskGroup == null) {
+					return;
+				}				
 				fDataTaskGroup.setFieldName(fNameEntry.getValue());
 			}
 		});			
@@ -204,6 +215,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	private void createListenersKindCombo() {
 		fKindCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fDataTaskGroup == null) {
+					return;
+				}				
 				String selection = fKindCombo.getSelection();
 				if (selection.equals(F_KIND_VALUE_CHOICE)) {
 					fDataTaskGroup.setFieldKind(
@@ -225,6 +240,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	private void createListenersSkipButton() {
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fDataTaskGroup == null) {
+					return;
+				}				
 				fDataTaskGroup.setFieldSkip(fSkip.getSelection());
 			}
 		});		
@@ -234,7 +253,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-
+		// Ensure data object is defined
+		if (fDataTaskGroup == null) {
+			return;
+		}		
 		boolean editable = isEditableElement();
 		// Update name entry
 		updateNameEntry(editable);
@@ -295,7 +317,17 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		// TODO: MP: CompCS: IMPLEMENT
+		// Get the first selected object
+		Object object = getFirstSelectedObject(selection);
+		// Ensure we have the right type
+		if ((object == null) ||
+				(object instanceof ICompCSTaskGroup) == false) {
+			return;
+		}
+		// Set data
+		setData((ICompCSTaskGroup)object);
+		// Update the UI given the new data
+		updateFields();
 	}
 	
 	/* (non-Javadoc)

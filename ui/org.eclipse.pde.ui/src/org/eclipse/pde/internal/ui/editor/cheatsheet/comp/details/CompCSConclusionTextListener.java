@@ -27,13 +27,38 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 
 	private ICompCSTaskObject fDataTaskObject;	
 	
+	private boolean fBlockEvents;
+	
 	/**
 	 * 
 	 */
-	public CompCSConclusionTextListener(ICompCSTaskObject dataTaskObject) {
-		fDataTaskObject = dataTaskObject;
+	public CompCSConclusionTextListener() {
+		fDataTaskObject = null;
+		fBlockEvents = false;		
 	}
 
+	/**
+	 * @param block
+	 */
+	public void setBlockEvents(boolean block) {
+		fBlockEvents = block;
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean getBlockEvents() {
+		return fBlockEvents;
+	}	
+	
+	/**
+	 * @param object
+	 */
+	public void setData(ICompCSTaskObject object) {
+		// Set data
+		fDataTaskObject = object;
+	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -45,6 +70,14 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void documentChanged(DocumentEvent event) {
+		// Check whether to handle this event
+		if (fBlockEvents) {
+			return;
+		}		
+		// Ensure the task object is defined
+		if (fDataTaskObject == null) {
+			return;
+		}
 		// Get the text from the event
 		IDocument document = event.getDocument();
 		if (document == null) {
