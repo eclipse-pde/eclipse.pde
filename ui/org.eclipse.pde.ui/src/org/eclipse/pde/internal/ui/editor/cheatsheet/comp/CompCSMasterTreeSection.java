@@ -14,8 +14,9 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -24,7 +25,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
@@ -51,7 +51,9 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -394,15 +396,28 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * 
 	 */
 	private void handlePreviewAction() {
-		
-		if (!(fModel instanceof IEditable)) {
-			return;
-		}
-
-		IFileEditorInput input = (IFileEditorInput)getPage().getEditorInput();
-		IFile file  = input.getFile();
-		
+		// Get the editor input
+		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer View)
+		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS Repositories View)
+		IEditorInput input = getPage().getEditorInput();
+		URL url = null;
 		try {
+			if (input instanceof IFileEditorInput) {
+				IFileEditorInput fileInput = (IFileEditorInput)input;
+				url  = fileInput.getFile().getLocationURI().toURL();
+			} else if (input instanceof IStorageEditorInput) {
+				// Note:  This URL does not exist on the local file system
+				// As a result any tasks this composite cheat sheet has that 
+				// specify a pathes to simple cheat sheets will not resolve
+				// Cheat sheet view will log an error loading simple cheat
+				// sheets
+				IStorageEditorInput storageInput = (IStorageEditorInput)input;
+				url = storageInput.getStorage().getFullPath().toFile().toURL();
+			} else {
+				// No base URL.  Pathes will definitely not resolve here 
+				url = null;
+			}
+		
 			// Write the current model into a String as raw XML
 			StringWriter swriter = new StringWriter();
 			PrintWriter writer = new PrintWriter(swriter);
@@ -411,15 +426,16 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			swriter.close();
 			// Launch in the cheat sheet view
 			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
-					file.getName(),
-					file.getName(), 
+					input.getName(),
+					input.getName(), 
 					swriter.toString(),
-					file.getLocationURI().toURL());
+					url);
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
-
 	}	
 
 	/* (non-Javadoc)

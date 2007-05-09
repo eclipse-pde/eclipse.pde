@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -26,7 +25,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
@@ -58,7 +56,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -480,14 +478,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * 
 	 */
 	private void handlePreviewAction() {
-		
-		if (!(fModel instanceof IEditable)) {
-			return;
-		}
-
-		IFileEditorInput input = (IFileEditorInput)getPage().getEditorInput();
-		IFile file  = input.getFile();
-		
+		// Get the editor input
+		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer View)
+		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS Repositories View)
+		IEditorInput input = getPage().getEditorInput();
 		try {
 			// Write the current model into a String as raw XML
 			StringWriter swriter = new StringWriter();
@@ -496,16 +490,16 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			writer.flush();
 			swriter.close();
 			// Launch in the cheat sheet view
+			// Note:  Having a null URL is valid for simple cheat sheets
 			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
-					file.getName(),
-					file.getName(), 
+					input.getName(),
+					input.getName(), 
 					swriter.toString(),
-					file.getLocationURI().toURL());
+					null);
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-
 	}
 	
 	/* (non-Javadoc)
