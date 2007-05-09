@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,14 +33,13 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -150,27 +149,40 @@ public class ConvertedProjectsPage extends WizardPage  {
 		throws CoreException {
 		WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(file, null);
 		model.load();
-		IPlugin plugin = model.getPlugin();
-		plugin.setId(IdUtil.getValidId(file.getProject().getName()));
-		plugin.setName(createInitialName(plugin.getId()));
-		plugin.setVersion("1.0.0"); //$NON-NLS-1$
+		IBundle pluginBundle = model.getBundleModel().getBundle(); 
+
+		String existingId = pluginBundle.getHeader(Constants.BUNDLE_SYMBOLICNAME);
+		String existingName = pluginBundle.getHeader(Constants.BUNDLE_NAME);
+		String existingVersion = pluginBundle.getHeader(Constants.BUNDLE_VERSION);
+
+		boolean missingInfo = (existingId == null || existingName == null || existingVersion == null);
 		
-		IPluginModelFactory factory = model.getPluginFactory();
-		IPluginBase base = model.getPluginBase();
-		if (fLibraryName != null && !fLibraryName.equals(".")) { //$NON-NLS-1$
-			IPluginLibrary library = factory.createLibrary();
-			library.setName(fLibraryName);
-			library.setExported(true);
-			base.add(library);
+		pluginBundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, existingId != null ? 
+				existingId : IdUtil.getValidId(file.getProject().getName()));
+		pluginBundle.setHeader(Constants.BUNDLE_VERSION, existingVersion != null ? 
+				existingVersion : "1.0.0"); //$NON-NLS-1$
+		pluginBundle.setHeader(Constants.BUNDLE_NAME, existingName != null ? 
+				existingName : createInitialName(existingId));
+
+		if(missingInfo)
+		{	IPluginModelFactory factory = model.getPluginFactory();
+			IPluginBase base = model.getPluginBase();
+			if (fLibraryName != null && !fLibraryName.equals(".")) { //$NON-NLS-1$
+				IPluginLibrary library = factory.createLibrary();
+				library.setName(fLibraryName);
+				library.setExported(true);
+				base.add(library);
+			}
+			for (int i = 0; i < fLibEntries.length; i++) {
+				IPluginLibrary library = factory.createLibrary();
+				library.setName(fLibEntries[i]);
+				library.setExported(true);
+				base.add(library);
+			}
+			if (TargetPlatformHelper.getTargetVersion() >= 3.1)
+				pluginBundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		}
-		for (int i = 0; i < fLibEntries.length; i++) {
-			IPluginLibrary library = factory.createLibrary();
-			library.setName(fLibEntries[i]);
-			library.setExported(true);
-			base.add(library);
-		}
-		if (TargetPlatformHelper.getTargetVersion() >= 3.1)
-			model.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
+
 		model.save();
 		monitor.done();
 		organizeExports(file.getProject());
@@ -214,8 +226,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 		loadClasspathEntries(project, monitor);
 		loadLibraryName(project);
 		
-		if (!WorkspaceModelManager.isPluginProject(project))
-			createManifestFile(project.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
+		createManifestFile(project.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
+
 		IFile buildFile = project.getFile(PDEModelUtility.F_BUILD);
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
