@@ -64,8 +64,10 @@ public abstract class CSAbstractPage extends PDEFormPage {
 		fModel = model;
 		// Add the register cheat sheet link to the form title area
 		ScrolledForm form = managedForm.getForm();
-		form.getToolBarManager().add(createUIControlConRegisterCS());
-		form.getToolBarManager().update(true);		
+		if (fModel.isEditable()) {
+			form.getToolBarManager().add(createUIControlConRegisterCS());
+			form.getToolBarManager().update(true);
+		}
 	}
 	
 	/**
