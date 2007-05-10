@@ -101,13 +101,15 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 				// only interested in workspace plug-ins that are affected by delta
 				// but not those who have caused it.
 				int type = deltas[i].getType();
-				if ((type & BundleDelta.UPDATED) != BundleDelta.UPDATED 
-						||(type & BundleDelta.ADDED) != BundleDelta.ADDED) {
-					IPluginModelBase model = PluginRegistry.findModel(deltas[i].getBundle());
-					IResource resource = model == null ? null : model.getUnderlyingResource();
-					if (resource != null)
-						fProjectNames.add(resource.getProject().getName());
-				}
+				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED 
+						|| (type & BundleDelta.ADDED) == BundleDelta.ADDED
+						|| (type & BundleDelta.REMOVED) == BundleDelta.REMOVED)
+					continue;
+			
+				IPluginModelBase model = PluginRegistry.findModel(deltas[i].getBundle());
+				IResource resource = model == null ? null : model.getUnderlyingResource();
+				if (resource != null)
+					fProjectNames.add(resource.getProject().getName());		
 			}
 		}
 	}
