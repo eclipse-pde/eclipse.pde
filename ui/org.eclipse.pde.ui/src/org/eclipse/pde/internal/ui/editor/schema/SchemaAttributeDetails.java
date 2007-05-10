@@ -241,22 +241,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		Object value = fAttribute.getValue();
 		fValue.setValue(value != null ? value.toString() : "", true); //$NON-NLS-1$
 		
-		if (kind == IMetaAttribute.JAVA) {
-			String basedOn = fAttribute.getBasedOn();
-			if (basedOn != null && basedOn.length() > 0) {
-				int index = basedOn.indexOf(":"); //$NON-NLS-1$
-				if (index == -1) {
-					String className = basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
-					if (className.length() > 1 && className.charAt(0) == 'I')
-						fInterfaceEntry.setValue(basedOn, true);
-					else
-						fClassEntry.setValue(basedOn, true);
-				} else {
-					fClassEntry.setValue(basedOn.substring(0, index), true);
-					fInterfaceEntry.setValue(basedOn.substring(index + 1), true);
-				}
-			}
-		}
+		updateJavaFields();
+		
 		boolean editable = isEditableElement();
 		updateTabSelection(fType.getSelectionIndex());
 		fTransTrue.setEnabled(editable);
@@ -280,6 +266,36 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fInterfaceEntry.setEditable(editable);
 	}
 
+	/**
+	 * 
+	 */
+	private void updateJavaFields() {
+		String basedOn = fAttribute.getBasedOn();
+		if ((basedOn != null) && 
+				(basedOn.length() > 0)) {
+			int index = basedOn.indexOf(":"); //$NON-NLS-1$
+			if (index == -1) {
+				String className = 
+					basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
+				if ((className.length() > 1) && 
+						(className.charAt(0) == 'I')) {
+					fClassEntry.setValue(""); //$NON-NLS-1$
+					fInterfaceEntry.setValue(basedOn, true);
+				} else {
+					fClassEntry.setValue(basedOn, true);
+					fInterfaceEntry.setValue(""); //$NON-NLS-1$
+				}
+			} else {
+				fClassEntry.setValue(basedOn.substring(0, index), true);
+				fInterfaceEntry.setValue(basedOn.substring(index + 1), true);
+			}
+		} else {
+			fClassEntry.setValue(""); //$NON-NLS-1$
+			fInterfaceEntry.setValue(""); //$NON-NLS-1$
+		}		
+		
+	}
+	
 	public void hookListeners() {
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fValue.setFormEntryListener(new FormEntryAdapter(this) {
