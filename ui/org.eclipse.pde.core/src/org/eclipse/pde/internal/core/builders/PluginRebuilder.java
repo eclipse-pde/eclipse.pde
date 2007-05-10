@@ -31,9 +31,6 @@ import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
-/**
- * Revalidates workspace features, on change in plug-ins or features
- */
 public class PluginRebuilder implements IStateDeltaListener, IResourceChangeListener {
 	
 	private Set fProjectNames = new HashSet();
