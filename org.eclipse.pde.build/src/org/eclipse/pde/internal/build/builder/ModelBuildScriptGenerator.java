@@ -380,7 +380,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				script.printMkdirTask(destination.toString());
 				destinations.add(destination);
 			}
-			script.printCopyTask(getTempJARFolderLocation(name) + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION), destination.toString(), null, false, false);
+			Path logPath = new Path(getTempJARFolderLocation(name) + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			FileSet logSet = new FileSet(logPath.removeLastSegments(1).toString(), null, logPath.lastSegment(), null, null, null, null);
+			script.printCopyTask(null, destination.toString(), new FileSet[] { logSet }, false, false);
 		}
 
 		if (customBuildCallbacks != null) {
