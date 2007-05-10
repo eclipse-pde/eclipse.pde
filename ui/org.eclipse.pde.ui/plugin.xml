@@ -391,6 +391,16 @@
                contentTypeId="org.eclipse.pde.compositeCheatSheet">
          </contentTypeBinding>
       </editor>
+      <editor
+            default="false"
+            icon="$nl$/icons/obj16/discovery.gif"
+            id="org.eclipse.pde.ui.schemaPreviewLauncher"
+            launcher="org.eclipse.pde.internal.ui.editor.schema.SchemaPreviewLauncher"
+            name="%editors.schema.launcher.name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.schema">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -791,46 +801,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.OpenManifestAction"> 
          </action> 
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="*.mxsd"
-            id="org.eclipse.pde.ui.PreviewReference1">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.schema.mxsd.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
-         <action
-               label="%PreviewReference.label"
-               helpContextId="org.eclipse.pde.doc.user.preview_schema"
-               class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-               menubarPath="org.eclipse.pde.ui.schema.mxsd.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.PreviewReference">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="*.exsd"
-            id="org.eclipse.pde.ui.schema.exsd.tools">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.schema.exsd.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
-         <action
-               label="%PreviewReference.label"
-               helpContextId="org.eclipse.pde.doc.user.preview_schema"
-               class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-               menubarPath="org.eclipse.pde.ui.schema.exsd.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.PreviewReference2">
-         </action>
       </objectContribution>
    </extension>
    <extension
