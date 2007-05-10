@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.ArrayList;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -178,6 +179,16 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			labels[i + 1] = attribs[i].getName();
 		}
 		return labels;
+	}
+	
+	public void modelChanged(IModelChangedEvent event) {
+		Object[] changedObjs = event.getChangedObjects();
+		if(event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
+			if (changedObjs[0] instanceof SchemaElement) {	
+				fName.getText().setFocus();
+		    }
+		}
+		super.modelChanged(event);
 	}
 	
 	/* (non-Javadoc)

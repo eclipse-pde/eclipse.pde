@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
@@ -534,6 +535,16 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 		if (oldPage != fNotebookLayout.topControl)
 			fNotebook.layout();
+	}
+
+	public void modelChanged(IModelChangedEvent event) {
+		Object[] changedObjs = event.getChangedObjects();
+		if(event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
+			if(changedObjs[0] instanceof SchemaAttribute) {	
+				fName.getText().setFocus();
+		    }
+		}
+		super.modelChanged(event);
 	}
 	
 	/* (non-Javadoc)
