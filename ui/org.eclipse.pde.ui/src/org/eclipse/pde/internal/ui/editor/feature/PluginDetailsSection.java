@@ -40,6 +40,8 @@ IPartSelectionListener {
 	protected IFeaturePlugin fInput;
 
 	private FormEntry fNameText;
+	
+	private FormEntry fVersionText;
 
 	private FormEntry fdownloadSizeText;
 
@@ -63,12 +65,14 @@ IPartSelectionListener {
 	}
 
 	public void cancelEdit() {
+		fVersionText.cancelEdit();
 		fdownloadSizeText.cancelEdit();
 		fInstallSizeText.cancelEdit();
 		super.cancelEdit();
 	}
 
 	public void commit(boolean onSave) {
+		fVersionText.commit();
 		fdownloadSizeText.commit();
 		fInstallSizeText.commit();
 		super.commit(onSave);
@@ -89,6 +93,20 @@ IPartSelectionListener {
 		limitTextWidth(fNameText);
 		fNameText.setEditable(false);
 		fNameText.getText().setEnabled(false);
+		
+		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
+		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				if (fInput != null)
+					try {
+						fInput.setVersion(text.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
+		limitTextWidth(fVersionText);
+		fVersionText.setEditable(isEditable());
 
 		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
@@ -195,6 +213,7 @@ IPartSelectionListener {
 	private void update() {
 		if (fInput != null) {
 			fNameText.setValue(fInput.getLabel());
+			fVersionText.setValue(fInput.getVersion(), true);
 			fdownloadSizeText
 			.setValue(
 					fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
@@ -207,15 +226,18 @@ IPartSelectionListener {
 
 		} else {
 			fNameText.setValue(null);
+			fVersionText.setValue(null, true);
 			fdownloadSizeText.setValue(null, true); 
 			fInstallSizeText.setValue(null, true); 
 			fBlockNotification = true;
 			fUnpackButton.setSelection(true);
 			fBlockNotification = false;
 		}
-		fdownloadSizeText.setEditable(fInput != null && isEditable());
-		fInstallSizeText.setEditable(fInput != null && isEditable());
-		fUnpackButton.setEnabled(fInput != null && isEditable());
+		boolean editable = fInput != null && isEditable();
+		fVersionText.setEditable(editable);
+		fdownloadSizeText.setEditable(editable);
+		fInstallSizeText.setEditable(editable);
+		fUnpackButton.setEnabled(editable);
 	}
 
 	public boolean isEditable() {

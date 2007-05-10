@@ -18,6 +18,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
@@ -45,7 +46,20 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		if (id == null) {
 			return null;
 		}
-		IPluginModelBase model = PluginRegistry.findModel(id);
+		String version = getVersion();
+		IPluginModelBase model = null;
+		if (version == null || version.equals("0.0.0")) //$NON-NLS-1$
+			model = PluginRegistry.findModel(id);
+		else {
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			IPluginModelBase bases[] = entry.getActiveModels();
+			for (int i = 0; i < bases.length; i++) {
+				if (bases[i].getPluginBase().getVersion().equals(version)) {
+					model = bases[i];
+					break;
+				}
+			}
+		}
 		if (fFragment && model instanceof IFragmentModel)
 			return model.getPluginBase();
 		if (!fFragment && model instanceof IPluginModel)

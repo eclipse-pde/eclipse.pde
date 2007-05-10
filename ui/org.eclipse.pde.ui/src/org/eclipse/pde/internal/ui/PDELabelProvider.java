@@ -360,9 +360,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(FeatureChild obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
-		if (model != null) 
-			return getObjectText(model);
 		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	

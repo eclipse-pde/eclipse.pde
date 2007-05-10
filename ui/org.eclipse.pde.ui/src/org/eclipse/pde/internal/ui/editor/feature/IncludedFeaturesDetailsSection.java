@@ -42,6 +42,8 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	protected IFeatureChild fInput;
 
 	private FormEntry fNameText;
+	
+	private FormEntry fVersionText;
 
 	private Button fOptionalButton;
 
@@ -68,11 +70,13 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 
 	public void cancelEdit() {
 		fNameText.cancelEdit();
+		fVersionText.cancelEdit();
 		super.cancelEdit();
 	}
 
 	public void commit(boolean onSave) {
 		fNameText.commit();
+		fVersionText.commit();
 		super.commit(onSave);
 	}
 
@@ -98,6 +102,19 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 		fNameText.setEditable(isEditable());
+		
+		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
+		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				if (fInput != null)
+					try {
+						fInput.setVersion(text.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
+		fVersionText.setEditable(isEditable());
 
 		fOptionalButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_optional, SWT.CHECK);
 
@@ -229,6 +246,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 
 		if (fInput != null) {
 			fNameText.setValue(fInput.getName(), true);
+			fVersionText.setValue(fInput.getVersion(), true);
 			fOptionalButton.setSelection(fInput.isOptional());
 			int searchLocation = fInput.getSearchLocation();
 			fSearchRootButton
@@ -239,16 +257,19 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 					.setSelection(searchLocation == IFeatureChild.BOTH);
 		} else {
 			fNameText.setValue(null, true);
+			fVersionText.setValue(null, true);
 			fOptionalButton.setSelection(false);
 			fSearchRootButton.setSelection(true);
 			fSearchSelfButton.setSelection(false);
 			fSearchBothButton.setSelection(false);
 		}
-		fNameText.setEditable(fInput != null && isEditable());
-		fOptionalButton.setEnabled(fInput != null && isEditable());
-		fSearchRootButton.setEnabled(fInput != null && isEditable());
-		fSearchSelfButton.setEnabled(fInput != null && isEditable());
-		fSearchBothButton.setEnabled(fInput != null && isEditable());
+		boolean editable = fInput != null && isEditable();
+		fNameText.setEditable(editable);
+		fVersionText.setEditable(editable);
+		fOptionalButton.setEnabled(editable);
+		fSearchRootButton.setEnabled(editable);
+		fSearchSelfButton.setEnabled(editable);
+		fSearchBothButton.setEnabled(editable);
 
 		fBlockNotification = false;
 	}
