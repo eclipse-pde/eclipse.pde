@@ -106,8 +106,8 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
 			// Compute horizontal span
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getKind() == IMetaAttribute.JAVA
-						|| atts[i].getKind() == IMetaAttribute.RESOURCE) {
+				if (isEditable() && (atts[i].getKind() == IMetaAttribute.JAVA
+						|| atts[i].getKind() == IMetaAttribute.RESOURCE)) {
 					span = 3;
 					break;
 				}

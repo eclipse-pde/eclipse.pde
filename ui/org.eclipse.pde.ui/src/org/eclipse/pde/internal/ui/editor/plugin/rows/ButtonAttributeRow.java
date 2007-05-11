@@ -38,15 +38,17 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 	}
 
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
-		super.createContents(parent, toolkit, span);
-		Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH); 
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!isReferenceModel())
-					browse();
-			}
-		});
-		button.setEnabled(part.isEditable());
+		super.createContents(parent, toolkit, span);		
+		if(part.isEditable())
+		{	Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH); 
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (!isReferenceModel())
+						browse();
+				}
+			});
+			//button.setEnabled(part.isEditable());
+		}
 	}	
 
 	protected GridData createGridData(int span) {

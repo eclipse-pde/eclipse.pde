@@ -40,6 +40,11 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
+		if(!part.isEditable())
+		{	super.createLabel(parent, toolkit);
+			return;
+		}
+
 		Hyperlink link = toolkit.createHyperlink(parent, getPropertyLabel(),
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
