@@ -197,8 +197,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void collectSourcePlugins(IPluginEntry pluginEntry, BundleDescription model) {
 		if (!sourceFeatureGeneration)
 			return;
-		if (!assemblyData.getAllCompiledPlugins().contains(model))
+		//Do not collect plug-ins for which we are not generating build.xml
+		try {
+			if (AbstractScriptGenerator.readProperties(model.getLocation(), PROPERTIES_FILE, IStatus.OK) == MissingProperties.getInstance())
+				return;
+		} catch (CoreException e) {
 			return;
+		}
 		// The generic entry may not be part of the configuration we are building however,
 		// the code for a non platform specific plugin still needs to go into a generic source plugin
 		if (pluginEntry.getOS() == null && pluginEntry.getWS() == null && pluginEntry.getOSArch() == null) {
