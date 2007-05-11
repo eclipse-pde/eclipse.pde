@@ -83,7 +83,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 		startTag("description", parameters, true); //$NON-NLS-1$
 		printTabulation();
-		println(feature.getDescriptionModel().getAnnotationNonLocalized());
+		printlnEscaped(feature.getDescriptionModel().getAnnotationNonLocalized());
 		endTag("description"); //$NON-NLS-1$
 	}
 
@@ -94,7 +94,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.put("url", feature.getCopyrightModel().getURLString()); //$NON-NLS-1$
 		startTag("copyright", parameters, true); //$NON-NLS-1$
 		printTabulation();
-		println(feature.getCopyrightModel().getAnnotationNonLocalized());
+		printlnEscaped(feature.getCopyrightModel().getAnnotationNonLocalized());
 		endTag("copyright"); //$NON-NLS-1$
 	}
 
@@ -105,7 +105,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.put("url", feature.getLicenseModel().getURLString()); //$NON-NLS-1$
 		startTag("license", parameters, true); //$NON-NLS-1$
 		printTabulation();
-		println(feature.getLicenseModel().getAnnotationNonLocalized());
+		printlnEscaped(feature.getLicenseModel().getAnnotationNonLocalized());
 		endTag("license"); //$NON-NLS-1$
 	}
 

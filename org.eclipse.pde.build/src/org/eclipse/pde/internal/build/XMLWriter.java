@@ -115,4 +115,8 @@ public class XMLWriter extends PrintWriter {
 				return String.valueOf(c);
 		}
 	}
+	
+	public void printlnEscaped(String s) {
+		println(getEscaped(s));
+	}
 }
