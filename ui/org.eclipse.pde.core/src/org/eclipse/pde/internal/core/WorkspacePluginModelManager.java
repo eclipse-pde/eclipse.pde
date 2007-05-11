@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,20 +27,25 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.internal.core.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
@@ -128,6 +138,8 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 					((AbstractNLModel)model).resetNLResourceHelper();					 
 				 }
 			 }
+		} else if (filename.endsWith(".exsd")) { //$NON-NLS-1$
+			handleEclipseSchemaDelta(file, delta);
 		} else {
 			IPath path = file.getProjectRelativePath();
 			if (path.equals(ICoreConstants.PLUGIN_PATH) 
@@ -137,6 +149,74 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				handleBundleManifestDelta(file, delta);
 			}
 		}
+	}
+	
+	/**
+	 * @param file
+	 * @param delta
+	 */
+	private void handleEclipseSchemaDelta(IFile schemaFile, IResourceDelta delta) {
+		// Get the kind of resource delta
+		int kind = delta.getKind();
+		// We are only interested in schema files whose contents have changed
+		if (kind != IResourceDelta.CHANGED) {
+			return;
+		} else if ((IResourceDelta.CONTENT & delta.getFlags()) == 0) {
+			return;
+		}
+		// Get the schema preview file session property
+		Object property = null;
+		try {
+			property = 
+				schemaFile.getSessionProperty(PDECore.SCHEMA_PREVIEW_FILE);
+		} catch (CoreException e) {
+			// Ignore
+			return;
+		}
+		// Check if the schema file has an associated HTML schema preview file
+		// (That is, whether a show description action has been executed before)
+		// Property set in
+		// org.eclipse.pde.internal.ui.search.ShowDescriptionAction.linkPreviewFileToSchemaFile()
+		if (property == null) {
+			return;
+		} else if ((property instanceof File) == false) {
+			return;
+		}
+		File schemaPreviewFile = (File)property;
+		// Ensure the file exists and is writable
+		if (schemaPreviewFile.exists() == false) {
+			return;
+		} else if (schemaPreviewFile.isFile() == false) {
+			return;
+		} else if (schemaPreviewFile.canWrite() == false) {
+			return;
+		}
+		// Get the schema model object
+		ISchemaDescriptor descriptor = new SchemaDescriptor(schemaFile, false);
+		ISchema schema = descriptor.getSchema(false);
+		
+		try {
+			// Re-generate the schema preview file contents in order to reflect
+			// the changes in the schema
+			recreateSchemaPreviewFileContents(schemaPreviewFile, schema);
+		} catch (IOException e) {
+			// Ignore
+		}
+	}
+
+	/**
+	 * @param schemaPreviewFile
+	 * @param schema
+	 * @throws IOException
+	 */
+	private void recreateSchemaPreviewFileContents(File schemaPreviewFile,
+			ISchema schema) throws IOException {
+		SchemaTransformer transformer = new SchemaTransformer();
+		OutputStream os = new FileOutputStream(schemaPreviewFile);
+		PrintWriter printWriter = new PrintWriter(os, true);
+		transformer.transform(schema, printWriter); 
+		os.flush();
+		os.close();		
 	}
 	
 	/**
@@ -303,13 +383,22 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	/**
 	 * Returns true if the folder being visited is of interest to PDE.
 	 * In this case, PDE is only interested in META-INF folders at the root of a plug-in project
+	 * We are also interested in schema folders
 	 * 
 	 * @return <code>true</code> if the folder (and its children) is of interest to PDE;
 	 * <code>false</code> otherwise.
 	 * 
 	 */
 	protected boolean isInterestingFolder(IFolder folder) {
-		return folder.getName().equals("META-INF") && folder.getParent() instanceof IProject; //$NON-NLS-1$;
+		if (folder.getName().equals("META-INF") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
+			return true;
+		}
+		
+		if (folder.getName().equals("schema") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**

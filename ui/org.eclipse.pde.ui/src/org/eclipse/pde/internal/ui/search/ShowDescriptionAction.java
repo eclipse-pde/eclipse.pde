@@ -18,10 +18,14 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -35,6 +39,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.update.core.Utilities;
 
 
 public class ShowDescriptionAction extends Action {
@@ -42,6 +47,8 @@ public class ShowDescriptionAction extends Action {
 	private ISchema fSchema;
 	private File fPreviewFile;
 	private boolean fForceExternal;
+	
+	private static File fTempWorkingDir;
 	
 	public ShowDescriptionAction(String pointID) {
 		fPointID = pointID;
@@ -115,7 +122,7 @@ public class ShowDescriptionAction extends Action {
 
 	private void showSchemaDocument() {
 		try {
-			fPreviewFile = getPreviewFile();
+			fPreviewFile = getTempPreviewFile();
 			if (fPreviewFile == null)
 				return;
 
@@ -126,19 +133,107 @@ public class ShowDescriptionAction extends Action {
 			os.flush();
 			os.close();
 			showURL(fPreviewFile, fForceExternal);
+			// Associate the generated preview file with the schema file
+			// to enable automatic preview file updates on schema file changes
+			linkPreviewFileToSchemaFile();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 	
-	private File getPreviewFile(){
-		try {
-			File file = File.createTempFile("pde", ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-			file.deleteOnExit();
-			return file;
-		} catch (IOException e) {
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	private File getTempWorkingDir() throws IOException {
+		if (fTempWorkingDir == null) {
+			fTempWorkingDir = Utilities.createWorkingDirectory();
 		}
-		return null;
+		return fTempWorkingDir;
+	}	
+	
+	/**
+	 * @return
+	 */
+	private File getTempPreviewFile(){
+		// Get the temporary working directory
+		File tempWorkingDir = null;
+		try {
+			tempWorkingDir = getTempWorkingDir();
+		} catch (IOException e) {
+			return null;
+		}	
+		// Generate a consistent unique preview file name for this schema
+		StringBuffer previewFileName = new StringBuffer();
+		previewFileName.append("pde_schema_"); //$NON-NLS-1$
+		previewFileName.append(fSchema.getQualifiedPointId().replace('.', '-'));
+		previewFileName.append("_preview.html");			 //$NON-NLS-1$
+		File previewFile = new File(
+			tempWorkingDir.getPath() + 
+			File.separatorChar + 
+			previewFileName.toString());
+		// If the file does not exist yet, create it within the temporary
+		// working diretory
+		if (previewFile.exists() == false) {
+			try {
+				previewFile.createNewFile();
+			} catch (IOException e) {
+				return null;
+			}
+			// Mark file for deletion on VM exit
+			previewFile.deleteOnExit();
+		}
+		
+		return previewFile;
+	}
+	
+	/**
+	 * 
+	 */
+	private void linkPreviewFileToSchemaFile() {
+		// Ensure the preview file is defined
+		if (fPreviewFile == null) {
+			return;
+		}
+		// Get the schema file
+		IFile schemaFile = getSchemaFile();
+		// Ensure we found the workspace Eclipse schema file
+		if (schemaFile == null) {
+			return;
+		}
+		// Set the preview file on the Eclipse schema file resource.
+		// Later on, content changes to the Eclipse schema file in the workspace
+		// will result in an automatic regeneration of the schema preview
+		// contents
+		// This is handled in
+		// org.eclipse.pde.internal.core.WorkspacePluginModelManager.handleEclipseSchemaDelta(IFile, IResourceDelta)
+		try {
+			schemaFile.setSessionProperty(
+					PDECore.SCHEMA_PREVIEW_FILE, fPreviewFile);
+		} catch (CoreException e) {
+			// Ignore
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private IFile getSchemaFile() {
+		// Ensure the schema is defined
+		if (fSchema == null) {
+			return null;
+		}
+		// Get the Java schema file
+		File javaSchemaFile = new File(fSchema.getURL().getFile());
+		// Get the Eclipse schema file
+		IFile[] eclipseSchemaFiles = 
+			ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
+				javaSchemaFile.toURI());
+		// Ensure the file was found in the workspace
+		if (eclipseSchemaFiles.length == 0) {
+			return null;
+		}
+		return eclipseSchemaFiles[0];
 	}
 	
 	private void showURL(File file, boolean forceExternal) {

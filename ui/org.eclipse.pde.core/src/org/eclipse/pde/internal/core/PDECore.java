@@ -44,6 +44,9 @@ public class PDECore extends Plugin {
 
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported"); //$NON-NLS-1$
 	public static final QualifiedName TOUCH_PROJECT = new QualifiedName(PLUGIN_ID, "TOUCH_PROJECT"); //$NON-NLS-1$
+
+	public static final QualifiedName SCHEMA_PREVIEW_FILE = 
+		new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
 	
 	// Shared instance
 	private static PDECore inst;
