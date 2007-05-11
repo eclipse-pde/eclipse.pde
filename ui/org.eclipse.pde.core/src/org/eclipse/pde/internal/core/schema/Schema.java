@@ -575,7 +575,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private ISchemaObject processCompositorChild(ISchemaObject parent,
 			Node child, int parentKind) {
 		String tag = child.getNodeName();
-		if (tag.equals("element")) { //$NON-NLS-1$
+		if (tag.equals("element") && parentKind != ISchemaCompositor.ROOT) { //$NON-NLS-1$
 			return processElement(parent, child);
 		}
 		// sequence: element | group | choice | sequence
