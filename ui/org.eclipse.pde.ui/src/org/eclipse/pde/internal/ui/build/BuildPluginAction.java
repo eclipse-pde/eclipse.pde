@@ -11,11 +11,11 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -43,8 +43,8 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		generator.setBuildingOSGi(true);
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		if(model != null && model.getPluginBase().getId() != null)
-		{	generator.setElements(new String[] { "plugin@" + model.getPluginBase().getId() }); //$NON-NLS-1$
+		if(model != null && model.getPluginBase().getId() != null) {
+			generator.setBundles(new BundleDescription[] {model.getBundleDescription()});
 			generator.generate();
 		}
 		else
