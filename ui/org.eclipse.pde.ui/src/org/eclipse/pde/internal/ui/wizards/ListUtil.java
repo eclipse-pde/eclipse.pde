@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
+import java.util.Comparator;
+
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -27,7 +30,24 @@ import org.eclipse.swt.graphics.Image;
 
 
 public class ListUtil {
+	
+	private static final Comparator stringComparator = new Comparator() {
+
+		public int compare(Object arg0, Object arg1) {
+			if (arg0 instanceof String && arg1 instanceof String)
+				return ((String)arg0).compareTo((String)arg1);
+			// if not two Strings like we expect, then use default comparator
+			return Policy.getComparator().compare(arg0, arg1);
+		}
+		
+	};
+	
 	static class NameComparator extends ViewerComparator {
+		public NameComparator() {
+			// when comparing names, always use the comparator above to do a String comparison
+			super(stringComparator);
+		}
+		
 		public boolean isSorterProperty(Object element, Object propertyId) {
 			return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 		}
