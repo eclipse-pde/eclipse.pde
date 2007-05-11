@@ -315,6 +315,10 @@ public class Schema extends PlatformObject implements ISchema {
 	public void setParent(ISchemaObject obj) {
 	}
 
+	public ISchemaElement getElementAt(int index)
+	{	return (ISchemaElement)fElements.get(index);
+	}
+	
 	public String getQualifiedPointId() {
 		return fPluginID + "." + fPointID; //$NON-NLS-1$
 	}
@@ -339,6 +343,10 @@ public class Schema extends PlatformObject implements ISchema {
 		return fURL;
 	}
 
+	public int indexOf(Object obj) {
+		return fElements.indexOf(obj);
+	}
+	
 	public boolean isDisposed() {
 		return fDisposed;
 	}

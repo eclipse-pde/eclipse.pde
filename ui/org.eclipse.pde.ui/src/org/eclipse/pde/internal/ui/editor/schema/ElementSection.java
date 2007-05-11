@@ -216,10 +216,29 @@ public class ElementSection extends TreeSection {
 	public boolean doGlobalAction(String actionId) {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
-			ISelection sel = fTreeViewer.getSelection();
-			Object obj = ((IStructuredSelection) sel).getFirstElement();
-			if (obj != null)
-				handleDelete(obj);
+			// Get the current selection
+			IStructuredSelection sel = (IStructuredSelection)fTreeViewer.getSelection();
+			// Get the first selected object
+			Object selectedObject = sel.getFirstElement();
+			// Ensure we have a selection
+			if (selectedObject == null) {
+				return true;
+			}
+			// Get the current index of the first selected object in the model
+			int index = fSchema.indexOf(selectedObject);
+			// Delete the selection
+			handleDelete(sel);
+			// The the item deleted was the last item, select the second-last
+			// item (if their is one)
+			if (index == fSchema.getElementCount()) {
+				--index;
+			}
+			// Make the selection if the index exists (e.g. there are still 
+			// items after the deletion)
+			if (index != -1) {
+				fTreeViewer.setSelection(
+						new StructuredSelection(fSchema.getElementAt(index)));
+			}
 			// if cutting delete here and let the editor transfer
 			// the selection to the clipboard
 			return !cut;
