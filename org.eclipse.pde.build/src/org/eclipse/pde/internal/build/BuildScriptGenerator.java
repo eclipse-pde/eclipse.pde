@@ -72,6 +72,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	private boolean generateVersionsList = false;
 
 	private Properties antProperties = null;
+	private BundleDescription[] bundlesToBuild;
 	
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
@@ -112,6 +113,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * Separate elements by kind.
 	 */
 	protected void sortElements(List features, List plugins) {
+		if (elements == null)
+			return;
 		for (int i = 0; i < elements.length; i++) {
 			int index = elements[i].indexOf('@');
 			String type = elements[i].substring(0, index);
@@ -135,11 +138,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator = new ModelBuildScriptGenerator();
 				generator.setReportResolutionErrors(reportResolutionErrors);
 				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
-				//Filtering is not required here, since we are only generating the
-				// build for a plugin or a fragment
-				String model = (String) iterator.next();
+				//Filtering is not required here, since we are only generating the build for a plugin or a fragment
+				String[] modelInfo = getNameAndVersion((String) iterator.next());
 				generator.setBuildSiteFactory(siteFactory);
-				generator.setModelId(model);
+				generator.setModelId(modelInfo[0], modelInfo[1]);
 
 				generator.setPluginPath(pluginPath);
 				generator.setDevEntries(devEntries);
@@ -148,6 +150,22 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setSignJars(signJars);
 				generator.generate();
 			}
+			if (bundlesToBuild != null)
+				for (int i = 0; i < bundlesToBuild.length; i++) {
+					generator = new ModelBuildScriptGenerator();
+					generator.setReportResolutionErrors(reportResolutionErrors);
+					generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+					//Filtering is not required here, since we are only generating the build for a plugin or a fragment
+					generator.setBuildSiteFactory(siteFactory);
+					generator.setModel(bundlesToBuild[i]);
+
+					generator.setPluginPath(pluginPath);
+					generator.setDevEntries(devEntries);
+					generator.setCompiledElements(generator.getCompiledElements());
+					generator.setBuildingOSGi(isBuildingOSGi());
+					generator.setSignJars(signJars);
+					generator.generate();
+				}
 		} finally {
 			if (generator != null)
 				generator.getSite(false).getRegistry().cleanupOriginalState();
@@ -505,5 +523,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setImmutableAntProperties(Properties properties) {
 		antProperties = properties;
+	}
+	
+	public void setBundles(BundleDescription[] bundles) {
+		bundlesToBuild = bundles;
 	}
 }

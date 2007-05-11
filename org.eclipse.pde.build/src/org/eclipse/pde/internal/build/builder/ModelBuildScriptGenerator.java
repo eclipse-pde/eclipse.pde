@@ -789,8 +789,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @param modelId
 	 * @throws CoreException
 	 */
-	public void setModelId(String modelId) throws CoreException {
-		BundleDescription newModel = getModel(modelId);
+	public void setModelId(String modelId, String modelVersion) throws CoreException {
+		BundleDescription newModel = getModel(modelId, modelVersion);
 		if (newModel == null) {
 			String message = NLS.bind(Messages.exception_missingElement, modelId);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
@@ -1295,8 +1295,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @param modelId the identifier of the model object to lookup
 	 * @return the model object or <code>null</code>
 	 */
-	protected BundleDescription getModel(String modelId) throws CoreException {
-		return getSite(false).getRegistry().getResolvedBundle(modelId);
+	protected BundleDescription getModel(String modelId, String modelVersion) throws CoreException {
+		if (modelVersion == null)
+			return getSite(false).getRegistry().getResolvedBundle(modelId);
+		return getSite(false).getRegistry().getResolvedBundle(modelId, modelVersion);
 	}
 
 	public IPluginEntry getAssociatedEntry() {
