@@ -91,6 +91,8 @@ public interface IXMLConstants {
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_NL = "basenl"; //$NON-NLS-1$ 
 	public static final String PROPERTY_OS = "os"; //$NON-NLS-1$
+	public static final String PROPERTY_BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
+	public static final String PROPERTY_BUNDLE_ID = "bundleId"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_OS = "baseos"; //$NON-NLS-1$
 	public static final String PROPERTY_QUIET = "quiet"; //$NON-NLS-1$
 	public static final String PROPERTY_PLUGIN_DESTINATION = "plugin.destination"; //$NON-NLS-1$

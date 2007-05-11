@@ -646,10 +646,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		script.printProperty(PROPERTY_BASE_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));
 		script.printProperty(PROPERTY_BASE_NL, Utils.getPropertyFormat(PROPERTY_NL));
+		script.printProperty(PROPERTY_BUNDLE_ID, model.getSymbolicName());
+		script.printProperty(PROPERTY_BUNDLE_VERSION, model.getVersion().toString());
 		script.println();
 
 		if (customBuildCallbacks != null && !customBuildCallbacks.equals(FALSE)) {
-			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customBuildCallbacks, customBuildCallbacks);
+			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customCallbacksBuildpath + '/' + customBuildCallbacks, customBuildCallbacks);
 			script.println();
 		}
 
