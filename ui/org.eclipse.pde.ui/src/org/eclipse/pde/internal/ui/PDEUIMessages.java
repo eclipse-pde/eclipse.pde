@@ -319,6 +319,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiresSection_sortAlpha;
 
+	public static String SchemaPreviewLauncher_msgEditorHasUnsavedChanges;
+
+	public static String SchemaPreviewLauncher_msgSaveChanges;
+
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
 	public static String SimpleCSItemDetails_msgFieldDisabledOptional;

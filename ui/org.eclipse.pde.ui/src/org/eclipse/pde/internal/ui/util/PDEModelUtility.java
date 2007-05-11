@@ -48,12 +48,16 @@ import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
+import org.eclipse.pde.internal.ui.editor.schema.SchemaInputContext;
 import org.eclipse.pde.internal.ui.editor.site.SiteEditor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.osgi.framework.Constants;
 
@@ -150,6 +154,72 @@ public class PDEModelUtility {
 			PDEFormEditor editor = (PDEFormEditor)list.get(i);
 			if (editor.getEditorSite().getId().equals(editorId))
 				return editor;
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the open schema editor rooted at the specified underlying file
+	 * @param file
+	 * @return editor if found or null
+	 */
+	public static SchemaEditor getOpenSchemaEditor(IFile file) {
+		return (SchemaEditor)getOpenEditor(
+				IPDEUIConstants.SCHEMA_EDITOR_ID, 
+				SchemaInputContext.CONTEXT_ID, 
+				file);
+	}
+
+	/**
+	 * @param editorID
+	 * @param inputContextID
+	 * @param file
+	 * @return
+	 */
+	private static PDEFormEditor getOpenEditor(String editorID, 
+			String inputContextID, IFile file) {
+		// Get the file's project
+		IProject project = file.getProject();
+		// Check for open editors housed in the specified project
+		ArrayList list = (ArrayList)fOpenPDEEditors.get(project);
+		// No open editors found
+		if (list == null) {
+			return null;
+		}
+		// Get the open editor whose 
+		// (1) Editor ID matches the specified editor ID
+		// (2) Underlying file matches the specified file
+		// Check all open editors
+		for (int i = 0; i < list.size(); i++) {
+			// Get the editor
+			PDEFormEditor editor = (PDEFormEditor)list.get(i);
+			// Check for the specified type 
+			// Get the editor ID
+			String currentEditorID = editor.getEditorSite().getId();
+			if (currentEditorID.equals(editorID) == false) {
+				continue;
+			}
+			// Check for the specified file
+			// Find the editor's input context
+			InputContext context = 
+				editor.getContextManager().findContext(inputContextID);
+			// Ensure we have an input context
+			if (context == null) {
+				continue;
+			}
+			// Get the editor input
+			IEditorInput input = context.getInput();
+			// Ensure we have a file editor input
+			if ((input instanceof IFileEditorInput) == false) {
+				continue;
+			}
+			// Get the editor's underlying file
+			IFile currentFile = ((IFileEditorInput)input).getFile();
+			// If the file matches the specified file, we have found the 
+			// specified editor
+			if (currentFile.equals(file)) {
+				return editor;
+			}
 		}
 		return null;
 	}
