@@ -45,7 +45,7 @@ public class SplashPage extends PDEFormPage {
 	 */
 	protected String getHelpResource() {
 		// TODO: MP: SPLASH: Update help document reference in header
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/branding.htm"; //$NON-NLS-1$
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/splash.htm"; //$NON-NLS-1$
 	}	
 
 	/* (non-Javadoc)
