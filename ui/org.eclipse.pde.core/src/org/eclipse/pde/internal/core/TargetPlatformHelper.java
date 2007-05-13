@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -47,6 +50,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class TargetPlatformHelper {
+	
+	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
 	
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
@@ -231,6 +236,90 @@ public class TargetPlatformHelper {
 		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		result.put("osgi.resolverMode", "development"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
+	}
+	
+	public static Dictionary[] getPlatformProperties(String[] profiles, MinimalState state) {
+		if (profiles == null || profiles.length == 0)
+			return new Dictionary[] {getTargetEnvironment()};
+		
+		// add java profiles for those EE's that have a .profile file in the current system bundle
+		ArrayList result = new ArrayList(profiles.length);
+		for (int i = 0; i < profiles.length; i++) {
+			Properties profileProps = getJavaProfileProperties(profiles[i], state.getState());
+			if (profileProps != null) {
+				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
+				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+				if (systemPackages != null)
+					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+				if (ee != null)
+					props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+				result.add(props);
+			}
+		}
+		if (result.size() > 0)
+			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
+		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
+	}
+	
+	private static Properties getJavaProfileProperties(String ee, State state) {
+		BundleDescription osgiBundle = state.getBundle(SYSTEM_BUNDLE, null);
+		if (osgiBundle == null) 
+			return null;
+		
+		File location = new File(osgiBundle.getLocation());
+		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
+		InputStream is = null;
+		ZipFile zipFile = null;
+		try {
+			// find the input stream to the profile properties file
+			if (location.isDirectory()) {
+				File file = new File(location, filename);
+				if (file.exists())
+					is = new FileInputStream(file);
+			} else {
+				zipFile = null;
+				try {
+					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
+					ZipEntry entry = zipFile.getEntry(filename);
+					if (entry != null)
+						is = zipFile.getInputStream(entry);
+				} catch (IOException e) {
+					// nothing to do
+				}
+			}
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
+		} catch (IOException e) {
+			// nothing to do
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+			if (zipFile != null)
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+		}
+		return null;
+	}
+	
+	public static String[] getKnownExecutionEnvironments() {
+		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
+		if (jreProfile != null && jreProfile.length() > 0) {
+			if ("none".equals(jreProfile))  //$NON-NLS-1$
+				return new String[0];
+			return new String[] {jreProfile};	
+		}	
+		return ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 	}
 
 	public static String getTargetVersionString() {

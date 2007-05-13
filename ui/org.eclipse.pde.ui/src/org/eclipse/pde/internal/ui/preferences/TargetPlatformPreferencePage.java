@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private IConfigurationElement [] fElements;
 	
 	private Preferences fPreferences = null;
-	private boolean fNeedsReload = false;
+	protected boolean fNeedsReload = false;
 	private String fOriginalText;
 	private int fIndex;
 	private TabFolder fTabFolder;
@@ -280,7 +280,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void createEnvironmentTab(TabFolder folder) {
-		fEnvironmentTab = new TargetEnvironmentTab();
+		fEnvironmentTab = new TargetEnvironmentTab(this);
 		Control block = fEnvironmentTab.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
@@ -557,7 +557,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	public boolean performOk() {
-		fEnvironmentTab.performOk();
 		if (fNeedsReload && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
@@ -577,6 +576,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fPluginsTab.handleReload(new ArrayList());
 			resetTargetProfile();
 		} 
+		fEnvironmentTab.performOk();
 		fSourceTab.performOk();
 		fPluginsTab.performOk();
 		fArgumentsTab.performOk();
@@ -647,4 +647,5 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		}
 	}
+	
 }

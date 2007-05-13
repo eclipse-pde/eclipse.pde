@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Dictionary;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -24,7 +25,11 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetJRE;
@@ -57,8 +62,10 @@ public class TargetEnvironmentTab  {
 	
 	private static boolean LOCALES_INITIALIZED = false;
 	private String fDefaultJRE;
+	private TargetPlatformPreferencePage fPage;
 
-	public TargetEnvironmentTab() {
+	public TargetEnvironmentTab(TargetPlatformPreferencePage page) {
+		fPage = page;
 		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 	
@@ -283,6 +290,12 @@ public class TargetEnvironmentTab  {
 	}
 	
 	private void applyTargetEnvironmentGroup() {
+		String oldOS = preferences.getString(ICoreConstants.OS);
+		String oldWS = preferences.getString(ICoreConstants.WS);
+		String oldARCH = preferences.getString(ICoreConstants.ARCH);
+		String oldNL = preferences.getString(ICoreConstants.NL);
+		boolean changed = false;
+		
 		String os = fOSCombo.getText().trim();
 		if (os.length() > 0) {
 			if (!fOSChoices.contains(os)) {
@@ -291,6 +304,7 @@ public class TargetEnvironmentTab  {
 				preferences.setValue(ICoreConstants.OS_EXTRA, value);
 			}
 			preferences.setValue(ICoreConstants.OS, os);
+			changed |= !(os.equals(oldOS));
 		}
 		
 		String ws = fWSCombo.getText().trim();
@@ -301,6 +315,7 @@ public class TargetEnvironmentTab  {
 				preferences.setValue(ICoreConstants.WS_EXTRA, value);
 			}
 			preferences.setValue(ICoreConstants.WS, ws);
+			changed |= !(ws.equals(oldWS));
 		}
 		
 		String arch = fArchCombo.getText().trim();
@@ -311,6 +326,7 @@ public class TargetEnvironmentTab  {
 				preferences.setValue(ICoreConstants.ARCH_EXTRA, value);
 			}
 			preferences.setValue(ICoreConstants.ARCH, arch);
+			changed |= !(arch.equals(oldARCH));
 		}
 		
 		String locale = fNLCombo.getText().trim();
@@ -325,10 +341,32 @@ public class TargetEnvironmentTab  {
 				locale = locale.substring(0, dash);
 			locale = locale.trim();
 			preferences.setValue(ICoreConstants.NL, locale);
+			changed |= !(locale.equals(oldNL));
 		}
 		PDECore.getDefault().savePluginPreferences();
+		if (changed) {
+			updateState();
+		}
 	}
-		
+	
+	private void updateState() {
+		PDEState state = fPage.getCurrentState();
+		// update the current state with the platform properties of the current environment settings.
+		String[] knownExecutionEnvironments = TargetPlatformHelper.getKnownExecutionEnvironments();
+		Dictionary[] properties = TargetPlatformHelper.getPlatformProperties(knownExecutionEnvironments, fPage.getCurrentState());
+		state.getState().setPlatformProperties(properties);
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		// Resetting the state (manager.getState() != state) refreshes workspace projects automatically.  So if we are not reseting  
+		// the state, we need to fire an event to have the PluginModelManager re-resolve the current state with the new platform properties.
+		if (manager.getState() == state) {
+			manager.modelsChanged(new ModelProviderEvent(
+					properties,
+					ICoreConstants.ENVIRONMENT_CHANGED,
+					null,
+					null,
+					null));
+		}
+	}
 	
 	private String expandLocaleName(String name) {
 		String language = ""; //$NON-NLS-1$

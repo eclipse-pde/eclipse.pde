@@ -15,9 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -236,77 +234,7 @@ public class MinimalState {
 	}
 
 	private Dictionary[] getProfilePlatformProperties() {
-		if (fExecutionEnvironments == null || fExecutionEnvironments.length == 0)
-			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-		
-		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList result = new ArrayList(fExecutionEnvironments.length);
-		for (int i = 0; i < fExecutionEnvironments.length; i++) {
-			Properties profileProps = getJavaProfileProperties(fExecutionEnvironments[i]);
-			if (profileProps != null) {
-				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
-				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-				if (systemPackages != null)
-					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-				if (ee != null)
-					props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
-				result.add(props);
-			}
-		}
-		if (result.size() > 0)
-			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
-		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-	}
-
-	private Properties getJavaProfileProperties(String ee) {
-		BundleDescription osgiBundle = fState.getBundle(SYSTEM_BUNDLE, null);
-		if (osgiBundle == null) 
-			return null;
-		
-		File location = new File(osgiBundle.getLocation());
-		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
-		InputStream is = null;
-		ZipFile zipFile = null;
-		try {
-			// find the input stream to the profile properties file
-			if (location.isDirectory()) {
-				File file = new File(location, filename);
-				if (file.exists())
-					is = new FileInputStream(file);
-			} else {
-				zipFile = null;
-				try {
-					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry entry = zipFile.getEntry(filename);
-					if (entry != null)
-						is = zipFile.getInputStream(entry);
-				} catch (IOException e) {
-					// nothing to do
-				}
-			}
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
-			}
-		} catch (IOException e) {
-			// nothing to do
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-			if (zipFile != null)
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-		}
-		return null;
+		return TargetPlatformHelper.getPlatformProperties(fExecutionEnvironments, this);
 	}
 
 	public void removeBundleDescription(BundleDescription description) {
@@ -318,16 +246,16 @@ public class MinimalState {
 		return fState;
 	}
 
-	private void setExecutionEnvironments() {		
-		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
-		if (jreProfile != null && jreProfile.length() > 0) {
-			if ("none".equals(jreProfile)) { //$NON-NLS-1$
-				fNoProfile = true;
-			} else {
-				fExecutionEnvironments = new String[] {jreProfile};	
-			}
-		} else {		
-			fExecutionEnvironments = ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
+	private void setExecutionEnvironments() {	
+		String[] knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
+		if (knownExecutionEnviroments.length == 0) {
+			String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
+			if (jreProfile != null && jreProfile.length() > 0)
+				if ("none".equals(jreProfile)) //$NON-NLS-1$
+					fNoProfile = true;
+		}
+		if (!fNoProfile) {
+			fExecutionEnvironments = knownExecutionEnviroments;
 		}
 		fEEListChanged = true; // alway indicate the list has changed
 	}
