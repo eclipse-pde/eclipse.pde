@@ -30,8 +30,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
-import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
-import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.SWT;
@@ -50,8 +48,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	private FormEntry fClassEntry;
 	private Button fLazyStart;
 	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
-	
-	private TextValidator fClassEntryValidator;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
@@ -134,13 +130,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			}
 		});
 		fClassEntry.setEditable(isEditable);
-		// Create validator
-		fClassEntryValidator = new TextValidator(getManagedForm(), 
-				fClassEntry.getText(), getProject(), true) {
-			protected boolean validateControl() {
-				return validateClassEntry();
-			}
-		};
 		
 		if (isEditable) {
 			fTypeFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(
@@ -150,20 +139,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		}
 	}
 	
-	/**
-	 * @return
-	 */
-	private boolean validateClassEntry() {
-		// No validation required for an optional field
-		if (fClassEntry.getText().getText().length() == 0) {
-			return true;
-		}	
-		// Value must be on the plug-ins classpath
-		return ControlValidationUtility.validateActivatorField(
-				fClassEntry.getText().getText(), fClassEntryValidator, 
-				getProject());
-	}
-
 	private void doOpenSelectionDialog(String className) {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
 		String type = 
