@@ -41,4 +41,8 @@ public class ContentPage extends AbstractTargetPage {
 		managedForm.addPart(new ContentSection(this, body));
 	}
 
+	protected String getHelpResource() {
+		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/content.htm"; //$NON-NLS-1$
+	}
+
 }

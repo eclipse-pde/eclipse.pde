@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * CheatSheetFileWizardPage
@@ -138,6 +140,8 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.CHEAT_SHEET_PAGE );
 	}
 
 }

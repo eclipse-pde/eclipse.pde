@@ -108,6 +108,7 @@ public interface IHelpContextIds {
 
 	public static final String PLUGINS_CONTAINER_PAGE = PREFIX + "plugins_container_page"; //$NON-NLS-1$
 	public static final String EXTERNALIZE_STRINGS_PAGE = PREFIX + "externalize_strings_page"; //$NON-NLS-1$
+	public static final String CHEAT_SHEET_PAGE = PREFIX + "cheat_sheet_page"; //$NON-NLS-1$
 	public static final String PRODUCT_FILE_PAGE = PREFIX + "product_file_page"; //$NON-NLS-1$
 	public static final String TARGET_DEFINITION_PAGE = PREFIX + "target_definition_page"; //$NON-NLS-1$
 

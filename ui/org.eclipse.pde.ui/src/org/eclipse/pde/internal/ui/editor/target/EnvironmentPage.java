@@ -56,5 +56,9 @@ public class EnvironmentPage extends AbstractTargetPage {
 	protected void updateChoices() {
 		fEnvSection.updateChoices();
 	}
+
+	protected String getHelpResource() {
+		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/environment.htm"; //$NON-NLS-1$
+	}
 	
 }

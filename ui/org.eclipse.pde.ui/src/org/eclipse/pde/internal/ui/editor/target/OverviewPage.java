@@ -115,4 +115,8 @@ public class OverviewPage extends AbstractTargetPage implements IHyperlinkListen
 		mng.setMessage(null);
 	}
 
+	protected String getHelpResource() {
+		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/overview.htm"; //$NON-NLS-1$
+	}
+
 }

@@ -115,10 +115,6 @@ public abstract class AbstractTargetPage extends PDEFormPage {
 		}
 		return null;
 	}
-	
-	protected String getHelpResource() {
-		return "/org.eclipse.pde.doc.user/guide/tools/file_wizards/new_target_definition.htm"; //$NON-NLS-1$
-	}
 
 
 }
