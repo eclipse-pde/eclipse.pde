@@ -207,7 +207,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			int del = schemaBasedOn.indexOf(':');
 			if (del != -1) {
 				if(del == 0)
-				{	initialValues.superClassName = "java.lang.Object";				
+				{	initialValues.superClassName = "java.lang.Object";				 //$NON-NLS-1$
 				}
 				else
 				{	initialValues.superClassName = schemaBasedOn.substring(0, del); //$NON-NLS-1$

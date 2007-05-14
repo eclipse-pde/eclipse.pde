@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -19,6 +20,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -26,12 +28,18 @@ import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
@@ -40,7 +48,9 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	private SchemaBlock fBlock;
 	private IColorManager fColorManager;
 	private DetailsPart fDetailsPart;
-	
+	private ImageHyperlink fImageHyperlinkPreviewRefDoc;
+	private ShowDescriptionAction fPreviewAction;
+
 	public class SchemaBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider {
 		
 		public SchemaBlock() {
@@ -85,9 +95,24 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		fBlock = new SchemaBlock();
 		fColorManager = ColorManager.getDefault();
 	}
+	 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/definition.htm"; //$NON-NLS-1$
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
+		ScrolledForm form = managedForm.getForm();	 
+		ISchema schema = (ISchema)((SchemaEditor)getEditor()).getAggregateModel();
+
+		if (schema.isEditable()) {
+			 form.getToolBarManager().add(createUIControlConPreviewRefDoc());
+			 form.getToolBarManager().update(true);
+		}
+
 		super.createFormContent(managedForm);
-		ScrolledForm form = managedForm.getForm();
 		fBlock.createContent(managedForm);
 		DescriptionSection descSection = new DescriptionSection(this, form.getBody(), fColorManager);
 		managedForm.addPart(descSection);
@@ -95,6 +120,87 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		initialize();
 	}
 	
+	/**
+	 * @return
+	 */
+	private ControlContribution createUIControlConPreviewRefDoc() {
+		return new ControlContribution("Preview") { //$NON-NLS-1$
+			protected Control createControl(Composite parent) {
+				// Create UI
+				createUIImageHyperlinkPreviewRefDoc(parent);
+				// Create Listener
+				createUIListenerImageHyperlinkPreviewRefDoc();
+				return fImageHyperlinkPreviewRefDoc;
+			}
+		};			
+	}
+
+	/**
+	 * @param parent
+	 */
+	private void createUIImageHyperlinkPreviewRefDoc(Composite parent) {
+		fImageHyperlinkPreviewRefDoc = new ImageHyperlink(parent, SWT.NONE);
+		fImageHyperlinkPreviewRefDoc.setText(
+				PDEUIMessages.SchemaEditor_previewLink);
+		fImageHyperlinkPreviewRefDoc.setUnderlined(true);
+		fImageHyperlinkPreviewRefDoc.setForeground(
+				getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIListenerImageHyperlinkPreviewRefDoc() {
+		fImageHyperlinkPreviewRefDoc.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkActivated(HyperlinkEvent e) {
+				handleLinkActivatedPreviewRefDoc();
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				handleLinkEnteredPreviewRefDoc(e.getLabel());
+			}
+			public void linkExited(HyperlinkEvent e) {
+				handleLinkExitedPreviewRefDoc();
+			}
+		});	
+	}
+	
+	/**
+	 * @param message
+	 */
+	private void handleLinkEnteredPreviewRefDoc(String message) {
+		// Update colour
+		fImageHyperlinkPreviewRefDoc.setForeground(
+				getManagedForm().getToolkit().getHyperlinkGroup().getActiveForeground());
+		// Update IDE status line
+		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
+	}	
+	
+	/**
+	 *
+	 */
+	private void handleLinkExitedPreviewRefDoc() {
+		// Update colour
+		fImageHyperlinkPreviewRefDoc.setForeground(
+				getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
+		// Update IDE status line
+		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
+	}		
+	
+	/**
+	 * 
+	 */
+	private void handleLinkActivatedPreviewRefDoc() {
+		ISchema schema = (ISchema)((SchemaEditor)getEditor()).getAggregateModel();
+		if(fPreviewAction == null)
+		{	fPreviewAction = new ShowDescriptionAction(schema);
+		}
+		else
+		{	fPreviewAction.setSchema(schema);
+		}
+		
+		fPreviewAction.run();
+	}	
+	 
 	public void initialize() {
 		ISchema schema = (ISchema)getModel();
 		getManagedForm().getForm().setText(schema.getName());

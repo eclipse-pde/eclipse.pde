@@ -938,7 +938,8 @@ public class PDEUIMessages extends NLS {
 
 	// Schema Editor ##################################
 	public static String SchemaEditorContributor_previewAction;
-
+	public static String SchemaEditor_previewLink;
+	
 	public static String SchemaEditor_DescriptionSection_title;
 	public static String SchemaEditor_DescriptionSection_desc;
 
