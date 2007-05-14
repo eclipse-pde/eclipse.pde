@@ -11,13 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
-import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
@@ -28,20 +21,14 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSSourceViewer;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
-import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -50,11 +37,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
@@ -67,17 +52,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	
 	private Section fEnclosingTextSection;		
 	
-	private SourceViewer fIntroductionViewer;
+	private CSSourceViewer fIntroductionViewer;
 
-	private SourceViewer fConclusionViewer;
-
-	private XMLConfiguration fSourceConfiguration;
-	
-	private IColorManager fColorManager;
-	
-	private IDocument fIntroductionDocument;
-
-	private IDocument fConclusionDocument;
+	private CSSourceViewer fConclusionViewer;
 	
 	private CTabFolder fTabFolder;
 	
@@ -113,9 +90,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fEnclosingTextSection = null;
 		
 		fIntroductionViewer = null;
-		fIntroductionDocument = null;
 		fConclusionViewer = null;
-		fConclusionDocument = null;
 		
 		fTabFolder = null;
 		fNotebookComposite = null;
@@ -128,7 +103,6 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fConclusionListener = new CompCSConclusionTextListener();
 		
 		defineTaskObjectLabelName(type);
-		setupSourceViewerConfiguration();
 	}
 
 	/**
@@ -150,16 +124,6 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		super.commit(onSave);
 		// Only required for form entries
 	}	
-	
-	/**
-	 * 
-	 */
-	private void setupSourceViewerConfiguration() {
-		// Get the color manager
-		fColorManager = ColorManager.getDefault();
-		// Create the source configuration
-		fSourceConfiguration = new XMLConfiguration(fColorManager);		
-	}
 	
 	/**
 	 * 
@@ -276,42 +240,13 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 				fIntroductionComposite, description, SWT.WRAP);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
-		// Create the underlying document
-		fIntroductionDocument = new Document();
 		// Create the source viewer
-		fIntroductionViewer = createUISourceViewer(fIntroductionComposite, fIntroductionDocument);
+		fIntroductionViewer = new CSSourceViewer(getPage());
+		fIntroductionViewer.createUI(fIntroductionComposite, 60, 60);
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
 		// theme
 		getToolkit().paintBordersFor(fIntroductionComposite);
-	}
-
-	/**
-	 * 
-	 */
-	private SourceViewer createUISourceViewer(Composite parent, IDocument document) {
-		// Create the source viewer
-		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
-		SourceViewer viewer = 
-			new SourceViewer(parent, null, style);
-		// Configure the source viewer
-		viewer.configure(fSourceConfiguration);
-		// Setup the underlying document
-		IDocumentSetupParticipant participant = 
-			new XMLDocumentSetupParticpant();
-		participant.setup(document);
-		// Set the document on the source viewer
-		viewer.setDocument(document);
-		// Configure the underlying styled text widget
-		StyledText styledText = viewer.getTextWidget();
-		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
-		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = 60;
-		data.widthHint = 60;
-		styledText.setLayoutData(data);
-		
-		return viewer;
 	}
 	
 	/* (non-Javadoc)
@@ -321,7 +256,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Determine which tab is selected
 		int index = fTabFolder.getSelectionIndex();
 		// Do the global action on the source viewer on that tab
-		SourceViewer viewer = null;
+		CSSourceViewer viewer = null;
 		
 		if (index == F_INTRODUCTION_TAB) {
 			viewer = fIntroductionViewer;
@@ -329,44 +264,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 			viewer = fConclusionViewer;
 		}
 		
-		return doGlobalActionViewer(actionId, viewer);
-	}
-	
-	/**
-	 * @param actionId
-	 * @param viewer
-	 * @return
-	 */
-	private boolean doGlobalActionViewer(String actionId, SourceViewer viewer) {
-		if (actionId.equals(ActionFactory.CUT.getId())) {
-			viewer.doOperation(ITextOperationTarget.CUT);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.COPY.getId())) {
-			viewer.doOperation(ITextOperationTarget.COPY);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.PASTE.getId())) {
-			viewer.doOperation(ITextOperationTarget.PASTE);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			viewer.doOperation(ITextOperationTarget.SELECT_ALL);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.DELETE.getId())) {
-			viewer.doOperation(ITextOperationTarget.DELETE);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.UNDO.getId())) {
-			viewer.doOperation(ITextOperationTarget.UNDO);
-			return true;
-		} else if (
-			actionId.equals(ActionFactory.REDO.getId())) {
-			viewer.doOperation(ITextOperationTarget.REDO);
-			return true;
-		}
-		return false;		
+		return viewer.doGlobalAction(actionId);
 	}
 	
 	/**
@@ -383,10 +281,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 				fConclusionComposite, description, SWT.WRAP);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);		
-		// Create the underlying document
-		fConclusionDocument = new Document();
 		// Create the source viewer
-		fConclusionViewer = createUISourceViewer(fConclusionComposite, fConclusionDocument);		
+		fConclusionViewer = new CSSourceViewer(getPage());
+		fConclusionViewer.createUI(fConclusionComposite, 60, 60);		
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
 		// theme
@@ -424,40 +321,18 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	 * 
 	 */
 	private void createListenersIntroductionViewer() {
-		// Create selection listener
-		fIntroductionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				getPage().getPDEEditor().setSelection(event.getSelection());
-			}
-		});
-		// Create focus listener
-		fIntroductionViewer.getTextWidget().addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
-			}
-		});
+		fIntroductionViewer.createUIListeners();
 		// Create document listener
-		fIntroductionDocument.addDocumentListener(fIntroductionListener);		
+		fIntroductionViewer.getDocument().addDocumentListener(fIntroductionListener);		
 	}
 	
 	/**
 	 * 
 	 */
 	private void createListenersConclusionViewer() {
-		// Create selection listener
-		fConclusionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				getPage().getPDEEditor().setSelection(event.getSelection());
-			}
-		});
-		// Create focus listener
-		fConclusionViewer.getTextWidget().addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
-			}
-		});
+		fConclusionViewer.createUIListeners();
 		// Create document listener
-		fConclusionDocument.addDocumentListener(fConclusionListener);				
+		fConclusionViewer.getDocument().addDocumentListener(fConclusionListener);				
 	}
 
 	/**
@@ -524,14 +399,14 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fIntroductionListener.setBlockEvents(true);
 		if ((intro != null) &&
 				PDETextHelper.isDefined(intro.getFieldContent())) {
-			fIntroductionDocument.set(intro.getFieldContent());
+			fIntroductionViewer.getDocument().set(intro.getFieldContent());
 		} else {
-			fIntroductionDocument.set(""); //$NON-NLS-1$
+			fIntroductionViewer.getDocument().set(""); //$NON-NLS-1$
 		}
 		// Unblock for user updates
 		fIntroductionListener.setBlockEvents(false);
 		
-		fIntroductionViewer.setEditable(editable);
+		fIntroductionViewer.getViewer().setEditable(editable);
 	}
 
 	/**
@@ -544,52 +419,31 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		fConclusionListener.setBlockEvents(true);
 		if ((conclusion != null) &&
 				PDETextHelper.isDefined(conclusion.getFieldContent())) {
-			fConclusionDocument.set(conclusion.getFieldContent());
+			fConclusionViewer.getDocument().set(conclusion.getFieldContent());
 		} else {
-			fConclusionDocument.set(""); //$NON-NLS-1$
+			fConclusionViewer.getDocument().set(""); //$NON-NLS-1$
 		}
 		// Unblock for user updates
 		fConclusionListener.setBlockEvents(false);		
 		
-		fConclusionViewer.setEditable(editable);		
+		fConclusionViewer.getViewer().setEditable(editable);		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		// TODO: MP: CompCS: Profile Sleek when making static to ensure no leaks
 		// Set the context menu to null to prevent the editor context menu
 		// from being disposed along with the source viewer
-		unsetSourceViewerMenu(fIntroductionViewer);
-		unsetSourceViewerMenu(fConclusionViewer);
-		// Dispose of the color manager
-		if (fColorManager != null) {
-			fColorManager.dispose();
-			fColorManager = null;
+		if (fIntroductionViewer != null) {
+			fIntroductionViewer.unsetMenu();
+			fIntroductionViewer = null;
 		}
-		// Dispose of the source configuration
-		if (fSourceConfiguration != null) {
-			fSourceConfiguration.dispose();
-			fSourceConfiguration = null;
+		if (fConclusionViewer != null) {
+			fConclusionViewer.unsetMenu();
+			fConclusionViewer = null;
 		}
 		super.dispose();
-	}
-
-	/**
-	 * @param viewer
-	 */
-	private void unsetSourceViewerMenu(SourceViewer viewer) {
-		if (viewer == null) {
-			return;
-		}
-		StyledText styledText = viewer.getTextWidget();
-		if (styledText == null) {
-			return;
-		} else if (styledText.isDisposed()) {
-			return;
-		}
-		styledText.setMenu(null);
 	}
 	
 	/* (non-Javadoc)
@@ -599,7 +453,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Determine which tab is selected
 		int index = fTabFolder.getSelectionIndex();
 		// Check if the source viewer on that tab can paste
-		SourceViewer viewer = null;
+		CSSourceViewer viewer = null;
 		
 		if (index == F_INTRODUCTION_TAB) {
 			viewer = fIntroductionViewer;
@@ -607,6 +461,6 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 			viewer = fConclusionViewer;
 		}		
 		
-		return viewer.canDoOperation(ITextOperationTarget.PASTE);
+		return viewer.canPaste();
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
+import org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCSCreationOperation;
 
 /**
  * SimpleCSAddStepAction
@@ -114,7 +115,9 @@ public class SimpleCSAddStepAction extends CSAbstractAddAction {
 		item.setTitle(generateItemTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1));
 		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription(item);
-		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
+		description.setContent(
+				BaseCSCreationOperation.formatTextBold(
+						PDEUIMessages.SimpleCheatSheetCreationOperation_2));
 		item.setDescription(description);
 		return item;
 	}

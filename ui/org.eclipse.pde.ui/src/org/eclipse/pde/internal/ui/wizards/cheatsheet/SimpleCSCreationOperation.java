@@ -62,7 +62,8 @@ public class SimpleCSCreationOperation extends
 		ISimpleCSIntro intro = factory.createSimpleCSIntro(simpleCS);
 		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription(intro);
-		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_0);
+		description.setContent(
+				formatTextBold(PDEUIMessages.SimpleCheatSheetCreationOperation_0));
 		intro.setDescription(description); 
 
 		// Element: item
@@ -70,7 +71,8 @@ public class SimpleCSCreationOperation extends
 		item.setTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1);
 		// Element: description
 		ISimpleCSDescription description2 = factory.createSimpleCSDescription(item);
-		description2.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
+		description2.setContent(
+				formatTextBold(PDEUIMessages.SimpleCheatSheetCreationOperation_2));
 		item.setDescription(description2);
 
 		// Attribute: title

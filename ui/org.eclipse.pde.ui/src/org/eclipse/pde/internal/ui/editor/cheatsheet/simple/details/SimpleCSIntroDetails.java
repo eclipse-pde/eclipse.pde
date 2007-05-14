@@ -11,18 +11,24 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSSourceViewer;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -36,11 +42,13 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 	private ISimpleCSIntro fIntro;
 	
-	private FormEntry fContent;
+	private CSSourceViewer fContentViewer;
 	
 	private Section fMainSection;	
 	
 	private SimpleCSHelpDetails fHelpSection;
+	
+	private boolean fBlockEvents;
 	
 	/**
 	 * @param elementSection
@@ -49,9 +57,10 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		super(elementSection, SimpleCSInputContext.CONTEXT_ID);
 		fIntro = null;
 		
-		fContent = null;
+		fContentViewer = null;
 		fMainSection = null;
 		fHelpSection = new SimpleCSHelpDetails(elementSection);
+		fBlockEvents = false;
 	}
 
 	/**
@@ -119,13 +128,8 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));				
 	
 		// description:  Content (Element)
-		fContent = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = 90;
-		fContent.getText().setLayoutData(data);		
-		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
-		fContent.getLabel().setLayoutData(data);				
-
+		createUIFieldContent(mainSectionClient);
+		
 		// Bind widgets
 		getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
@@ -134,27 +138,81 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fHelpSection.createDetails(parent);
 	}
 
+	/**
+	 * @param parent
+	 */
+	private void createUIFieldContent(Composite parent) {
+		GridData data = null;
+		// Create the label
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
+		Label label = 
+			getToolkit().createLabel(
+					parent, 
+					PDEUIMessages.SimpleCSDescriptionDetails_0, 
+					SWT.WRAP);
+		label.setForeground(foreground);
+		int style = GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END;
+		data = new GridData(style);
+		label.setLayoutData(data);			
+		// Create the source viewer
+		fContentViewer = new CSSourceViewer(getPage());
+		fContentViewer.createUI(parent, 90, 60);
+		// Needed to align vertically with form entry field and allow space
+		// for a possible field decoration			
+		((GridData)fContentViewer.getViewer().getTextWidget().getLayoutData()).horizontalIndent = 
+			FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#doGlobalAction(java.lang.String)
+	 */
+	public boolean doGlobalAction(String actionId) {
+		return fContentViewer.doGlobalAction(actionId);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
 		// description: Content (Element)
-		fContent.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
+		createUIListenersContentViewer();
+		fHelpSection.hookListeners();
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIListenersContentViewer() {
+		fContentViewer.createUIListeners();
+		// Create document listener
+		fContentViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			public void documentAboutToBeChanged(DocumentEvent event) {
+				// NO-OP
+			}
+			public void documentChanged(DocumentEvent event) {
+				// Check whether to handle this event
+				if (fBlockEvents) {
+					return;
+				}	
 				// Ensure data object is defined
 				if (fIntro == null) {
 					return;
 				}
-
+				// Get the text from the event
+				IDocument document = event.getDocument();
+				if (document == null) {
+					return;
+				}				
+				// Get the text from the event
+				String text = document.get().trim();
+				
 				if (fIntro.getDescription() != null) {
-					fIntro.getDescription().setContent(fContent.getValue());
-				}
+					fIntro.getDescription().setContent(text);
+				}				
 			}
-		});
-		
-		fHelpSection.hookListeners();
+		});				
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
 	 */
@@ -166,16 +224,38 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		
 		fHelpSection.updateFields();
 		
-		boolean editable = isEditableElement();
-		
 		if (fIntro.getDescription() == null) {
 			return;
 		}
 
 		// description:  Content (Element)
-		fContent.setValue(fIntro.getDescription().getContent(), true);
-		fContent.setEditable(editable);		
-
+		fBlockEvents = true;
+		fContentViewer.getDocument().set(fIntro.getDescription().getContent());
+		fBlockEvents = false;
+		
+		boolean editable = isEditableElement();		
+		fContentViewer.getViewer().setEditable(editable);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		// Set the context menu to null to prevent the editor context menu
+		// from being disposed along with the source viewer
+		if (fContentViewer != null) {
+			fContentViewer.unsetMenu();
+			fContentViewer = null;
+		}
+		
+		super.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#canPaste(org.eclipse.swt.dnd.Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		return fContentViewer.canPaste();
 	}
 	
 	/* (non-Javadoc)
@@ -184,7 +264,6 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
-		fContent.commit();
 		// No need to call for sub details, because they contain no form entries
 	}
 	

@@ -98,4 +98,17 @@ public abstract class BaseCSCreationOperation extends
 			}
 		});
 	}	
+	
+	/**
+	 * @param text
+	 * @return
+	 */
+	public static String formatTextBold(String text) {
+		// TODO: MP: CompCS:  Create generalized HTML formatter utility
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<b>"); //$NON-NLS-1$
+		buffer.append(text);
+		buffer.append("</b>"); //$NON-NLS-1$
+		return buffer.toString();
+	}
 }
