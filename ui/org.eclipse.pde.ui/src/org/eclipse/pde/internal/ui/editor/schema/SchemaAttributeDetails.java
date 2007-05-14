@@ -503,12 +503,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	}
 	
 	private void setBasedOn() {
-		String classEntry = fClassEntry.getValue();
-		String interfaceEntry = fInterfaceEntry.getValue();
+		String classEntry = fClassEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String interfaceEntry = fInterfaceEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuffer sb = new StringBuffer();
 		if (classEntry.length() > 0)
 			sb.append(classEntry);
-		if (classEntry.length() > 0 && interfaceEntry.length() > 0)
+		if (classEntry.length() > 0 || interfaceEntry.length() > 0)
 			sb.append(":"); //$NON-NLS-1$
 		if (interfaceEntry.length() > 0)
 			sb.append(interfaceEntry);

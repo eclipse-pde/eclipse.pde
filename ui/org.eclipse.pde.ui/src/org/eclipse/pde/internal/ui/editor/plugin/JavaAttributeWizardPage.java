@@ -206,10 +206,17 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			int del = schemaBasedOn.indexOf(':');
 			if (del != -1) {
-				initialValues.superClassName = schemaBasedOn.substring(0, del);
+				if(del == 0)
+				{	initialValues.superClassName = "java.lang.Object";				
+				}
+				else
+				{	initialValues.superClassName = schemaBasedOn.substring(0, del); //$NON-NLS-1$
+				}
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
-				initialValues.interfaceName = schemaBasedOn.substring(del + 1);
-				initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
+				if(del < schemaBasedOn.length() - 1)
+				{	initialValues.interfaceName = schemaBasedOn.substring(del + 1);
+					initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
+				}
 			} else {
 				int schemaLoc = schemaBasedOn.lastIndexOf("."); //$NON-NLS-1$
 				if (schemaLoc != -1 && schemaLoc < schemaBasedOn.length()) {
