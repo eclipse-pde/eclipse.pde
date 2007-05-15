@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,9 +109,8 @@ public class AboutSection extends PDESection {
 		// for a possible field decoration		
 		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		fTextEntry.getText().setLayoutData(data);
-		// Configure Label widget
-		style = GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END;
-		data = new GridData(style);
+		// Configure Label widget to be aligned to the top-left
+		data = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		fTextEntry.getLabel().setLayoutData(data);	
 		// Configure editability
 		fTextEntry.setEditable(isEditable());		
