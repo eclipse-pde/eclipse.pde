@@ -106,7 +106,10 @@ public class PDEState extends MinimalState {
 			resolveState(false);
 			saveState(dir);
 		} else {
+			boolean propertiesChanged = initializePlatformProperties();
 			fState.setResolver(Platform.getPlatformAdmin().getResolver());
+			if (propertiesChanged)
+				fState.resolve(false);
 			fId = fState.getBundles().length;
 		}
 		if (!fExtensionRegistry.readExtensionsCache(dir))

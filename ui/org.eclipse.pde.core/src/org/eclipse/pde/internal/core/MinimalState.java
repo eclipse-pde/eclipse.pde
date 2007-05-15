@@ -223,14 +223,19 @@ public class MinimalState {
 	}
 
 	private synchronized StateDelta internalResolveState(boolean incremental) {
+		boolean fullBuildRequired = initializePlatformProperties();
+		return fState.resolve(incremental && !fullBuildRequired);
+	}
+	
+	protected boolean initializePlatformProperties() {
 		if (fExecutionEnvironments == null && !fNoProfile)
 			setExecutionEnvironments();
 	
 		if (fEEListChanged) {
-			incremental = !fState.setPlatformProperties(getProfilePlatformProperties());
 			fEEListChanged = false;
+			return fState.setPlatformProperties(getProfilePlatformProperties());
 		}
-		return fState.resolve(incremental);
+		return false;
 	}
 
 	private Dictionary[] getProfilePlatformProperties() {
