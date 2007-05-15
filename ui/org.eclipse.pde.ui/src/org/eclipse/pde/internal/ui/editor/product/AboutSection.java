@@ -62,7 +62,7 @@ public class AboutSection extends PDESection {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 300;
-		data.heightHint = 65;
+		data.heightHint = 70;
 		section.setLayoutData(data);		
 		
 		section.setText(PDEUIMessages.AboutSection_title); 
