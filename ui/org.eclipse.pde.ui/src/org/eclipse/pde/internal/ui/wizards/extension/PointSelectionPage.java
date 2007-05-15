@@ -68,7 +68,6 @@ import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -226,18 +225,14 @@ public class PointSelectionPage
 		
 		public Image getColumnImage(Object obj, int index) {
 			IPluginExtensionPoint exp = (IPluginExtensionPoint) obj;
-			int flag =
-				exp instanceof PluginExtensionPointNode || 
-				fAvailableImports.contains(exp.getPluginBase().getId())
-					? 0
-					: SharedLabelProvider.F_WARNING;
+			
 			if (((TemplateContentProvider)fTemplateViewer.getContentProvider()).getElements(exp).length >0)
-				return PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_NEWEXP_WIZ_TOOL,
-						flag);
+			{	return PDEPlugin.getDefault().getLabelProvider().get(
+						PDEPluginImages.DESC_NEWEXP_WIZ_TOOL, 0);
+			}
+			
 			return PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_EXT_POINT_OBJ,
-				flag);
+				PDEPluginImages.DESC_EXT_POINT_OBJ,	0);
 		}
 	}
 
