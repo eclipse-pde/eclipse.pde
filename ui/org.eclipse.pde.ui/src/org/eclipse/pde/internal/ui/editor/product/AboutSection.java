@@ -60,11 +60,14 @@ public class AboutSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {		
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setLayoutData(new GridData(GridData.FILL_BOTH));			
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = 300;
+		data.heightHint = 65;
+		section.setLayoutData(data);		
 		
 		section.setText(PDEUIMessages.AboutSection_title); 
 		section.setDescription(PDEUIMessages.AboutSection_desc); 
-		
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -91,19 +94,33 @@ public class AboutSection extends PDESection {
 			}
 		});
 		
-		fTextEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_text, SWT.MULTI|SWT.WRAP); 
+		// Text field
+		// Create Text field UI
+		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
+		fTextEntry = new FormEntry(
+				client, 
+				toolkit, 
+				PDEUIMessages.AboutSection_text, 
+				style); 
+		// Configure Text widget
+		data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 2;
+		// Needed to align vertically with form entry field and allow space
+		// for a possible field decoration		
+		data.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+		fTextEntry.getText().setLayoutData(data);
+		// Configure Label widget
+		style = GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END;
+		data = new GridData(style);
+		fTextEntry.getLabel().setLayoutData(data);	
+		// Configure editability
+		fTextEntry.setEditable(isEditable());		
+		// Create Text field listener
 		fTextEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setText(entry.getValue());
 			}
 		});
-
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		fTextEntry.getText().setLayoutData(gd);
-		fTextEntry.setEditable(isEditable());
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		fTextEntry.getLabel().setLayoutData(gd);
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
