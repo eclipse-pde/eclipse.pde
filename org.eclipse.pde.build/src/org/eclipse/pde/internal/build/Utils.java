@@ -191,8 +191,14 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * @return IPath
 	 */
 	public static IPath makeRelative(IPath location, IPath base) {
-		if (location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice()))
-			return location;
+		//can't make relative if the devices don't match
+		if (location.getDevice() == null) {
+			if (base.getDevice() != null)
+				return location;
+		} else {
+			if (!location.getDevice().equalsIgnoreCase(base.getDevice()))
+				return location;
+		}
 		int baseCount = base.segmentCount();
 		int count = base.matchingFirstSegments(location);
 		String temp = ""; //$NON-NLS-1$
