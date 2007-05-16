@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
+import org.osgi.framework.Version;
 
 /**
  * General utility class.
@@ -445,4 +446,28 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return (Boolean.FALSE == bundleProperties.get(IS_COMPILED));
 	}
+	
+	public static Object[] parseExtraBundlesString(String input, boolean onlyId) {
+		StringTokenizer tokenizer = null;
+		if (onlyId)
+			tokenizer = new StringTokenizer(input.startsWith("plugin@") ? input.substring(7) : input.substring(8), ";"); //$NON-NLS-1$//$NON-NLS-2$
+		else
+			tokenizer = new StringTokenizer(input);
+		String bundleId = tokenizer.nextToken();
+		Version version = Version.emptyVersion;
+		Boolean unpack = Boolean.FALSE;
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.startsWith("version")) { //$NON-NLS-1$
+				version = new Version(token.substring(8));
+				continue;
+			}
+			if (token.startsWith("unpack")) { //$NON-NLS-1$
+				unpack = (token.toLowerCase().indexOf(TRUE) > -1) ? Boolean.TRUE : Boolean.FALSE;
+				continue;
+			}
+		}
+		return new Object[] { bundleId, version, unpack };
+	}
+
 }

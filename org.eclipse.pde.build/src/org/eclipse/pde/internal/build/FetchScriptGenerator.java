@@ -313,9 +313,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					String[] elements = Utils.getArrayFromString(extraElementsToFetch[j], ";"); //$NON-NLS-1$
-					Object[] splittedElement = splitElement(elements[0]);
-					generateFetchEntry((String) splittedElement[0], (Version) splittedElement[1], false);
+					Object[] infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					generateFetchEntry((String) infos[0], (Version) infos[1], false);
 				}
 				continue;
 			}
@@ -400,8 +399,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + elementId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Object[] splittedElement = splitElement(extraElementsToFetch[j]);
-					generateFetchEntry((String) splittedElement[0], (Version) splittedElement[1], false);
+					Object[] infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					generateFetchEntry((String) infos[0], (Version) infos[1], false);
 				}
 				continue;
 			}

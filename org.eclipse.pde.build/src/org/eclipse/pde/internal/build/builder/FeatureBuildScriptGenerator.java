@@ -1408,17 +1408,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				include.setFeatureVersion(GENERIC_VERSION_NUMBER);
 				sourceFeature.addIncludedFeatureReferenceModel(include);
 			} else {
-				StringTokenizer tokenizer = new StringTokenizer(extraPlugins[i].startsWith("plugin@") ? extraPlugins[i].substring(7) : extraPlugins[i].substring(8), ";"); //$NON-NLS-1$//$NON-NLS-2$
-				String bundleId = tokenizer.nextToken();
-				boolean unpack = true;
-				while (tokenizer.hasMoreTokens()) {
-					String token = tokenizer.nextToken();
-					if (token.startsWith("unpack")) { //$NON-NLS-1$
-						unpack = (token.toLowerCase().indexOf(TRUE) > -1);
-						break;
-					}
-				}
-				model = getSite(false).getRegistry().getResolvedBundle(bundleId);
+				Object[] items = Utils.parseExtraBundlesString(extraPlugins[i], true);
+				model = getSite(false).getRegistry().getResolvedBundle((String) items[0], ((Version) items[1]).toString());
 				if (model == null) {
 					String message = NLS.bind(Messages.exception_missingPlugin, extraPlugins[i]);
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
@@ -1427,7 +1418,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				PluginEntry entry = new PluginEntry();
 				entry.setPluginIdentifier(model.getSymbolicName());
 				entry.setPluginVersion(model.getVersion().toString());
-				entry.setUnpack(unpack);
+				entry.setUnpack(((Boolean) items[2]).booleanValue());
 				sourceFeature.addPluginEntryModel(entry);
 			}
 		}
