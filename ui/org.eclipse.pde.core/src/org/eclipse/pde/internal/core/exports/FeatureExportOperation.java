@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -93,7 +92,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 
 	protected HashMap fAntBuildProperties;
 
-	private State fStateCopy;
+	protected State fStateCopy;
 
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
@@ -480,9 +479,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			return main;
 		} 			
 		if (fStateCopy == null) {
-			fStateCopy = main.getFactory().createState(main);
-			fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
-			fStateCopy.setPlatformProperties(main.getPlatformProperties());
+			copyState(main);
 		}
 		
 		Dictionary[] dictionaries = fStateCopy.getPlatformProperties();
@@ -494,6 +491,12 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		}
 		fStateCopy.resolve(false);
 		return fStateCopy;
+	}
+	
+	protected void copyState(State state) {
+		fStateCopy = state.getFactory().createState(state);
+		fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
+		fStateCopy.setPlatformProperties(state.getPlatformProperties());
 	}
 	
 	private String getDevProperties() {
@@ -629,8 +632,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
             environment.put("osgi.ws", config[1]); //$NON-NLS-1$
             environment.put("osgi.arch", config[2]); //$NON-NLS-1$
             environment.put("osgi.nl", config[3]); //$NON-NLS-1$
-
-            BundleContext context = PDECore.getDefault().getBundleContext();
+            
             for (int i = 0; i < fInfo.items.length; i++) {
             	if (fInfo.items[i] instanceof IFeatureModel) {
                     IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
@@ -649,17 +651,13 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	                }
 	                if (bundle == null)
 	                	continue;
-                    try {
-                        String filterSpec = bundle.getPlatformFilter();
-                        if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
-                        	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
-                        	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-                            plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
-                            setAdditionalAttributes(plugin, bundle);
-                            root.appendChild(plugin);
-                         }
-                    } catch (InvalidSyntaxException e) {
-                    }
+	                if (shouldAddPlugin(bundle, environment)) {
+	                	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
+	                	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+	                	plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+	                	setAdditionalAttributes(plugin, bundle);
+	                	root.appendChild(plugin);
+	                }
                 }
             }
             XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
@@ -680,5 +678,12 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		fHasErrors = true;
 	}
 
-
+	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary environment) {
+		String filterSpec = bundle.getPlatformFilter();
+		try {
+			return (filterSpec == null|| PDECore.getDefault().getBundleContext().createFilter(filterSpec).match(environment));
+		} catch (InvalidSyntaxException e) {
+		}
+		return false;
+	}
 }
