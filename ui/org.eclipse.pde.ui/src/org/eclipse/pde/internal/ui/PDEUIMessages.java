@@ -29,6 +29,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
 
+	public static String BuildSiteJob_name;
+
 	public static String BundleSourcePage_renameActionText;
 
 	public static String BundlesTab_title;
@@ -261,6 +263,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PackageFinder_taskName;
 
+	public static String PluginExportJob_name;
+
 	public static String PluginListPage_initializeFromLaunch;
 
 	public static String PluginListPage_initializeFromPlugins;
@@ -284,6 +288,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTabToolBar_validate;
 
 	public static String PointSelectionPage_cannotFindTemplate;
+
+	public static String ProductExportJob_name;
 
 	public static String RemoveSplashHandlerBindingAction_msgProgressRemoveProductBindings;
 

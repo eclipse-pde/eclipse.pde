@@ -43,7 +43,11 @@ public class FeatureExportJob extends Job {
 	protected FeatureExportInfo fInfo;
 
 	public FeatureExportJob(FeatureExportInfo info) {
-		super(PDEUIMessages.FeatureExportJob_name); 
+		this(info, PDEUIMessages.FeatureExportJob_name); 
+	}
+	
+	protected FeatureExportJob(FeatureExportInfo info, String name) {
+		super(name);
 		fInfo = info;
 		setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}

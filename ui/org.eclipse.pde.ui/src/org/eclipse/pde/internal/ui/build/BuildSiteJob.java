@@ -53,7 +53,7 @@ public class BuildSiteJob extends FeatureExportJob {
 	private IContainer fSiteContainer;
 
 	public BuildSiteJob(IFeatureModel[] features, ISiteModel site) {
-		super(getInfo(features, site));
+		super(getInfo(features, site), PDEUIMessages.BuildSiteJob_name);
 		fFeatureModels = features;
 		fSiteModel = site;
 		fSiteContainer = site.getUnderlyingResource().getParent();

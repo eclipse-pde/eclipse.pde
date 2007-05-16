@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.exports.ProductExportOperation;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -22,7 +23,7 @@ public class ProductExportJob extends FeatureExportJob {
 	private String fRoot;
 	
 	public ProductExportJob(FeatureExportInfo info, IProductModel model, String productRoot) {
-		super(info);
+		super(info, PDEUIMessages.ProductExportJob_name);
 		fProduct = model.getProduct();
 		fRoot = productRoot;
 	}
