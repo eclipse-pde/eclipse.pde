@@ -770,6 +770,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (model == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Messages.error_missingElement, null));
 		}
+		model = getSite(false).getRegistry().getVersionReplacement(model);
 		this.model = model;
 		if (getBuildProperties() == AbstractScriptGenerator.MissingProperties.getInstance()) {
 			//if there were no build.properties, then it is a binary plugin

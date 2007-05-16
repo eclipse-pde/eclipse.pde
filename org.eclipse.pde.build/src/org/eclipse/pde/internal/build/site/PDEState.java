@@ -114,6 +114,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
 	}
 
+	private void mapVersionReplacedBundle(BundleDescription oldBundle, BundleDescription newBundle ) {
+		Properties bundleProperties = null;
+		bundleProperties = (Properties) oldBundle.getUserObject();
+		if (bundleProperties == null) {
+			bundleProperties = new Properties();
+			oldBundle.setUserObject(bundleProperties);
+		}
+		bundleProperties.setProperty(PROPERTY_VERSION_REPLACEMENT, String.valueOf(newBundle.getBundleId()));
+	}
+	
 	private String[] getClasspath(Dictionary manifest) {
 		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
@@ -751,9 +761,32 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), b.isSingleton(), b.attachFragments(), b.dynamicFragments(), b.getPlatformFilter(), b.getExecutionEnvironments(), b.getGenericRequires(), b.getGenericCapabilities());
 				addBundleDescription(newBundle);
 				rememberQualifierTagPresence(newBundle);
+				mapVersionReplacedBundle(b, newBundle);
 			}
 		}
 		state.resolve();
+	}
+
+	/*
+	 * If this bundle had its qualifier version replaced, return the replacement bundle description
+	 * return the original bundle if no replacement occurred
+	 */
+	public BundleDescription getVersionReplacement(BundleDescription bundle) {
+		Properties props = (Properties) bundle.getUserObject();
+		if (props == null)
+			return bundle;
+		String idString = props.getProperty(PROPERTY_VERSION_REPLACEMENT);
+		if (idString == null)
+			return bundle;
+		try {
+			long newId = Long.parseLong(idString);
+			BundleDescription newBundle = state.getBundle(newId);
+			if (newBundle != null)
+				return newBundle;
+		} catch (NumberFormatException e) {
+			// fall through
+		}
+		return bundle;
 	}
 
 	public void setPlatformProperties(Dictionary platformProperties) {
