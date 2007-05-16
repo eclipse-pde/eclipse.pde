@@ -223,10 +223,16 @@ public class PluginContentPage extends ContentPage {
     		fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
+			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
 			fUIPlugin.setEnabled(!fData.isSimple() && !isPureOSGi());
 			// if fUIPlugin is disabled, set selection to false
 			if (!fUIPlugin.isEnabled())
-				fUIPlugin.setSelection(false);
+			{	fUIPlugin.setSelection(false);
+			}
+			// if the fUIPlugin was disabled and is now enabled, then set the selection to true
+			else if(!wasUIPluginEnabled)
+			{	fUIPlugin.setSelection(true);
+			}
 
 			// plugin class group
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
