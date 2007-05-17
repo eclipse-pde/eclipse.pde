@@ -131,9 +131,9 @@ IProvisionerWizard {
 			}
 			fDirs = (File[]) dirs.toArray(new File[dirs.size()]);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			PDEPlugin.log(e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
