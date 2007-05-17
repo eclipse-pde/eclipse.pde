@@ -11,14 +11,11 @@
 package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
@@ -51,7 +48,8 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, true);
-		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);		
+		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
+		configuration.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
 
 		// Program to launch
 		if (LauncherUtils.requiresUI(configuration)) {
@@ -68,8 +66,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 
 		// Program arguments
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
 		if (programArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 

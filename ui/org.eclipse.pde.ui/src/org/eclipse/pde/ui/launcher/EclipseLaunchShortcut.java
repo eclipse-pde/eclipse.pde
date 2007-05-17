@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -34,8 +33,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
@@ -225,6 +222,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
+		wc.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
 		wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, fApplicationName == null);
 		if (fApplicationName != null) {
@@ -270,8 +268,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	}
 	
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy wc) {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
 		if (programArgs.length()  > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 	}

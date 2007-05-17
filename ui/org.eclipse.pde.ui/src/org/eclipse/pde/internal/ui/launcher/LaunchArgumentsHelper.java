@@ -52,7 +52,7 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
 
 public class LaunchArgumentsHelper {
-
+	
 	public static String getWorkspaceLocation(ILaunchConfiguration configuration) 
 	throws CoreException {
 		String location = configuration.getAttribute(IPDELauncherConstants.LOCATION, (String)null);
@@ -164,6 +164,18 @@ public class LaunchArgumentsHelper {
 			}
 		}
 		return result.toString();
+	}
+	
+	public static String getInitialProgramArguments() {
+		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"); //$NON-NLS-1$
+
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);	
+		if (programArgs.length() > 0) {
+			buffer.append(" "); //$NON-NLS-1$
+			buffer.append(programArgs);
+		}
+		return buffer.toString();
 	}
 
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {

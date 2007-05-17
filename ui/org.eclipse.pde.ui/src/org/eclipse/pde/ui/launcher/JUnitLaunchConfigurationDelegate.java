@@ -208,17 +208,19 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			programArgs.add(userArgs[i]);
 		}
 		
-		if (!programArgs.contains("-os")) { //$NON-NLS-1$
-			programArgs.add("-os"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getOS());
-		}
-		if (!programArgs.contains("-ws")) { //$NON-NLS-1$
-			programArgs.add("-ws"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getWS());
-		}
-		if (!programArgs.contains("-arch")) { //$NON-NLS-1$
-			programArgs.add("-arch"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getOSArch());
+		if (!configuration.getAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, false)) {
+			if (!programArgs.contains("-os")) { //$NON-NLS-1$
+				programArgs.add("-os"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getOS());
+			}
+			if (!programArgs.contains("-ws")) { //$NON-NLS-1$
+				programArgs.add("-ws"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getWS());
+			}
+			if (!programArgs.contains("-arch")) { //$NON-NLS-1$
+				programArgs.add("-arch"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getOSArch());
+			}
 		}
 			
 		programArgs.add("-testpluginname"); //$NON-NLS-1$

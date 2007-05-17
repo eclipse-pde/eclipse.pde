@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public interface IPDEUIConstants {
 		new QualifiedName(PLUGIN_ID, "product-export-root");	 //$NON-NLS-1$
 
 	String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
-	
+		
 	// JUnit application identifiers
 	String LEGACY_UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
 	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
@@ -59,5 +59,6 @@ public interface IPDEUIConstants {
 	 */
 	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$
 	String LAUNCHER_PDE_VERSION = "pde.version"; //$NON-NLS-1$
+	String APPEND_ARGS_EXPLICITLY = "append.args"; //$NON-NLS-1$
 	
 }

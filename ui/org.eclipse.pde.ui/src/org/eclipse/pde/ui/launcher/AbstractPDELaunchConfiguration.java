@@ -33,6 +33,7 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.EclipsePluginValidationOperation;
@@ -255,23 +256,26 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				continue;
 			userDefined.add(userArgs[i]);
 		}
+		
+		if (!configuration.getAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, false)) {
 
-		if (!userDefined.contains("-os")) { //$NON-NLS-1$
-			programArgs.add("-os"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getOS());
+			if (!userDefined.contains("-os")) { //$NON-NLS-1$
+				programArgs.add("-os"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getOS());
+			}
+			if (!userDefined.contains("-ws")) { //$NON-NLS-1$
+				programArgs.add("-ws"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getWS());
+			}
+			if (!userDefined.contains("-arch")) { //$NON-NLS-1$
+				programArgs.add("-arch"); //$NON-NLS-1$
+				programArgs.add(TargetPlatform.getOSArch());
+			}	
 		}
-		if (!userDefined.contains("-ws")) { //$NON-NLS-1$
-			programArgs.add("-ws"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getWS());
-		}
-		if (!userDefined.contains("-arch")) { //$NON-NLS-1$
-			programArgs.add("-arch"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getOSArch());
-		}
-
+		
 		if (userDefined.size() > 0) {
 			programArgs.addAll(userDefined);
-		}		
+		}	
 		
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
  	}

@@ -191,6 +191,22 @@
             description="%target_home.description"
             name="target_home"
             resolver="org.eclipse.pde.internal.core.variables.TargetHomeDynamicVariableResolver"/>
+      <variable
+            description="%target.os"
+            name="target.os"
+            resolver="org.eclipse.pde.internal.core.variables.TargetOSVariableResolver"/>
+      <variable
+            description="%target.ws"
+            name="target.ws"
+            resolver="org.eclipse.pde.internal.core.variables.TargetWSVariableResolver"/>
+      <variable
+            description="%target.nl"
+            name="target.nl"
+            resolver="org.eclipse.pde.internal.core.variables.TargetNLVariableResolver"/>
+      <variable
+            description="%target.arch"
+            name="target.arch"
+            resolver="org.eclipse.pde.internal.core.variables.TargetOSArchVariableResolver"/>
    </extension>
    
 </plugin>

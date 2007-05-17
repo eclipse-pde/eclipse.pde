@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,6 +243,9 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDEUIConstants.DOCLEARLOG, false);
+		wc.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LaunchArgumentsHelper.getInitialProgramArguments());
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, LaunchArgumentsHelper.getInitialVMArguments());
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
