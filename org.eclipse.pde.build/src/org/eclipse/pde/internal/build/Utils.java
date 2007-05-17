@@ -458,7 +458,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		if (onlyId)
 			tokenizer = new StringTokenizer(input.startsWith("plugin@") ? input.substring(7) : input.substring(8), ";"); //$NON-NLS-1$//$NON-NLS-2$
 		else
-			tokenizer = new StringTokenizer(input);
+			tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
 		String bundleId = tokenizer.nextToken();
 		Version version = Version.emptyVersion;
 		Boolean unpack = Boolean.FALSE;
