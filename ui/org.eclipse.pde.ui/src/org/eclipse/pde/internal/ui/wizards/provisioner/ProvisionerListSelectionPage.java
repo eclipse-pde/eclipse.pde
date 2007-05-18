@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -35,6 +36,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class ProvisionerListSelectionPage extends WizardSelectionPage {
 	
@@ -80,6 +82,7 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 		fTextBox.setText(new String());
 		fTextBox.setBackground(fTableViewer.getControl().getBackground());
 		setControl(container);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_PROVISIONERS_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(container);
 
 	}

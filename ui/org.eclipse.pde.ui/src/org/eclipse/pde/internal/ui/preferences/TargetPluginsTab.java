@@ -66,6 +66,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -288,6 +289,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		});
 		
 		initializeView();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLUGINS_PREFERENCE_PAGE);
 		return container;
 	}
 	

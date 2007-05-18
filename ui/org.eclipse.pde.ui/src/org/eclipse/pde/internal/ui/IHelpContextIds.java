@@ -17,7 +17,12 @@ public interface IHelpContextIds {
 	public static final String MAIN_PREFERENCE_PAGE = PREFIX + "main_preference_page"; //$NON-NLS-1$
     public static final String BUILD_OPTIONS_PREFERENCE_PAGE = PREFIX + "build_options_preference_page"; //$NON-NLS-1$
     public static final String EDITOR_PREFERENCE_PAGE = PREFIX + "editor_preference_page"; //$NON-NLS-1$
-	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page"; //$NON-NLS-1$
+    public static final String OSGI_PREFERENCE_PAGE = PREFIX + "osgi_preference_page"; //$NON-NLS-1$
+    public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page"; //$NON-NLS-1$
+    public static final String TARGET_PLUGINS_PREFERENCE_PAGE = PREFIX + "target_plugins_preference_page"; //$NON-NLS-1$
+    public static final String TARGET_PROVISIONERS_PREFERENCE_PAGE = PREFIX + "target_provisioners_preference_page"; //$NON-NLS-1$
+    public static final String IMPLICIT_PLUGINS_PREFERENCE_PAGE = PREFIX + "implicit_plugins_preference_page"; //$NON-NLS-1$
+    public static final String LAUNCHING_ARGS_PREFERENCE_PAGE = PREFIX + "launching_args_preference_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
  	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
@@ -190,5 +195,6 @@ public interface IHelpContextIds {
 	
 	// Provisioning
 	public static final String FILE_SYSTEM_PROVISIONING_PAGE = PREFIX + "file_system_provisioning_page"; //$NON-NLS-1$
+	public static final String UPDATE_SITE_PROVISIONING_PAGE = PREFIX + "update_site_provisioning_page"; //$NON-NLS-1$
 	
 }

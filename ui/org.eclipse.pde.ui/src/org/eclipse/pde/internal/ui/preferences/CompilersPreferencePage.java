@@ -54,7 +54,7 @@ public class CompilersPreferencePage extends PreferencePage implements
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(parent, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
+				.setHelp(getControl(), IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 	}
 
 	/*

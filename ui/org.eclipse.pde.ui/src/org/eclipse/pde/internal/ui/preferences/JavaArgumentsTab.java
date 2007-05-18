@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class JavaArgumentsTab {
 	
@@ -87,6 +89,7 @@ public class JavaArgumentsTab {
 		vmVars.addSelectionListener(getListener(fVMArgs));
 		
 		initialize();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.LAUNCHING_ARGS_PREFERENCE_PAGE);
 		return container;
 	}
 	

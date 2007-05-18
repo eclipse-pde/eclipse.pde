@@ -136,7 +136,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		createTargetProfilesGroup(container);
 		
 		Dialog.applyDialogFont(container);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
 	

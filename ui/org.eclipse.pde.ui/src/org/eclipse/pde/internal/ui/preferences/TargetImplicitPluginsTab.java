@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class TargetImplicitPluginsTab {
@@ -80,7 +82,7 @@ public class TargetImplicitPluginsTab {
 		createLabel(container);
 		createTable(container);
 		createButtons(container);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.IMPLICIT_PLUGINS_PREFERENCE_PAGE);
 		return container;
 	}
 	

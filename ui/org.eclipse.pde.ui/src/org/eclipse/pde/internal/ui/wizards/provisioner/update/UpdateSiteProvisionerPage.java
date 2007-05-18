@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -38,6 +39,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 public class UpdateSiteProvisionerPage extends WizardPage {
 
@@ -122,8 +124,9 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 			}
 		});
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client,
+				IHelpContextIds.UPDATE_SITE_PROVISIONING_PAGE);
 		createButtons(client);
-
 		setControl(client);
 	}
 

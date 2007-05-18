@@ -299,7 +299,7 @@ public class TargetSourceTab {
 		fRemoveButton.setEnabled(false);
 		
 		Dialog.applyDialogFont(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
 	}
 
