@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
@@ -92,7 +93,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ContributionItemFactory;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
 public class PluginsView extends ViewPart implements IPluginModelListener{
@@ -118,8 +124,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private Action fSelectAllAction;
 	private RenamePluginAction fRefactorAction;
     private CollapseAllAction fCollapseAllAction;
-	private ShowInWorkspaceAction fShowInNavigatorAction;
-	private ShowInWorkspaceAction fShowInPackagesAction;
 	private DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
 	private DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
 	private WorkspaceFilter fHideWorkspaceFilter = new WorkspaceFilter();
@@ -386,14 +390,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	            fTreeViewer.getTree().selectAll();
 	        }
 		};
-		fSelectAllAction.setText(PDEUIMessages.PluginsView_SelectAllAction_label); 
-
-		fShowInNavigatorAction =
-			new ShowInWorkspaceAction(IPageLayout.ID_RES_NAV, fTreeViewer);
-		fShowInNavigatorAction.setText(PDEUIMessages.PluginsView_showInNavigator); 
-		fShowInPackagesAction =
-			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, fTreeViewer);
-		fShowInPackagesAction.setText(PDEUIMessages.PluginsView_showInPackageExplorer); 
+		fSelectAllAction.setText(PDEUIMessages.PluginsView_SelectAllAction_label);
         
         fCollapseAllAction = new CollapseAllAction();
 
@@ -484,16 +481,22 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 				manager.add(new Separator());
 		}
 		if (selection.size() > 0) {
-			boolean addSeparator = false;
-			if (fShowInNavigatorAction.isApplicable()) {
-				manager.add(fShowInNavigatorAction);
-				addSeparator = true;
-			}
-			if (fShowInPackagesAction.isApplicable()) {
-				manager.add(fShowInPackagesAction);
-				addSeparator = true;
-			}
-			if (addSeparator) {
+			if (isShowInApplicable()) {
+				String showInLabel = PDEUIMessages.PluginsView_showIn;
+				IBindingService bindingService = (IBindingService) PlatformUI
+						.getWorkbench().getAdapter(IBindingService.class);
+				if (bindingService != null) {
+					String keyBinding = bindingService
+							.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+					if (keyBinding != null) {
+						showInLabel += '\t' + keyBinding;
+					}
+				}
+				IMenuManager showInMenu = new MenuManager(showInLabel);
+				showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
+						.create(getViewSite().getWorkbenchWindow()));
+						
+				manager.add(showInMenu);
 				manager.add(new Separator());
 			}
 			if (ImportActionGroup.canImport(selection)) {
@@ -524,6 +527,20 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		}
 		fDrillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+	
+	public boolean isShowInApplicable() {
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		if (selection.isEmpty())
+			return false;
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (!(obj instanceof IPluginModelBase))
+				return false;
+			if (((IPluginModelBase)obj).getUnderlyingResource() == null)
+				return false;
+		}
+		return true;
 	}
 	
 	private void fillOpenWithMenu(IMenuManager manager, Object obj) {
@@ -896,4 +913,59 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		return true;
 	}
 
+	public Object getAdapter(Class adapter) {
+		if(isShowInApplicable())
+		{	if(adapter == IShowInSource.class && isShowInApplicable())
+			{	return getShowInSource();
+			}
+			else if(adapter == IShowInTargetList.class)
+			{	return getShowInTargetList();
+			}
+		}
+
+		return super.getAdapter(adapter);
+	}
+	
+	/**
+	 * Returns the <code>IShowInSource</code> for this view.
+	 * @return the <code>IShowInSource</code> 
+	 */
+	protected IShowInSource getShowInSource() {
+		return new IShowInSource() {
+			public ShowInContext getShowInContext() {
+				ArrayList resourceList = new ArrayList();
+				IStructuredSelection selection = (IStructuredSelection)fTreeViewer.getSelection();
+				IStructuredSelection resources;
+				if (selection.isEmpty())
+				{	resources = null;
+				}
+				else
+				{	for (Iterator iter = selection.iterator(); iter.hasNext();) {
+						Object obj = iter.next();
+						if (obj instanceof IPluginModelBase) {
+							resourceList.add(((IPluginModelBase)obj).getUnderlyingResource());
+						}
+					}
+					resources = new StructuredSelection(resourceList); 
+				}
+				
+				return new ShowInContext(
+					fTreeViewer.getInput(),
+					resources);
+			}
+		};
+	}
+
+	/**
+	 * Returns the <code>IShowInTargetList</code> for this view.
+	 * @return the <code>IShowInTargetList</code> 
+	 */
+	protected IShowInTargetList getShowInTargetList() {
+		return new IShowInTargetList() {
+			public String[] getShowInTargetIds() {
+				return new String[] 
+				       {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+			}
+		};
+	}
 }
