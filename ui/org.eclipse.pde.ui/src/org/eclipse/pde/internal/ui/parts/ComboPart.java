@@ -51,7 +51,7 @@ public class ComboPart {
 			combo = new Combo(parent, style | SWT.BORDER);
 		else
 			combo = new CCombo(parent, style | SWT.FLAT);
-		toolkit.adapt(combo, true, true);
+		toolkit.adapt(combo, true, false);
 	}
 	public Control getControl() {
 		return combo;
