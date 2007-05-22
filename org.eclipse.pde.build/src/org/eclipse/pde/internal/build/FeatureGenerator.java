@@ -45,8 +45,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 */
 	private static Set createSet(String[] contents) {
 		if (contents == null)
-			return new HashSet(0);
-		Set result = new HashSet(contents.length);
+			return new LinkedHashSet(0);
+		Set result = new LinkedHashSet(contents.length);
 		for (int i = 0; i < contents.length; i++)
 			if (contents[i] != null)
 				result.add(contents[i]);
@@ -178,6 +178,17 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	/**
+	 * Generate a feature that includes the given plug-ins, fragments and features.
+	 * Feature order matters at compile time if there is dependencies between the features' contents. 
+	 * Make sure to pass an ordered set if this matters.
+	 * @param feature - Name of the feature to generate
+	 * @param plugins - plug-ins to include
+	 * @param fragments - fragments to include
+	 * @param features: An ordered set of features to include
+	 * @throws CoreException
+	 * @throws FileNotFoundException
+	 */
 	protected void createFeature(String feature, Set plugins, Set fragments, Set features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;
 		File directory = new File(getWorkingDirectory(), location);
