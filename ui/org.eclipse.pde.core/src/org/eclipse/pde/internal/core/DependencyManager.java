@@ -11,8 +11,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -30,7 +32,7 @@ public class DependencyManager {
 	 * 
 	 */
 	public static Set getSelfAndDependencies(IPluginModelBase model) {
-		return getDependencies(new Object[] {model}, new String[0], TargetPlatformHelper.getState(), false, true);
+		return getDependencies(new Object[] {model}, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true);
 	}
 	
 	/** 
@@ -38,7 +40,7 @@ public class DependencyManager {
 	 * 
 	 */
 	public static Set getSelfandDependencies(IPluginModelBase[] models) {
-		return getDependencies(models, new String[0], TargetPlatformHelper.getState(), false, true);
+		return getDependencies(models, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true);
 	}
 	
 	/** 
@@ -54,7 +56,7 @@ public class DependencyManager {
 	 * 
 	 */
 	public static Set getDependencies(Object[] selected, boolean includeOptional) {
-		return getDependencies(selected, new String[0], TargetPlatformHelper.getState(), true, includeOptional);
+		return getDependencies(selected, getImplicitDependencies(), TargetPlatformHelper.getState(), true, includeOptional);
 	}
 	
 	/** 
@@ -94,6 +96,18 @@ public class DependencyManager {
 			}
 		}
 		return set;
+	}
+	
+	private static String[] getImplicitDependencies() {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String dependencies = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
+		if (dependencies.length() == 0)
+			return new String[0];
+		StringTokenizer tokenizer = new StringTokenizer(dependencies, ","); //$NON-NLS-1$
+		String[] implicitIds = new String[tokenizer.countTokens()];
+		for (int i = 0; i < implicitIds.length; i++)
+			implicitIds[i] = tokenizer.nextToken();
+		return implicitIds;
 	}
 	
 	private static void addBundleAndDependencies(BundleDescription desc, Set set, boolean includeOptional) {
