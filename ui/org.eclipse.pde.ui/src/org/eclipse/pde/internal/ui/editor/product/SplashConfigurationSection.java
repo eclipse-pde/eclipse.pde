@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductObject;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
+import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -257,9 +258,6 @@ public class SplashConfigurationSection extends PDESection {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddBarButton.getSelection();
 				getSplashInfo().addProgressBar(enable, false);
-				for (int i = 0; i < fBarControls.length; i++)
-					fBarControls[i].setEnabled(enable);
-				// Update this sections enablement
 				updateFieldEnablement();
 			}
 		});
@@ -278,6 +276,8 @@ public class SplashConfigurationSection extends PDESection {
 		fBarControls[5] = fBarSpinners[2] = createSpinner(parent, fToolkit);
 		fBarControls[6] = createLabel(parent, fToolkit, foreground, PDEUIMessages.SplashSection_progressHeight);
 		fBarControls[7] = fBarSpinners[3] = createSpinner(parent, fToolkit);
+		// Add tooltips to coordinate controls
+		addOffsetTooltips(fBarControls);
 		
 		for (int i = 0; i < fBarSpinners.length; i++) {
 			fBarSpinners[i].addModifyListener(new ModifyListener() {
@@ -300,10 +300,7 @@ public class SplashConfigurationSection extends PDESection {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddMessageButton.getSelection();
 				getSplashInfo().addProgressMessage(enable, false);
-				for (int i = 0; i < fMessageControls.length; i++)
-					fMessageControls[i].setEnabled(enable);
 				updateFieldEnablement();
-
 			}
 		});
 		
@@ -329,7 +326,9 @@ public class SplashConfigurationSection extends PDESection {
 		});
 		fToolkit.adapt(fColorSelector.getButton(), true, true);
 		fMessageControls[9] = fColorSelector.getButton();
-
+		// Add tooltips to coordinate controls
+		addOffsetTooltips(fMessageControls);
+		
 		for (int i = 0; i < fMessageSpinners.length; i++) {
 			fMessageSpinners[i].addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -388,13 +387,32 @@ public class SplashConfigurationSection extends PDESection {
 	}
 	
 	/**
-	 * @param spinners
+	 * 
 	 */
-	private void resetSpinnerGeometry(Spinner[] spinners) {
-		for (int i = 0; i < spinners.length; i++) {
-			spinners[i].setSelection(0);
-		}		
+	private void resetProgressBarGeometry() {
+		// X Offset
+		fBarSpinners[0].setSelection(SplashInfo.F_DEFAULT_BAR_X_OFFSET);
+		// Y Offset
+		fBarSpinners[1].setSelection(SplashInfo.F_DEFAULT_BAR_Y_OFFSET);
+		// Width
+		fBarSpinners[2].setSelection(SplashInfo.F_DEFAULT_BAR_WIDTH);
+		// Height
+		fBarSpinners[3].setSelection(SplashInfo.F_DEFAULT_BAR_HEIGHT);		
 	}
+	
+	/**
+	 * 
+	 */
+	private void resetProgressMessageGeometry() {
+		// X Offset
+		fMessageSpinners[0].setSelection(SplashInfo.F_DEFAULT_MESSAGE_X_OFFSET);
+		// Y Offset
+		fMessageSpinners[1].setSelection(SplashInfo.F_DEFAULT_MESSAGE_Y_OFFSET);
+		// Width
+		fMessageSpinners[2].setSelection(SplashInfo.F_DEFAULT_MESSAGE_WIDTH);
+		// Height
+		fMessageSpinners[3].setSelection(SplashInfo.F_DEFAULT_MESSAGE_HEIGHT);		
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
@@ -413,12 +431,10 @@ public class SplashConfigurationSection extends PDESection {
 				fBarSpinners[i].setSelection(pgeo[i]);
 			}
 		} else {
-			resetSpinnerGeometry(fBarSpinners);
+			resetProgressBarGeometry();
 		}
 		
 		fAddBarButton.setSelection(addProgress);
-		for (int i = 0; i < fBarControls.length; i++)
-			fBarControls[i].setEnabled(addProgress);
 		
 		int[] mgeo = info.getMessageGeometry();
 		boolean addMessage = mgeo != null;
@@ -428,7 +444,7 @@ public class SplashConfigurationSection extends PDESection {
 				fMessageSpinners[i].setSelection(mgeo[i]);
 			}
 		} else {
-			resetSpinnerGeometry(fMessageSpinners);
+			resetProgressMessageGeometry();
 		}
 		fColorSelector.setColorValue(
 				addMessage ?
@@ -436,8 +452,6 @@ public class SplashConfigurationSection extends PDESection {
 						new RGB(0,0,0));
 		
 		fAddMessageButton.setSelection(addMessage);
-		for (int i = 0; i < fMessageControls.length; i++)
-			fMessageControls[i].setEnabled(addMessage);
 		
 		// Update the UI
 		updateUIFieldTemplateCombo();		
@@ -544,7 +558,7 @@ public class SplashConfigurationSection extends PDESection {
 			// Ignore
 		} else if ((object instanceof IProduct) && 
 				(event.getChangedProperty() == IProduct.P_ID)) {
-			updateFieldTemplateEnablement();
+			updateFieldEnablement();
 		}
 	}
 
@@ -582,18 +596,45 @@ public class SplashConfigurationSection extends PDESection {
 	private void updateFieldProgressEnablement() {
 		// Get the splash info if any
 		ISplashInfo info = getSplashInfo();
-		// Enable this section if a splash handler is defined and no
-		// progress geometry is specified
-		if ((info.isDefinedGeometry() == false) &&
-				(info.isDefinedSplashHandlerType())) {
+		// Enable section under the following conditions:
+		// (1) Product ID is defined
+		// (2) Progress geometry is defined
+		// (3) Splash handler type is NOT defined
+		if ((PDETextHelper.isDefined(getProduct().getId()) == false) ||
+				((info.isDefinedGeometry() == false) &&
+				(info.isDefinedSplashHandlerType() == true))) {
 			fAddBarButton.setEnabled(false);
 			fAddMessageButton.setEnabled(false);
+			updateFieldProgressBarEnablement(false);
+			updateFieldProgressMessageEnablement(false);
 		} else {
 			fAddBarButton.setEnabled(true);
 			fAddMessageButton.setEnabled(true);
+			updateFieldProgressBarEnablement(true);
+			updateFieldProgressMessageEnablement(true);
 		}
 	}	
 
+	/**
+	 * @param buttonEnabled
+	 */
+	private void updateFieldProgressBarEnablement(boolean buttonEnabled) {
+		boolean enable = (fAddBarButton.getSelection() && buttonEnabled);
+		for (int i = 0; i < fBarControls.length; i++) {
+			fBarControls[i].setEnabled(enable);
+		}
+	}
+	
+	/**
+	 * @param buttonEnabled
+	 */
+	private void updateFieldProgressMessageEnablement(boolean buttonEnabled) {
+		boolean enable = (fAddMessageButton.getSelection() && buttonEnabled);
+		for (int i = 0; i < fMessageControls.length; i++) {
+			fMessageControls[i].setEnabled(enable);		
+		}
+	}	
+	
 	/**
 	 * 
 	 */
@@ -610,6 +651,23 @@ public class SplashConfigurationSection extends PDESection {
 			fFieldTemplateCombo.setEnabled(false);
 		} else {
 			fFieldTemplateCombo.setEnabled(true);
+		}
+	}	
+	
+	/**
+	 * @param controls
+	 */
+	private void addOffsetTooltips(Control[] controls) {
+		// Limit includes X, Y spinners and labels
+		int limit = 4;
+		// Ensure we have that many controls
+		if (controls.length < limit) {
+			// Something seriously wrong
+			return;
+		}
+		// Set the tooltips
+		for (int i = 0; i < limit; i++) {
+			controls[i].setToolTipText(PDEUIMessages.SplashConfigurationSection_msgTooltipOffsetRelative);
 		}
 	}	
 	

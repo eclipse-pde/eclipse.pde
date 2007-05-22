@@ -20,6 +20,16 @@ import org.w3c.dom.Node;
 
 public class SplashInfo extends ProductObject implements ISplashInfo {
 
+	public static final int F_DEFAULT_BAR_X_OFFSET = 5;
+	public static final int F_DEFAULT_BAR_Y_OFFSET = 275;
+	public static final int F_DEFAULT_BAR_WIDTH = 445;
+	public static final int F_DEFAULT_BAR_HEIGHT = 15;
+
+	public static final int F_DEFAULT_MESSAGE_X_OFFSET = 7;
+	public static final int F_DEFAULT_MESSAGE_Y_OFFSET = 252;
+	public static final int F_DEFAULT_MESSAGE_WIDTH = 445;
+	public static final int F_DEFAULT_MESSAGE_HEIGHT = 20;
+	
 	private static final char[] VALID_HEX_CHARS = new char[] {
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'a', 'b', 'c', 'd', 'e', 'f',
@@ -198,7 +208,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		fCustomizeProgressBar = add;
 		int[] geo = getProgressGeometry();
 		if (add)
-			setProgressGeometry(geo != null ? geo : new int[] {0,0,0,0}, blockNotification);
+			setProgressGeometry(geo != null ? geo : new int[] {
+					F_DEFAULT_BAR_X_OFFSET,
+					F_DEFAULT_BAR_Y_OFFSET,
+					F_DEFAULT_BAR_WIDTH,
+					F_DEFAULT_BAR_HEIGHT}, 
+					blockNotification);
 		 else if (!blockNotification && isEditable())
 			firePropertyChanged("", Boolean.toString(old), Boolean.toString(add)); //$NON-NLS-1$
 	}
@@ -211,7 +226,12 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		int[] geo = getMessageGeometry();
 		String foreground = getForegroundColor();
 		if (add) {
-			setMessageGeometry(geo != null ? geo : new int[] {0,0,0,0}, blockNotification);
+			setMessageGeometry(geo != null ? geo : new int[] {
+					F_DEFAULT_MESSAGE_X_OFFSET,
+					F_DEFAULT_MESSAGE_Y_OFFSET,
+					F_DEFAULT_MESSAGE_WIDTH,
+					F_DEFAULT_MESSAGE_HEIGHT}, 
+					blockNotification);
 			setForegroundColor(foreground != null ? foreground : "000000", blockNotification); //$NON-NLS-1$
 		} else if (!blockNotification && isEditable())
 			firePropertyChanged("", Boolean.toString(mold || cold), Boolean.toString(add)); //$NON-NLS-1$

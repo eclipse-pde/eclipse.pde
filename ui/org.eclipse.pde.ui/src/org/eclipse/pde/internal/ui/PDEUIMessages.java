@@ -339,6 +339,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String SplashConfigurationSection_msgDecorationTemplateSupport;
 
+	public static String SplashConfigurationSection_msgTooltipOffsetRelative;
+
 	public static String SplashConfigurationSection_sectionDescCustomization;
 
 	public static String SplashPage_splashName;
@@ -680,6 +682,14 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateSplashHandlerInModelAction_templateTypeExtensible;
 
 	public static String UpdateSplashHandlerInModelAction_templateTypeInteractive;
+
+	public static String UpdateSplashProgressAction_msgErrorCustomFileSaveFailed;
+
+	public static String UpdateSplashProgressAction_msgErrorTextFileBuffer;
+
+	public static String UpdateSplashProgressAction_msgErrorTextFileBufferManager;
+
+	public static String UpdateSplashProgressAction_msgProgressCustomizingSplash;
 
 	// Reusable Parts ################################
 	public static String WizardCheckboxTablePart_selectAll;

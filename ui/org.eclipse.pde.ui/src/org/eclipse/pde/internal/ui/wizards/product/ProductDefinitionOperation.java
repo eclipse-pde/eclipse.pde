@@ -57,6 +57,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private UpdateSplashHandlerAction fUpdateSplashAction;
 	
 	private RemoveSplashHandlerBindingAction fRemoveSplashAction;
+	
+	private UpdateSplashProgressOperation fUpdateSplashProgressOperation;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
 		super(shell, pluginId);
@@ -163,6 +165,58 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 				"." +  //$NON-NLS-1$
 				getSplashHandlerType();
 	}	
+
+	/**
+	 * @return
+	 */
+	private UpdateSplashProgressOperation getUpdateSplashProgressOperation() {
+		if (fUpdateSplashProgressOperation == null) {
+			fUpdateSplashProgressOperation = new UpdateSplashProgressOperation();
+		} else {
+			fUpdateSplashProgressOperation.reset();
+		}
+		return fUpdateSplashProgressOperation;
+	}
+	
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void updateSplashProgress(IPluginModelBase model, 
+			IProgressMonitor monitor) throws CoreException {
+		// Sanity checks
+		if (fProject == null) {
+			return;
+		} else if (model == null) {
+			return;
+		} else if (monitor == null) {
+			return;
+		}
+		// Get the action
+		UpdateSplashProgressOperation operation = getUpdateSplashProgressOperation();
+		operation.setModel(model);
+		operation.setShowProgress(isProgressDefined());
+		operation.setProject(fProject);
+		operation.setProductID(fProduct.getId());
+		operation.setPluginID(fPluginId);
+		// Execute the action
+		operation.run(monitor);
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean isProgressDefined() {
+		// Get the splash info from the model
+		ISplashInfo info = fProduct.getProduct().getSplashInfo();
+		// Ensure splash info was defined
+		if (info == null) {
+			return false;
+		}
+		// Ensure splash progress was defined
+		return info.isDefinedGeometry();
+	}
 
 	/**
 	 * @return
@@ -311,6 +365,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		base.add(createExtension(model));
 		// Update the splash handler.  Update plug-in model and copy files
 		updateSplashHandler(model, monitor);
+		// Update splash progress.  Update plug-in model and copy files
+		updateSplashProgress(model, monitor);
 		
 		model.save();
 	}
@@ -449,6 +505,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 					modifyExistingExtension(extension);
 				// Update the splash handler.  Update plug-in model and copy files
 				updateSplashHandler((IPluginModelBase)model, monitor);
+				// Update splash progress.  Update plug-in model and copy files
+				updateSplashProgress((IPluginModelBase)model, monitor);
 			}
 		};
 		PDEModelUtility.modifyModel(mod, monitor);
