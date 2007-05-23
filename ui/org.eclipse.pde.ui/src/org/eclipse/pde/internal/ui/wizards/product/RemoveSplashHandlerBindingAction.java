@@ -39,6 +39,8 @@ public class RemoveSplashHandlerBindingAction extends Action implements
 	private CoreException fException;	
 	
 	private String fFieldProductID;	
+
+	private String fFieldTargetPackage;		
 	
 	/**
 	 * 
@@ -55,6 +57,13 @@ public class RemoveSplashHandlerBindingAction extends Action implements
 	}	
 	
 	/**
+	 * @param fieldTargetPackage
+	 */
+	public void setFieldTargetPackage(String fieldTargetPackage) {
+		fFieldTargetPackage = fieldTargetPackage;
+	}		
+	
+	/**
 	 * 
 	 */
 	public void reset() {
@@ -63,6 +72,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements
 		fException = null;		
 		
 		fFieldProductID = null;
+		fFieldTargetPackage = null;
 	}	
 	
 	/* (non-Javadoc)
@@ -147,15 +157,48 @@ public class RemoveSplashHandlerBindingAction extends Action implements
 			IPluginAttribute productIDAttribute = 
 				element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
 			// Remove any product binding element that does not define a 
-			// product ID or has a product ID matching the target product ID
+			// product ID 
 			if ((productIDAttribute == null) || 
-					(PDETextHelper.isDefined(productIDAttribute.getValue()) == false) ||
-					productIDAttribute.getValue().equals(fFieldProductID)) {
-				// Matching element found
+					(PDETextHelper.isDefined(productIDAttribute.getValue()) == false)) {
+				extension.remove(element);
+				continue;
+			}
+			// Get the splash ID attribute
+			IPluginAttribute splashIDAttribute = 
+				element.getAttribute(F_ATTRIBUTE_SPLASH_ID);
+			// Remove any product binding element that does not define a 
+			// splash ID 
+			if ((splashIDAttribute == null) || 
+					(PDETextHelper.isDefined(splashIDAttribute.getValue()) == false)) {
+				extension.remove(element);
+				continue;
+			}
+			// Remove any product binding element whose product ID matches this
+			// product's ID and whose splash ID match's a generated splash
+			// handler template ID
+			if (productIDAttribute.getValue().equals(fFieldProductID) &&
+					isGeneratedSplashID(splashIDAttribute.getValue())) {
 				extension.remove(element);
 			}	
 		}
 	}	
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	private boolean isGeneratedSplashID(String value) {
+		String[][] choices = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES;
+		// Check to see if the splash ID matches any of the pre-generated
+		// splash handler template IDs
+		for (int i = 0; i < choices.length; i++) {
+			String splashID = fFieldTargetPackage + '.' + choices[i][0];
+			if (value.equals(splashID)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * @param extension

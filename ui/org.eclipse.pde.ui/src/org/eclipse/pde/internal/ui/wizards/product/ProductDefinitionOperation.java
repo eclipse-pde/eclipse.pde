@@ -306,6 +306,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		fRemoveSplashAction = new RemoveSplashHandlerBindingAction();
 		// Configure the action
 		fRemoveSplashAction.setFieldProductID(fProduct.getId());
+		fRemoveSplashAction.setFieldTargetPackage(createTargetPackage());
 		
 		fRemoveSplashAction.setModel(model);
 		fRemoveSplashAction.setMonitor(monitor);
