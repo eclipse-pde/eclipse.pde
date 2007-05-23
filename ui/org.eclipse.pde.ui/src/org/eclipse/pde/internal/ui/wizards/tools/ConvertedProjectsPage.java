@@ -151,18 +151,31 @@ public class ConvertedProjectsPage extends WizardPage  {
 		model.load();
 		IBundle pluginBundle = model.getBundleModel().getBundle(); 
 
-		String existingId = pluginBundle.getHeader(Constants.BUNDLE_SYMBOLICNAME);
-		String existingName = pluginBundle.getHeader(Constants.BUNDLE_NAME);
-		String existingVersion = pluginBundle.getHeader(Constants.BUNDLE_VERSION);
+		String pluginId = pluginBundle.getHeader(Constants.BUNDLE_SYMBOLICNAME);
+		String pluginName = pluginBundle.getHeader(Constants.BUNDLE_NAME);
+		String pluginVersion = pluginBundle.getHeader(Constants.BUNDLE_VERSION);
 
-		boolean missingInfo = (existingId == null || existingName == null || existingVersion == null);
+		boolean missingInfo = (pluginId == null || pluginName == null || pluginVersion == null);
 		
-		pluginBundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, existingId != null ? 
-				existingId : IdUtil.getValidId(file.getProject().getName()));
-		pluginBundle.setHeader(Constants.BUNDLE_VERSION, existingVersion != null ? 
-				existingVersion : "1.0.0"); //$NON-NLS-1$
-		pluginBundle.setHeader(Constants.BUNDLE_NAME, existingName != null ? 
-				existingName : createInitialName(existingId));
+		//If no ID exists, create one
+		if(pluginId == null)
+		{	pluginId = IdUtil.getValidId(file.getProject().getName());
+		}
+		//At this point, the plug-in ID is not null
+		
+		//If no version number exists, create one
+		if(pluginVersion == null)
+		{	pluginVersion = "1.0.0"; //$NON-NLS-1$
+		}
+		
+		//If no name exists, create one using the non-null pluginID
+		if(pluginName == null)
+		{	pluginName = createInitialName(pluginId);
+		}
+		
+		pluginBundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, pluginId);
+		pluginBundle.setHeader(Constants.BUNDLE_VERSION, pluginVersion);
+		pluginBundle.setHeader(Constants.BUNDLE_NAME, pluginName);
 
 		if(missingInfo)
 		{	IPluginModelFactory factory = model.getPluginFactory();
