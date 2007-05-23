@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,10 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
@@ -123,12 +126,19 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     			return ((ExportPackageDescription)fUnderlying).getName();
     		if (fUnderlying instanceof IPackageFragment)
     			return ((IPackageFragment)fUnderlying).getElementName();
+    		if (fUnderlying instanceof ExportPackageObject)
+    			return ((ExportPackageObject)fUnderlying).getName();
     		return null;
     	}
     	
     	public Version getVersion() {
     		if (fUnderlying instanceof ExportPackageDescription)
     			return ((ExportPackageDescription)fUnderlying).getVersion();
+    		if (fUnderlying instanceof ExportPackageObject) {
+    			String version = ((ExportPackageObject)fUnderlying).getVersion();
+    			if (version != null)
+    				return new Version(version);
+    		}
     		return null;
     	}
     	
@@ -458,6 +468,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						// non exported package
 						IPackageFragment fragment = ((IPackageFragment) selected[i]);
 						impObject = new ImportPackageObject(fHeader, fragment.getElementName(), null, getVersionAttribute());
+					} else if (selected[i] instanceof ExportPackageObject) {
+						ExportPackageObject epo = (ExportPackageObject)selected[i];
+						impObject = new ImportPackageObject(fHeader, epo.getName(), epo.getVersion(), getVersionAttribute());
 					}
 					if (impObject != null)
 						fHeader.addPackage(impObject);
@@ -511,6 +524,22 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     			if (names.add(name) && 
     					(fHeader == null || !fHeader.hasPackage(name)))
    					elements.add(new ImportItemWrapper(exported[j]));
+        	}
+        	IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        	if (model instanceof IBundlePluginModelBase) {
+        		IBundleModel bmodel = ((IBundlePluginModelBase)model).getBundleModel();
+        		if (bmodel != null) {
+        			ExportPackageHeader header = (ExportPackageHeader)bmodel.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+        			if (header != null) {
+        				ExportPackageObject[] pkgs = header.getPackages();
+        				for (int j = 0; j < pkgs.length; j++) {
+        					String name = pkgs[j].getName();
+        					if (names.add(name) && (fHeader == null || !fHeader.hasPackage(name)))
+        						elements.add(new ImportItemWrapper(pkgs[j]));
+        				}
+        			}
+        		}
+        				
         	}
         }
         for (int i = 0; i < models.length; i++) {
