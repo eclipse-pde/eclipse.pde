@@ -341,6 +341,7 @@ public class ContentSection extends TableSection {
 				plugins[i] = plugin;
 			}
 			target.addPlugins(plugins);
+			fContentViewer.setSelection(new StructuredSelection(plugins[plugins.length - 1]));
 		}
 	}
 	
@@ -396,6 +397,7 @@ public class ContentSection extends TableSection {
 				features[i] = tfeature;
 			}
 			target.addFeatures(features);
+			fContentViewer.setSelection(new StructuredSelection(features[features.length - 1]));
 		}
 	}
 	

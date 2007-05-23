@@ -434,6 +434,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(id);
 		product.addPlugins(new IProductPlugin[] {plugin});
+		fPluginTable.setSelection(new StructuredSelection(plugin));
 	}
 	
 	private IProduct getProduct() {
