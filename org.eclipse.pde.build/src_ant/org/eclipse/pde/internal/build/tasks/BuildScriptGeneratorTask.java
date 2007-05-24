@@ -86,6 +86,9 @@ public class BuildScriptGeneratorTask extends Task {
 
 	public void run() throws CoreException {
 		generator.setReportResolutionErrors(true);
+		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
+		if (Boolean.valueOf(value).booleanValue())
+			antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();

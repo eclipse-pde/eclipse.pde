@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
+import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -23,10 +24,15 @@ import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
  */
 public class FeatureGeneratorTask extends Task {
 	private FeatureGenerator generator = new FeatureGenerator();
-
+	private Properties antProperties = new Properties();
+	
 	public void execute() throws BuildException {
 		try {
 			BundleHelper.getDefault().setLog(this);
+			String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
+			if (Boolean.valueOf(value).booleanValue())
+				antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+			generator.setImmutableAntProperties(antProperties);
 			run();
 			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {

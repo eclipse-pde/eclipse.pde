@@ -27,7 +27,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_SOURCE_PREFIX = "source."; //$NON-NLS-1$
 	public static final String PROPERTY_OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$	
-	public static final String PROPERTY_EXCLUDE_PREFIX = "exclude.";  //$NON-NLS-1$
+	public static final String PROPERTY_EXCLUDE_PREFIX = "exclude."; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$
 	public static final String PROPERTY_MANIFEST_PREFIX = "manifest."; //$NON-NLS-1$
 
@@ -40,7 +40,7 @@ public interface IBuildPropertiesConstants {
 	public final static String GENERATION_SOURCE_FEATURE_PREFIX = GENERATION_SOURCE_PREFIX + "feature@"; //$NON-NLS-1$
 	public final static String GENERATION_SOURCE_PLUGIN_PREFIX = GENERATION_SOURCE_PREFIX + "plugin@"; //$NON-NLS-1$
 	public final static String PROPERTY_SOURCE_FEATURE_NAME = "sourceFeature.name"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_CUSTOM = "custom"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_SUFFIX = ".zip"; //$NON-NLS-1$
 
@@ -53,12 +53,12 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX = "javacDefaultEncoding."; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX = "javacCustomEncodings."; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_WARNINGS_PREFIX = "javacWarnings."; //$NON-NLS-1$
-	
+
 	public static final String DEFAULT_MATCH_ALL = "*"; //$NON-NLS-1$
 	public static final String DEFAULT_FINAL_SHAPE = "*"; //$NON-NLS-1$
-	
-	public static final String PROPERTY_OVERWRITE_ROOTFILES = "overwriteRootFiles";  //$NON-NLS-1$
-	
+
+	public static final String PROPERTY_OVERWRITE_ROOTFILES = "overwriteRootFiles"; //$NON-NLS-1$
+
 	public static final String PROPERTY_CUSTOM_BUILD_CALLBACKS = "customBuildCallbacks"; //$NON-NLS-1$
 	public static final String PROPERTY_CUSTOM_CALLBACKS_BUILDPATH = "customBuildCallbacks.buildpath"; //$NON-NLS-1$
 	public static final String PROPERTY_CUSTOM_CALLBACKS_FAILONERROR = "customBuildCallbacks.failonerror"; //$NON-NLS-1$
@@ -67,17 +67,18 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_BOOT_CLASSPATH = "bootClasspath"; //$NON-NLS-1$
 	public static final String PROPERTY_JRE_COMPILATION_PROFILE = "jre.compilation.profile"; //$NON-NLS-1$
-	
-	public static final String PROPERTY_SIGNIFICANT_VERSION_DIGITS = "significantVersionDigits";  //$NON-NLS-1$
+
+	public static final String PROPERTY_SIGNIFICANT_VERSION_DIGITS = "significantVersionDigits"; //$NON-NLS-1$
 	public static final String PROPERTY_GENERATED_VERSION_LENGTH = "generatedVersionLength"; //$NON-NLS-1$
 
 	public static final String PROPERTY_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
 	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
 
+	public static final String RESOLVER_DEV_MODE = "resolution.devMode"; //$NON-NLS-1$
+
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_PACKAGER_MODE = "packagerMode"; //$NON-NLS-1$
 	public static final String PROPERTY_PACKAGER_AS_NORMALIZER = "packagerAsNormalizer"; //$NON-NLS-1$
 }
-
