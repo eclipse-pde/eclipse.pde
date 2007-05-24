@@ -265,4 +265,19 @@ public class BuilderTemplate extends PDETemplateSection {
 		}
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
+	 */
+	public String getLabel() {
+		return getPluginResourceString("newExtension.templates.builder.name"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
+	 */
+	public String getDescription() {
+		return getPluginResourceString("newExtension.templates.builder.desc"); //$NON-NLS-1$
+	}
+	
 }

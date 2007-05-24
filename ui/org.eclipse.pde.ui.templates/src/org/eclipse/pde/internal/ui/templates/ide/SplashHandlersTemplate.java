@@ -411,4 +411,19 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 			
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
+	 */
+	public String getLabel() {
+		return getPluginResourceString("wizard.name.splash.handler"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
+	 */
+	public String getDescription() {
+		return getPluginResourceString("wizard.description.splash.handler"); //$NON-NLS-1$
+	}
+	
 }
