@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
@@ -69,7 +70,7 @@ public class PluginPathFinder {
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
-		ArrayList sites = new ArrayList();
+		HashSet sites = new HashSet();
 		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!features && !file.exists())
 			file = new File(platformHome);
@@ -174,7 +175,7 @@ public class PluginPathFinder {
 	 * @return URLs to plugins/features
 	 */
 	public static URL[] scanLocations(File[] sites) {
-		ArrayList result = new ArrayList();
+		HashSet result = new HashSet();
 		for (int i = 0; i < sites.length; i++){
 			if (!sites[i].exists())
 				continue;
