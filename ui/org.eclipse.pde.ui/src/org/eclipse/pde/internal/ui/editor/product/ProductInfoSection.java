@@ -328,10 +328,16 @@ public class ProductInfoSection extends PDESection {
 		((ProductEditor)getPage().getEditor()).updateConfigurationPage();
 	}
 	
-	private void refreshProductCombo(String productId) {
-		if (fProductCombo.indexOf(productId) == -1)
-			fProductCombo.add(productId, 0);		
-		fProductCombo.setText(productId);
+	/**
+	 * @param productId
+	 */
+	private void refreshProductCombo(String productID) {
+		if (productID == null) {
+			productID = ""; //$NON-NLS-1$
+		} else if (fProductCombo.indexOf(productID) == -1) {
+			fProductCombo.add(productID, 0);
+		}
+		fProductCombo.setText(productID);
 	}
 	
 	private IStatusLineManager getStatusLineManager() {
