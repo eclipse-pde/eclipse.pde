@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -17,6 +19,8 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -49,7 +53,23 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		});
 		text.setEditable(part.isEditable());
 		PDETextHover.addHoverListenerToControl(fIC, text, this);
+		// Create a focus listener to update selectable actions
+		createUITextFocusListener();
 	}
+	
+	/**
+	 * 
+	 */
+	private void createUITextFocusListener() {
+		// Required to enable Ctrl-V paste operations
+		text.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				ITextSelection selection = new TextSelection(1,1);
+				part.getPage().getPDEEditor().getContributor().updateSelectableActions(selection);				
+			}
+		});		
+	}
+
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(span == 2
 				? GridData.FILL_HORIZONTAL
