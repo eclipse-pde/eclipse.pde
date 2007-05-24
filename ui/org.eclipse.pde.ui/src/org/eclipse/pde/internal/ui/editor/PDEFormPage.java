@@ -270,7 +270,7 @@ public abstract class PDEFormPage extends FormPage {
 	 * 
 	 * @param composite
 	 */
-	private void addLastFocusListeners(Composite composite) {
+	public void addLastFocusListeners(Composite composite) {
 		Control[] controls = composite.getChildren();
 		for (int i = 0; i < controls.length; i++) {
 			Control control = controls[i];
