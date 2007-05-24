@@ -35,7 +35,7 @@ public class ListUtil {
 
 		public int compare(Object arg0, Object arg1) {
 			if (arg0 instanceof String && arg1 instanceof String)
-				return ((String)arg0).compareTo((String)arg1);
+				return ((String)arg0).compareToIgnoreCase((String)arg1);
 			// if not two Strings like we expect, then use default comparator
 			return Policy.getComparator().compare(arg0, arg1);
 		}
