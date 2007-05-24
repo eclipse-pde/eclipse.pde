@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,21 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class PluginBlock extends AbstractPluginBlock {
+	
+	protected ILaunchConfiguration fLaunchConfig;
 
 	public PluginBlock(AbstractLauncherTab tab) {
 		super(tab);
@@ -36,6 +46,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		enableViewer(customSelection);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
+		fLaunchConfig = config;
 	}
 	
 	/*
@@ -138,6 +149,75 @@ public class PluginBlock extends AbstractPluginBlock {
 			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
 			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, (String)null);
 		}
+	}
+
+	protected void computeSubset() {
+		validateExtensions();
+		super.computeSubset();
+	}
+	
+	private void validateExtensions() {
+		try {
+			if (fLaunchConfig.getAttribute(IPDELauncherConstants.USE_PRODUCT, true)) {
+				String product = fLaunchConfig.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+				if (product != null) {
+					validateLaunchId(product);
+					String application = getApplication(product);
+					if (application != null)
+						validateLaunchId(application);
+				}
+			} 
+			else {
+				String configType = fLaunchConfig.getType().getIdentifier();
+				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE)
+				? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
+				String application = fLaunchConfig.getAttribute(attribute, TargetPlatform.getDefaultApplication());
+				if (!IPDEUIConstants.CORE_TEST_APPLICATION.equals(application))
+					validateLaunchId(application);
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
+	private void validateLaunchId(String launchId) {
+		if (launchId != null) {
+			int index = launchId.lastIndexOf('.');
+			if (index > 0) {
+				String pluginId = launchId.substring(0, index);
+				// see if launcher plugin is already included
+				IPluginModelBase base = findPlugin(pluginId);
+				if (base == null) {
+					base = PluginRegistry.findModel(pluginId);
+					if (base != null) {
+						fPluginTreeViewer.setChecked(base, true);
+					}
+				}
+			}
+		}
+	}
+	
+	private String getApplication(String product) {
+		String bundleID = product.substring(0, product.lastIndexOf('.'));
+		IPluginModelBase model = findPlugin(bundleID);
+		
+		if (model != null) {
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IPluginExtension ext = extensions[i];
+				String point = ext.getPoint();
+				if ("org.eclipse.core.runtime.products".equals(point)  //$NON-NLS-1$
+						&& product.equals(IdUtil.getFullId(ext))) { 
+					if (ext.getChildCount() == 1) {
+						IPluginElement prod = (IPluginElement)ext.getChildren()[0];
+						if (prod.getName().equals("product")) { //$NON-NLS-1$
+							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
+							return attr != null ? attr.getValue() : null;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }

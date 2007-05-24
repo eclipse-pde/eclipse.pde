@@ -367,7 +367,7 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 	
-	private void computeSubset() {
+	protected void computeSubset() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
 		ArrayList toCheck = new ArrayList(checked.length);
 		for (int i = 0; i < checked.length; i++)
@@ -406,7 +406,7 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.setCheckedElements(checked);
 	}
 
-	private IPluginModelBase findPlugin(String id) {
+	protected IPluginModelBase findPlugin(String id) {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
 			IPluginModelBase model = entry.getModel();
