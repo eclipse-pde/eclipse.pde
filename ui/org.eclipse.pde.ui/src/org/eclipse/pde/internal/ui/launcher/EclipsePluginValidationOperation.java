@@ -67,7 +67,7 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 						validateExtension(application);
 				}
 			} else {
-				String configType = fLaunchConfiguration.getType().getName();
+				String configType = fLaunchConfiguration.getType().getIdentifier();
 				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE)
 									? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
 				String application = fLaunchConfiguration.getAttribute(attribute, TargetPlatform.getDefaultApplication());
@@ -118,7 +118,7 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	}
 	
 	public boolean hasErrors() {
-		return super.hasErrors() || fExtensionErrors.size() > 1;
+		return super.hasErrors() || fExtensionErrors.size() >= 1;
 	}
 	
 	public Map getInput() {
