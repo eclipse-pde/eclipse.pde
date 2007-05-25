@@ -219,5 +219,8 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 		return null;
 	}
-
+	
+	protected LaunchValidationOperation createValidationOperation() {
+		return new EclipsePluginValidationOperation(fLaunchConfig);
+	}
 }

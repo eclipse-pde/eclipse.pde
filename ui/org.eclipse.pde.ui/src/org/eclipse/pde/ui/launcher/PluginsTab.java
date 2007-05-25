@@ -20,8 +20,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.PluginBlock;
-import org.eclipse.pde.internal.ui.launcher.AbstractLauncherToolbar;
-import org.eclipse.pde.internal.ui.launcher.PluginsTabToolbar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,7 +46,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	private boolean fShowFeatures = true;
 	private Combo fSelectionCombo;
 	private PluginBlock fPluginBlock;
-	private AbstractLauncherToolbar fToolBar;
 	
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
@@ -82,7 +79,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fPluginBlock = new PluginBlock(this);
-		fToolBar = new PluginsTabToolbar(this);
 	}
 
 	/*
@@ -91,7 +87,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void dispose() {
 		fPluginBlock.dispose();
-		fToolBar.dispose();
 		fImage.dispose();
 		super.dispose();
 	}
@@ -113,7 +108,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		fSelectionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fSelectionCombo.addSelectionListener(new Listener());
 
-		fToolBar.createContents(composite);	
 		fPluginBlock.createControl(composite, 3, 10);
 		
 		setControl(composite);
@@ -135,7 +129,6 @@ public class PluginsTab extends AbstractLauncherTab {
 			}
 			fSelectionCombo.setText(fSelectionCombo.getItem(index));
 			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
-			fToolBar.initializeFrom(configuration, custom);
 			fPluginBlock.initializeFrom(configuration, custom);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
@@ -150,7 +143,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, false);
-		fToolBar.setDefaults(configuration);
 		fPluginBlock.setDefaults(configuration);
 	}
 	
@@ -163,7 +155,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
-		fToolBar.performApply(configuration);
 		fPluginBlock.performApply(configuration);
 	}
 

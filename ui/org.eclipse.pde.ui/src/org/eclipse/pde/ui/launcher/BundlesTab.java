@@ -18,8 +18,6 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.AbstractLauncherToolbar;
-import org.eclipse.pde.internal.ui.launcher.BundlesTabToolbar;
 import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkBlock;
 import org.eclipse.swt.SWT;
@@ -39,13 +37,11 @@ import org.eclipse.ui.PlatformUI;
 public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
-	private AbstractLauncherToolbar fToolBar;
 	private OSGiBundleBlock fPluginBlock;
 	private OSGiFrameworkBlock fFrameworkBlock;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
-		fToolBar = new BundlesTabToolbar(this);
 		fPluginBlock = new OSGiBundleBlock(this);
 		fFrameworkBlock = new OSGiFrameworkBlock(this);
 	}
@@ -55,7 +51,6 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		fToolBar.dispose();
 		fPluginBlock.dispose();
 		fImage.dispose();
 		super.dispose();
@@ -70,7 +65,6 @@ public class BundlesTab extends AbstractLauncherTab {
 		composite.setLayout(new GridLayout(2, false));
 
 		fFrameworkBlock.createControl(composite);
-		fToolBar.createContents(composite);	
 		fPluginBlock.createControl(composite, 2, 5);
 
 		setControl(composite);
@@ -86,7 +80,6 @@ public class BundlesTab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fFrameworkBlock.initializeFrom(config);
-			fToolBar.initializeFrom(config, true);
 			fPluginBlock.initializeFrom(config);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
@@ -107,7 +100,6 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fFrameworkBlock.performApply(config);
-		fToolBar.performApply(config);
 		fPluginBlock.performApply(config);
 	}
 	

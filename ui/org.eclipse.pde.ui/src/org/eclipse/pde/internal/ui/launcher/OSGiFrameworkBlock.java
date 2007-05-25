@@ -61,10 +61,13 @@ public class OSGiFrameworkBlock {
 		GridLayout layout = new GridLayout(6, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		composite.setLayoutData(gd);
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(PDEUIMessages.OSGiBundlesTab_frameworkLabel);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalIndent = 5;
 		label.setLayoutData(gd);
 		

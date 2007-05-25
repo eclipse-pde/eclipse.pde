@@ -21,10 +21,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -79,6 +81,8 @@ public abstract class AbstractPluginBlock {
 
 	private Button fIncludeOptionalButton;
 	protected Button fAddWorkspaceButton;
+	private Button fAutoValidate;
+
 	
 	private Button fSelectAllButton;
 	private Button fDeselectButton;
@@ -89,6 +93,11 @@ public abstract class AbstractPluginBlock {
 	private Listener fListener = new Listener();
 
 	private Label fCounter;
+	
+	private LaunchValidationOperation fOperation;
+	private PluginStatusDialog fDialog;
+
+	private Button fValidateButton;
 
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
@@ -103,6 +112,8 @@ public abstract class AbstractPluginBlock {
 				computeSubset();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
+			} else if (source == fValidateButton) {
+				handleValidate();
 			}
 			fTab.updateLaunchConfigurationDialog();
 		}
@@ -176,25 +187,46 @@ public abstract class AbstractPluginBlock {
 
 	public void createControl(Composite parent, int span, int indent) {
 		createPluginViewer(parent, span - 1, indent);
-		createButtonContainer(parent);
-		
-		fIncludeOptionalButton = new Button(parent, SWT.CHECK);
-		fIncludeOptionalButton.setText(NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, 
+		createButtonContainer(parent);	
+		fIncludeOptionalButton = createButton(parent, 
+												span, 
+												indent, 
+												NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, 
+												fTab.getName().toLowerCase(Locale.ENGLISH)));		
+		fAddWorkspaceButton = createButton(parent, 
+											span, 
+											indent,
+											NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, 
 											fTab.getName().toLowerCase(Locale.ENGLISH))); 
+		
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = span;
+		Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(gd);
+		
+		fAutoValidate = createButton(parent, 
+				span - 1, 
+				indent,
+				NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH))); 
+		
+	    fValidateButton = new Button(parent, SWT.PUSH);
+		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")));
+		SWTUtil.setButtonDimensionHint(fValidateButton);
+		fValidateButton.addSelectionListener(fListener);
+	}
+	
+	private Button createButton(Composite parent, int span, int indent, String text) {
+		Button button = new Button(parent, SWT.CHECK);
+		button.setText(text);
+		
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;
-		fIncludeOptionalButton.setLayoutData(gd);
-		fIncludeOptionalButton.addSelectionListener(fListener);
+		button.setLayoutData(gd);
+		button.addSelectionListener(fListener);
 		
-		fAddWorkspaceButton = new Button(parent, SWT.CHECK);
-		fAddWorkspaceButton.setText(NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, 
-											fTab.getName().toLowerCase(Locale.ENGLISH))); 
-		gd = new GridData();
-		gd.horizontalSpan = span;
-		gd.horizontalIndent = indent;
-		fAddWorkspaceButton.setLayoutData(gd);
-		fAddWorkspaceButton.addSelectionListener(fListener);		
+		return button;
 	}
 	
 	protected ILabelProvider getLabelProvider() {
@@ -360,6 +392,7 @@ public abstract class AbstractPluginBlock {
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
 		if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -443,6 +476,7 @@ public abstract class AbstractPluginBlock {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
 		savePluginState(config);
 		updateCounter();
 	}
@@ -452,6 +486,7 @@ public abstract class AbstractPluginBlock {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 	}
 	
 	public void enableViewer(boolean enable) {
@@ -510,5 +545,35 @@ public abstract class AbstractPluginBlock {
 		}
 		return PDEPlugin.getActiveWorkbenchShell();
 	}
+	
+	public void handleValidate() {
+		if (fOperation == null)
+			fOperation = createValidationOperation();
+		try {
+			fOperation.run(new NullProgressMonitor());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
+		if (fDialog == null) {
+			if (fOperation.hasErrors()) {
+				fDialog = new PluginStatusDialog(getShell(), SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+				fDialog.setInput(fOperation.getInput());
+				fDialog.open();
+				fDialog = null;
+			} else if (fOperation.isEmpty()) {
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), 
+											PDEUIMessages.PluginStatusDialog_pluginValidation, 
+											NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+			} else {
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), 
+						PDEUIMessages.PluginStatusDialog_pluginValidation, 
+						PDEUIMessages.AbstractLauncherToolbar_noProblems);
+			}
+		} else {
+			fDialog.refresh(fOperation.getInput());
+		}
+	}
+	
+	protected abstract LaunchValidationOperation createValidationOperation();
 	
 }

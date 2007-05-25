@@ -56,6 +56,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		}
 	}
 
+	private ILaunchConfiguration fLaunchConfiguration;
+
 	public OSGiBundleBlock(BundlesTab tab) {
 		super(tab);
 	}
@@ -208,6 +210,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		initWorkspacePluginsState(configuration);
 		initExternalPluginsState(configuration);
 		updateCounter();
+		fLaunchConfiguration = configuration;
 	}
 		
 	private void initExternalPluginsState(ILaunchConfiguration configuration)
@@ -343,6 +346,10 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	
 	protected int getTreeViewerStyle() {
 		return super.getTreeViewerStyle() | SWT.FULL_SELECTION;
+	}
+	
+	protected LaunchValidationOperation createValidationOperation() {
+		return new OSGiValidationOperation(fLaunchConfiguration);
 	}
 	
 }
