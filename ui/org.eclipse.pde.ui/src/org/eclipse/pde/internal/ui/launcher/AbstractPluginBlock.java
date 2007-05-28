@@ -207,11 +207,11 @@ public abstract class AbstractPluginBlock {
 		fAutoValidate = createButton(parent, 
 				span - 1, 
 				indent,
-				NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH))); 
+				NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH)));  //$NON-NLS-1$ //$NON-NLS-2$
 		
 	    fValidateButton = new Button(parent, SWT.PUSH);
 		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")));
+		fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
 		SWTUtil.setButtonDimensionHint(fValidateButton);
 		fValidateButton.addSelectionListener(fListener);
 	}

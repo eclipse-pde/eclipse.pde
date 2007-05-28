@@ -279,19 +279,19 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 					basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
 				if ((className.length() > 1) && 
 						(className.charAt(0) == 'I')) {
-					fClassEntry.setValue(""); //$NON-NLS-1$
+					fClassEntry.setValue("", true); //$NON-NLS-1$
 					fInterfaceEntry.setValue(basedOn, true);
 				} else {
 					fClassEntry.setValue(basedOn, true);
-					fInterfaceEntry.setValue(""); //$NON-NLS-1$
+					fInterfaceEntry.setValue("", true); //$NON-NLS-1$
 				}
 			} else {
 				fClassEntry.setValue(basedOn.substring(0, index), true);
 				fInterfaceEntry.setValue(basedOn.substring(index + 1), true);
 			}
 		} else {
-			fClassEntry.setValue(""); //$NON-NLS-1$
-			fInterfaceEntry.setValue(""); //$NON-NLS-1$
+			fClassEntry.setValue("", true); //$NON-NLS-1$
+			fInterfaceEntry.setValue("", true); //$NON-NLS-1$
 		}		
 		
 	}
