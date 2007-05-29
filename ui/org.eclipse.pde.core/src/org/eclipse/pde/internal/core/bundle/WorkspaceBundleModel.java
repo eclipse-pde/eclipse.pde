@@ -71,6 +71,10 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	}
 
 	public String getInstallLocation() {
+		// Ensure we have an underlying resource
+		if (fUnderlyingResource == null) {
+			return null;
+		}
 		IPath path = fUnderlyingResource.getLocation();
 		if(path == null)
 			return null;
@@ -100,10 +104,24 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	}
 
 	public boolean isInSync() {
+		// If we have no underlying resource, it probably got deleted from right
+		// underneath us; thus, the model is not in sync
+		if (fUnderlyingResource == null) {
+			return false;
+		} else if (fUnderlyingResource.getLocation() == null) {
+			return false;
+		}
 		return isInSync(fUnderlyingResource.getLocation().toFile());
 	}
 
 	protected void updateTimeStamp() {
+		// If we have no underlying resource, it probably got deleted from right
+		// underneath us; thus, there is nothing to update the time stamp for
+		if (fUnderlyingResource == null) {
+			return;
+		} else if (fUnderlyingResource.getLocation() == null) {
+			return;
+		}
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
