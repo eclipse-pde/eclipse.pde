@@ -858,7 +858,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER);
 		script.printProperty(PROPERTY_FEATURE_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		if (customFeatureCallbacks != null) {
-			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customFeatureCallbacks, customFeatureCallbacks);
+			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customCallbacksBuildpath + '/' + customFeatureCallbacks, customFeatureCallbacks);
 		}
 		script.printTargetEnd();
 	}
