@@ -576,6 +576,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fPluginsTab.handleReload(new ArrayList());
 			resetTargetProfile();
 		} 
+		// if performOK is getting run in lieu of performApply, we need update the fOriginalText so if the user changes it back to the first state, we know we need to reload
+		fOriginalText = fHomeText.getText();
 		fEnvironmentTab.performOk();
 		fSourceTab.performOk();
 		fPluginsTab.performOk();

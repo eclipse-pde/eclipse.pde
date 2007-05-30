@@ -836,6 +836,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param state  the new state
 	 */
 	public void resetState(PDEState state) {
+		if (fState != null && fState.equals(state))
+			return;
 		// clear all models and add new ones
 		int type = IModelProviderEvent.TARGET_CHANGED;
 		IModel[] removed = fState.getTargetModels();
