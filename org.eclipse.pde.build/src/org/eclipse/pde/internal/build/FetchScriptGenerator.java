@@ -484,7 +484,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			
 			runner.run();	
 		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Messages.error_retrieveFailed, e));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, NLS.bind(Messages.error_retrieveFailed, elementName), e));
 		}
 		
 		try {
