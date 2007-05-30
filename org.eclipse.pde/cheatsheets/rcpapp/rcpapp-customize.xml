@@ -23,7 +23,7 @@
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -32,7 +32,7 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
+      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -40,7 +40,7 @@
    <item title="Open the product editor"
          href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/editor.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the product editor (if it is not already open),
          expand the <b>com.example.rcpapp</b> tree dialog
@@ -51,7 +51,7 @@
          <br/>
          Alternatively, click the following button to perform the task.         
       </description>
-      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)"/>
+      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)" required="false" translate="" />
    </item>
 
    <!-- Item -->

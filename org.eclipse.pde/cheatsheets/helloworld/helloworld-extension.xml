@@ -22,7 +22,7 @@
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -31,7 +31,7 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
+      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -39,7 +39,7 @@
    <item title="Open the plug-in editor"
          href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/editor.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the plug-in editor (if it is not already open),
          expand the <b>com.example.helloworld</b> tree dialog
@@ -50,7 +50,7 @@
          <br/>
          Alternatively, click the following button to perform the task.         
       </description>
-      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)"/>
+      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -173,8 +173,8 @@
          perform the following steps:
       </description>
       <subitem label="Open the plug-in editor and select the &quot;Overview&quot; tab" 
-               skip="true">
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)"/>
+               skip="false">
+         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)" required="false" translate="" />
       </subitem>
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>

@@ -22,7 +22,7 @@
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -31,7 +31,7 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
+      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -44,8 +44,8 @@
          To create the plug-in, perform the following steps:
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; from the main menu, expand the &quot;Plug-in Development&quot; category within the resulting &quot;New Project&quot; dialog box, and choose &quot;Plug-in Project&quot;" 
-               skip="true">
-         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)"/>
+               skip="false">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)" required="false" translate="" />
       </subitem>
       <subitem label="Input &quot;com.example.rcpapp&quot; into the &quot;Project Name&quot; text box on the &quot;Plug-in Project&quot; page and click &quot;Next &gt;&quot;" 
                skip="false"/>
@@ -66,8 +66,8 @@
          perform the following steps:
       </description>
       <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overview&quot; tab within it" 
-               skip="true">
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)"/>
+               skip="false">
+         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)" required="false" translate="" />
       </subitem>               
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
@@ -91,8 +91,8 @@
          perform the following steps:
       </description>
       <subitem label="Open &quot;ApplicationWorkbenchWindowAdvisor.java&quot; by locating it in the &quot;src&quot; folder of the &quot;com.example.rcpapp&quot; package in the &quot;Package Explorer&quot; view and double-clicking it" 
-               skip="true">                                                    
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/src/com/example/rcpapp/ApplicationWorkbenchWindowAdvisor.java)"/>
+               skip="false">                                                    
+         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/src/com/example/rcpapp/ApplicationWorkbenchWindowAdvisor.java)" required="false" translate="" />
       </subitem>
       <subitem label="Comment out &apos;configurer.setTitle(&quot;Hello RCP&quot;);&apos; in the &quot;preWindowOpen()&quot; method" 
                skip="false"/>
@@ -111,8 +111,8 @@
          perform the following steps:
       </description>
       <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overview&quot; tab within it" 
-               skip="true">
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)"/>
+               skip="false">
+         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)" required="false" translate="" />
       </subitem>               
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>

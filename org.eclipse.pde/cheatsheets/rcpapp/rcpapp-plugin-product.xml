@@ -23,7 +23,7 @@
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -32,7 +32,7 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
+      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -45,8 +45,8 @@
          To create the product configuration, perform the following steps:
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Product Configuration&quot; from the main menu" 
-               skip="true">
-         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProductConfigurationWizard)"/>
+               skip="false">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProductConfigurationWizard)" required="false" translate="" />
       </subitem>
       <subitem label="Select &quot;com.example.rcpapp&quot; in the resulting &quot;New Product Configuration&quot; wizard page" 
                skip="false"/>
@@ -61,7 +61,7 @@
    <item title="Open the product editor"
          href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/editor.htm"
          dialog="false"
-         skip="true">
+         skip="false">
       <description>
          To open the product editor (if it is not already open),
          expand the <b>com.example.rcpapp</b> tree dialog
@@ -72,7 +72,7 @@
          <br/>
          Alternatively, click the following button to perform the task.         
       </description>
-      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)"/>
+      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)" required="false" translate="" />
    </item>
 
    <!-- Item -->
@@ -131,7 +131,7 @@
          To run the RCP product,
          perform the following steps:
       </description>
-      <subitem label="Click the &quot;Launch the product&quot; hyperlink under the &quot;Testing&quot; heading" 
+      <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
       <subitem label="Note: &quot;RCP Application&quot; now shows up in the window title bar" 
                skip="true"/>
