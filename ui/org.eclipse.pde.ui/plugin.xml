@@ -128,7 +128,7 @@
       </wizard>
       <wizard
             name="%new.schemaFile.name"
-            icon="$nl$/icons/obj16/schema_obj.gif"
+            icon="$nl$/icons/etool16/newexpfile_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
