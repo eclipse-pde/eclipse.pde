@@ -82,7 +82,15 @@ public class PluginPathFinder {
 		return (File[]) sites.toArray(new File[sites.size()]);
 	}
 
+	public static File[] getFeaturePaths(String platformHome) {
+		return getPaths(platformHome, true);
+	}
+	
 	public static File[] getPluginPaths(String platformHome) {
+		return getPaths(platformHome, false);
+	}
+	
+	public static File[] getPaths(String platformHome, boolean features) {
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
@@ -90,7 +98,7 @@ public class PluginPathFinder {
 				System.setProperty(URL_PROPERTY, value);
 				try {
 					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-					return Utils.asFile(getConfiguredSitesPaths(platformHome, config, false));
+					return Utils.asFile(getConfiguredSitesPaths(platformHome, config, features));
 				} finally {
 					System.setProperty(URL_PROPERTY, EMPTY_STRING);
 				}
@@ -99,7 +107,7 @@ public class PluginPathFinder {
 			}
 		}
 
-		return Utils.asFile(scanLocations(getSites(platformHome, false)));
+		return Utils.asFile(scanLocations(getSites(platformHome, features)));
 	}
 
 	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {

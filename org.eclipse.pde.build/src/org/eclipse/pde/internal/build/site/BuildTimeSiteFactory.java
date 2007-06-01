@@ -71,14 +71,15 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 			Collection installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
-
-			//Search the features in the links
-			File[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
-			for (int i = 0; i < linkPaths.length; i++) {
-				Collection foundFeatures = Utils.findFiles(linkPaths[i], DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
-				if (foundFeatures != null)
-					featureXMLs.addAll(foundFeatures);
+	
+			// extract features from platform.xml
+			File[] featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
+			for (int i = 0; i < featureDirectories.length; i++) {
+				File featureXML = new File(featureDirectories[i],Constants.FEATURE_FILENAME_DESCRIPTOR);
+				if (featureXML.exists())
+					featureXMLs.add(featureXML);
 			}
+			
 		}
 
 		URL featureURL;
