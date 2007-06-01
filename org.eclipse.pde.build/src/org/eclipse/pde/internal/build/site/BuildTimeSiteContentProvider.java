@@ -39,7 +39,6 @@ public class BuildTimeSiteContentProvider extends SiteContentProvider implements
 		Collection pluginsToCompile = findPluginXML(Utils.asFile(urls));
 		if (installedBaseURL != null) {
 			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL)));
-			pluginsToCompile.addAll(findPluginXML(new File[] {new File(installedBaseURL)}));
 		}
 		return pluginsToCompile;
 	}
