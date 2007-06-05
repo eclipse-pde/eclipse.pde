@@ -123,8 +123,14 @@ public class LaunchAction extends Action {
 	}
 	
 	private String getProgramArguments(String os) {
+		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return info != null ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : ""; //$NON-NLS-1$
+		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : ""; //$NON-NLS-1$
+		if (userArgs.length() > 0) {
+			buffer.append(" "); //$NON-NLS-1$
+			buffer.append(userArgs);
+		}
+		return buffer.toString();
 	}
 	
 	private String getVMArguments(String os) {
@@ -244,8 +250,6 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDEUIConstants.DOCLEARLOG, false);
 		wc.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, LaunchArgumentsHelper.getInitialProgramArguments());
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, LaunchArgumentsHelper.getInitialVMArguments());
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
