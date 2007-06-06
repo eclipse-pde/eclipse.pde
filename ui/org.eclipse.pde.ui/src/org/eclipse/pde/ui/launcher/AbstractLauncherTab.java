@@ -13,6 +13,10 @@ package org.eclipse.pde.ui.launcher;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * An abstract class subclassed by all PDE tabs.
@@ -24,6 +28,20 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
 	
 	/**
+	 * Creates an empty label and hence a space in the tab
+	 * 
+	 * @param parent the parent of the label
+	 * @param span the span of the label
+	 * @deprecated
+	 */
+	protected void createStartingSpace(Composite parent, int span) {
+		Label label = new Label(parent, SWT.NULL);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		label.setLayoutData(data);
+	}
+
+	/**
 	 * 
 	 * 
 	 * @return <code>true</code> if the tab is valid, <code>false</code> otherwise
@@ -34,14 +52,12 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		return getErrorMessage() == null;
 	}
 	
-	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 	
-	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
