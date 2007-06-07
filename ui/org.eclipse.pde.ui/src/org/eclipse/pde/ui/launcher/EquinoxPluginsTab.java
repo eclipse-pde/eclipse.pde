@@ -22,5 +22,14 @@ package org.eclipse.pde.ui.launcher;
  * @deprecated use {@link BundlesTab}
  */
 public class EquinoxPluginsTab extends BundlesTab {
+	
+	/**
+	 * Returns the default start level for the launch configuration
+	 * 
+	 * @return the default start level
+	 */
+	public int getDefaultStartLevel() {
+		return fFrameworkBlock.getDefaultStartLevel();
+	}
 
 }

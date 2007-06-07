@@ -38,7 +38,7 @@ public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
 	private OSGiBundleBlock fPluginBlock;
-	private OSGiFrameworkBlock fFrameworkBlock;
+	OSGiFrameworkBlock fFrameworkBlock;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
