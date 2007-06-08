@@ -91,6 +91,8 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public static String getEscaped(String s) {
+		if (s == null)
+			return ""; //$NON-NLS-1$
 		StringBuffer result = new StringBuffer(s.length() + 10);
 		for (int i = 0; i < s.length(); ++i)
 			appendEscapedChar(result, s.charAt(i));
