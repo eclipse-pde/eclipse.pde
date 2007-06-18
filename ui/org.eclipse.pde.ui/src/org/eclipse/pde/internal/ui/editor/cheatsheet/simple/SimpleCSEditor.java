@@ -18,7 +18,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -32,7 +34,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
  * SimpleCheatSheetEditor
  *
  */
-public class SimpleCSEditor extends PDEFormEditor {
+public class SimpleCSEditor extends MultiSourceEditor {
 
 	/**
 	 * 
@@ -66,11 +68,14 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
 	 */
 	protected void addEditorPages() {
+		// Add form pages
 		try {
-			addPage(new SimpleCSPage(this));
+			addPage(new SimpleCSDefinitionPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+		// Add source page
+		addSourcePage(SimpleCSInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +125,8 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
 	public void editorContextAdded(InputContext context) {
-		// NO-OP
+		// Add the source page
+		addSourcePage(context.getId());
 	}
 
 	/* (non-Javadoc)
@@ -162,13 +168,31 @@ public class SimpleCSEditor extends PDEFormEditor {
 		// the outline view
 		IFormPage formPage = getActivePageInstance();	
 		if ((formPage != null) && 
-				(formPage instanceof SimpleCSPage)) {
+				(formPage instanceof SimpleCSDefinitionPage)) {
 			// Synchronizes the selection made in the master tree view with the
 			// selection in the outline view when the link with editor button
 			// is toggled on
-			return ((SimpleCSPage)formPage).getSelection();
+			return ((SimpleCSDefinitionPage)formPage).getSelection();
 		}
 		return super.getSelection();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
+	 */
+	protected String computeInitialPageId() {
+		String firstPageId = super.computeInitialPageId();
+		if (firstPageId == null) {
+			firstPageId = SimpleCSDefinitionPage.PAGE_ID;
+		}
+		return firstPageId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage(org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		return new SimpleCSSourcePage(editor, title, name);
+	}	
 	
 }

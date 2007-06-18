@@ -11,10 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -37,6 +33,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
@@ -44,6 +41,7 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveRunObjectAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
@@ -56,9 +54,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -118,8 +114,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				PDEUIMessages.SimpleCSElementSection_1, 
 				PDEUIMessages.SimpleCSElementSection_2, 
 				PDEUIMessages.SimpleCSElementSection_3});
-		getSection().setText(PDEUIMessages.SimpleCSElementSection_4);
-		getSection().setDescription(PDEUIMessages.SimpleCSElementSection_5);
 
 		// Create actions
 		fAddStepAction = new SimpleCSAddStepAction();
@@ -129,7 +123,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
 		fCollapseAction = null;
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -137,12 +130,17 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
 		fModel = (ISimpleCSModel)getPage().getModel();
-
+		// Set section title 
+		section.setText(PDEUIMessages.SimpleCSElementSection_4);
+		// Set section description
+		section.setDescription(PDEUIMessages.SimpleCSElementSection_5);
+		// Create section client
 		Composite container = createClientContainer(section, 2, toolkit);
 		createTree(container, toolkit);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initializeTreeViewer();
+		// Create section toolbar
 		createSectionToolbar(section, toolkit);
 	}
 
@@ -478,28 +476,19 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * 
 	 */
 	private void handlePreviewAction() {
-		// Get the editor input
-		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer View)
-		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS Repositories View)
-		IEditorInput input = getPage().getEditorInput();
-		try {
-			// Write the current model into a String as raw XML
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
-			fModel.getSimpleCS().write("", writer); //$NON-NLS-1$
-			writer.flush();
-			swriter.close();
-			// Launch in the cheat sheet view
-			// Note:  Having a null URL is valid for simple cheat sheets
-			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
-					input.getName(),
-					input.getName(), 
-					swriter.toString(),
-					null);
-			openAction.run();
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		}
+		// Get the editor
+		PDEFormEditor editor = (PDEFormEditor)getPage().getEditor();
+		// Get the form editor contributor
+		SimpleCSEditorContributor contributor = 
+			(SimpleCSEditorContributor)editor.getContributor();
+		// Get the preview action
+		SimpleCSPreviewAction previewAction = contributor.getPreviewAction();
+		// Set the cheat sheet object
+		previewAction.setDataModelObject(fModel.getSimpleCS());
+		// Set the editor input
+		previewAction.setEditorInput(getPage().getEditorInput());
+		// Run the preview action
+		previewAction.run();
 	}
 	
 	/* (non-Javadoc)
@@ -531,7 +520,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return;
 		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 			// Get the form page
-			SimpleCSPage page = (SimpleCSPage)getPage();			
+			SimpleCSDefinitionPage page = (SimpleCSDefinitionPage)getPage();			
 			// Remember the currently selected page
 			IDetailsPage previousDetailsPage = 
 				page.getBlock().getDetailsPart().getCurrentPage();

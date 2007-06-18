@@ -72,7 +72,7 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
 	 */
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof SimpleCSPage) {
+		if (parent instanceof SimpleCSDefinitionPage) {
 			ISimpleCSModel cheatsheet = (ISimpleCSModel)fEditor.getAggregateModel();
 			if ((cheatsheet != null)
 					&& cheatsheet.isLoaded()) {
@@ -101,7 +101,7 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
 	 */
 	protected String getParentPageId(Object item) {
-		return SimpleCSPage.PAGE_ID;
+		return SimpleCSDefinitionPage.PAGE_ID;
 	}	
 	
 }

@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * SimpleCSModel
@@ -37,7 +38,7 @@ public class SimpleCSModel extends AbstractModel implements ISimpleCSModel {
 	private ISimpleCSModelFactory fFactory;
 	
 	private ISimpleCS fSimpleCS;
-	
+
 	/**
 	 * 
 	 */
@@ -103,15 +104,24 @@ public class SimpleCSModel extends AbstractModel implements ISimpleCSModel {
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
 				setLoaded(true);
+			} else {
+				setLoaded(false);
 			}
+			setException(null);
+		} catch (SAXException e) {
+			setLoaded(false);
+			setException(e);	
 		} catch (Exception e) {
+			setLoaded(false);
 			setException(e);
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (source != null)
+				if (source != null) {
 					source.close();
+				}
 			} catch (IOException e) {
+				// Ignore
 			}
 		}
 	}

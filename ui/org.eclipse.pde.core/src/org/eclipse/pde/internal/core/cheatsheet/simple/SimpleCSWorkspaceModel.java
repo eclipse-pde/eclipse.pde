@@ -17,11 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.PDECore;
@@ -185,5 +187,27 @@ public class SimpleCSWorkspaceModel extends SimpleCSModel implements
 			} 
 		} 		
 	}
+
+	/**
+	 * @param document
+	 */
+	public void reload(IDocument document) {
+		// Get the document's text
+		String text = document.get();
+		InputStream stream = null;
+
+		try {
+			// Turn the document's text into a stream
+			stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
+			// Reload the model using the stream
+			reload(stream, false);
+			// Remove the dirty (*) indicator from the editor window
+			setDirty(false);
+		} catch (UnsupportedEncodingException e) {
+			PDECore.logException(e);
+		} catch (CoreException e) {
+			// Ignore
+		}
+	}		
 	
 }

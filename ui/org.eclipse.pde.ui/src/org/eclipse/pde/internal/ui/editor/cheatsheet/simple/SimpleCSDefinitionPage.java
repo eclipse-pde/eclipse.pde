@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * SimpleCSPage
  *
  */
-public class SimpleCSPage extends CSAbstractPage implements IModelChangedListener {
+public class SimpleCSDefinitionPage extends CSAbstractPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "simpleCSPage"; //$NON-NLS-1$
 	
@@ -45,7 +45,7 @@ public class SimpleCSPage extends CSAbstractPage implements IModelChangedListene
 	/**
 	 * @param editor
 	 */
-	public SimpleCSPage(FormEditor editor) {
+	public SimpleCSDefinitionPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.SimpleCSPage_0);
 		fBlock = new SimpleCSBlock(this);
 	}
