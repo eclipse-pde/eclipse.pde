@@ -155,8 +155,6 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewNewWizard_wtitle;
 	public static String ViewTemplate_title0;
 	public static String ViewTemplate_desc0;
-	public static String ViewTemplate_title1;
-	public static String ViewTemplate_desc1;
 	public static String ViewTemplate_packageName;
 	public static String ViewTemplate_className;
 	public static String ViewTemplate_name;
@@ -167,11 +165,7 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewTemplate_select;
 	public static String ViewTemplate_table;
 	public static String ViewTemplate_tree;
-	public static String ViewTemplate_doubleClick;
-	public static String ViewTemplate_popup;
-	public static String ViewTemplate_toolbar;
-	public static String ViewTemplate_pulldown;
-	public static String ViewTemplate_sorting;
+	public static String ViewTemplate_contextHelp;
 	public static String ViewTemplate_addToPerspective;
 
 	public static String HelpTemplate_title;

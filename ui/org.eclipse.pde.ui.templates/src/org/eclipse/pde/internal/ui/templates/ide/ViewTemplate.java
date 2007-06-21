@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.templates.ide;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -30,15 +31,17 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.templates.AbstractTemplateSection;
 import org.eclipse.pde.ui.templates.BooleanOption;
 
 public class ViewTemplate extends PDETemplateSection {
 	private BooleanOption addToPerspective;
+	private BooleanOption contextHelp;
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
 	public ViewTemplate() {
-		setPageCount(2);
+		setPageCount(1);
 		createOptions();
 	}
 	
@@ -65,28 +68,23 @@ public class ViewTemplate extends PDETemplateSection {
 						{"treeViewer", PDETemplateMessages.ViewTemplate_tree}}, //$NON-NLS-1$
 						"tableViewer", 0); //$NON-NLS-1$
 		addToPerspective = (BooleanOption)addOption("addToPerspective",PDETemplateMessages.ViewTemplate_addToPerspective,true,0); //$NON-NLS-1$
-		// second page
-		addOption("doubleClick", PDETemplateMessages.ViewTemplate_doubleClick, true, 1); //$NON-NLS-1$
-		addOption("popup", PDETemplateMessages.ViewTemplate_popup, true, 1); //$NON-NLS-1$
-		addOption("localToolbar", PDETemplateMessages.ViewTemplate_toolbar, true, 1); //$NON-NLS-1$
-		addOption("localPulldown", PDETemplateMessages.ViewTemplate_pulldown, true, 1); //$NON-NLS-1$
-		addOption("sorter", PDETemplateMessages.ViewTemplate_sorting, true, 1); //$NON-NLS-1$
-		//addOption("filter", PDEPlugin.getResourceString(NL_FILTER), true, lists[1]);
+		contextHelp = (BooleanOption)addOption("contextHelp", PDETemplateMessages.ViewTemplate_contextHelp, true, 0); //$NON-NLS-1$
 	}
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
-		initializeOption("viewCategoryId", id); //$NON-NLS-1$
+		initializeFields(data.getId());
+		
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
-		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
-		initializeOption("viewCategoryId", pluginId); //$NON-NLS-1$
+		initializeFields(model.getPluginBase().getId());
+	}
+	public void initializeFields(String id) {
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption("viewCategoryId", id); //$NON-NLS-1$
 	}
 	
 	public boolean isDependentOnParentWizard() {
@@ -99,11 +97,18 @@ public class ViewTemplate extends PDETemplateSection {
 		page0.setDescription(PDETemplateMessages.ViewTemplate_desc0);
 		wizard.addPage(page0);
 		
-		WizardPage page1 = createPage(1, IHelpContextIds.TEMPLATE_VIEW);
-		page1.setTitle(PDETemplateMessages.ViewTemplate_title1);
-		page1.setDescription(PDETemplateMessages.ViewTemplate_desc1);
-		wizard.addPage(page1);
 		markPagesAdded();
+	}
+	/**
+	 * @see AbstractTemplateSection#isOkToCreateFile(File)
+	 */
+	protected boolean isOkToCreateFile(File sourceFile) {
+		boolean isOk = true;
+		String fileName = sourceFile.getName();
+		if (fileName.equals("contexts.xml")) { //$NON-NLS-1$
+			isOk = contextHelp.isSelected();
+		}
+		return isOk;	
 	}
 	
 	public String getUsedExtensionPoint() {
@@ -140,7 +145,7 @@ public class ViewTemplate extends PDETemplateSection {
 			perspectiveElement.setName("perspectiveExtension"); //$NON-NLS-1$
 			perspectiveElement.setAttribute(
 				"targetID", //$NON-NLS-1$
-				"org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
+				"org.eclipse.jdt.ui.JavaPerspective"); //$NON-NLS-1$
 
 			IPluginElement view = factory.createElement(perspectiveElement);
 			view.setName("view"); //$NON-NLS-1$
@@ -154,6 +159,18 @@ public class ViewTemplate extends PDETemplateSection {
 			if (!perspectiveExtension.isInTheModel())
 				plugin.add(perspectiveExtension);
 		}	
+		
+		if (contextHelp.isSelected()) {
+			IPluginExtension contextExtension =
+				createExtension("org.eclipse.help.contexts", true); //$NON-NLS-1$
+			
+			IPluginElement contextsElement = factory.createElement(contextExtension);
+			contextsElement.setName("contexts"); //$NON-NLS-1$
+			contextsElement.setAttribute("file", "contexts.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			contextExtension.add(contextsElement);
+			if (!contextExtension.isInTheModel())
+				plugin.add(contextExtension);
+		}
 	}
 
 	private void createCategory(IPluginExtension extension, String id) throws CoreException {
@@ -202,5 +219,11 @@ public class ViewTemplate extends PDETemplateSection {
         if (packageName.length() != 0)
             return packageName + ".views"; //$NON-NLS-1$
         return "views"; //$NON-NLS-1$
+    }
+    
+    public Object getValue(String name) {
+    	if (name.equals("useEnablement")) //$NON-NLS-1$
+    		return new Boolean(getTargetVersion() >= 3.3);
+    	return super.getValue(name);
     }
 }

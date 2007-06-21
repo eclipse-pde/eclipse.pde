@@ -43,11 +43,6 @@ import org.eclipse.core.runtime.IAdaptable;
 % viewCategoryId
 % viewCategoryName
 % viewType
-% doubleClick
-% popup
-% localToolbar
-% localPulldown
-% sorter
 % filter
 % drillDown
 
@@ -60,13 +55,9 @@ public class $className$ extends ViewPart {
 	private DrillDownAdapter drillDownAdapter;
 %  endif
 %endif
-%if (localToolbar || localPulldown || popup)
 	private Action action1;
 	private Action action2;
-%endif
-%if doubleClick
 	private Action doubleClickAction;
-%endif
 
 	/*
 	 * The content provider class is responsible for
@@ -223,10 +214,8 @@ public class $className$ extends ViewPart {
 		}
 	}
 %endif
-%if sorter
 	class NameSorter extends ViewerSorter {
 	}
-%endif
 
 	/**
 	 * The constructor.
@@ -249,25 +238,19 @@ public class $className$ extends ViewPart {
 %endif
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-%if sorter
 		viewer.setSorter(new NameSorter());
-%endif
 		viewer.setInput(getViewSite());
-%if (localToolbar || localPulldown || popup)
+%if contextHelp
+
+		// Create the help context id for the viewer's control
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "$pluginId$.viewer");
+%endif
 		makeActions();
-%endif
-%if popup
 		hookContextMenu();
-%endif
-%if doubleClick
 		hookDoubleClickAction();
-%endif
-%if (localToolbar || localPulldown)
 		contributeToActionBars();
-%endif
 	}
 
-%if popup	
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
@@ -280,29 +263,19 @@ public class $className$ extends ViewPart {
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-%endif
 
-%if (localToolbar || localPulldown)	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-%if localPulldown
 		fillLocalPullDown(bars.getMenuManager());
-%endif
-%if localToolbar
 		fillLocalToolBar(bars.getToolBarManager());
-%endif
 	}
-%endif
 
-%if localPulldown	
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(action1);
 		manager.add(new Separator());
 		manager.add(action2);
 	}
-%endif
 
-%if popup	
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(action1);
 		manager.add(action2);
@@ -313,9 +286,7 @@ public class $className$ extends ViewPart {
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-%endif
 	
-%if localToolbar
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(action1);
 		manager.add(action2);
@@ -324,9 +295,7 @@ public class $className$ extends ViewPart {
 		drillDownAdapter.addNavigationActions(manager);
 %  endif
 	}
-%endif
 
-%if (localToolbar || localPulldown || popup)	
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
@@ -347,7 +316,6 @@ public class $className$ extends ViewPart {
 		action2.setToolTipText("Action 2 tooltip");
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-%   if doubleClick		
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
@@ -355,11 +323,8 @@ public class $className$ extends ViewPart {
 				showMessage("Double-click detected on "+obj.toString());
 			}
 		};
-%   endif
 	}
-%endif
 
-%if doubleClick	
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -367,7 +332,6 @@ public class $className$ extends ViewPart {
 			}
 		});
 	}
-%endif	
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),
