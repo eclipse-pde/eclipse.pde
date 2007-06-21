@@ -1,0 +1,36 @@
+<project name="Product Build allElements Delegator">
+	<property name="archiveNamePrefix" value="${buildId}"/>
+	
+ 	<!-- ===================================================================== -->
+ 	<!-- Run a given ${target} on all elements being built                     -->
+ 	<!-- Add on <ant> task for each top level element being built.             -->
+ 	<!-- ===================================================================== -->
+ 	<target name="allElementsDelegator">
+ 		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="a.feature" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
+			<property name="id" value="a.feature.sdk" />
+		</ant>
+ 	</target>
+ 
+ 	<!-- ===================================================================== -->
+ 	<!-- Targets to assemble the built elements for particular configurations  -->
+ 	<!-- These generally call the generated assemble scripts (named in         -->
+ 	<!-- ${assembleScriptName}) but may also add pre and post processing       -->
+ 	<!-- Add one target for each root element and each configuration           -->
+ 	<!-- ===================================================================== -->
+	<target name="assemble.a.feature">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
+			<property name="archiveName" value="a.feature.zip" />
+		</ant>
+	</target>
+			
+	<target name="assemble.a.feature.sdk">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
+			<property name="archiveName" value="a.feature.sdk.zip" />
+		</ant>
+	</target>
+</project>

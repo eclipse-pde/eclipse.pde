@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config date="1182438350582" transient="false" version="3.0">
+<site enabled="true" policy="MANAGED-ONLY" updateable="true" url="file:@BASE_LOCATION@">
+	<feature id="org.eclipse.rcp" url="features/org.eclipse.rcp_@RCP_VERSION@/" version="@RCP_VERSION@">
+	</feature>
+</site>
+</config>

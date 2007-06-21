@@ -1,0 +1,2 @@
+!******* The real map entry has "org.eclipse.sdk-feature" not "org.eclipse.sdk-features"
+feature@org.eclipse.rcp=vNONEXISTANT,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,org.eclipse.sdk-features/features/org.eclipse.rcp

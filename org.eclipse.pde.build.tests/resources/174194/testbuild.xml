@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+    <target name="default">
+    	<eclipse.fetch
+    			elements="feature@org.eclipse.rcp"
+    			buildDirectory="${basedir}"
+    			directory="${basedir}/directory.txt"
+    			baseLocation="${basedir}"
+    		/>
+    </target>
+</project>

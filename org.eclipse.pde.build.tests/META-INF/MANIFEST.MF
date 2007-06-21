@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests Plug-in
+Bundle-SymbolicName: org.eclipse.pde.build.tests;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.pde.build.tests.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.junit,
+ org.eclipse.pde.build,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ org.eclipse.ant.core,
+ org.apache.ant,
+ org.eclipse.ant.ui,
+ org.eclipse.debug.core,
+ org.eclipse.update.core
+Eclipse-LazyStart: true
