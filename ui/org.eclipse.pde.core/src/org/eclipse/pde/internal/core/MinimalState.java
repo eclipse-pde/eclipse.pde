@@ -120,6 +120,9 @@ public class MinimalState {
 			BundleDescription descriptor = stateObjectFactory.createBundleDescription(
 					fState, manifest, bundleLocation.getAbsolutePath(),
 					bundleId == -1 ? getNextId() : bundleId);
+			// Don't add the BundleDescription if we already have a Bundle with the same id and version
+			if (fState.getBundle(descriptor.getSymbolicName(), descriptor.getVersion()) != null)
+					return null;
 			// new bundle
 			if (bundleId == -1) {
 				fState.addBundle(descriptor);
