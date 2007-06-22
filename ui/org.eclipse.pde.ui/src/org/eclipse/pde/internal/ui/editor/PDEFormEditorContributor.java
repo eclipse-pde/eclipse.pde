@@ -92,7 +92,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 
 		public void selectionChanged(ISelection selection) {
-			setEnabled(isEditable() && fEditor.canCopy(selection));
+			setEnabled(isEditable() && fEditor.canCut(selection));
 		}
 	}
 

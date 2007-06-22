@@ -903,6 +903,9 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		return false;
 	}
+	public boolean canCut(ISelection selection) {
+		return canCopy(selection);
+	}
 	void updateUndo(IAction undoAction, IAction redoAction) {
 		IModelUndoManager undoManager = fInputContextManager.getUndoManager();
 		if (undoManager != null)

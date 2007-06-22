@@ -19,11 +19,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
@@ -272,5 +276,23 @@ public class SchemaEditor extends MultiSourceEditor {
 			schemaEditor.selectReveal(element);
 		}
 	}
+	
+	public boolean canCut(ISelection selection) {
+		if (selection instanceof IStructuredSelection)
+		{	Object selected = ((IStructuredSelection)selection).getFirstElement();
+			if(selected instanceof ISchemaRootElement)
+			{	return false;
+			}
+			else if (selected instanceof ISchemaAttribute)
+			{	if(((ISchemaAttribute)selected).getParent() instanceof ISchemaRootElement)
+				{	return false;
+				}
+			}
+		}
+
+		return super.canCut(selection);
+	}
+	
+	
 
 }

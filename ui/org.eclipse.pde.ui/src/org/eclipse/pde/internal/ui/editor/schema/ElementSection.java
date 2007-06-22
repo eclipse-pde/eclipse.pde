@@ -325,15 +325,18 @@ public class ElementSection extends TreeSection {
 		manager.add(submenu);
 		if (object != null) {
 			if (!(object instanceof ISchemaRootElement)) { //$NON-NLS-1$
-				manager.add(new Separator());
-				Action deleteAction = new Action() {
-					public void run() {
-						handleDelete((IStructuredSelection) selection);
-					}
-				};
-				deleteAction.setText(PDEUIMessages.Actions_delete_label);
-				deleteAction.setEnabled(fSchema.isEditable());
-				manager.add(deleteAction);
+				if(!(object instanceof ISchemaAttribute 
+						&& ((ISchemaAttribute)object).getParent() instanceof ISchemaRootElement))
+				{	manager.add(new Separator());
+					Action deleteAction = new Action() {
+						public void run() {
+							handleDelete((IStructuredSelection) selection);
+						}
+					};
+					deleteAction.setText(PDEUIMessages.Actions_delete_label);
+					deleteAction.setEnabled(fSchema.isEditable());
+					manager.add(deleteAction);
+				}
 			}
 		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
@@ -347,12 +350,28 @@ public class ElementSection extends TreeSection {
 	}
 
 	private void handleDelete(Object object) {
-		if (object instanceof SchemaElementReference) {
+		if (object instanceof ISchemaRootElement)
+		{	// Semantic rule: The root "extension" element of a schema
+			// cannot be removed
+
+			// Produce audible beep
+			Display.getCurrent().beep();				
+		}
+		else if (object instanceof SchemaElementReference) {
 			fRearranger.deleteReference((SchemaElementReference)object);
 		} else if (object instanceof ISchemaElement) {
 			fRearranger.deleteElement((ISchemaElement)object);
 		} else if (object instanceof ISchemaAttribute) {
-			fRearranger.deleteAttribute((ISchemaAttribute)object);
+			if(!(((ISchemaAttribute)object).getParent() instanceof ISchemaRootElement))
+			{	fRearranger.deleteAttribute((ISchemaAttribute)object);
+			}
+			else
+			{	// Semantic rule: Attributes of the root "extension" element
+				// of a schema cannot be removed
+
+				// Produce audible beep
+				Display.getCurrent().beep();
+			}
 		} else if (object instanceof ISchemaCompositor) {
 			fRearranger.deleteCompositor((ISchemaCompositor)object);
 		}
@@ -493,7 +512,7 @@ public class ElementSection extends TreeSection {
 
 	protected void selectionChanged(IStructuredSelection selection) {
 //		getPage().getManagedForm().fireSelectionChanged(this, selection);
-//		getPage().getPDEEditor().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}
 
