@@ -528,7 +528,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 				menu.add(action);
 			}
 			FormatAction formatManifestAction = textContributor.getFormatAction();
-			if (formatManifestAction != null && formatManifestAction.isEnabled())
+			if (isEditable() && formatManifestAction != null && formatManifestAction.isEnabled())
 				menu.add(formatManifestAction);
 		}
 		super.editorContextMenuAboutToShow(menu);
