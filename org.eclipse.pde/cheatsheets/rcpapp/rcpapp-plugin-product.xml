@@ -116,7 +116,7 @@
          <br/>
          <br/>
          Note:  PDE automatically synchronizes the product configuration
-         when the <b>Launch the product</b> hyperlinks under the 
+         when the <b>Launch an Eclipse Application</b> hyperlinks under the 
          <b>Testing</b> heading are used.
       </description>
    </item>

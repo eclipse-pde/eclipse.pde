@@ -89,7 +89,7 @@
       </description>
       <subitem label="Select the &quot;Overview&quot; tab within the product editor to display the &quot;Overview&quot; page" 
                skip="false"/>      
-      <subitem label="Click the &quot;Launch the product&quot; hyperlink under the &quot;Testing&quot; heading" 
+      <subitem label="Click the &quot;Launch an Eclipse Application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
       <subitem label="Note the image in the window title bar (if applicable on your platform)" 
                skip="true"/>
@@ -100,15 +100,15 @@
    <!-- Item -->
 
    <item title="Add a splash screen"
-         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/branding.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/splash.htm"
          dialog="true"
          skip="false">
       <description>
          To add a splash screen, perform the following steps:
       </description>
-      <subitem label="Select the &quot;Branding&quot; tab within the product editor to display the &quot;Branding&quot; page" 
+      <subitem label="Select the &quot;Splash&quot; tab within the product editor to display the &quot;Splash&quot; page" 
                skip="false"/>      
-      <subitem label="Click the &quot;Browse...&quot; button adjacent to the &quot;Plug-in&quot; text box under the &quot;Splash Screen&quot; heading" 
+      <subitem label="Click the &quot;Browse...&quot; button adjacent to the &quot;Plug-in&quot; text box under the &quot;Location&quot; heading" 
                skip="false"/>
       <subitem label="Select the &quot;com.example.rcpapp&quot; entry in the &quot;Plug-in Selection&quot; dialog box and click &quot;OK&quot;" 
                skip="true"/>
@@ -136,7 +136,7 @@
       </description>
       <subitem label="Select the &quot;Overview&quot; tab within the product editor to display the &quot;Overview&quot; page" 
                skip="false"/>      
-      <subitem label="Click the &quot;Launch the product&quot; hyperlink under the &quot;Testing&quot; heading" 
+      <subitem label="Click the &quot;Launch an Eclipse Application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
       <subitem label="Note the splash screen displayed before the RCP application window is visible" 
                skip="true"/>
