@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class PluginExtensionPointNode extends PluginObjectNode implements
-		IPluginExtensionPoint, IDocumentExtensionPoint {
+		IPluginExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,10 +96,10 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.IDocumentExtensionPoint#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public void reconnect(ISharedPluginModel model, IDocumentNode parent) {
-		super.reconnect(model, null, parent);
+	public void reconnect(IDocumentNode parent, IModel model) {
+		super.reconnect(parent, model);
 	}
 	
 	/* (non-Javadoc)

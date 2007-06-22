@@ -11,9 +11,10 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.core.IModel;
 
 public interface IDocumentNode extends Serializable, IDocumentRange {
 		
@@ -29,19 +30,25 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	IDocumentTextNode getTextNode();
 	void removeTextNode();
 	
+	// Not used by text edit operations
 	int indexOf(IDocumentNode child);
+	
 	IDocumentNode getChildAt(int index);
 	
 	IDocumentNode getPreviousSibling();
 	void setPreviousSibling(IDocumentNode sibling);
 	
+	// Not used by text edit operations
 	void swap(IDocumentNode child1, IDocumentNode child2);
 	
 	void setXMLTagName(String tag);	
 	String getXMLTagName();
 	
 	void setXMLAttribute(IDocumentAttribute attribute);	
+	
+	// Not used by text edit operations
 	void setXMLAttribute(String name, String value);	
+	// Not used by text edit operations
 	String getXMLAttributeValue(String name);
 	
 	IDocumentAttribute getDocumentAttribute(String name);
@@ -58,12 +65,22 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 		
 	void setLineIndent(int indent);
 	int getLineIndent();
+	// Not used by text edit operations
+	public String getIndent();
 	
 	String write(boolean indent);
 	String writeShallow(boolean terminate);
 	
+	// Not used by text edit operations
 	public int getChildCount();
+	// Not used by text edit operations
+	public TreeMap getNodeAttributesMap();
+	// Not used by text edit operations
+	public ArrayList getChildNodesList();
+	// Not used by text edit operations
+	public void reconnect(IDocumentNode parent, IModel model);
 	
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
-	
+	// TODO: MP: TEO:  Rename to IDocumentElementNode
+	// TODO: MP: TEO:  Space out, comment and rename methods
+	// TODO: MP: TEO: Consider making separate interface for plugins only as subinterface
 }

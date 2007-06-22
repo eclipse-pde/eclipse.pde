@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class PluginExtensionNode extends PluginParentNode implements
-		IPluginExtension, IDocumentExtension {
+		IPluginExtension {
 	
 	private static final long serialVersionUID = 1L;
 	private transient ISchema fSchema;
@@ -142,10 +142,12 @@ public class PluginExtensionNode extends PluginParentNode implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		super.reconnect(model, schema, parent);
+	public void reconnect(IDocumentNode parent, IModel model) {
+		super.reconnect(parent, model);
 		// Transient Field:  Schema
-		fSchema = schema;
+		// Not necessary to reconnect schema.
+		// getSchema will retrieve the schema on demand if it is null		
+		fSchema = null;
 	}
 
 }

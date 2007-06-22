@@ -20,9 +20,10 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
-public class PluginDocumentNodeFactory implements IPluginModelFactory {
+public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocumentNodeFactory {
 	
 	private PluginModelBase fModel;
 

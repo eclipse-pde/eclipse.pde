@@ -133,6 +133,50 @@ public class PDEXMLHelper {
 		return buf.toString();
 	}
 
+	/**
+	 * @param source
+	 * @return
+	 */
+	public static String getWritableAttributeString(String source) {
+		// Ensure source is defined
+		if (source == null) {
+			return ""; //$NON-NLS-1$
+		}
+		// Translate source using a buffer
+		StringBuffer buffer = new StringBuffer();
+		// Translate source character by character
+		for (int i = 0; i < source.length(); i++) {
+			char character = source.charAt(i);
+			switch (character) {
+				case '&' :
+					buffer.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buffer.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buffer.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buffer.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buffer.append("&quot;"); //$NON-NLS-1$
+					break;
+				case '\r' :
+					buffer.append("&#x0D;"); //$NON-NLS-1$
+					break;
+				case '\n' :
+					buffer.append("&#x0A;"); //$NON-NLS-1$
+					break;
+				default :
+					buffer.append(character);
+					break;
+			}
+		}
+		return buffer.toString();
+	}
+	
 	public static int getSAXPoolLimit() {
 		return fSAXPoolLimit;
 	}

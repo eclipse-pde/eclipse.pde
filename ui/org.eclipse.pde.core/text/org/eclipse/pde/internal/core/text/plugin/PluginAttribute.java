@@ -14,8 +14,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
@@ -24,13 +23,23 @@ public class PluginAttribute extends PluginObjectNode implements
 	
 	private static final long serialVersionUID = 1L;
 
-	private transient IDocumentNode fEnclosingElement;
-	private transient int fNameOffset = -1;
-	private transient int fNameLength = -1;
-	private transient int fValueOffset = -1;
-	private transient int fValueLength = -1;
+	// The plugin attribute interface requires this class to extend PluginObjectNode
+	// However, by doing that this class also extends the document
+	// element node class - which is wrong when implementing 
+	// the document attribute node interface
+	// To work around this issue, we use an adaptor.
+	private DocumentAttributeNode fAttribute;
 
 	private String fValue;
+	
+	/**
+	 * 
+	 */
+	public PluginAttribute() {
+		super();
+		fAttribute = new DocumentAttributeNode();
+		fValue = null;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()
@@ -38,78 +47,91 @@ public class PluginAttribute extends PluginObjectNode implements
 	public String getValue() {
 		return fValue;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#setValue(java.lang.String)
 	 */
 	public void setValue(String value) throws CoreException {
 		fValue = value;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
 	public void setEnclosingElement(IDocumentNode node) {
-		fEnclosingElement = node;
+		fAttribute.setEnclosingElement(node);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getEnclosingElement()
 	 */
 	public IDocumentNode getEnclosingElement() {
-		return fEnclosingElement;
+		return fAttribute.getEnclosingElement();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameOffset(int)
 	 */
 	public void setNameOffset(int offset) {
-		fNameOffset = offset;
+		fAttribute.setNameOffset(offset);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameOffset()
 	 */
 	public int getNameOffset() {
-		return fNameOffset;
+		return fAttribute.getNameOffset();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameLength(int)
 	 */
 	public void setNameLength(int length) {
-		fNameLength = length;
+		fAttribute.setNameLength(length);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameLength()
 	 */
 	public int getNameLength() {
-		return fNameLength;
+		return fAttribute.getNameLength();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueOffset(int)
 	 */
 	public void setValueOffset(int offset) {
-		fValueOffset = offset;
+		fAttribute.setValueOffset(offset);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueOffset()
 	 */
 	public int getValueOffset() {
-		return fValueOffset;
+		return fAttribute.getValueOffset();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueLength(int)
 	 */
 	public void setValueLength(int length) {
-		fValueLength = length;
+		fAttribute.setValueLength(length);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueLength()
 	 */
 	public int getValueLength() {
-		return fValueLength;
+		return fAttribute.getValueLength();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeName()
 	 */
 	public String getAttributeName() {
 		return getName();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeValue()
 	 */
@@ -124,6 +146,9 @@ public class PluginAttribute extends PluginObjectNode implements
 		return getName() + "=\"" + getWritableString(getValue()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#getWritableString(java.lang.String)
+	 */
 	public String getWritableString(String source) {
 		return super
 				.getWritableString(source)
@@ -131,32 +156,29 @@ public class PluginAttribute extends PluginObjectNode implements
 				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeName(java.lang.String)
+	 */
 	public void setAttributeName(String name) throws CoreException {
 		setName(name);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeValue(java.lang.String)
+	 */
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#reconnectAttribute()
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		super.reconnect(model, schema, parent);
-		// Transient field:  Enclosing element
-		// Essentially is the parent (an element)
-		// Note: Parent field from plugin document node parent seems to be 
-		// null; but, we will set it any ways
-		fEnclosingElement = parent;
-		// Transient field:  Name Length
-		fNameLength = -1;
-		// Transient field:  Name Offset
-		fNameOffset = -1;
-		// Transient field:  Value Length
-		fValueLength = -1;
-		// Transient field:  Value Offset
-		fValueOffset = -1;
+	public void reconnect(IDocumentNode parent) {
+		// Inconsistency in model
+		// A document attribute node should not extend plugin object because plugin object extends 
+		// document element node
+		super.reconnect(parent, getModel());
+		fAttribute.reconnect(parent);
 	}
 	
 	/* (non-Javadoc)

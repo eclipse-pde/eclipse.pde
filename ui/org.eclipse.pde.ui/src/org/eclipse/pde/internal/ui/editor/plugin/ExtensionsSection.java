@@ -52,8 +52,6 @@ import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.plugin.IDocumentElement;
-import org.eclipse.pde.internal.core.text.plugin.IDocumentExtension;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -1007,29 +1005,24 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
 				
-				if ((sourceObject instanceof IDocumentExtension) &&
-						(sourceObject instanceof IPluginExtension) &&
+				if ((sourceObject instanceof IPluginExtension) &&
 						(pluginBase instanceof IDocumentNode)) {
 					// Extension object
-					IDocumentExtension extension = (IDocumentExtension)sourceObject;
-					// Retrieve the associated schema if there is one
-					ISchema schema = getSchema((IPluginExtension)extension);
+					IDocumentNode extension = (IDocumentNode)sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					extension.reconnect(model, schema, (IDocumentNode)pluginBase);
+					extension.reconnect((IDocumentNode)pluginBase, model);
+					// Add the extension to the plugin parent (plugin)
 					pluginBase.add((IPluginExtension)extension);
 
-				} else if ((sourceObject instanceof IDocumentElement) &&
-						(sourceObject instanceof IPluginElement) &&
+				} else if ((sourceObject instanceof IPluginElement) &&
 						(targetObject instanceof IPluginParent) &&
 						(targetObject instanceof IDocumentNode)) {
 					// Element object
-					IDocumentElement element = (IDocumentElement)sourceObject;
-					// Retrieve the associated schema if there is one
-					ISchema schema = getSchema((IPluginElement)element);
+					IDocumentNode element = (IDocumentNode)sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					element.reconnect(model, schema, (IDocumentNode)targetObject);
+					element.reconnect((IDocumentNode)targetObject, model);
 					// Add the element to the plugin parent (extension or
 					// element)
 					((IPluginParent)targetObject).add((IPluginElement)element);

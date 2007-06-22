@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.core.text.plugin;
-
-import java.io.Serializable;
-
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+package org.eclipse.pde.internal.core.text;
 
 /**
- * IDocumentExtensionPoint
+ * IDocumentFactory
  *
  */
-public interface IDocumentExtensionPoint extends Serializable {
+public interface IDocumentNodeFactory {
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
-	public void reconnect(ISharedPluginModel model, IDocumentNode parent);
+	public IDocumentAttribute createAttribute(String name, String value, IDocumentNode enclosingElement);
+
+	public IDocumentNode createDocumentNode(String name, IDocumentNode parent);
 	
 }

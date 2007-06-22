@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginElementNode extends PluginParentNode implements
-		IPluginElement, IDocumentElement {
+		IPluginElement {
 
 	private static final long serialVersionUID = 1L;
 
@@ -40,19 +40,19 @@ public class PluginElementNode extends PluginParentNode implements
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttribute(java.lang.String)
 	 */
 	public IPluginAttribute getAttribute(String name) {
-		return (IPluginAttribute)fAttributes.get(name);
+		return (IPluginAttribute)getNodeAttributesMap().get(name);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttributes()
 	 */
 	public IPluginAttribute[] getAttributes() {
-		return (IPluginAttribute[])fAttributes.values().toArray(new IPluginAttribute[fAttributes.size()]);
+		return (IPluginAttribute[])getNodeAttributesMap().values().toArray(new IPluginAttribute[getNodeAttributesMap().size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttributeCount()
 	 */
 	public int getAttributeCount() {
-		return fAttributes.size();
+		return getNodeAttributesMap().size();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getText()
@@ -173,15 +173,12 @@ public class PluginElementNode extends PluginParentNode implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		super.reconnect(model, schema, parent);
+	public void reconnect(IDocumentNode parent, IModel model) {
+		super.reconnect(parent, model);
 		// Transient Field:  Element Info
-		// This may not be necessary.  getElementInfo will retrieve the schema
-		// on demand if it is null
+		// Not necessary to reconnect schema.
+		// getElementInfo will retrieve the schema on demand if it is null	
 		elementInfo = null;
-		if (schema != null) {
-			elementInfo = schema.findElement(getXMLTagName());
-		}
 	}
 	
 	/* (non-Javadoc)

@@ -23,17 +23,15 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IDocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends PluginDocumentNode implements
-		IPluginObject, IDocumentObject, IWritableDelimiter {
+		IPluginObject, IWritableDelimiter {
 
 	private transient boolean fInTheModel;
 	private transient ISharedPluginModel fModel;
@@ -41,6 +39,13 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	private static final long serialVersionUID = 1L;
 	private String fName;
 
+	/**
+	 * 
+	 */
+	public PluginObjectNode() {
+		super();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -161,7 +166,7 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		String oldValue = getXMLAttributeValue(name);
 		if (oldValue != null && oldValue.equals(value))
 			return;
-		PluginAttribute attr = (PluginAttribute) fAttributes.get(name);
+		PluginAttribute attr = (PluginAttribute) getNodeAttributesMap().get(name);
 		try {
 			if (value == null)
 				value = ""; //$NON-NLS-1$
@@ -169,7 +174,7 @@ public class PluginObjectNode extends PluginDocumentNode implements
 					attr = new PluginAttribute();
 					attr.setName(name);
 					attr.setEnclosingElement(this);
-					fAttributes.put(name, attr);
+					getNodeAttributesMap().put(name, attr);
 				}
 				attr.setValue(value == null ? "" : value); //$NON-NLS-1$
 		} catch (CoreException e) {
@@ -215,23 +220,6 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	public String getWritableString(String source) {
 		return PDEXMLHelper.getWritableString(source);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#writeShallow()
-	 */
-	public String writeShallow(boolean terminate) {
-		return ""; //$NON-NLS-1$
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#write()
-	 */
-	public String write(boolean indent) {
-		return ""; //$NON-NLS-1$
-	}
 
 	protected void appendAttribute(StringBuffer buffer, String attrName) {
 		appendAttribute(buffer, attrName, ""); //$NON-NLS-1$
@@ -264,22 +252,18 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		return write(false);
 	}
 	
-	public boolean isRoot() {
-		return false;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent) {
-		super.reconnect(model, schema, parent);
+	public void reconnect(IDocumentNode parent, IModel model) {
+		super.reconnect(parent, model);
 		// Transient field:  In The Model
 		// Value set to true when added to the parent
 		fInTheModel = false;
 		// Transient field:  Model
-		// This may not be necessary.  When this node is added to the parent,
-		// the parent takes care of this
-		fModel = model;
+		if (model instanceof ISharedPluginModel) {
+			fModel = (ISharedPluginModel)model;
+		}
 	}
 	
 	/* (non-Javadoc)

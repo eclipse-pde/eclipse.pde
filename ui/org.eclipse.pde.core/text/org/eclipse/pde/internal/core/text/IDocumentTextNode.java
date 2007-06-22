@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 public interface IDocumentTextNode extends IDocumentRange, Serializable {
 	
+	// Used by text edit operations
 	void setEnclosingElement(IDocumentNode node);	
 	IDocumentNode getEnclosingElement();
 
@@ -23,6 +24,7 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable {
 	void setOffset(int offset);
 	void setLength(int length);
 	
+	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent);
 	
 }

@@ -38,7 +38,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.plugin.IDocumentExtensionPoint;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -324,15 +323,14 @@ public class ExtensionPointsSection extends TableSection {
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
 				
-				if ((sourceObject instanceof IDocumentExtensionPoint) &&
-						(sourceObject instanceof IPluginExtensionPoint) &&
+				if ((sourceObject instanceof IPluginExtensionPoint) &&
 						(pluginBase instanceof IDocumentNode)) {
 					// Extension point object
-					IDocumentExtensionPoint extensionPoint = 
-						(IDocumentExtensionPoint)sourceObject;
+					IDocumentNode extensionPoint = 
+						(IDocumentNode)sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					extensionPoint.reconnect(model, (IDocumentNode)pluginBase);
+					extensionPoint.reconnect((IDocumentNode)pluginBase, model);
 					// Add the extension point to the plug-in
 					pluginBase.add((IPluginExtensionPoint)extensionPoint);
 				}

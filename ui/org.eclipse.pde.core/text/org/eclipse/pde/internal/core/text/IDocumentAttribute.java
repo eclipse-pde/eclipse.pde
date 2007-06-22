@@ -13,10 +13,12 @@ package org.eclipse.pde.internal.core.text;
 import java.io.Serializable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ischema.ISchema;
 
 public interface IDocumentAttribute extends Serializable {
+	
+	// Used by text edit operations
+	
+	// TODO: MP: TEO:  Rename to IDocumentAttributeNode
 	
 	void setEnclosingElement(IDocumentNode node);	
 	IDocumentNode getEnclosingElement();
@@ -40,7 +42,8 @@ public interface IDocumentAttribute extends Serializable {
 	void setAttributeValue(String value) throws CoreException;
 	
 	String write();
-
-	public void reconnect(ISharedPluginModel model, ISchema schema, IDocumentNode parent);
+	
+	// Not used by text edit operations
+	public void reconnect(IDocumentNode parent);
 	
 }

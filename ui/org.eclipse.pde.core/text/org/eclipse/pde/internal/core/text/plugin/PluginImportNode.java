@@ -27,7 +27,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 			PluginAttribute attr = new PluginAttribute();
 			attr.setName(name);
 			attr.setEnclosingElement(this);
-			fAttributes.put(name, attr);
+			getNodeAttributesMap().put(name, attr);
 			attr.setValue(id);
 		} catch (CoreException e) {
 		}
