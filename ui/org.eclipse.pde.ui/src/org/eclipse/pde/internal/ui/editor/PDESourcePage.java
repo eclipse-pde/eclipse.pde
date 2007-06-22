@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IMarker;
 
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -65,12 +66,15 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
@@ -616,4 +620,35 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 		synchronizeOutlinePage(current_offset);
 	}
 
+	/**
+	 * Override the getAdapter function to return a list of targets
+	 * for the "Show In >" action in the context menu.
+	 *  
+	 * @param adapter
+	 * @return A list of targets (IShowInTargetList) for the "Show In >"
+	 * submenu if the appropriate adapter is passed in and the editor
+	 * is not read-only. Returns <code>super.getAdapter(adapter)</code>
+	 * otherwise.
+	 */	
+	public Object getAdapter(Class adapter) {
+		if ((adapter == IShowInTargetList.class) &&
+				(fEditor != null) &&
+				(fEditor.getEditorInput() instanceof IFileEditorInput)) {
+				return getShowInTargetList();
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	/**
+	 * Returns the <code>IShowInTargetList</code> for this view.
+	 * @return the <code>IShowInTargetList</code> 
+	 */
+	protected IShowInTargetList getShowInTargetList() {
+		return new IShowInTargetList() {
+			public String[] getShowInTargetIds() {
+				return new String[] 
+				       {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+			}
+		};
+	}
 }
