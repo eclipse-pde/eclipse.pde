@@ -9,8 +9,7 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;
 
@@ -20,10 +19,12 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.FeatureModelFactory;
 
 public class ScriptGenerationTests extends PDETestCase {
 
-	
 	// Test that script generation works when buildDirectory does not contain a plugins subdirectory
 	public void testBug147292() throws Exception {
 		IFolder buildFolder = newTest("147292");
@@ -104,22 +105,22 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("183869");
 
 		Utils.generateAllElements(buildFolder, "a.feature");
-		
+
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		Utils.storeBuildProperties(buildFolder, buildProperties);
-		
+
 		runBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder, "log.log");
-		String [] lines = new String [] {"[echo] Hello Plugin!", "[echo] Hello Feature!" };
+		String[] lines = new String[] {"[echo] Hello Plugin!", "[echo] Hello Feature!"};
 		assertLogContainsLines(buildFolder.getFile("log.log"), lines);
 	}
-	
+
 	// test platform.xml
 	public void testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
 		IFolder configFolder = buildFolder.getFolder("configuration/org.eclipse.update");
-		
+
 		//Figure out the version of the org.eclipse.rcp feature
 		String baseLocation = Platform.getInstallLocation().getURL().getPath();
 		File features = new File(baseLocation, "features");
@@ -132,19 +133,19 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(rcp.length > 0);
 		String name = rcp[0].getName();
 		String version = name.substring("org.eclipse.rcp_".length(), name.length());
-		
+
 		// copy platform.xml and set the baseLocation and rcp version
 		IFile sourceXML = buildFolder.getFile("platform.xml");
 		Map replacements = new HashMap();
 		replacements.put("BASE_LOCATION", baseLocation);
 		replacements.put("RCP_VERSION", version);
 		Utils.transferAndReplace(sourceXML.getLocationURI().toURL(), configFolder.getFile("platform.xml"), replacements);
-		
+
 		//Generate Scripts for org.eclipse.rcp, expect to find it through platform.xml
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.rcp");
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
-		
+
 		//platform.xml has MANAGED-ONLY policy, expect to not find org.eclipse.core.resources
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.eclipse.core.resources");
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
@@ -152,8 +153,58 @@ public class ScriptGenerationTests extends PDETestCase {
 			//this is expected to fail
 			generateScripts(buildFolder, properties);
 			assertTrue(false);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			assertTrue(e.getMessage().endsWith("Unable to find element: org.eclipse.core.resources."));
 		}
+	}
+
+	// test that the order of features passed to FeatureGenerator is preserved
+	public void testBug187809() throws Exception {
+		IFolder buildFolder = newTest("187809");
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"foo", "bar", "disco"}, null);
+
+		assertResourceFile(buildFolder, "features/sdk/feature.xml");
+		IFile feature = buildFolder.getFile("features/sdk/feature.xml");
+		FeatureModelFactory factory = new FeatureModelFactory();
+		InputStream stream = new BufferedInputStream(feature.getLocationURI().toURL().openStream());
+		FeatureModel model = null;
+		try {
+			model = factory.parseFeature(stream);
+		} finally {
+			stream.close();
+		}
+		IIncludedFeatureReference[] included = model.getFeatureIncluded();
+		assertEquals(included.length, 3);
+		assertEquals(included[0].getVersionedIdentifier().getIdentifier(), "foo");
+		assertEquals(included[1].getVersionedIdentifier().getIdentifier(), "bar");
+		assertEquals(included[2].getVersionedIdentifier().getIdentifier(), "disco");
+	}
+
+	// Test that & characters in classpath are escaped properly
+	public void testBug125577() throws Exception {
+		IFolder buildFolder = newTest("125577");
+		buildFolder.getFolder("plugins").create(true, true, null);
+
+		//Create Bundle A
+		IFolder bundleA = buildFolder.getFolder("plugins/A & A");
+		bundleA.create(true, true, null);
+		Utils.generateBundle(bundleA, "A");
+
+		//Create Bundle B
+		IFolder bundleB = buildFolder.getFolder("plugins/B");
+		bundleB.create(true, true, null);
+		Utils.generatePluginBuildProperties(bundleB, null);
+
+		// Bundle B requires Bundle A
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "A");
+		Utils.generateBundleManifest(bundleB, "B", "1.0.0", manifestAdditions);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "B"));
+		
+		assertResourceFile(bundleB, "build.xml");
+		//if the & was not escaped, it won't be a valid ant script
+		assertValidAntScript(bundleB.getFile("build.xml"));
 	}
 }

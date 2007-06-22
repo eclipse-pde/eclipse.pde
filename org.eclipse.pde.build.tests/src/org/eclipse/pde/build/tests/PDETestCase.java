@@ -16,6 +16,9 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.helper.AntXMLContext;
+import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.eclipse.ant.core.AntRunner;
@@ -170,14 +173,18 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(archiveFile.exists());
 
 		ZipFile zip = new ZipFile(archiveFile);
-		Enumeration e = zip.getEntries();
-		while (e.hasMoreElements() && entries.size() > 0) {
-			ZipEntry entry = (ZipEntry) e.nextElement();
-			String name = entry.getName();
-			if (entries.contains(name)) {
-				assertTrue(entry.getSize() > 0);
-				entries.remove(name);
+		try {
+			Enumeration e = zip.getEntries();
+			while (e.hasMoreElements() && entries.size() > 0) {
+				ZipEntry entry = (ZipEntry) e.nextElement();
+				String name = entry.getName();
+				if (entries.contains(name)) {
+					assertTrue(entry.getSize() > 0);
+					entries.remove(name);
+				}
 			}
+		} finally {
+			zip.close();
 		}
 		assertTrue(entries.size() == 0);
 	}
@@ -230,5 +237,20 @@ public abstract class PDETestCase extends TestCase {
 		}
 		reader.close();
 		assertTrue(false);
+	}
+	
+	public static void assertValidAntScript(IFile buildXML) throws Exception {
+		// Parse the build file using ant
+		ProjectHelper2 helper = new ProjectHelper2();
+		Project project = new Project();
+		project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
+		
+		AntXMLContext context = new AntXMLContext(project);
+        project.addReference("ant.parsing.context", context);
+        project.addReference("ant.targets", context.getTargets());
+        context.setCurrentTargets(new HashMap());
+        
+        // this will throw an exception if it is not a valid ant script
+        helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
 	}
 }

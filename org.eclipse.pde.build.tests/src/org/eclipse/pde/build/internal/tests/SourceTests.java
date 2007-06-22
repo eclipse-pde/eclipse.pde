@@ -9,8 +9,7 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.jar.Manifest;
 
@@ -22,7 +21,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
-import org.eclipse.pde.internal.build.FeatureGenerator;
 import org.eclipse.update.core.model.FeatureModelFactory;
 import org.osgi.framework.FrameworkUtil;
 
@@ -57,21 +55,14 @@ public class SourceTests extends PDETestCase {
 
 		IFolder features = buildFolder.getFolder("features");;
 		features.create(true, true, null);
-		
+
 		//generate an SDK feature
-		FeatureGenerator generator = new FeatureGenerator();
-		generator.setIncludeLaunchers(false);
-		generator.setVerify(false);
-		generator.setFeatureId("sdk");
-		generator.setFeatureList(new String[] {"org.eclipse.rcp", "org.eclipse.rcp.source"});
-		generator.setWorkingDirectory(buildFolder.getLocation().toOSString());
-		generator.generate();
-		
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.rcp", "org.eclipse.rcp.source"}, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@org.eclipse.rcp.source", "org.eclipse.rcp");
 		IFolder sdk = features.getFolder("sdk");
 		Utils.storeBuildProperties(sdk, properties);
-		
+
 		String os = Platform.getOS();
 		String ws = Platform.getWS();
 		String arch = Platform.getOSArch();
@@ -107,7 +98,7 @@ public class SourceTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "a.feature.sdk");
 		generateScripts(buildFolder, properties);
-		
+
 		assertResourceFile(buildFolder, "features/a.feature.source/feature.xml");
 		IFile feature = buildFolder.getFile("features/a.feature.source/feature.xml");
 
@@ -119,5 +110,65 @@ public class SourceTests extends PDETestCase {
 		} finally {
 			stream.close();
 		}
+	}
+
+	// test that source can come before the feature it is based on
+	public void testBug179616A() throws Exception {
+		IFolder buildFolder = newTest("179616A");
+		buildFolder.getFolder("plugins").create(true, true, null);
+		buildFolder.getFolder("features").create(true, true, null);
+		IFolder bundleFolder = buildFolder.getFolder("plugins/a.bundle");
+		bundleFolder.create(true, true, null);
+
+		Utils.generateBundle(bundleFolder, "a.bundle");
+		//add some source to a.bundle
+		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
+		src.getParentFile().mkdir();
+		FileOutputStream stream = new FileOutputStream(src);
+		stream.write("//L33T CODEZ\n".getBytes());
+		stream.close();
+
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"});
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp.source", "rcp"}, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@rcp.source", "rcp");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/sdk"), properties);
+
+		Utils.generateAllElements(buildFolder, "sdk");
+		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+		runBuild(buildFolder);
+
+		Set entries = new HashSet();
+		entries.add("eclipse/plugins/rcp.source_1.0.0/src/a.bundle_1.0.0/src.zip");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
+	}
+
+	public void testBug179616B() throws Exception {
+		IFolder buildFolder = newTest("179616B");
+		buildFolder.getFolder("plugins").create(true, true, null);
+		buildFolder.getFolder("features").create(true, true, null);
+		IFolder bundleFolder = buildFolder.getFolder("plugins/a.bundle");
+		bundleFolder.create(true, true, null);
+
+		Utils.generateBundle(bundleFolder, "a.bundle");
+		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
+		src.getParentFile().mkdir();
+		FileOutputStream stream = new FileOutputStream(src);
+		stream.write("//L33T CODEZ\n".getBytes());
+		stream.close();
+
+		Utils.generateFeature(buildFolder, "single", null, new String[] {"single.source", "a.bundle"});
+		Properties properties = new Properties();
+		properties.put("generate.plugin@single.source", "single");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/single"), properties);
+
+		Utils.generateAllElements(buildFolder, "single");
+		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+		runBuild(buildFolder);
+
+		Set entries = new HashSet();
+		entries.add("eclipse/plugins/single.source_1.0.0/src/a.bundle_1.0.0/src.zip");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
 }

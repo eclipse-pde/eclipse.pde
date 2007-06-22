@@ -15,7 +15,7 @@ public class BuildConfiguration {
 	private static Properties defaultScriptConfig = new Properties();
 	static {
 		defaultBuildConfig.put("runPackager", TRUE);
-		defaultBuildConfig.put("archiveNamePrefix", "");
+		defaultBuildConfig.put("archiveNamePrefix", "eclipse");
 		defaultBuildConfig.put("archivePrefix", "eclipse");
 		defaultBuildConfig.put("collectingFolder", "eclipse");
 		defaultBuildConfig.put("configs", "*,*,*");

@@ -21,6 +21,7 @@ import org.apache.tools.ant.util.ReaderInputStream;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.Activator;
+import org.eclipse.pde.internal.build.FeatureGenerator;
 
 public class Utils {
 
@@ -108,5 +109,16 @@ public class Utils {
 		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(buildPropertiesFile));
 		buildProperties.store(outputStream, "");
 		outputStream.close();
+	}
+	
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList ) throws CoreException {
+		FeatureGenerator generator = new FeatureGenerator();
+		generator.setIncludeLaunchers(false);
+		generator.setVerify(false);
+		generator.setFeatureId(id);
+		generator.setFeatureList(featureList);
+		generator.setPluginList(pluginList);
+		generator.setWorkingDirectory(workingDirectory.getLocation().toOSString());
+		generator.generate();
 	}
 }
