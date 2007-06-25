@@ -11,18 +11,16 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions;
 
-import java.util.HashSet;
-
+import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public abstract class CompCSAbstractAddAction extends CSAbstractAddAction {
+public abstract class CompCSAbstractAddAction extends Action {
 
 	protected ICompCSObject fParentObject;
 	
@@ -40,24 +38,13 @@ public abstract class CompCSAbstractAddAction extends CSAbstractAddAction {
 		fParentObject = object;
 	}
 	
-	/**
-	 * @return
-	 */
-	protected String generateTaskObjectName(ICompCSTaskGroup parent, String base) {
-		StringBuffer result = new StringBuffer(base);
-		ICompCSTaskObject[] taskObjects = parent.getFieldTaskObjects();
-		// Used to track auto-generated numbers used
-		HashSet set = new HashSet();
-
-		// Linear search O(n).  
-		// Performance hit unnoticeable because number of items per cheatsheet
-		// should be minimal.
-		for (int i = 0; i < taskObjects.length; i++) {
-			compareTitleWithBase(base, set, taskObjects[i].getFieldName());
+	protected String[] getTaskObjectNames(ICompCSTaskGroup parent)
+	{	ICompCSTaskObject[] taskObjects = parent.getFieldTaskObjects();
+		String[] taskObjectNames = new String[taskObjects.length];
+		for(int i = 0; i < taskObjects.length; ++i)
+		{	taskObjectNames[i] = taskObjects[i].getFieldName();
 		}
-		// Add an auto-generated number
-		addNumberToBase(result, set);
 		
-		return result.toString();
-	}	
+		return taskObjectNames;
+	}
 }

@@ -11,8 +11,9 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
@@ -20,13 +21,13 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
+public class SimpleCSAddSubStepAction extends Action {
 
 	private ISimpleCSItem fItem;
 	
@@ -88,8 +89,20 @@ public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
 		ISimpleCSModelFactory factory = fItem.getModel().getFactory();
 		// Element: subitem
 		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fItem);
+		
+		ISimpleCSSubItemObject[] subItems = fItem.getSubItems();
+		ArrayList subItemNames = new ArrayList(subItems.length);
+		
+		for(int i = 0; i < subItems.length; ++i)
+		{	if(subItems[i].getType() == ISimpleCSConstants.TYPE_SUBITEM)
+			{	subItemNames.add(((ISimpleCSSubItem)subItems[i]).getLabel());
+			}
+		}
+
+		String[] names = (String[])subItemNames.toArray(new String[subItemNames.size()]);
+
 		// Set on the proper parent object
-		subitem.setLabel(generateSubItemLabel(fItem, PDEUIMessages.SimpleCSAddSubStepAction_1));
+		subitem.setLabel(PDELabelUtility.generateName(names, PDEUIMessages.SimpleCSAddSubStepAction_1));
 		return subitem;
 	}
 	
@@ -110,28 +123,4 @@ public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
 		}
 	}	
 	
-	/**
-	 * @return
-	 */
-	private String generateSubItemLabel(ISimpleCSItem item, String base) {
-		StringBuffer result = new StringBuffer(base);
-		ISimpleCSSubItemObject[] subitems = item.getSubItems();
-		// Used to track auto-generated numbers used
-		HashSet set = new HashSet();
-
-		// Linear search O(n).  
-		// Performance hit unnoticeable because number of items per cheatsheet
-		// should be minimal.
-		for (int i = 0; i < subitems.length; i++) {
-			ISimpleCSSubItemObject object = subitems[i];
-			if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
-				compareTitleWithBase(base, set, subitem.getLabel());
-			}
-		}
-		// Add an auto-generated number
-		addNumberToBase(result, set);
-		
-		return result.toString();
-	}	
 }

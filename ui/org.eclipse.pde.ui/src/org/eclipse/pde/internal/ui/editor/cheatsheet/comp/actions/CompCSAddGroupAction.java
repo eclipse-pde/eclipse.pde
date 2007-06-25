@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.CompCSCreationOperation;
 
 
@@ -43,7 +44,8 @@ public class CompCSAddGroupAction extends CompCSAbstractAddAction {
 		// Set on the proper parent object
 		if (fParentObject.getType() == ICompCSConstants.TYPE_TASKGROUP) {
 			ICompCSTaskGroup parent = (ICompCSTaskGroup)fParentObject;
-			String name = generateTaskObjectName(parent, PDEUIMessages.CompCSCreationOperation_group);
+
+			String name = PDELabelUtility.generateName(getTaskObjectNames(parent), PDEUIMessages.CompCSCreationOperation_group);
 			group.setFieldName(name);
 			parent.addFieldTaskObject(group);
 		} else if (fParentObject.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {

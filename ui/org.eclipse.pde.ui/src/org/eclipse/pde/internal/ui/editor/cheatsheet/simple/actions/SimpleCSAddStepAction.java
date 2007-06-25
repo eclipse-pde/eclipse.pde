@@ -11,8 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
-import java.util.HashSet;
-
+import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -21,14 +20,14 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCSCreationOperation;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddStepAction extends CSAbstractAddAction {
+public class SimpleCSAddStepAction extends Action {
 
 	private ISimpleCS fCheatsheet;
 	
@@ -112,7 +111,15 @@ public class SimpleCSAddStepAction extends CSAbstractAddAction {
 		// Create the new item
 		// Element: item
 		ISimpleCSItem item = factory.createSimpleCSItem(fCheatsheet);
-		item.setTitle(generateItemTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1));
+
+		ISimpleCSItem[] items = fCheatsheet.getItems();
+		String[] itemNames = new String[items.length];
+
+		for(int i = 0; i < items.length; ++i)
+		{	itemNames[i] = items[i].getTitle();
+		}
+
+		item.setTitle(PDELabelUtility.generateName(itemNames, PDEUIMessages.SimpleCheatSheetCreationOperation_1));
 		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription(item);
 		description.setContent(
@@ -121,27 +128,4 @@ public class SimpleCSAddStepAction extends CSAbstractAddAction {
 		item.setDescription(description);
 		return item;
 	}
-	
-	/**
-	 * @return
-	 */
-	private String generateItemTitle(String base) {
-		StringBuffer result = new StringBuffer(base);
-		ISimpleCSItem[] items = fCheatsheet.getItems();
-		// Used to track auto-generated numbers used
-		HashSet set = new HashSet();
-
-		// Linear search O(n).  
-		// Performance hit unnoticeable because number of items per cheatsheet
-		// should be minimal.
-		for (int i = 0; i < items.length; i++) {
-			ISimpleCSItem item = items[i];
-			compareTitleWithBase(base, set, item.getTitle());
-		}
-		// Add an auto-generated number
-		addNumberToBase(result, set);
-		
-		return result.toString();
-	}
-	
 }

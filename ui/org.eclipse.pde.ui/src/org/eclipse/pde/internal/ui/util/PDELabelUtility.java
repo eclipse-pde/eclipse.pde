@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.util;
 
+import java.util.HashSet;
+
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
@@ -90,4 +92,93 @@ public class PDELabelUtility {
 		return buffer.toString();
 	}	
 	
+	/**
+	 * @param base
+	 * @param set
+	 */
+	private static void addNumberToBase(StringBuffer base, HashSet set) {
+		if (set.size() > 0) {
+			// Limit on the number of auto-generated item numbers to check for
+			int limit = 100;
+			// Check the set for the numbers encountered and generate the 
+			// lowest number accordingly
+			if (set.contains(new Integer(0)) == false) {
+				// Use base
+			} else {
+				for (int x = 1; x < limit; x++) {
+					// Check if the number was already used to auto-generate an
+					// existing item
+					if (set.contains(new Integer(x)) == false) {
+						base.append(" ("); //$NON-NLS-1$
+						base.append(x);
+						base.append(")"); //$NON-NLS-1$
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param base
+	 * @param set
+	 * @param title
+	 */
+	private static void compareTitleWithBase(String base, HashSet set, String title) {
+		// Check to see it the name starts with the base
+		if (title.startsWith(base)) {
+			// space, (, number, )
+			int minSizeNumAddOn = 4;				
+			// We found a possible auto-generated name
+			// Determine number
+			if (title.length() >= (base.length() + minSizeNumAddOn)) {
+				// We skipped the space
+				String numPart = title.substring(base.length() + 1);
+				// We found an auto-generated name
+				if (numPart.charAt(0) == '(') {
+					StringBuffer buffer = new StringBuffer();
+					// Parse the number between the brackets
+					for (int j = 1; j < numPart.length(); j++) {
+						char current = numPart.charAt(j);
+						// Make sure its a digit
+						if (Character.isDigit(current)) {
+							buffer.append(current);
+						} else {
+							// Break on non digits including ')'
+							break;
+						}
+					}
+					// Convert the number we found into an actual number
+					if (buffer.length() > 0) {
+						set.add(new Integer(buffer.toString()));
+					}
+				}
+				
+			} else {
+				// No number to parse
+				// Assume it is just base
+				set.add(new Integer(0));
+			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public static String generateName(String[] names, String base) {
+		StringBuffer result = new StringBuffer(base);
+		// Used to track auto-generated numbers used
+		HashSet set = new HashSet();
+
+		// Linear search O(n).  
+		// Performance hit unnoticeable because number of items per cheatsheet
+		// should be minimal.
+		for (int i = 0; i < names.length; i++) {
+			PDELabelUtility.compareTitleWithBase(base, set, names[i]);
+		}
+		// Add an auto-generated number
+		PDELabelUtility.addNumberToBase(result, set);
+		
+		return result.toString();
+	}
 }
