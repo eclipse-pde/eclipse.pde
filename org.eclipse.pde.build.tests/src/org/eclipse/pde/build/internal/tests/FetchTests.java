@@ -28,6 +28,6 @@ public class FetchTests extends PDETestCase {
 		}
 
 		assertResourceFile(buildFolder, "log.log");
-		assertLogContainsLine(buildFolder.getFile("log.log"), "[eclipse.fetch] Could not retrieve feature.xml and/or build.properties: cvs exited with error code 1");
+		assertLogContainsLine(buildFolder.getFile("log.log"), "[eclipse.fetch] Could not retrieve feature.xml and/or build.properties:");
 	}
 }

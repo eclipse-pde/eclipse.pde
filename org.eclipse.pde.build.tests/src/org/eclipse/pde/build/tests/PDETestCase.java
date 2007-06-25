@@ -32,19 +32,10 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public abstract class PDETestCase extends TestCase {
-	private static final String PROJECT_NAME = "org.eclipse.pde.build.tests.builder";
+	public static final String PROJECT_NAME = "org.eclipse.pde.build.tests.builder";
 
-	protected void tearDown() {
-		//		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		//		IProject[] projects = workspaceRoot.getProjects();
-		//		try {
-		//			for (int i = 0; i < projects.length; i++) {
-		//				projects[i].delete(true, new NullProgressMonitor());
-		//			}
-		//		} catch (CoreException e) {
-		//		}
-	}
-
+	private IFolder buildFolder = null;
+	
 	protected void clearStatics() throws Exception {
 		AbstractScriptGenerator.getConfigInfos().clear();
 		BuildTimeSiteFactory.setInstalledBaseSite(null);
@@ -53,6 +44,18 @@ public abstract class PDETestCase extends TestCase {
 		QualifierReplacer.setGlobalQualifier("");
 	}
 
+	protected void runTest() throws Throwable {
+		super.runTest();
+		
+		//clean up after success
+		if (buildFolder != null && buildFolder.exists()) {
+			try {
+				buildFolder.delete(true, null);
+			} catch (CoreException e) {
+			}
+		}
+	}
+	
 	protected IProject newTest() throws Exception {
 		IProject builderProject = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!builderProject.exists()) {
@@ -70,7 +73,7 @@ public abstract class PDETestCase extends TestCase {
 		IProject builderProject = newTest();
 
 		// create build folder for this test
-		IFolder buildFolder = builderProject.getFolder(resources);
+		buildFolder = builderProject.getFolder(resources);
 		if (buildFolder.exists()) {
 			try {
 				buildFolder.delete(true, null);
@@ -99,25 +102,6 @@ public abstract class PDETestCase extends TestCase {
 
 		return buildFolder;
 	}
-
-	//	private void setAntRunnerClasspath(AntRunner runner) {	
-	//		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-	//		IAntClasspathEntry entry = preferences.getToolsJarEntry();
-	//		if (entry != null) {
-	//			IAntClasspathEntry[] classpath = preferences.getAntHomeClasspathEntries();
-	//			IAntClasspathEntry[] contributed = preferences.getContributedClasspathEntries();
-	//			IAntClasspathEntry[] additional = preferences.getAdditionalClasspathEntries();
-	//			IAntClasspathEntry[] paths = new IAntClasspathEntry[classpath.length + contributed.length + additional.length];
-	//			System.arraycopy(classpath, 0, paths, 0, classpath.length);
-	//			System.arraycopy(contributed, 0, paths, classpath.length, contributed.length);
-	//			System.arraycopy(additional, 0, paths, classpath.length + contributed.length, additional.length);
-	//			URL[] urls = new URL[paths.length];
-	//			for (int i = 0; i < paths.length; i++) {
-	//				urls[i] = paths[i].getEntryURL();
-	//			}
-	//			runner.setCustomClasspath(urls);
-	//		}
-	//	}
 
 	protected void runBuild(IFolder buildFolder) throws Exception {
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/build.xml"), null);
