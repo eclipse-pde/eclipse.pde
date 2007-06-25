@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
 import org.eclipse.pde.ui.templates.BooleanOption;
 
 public class ViewTemplate extends PDETemplateSection {
