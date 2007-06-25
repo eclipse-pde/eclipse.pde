@@ -167,6 +167,13 @@ public abstract class PDETestCase extends TestCase {
 		}
 	}
 
+	/**
+	 * Assert that the zip file contains at least the given entries 
+	 * @param buildFolder
+	 * @param archive
+	 * @param entries
+	 * @throws Exception
+	 */
 	public static void assertZipContents(IFolder buildFolder, String archive, Set entries) throws Exception {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, archive);
@@ -189,6 +196,12 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(entries.size() == 0);
 	}
 
+	/**
+	 * Assert that the given resource exists and has size > 0
+	 * @param buildFolder
+	 * @param fileName
+	 * @throws Exception
+	 */
 	public static void assertResourceFile(IFolder buildFolder, String fileName) throws Exception {
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFile file = buildFolder.getFile(fileName);
@@ -200,7 +213,8 @@ public abstract class PDETestCase extends TestCase {
 
 	
 	/**
-	 * msg is expected to be contained on a single line
+	 * Assert that the given log file contains the given message
+	 * The message is expected to be contained on a single line
 	 * @param log
 	 * @param msg
 	 * @throws Exception
@@ -210,6 +224,7 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	/**
+	 * Assert that the given log file contains the given lines
 	 * Lines are expected to appear in order
 	 * @param log
 	 * @param lines
@@ -239,7 +254,14 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(false);
 	}
 	
+	/**
+	 * assert that the given xml file exists, has size > 0 and is a valid ant script
+	 * @param buildXML
+	 * @throws Exception
+	 */
 	public static void assertValidAntScript(IFile buildXML) throws Exception {
+		assertResourceFile((IFolder) buildXML.getParent(), buildXML.getName());
+		
 		// Parse the build file using ant
 		ProjectHelper2 helper = new ProjectHelper2();
 		Project project = new Project();
