@@ -35,7 +35,7 @@ public abstract class PDETestCase extends TestCase {
 	public static final String PROJECT_NAME = "org.eclipse.pde.build.tests.builder";
 
 	private IFolder buildFolder = null;
-	
+
 	protected void clearStatics() throws Exception {
 		AbstractScriptGenerator.getConfigInfos().clear();
 		BuildTimeSiteFactory.setInstalledBaseSite(null);
@@ -46,7 +46,7 @@ public abstract class PDETestCase extends TestCase {
 
 	protected void runTest() throws Throwable {
 		super.runTest();
-		
+
 		//clean up after success
 		if (buildFolder != null && buildFolder.exists()) {
 			try {
@@ -55,7 +55,7 @@ public abstract class PDETestCase extends TestCase {
 			}
 		}
 	}
-	
+
 	protected IProject newTest() throws Exception {
 		IProject builderProject = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!builderProject.exists()) {
@@ -146,7 +146,7 @@ public abstract class PDETestCase extends TestCase {
 		} catch (InvocationTargetException e) {
 			Throwable target = e.getTargetException();
 			if (target instanceof Exception)
-				throw (Exception)target;
+				throw (Exception) target;
 			throw e;
 		}
 	}
@@ -195,7 +195,6 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(ioFile.length() > 0);
 	}
 
-	
 	/**
 	 * Assert that the given log file contains the given message
 	 * The message is expected to be contained on a single line
@@ -214,7 +213,7 @@ public abstract class PDETestCase extends TestCase {
 	 * @param lines
 	 * @throws Exception
 	 */
-	public static void assertLogContainsLines(IFile log, String [] lines) throws Exception {
+	public static void assertLogContainsLines(IFile log, String[] lines) throws Exception {
 		assertNotNull(log);
 		assertTrue(log.exists());
 
@@ -222,41 +221,40 @@ public abstract class PDETestCase extends TestCase {
 		assertTrue(logFile.length() > 0);
 
 		int idx = 0;
-		CharSequence sequence = lines[idx].subSequence(0, lines[idx].length());
 		BufferedReader reader = new BufferedReader(new FileReader(logFile));
 		while (reader.ready()) {
 			String line = reader.readLine();
-			if (line.contains(sequence)) {
+			if (line.indexOf(lines[idx]) >= 0) {
 				if (++idx >= lines.length) {
 					reader.close();
 					return;
 				}
-				sequence = lines[idx].subSequence(0, lines[idx].length());
 			}
 		}
 		reader.close();
 		assertTrue(false);
 	}
-	
+
 	/**
 	 * assert that the given xml file exists, has size > 0 and is a valid ant script
 	 * @param buildXML
 	 * @throws Exception
 	 */
-	public static void assertValidAntScript(IFile buildXML) throws Exception {
+	public static Project assertValidAntScript(IFile buildXML) throws Exception {
 		assertResourceFile((IFolder) buildXML.getParent(), buildXML.getName());
-		
+
 		// Parse the build file using ant
 		ProjectHelper2 helper = new ProjectHelper2();
 		Project project = new Project();
 		project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
-		
+
 		AntXMLContext context = new AntXMLContext(project);
-        project.addReference("ant.parsing.context", context);
-        project.addReference("ant.targets", context.getTargets());
-        context.setCurrentTargets(new HashMap());
-        
-        // this will throw an exception if it is not a valid ant script
-        helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
+		project.addReference("ant.parsing.context", context);
+		project.addReference("ant.targets", context.getTargets());
+		context.setCurrentTargets(new HashMap());
+
+		// this will throw an exception if it is not a valid ant script
+		helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
+		return project;
 	}
 }
