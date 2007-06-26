@@ -119,7 +119,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	// test platform.xml
 	public void testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
-		IFolder configFolder = buildFolder.getFolder("configuration/org.eclipse.update");
+		IFolder configFolder = Utils.createFolder(buildFolder, "configuration/org.eclipse.update");
 
 		//Figure out the version of the org.eclipse.rcp feature
 		String baseLocation = Platform.getInstallLocation().getURL().getPath();
@@ -184,7 +184,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	// Test that & characters in classpath are escaped properly
 	public void testBug125577() throws Exception {
 		IFolder buildFolder = newTest("125577");
-		buildFolder.getFolder("plugins").create(true, true, null);
+		Utils.createFolder(buildFolder, "plugins");
 
 		//Create Bundle A
 		IFolder bundleA = buildFolder.getFolder("plugins/A & A");
