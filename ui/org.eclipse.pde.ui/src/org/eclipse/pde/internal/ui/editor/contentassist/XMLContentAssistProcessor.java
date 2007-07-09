@@ -12,8 +12,8 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
@@ -487,7 +487,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					// We have a schema complex type.  Either the element has attributes
 					// or the element has children.					
 					// Generate the list of element proposals
-					HashSet elementSet = XMLElementProposalComputer
+					TreeSet elementSet = XMLElementProposalComputer
 							.computeElementProposal(sElement, node);
 					// Filter the list of element proposals
 					Iterator iterator = elementSet.iterator();

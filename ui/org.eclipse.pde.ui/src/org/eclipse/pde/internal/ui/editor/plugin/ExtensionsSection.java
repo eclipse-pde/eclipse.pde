@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -162,8 +163,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// We have a schema complex type.  Either the element has attributes
 			// or the element has children.
 			// Generate the list of element proposals
-			HashSet elementSet = XMLElementProposalComputer
+			TreeSet elementSet = XMLElementProposalComputer
 					.computeElementProposal(elementInfo, (IDocumentNode)parent);
+			
 			// Create a corresponding menu entry for each element proposal
 			Iterator iterator = elementSet.iterator();
 			while (iterator.hasNext()) {
@@ -888,7 +890,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// We have a schema complex type.  Either the target object has 
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		HashSet elementSet = 
+		TreeSet elementSet = 
 			XMLElementProposalComputer.computeElementProposal(
 					schemaElement, (IDocumentNode)targetObject);
 		// Determine whether we can paste the source elements as children of
@@ -905,7 +907,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @return
 	 */
 	private boolean canPasteSourceElements(IPluginElement[] sourceElements,
-			HashSet targetElementSet) {
+			TreeSet targetElementSet) {
 		// Performance optimization
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
@@ -940,7 +942,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @return
 	 */
 	private boolean canPasteSourceElement(IPluginElement sourceElement, 
-			HashSet targetElementSet) {
+			TreeSet targetElementSet) {
 		boolean canPaste = false;
 		// Get the source element tag name
 		String sourceTagName = sourceElement.getName();

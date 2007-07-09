@@ -12,7 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.TreeSet;
 
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
@@ -34,7 +34,7 @@ public class XMLElementProposalComputer {
 	 * given multiplicity constraints and existing children found under 
 	 * <code>node</code>.
 	 */
-	public static HashSet computeElementProposal(ISchemaElement sElement, 
+	public static TreeSet computeElementProposal(ISchemaElement sElement, 
 			IDocumentNode node) {
 		// Calculate the number of occurrences of each XML tag name
 		// in the node's direct children
@@ -47,10 +47,10 @@ public class XMLElementProposalComputer {
 	 * @param tagNameMap
 	 * @return
 	 */
-	private static HashSet computeElementProposal(ISchemaElement sElement, 
+	private static TreeSet computeElementProposal(ISchemaElement sElement, 
 			HashMap tagNameMap) {
 		
-		HashSet elementSet = new HashSet();
+		TreeSet elementSet = new TreeSet(new XMLElementProposalComparator());
 		// Get this element's compositor
 		ISchemaCompositor compositor = 
 			((ISchemaComplexType)sElement.getType()).getCompositor();
@@ -92,7 +92,7 @@ public class XMLElementProposalComputer {
 	 * @param multiplicityTracker
 	 */
 	private static void computeCompositorChildProposal(
-			ISchemaCompositor compositor, HashSet elementSet,
+			ISchemaCompositor compositor, TreeSet elementSet,
 			HashMap siblings, int multiplicityTracker) {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
@@ -117,7 +117,7 @@ public class XMLElementProposalComputer {
 	 * @param multiplicityTracker
 	 */
 	private static void computeCompositorSequenceProposal(
-			ISchemaCompositor compositor, HashSet elementSet, HashMap siblings,
+			ISchemaCompositor compositor, TreeSet elementSet, HashMap siblings,
 			int multiplicityTracker) {
 
 		ISchemaObject[] schemaObject = compositor.getChildren();
@@ -140,7 +140,7 @@ public class XMLElementProposalComputer {
 	 * @param multiplicityTracker
 	 */
 	private static void computeCompositorChoiceProposal(
-			ISchemaCompositor compositor, HashSet elementSet, HashMap siblings,
+			ISchemaCompositor compositor, TreeSet elementSet, HashMap siblings,
 			int multiplicityTracker) {
 
 		// Unbounded max occurs are represented by the maximum integer value
@@ -200,7 +200,7 @@ public class XMLElementProposalComputer {
 	 * @param multiplicityTracker
 	 */
 	private static void computeObjectChildProposal(ISchemaObject schemaObject,
-			HashSet elementSet, HashMap siblings,
+			TreeSet elementSet, HashMap siblings,
 			int multiplicityTracker) {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement)schemaObject;
@@ -220,7 +220,7 @@ public class XMLElementProposalComputer {
 	 * @param multiplicityTracker
 	 */
 	private static void computeElementChildProposal(ISchemaElement schemaElement,
-			HashSet elementSet, HashMap siblings,
+			TreeSet elementSet, HashMap siblings,
 			int multiplicityTracker) {
 
 		int occurrences = 0;
