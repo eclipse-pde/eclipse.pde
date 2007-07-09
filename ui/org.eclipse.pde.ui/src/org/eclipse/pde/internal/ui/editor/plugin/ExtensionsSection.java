@@ -225,7 +225,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());

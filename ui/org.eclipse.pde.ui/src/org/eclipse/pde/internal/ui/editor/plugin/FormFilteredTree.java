@@ -83,7 +83,7 @@ public class FormFilteredTree extends FilteredTree {
 	}
 
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
-		TreeViewer viewer = super.doCreateTreeViewer(parent, toolkit.getBorderStyle());
+		TreeViewer viewer = super.doCreateTreeViewer(parent, toolkit.getBorderStyle() | style);
 		toolkit.paintBordersFor(viewer.getTree().getParent());
 		return viewer;
 	}
