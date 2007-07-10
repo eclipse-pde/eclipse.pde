@@ -84,14 +84,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	}
 
 	public void hookListeners() {
-		fName.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
-					return;
-				fElement.setName(fName.getValue());
-				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
-			}
-		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
@@ -117,7 +109,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
-		fName.commit();
 		fSuggestion.commit();
 	}
 	
