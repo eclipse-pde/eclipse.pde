@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
@@ -315,7 +316,8 @@ public class ElementSection extends TreeSection {
 					MenuManager refMenu = new MenuManager(PDEUIMessages.ElementSection_referenceMenu);
 					ISchemaElement[] elements = schema.getResolvedElements();
 					for (int i = 0; i < elements.length; i++) {
-						refMenu.add(new NewReferenceAction(sourceElement,object, elements[i]));
+						if (!(elements[i] instanceof SchemaRootElement))
+							refMenu.add(new NewReferenceAction(sourceElement,object, elements[i]));
 					}
 					if (!refMenu.isEmpty())
 						submenu.add(refMenu);
