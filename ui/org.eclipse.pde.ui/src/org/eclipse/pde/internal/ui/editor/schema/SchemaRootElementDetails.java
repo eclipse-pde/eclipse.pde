@@ -44,7 +44,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
-		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
+		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.READ_ONLY);
 
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
@@ -54,7 +54,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
 		
-		setText(PDEUIMessages.SchemaElementDetails_title);
+		setText(PDEUIMessages.SchemaElementDetails_rootTitle);
 	}
 
 	public void updateFields(ISchemaObject element) {
@@ -72,7 +72,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDepFalse.setSelection(!fElement.isDeprecated());
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 		
-		fName.setEditable(isEditable());
 		fDepTrue.setEnabled(isEditable());
 		fDepFalse.setEnabled(isEditable());
 

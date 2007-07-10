@@ -2403,6 +2403,8 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaDetails_translatable;
 
 	public static String SchemaElementDetails_title;
+
+	public static String SchemaElementDetails_rootTitle;
 	
 	public static String SchemaElementDetails_description;
 
