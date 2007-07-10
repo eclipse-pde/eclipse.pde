@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
@@ -49,7 +50,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
-
+	
 	private URL fURL;
 
 	private Vector fListeners = new Vector();
@@ -101,6 +102,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fDocSections.addElement(docSection);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
 				new Object[] { docSection }, null));
+
 	}
 
 	public void addElement(ISchemaElement element) {
@@ -927,10 +929,21 @@ public class Schema extends PlatformObject implements ISchema {
 				}
 			}
 		}
+		addOmittedDocumentSections();
 		fLoaded = true;
 		if (fReferences.size() > 0)
 			resolveReferences(fReferences);
 		fReferences = null;
+	}
+	
+	private void addOmittedDocumentSections() {
+		for (int i = 0; i < DocumentSection.DOC_SECTIONS.length; i++) {
+			DocumentSection section = new DocumentSection(this, DocumentSection.DOC_SECTIONS[i], null);
+			if (!fDocSections.contains(section)) {
+				addDocumentSection(section);
+			}
+		}
+		Collections.sort(fDocSections);
 	}
 
 	public void updateReferencesFor(ISchemaElement element) {
