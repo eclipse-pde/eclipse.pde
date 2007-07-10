@@ -89,12 +89,24 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		String productPath = findFile(product, false);
-		if (productPath == null)
-			productPath = product;
-		File f = new File(productPath);
+
+		File f = null;
+		if (productPath != null) {
+			f = new File(productPath);
+		} else {
+			// couldn't find product, try it as a path directly
+			f = new File(product);
+			if (!f.exists() || !f.isFile()) {
+				// doesn't exist, try it as a path relative to the working directory
+				f = new File(getWorkingDirectory(), product);
+				if (!f.exists() || !f.isFile()) {
+					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
+				}
+			}
+		}
 		if (f.exists() && f.isFile()) {
 			try {
-				productFile = new ProductFile(productPath, configInfo.getOs());
+				productFile = new ProductFile(f.getAbsolutePath(), configInfo.getOs());
 			} catch (CoreException e) {
 				// TODO log
 			}
