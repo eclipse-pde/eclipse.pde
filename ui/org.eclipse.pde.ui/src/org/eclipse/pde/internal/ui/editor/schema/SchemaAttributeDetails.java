@@ -487,7 +487,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				if (element != null)
 					JavaUI.openInEditor(element);
 				else {
-					NewClassCreationWizard wizard = new NewClassCreationWizard(project, isInter);
+					NewClassCreationWizard wizard = new NewClassCreationWizard(project, isInter, value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
