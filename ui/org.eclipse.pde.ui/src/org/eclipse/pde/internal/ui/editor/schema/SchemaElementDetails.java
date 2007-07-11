@@ -17,6 +17,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
@@ -97,6 +98,12 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fDepTrue.setSelection(fElement.isDeprecated());
 		fDepFalse.setSelection(!fElement.isDeprecated());
 		
+		boolean hasCompositor = false;
+		if (fElement.getType() instanceof ISchemaComplexType &&
+				((ISchemaComplexType)fElement.getType()).getCompositor() != null)
+			hasCompositor = true;
+		if (hasCompositor)
+			fElement.setTranslatableProperty(false);
 		fTransTrue.setSelection(fElement.hasTranslatableContent());
 		fTransFalse.setSelection(!fElement.hasTranslatableContent());
 		
@@ -107,8 +114,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		
 		fDepTrue.setEnabled(editable);
 		fDepFalse.setEnabled(editable);
-		fTransTrue.setEnabled(editable);
-		fTransFalse.setEnabled(editable);
+		fTransTrue.setEnabled(editable && !hasCompositor);
+		fTransFalse.setEnabled(editable && !hasCompositor);
 	}
 
 	public void hookListeners() {
