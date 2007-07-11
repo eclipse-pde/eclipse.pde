@@ -325,6 +325,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiresSection_sortAlpha;
 
+	public static String SchemaEditor_ElementSection_newChoice;
+
+	public static String SchemaEditor_ElementSection_newSequence;
+
+	public static String SchemaEditor_ElementSection_remove;
+
 	public static String SchemaPreviewLauncher_msgEditorHasUnsavedChanges;
 
 	public static String SchemaPreviewLauncher_msgSaveChanges;

@@ -119,7 +119,10 @@ public class ElementSection extends TreeSection {
 	public ElementSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {
 				PDEUIMessages.SchemaEditor_ElementSection_newElement,
-				PDEUIMessages.SchemaEditor_ElementSection_newAttribute });
+				PDEUIMessages.SchemaEditor_ElementSection_newAttribute,
+				PDEUIMessages.SchemaEditor_ElementSection_newChoice,
+				PDEUIMessages.SchemaEditor_ElementSection_newSequence,
+				PDEUIMessages.SchemaEditor_ElementSection_remove});
 		getSection().setText(PDEUIMessages.SchemaEditor_ElementSection_title);
 		getSection().setDescription(PDEUIMessages.SchemaEditor_ElementSection_desc);
 	}
@@ -202,7 +205,29 @@ public class ElementSection extends TreeSection {
 		case 1:
 			handleNewAttribute();
 			break;
+		case 2:
+			addCompositor(ISchemaCompositor.CHOICE);
+			break;
+		case 3:
+			addCompositor(ISchemaCompositor.SEQUENCE);
+			break;
+		case 4:
+			final ISelection selection = fTreeViewer.getSelection();
+			handleDelete((IStructuredSelection)selection);
+			break;
 		}
+	}
+	
+	private void addCompositor (int kind) {
+		Object selection = ((IStructuredSelection)fTreeViewer.getSelection()).getFirstElement();
+		ISchemaElement sourceElement = null;
+		Object current = selection;
+		while (current instanceof ISchemaCompositor)
+			current = ((ISchemaCompositor)current).getParent();
+		if (current instanceof ISchemaElement)
+			sourceElement = (ISchemaElement) current;
+		if (sourceElement != null)
+			new NewCompositorAction(sourceElement, selection, kind).run();
 	}
 
 	public void dispose() {
@@ -531,22 +556,37 @@ public class ElementSection extends TreeSection {
 	private void updateButtons() {
 		if (!fSchema.isEditable())
 			return;
-		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
-		ISchemaObject sobject = (ISchemaObject) object;
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		ISchemaObject sobject = (ISchemaObject) selection.getFirstElement();
 
 		boolean canAddAttribute = false;
-		if (sobject != null) {
-			if (sobject instanceof ISchemaElement) {
-				if (!(sobject instanceof ISchemaRootElement)
-						&& !(sobject instanceof ISchemaObjectReference))
-					canAddAttribute = true;
-			} else if (sobject instanceof ISchemaAttribute) {
-				ISchemaElement element = (ISchemaElement) (sobject.getParent());
-				if (!(element instanceof ISchemaRootElement))
-					canAddAttribute = true;
-			}
+		if (sobject instanceof ISchemaElement) {
+			if (!(sobject instanceof ISchemaRootElement)
+					&& !(sobject instanceof ISchemaObjectReference))
+				canAddAttribute = true;
+		} else if (sobject instanceof ISchemaAttribute) {
+			ISchemaElement element = (ISchemaElement) (sobject.getParent());
+			if (!(element instanceof ISchemaRootElement))
+				canAddAttribute = true;
 		}
 		getTreePart().setButtonEnabled(1, canAddAttribute);
+		
+		boolean canAddCompositor = false;
+		if (sobject instanceof ISchemaCompositor || (sobject instanceof ISchemaElement && !(sobject instanceof SchemaElementReference)))
+			canAddCompositor = true;
+		getTreePart().setButtonEnabled(2, canAddCompositor);
+		getTreePart().setButtonEnabled(3, canAddCompositor);
+		
+		boolean canRemove = false;
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			sobject = (ISchemaObject) iter.next();
+			if (sobject != null && !(sobject instanceof ISchemaRootElement) && 
+					!(sobject instanceof ISchemaAttribute && sobject.getParent() instanceof ISchemaRootElement)) {
+				canRemove = true;
+				break;
+			}
+		}
+		getTreePart().setButtonEnabled(4, canRemove);
 	}
 
 	private ISchemaObject getSibling(Object target, Object object) {
