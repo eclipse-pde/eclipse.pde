@@ -136,10 +136,10 @@ public class SchemaElement extends RepeatableSchemaObject implements
 				ISchemaCompositor compositor = complexType.getCompositor();
 				if (compositor != null)
 					text += calculateChildRepresentation(compositor, addLinks);
-				else
+				else if (getAttributeCount() != 0)
 					text += "EMPTY"; //$NON-NLS-1$
-
-			} else
+			}
+			if (text.length() == 0)
 				text += "(#PCDATA)"; //$NON-NLS-1$
 		}
 		if (text.length() > 0) {
