@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Path;
@@ -340,6 +341,7 @@ public class ElementSection extends TreeSection {
 				if (object instanceof SchemaCompositor) {
 					MenuManager refMenu = new MenuManager(PDEUIMessages.ElementSection_referenceMenu);
 					ISchemaElement[] elements = schema.getResolvedElements();
+					Arrays.sort(elements);
 					for (int i = 0; i < elements.length; i++) {
 						if (!(elements[i] instanceof SchemaRootElement))
 							refMenu.add(new NewReferenceAction(sourceElement,object, elements[i]));

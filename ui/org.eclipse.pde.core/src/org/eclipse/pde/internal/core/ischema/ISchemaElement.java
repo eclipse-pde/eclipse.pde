@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.core.ischema;
  * type (typically complex types with compositors) and
  * attribute definitions.
  */
-public interface ISchemaElement extends ISchemaObject, ISchemaRepeatable, ISchemaAttributeProvider, IMetaElement {
+public interface ISchemaElement extends ISchemaObject, ISchemaRepeatable, ISchemaAttributeProvider, IMetaElement, Comparable {
 /**
  * Returns an approximate representation of this element's content
  * model in DTD form. The resulting representation may not

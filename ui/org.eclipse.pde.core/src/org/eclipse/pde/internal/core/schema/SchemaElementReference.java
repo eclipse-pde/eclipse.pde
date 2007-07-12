@@ -287,4 +287,13 @@ public class SchemaElementReference extends PlatformObject implements
 	public boolean isDeprecated() {
 		return false;
 	}
+
+	public int compareTo(Object arg0) {
+		if (element == null) {
+			return -1;
+		} else if (arg0 == null) {
+			return -1;
+		}
+		return element.compareTo(arg0);
+	}
 }

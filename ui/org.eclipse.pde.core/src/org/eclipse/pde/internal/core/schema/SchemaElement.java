@@ -310,4 +310,10 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		
 		return description;
 	}
+
+	public int compareTo(Object arg0) {
+		if (arg0 instanceof ISchemaElement)
+			return getName().compareToIgnoreCase(((ISchemaElement)arg0).getName());
+		return -1;
+	}
 }
