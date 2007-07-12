@@ -103,8 +103,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 				((ISchemaComplexType)fElement.getType()).getCompositor() != null) ||
 				fElement.getAttributeCount() != 0)
 			isTranslatable = false;
-		if (!isTranslatable)
-			fElement.setTranslatableProperty(false);
+
 		fTransTrue.setSelection(fElement.hasTranslatableContent());
 		fTransFalse.setSelection(!fElement.hasTranslatableContent());
 		

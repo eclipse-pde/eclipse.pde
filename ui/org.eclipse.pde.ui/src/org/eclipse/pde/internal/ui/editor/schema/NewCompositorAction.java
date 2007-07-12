@@ -84,6 +84,10 @@ public class NewCompositorAction extends Action {
 				type.setCompositor(compositor);
 				((SchemaElement) source).setType(type);
 			}
+			// Any element that defines a root compositor cannot be translatable
+			if (element.hasTranslatableContent()) {
+				element.setTranslatableProperty(false);
+			}			
 		} else if (object instanceof SchemaCompositor) {
 			((SchemaCompositor) object).addChild(compositor);
 		}

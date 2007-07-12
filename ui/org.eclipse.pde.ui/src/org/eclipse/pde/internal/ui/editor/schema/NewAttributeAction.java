@@ -61,6 +61,10 @@ public void run() {
 		complexType = (SchemaComplexType)type;
 	}
 	complexType.addAttribute(att);
+	// Any element that defines attributes cannot be translatable
+	if (element.hasTranslatableContent()) {
+		element.setTranslatableProperty(false);
+	}		
 }
 public void setElement(org.eclipse.pde.internal.core.schema.SchemaElement newElement) {
 	element = newElement;
