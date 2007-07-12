@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
@@ -301,7 +302,7 @@ public class ElementSection extends TreeSection {
 		final Object object = ((IStructuredSelection) selection).getFirstElement();
 
 		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
-		if (object == null || object instanceof SchemaElement) {
+		if (object == null) {
 			fNewElementAction.setSchema(fSchema);
 			fNewElementAction.setEnabled(fSchema.isEditable());
 			submenu.add(fNewElementAction);
@@ -331,32 +332,37 @@ public class ElementSection extends TreeSection {
 				schemaObject = schemaObject.getParent();
 			}
 			if (sourceElement != null) {
-				ISchema schema = sourceElement.getSchema();
-				MenuManager cmenu = new MenuManager(PDEUIMessages.ElementSection_compositorMenu);
-				cmenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.CHOICE));
-				cmenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.SEQUENCE));
-				if (submenu.getItems().length > 0)
-					submenu.add(new Separator());
-				submenu.add(cmenu);
+				if (object instanceof SchemaCompositor || sourceElement.getType() instanceof ISchemaSimpleType ||
+						((ISchemaComplexType)sourceElement.getType()).getCompositor() == null) {
+					if (submenu.getItems().length > 0)
+						submenu.add(new Separator());
+					submenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.CHOICE));
+					submenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.SEQUENCE));
+				}
 				if (object instanceof SchemaCompositor) {
-					MenuManager refMenu = new MenuManager(PDEUIMessages.ElementSection_referenceMenu);
-					ISchemaElement[] elements = schema.getResolvedElements();
+					boolean seperatorAdded = false;
+					ISchemaElement[] elements = sourceElement.getSchema().getResolvedElements();
 					Arrays.sort(elements);
 					for (int i = 0; i < elements.length; i++) {
-						if (!(elements[i] instanceof SchemaRootElement))
-							refMenu.add(new NewReferenceAction(sourceElement,object, elements[i]));
+						if (!(elements[i] instanceof SchemaRootElement)) {
+							if (!seperatorAdded) {
+								submenu.add(new Separator());
+								seperatorAdded = true;
+							}
+						submenu.add(new NewReferenceAction(sourceElement,object, elements[i]));
+						}
 					}
-					if (!refMenu.isEmpty())
-						submenu.add(refMenu);
 				}
 			}
 		}
 		manager.add(submenu);
 		if (object != null) {
 			if (!(object instanceof ISchemaRootElement)) { //$NON-NLS-1$
+				if (manager.getItems().length > 0)
+					manager.add(new Separator());
 				if(!(object instanceof ISchemaAttribute 
 						&& ((ISchemaAttribute)object).getParent() instanceof ISchemaRootElement))
-				{	manager.add(new Separator());
+				{	
 					Action deleteAction = new Action() {
 						public void run() {
 							handleDelete((IStructuredSelection) selection);
@@ -574,7 +580,9 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 		
 		boolean canAddCompositor = false;
-		if (sobject instanceof ISchemaCompositor || (sobject instanceof ISchemaElement && !(sobject instanceof SchemaElementReference)))
+		if (sobject instanceof ISchemaCompositor || (sobject instanceof ISchemaElement &&
+				!(sobject instanceof SchemaElementReference) && (((ISchemaElement)sobject).getType() instanceof ISchemaSimpleType ||
+						((ISchemaComplexType)((ISchemaElement)sobject).getType()).getCompositor() == null)))
 			canAddCompositor = true;
 		getTreePart().setButtonEnabled(2, canAddCompositor);
 		getTreePart().setButtonEnabled(3, canAddCompositor);

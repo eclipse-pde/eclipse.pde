@@ -2384,10 +2384,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractSchemaDetails_unboundedButton;
 
-	public static String ElementSection_compositorMenu;
-
-	public static String ElementSection_referenceMenu;
-
 	public static String NewRestrictionDialog_title;
 
 	public static String NewRestrictionDialog_message;

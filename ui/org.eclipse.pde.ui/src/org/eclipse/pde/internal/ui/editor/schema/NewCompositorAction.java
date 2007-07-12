@@ -31,8 +31,10 @@ public class NewCompositorAction extends Action {
 		this.source = source;
 		this.object = object;
 		this.kind = kind;
-		setText("&" + ISchemaCompositor.kindTable[kind]); //$NON-NLS-1$
-		setToolTipText(NLS.bind(PDEUIMessages.SchemaEditor_NewCompositor_tooltip, ISchemaCompositor.kindTable[kind]));
+		
+		String text = upperCaseFirstLetter(ISchemaCompositor.kindTable[kind]);
+		setText("&" + text); //$NON-NLS-1$
+		setToolTipText(NLS.bind(PDEUIMessages.SchemaEditor_NewCompositor_tooltip, text));
 		ImageDescriptor desc = null;
 	
 		switch (kind) {
@@ -46,6 +48,22 @@ public class NewCompositorAction extends Action {
 		setImageDescriptor(desc);
 		setEnabled(source.getSchema().isEditable());
 	}
+	
+	/**
+	 * @param text must have a length of at least two
+	 * @return
+	 */
+	private String upperCaseFirstLetter(String text) {
+		if ((text == null) ||
+				(text.length() < 2)) {
+			return text;
+		}
+		String firstLetter = text.substring(0, 1).toUpperCase(); 
+		String rest = text.substring(1);
+		
+		return firstLetter + rest;
+	}
+	
 	public void run() {
 		SchemaCompositor compositor = new SchemaCompositor(source, kind);
 		if (object instanceof SchemaElement) {
