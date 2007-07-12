@@ -98,11 +98,12 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fDepTrue.setSelection(fElement.isDeprecated());
 		fDepFalse.setSelection(!fElement.isDeprecated());
 		
-		boolean hasCompositor = false;
-		if (fElement.getType() instanceof ISchemaComplexType &&
-				((ISchemaComplexType)fElement.getType()).getCompositor() != null)
-			hasCompositor = true;
-		if (hasCompositor)
+		boolean isTranslatable = true;
+		if ((fElement.getType() instanceof ISchemaComplexType &&
+				((ISchemaComplexType)fElement.getType()).getCompositor() != null) ||
+				fElement.getAttributeCount() != 0)
+			isTranslatable = false;
+		if (!isTranslatable)
 			fElement.setTranslatableProperty(false);
 		fTransTrue.setSelection(fElement.hasTranslatableContent());
 		fTransFalse.setSelection(!fElement.hasTranslatableContent());
@@ -114,8 +115,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		
 		fDepTrue.setEnabled(editable);
 		fDepFalse.setEnabled(editable);
-		fTransTrue.setEnabled(editable && !hasCompositor);
-		fTransFalse.setEnabled(editable && !hasCompositor);
+		fTransTrue.setEnabled(editable && isTranslatable);
+		fTransFalse.setEnabled(editable && isTranslatable);
 	}
 
 	public void hookListeners() {
