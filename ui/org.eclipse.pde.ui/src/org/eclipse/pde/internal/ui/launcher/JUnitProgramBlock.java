@@ -65,7 +65,8 @@ public class JUnitProgramBlock extends ProgramBlock {
 	 */
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		if (fApplicationCombo.getText().equals(PDEUIMessages.JUnitProgramBlock_headless)) { 
-			config.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);
+			String appName = fApplicationCombo.isEnabled() ? IPDEUIConstants.CORE_TEST_APPLICATION : null;
+			config.setAttribute(IPDELauncherConstants.APPLICATION, appName);
 			config.setAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 		} else {
 			config.setAttribute(IPDELauncherConstants.APPLICATION, (String)null);
