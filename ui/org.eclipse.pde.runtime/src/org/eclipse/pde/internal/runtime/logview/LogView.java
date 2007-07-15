@@ -859,7 +859,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	void onMouseHover(Event e) {
-		if (!fCanOpenTextShell)
+		if (!fCanOpenTextShell || fTextShell == null || fTextShell.isDisposed())
 			return;
 		fCanOpenTextShell = false;
 		Point point = new Point(e.x, e.y);
