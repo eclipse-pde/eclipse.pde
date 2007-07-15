@@ -149,7 +149,7 @@ public class PDEClasspathContainer {
 	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
 		IAccessRule rule = (IAccessRule)DISCOURAGED_RULES.get(path);
 		if (rule == null) {
-			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED|IAccessRule.IGNORE_IF_BETTER);
+			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
 			DISCOURAGED_RULES.put(path, rule);
 		}
 		return rule;		
