@@ -1226,7 +1226,7 @@
       </key>      
       <key
             commandId="org.eclipse.pde.ui.edit.text.format"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="org.eclipse.pde.ui.pdeEditorContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+F"/>
       <key
