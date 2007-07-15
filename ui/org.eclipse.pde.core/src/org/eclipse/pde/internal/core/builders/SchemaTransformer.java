@@ -77,8 +77,12 @@ public class SchemaTransformer {
 	private String getSchemaCssURL() {
 		if (fCssPurpose == BUILD)
 			return "../../" +  SCHEMA_CSS; //$NON-NLS-1$
-		String url = getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS).toString();
-		return url != null ? url : getResourceURL(PDECore.PLUGIN_ID, SCHEMA_CSS).toString();
+		URL url = getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS);
+		if (url == null) {
+			// this CSS file is last resort and is always there.
+			url = getResourceURL(PDECore.PLUGIN_ID, SCHEMA_CSS);
+		}
+		return url.toString();
 	}
 	
 	private void printHTMLContent() {
