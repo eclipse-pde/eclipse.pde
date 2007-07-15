@@ -120,11 +120,11 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 			PDESourcePathProvider.ID); 
 		
 		// Set Program/VM arguments with preference values
-		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
+		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments().trim();
 		if (programArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 
-		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
+		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments().trim();
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		

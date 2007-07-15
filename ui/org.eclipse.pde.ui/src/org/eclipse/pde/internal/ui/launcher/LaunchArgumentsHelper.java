@@ -144,7 +144,8 @@ public class LaunchArgumentsHelper {
 					boolean vmargs = false;
 					while ((str = in.readLine()) != null) {
 						if (vmargs) {
-							result.append(" "); //$NON-NLS-1$
+							if (result.length() > 0)
+								result.append(" "); //$NON-NLS-1$
 							result.append(str);
 						}
 						// start concat'ng if we have vmargs
