@@ -612,36 +612,19 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
+		if (parent instanceof ISchemaCompositor)
+			return processElementReference((ISchemaCompositor)parent, elementNode);
+		return processElementDeclaration(parent, elementNode);
+	}
+	
+	private ISchemaElement processElementDeclaration (ISchemaObject parent, Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		if (aname == null)
 			return null;
-		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
-		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
+		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$	
+		int minOccurs = getMinOccurs(elementNode);
+		int maxOccurs = getMaxOccurs(elementNode);
 		
-		int minOccurs = 1;
-		int maxOccurs = 1;
-		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
-		String amaxOccurs = getAttribute(elementNode, "maxOccurs"); //$NON-NLS-1$
-		if (aminOccurs != null)
-			minOccurs = Integer.valueOf(aminOccurs).intValue();
-		if (amaxOccurs != null) {
-			if (amaxOccurs.equals("unbounded")) //$NON-NLS-1$
-				maxOccurs = Integer.MAX_VALUE;
-			else {
-				maxOccurs = Integer.valueOf(amaxOccurs).intValue();
-			}
-		}
-		if (aref != null) {
-			// Reference!!
-			SchemaElementReference reference = new SchemaElementReference(
-					(ISchemaCompositor) parent, aref);
-			reference.addComments(elementNode);
-			reference.setMinOccurs(minOccurs);
-			reference.setMaxOccurs(maxOccurs);
-			fReferences.addElement(reference);
-			//reference.bindSourceLocation(elementNode, lineTable);
-			return reference;
-		}
 		ISchemaType type = null;
 		if (atype != null) {
 			type = resolveTypeReference(atype);
@@ -669,6 +652,42 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		element.setType(type);
 		return element;
+	}
+	
+	private ISchemaElement processElementReference (ISchemaCompositor compositor, Node elementNode) {
+		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
+		if (aref == null) {
+			return null;
+		}
+		int minOccurs = getMinOccurs(elementNode);
+		int maxOccurs = getMaxOccurs(elementNode);
+
+		SchemaElementReference reference = new SchemaElementReference(
+				compositor, aref);
+		reference.addComments(elementNode);
+		reference.setMinOccurs(minOccurs);
+		reference.setMaxOccurs(maxOccurs);
+		fReferences.addElement(reference);
+		//reference.bindSourceLocation(elementNode, lineTable);
+		return reference;
+	}
+	
+	private int getMinOccurs (Node elementNode) {
+		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
+		if (aminOccurs != null)
+			return Integer.valueOf(aminOccurs).intValue();
+		return 1;
+		
+	}
+	
+	private int getMaxOccurs (Node elementNode) {
+		String amaxOccurs = getAttribute(elementNode, "maxOccurs"); //$NON-NLS-1$
+		if (amaxOccurs != null) {
+			if (amaxOccurs.equals("unbounded")) //$NON-NLS-1$
+				return Integer.MAX_VALUE;
+			return Integer.valueOf(amaxOccurs).intValue();
+		}
+		return 1;
 	}
 
 	private void processElementAnnotation(SchemaElement element, Node node) {
