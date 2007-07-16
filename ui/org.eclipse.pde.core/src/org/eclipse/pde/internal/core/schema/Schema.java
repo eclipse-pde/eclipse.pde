@@ -399,6 +399,8 @@ public class Schema extends PlatformObject implements ISchema {
 	private ISchemaAttribute processAttribute(ISchemaElement element,
 			Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
+		if (aname == null)
+			return null;
 		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
 		String ause = getAttribute(elementNode, "use"); //$NON-NLS-1$
 		String avalue = getAttribute(elementNode, "value"); //$NON-NLS-1$
@@ -611,6 +613,8 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
+		if (aname == null)
+			return null;
 		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
 		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
 		
@@ -921,6 +925,16 @@ public class Schema extends PlatformObject implements ISchema {
 				String nodeName = child.getNodeName().toLowerCase(Locale.ENGLISH);
 				if (nodeName.equals("element")) { //$NON-NLS-1$
 					ISchemaElement element = processElement(this, child);
+					if (element == null) {
+						fValid = false;
+						return;
+					}
+					ISchemaAttribute[] attributes = element.getAttributes();
+					for (int j = 0; j < attributes.length; j++)
+						if (attributes[j] == null) {
+							fValid = false;
+							return;
+						}
 					fElements.addElement(element);
 				} else if (nodeName.equals("annotation")) { //$NON-NLS-1$
 					processSchemaAnnotation(child);

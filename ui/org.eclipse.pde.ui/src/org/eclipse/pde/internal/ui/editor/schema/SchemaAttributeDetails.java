@@ -309,8 +309,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
-				fAttribute.setName(fName.getValue());
-				setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
+				if (fName.getValue().length() != 0) {
+					fAttribute.setName(fName.getValue());
+					setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
+				} else {
+					fName.setValue(fAttribute.getName(), true);
+				}
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {

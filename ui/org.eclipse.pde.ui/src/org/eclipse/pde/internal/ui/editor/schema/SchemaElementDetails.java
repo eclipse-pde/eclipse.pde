@@ -145,9 +145,13 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
-				fElement.setName(fName.getValue());
-				((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
-				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
+				if (fName.getValue().length() != 0) {
+					fElement.setName(fName.getValue());
+					((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
+					setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
+				} else {
+					fName.setValue(fElement.getName(),true);
+				}
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
