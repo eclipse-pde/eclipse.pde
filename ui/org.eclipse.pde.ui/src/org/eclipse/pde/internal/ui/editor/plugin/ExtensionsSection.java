@@ -93,7 +93,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private Image fGenericElementImage;
 	private FormFilteredTree fFilteredTree;
 	private SchemaRegistry fSchemaRegistry;
-	private Action fNewExtensionAction;
 	private Hashtable fEditorWizards;
 	private SortAction fSortAction;
 	private CollapseAction fCollapseAction;
@@ -357,13 +356,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fExtensionTree.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		IMenuManager newMenu = null;
 		if (ssel.size() == 1) {
 			Object object = ssel.getFirstElement();
 			if (object instanceof IPluginParent) {
 				IPluginParent parent = (IPluginParent) object;
 				if (parent.getModel().getUnderlyingResource() != null) {
-					newMenu = fillContextMenu(getPage(), parent, manager);
+					fillContextMenu(getPage(), parent, manager);
 					manager.add(new Separator());
 				}
 			}
@@ -379,10 +377,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			manager.add(new Separator());
 			delAction.setEnabled(isEditable());
 		}
-		if (newMenu == null) {
-			newMenu = new MenuManager(PDEUIMessages.Menus_new_label);
-			manager.add(newMenu);
-		}
 		if (ssel.size() == 1) {
 			manager.add(new Separator());
 			Object object = ssel.getFirstElement();
@@ -393,10 +387,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				manager.add(new Separator());
 			}
 			//manager.add(new PropertiesAction(getFormPage().getEditor()));
-		}		
-		if (!newMenu.isEmpty())
-			newMenu.add(new Separator());
-		newMenu.add(fNewExtensionAction);
+		}
 		manager.add(new Separator());
 		manager.add(new Separator());
 		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
@@ -607,15 +598,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		treePart.setButtonEnabled(3, false);
 		treePart.setButtonEnabled(4, false);
 		model.addModelChangedListener(this);
-		fNewExtensionAction = new Action() {
-			public void run() {
-				handleNew();
-			}
-		};
-		fNewExtensionAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_newExtension);
-		fNewExtensionAction
-		.setImageDescriptor(PDEPluginImages.DESC_EXTENSION_OBJ);
-		fNewExtensionAction.setEnabled(editable);
 	}
 	private void selectFirstExtension() {
 		Tree tree = fExtensionTree.getTree();
