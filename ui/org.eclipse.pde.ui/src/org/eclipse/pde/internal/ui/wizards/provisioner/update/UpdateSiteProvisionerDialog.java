@@ -48,19 +48,19 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 
 	public UpdateSiteProvisionerDialog(Shell parent, String installLocation, String siteLocation, String title) {
 		super(parent);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fInstallLocation = installLocation;
 		fSiteLocation = siteLocation;
 		setTitle(title); 
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+		Composite container = new Composite(parent, SWT.RESIZE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginHeight = layout.marginWidth = 10;
 		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		container.setLayoutData(gd);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createEntry(container);
 
