@@ -325,6 +325,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiresSection_sortAlpha;
 
+	public static String SchemaDtdDetailsSection_title;
+
 	public static String SchemaEditor_ElementSection_newChoice;
 
 	public static String SchemaEditor_ElementSection_newSequence;
@@ -2374,8 +2376,6 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestSyntaxColorTab_reservedOSGi;
 
 	public static String ManifestSyntaxColorTab_attributes;
-
-	public static String AbstractSchemaDetails_dtdLabel;
 
 	public static String AbstractSchemaDetails_minOccurLabel;
 

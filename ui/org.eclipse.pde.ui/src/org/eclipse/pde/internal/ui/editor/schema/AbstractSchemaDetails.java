@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -31,9 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -48,7 +44,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		new String[] { Boolean.toString(true), Boolean.toString(false) };
 	
 	private Section fSection;
-	private Text fDtdLabel;
+	private SchemaDtdDetailsSection fDtdSection;
 	private ElementSection fElementSection;
 	private boolean fShowDTD;
 	private Spinner fMinOccurSpinner;
@@ -57,6 +53,10 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	private Label fMinLabel;
 	private Label fMaxLabel;
 	private boolean fBlockListeners = false;
+
+	public AbstractSchemaDetails(ElementSection section) {
+		this(section,false);
+	}
 	
 	public AbstractSchemaDetails(ElementSection section, boolean showDTD) {
 		fElementSection = section;
@@ -64,12 +64,15 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.REMOVE)
+		if ((event.getChangeType() == IModelChangedEvent.REMOVE) ||
+				(fShowDTD == false) ||
+				(fDtdSection == null)) {
 			return;
+		}
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ISchemaCompositor)
-				updateDTDLabel(objects[i]);
+				fDtdSection.updateDTDLabel(objects[i]);
 		}
 	}
 	
@@ -81,7 +84,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSection.setLayoutData(gd);
 		
 		// Align the master and details section headers (misalignment caused
@@ -93,22 +96,12 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		
 		createDetails(client);
 		
+		// If the DTD Approximation section was requested, instantiate it and create it's contents
+		// on the same parent Composite
 		if (fShowDTD) {
-			Label label = toolkit.createLabel(client, PDEUIMessages.AbstractSchemaDetails_dtdLabel);
-			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 3;
-			gd.verticalIndent = 15;
-			label.setLayoutData(gd);
-			
-			fDtdLabel = toolkit.createText(client, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 3;
-			gd.heightHint = 60;
-			fDtdLabel.setLayoutData(gd);
-			fDtdLabel.setEditable(false);
-			// remove pop-up menu
-			fDtdLabel.setMenu(new Menu(client));
+			fDtdSection = new SchemaDtdDetailsSection();
+			fDtdSection.initialize(getManagedForm());
+			fDtdSection.createContents(parent);
 		}
 		
 		toolkit.paintBordersFor(client);
@@ -149,27 +142,15 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		if (!(part instanceof ElementSection))
 			return;
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		updateDTDLabel(obj);
+		if ((fShowDTD) &&
+				(fDtdSection != null)) {
+			fDtdSection.updateDTDLabel(obj);
+		}
 		if (obj instanceof ISchemaObject) {
 			setBlockListeners(true);
 			updateFields((ISchemaObject)obj);
 			setBlockListeners(false);
 		}
-	}
-	
-	private void updateDTDLabel(Object changeObject) {
-		if (!fShowDTD || fDtdLabel.isDisposed()) return;
-		if (changeObject instanceof ISchemaAttribute) {
-			changeObject = ((ISchemaAttribute) changeObject).getParent();
-		} else if (changeObject instanceof ISchemaCompositor) {
-			while (changeObject != null) {
-				if (changeObject instanceof ISchemaElement)
-					break;
-				changeObject = ((ISchemaCompositor)changeObject).getParent();
-			}
-		}
-		if (changeObject instanceof ISchemaElement)
-			fDtdLabel.setText(((ISchemaElement)changeObject).getDTDRepresentation(false));
 	}
 	
 	protected void fireMasterSelection(ISelection selection) {
