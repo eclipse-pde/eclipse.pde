@@ -96,7 +96,7 @@ public class PDELabelUtility {
 	 * @param base
 	 * @param set
 	 */
-	private static void addNumberToBase(StringBuffer base, HashSet set) {
+	private static void addNumberToBase(StringBuffer base, boolean bracketed, HashSet set) {
 		if (set.size() > 0) {
 			// Limit on the number of auto-generated item numbers to check for
 			int limit = 100;
@@ -109,9 +109,11 @@ public class PDELabelUtility {
 					// Check if the number was already used to auto-generate an
 					// existing item
 					if (set.contains(new Integer(x)) == false) {
-						base.append(" ("); //$NON-NLS-1$
+						if (bracketed)
+							base.append(" ("); //$NON-NLS-1$
 						base.append(x);
-						base.append(")"); //$NON-NLS-1$
+						if (bracketed)
+							base.append(")"); //$NON-NLS-1$
 						break;
 					}
 				}
@@ -124,34 +126,60 @@ public class PDELabelUtility {
 	 * @param set
 	 * @param title
 	 */
-	private static void compareTitleWithBase(String base, HashSet set, String title) {
-		// Check to see it the name starts with the base
+	private static void compareTitleWithBase(String base, boolean bracketed, HashSet set, String title) {
+		// Check to see it the name starts with the prefix
 		if (title.startsWith(base)) {
-			// space, (, number, )
-			int minSizeNumAddOn = 4;				
+			// with brackets add on is: space, (, #, )
+			int minSizeNumAddOn = 4;
+			if (!bracketed)
+				// without brackets and space add on is just number
+				minSizeNumAddOn = 1;
 			// We found a possible auto-generated name
 			// Determine number
 			if (title.length() >= (base.length() + minSizeNumAddOn)) {
-				// We skipped the space
-				String numPart = title.substring(base.length() + 1);
+				String numPart;
+				if (bracketed && title.charAt(base.length()) == ' ') {
+					// We skipped the space since we already checked
+					numPart = title.substring(base.length() + 1);
+				} else if (!bracketed) {
+					// without brackets, the numPart is everything after the prefix
+					numPart = title.substring(base.length());
+				} else {
+					// We are using brackets and there was no space
+					return;
+				}
+				if (bracketed) {
+					if (numPart.charAt(0) == '(') {
+						// We are using brackets and confirmed that the open bracket exists
+						// move on to just the number part
+						numPart = numPart.substring(1);
+					}
+					else {
+						// We are using brackets and there is no opening bracket
+						return;
+					}
+				}
 				// We found an auto-generated name
-				if (numPart.charAt(0) == '(') {
-					StringBuffer buffer = new StringBuffer();
-					// Parse the number between the brackets
-					for (int j = 1; j < numPart.length(); j++) {
-						char current = numPart.charAt(j);
-						// Make sure its a digit
-						if (Character.isDigit(current)) {
-							buffer.append(current);
-						} else {
-							// Break on non digits including ')'
-							break;
+				StringBuffer buffer = new StringBuffer();
+				// Parse the number between the brackets
+				for (int j = 0; j < numPart.length(); j++) {
+					char current = numPart.charAt(j);
+					// Make sure its a digit
+					if (Character.isDigit(current)) {
+						buffer.append(current);
+					} else {
+						if (!bracketed || numPart.charAt(j) != ')' || j != numPart.length() - 1) {
+							// without brackets, a non digits means this will not conflict
+							// with brackets, anything other than a ')' means this will not conflict
+							// with brackets, if this is not the last character it will not conflict
+							return;
 						}
+						// if all conditions passed, this is the last loop, no need to break
 					}
-					// Convert the number we found into an actual number
-					if (buffer.length() > 0) {
-						set.add(new Integer(buffer.toString()));
-					}
+				}
+				// Convert the number we found into an actual number
+				if (buffer.length() > 0) {
+					set.add(new Integer(buffer.toString()));
 				}
 				
 			} else {
@@ -166,6 +194,24 @@ public class PDELabelUtility {
 	 * @return
 	 */
 	public static String generateName(String[] names, String base) {
+		return generateName(names, base, true);
+	}
+	
+	/**
+	 * <p>Generates a name that does not conflict with any of the given names with one of two forms:
+	 * <ol><li>&quot;&lt;base&gt; (#)&quot;</li><li>&quot;&lt;base&gt;#&quot;</li></ol>
+	 * The number will be omitted if the base name alone is available.</p>
+	 * 
+	 * @param names
+	 * 			the existing names that should not be conflicted
+	 * @param base
+	 * 			the base name to add numbers to
+	 * @param bracketed
+	 * 			if true use the first form, otherwise use the second
+	 * @return
+	 * 			the non-conflicting name
+	 */
+	public static String generateName(String[] names, String base, boolean bracketed){
 		StringBuffer result = new StringBuffer(base);
 		// Used to track auto-generated numbers used
 		HashSet set = new HashSet();
@@ -174,11 +220,12 @@ public class PDELabelUtility {
 		// Performance hit unnoticeable because number of items per cheatsheet
 		// should be minimal.
 		for (int i = 0; i < names.length; i++) {
-			PDELabelUtility.compareTitleWithBase(base, set, names[i]);
+			PDELabelUtility.compareTitleWithBase(base, bracketed, set, names[i]);
 		}
 		// Add an auto-generated number
-		PDELabelUtility.addNumberToBase(result, set);
+		PDELabelUtility.addNumberToBase(result, bracketed, set);
 		
 		return result.toString();
+		
 	}
 }
