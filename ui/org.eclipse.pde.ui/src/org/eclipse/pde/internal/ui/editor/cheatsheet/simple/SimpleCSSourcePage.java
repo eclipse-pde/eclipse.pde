@@ -118,7 +118,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
 	 */
 	protected void setPartName(String partName) {
-		super.setPartName(PDEUIMessages.SimpleCSSourcePage_pageNameSource);
+		super.setPartName(PDEUIMessages.EditorSourcePage_name);
 	}
 	
 }

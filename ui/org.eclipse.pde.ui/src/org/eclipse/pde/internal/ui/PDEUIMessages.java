@@ -343,7 +343,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
 
-	public static String SimpleCSSourcePage_pageNameSource;
+	public static String EditorSourcePage_name;
 
 	public static String SplashConfigurationSection_msgDecorationTemplateSupport;
 

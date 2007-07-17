@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
@@ -77,5 +78,8 @@ public class SchemaSourcePage extends XMLSourcePage {
 	public void updateSelection(Object object) {
 		// NO-OP
 	}
-
+	
+	protected void setPartName(String partName) {
+		super.setPartName(PDEUIMessages.EditorSourcePage_name);
+	}
 }
