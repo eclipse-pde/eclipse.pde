@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -41,9 +42,11 @@ import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -103,6 +106,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Composite fResourceTypeComp;
 	private Composite fNotebook;
 	private StackLayout fNotebookLayout;
+	private TypeFieldAssistDisposer fClassEntryFieldAssistDisposer;
+	private TypeFieldAssistDisposer fInterfaceEntryFieldAssistDisposer;
 	
 	public SchemaAttributeDetails(ElementSection section) {
 		super(section, false);
@@ -173,7 +178,13 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Composite createJavaTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
 		Composite comp = createEmptyComposite(parent, toolkit);
 		fClassEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
+		fClassEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fClassEntry.getText(),
+				getPage().getPDEEditor().getCommonProject(),
+				IJavaSearchConstants.CLASS);
 		fInterfaceEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
+		fInterfaceEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fInterfaceEntry.getText(),
+				getPage().getPDEEditor().getCommonProject(),
+				IJavaSearchConstants.INTERFACE);
 		return comp;
 	}
 
@@ -292,8 +303,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		} else {
 			fClassEntry.setValue("", true); //$NON-NLS-1$
 			fInterfaceEntry.setValue("", true); //$NON-NLS-1$
-		}		
-		
+		}
 	}
 	
 	public void hookListeners() {
@@ -578,4 +588,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fInterfaceEntry.commit();
 		fValue.commit();
 	}	
+	
+	public void dispose() {
+		super.dispose();
+		if (fClassEntryFieldAssistDisposer != null)
+			fClassEntryFieldAssistDisposer.dispose();
+		if (fInterfaceEntryFieldAssistDisposer != null)
+			fInterfaceEntryFieldAssistDisposer.dispose();
+	}
 }

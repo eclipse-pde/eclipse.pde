@@ -115,7 +115,8 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						boolean isInterface = Flags.isInterface(proposal.getFlags());
 						String completion = new String(proposal.getCompletion());
 						if (isInterface && typeScope == IJavaSearchConstants.CLASS ||
-								completion.equals("Dummy2"))  //$NON-NLS-1$
+								(!isInterface && typeScope == IJavaSearchConstants.INTERFACE) ||
+								completion.equals("Dummy2")) //$NON-NLS-1$
 							// don't want Dummy class showing up as option.
 							return;
 						int period = completion.lastIndexOf('.');
