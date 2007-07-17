@@ -47,14 +47,13 @@ public class NewElementAction extends Action {
 		try {
 			newElement.setName(getElementName());
 			((PluginElementNode)newElement).setParentNode((IDocumentNode)parent);
-			parent.add(newElement);
-
+			
 			// If there is an associated schema, recursively auto-insert 
 			// required child elements and attributes respecting multiplicity
 			if (elementInfo != null) {
 				XMLInsertionComputer.computeInsertion(elementInfo, newElement);
 			}
-			
+			parent.add(newElement);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
