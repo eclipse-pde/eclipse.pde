@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+import java.util.Arrays;
+
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
@@ -26,8 +29,6 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -46,7 +47,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
 	private ElementSection fSection;
 	private SchemaBlock fBlock;
-	private IColorManager fColorManager;
 	private DetailsPart fDetailsPart;
 	private ImageHyperlink fImageHyperlinkPreviewRefDoc;
 	private ShowDescriptionAction fPreviewAction;
@@ -67,7 +67,9 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			detailsPart.registerPage(ISchemaRootElement.class, new SchemaRootElementDetails(fSection));
 			detailsPart.registerPage(ISchemaElement.class, new SchemaElementDetails(fSection));
 			detailsPart.registerPage(ISchemaCompositor.class, new SchemaCompositorDetails(fSection));
-			detailsPart.registerPage(ISchemaAttribute.class, new SchemaAttributeDetails(fSection));
+			detailsPart.registerPage(SchemaStringAttributeDetails.class, new SchemaStringAttributeDetails(fSection));
+			detailsPart.registerPage(SchemaJavaAttributeDetails.class, new SchemaJavaAttributeDetails(fSection));
+			detailsPart.registerPage(SchemaOtherAttributeDetails.class, new SchemaOtherAttributeDetails(fSection));
 			detailsPart.setPageProvider(this);
 		}
 		public Object getPageKey(Object object) {
@@ -79,8 +81,20 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 				return ISchemaElement.class;
 			else if (object instanceof ISchemaCompositor)
 				return ISchemaCompositor.class;
-			else if (object instanceof ISchemaAttribute)
-				return ISchemaAttribute.class;
+			else if (object instanceof ISchemaAttribute) {
+				ISchemaAttribute att = (ISchemaAttribute) object;
+				int kind = att.getKind();
+				switch (kind) {
+					case IMetaAttribute.JAVA :
+						return SchemaJavaAttributeDetails.class;
+					case IMetaAttribute.STRING :
+						int typeIndex = Arrays.binarySearch(SchemaAttributeDetails.TYPES,
+								att.getType().getName());
+						if (typeIndex == SchemaAttributeDetails.STR_IND)
+							return SchemaStringAttributeDetails.class;
+				}
+				return SchemaOtherAttributeDetails.class;
+			}
 			else
 				return null;
 		}
@@ -93,7 +107,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	public SchemaFormPage(PDEFormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.SchemaEditor_FormPage_title);
 		fBlock = new SchemaBlock();
-		fColorManager = ColorManager.getDefault();
 	}
 	 
 	/* (non-Javadoc)
@@ -114,8 +127,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 
 		super.createFormContent(managedForm);
 		fBlock.createContent(managedForm);
-		DescriptionSection descSection = new DescriptionSection(this, form.getBody(), fColorManager);
-		managedForm.addPart(descSection);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_MAIN);
 		initialize();
 	}
@@ -209,7 +220,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	public void dispose() {
 		ISchema schema = (ISchema) getModel();
 		if (schema != null) schema.removeModelChangedListener(this);
-		fColorManager.dispose();
 		super.dispose();
 	}
 

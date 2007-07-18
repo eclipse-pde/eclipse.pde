@@ -19,6 +19,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractLauncherToolbar_noSelection;
 
+	public static String AbstractSchemaDetails_descriptionLabel;
+
 	public static String AbstractTargetPage_setTarget;
 
 	public static String AddLibraryDialog_nospaces;
@@ -964,9 +966,6 @@ public class PDEUIMessages extends NLS {
 	// Schema Editor ##################################
 	public static String SchemaEditorContributor_previewAction;
 	public static String SchemaEditor_previewLink;
-	
-	public static String SchemaEditor_DescriptionSection_title;
-	public static String SchemaEditor_DescriptionSection_desc;
 
 	public static String SchemaEditor_DocSection_desc;
 	public static String SchemaEditor_topic_overview;

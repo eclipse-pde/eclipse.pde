@@ -21,9 +21,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSSourceViewer;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
+import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -52,9 +52,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	
 	private Section fEnclosingTextSection;		
 	
-	private CSSourceViewer fIntroductionViewer;
+	private PDESourceViewer fIntroductionViewer;
 
-	private CSSourceViewer fConclusionViewer;
+	private PDESourceViewer fConclusionViewer;
 	
 	private CTabFolder fTabFolder;
 	
@@ -241,7 +241,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 		// Create the source viewer
-		fIntroductionViewer = new CSSourceViewer(getPage());
+		fIntroductionViewer = new PDESourceViewer(getPage());
 		fIntroductionViewer.createUI(fIntroductionComposite, 60, 60);
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
@@ -256,7 +256,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Determine which tab is selected
 		int index = fTabFolder.getSelectionIndex();
 		// Do the global action on the source viewer on that tab
-		CSSourceViewer viewer = null;
+		PDESourceViewer viewer = null;
 		
 		if (index == F_INTRODUCTION_TAB) {
 			viewer = fIntroductionViewer;
@@ -282,7 +282,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);		
 		// Create the source viewer
-		fConclusionViewer = new CSSourceViewer(getPage());
+		fConclusionViewer = new PDESourceViewer(getPage());
 		fConclusionViewer.createUI(fConclusionComposite, 60, 60);		
 		// Note: Must paint border for parent composite; otherwise, the border
 		// goes missing on the text widget when using the Windows XP Classic
@@ -453,7 +453,7 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		// Determine which tab is selected
 		int index = fTabFolder.getSelectionIndex();
 		// Check if the source viewer on that tab can paste
-		CSSourceViewer viewer = null;
+		PDESourceViewer viewer = null;
 		
 		if (index == F_INTRODUCTION_TAB) {
 			viewer = fIntroductionViewer;

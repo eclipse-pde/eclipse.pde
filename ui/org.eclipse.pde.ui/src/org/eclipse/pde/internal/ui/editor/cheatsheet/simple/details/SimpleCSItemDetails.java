@@ -22,9 +22,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSSourceViewer;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
+import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -53,7 +53,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	
 	private Button fSkip;	
 	
-	private CSSourceViewer fContentViewer;
+	private PDESourceViewer fContentViewer;
 
 	private Section fMainSection;	
 
@@ -171,7 +171,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		data = new GridData(style);
 		label.setLayoutData(data);			
 		// Create the source viewer
-		fContentViewer = new CSSourceViewer(getPage());
+		fContentViewer = new PDESourceViewer(getPage());
 		fContentViewer.createUI(parent, 90, 60);
 		// Needed to align vertically with form entry field and allow space
 		// for a possible field decoration			

@@ -33,7 +33,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	private Label fRefLabel;
 	
 	public SchemaElementReferenceDetails(ElementSection section) {
-		super(section, true);
+		super(section, true, false);
 	}
 
 	public void createDetails(Composite parent) {

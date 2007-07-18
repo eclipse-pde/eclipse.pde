@@ -31,7 +31,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 	private Label fKindLabel;
 	
 	public SchemaCompositorDetails(ElementSection section) {
-		super(section, true);
+		super(section, true, false);
 	}
 
 	public void createDetails(Composite parent) {

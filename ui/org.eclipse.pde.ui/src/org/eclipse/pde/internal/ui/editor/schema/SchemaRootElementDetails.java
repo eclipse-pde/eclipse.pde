@@ -37,7 +37,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private FormEntry fSuggestion;
 	
 	public SchemaRootElementDetails(ElementSection section) {
-		super(section, true);
+		super(section, true, true);
 	}
 
 	public void createDetails(Composite parent) {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet;
+package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.Document;
@@ -38,7 +38,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * CSSourceViewerFactory
  *
  */
-public class CSSourceViewer {
+public class PDESourceViewer {
 
 	private static XMLConfiguration fSourceConfiguration = null;
 	
@@ -55,7 +55,7 @@ public class CSSourceViewer {
 	/**
 	 * @param page
 	 */
-	public CSSourceViewer(PDEFormPage page) {
+	public PDESourceViewer(PDEFormPage page) {
 		// Create the underlying document
 		fDocument = new Document();	
 		fPage = page;
@@ -95,6 +95,13 @@ public class CSSourceViewer {
 	 * @param widthHint
 	 */
 	public void createUI(Composite parent, int heightHint, int widthHint) {
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = heightHint;
+		data.widthHint = widthHint;
+		createUI(parent, data);
+	}
+
+	public void createUI(Composite parent, GridData data) {
 		// Create the source viewer
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
 		fViewer = new SourceViewer(parent, null, style);
@@ -106,7 +113,7 @@ public class CSSourceViewer {
 		// Set the document on the source viewer
 		fViewer.setDocument(fDocument);
 		// Configure the underlying styled text widget
-		configureUIStyledText(heightHint, widthHint, fViewer.getTextWidget());
+		configureUIStyledText(data, fViewer.getTextWidget());
 		// Create style text listeners
 		createUIListenersStyledText(fViewer.getTextWidget());	
 	}
@@ -175,15 +182,11 @@ public class CSSourceViewer {
 	 * @param widthHint
 	 * @param styledText
 	 */
-	private void configureUIStyledText(int heightHint,
-			int widthHint, StyledText styledText) {
+	private void configureUIStyledText(GridData data, StyledText styledText) {
 		// Configure the underlying styled text widget
 		styledText.setMenu(fPage.getPDEEditor().getContextMenu());
 		// Force borders
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = heightHint;
-		data.widthHint = widthHint;
 		styledText.setLayoutData(data);
 	}		
 	
@@ -238,14 +241,16 @@ public class CSSourceViewer {
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.UNDO.getId())) {
-			fViewer.doOperation(ITextOperationTarget.UNDO);
-			return true;
+			// TODO: MP: Undo: Re-enable Undo
+			//fViewer.doOperation(ITextOperationTarget.UNDO);
+			return false;
 		} else if (
 			actionId.equals(ActionFactory.REDO.getId())) {
-			fViewer.doOperation(ITextOperationTarget.REDO);
-			return true;
+			// TODO: MP: Undo: Re-enable Redo
+			//fViewer.doOperation(ITextOperationTarget.REDO);
+			return false;
 		}
-		return false;		
+		return false;
 	}	
 	
 	/**

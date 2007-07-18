@@ -9,17 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,23 +50,23 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		new String[] { Boolean.toString(true), Boolean.toString(false) };
 	
 	private Section fSection;
-	private SchemaDtdDetailsSection fDtdSection;
+	private SchemaDtdDetailsSection fDtdSection = null;
 	private ElementSection fElementSection;
 	private boolean fShowDTD;
+	private boolean fShowDescription;
 	private Spinner fMinOccurSpinner;
 	private Spinner fMaxOccurSpinner;
 	private Button fUnboundSelect;
 	private Label fMinLabel;
 	private Label fMaxLabel;
+	private PDESourceViewer fDescriptionViewer = null;
 	private boolean fBlockListeners = false;
+	private ISchemaObject fSchemaObject;
 
-	public AbstractSchemaDetails(ElementSection section) {
-		this(section,false);
-	}
-	
-	public AbstractSchemaDetails(ElementSection section, boolean showDTD) {
+	public AbstractSchemaDetails(ElementSection section, boolean showDTD, boolean showDescription) {
 		fElementSection = section;
 		fShowDTD = showDTD;
+		fShowDescription = showDescription;
 	}
 	
 	public void modelChanged(IModelChangedEvent event) {
@@ -84,7 +90,11 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd;
+		if (fShowDescription)
+			gd = new GridData(GridData.FILL_BOTH);
+		else
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSection.setLayoutData(gd);
 		
 		// Align the master and details section headers (misalignment caused
@@ -95,6 +105,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		
 		createDetails(client);
+		
+		if (fShowDescription)
+			createDescription(client, toolkit);
 		
 		// If the DTD Approximation section was requested, instantiate it and create it's contents
 		// on the same parent Composite
@@ -108,9 +121,52 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.setClient(client);
 		markDetailsPart(fSection);
 		
+		if (fShowDescription)
+			fDescriptionViewer.createUIListeners();
 		hookListeners();
 	}
 	
+	private void createDescription(Composite container, FormToolkit toolkit) {
+		Label label = toolkit.createLabel(container, PDEUIMessages.AbstractSchemaDetails_descriptionLabel);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 3;
+		label.setLayoutData(gd);
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
+		
+		fDescriptionViewer = new PDESourceViewer(getPage());
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 75;
+		gd.widthHint = 60;
+		gd.horizontalSpan = 3;
+		/* 
+		 * Needed to align vertically with form entry field and allow space
+		 * for a possible field decoration
+		 * commented out for now since fields are already grossly misaligned (see bug 196879)
+		 * commenting out temporarily makes the alignment better on Element details and Attribute details
+		 * but worse on RootElement details
+		 */
+		//gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
+		fDescriptionViewer.createUI(container, gd);
+		fDescriptionViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			public void documentChanged(DocumentEvent event) {
+				if (blockListeners())
+					return;
+				if (fSchemaObject != null){
+					// Get the text from the event
+					IDocument document = event.getDocument();
+					if (document == null) {
+						return;
+					}				
+					// Get the text from the event
+					String text = document.get().trim();
+					updateObjectDescription(text);
+				}
+			}
+			public void documentAboutToBeChanged(DocumentEvent event) {
+			}
+		});
+	}
+
 	public abstract void createDetails(Composite parent);
 	public abstract void updateFields(ISchemaObject obj);
 	public abstract void hookListeners();
@@ -118,7 +174,6 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	public boolean isEditableElement() {
 		return fElementSection.isEditable();
 	}
-	
 	protected void setDecription(String desc) {
 		fSection.setDescription(desc); 
 	}
@@ -138,19 +193,48 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
+	public boolean canPaste(Clipboard clipboard) {
+		if (fShowDescription && fDescriptionViewer != null &&
+				fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
+			return fDescriptionViewer.canPaste();
+		return super.canPaste(clipboard);
+	}
+	public boolean doGlobalAction(String actionId) {
+		if (fShowDescription && fDescriptionViewer != null &&
+				fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
+			return fDescriptionViewer.doGlobalAction(actionId);
+		return super.doGlobalAction(actionId);
+	}	
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (!(part instanceof ElementSection))
 			return;
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
-		if ((fShowDTD) &&
-				(fDtdSection != null)) {
-			fDtdSection.updateDTDLabel(obj);
-		}
 		if (obj instanceof ISchemaObject) {
 			setBlockListeners(true);
-			updateFields((ISchemaObject)obj);
+			ISchemaObject sObj = (ISchemaObject)obj;
+			fSchemaObject = sObj;
+			if (fShowDTD && fDtdSection != null)
+				fDtdSection.updateDTDLabel(obj);
+			if (fShowDescription && fDescriptionViewer != null)
+				updateDescriptionViewer(sObj);
+			updateFields(sObj);
 			setBlockListeners(false);
 		}
+	}
+	public void updateDescriptionViewer(ISchemaObject obj) {
+		if (obj != null) {
+			String text = obj.getDescription();
+			fDescriptionViewer.getDocument().set(text == null ? "" : text); //$NON-NLS-1$
+		}
+	}
+	private void updateObjectDescription(String text) {
+		if (fSchemaObject instanceof SchemaObject) {
+			((SchemaObject)fSchemaObject).setDescription(text);
+		}
+	}
+	
+	protected void fireSelectionChange() {
+		fElementSection.fireSelection(fElementSection.getTreeViewer().getSelection());
 	}
 	
 	protected void fireMasterSelection(ISelection selection) {
@@ -302,5 +386,15 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	
 	protected void setBlockListeners(boolean blockListeners) {
 		fBlockListeners = blockListeners;
+	}
+	
+	public void dispose() {
+		// Set the context menu to null to prevent the editor context menu
+		// from being disposed along with the source viewer
+		if (fDescriptionViewer != null) {
+			fDescriptionViewer.unsetMenu();
+			fDescriptionViewer = null;
+		}
+		super.dispose();
 	}
 }

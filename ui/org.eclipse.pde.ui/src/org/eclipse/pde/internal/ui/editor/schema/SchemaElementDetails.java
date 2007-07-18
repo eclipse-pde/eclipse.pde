@@ -48,7 +48,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private Button fTransFalse;
 	
 	public SchemaElementDetails(ElementSection section) {
-		super(section, true);
+		super(section, true, true);
 	}
 
 	public void createDetails(Composite parent) {
