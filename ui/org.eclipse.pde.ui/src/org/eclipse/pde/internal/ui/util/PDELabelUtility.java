@@ -239,7 +239,7 @@ public class PDELabelUtility {
 		while (Character.isDigit(result.charAt(result.length()-1)))
 			result = result.substring(0, result.length()-1);
 		if (bracketed) {
-			if (!result.substring(result.length()-2).equals(" ("))
+			if (!result.substring(result.length()-2).equals(" (")) //$NON-NLS-1$
 				return name;
 			result = result.substring(0, result.length()-2);
 		}
