@@ -225,6 +225,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		if (obj != null) {
 			String text = obj.getDescription();
 			fDescriptionViewer.getDocument().set(text == null ? "" : text); //$NON-NLS-1$
+			fDescriptionViewer.getViewer().setEditable(obj.getSchema().isEditable());
 		}
 	}
 	private void updateObjectDescription(String text) {
