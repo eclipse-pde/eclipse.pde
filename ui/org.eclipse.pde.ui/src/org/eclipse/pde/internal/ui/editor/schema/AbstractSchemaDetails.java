@@ -127,6 +127,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	private void createDescription(Composite container, FormToolkit toolkit) {
+	
 		Label label = toolkit.createLabel(container, PDEUIMessages.AbstractSchemaDetails_descriptionLabel);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 3;
@@ -138,6 +139,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		gd.heightHint = 75;
 		gd.widthHint = 60;
 		gd.horizontalSpan = 3;
+		gd.horizontalIndent = 1;
 		/* 
 		 * Needed to align vertically with form entry field and allow space
 		 * for a possible field decoration
@@ -247,6 +249,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		cp.createControl(parent, toolkit, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colspan;
+		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		cp.getControl().setLayoutData(gd);
 		cp.setItems(items);
 		cp.getControl().setEnabled(isEditable());
@@ -260,6 +263,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		comp.setLayout(gl);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colSpan;
+		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		comp.setLayoutData(gd);
 		Button tButton = toolkit.createButton(comp, BOOLS[0], SWT.RADIO);
 		Button fButton = toolkit.createButton(comp, BOOLS[1], SWT.RADIO);

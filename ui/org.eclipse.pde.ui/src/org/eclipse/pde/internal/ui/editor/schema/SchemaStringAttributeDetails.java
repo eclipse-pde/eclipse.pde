@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaEnumeration;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -78,6 +79,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 		Table table = toolkit.createTable(tableComp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 40;
+		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		table.setLayoutData(gd);
 		fRestrictionsTable = new TableViewer(table);
 		fRestrictionsTable.setContentProvider(new SchemaAttributeContentProvider());
