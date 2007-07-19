@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
@@ -145,12 +146,24 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
-				if (fName.getValue().length() != 0) {
+				boolean revert = false;
+				if (fName.getValue().length() == 0)
+					revert = true;
+				else {
+					ISchemaElement[] elements = fElement.getSchema().getElements();
+					for (int i = 0; i < elements.length; i++) {
+						if (elements[i] != fElement && elements[i].getName().equalsIgnoreCase(fName.getValue())) {
+							revert = true;
+							break;
+						}
+					}
+				}
+				if (revert)
+					fName.setValue(fElement.getName(),true);
+				else {
 					fElement.setName(fName.getValue());
 					((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
 					setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
-				} else {
-					fName.setValue(fElement.getName(),true);
 				}
 			}
 		});

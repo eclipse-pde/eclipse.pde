@@ -79,6 +79,12 @@ public class SchemaElementReference extends PlatformObject implements
 		return element.getAttributes();
 	}
 
+	public String[] getAttributeNames() {
+		if (element == null)
+			return new String[0];
+		return element.getAttributeNames();
+	}
+
 	public ISchemaCompositor getCompositor() {
 		return compositor;
 	}

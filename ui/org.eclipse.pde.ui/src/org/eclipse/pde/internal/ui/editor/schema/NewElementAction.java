@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
@@ -29,16 +28,7 @@ public class NewElementAction extends Action {
 		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
 	private String getInitialName() {
-		return PDELabelUtility.generateName(getElementNames(), PDEUIMessages.SchemaEditor_NewElement_initialName, false);
-	}
-	private String[] getElementNames() {
-		if (schema == null)
-			return new String[0];
-		ISchemaElement[] elements = schema.getElements();
-		String[] names = new String[elements.length];
-		for (int i = 0; i < elements.length; i++)
-			names[i] = elements[i].getName();
-		return names;
+		return PDELabelUtility.generateName(schema.getElementNames(), PDEUIMessages.SchemaEditor_NewElement_initialName, false);
 	}
 	public org.eclipse.pde.internal.core.schema.Schema getSchema() {
 		return schema;

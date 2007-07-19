@@ -37,4 +37,9 @@ String getDTDRepresentation(boolean addLinks);
  * or complex (with attributes and/or compositors).
  */	
 public ISchemaType getType();
+/**
+ * Returns the names of the element's attributes. Placed here instead of ISchemaAttributeProvider
+ * so that SchemaComplexType does not need to implement needlessly.
+ */
+public String[] getAttributeNames();
 }

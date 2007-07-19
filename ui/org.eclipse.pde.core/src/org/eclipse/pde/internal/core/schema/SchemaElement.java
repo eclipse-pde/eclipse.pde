@@ -125,6 +125,14 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		}
 		return new ISchemaAttribute[0];
 	}
+	
+	public String[] getAttributeNames() {
+		ISchemaAttribute[] attributes = getAttributes();
+		String[] names = new String[attributes.length];
+		for (int i = 0; i < attributes.length; i++)
+			names[i] = attributes[i].getName();
+		return names;
+	}
 
 	public String getDTDRepresentation(boolean addLinks) {
 		String text = ""; //$NON-NLS-1$

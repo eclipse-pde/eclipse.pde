@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
@@ -33,16 +32,7 @@ public class NewAttributeAction extends Action {
 		return element;
 	}
 	private String getInitialName() {
-		return PDELabelUtility.generateName(getAttributeNames(), PDEUIMessages.SchemaEditor_NewAttribute_initialName, false);
-	}
-	private String[] getAttributeNames() {
-		if (element == null)
-			return new String[0];
-		ISchemaAttribute[] attributes = element.getAttributes();
-		String[] names = new String[attributes.length];
-		for (int i = 0; i < attributes.length; i++)
-			names[i] = attributes[i].getName();
-		return names;
+		return PDELabelUtility.generateName(element.getAttributeNames(), PDEUIMessages.SchemaEditor_NewAttribute_initialName, false);
 	}
 	public void run() {
 		String name = getInitialName();

@@ -96,6 +96,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	public ISchemaElement[] getElements();
 
 	/**
+	 * Returns an array of element names with the global scope defined in this
+	 * schema.
+	 * 
+	 * @return an array of global elements
+	 */
+	public String[] getElementNames();
+
+	/**
 	 * Returns an array of elements with the global scope defined in this schema
 	 * and all the included schemas.
 	 * 

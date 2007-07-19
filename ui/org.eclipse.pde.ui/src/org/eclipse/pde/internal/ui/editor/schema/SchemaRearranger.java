@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
 public class SchemaRearranger {
 
@@ -119,6 +120,9 @@ public class SchemaRearranger {
 				oldType.removeAttribute(attribute);
 			}
 			attribute.setParent(newParent);
+			if (attribute instanceof SchemaAttribute)
+				((SchemaAttribute)attribute).setName(PDELabelUtility.generateName(
+						newParent.getAttributeNames(), PDELabelUtility.getBaseName(attribute.getName(), false), false));
 			type.addAttribute(attribute, sibling);
 		}
 	}
@@ -151,6 +155,8 @@ public class SchemaRearranger {
 	public void pasteElement(ISchemaElement object, ISchemaObject sibling) {
 		SchemaElement element = (SchemaElement) object;
 		element.setParent(fSchema);
+		element.setName(PDELabelUtility.generateName(element.getSchema().getElementNames(),
+				PDELabelUtility.getBaseName(element.getName(), false), false));
 		fSchema.addElement(element, (ISchemaElement) sibling);
 		fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
 	}
@@ -159,6 +165,8 @@ public class SchemaRearranger {
 		SchemaElement element = (SchemaElement) realTarget;
 		SchemaAttribute attribute = (SchemaAttribute) object;
 		attribute.setParent(element);
+		attribute.setName(PDELabelUtility.generateName(element.getAttributeNames(),
+				PDELabelUtility.getBaseName(attribute.getName(), false), false));
 		ISchemaType type = element.getType();
 		SchemaComplexType complexType = null;
 		if (!(type instanceof ISchemaComplexType)) {

@@ -270,6 +270,14 @@ public class Schema extends PlatformObject implements ISchema {
 		fElements.copyInto(result);
 		return result;
 	}
+	
+	public String[] getElementNames() {
+		ISchemaElement[] elements = getElements();
+		String[] names = new String[elements.length];
+		for (int i = 0; i < elements.length; i++)
+			names[i] = elements[i].getName();
+		return names;
+	}
 
 	public ISchemaElement[] getResolvedElements() {
 		if (fIncludes == null)
