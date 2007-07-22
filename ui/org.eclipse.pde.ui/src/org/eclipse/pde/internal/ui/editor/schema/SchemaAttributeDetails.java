@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
@@ -25,9 +26,11 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -42,7 +45,12 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Button fDepTrue;
 	private Button fDepFalse;
 	private ComboPart fType;
-	private ComboPart fUse;
+	private ComboPart fUseDefault;
+	private ComboPart fUseOther;
+	private StackLayout fUseLayout;
+	private Composite fUseComp;
+	private Composite fUseCompDefault;
+	private Composite fUseCompOther;
 	
 	public SchemaAttributeDetails(ElementSection section) {
 		super(section, false, true);
@@ -63,6 +71,8 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
+		// Ensures label columns on every detail page are same width
+		((GridData)fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
 		
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
@@ -70,17 +80,32 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fDepTrue = buttons[0];
 		fDepFalse = buttons[1];
 
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
+		label.setForeground(foreground);
+		
+		fUseComp = toolkit.createComposite(parent);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fUseComp.setLayoutData(gd);
+		fUseLayout = new StackLayout();
+		fUseComp.setLayout(fUseLayout);
+		
+		fUseCompDefault = toolkit.createComposite(fUseComp);
+		fUseCompDefault.setLayout(GridLayoutFactory.fillDefaults().margins(0,0).numColumns(2).create());
+		
+		fUseDefault = createComboPart(fUseCompDefault, toolkit, ISchemaAttribute.USE_TABLE, 1, SWT.NONE);
+		fValue = new FormEntry(fUseCompDefault, toolkit, null, 0, 1);
+		
+		fUseCompOther = toolkit.createComposite(fUseComp);
+		fUseCompOther.setLayout(GridLayoutFactory.fillDefaults().margins(0,0).create());
+
+		fUseOther = createComboPart(fUseCompOther, toolkit, ISchemaAttribute.USE_TABLE, 1);
+		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
 		label.setForeground(foreground);
 		fType = createComboPart(parent, toolkit, ISchemaAttribute.TYPES, 2);
 		
 		createTypeDetails(parent, toolkit);
-		
-		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
-		label.setForeground(foreground);
-		fUse = createComboPart(parent, toolkit, ISchemaAttribute.USE_TABLE, 2);
-		
-		fValue = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_defaultValue, null, false, 6);
 		
 		toolkit.paintBordersFor(parent);
 		setText(PDEUIMessages.SchemaAttributeDetails_title);
@@ -101,22 +126,24 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		int kind = fAttribute.getKind();
 		fType.select(isStringType ? 1 + kind : 0);
 		
-		fUse.select(fAttribute.getUse());
+		fUseDefault.select(fAttribute.getUse());
+		fUseOther.select(fAttribute.getUse());
 		Object value = fAttribute.getValue();
-		fValue.setValue(value != null ? value.toString() : "", true); //$NON-NLS-1$
+		fValue.setValue(value != null ? value.toString() : PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue, true);
 		
 		boolean editable = isEditableElement();
 		if (fAttribute.getUse() != 2) {
-			fValue.getLabel().setEnabled(false);
-			fValue.getText().setEditable(false);
+			fUseLayout.topControl = fUseCompOther;
 		} else {
-			fValue.setEditable(editable);
+			fUseLayout.topControl = fUseCompDefault;
 		}
+		fUseComp.layout();
 		fName.setEditable(editable);
 		fDepTrue.setEnabled(editable);
 		fDepFalse.setEnabled(editable);
 		fType.setEnabled(editable);
-		fUse.setEnabled(editable);
+		fUseDefault.setEnabled(editable);
+		fUseOther.setEnabled(editable);
 	}
 	
 	public void hookListeners() {
@@ -184,23 +211,44 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 				fireSelectionChange();
 			}
 		});
-		fUse.addSelectionListener(new SelectionAdapter() {
+		fUseDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
-				int use = fUse.getSelectionIndex();
-				fAttribute.setUse(use);
-				fValue.getLabel().setEnabled(use == 2);
-				fValue.getText().setEditable(use == 2);
-				if (use == 2 && fValue.getValue().length() == 0) {
-					fValue.setValue(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue);
-					fValue.getText().setSelection(0, fValue.getValue().length());
-					fValue.getText().setFocus();
-				} else if (use != 2)
-					fValue.setValue(""); //$NON-NLS-1$
-				
+				int i = fUseDefault.getSelectionIndex();
+				setBlockListeners(true);
+				fUseOther.select(i);
+				setBlockListeners(false);
+				doUseChange(i);
 			}
 		});
+		fUseOther.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
+				int i = fUseOther.getSelectionIndex();
+				setBlockListeners(true);
+				fUseDefault.select(i);
+				setBlockListeners(false);
+				doUseChange(i);
+			}
+		});
+	}
+	
+	private void doUseChange (int index) {
+		fAttribute.setUse(index);
+		if (index == 2) {
+			fUseLayout.topControl = fUseCompDefault;
+			fUseComp.layout();
+			if (fValue.getValue().equals(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue))
+				fValue.getText().setSelection(0, fValue.getValue().length());
+			fValue.getText().setFocus();
+		} else if (index != 2) {
+			fUseLayout.topControl = fUseCompOther;
+			fUseComp.layout();
+			fValue.setValue(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue);
+			fUseCompOther.setFocus();
+		}
 	}
 
 	public void modelChanged(IModelChangedEvent event) {

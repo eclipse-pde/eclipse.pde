@@ -30,6 +30,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,6 +47,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 
 	protected static final String[] BOOLS = 
 		new String[] { Boolean.toString(true), Boolean.toString(false) };
+	
+	protected int minLabelWeight;
 	
 	private Section fSection;
 	private SchemaDtdDetailsSection fDtdSection = null;
@@ -81,7 +84,16 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	public final void createContents(Composite parent) {
-
+		// This is a hacked fix to ensure that the label columns on every details
+		// page have the same width. SchemaDetails_translatable plus 11 pixels
+		// represents the longest label on any field on any details page. This
+		// occurs on SchemaStringAttributeDetails and 11 is the size of the
+		// horizontal indent that contributes to the label's width.
+		GC gc = new GC(parent);
+		minLabelWeight = gc.textExtent(PDEUIMessages.SchemaDetails_translatable).x + 11;
+		gc.dispose();
+		gc = null;
+		
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		fSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
@@ -242,16 +254,20 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fElementSection.fireSelection(selection);
 	}
 	
-	protected ComboPart createComboPart(Composite parent, FormToolkit toolkit, String[] items, int colspan) {
+	protected ComboPart createComboPart(Composite parent, FormToolkit toolkit, String[] items, int colspan, int style) {
 		ComboPart cp = new ComboPart();
 		cp.createControl(parent, toolkit, SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(style);
 		gd.horizontalSpan = colspan;
 		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		cp.getControl().setLayoutData(gd);
 		cp.setItems(items);
 		cp.getControl().setEnabled(isEditable());
 		return cp;
+	}
+	
+	protected ComboPart createComboPart(Composite parent, FormToolkit toolkit, String[] items, int colspan) {
+		return createComboPart(parent, toolkit, items, colspan, GridData.FILL_HORIZONTAL);
 	}
 	
 	protected Button[] createTrueFalseButtons(Composite parent, FormToolkit toolkit, int colSpan) {
