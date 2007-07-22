@@ -2396,10 +2396,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SchemaIncludesSection_dialogMessage;
 
-	public static String SchemaElementDetails_labelProperty;
-
-	public static String SchemaElementDetails_icon;
-
 	public static String SchemaDetails_translatable;
 
 	public static String SchemaElementDetails_title;

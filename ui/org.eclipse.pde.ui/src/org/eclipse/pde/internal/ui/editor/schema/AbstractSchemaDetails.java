@@ -44,8 +44,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class AbstractSchemaDetails extends PDEDetails {
 
-	protected static final String STRING_TYPE = "string"; //$NON-NLS-1$
-	protected static final String BOOLEAN_TYPE = "boolean"; //$NON-NLS-1$
 	protected static final String[] BOOLS = 
 		new String[] { Boolean.toString(true), Boolean.toString(false) };
 	

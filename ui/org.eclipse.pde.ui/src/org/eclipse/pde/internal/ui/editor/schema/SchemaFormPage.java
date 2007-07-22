@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
-import java.util.Arrays;
-
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -88,9 +86,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 					case IMetaAttribute.JAVA :
 						return SchemaJavaAttributeDetails.class;
 					case IMetaAttribute.STRING :
-						int typeIndex = Arrays.binarySearch(SchemaAttributeDetails.TYPES,
-								att.getType().getName());
-						if (typeIndex == SchemaAttributeDetails.STR_IND)
+						if (att.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]))
 							return SchemaStringAttributeDetails.class;
 				}
 				return SchemaOtherAttributeDetails.class;

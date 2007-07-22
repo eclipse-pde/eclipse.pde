@@ -36,22 +36,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	
-	private static final String JAVA_TYPE = "java"; //$NON-NLS-1$
-	private static final String RESOURCE_TYPE = "resource"; //$NON-NLS-1$
-	protected static final int BOOL_IND = 0;
-	protected static final int STR_IND = 1;
-	protected static final int JAVA_IND = 2;
-	protected static final int RES_IND = 3;
-	protected static final String[] TYPES = new String[4];
-	static {
-		TYPES[BOOL_IND]= BOOLEAN_TYPE;
-		TYPES[STR_IND] = STRING_TYPE;
-		TYPES[JAVA_IND] = JAVA_TYPE;
-		TYPES[RES_IND] = RESOURCE_TYPE;
-	}
-	private static final String[] USE = 
-		new String[] {"optional", "required", "default"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	
 	private SchemaAttribute fAttribute;
 	private FormEntry fValue;
 	private FormEntry fName;
@@ -88,13 +72,13 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
 		label.setForeground(foreground);
-		fType = createComboPart(parent, toolkit, TYPES, 2);
+		fType = createComboPart(parent, toolkit, ISchemaAttribute.TYPES, 2);
 		
 		createTypeDetails(parent, toolkit);
 		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
 		label.setForeground(foreground);
-		fUse = createComboPart(parent, toolkit, USE, 2);
+		fUse = createComboPart(parent, toolkit, ISchemaAttribute.USE_TABLE, 2);
 		
 		fValue = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_defaultValue, null, false, 6);
 		
@@ -113,7 +97,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fDepTrue.setSelection(fAttribute.isDeprecated());
 		fDepFalse.setSelection(!fAttribute.isDeprecated());
 		
-		boolean isStringType = fAttribute.getType().getName().equals(STRING_TYPE);
+		boolean isStringType = fAttribute.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]);
 		int kind = fAttribute.getKind();
 		fType.select(isStringType ? 1 + kind : 0);
 		
@@ -183,8 +167,8 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 				if (blockListeners())
 					return;
 				String typeString = fType.getSelection();
-				if (!typeString.equals(BOOLEAN_TYPE))
-					typeString = STRING_TYPE;
+				if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
+					typeString = ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND];
 				
 				fAttribute.setType(new SchemaSimpleType(fAttribute.getSchema(), typeString));
 				

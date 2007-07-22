@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
@@ -158,11 +159,36 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	}
 
 	public String getIconProperty() {
-		return iconName;
+		if (iconName != null)
+			return iconName;
+		String result = null;
+		ISchemaAttribute[] attributes = getAttributes();
+		for (int i = 0; i < attributes.length && result == null; i++) {
+			if (isValidIconProperty(attributes[i]))
+				result = attributes[i].getName();
+		}
+		return result;
 	}
 
 	public String getLabelProperty() {
-		return labelProperty;
+		if (labelProperty != null)
+			return labelProperty;
+		String result = null;
+		ISchemaAttribute[] attributes = getAttributes();
+		for (int i = 0; i < attributes.length && result == null; i++) {
+			if (isValidLabelProperty(attributes[i]))
+				result = attributes[i].getName();
+		}
+		return result;
+	}
+	
+	private boolean isValidLabelProperty(ISchemaAttribute a) {
+		return a.getKind() == IMetaAttribute.STRING &&
+			a.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]) &&
+			a.isTranslatable();
+	}
+	private boolean isValidIconProperty(ISchemaAttribute a) {
+		return a.getKind() == IMetaAttribute.RESOURCE;
 	}
 
 	public ISchemaType getType() {
