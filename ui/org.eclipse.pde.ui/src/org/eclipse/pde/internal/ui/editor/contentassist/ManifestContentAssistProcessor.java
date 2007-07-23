@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj@tpg.com.au) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=197410
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
@@ -63,8 +64,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
 	private static final String[] fHeader = {
-		Constants.BUNDLE_ACTIVATOR,
 		Constants.BUNDLE_ACTIVATIONPOLICY,
+		Constants.BUNDLE_ACTIVATOR,
 		Constants.BUNDLE_CATEGORY,
 		Constants.BUNDLE_CLASSPATH,
 		Constants.BUNDLE_CONTACTADDRESS,
@@ -85,14 +86,14 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		ICoreConstants.ECLIPSE_GENERIC_CAPABILITY,
 		ICoreConstants.ECLIPSE_GENERIC_REQUIRED,
 		ICoreConstants.ECLIPSE_LAZYSTART,
-		Constants.EXPORT_PACKAGE,
 		ICoreConstants.PLATFORM_FILTER,
 		ICoreConstants.ECLIPSE_REGISTER_BUDDY,
+		Constants.EXPORT_PACKAGE,
 		ICoreConstants.EXPORT_SERVICE,
+		Constants.FRAGMENT_HOST,
 		Constants.IMPORT_PACKAGE,
 		ICoreConstants.IMPORT_SERVICE,
-		Constants.REQUIRE_BUNDLE,
-		Constants.FRAGMENT_HOST 
+		Constants.REQUIRE_BUNDLE
 	};
 	
 	private static final String BAUMAN = "Brian Bauman"; //$NON-NLS-1$
