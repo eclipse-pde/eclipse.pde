@@ -163,6 +163,7 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	 *      java.lang.String)
 	 */
 	public void setXMLAttribute(String name, String value) {
+		// Overrided by necessity - dealing with different objects
 		String oldValue = getXMLAttributeValue(name);
 		if (oldValue != null && oldValue.equals(value))
 			return;
@@ -209,7 +210,7 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		}
 	}
 
-	protected void fireModelChanged(IModelChangedEvent e) {
+	private void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
@@ -273,5 +274,33 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		// NO-OP
 		// Child classes to override
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLAttributeValue(java.lang.String)
+	 */
+	public String getXMLAttributeValue(String name) {
+		// TODO: MP: TEO: MANIFEST MOD TEST
+		// Overrided by necessity - dealing with different objects
+		PluginAttribute attr = (PluginAttribute)getNodeAttributesMap().get(name);
+		return attr == null ? null : attr.getValue();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#write(boolean)
+	 */
+	public String write(boolean indent) {
+		// Used by text edit operations
+		// Subclasses to override
+		return ""; //$NON-NLS-1$
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#writeShallow(boolean)
+	 */
+	public String writeShallow(boolean terminate) {
+		// Used by text edit operations
+		// Subclasses to override
+		return ""; //$NON-NLS-1$
+	}	
 	
 }

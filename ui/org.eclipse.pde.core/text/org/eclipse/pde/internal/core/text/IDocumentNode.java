@@ -24,6 +24,9 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	void addChildNode(IDocumentNode child);
 	void addChildNode(IDocumentNode child, int position);
 	IDocumentNode removeChildNode(IDocumentNode child);	
+	// Not used by text edit operations
+	IDocumentNode removeChildNode(int index); 
+	
 	IDocumentNode[] getChildNodes();
 	
 	void addTextNode(IDocumentTextNode textNode);
@@ -79,6 +82,8 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	public ArrayList getChildNodesList();
 	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent, IModel model);
+	// Not used by text edit operations
+	public void setXMLContent(String text);
 	
 	// TODO: MP: TEO:  Rename to IDocumentElementNode
 	// TODO: MP: TEO:  Space out, comment and rename methods

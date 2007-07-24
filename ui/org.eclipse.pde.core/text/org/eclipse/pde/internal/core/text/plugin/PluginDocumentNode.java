@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
-public class PluginDocumentNode implements IDocumentNode {
+public abstract class PluginDocumentNode implements IDocumentNode {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -71,33 +74,57 @@ public class PluginDocumentNode implements IDocumentNode {
 		// Not used by text edit operations
 		return fAttributes;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
-	 */
-	public void setXMLAttribute(String name, String value) {
-		// Not used by text edit operations
-		// NO-OP
-		// Use strongly discouraged, use setXMLAttribute(IDocumentAttribute) instead
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#write(boolean)
-	 */
-	public String write(boolean indent) {
-		// Used by text edit operations
-		// Subclasses to override
-		return ""; //$NON-NLS-1$
-	}	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
 		// Used by text edit operations
-		// Subclasses to override
-		return ""; //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
+		// Print opening angle bracket
+		buffer.append("<"); //$NON-NLS-1$
+		// Print element
+		buffer.append(getXMLTagName());
+		// Print attributes
+		buffer.append(writeAttributes());
+		// Make self-enclosing element if specified
+		if (terminate) {
+			buffer.append("/"); //$NON-NLS-1$
+		}
+		// Print closing angle bracket
+		buffer.append(">"); //$NON-NLS-1$
+		
+		return buffer.toString();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#write(boolean)
+	 */
+	public String write(boolean indent) {
+		// Used by text edit operations
+		StringBuffer buffer = new StringBuffer();	
+		// Print indent
+		if (indent) {
+			buffer.append(getIndent());
+		}
+		// Print start element and attributes
+		buffer.append(writeShallow(false));	
+		// Print child elements
+		IDocumentNode[] children = getChildNodes();
+		for (int i = 0; i < children.length; i++) {
+			children[i].setLineIndent(getLineIndent() + 3);
+			buffer.append(getLineDelimiter() + children[i].write(true));
+		}
+		// Print end element
+		buffer.append(getLineDelimiter() + getIndent());
+		// TODO: MP: TEO: Replace with XMLPrintHandler constants
+		buffer.append("</"); //$NON-NLS-1$
+		buffer.append(getXMLTagName());
+		buffer.append(">"); //$NON-NLS-1$
+		
+		return buffer.toString();
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getChildNodes()
@@ -177,7 +204,32 @@ public class PluginDocumentNode implements IDocumentNode {
 			}
 		}
 		return null;
+		// TODO: MP: TEO: Set in the model equal to false ?
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode)
+	 */
+	public IDocumentNode removeChildNode(int index) {
+		// NOT used by text edit operations
+		if ((index < 0) ||
+				(index >= fChildren.size())) {
+			return null;
+		}
+		// Get the child at the specified index
+		IDocumentNode child = (IDocumentNode)fChildren.get(index);
+		// Remove the child
+		fChildren.remove(child);
+		// Determine the new previous sibling
+		IDocumentNode prevSibling = null;
+		if (index != 0) {
+			prevSibling = (IDocumentNode)fChildren.get(index - 1);
+		}
+		child.setPreviousSibling(prevSibling);
+		
+		return child;
+		// TODO: MP: TEO: Set in the model equal to false ?
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#isErrorNode()
@@ -240,8 +292,12 @@ public class PluginDocumentNode implements IDocumentNode {
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Not used by text edit operations
-		PluginAttribute attr = (PluginAttribute)fAttributes.get(name);
-		return attr == null ? null : attr.getValue();
+		// TODO: MP: TEO: MANIFEST MOD TEST
+		IDocumentAttribute attribute  = (IDocumentAttribute)fAttributes.get(name);
+		if (attribute == null) {
+			return null;
+		}
+		return attribute.getAttributeValue();
 	}
 	
 	/* (non-Javadoc)
@@ -489,5 +545,118 @@ public class PluginDocumentNode implements IDocumentNode {
 		// Used by text edit operations
 		return false;
 	}
+	
+	protected String writeAttributes() {
+
+		StringBuffer buffer = new StringBuffer();
+		IDocumentAttribute[] attributes = getNodeAttributes();
+
+		for (int i = 0; i < attributes.length; i++) {
+			IDocumentAttribute attribute = attributes[i];
+			if (isDefined(attribute)) {
+				buffer.append(getAttributeIndent() + attribute.write());
+			}			
+		}
+		return buffer.toString();
+	}
+	
+	protected String getAttributeIndent() {
+		return getLineDelimiter() + 
+			   getIndent() + 
+			   "      "; //$NON-NLS-1$
+	}
+	
+	protected String getLineDelimiter() {
+		// TODO: MP: TEO: Better way using Java library method?
+		// Subclasses to override
+		return "\n"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * @param attribute
+	 * @return
+	 */
+	protected boolean isDefined(IDocumentAttribute attribute) {
+		
+		if (attribute == null) {
+			return false;
+		} else if (attribute.getAttributeValue().trim().length() <= 0) {
+			return false;
+		}
+		
+		return true;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
+	 */
+	public void setXMLAttribute(String name, String value) {
+		// Not used by text edit operations
+
+		// Convenience method
+		// Ensure name is defined
+		if ((name == null) || 
+				(name.length() == 0)) {
+			return;
+		}
+		// Null values not allowed
+		if (value == null) {
+			value = ""; //$NON-NLS-1$
+		}		
+		String oldValue = getXMLAttributeValue(name);
+		// Check if the value is different
+		if ((oldValue != null) && 
+				oldValue.equals(value)) {
+			return;
+		}
+		// Check to see if the attribute already exists
+		IDocumentAttribute attribute = (IDocumentAttribute)getNodeAttributesMap().get(name);
+		try {
+			if (attribute == null) {
+				// Attribute does not exist
+				attribute = new DocumentAttributeNode();
+				attribute.setAttributeName(name);
+				attribute.setEnclosingElement(this);
+				setXMLAttribute(attribute);
+			}
+			attribute.setAttributeValue(value);
+		} catch (CoreException e) {
+			// Ignore
+			return;
+		}
+	}		
+	
+	/**
+	 * @param text Must be already trimmed and formatted
+	 */
+	public void setXMLContent(String text) {
+		// Not used by text edit operations
+		// Null text not allowed
+		if (text == null) {
+			text = ""; //$NON-NLS-1$
+		}	
+		// Not going to check if the old value is equal to the new one
+		// Too expensive
+		// Check to see if the content already exists
+		IDocumentTextNode node = getTextNode();
+		//String oldText = ""; 
+		if (node == null) {
+			// Text does not exist
+			node = new DocumentTextNode();
+			node.setEnclosingElement(this);
+			addTextNode(node);
+		}
+//		else {
+//			// Text exists
+//			oldText = node.getText();
+//		}
+		node.setText(text);
+		// Fire an event if in the model
+		// TODO: MP: TEO: Should we fire the change here?
+//		if (shouldFireEvent()) {
+//			// TODO: MP: TEO: Create constant
+//			firePropertyChanged(node, "TEXT", oldText, text);
+//		}
+	}	
 	
 }
