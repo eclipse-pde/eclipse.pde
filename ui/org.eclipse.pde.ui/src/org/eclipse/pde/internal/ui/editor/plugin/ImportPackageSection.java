@@ -653,16 +653,18 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         if (!selection.isEmpty())
         	manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		manager.add(new Separator());
-		if (singleSelection){ 
-			manager.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
-				public void run() {
-					doReferenceSearch(selection);
-				}
-			});
-		}
-		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) 
+		
+		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) {
+			manager.add(new Separator());
+			if (singleSelection){ 
+				manager.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
+					public void run() {
+						doReferenceSearch(selection);
+					}
+				});
+			}
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
+		}
 		
 		if (shouldEnableProperties(((IStructuredSelection)fPackageViewer.getSelection()).toArray())) {
             manager.add(new Separator());
@@ -692,6 +694,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	private IPackageFragmentRoot[] getSourceRoots() throws JavaModelException {
 		ArrayList result = new ArrayList();
 		IProject project = getPage().getPDEEditor().getCommonProject();
+		// would normally return array of size 0, but by returning null can optimize the search to run faster.
+		if (project == null) {
+			return null;
+		}
 		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
 		for (int i = 0; i < roots.length; i++) {
 			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
