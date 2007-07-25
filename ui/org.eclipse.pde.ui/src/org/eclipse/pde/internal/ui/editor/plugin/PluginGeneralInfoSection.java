@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.friese@openarchitectureware.org> - bug 191769
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -24,6 +25,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -42,11 +44,13 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.osgi.framework.Constants;
 
 public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private FormEntry fClassEntry;
 	private Button fLazyStart;
+	private Button fSingleton;
 	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
@@ -63,6 +67,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		if (isBundle() && (formEditor instanceof ManifestEditor)
 				&& ((ManifestEditor) formEditor).isEquinox()) {
 			createLazyStart(parent, toolkit, actionBars);
+			createSingleton(parent, toolkit, actionBars);
 		}
 	}
 
@@ -98,6 +103,21 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				else
 					getBundle().setHeader(getLazyStartHeaderName(), 
 							Boolean.toString(fLazyStart.getSelection()));
+			}
+		});
+	}
+	
+	private void createSingleton(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
+		fSingleton = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_singleton, SWT.CHECK);
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		fSingleton.setLayoutData(td);
+		fSingleton.setEnabled(isEditable());
+		fSingleton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IManifestHeader header = getSingletonHeader();
+				if (header instanceof BundleSymbolicNameHeader)
+					((BundleSymbolicNameHeader)header).setSingleton(fSingleton.getSelection());
 			}
 		});
 	}
@@ -180,6 +200,11 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			fLazyStart.setSelection(header instanceof LazyStartHeader 
 					&& ((LazyStartHeader)header).isLazyStart());
 		}
+		if (fSingleton != null) {
+			IManifestHeader header = getSingletonHeader();
+			fSingleton.setSelection(header instanceof BundleSymbolicNameHeader 
+					&& ((BundleSymbolicNameHeader)header).isSingleton());
+		}
 		super.refresh();
 	}
 	
@@ -201,6 +226,16 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		return ICoreConstants.ECLIPSE_AUTOSTART;
 	}
 
+	private IManifestHeader getSingletonHeader() {
+		IBundle bundle = getBundle();
+		if (bundle instanceof Bundle) {
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+			return header;
+		}
+		return null;
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.GeneralInfoSection#dispose()
 	 */
