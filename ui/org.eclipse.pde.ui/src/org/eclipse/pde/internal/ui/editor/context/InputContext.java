@@ -211,6 +211,13 @@ public abstract class InputContext {
 			flushModel(doc);
 			fDocumentProvider.changed(fEditorInput);
 			fValidated=false;
+		} else if ((fModel instanceof IEditable) &&
+				((IEditable)fModel).isDirty()) {
+			// When text edit operations are made that cancel each other out,
+			// the editor is not undirtied
+			// e.g. Extensions page:  Move an element up and then move it down
+			// back in the same position:  Bug # 197831
+			((IEditable)fModel).setDirty(false);
 		}
 	}
 	
