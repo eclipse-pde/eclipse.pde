@@ -20,4 +20,8 @@ public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilin
 public IDocument getDocument();
 public void setStale(boolean stale);
 public boolean isStale();
+
+	public String getCharset();
+	public void setCharset(String charset);
+
 }

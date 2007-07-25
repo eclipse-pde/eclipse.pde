@@ -26,11 +26,10 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSAction(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_ACTION);
 	}
 
 	/* (non-Javadoc)

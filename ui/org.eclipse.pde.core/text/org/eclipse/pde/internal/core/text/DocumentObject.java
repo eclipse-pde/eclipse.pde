@@ -12,6 +12,8 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
@@ -39,13 +41,15 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	private transient boolean fInTheModel;
 	
 	/**
-	 * 
+	 * @param model
+	 * @param tagName
 	 */
-	public DocumentObject(IModel model) {
+	public DocumentObject(IModel model, String tagName) {
 		super();
 		
 		fModel = model;
 		fInTheModel = false;
+		setXMLTagName(tagName);
 	}
 
 	/* (non-Javadoc)
@@ -111,7 +115,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 			IDocument document = ((IEditingModel)fModel).getDocument();
 			return TextUtilities.getDefaultLineDelimiter(document);
 		}
-		return "\n"; //$NON-NLS-1$
+		return super.getLineDelimiter();
 	}	
 	
 	/* (non-Javadoc)
@@ -204,10 +208,10 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 */
 	public void addChildNode(IDocumentNode child, int position) {
 		super.addChildNode(child, position);
-		// TODO: MP: TEO: Investigate if this is really needed.  Why not other add methods
-		if (child instanceof DocumentObject) {
-			((DocumentObject)child).setInTheModel(true);
-		}
+		// Fire event
+		if (shouldFireEvent()) {
+			fireStructureChanged(child, IModelChangedEvent.INSERT);
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -215,10 +219,43 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 */
 	public void addChildNode(IDocumentNode child) {
 		super.addChildNode(child);
-		// TODO: MP: TEO:  Not sure if this is needed
-		if (child instanceof DocumentObject) {
-			((DocumentObject)child).setInTheModel(true);
+		// Fire event
+		if (shouldFireEvent()) {
+			fireStructureChanged(child, IModelChangedEvent.INSERT);
+		}		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
+	public IDocumentNode removeChildNode(IDocumentNode child) {
+		IDocumentNode node = super.removeChildNode(child);
+		// Fire event
+		if (shouldFireEvent()) {
+			fireStructureChanged(node, IModelChangedEvent.REMOVE);
 		}	
+		return node;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
+	 */
+	public IDocumentNode removeChildNode(int index, Class clazz) {
+		// Validate index
+		if ((index < 0) ||
+				(index >= getChildCount()) ||
+				(clazz.isInstance(getChildAt(index)) == false)) {
+			// 0 <= index < child element count
+			// Cannot remove a node that is not the specified type		
+			return null;
+		}
+		// Remove the node
+		IDocumentNode node = super.removeChildNode(index);
+		// Fire event
+		if (shouldFireEvent()) {
+			fireStructureChanged(node, IModelChangedEvent.REMOVE);
+		}	
+		return node;
 	}
 	
 	/* (non-Javadoc)
@@ -227,6 +264,291 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
+	}	
+
+	/**
+	 * @param newNode
+	 * @param oldNode
+	 */
+	protected void setChildNode(IDocumentNode newNode, IDocumentNode oldNode) {
+
+		if ((newNode == null) &&
+				(oldNode == null)) {
+			// NEW = NULL, OLD = NULL
+			// If the new and old nodes are not defined, nothing to do
+			return;
+		} else if (newNode == null) {
+			// NEW = NULL, OLD = DEF
+			// Remove the old node
+			removeChildNode((IDocumentNode)oldNode);
+		} else if (oldNode == null) {
+			// NEW = DEF, OLD = NULL
+			// Add the new node as the first child
+			addChildNode((IDocumentNode)newNode, 0);
+		} else {
+			// NEW = DEF, OLD = DEF
+			// Remove the old node
+			removeChildNode((IDocumentNode)oldNode);
+			// Add the new node as the first child
+			addChildNode((IDocumentNode)newNode, 0);
+		}
+		
+		if (shouldFireEvent()) {
+			fireStructureChanged(newNode, oldNode);
+		}
+	}
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected IDocumentNode getChildNode(Class clazz) {
+		// Linear search O(n)
+		ArrayList children = getChildNodesList();
+		Iterator iterator = children.iterator();
+		while (iterator.hasNext()) {
+			IDocumentNode node = (IDocumentNode)iterator.next();
+			if (clazz.isInstance(node)) {
+				return node;
+			}
+		}
+		return null;		
+	}
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected int getChildNodeCount(Class clazz) {
+		// Linear search O(n)
+		int count = 0;
+		ArrayList children = getChildNodesList();
+		Iterator iterator = children.iterator();
+		while (iterator.hasNext()) {
+			IDocumentNode node = (IDocumentNode)iterator.next();
+			if (clazz.isInstance(node)) {
+				count++;
+			}
+		}		
+		return count;		
+	}
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected IDocumentNode[] getChildNodes(Class clazz) {
+		ArrayList filteredChildren = new ArrayList();
+		ArrayList children = getChildNodesList();
+		Iterator iterator = children.iterator();
+		while (iterator.hasNext()) {
+			IDocumentNode node = (IDocumentNode)iterator.next();
+			if (clazz.isInstance(node)) {
+				filteredChildren.add(node);
+			}
+		}		
+		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);		
+	}
+	
+	/**
+	 * @param node
+	 * @param clazz
+	 * @return
+	 */
+	protected IDocumentNode getNextSibling(IDocumentNode node, Class clazz) {
+		int position = indexOf(node);
+		int lastIndex = getChildCount() - 1;
+		if ((position < 0) ||
+				(position >= lastIndex)) {
+			// Either the node was not found or the node was found but it is 
+			// at the last index
+			return null;
+		}
+		// Get the next node of the given type
+		for (int i = position + 1; i <= lastIndex; i++) {
+			IDocumentNode currentNode = getChildAt(i);
+			if (clazz.isInstance(currentNode)) {
+				return currentNode;
+			}
+		}
+		return null;			
+	}
+	
+	/**
+	 * @param node
+	 * @param clazz
+	 * @return
+	 */
+	protected IDocumentNode getPreviousSibling(IDocumentNode node, Class clazz) {
+		int position = indexOf(node);
+		if ((position <= 0) ||
+				(position >= getChildCount())) {
+			// Either the item was not found or the item was found but it is 
+			// at the first index
+			return null;
+		}
+		// Get the previous node of the given type
+		for (int i = position - 1; i >= 0; i--) {
+			IDocumentNode currentNode = getChildAt(i);
+			if (clazz.isInstance(currentNode)) {
+				return currentNode;
+			}
+		}
+		return null;		
+	}	
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected boolean hasChildNodes(Class clazz) {
+		ArrayList children = getChildNodesList();
+		Iterator iterator = children.iterator();
+		while (iterator.hasNext()) {
+			IDocumentNode node = (IDocumentNode)iterator.next();
+			if (clazz.isInstance(node)) {
+				return true;
+			}
+		}		
+		return false;		
+	}
+	
+	/**
+	 * @param node
+	 * @param clazz
+	 * @return
+	 */
+	protected boolean isFirstChildNode(IDocumentNode node, Class clazz) {
+		int position = indexOf(node);
+		// Check to see if node is found
+		if ((position < 0) ||
+				(position >= getChildCount())) {
+			// Node not found
+			return false;
+		} else if (position == 0) {
+			// Node found in the first position
+			return true;
+		}
+		// Check to see if there is any node before the specified node of the
+		// same type
+		// Assertion: Position > 0
+		for (int i = 0; i < position; i++) {
+			if (clazz.isInstance(getChildAt(i))) {
+				// Another node of the same type found before the specified node
+				return false;
+			}
+		}
+		// All nodes before the specified node were of a different type
+		return true;
+	}
+	
+	/**
+	 * @param node
+	 * @param clazz
+	 * @return
+	 */
+	protected boolean isLastChildNode(IDocumentNode node, Class clazz) {
+		int position = indexOf(node);
+		int lastIndex = getChildCount() - 1;
+		// Check to see if node is found
+		if ((position < 0) ||
+				(position > lastIndex)) {
+			// Node not found
+			return false;
+		} else if (position == lastIndex) {
+			// Node found in the last position
+			return true;
+		}
+		// Check to see if there is any node after the specified node of the
+		// same type
+		// Assertion: Position < lastIndex
+		for (int i = position + 1; i <= lastIndex; i++) {
+			if (clazz.isInstance(getChildAt(i))) {
+				// Another node of the same type found after the specified node
+				return false;
+			}
+		}
+		// All nodes after the specified node were of a different type
+		return true;		
+	}
+	
+	/**
+	 * @param node
+	 * @param newRelativeIndex
+	 */
+	protected void moveChildNode(IDocumentNode node, int newRelativeIndex) {
+		// TODO: MP: TEO: Problem, if generic not viewable, may appear that node did not move
+		// Get the current index of the node
+		int currentIndex = indexOf(node);
+		// Ensure the node exists
+		if (currentIndex == -1) {
+			return;
+		}
+		// Calculate the new index
+		int newIndex = newRelativeIndex + currentIndex;
+		// Validate the new index
+		// 0 <= newIndex < child element count
+		if ((newIndex < 0) ||
+				(newIndex >= getChildCount())) {
+			return;
+		}
+		// Remove the node
+		removeChildNode(node);
+		// Removing the node and moving it to a positive relative index alters
+		// the indexing for insertion; however, this pads the new relative
+		// index by 1, allowing it to be inserted one position after as 
+		// desired
+		// Add the node back at the specified index
+		addChildNode(node, newIndex);
+	}
+	
+	/**
+	 * @param name
+	 * @param newValue
+	 */
+	public boolean setXMLAttribute(String name, String newValue) {
+		String oldValue = getXMLAttributeValue(name);
+		boolean changed = super.setXMLAttribute(name, newValue);
+		// Fire an event if in the model
+		if (changed && shouldFireEvent()) {
+			firePropertyChanged(name, oldValue, newValue);
+		}
+		return changed;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLContent(java.lang.String)
+	 */
+	public boolean setXMLContent(String text) {
+		String oldText = null; 
+		// Get old text node
+		IDocumentTextNode node = getTextNode();
+		if (node == null) {
+			// Text does not exist
+			oldText = ""; //$NON-NLS-1$
+		} else {
+			// Text exists
+			oldText = node.getText();
+		}		
+		boolean changed = super.setXMLContent(text);
+		
+		// Fire an event 
+		if (changed && shouldFireEvent()) {
+			// TODO: MP: TEO: Create constant
+			firePropertyChanged(node, "TEXT", oldText, text); //$NON-NLS-1$
+		}
+		return changed;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
+	 */
+	protected String getFileEncoding() {
+		if ((fModel != null) &&
+				(fModel instanceof IEditingModel)) {
+			return ((IEditingModel)fModel).getCharset();
+		}
+		return super.getFileEncoding();
 	}	
 	
 }

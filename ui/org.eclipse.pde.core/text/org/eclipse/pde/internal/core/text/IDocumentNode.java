@@ -50,7 +50,7 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	void setXMLAttribute(IDocumentAttribute attribute);	
 	
 	// Not used by text edit operations
-	void setXMLAttribute(String name, String value);	
+	public boolean setXMLAttribute(String name, String value);	
 	// Not used by text edit operations
 	String getXMLAttributeValue(String name);
 	
@@ -81,9 +81,16 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	// Not used by text edit operations
 	public ArrayList getChildNodesList();
 	// Not used by text edit operations
+	public ArrayList getChildNodesListFiltered();	
+	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent, IModel model);
 	// Not used by text edit operations
-	public void setXMLContent(String text);
+	
+	/**
+	 * @param text String already trimmed and formatted
+	 * @return
+	 */
+	public boolean setXMLContent(String text);
 	
 	// TODO: MP: TEO:  Rename to IDocumentElementNode
 	// TODO: MP: TEO:  Space out, comment and rename methods

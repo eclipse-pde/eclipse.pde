@@ -27,11 +27,10 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSSubItem(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_SUBITEM);
 	}
 
 	/* (non-Javadoc)

@@ -171,10 +171,16 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return new BufferedInputStream(new ByteArrayInputStream(document.get().getBytes(getCharset())));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IEditingModel#getCharset()
+	 */
 	public String getCharset() {
 		return fCharset != null ? fCharset : "UTF-8"; //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IEditingModel#setCharset(java.lang.String)
+	 */
 	public void setCharset(String charset) {
 		fCharset = charset;
 	}

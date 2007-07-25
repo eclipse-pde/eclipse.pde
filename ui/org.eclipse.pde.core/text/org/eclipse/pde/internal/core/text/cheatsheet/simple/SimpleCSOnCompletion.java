@@ -27,11 +27,10 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSOnCompletion(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_ONCOMPLETION);
 	}
 
 	/* (non-Javadoc)

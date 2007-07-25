@@ -55,14 +55,20 @@ public abstract class SimpleCSObject extends DocumentObject implements
 		SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
 	}	
 	
-	public SimpleCSObject(ISimpleCSModel model) {
-		super(model);
+	/**
+	 * @param model
+	 * @param tagName
+	 */
+	public SimpleCSObject(ISimpleCSModel model, String tagName) {
+		super(model, tagName);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getChildren()
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
-	public abstract List getChildren();
+	public List getChildren() {
+		return getChildNodesListFiltered();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getModel()
@@ -80,7 +86,6 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getParent()
 	 */
 	public ISimpleCSObject getParent() {
-		// TODO: MP: TEO: Candidate for removal and refactor
 		return (ISimpleCSObject)getParentNode();
 	}
 

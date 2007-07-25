@@ -12,11 +12,14 @@
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
  * SimpleCSIntro
@@ -27,76 +30,78 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSIntro(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_INTRO);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#getDescription()
 	 */
 	public ISimpleCSDescription getDescription() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSDescription)getChildNode(ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setDescription(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)description, (IDocumentNode)getDescription());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#getContextId()
 	 */
 	public String getContextId() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_CONTEXTID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#getHref()
 	 */
 	public String getHref() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_HREF);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_CONTEXTID, contextId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_HREF, href);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return new ArrayList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return PDECoreMessages.SimpleCSIntro_0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
+		return TYPE_INTRO;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.DocumentObject#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
 		// TODO: MP: CURRENT: IMPLEMENT
 		

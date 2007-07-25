@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
@@ -68,6 +69,21 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getChildNodesListFiltered()
+	 */
+	public ArrayList getChildNodesListFiltered() {
+		ArrayList filteredChildren = new ArrayList();
+		Iterator iterator = fChildren.iterator();
+		while (iterator.hasNext()) {
+			IDocumentNode node = (IDocumentNode)iterator.next();
+			if ((node instanceof DocumentGenericNode) == false) {
+				filteredChildren.add(node);
+			}
+		}		
+		return filteredChildren;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getNodeAttributesMap()
 	 */
 	public TreeMap getNodeAttributesMap() {
@@ -103,6 +119,10 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	public String write(boolean indent) {
 		// Used by text edit operations
 		StringBuffer buffer = new StringBuffer();	
+		// Print XML decl if root
+		if (isRoot()) {
+			buffer.append(writeXMLDecl());
+		}
 		// Print indent
 		if (indent) {
 			buffer.append(getIndent());
@@ -204,7 +224,6 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			}
 		}
 		return null;
-		// TODO: MP: TEO: Set in the model equal to false ?
 	}
 	
 	/* (non-Javadoc)
@@ -228,7 +247,6 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		child.setPreviousSibling(prevSibling);
 		
 		return child;
-		// TODO: MP: TEO: Set in the model equal to false ?
 	}	
 	
 	/* (non-Javadoc)
@@ -546,6 +564,19 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		return false;
 	}
 	
+	protected String getFileEncoding() {
+		return "UTF-8"; //$NON-NLS-1$
+	}
+	
+	protected String writeXMLDecl() {
+		StringBuffer buffer = new StringBuffer(XMLPrintHandler.XML_HEAD);
+		buffer.append(getFileEncoding());
+		buffer.append(XMLPrintHandler.XML_DBL_QUOTES);
+		buffer.append(XMLPrintHandler.XML_HEAD_END_TAG);
+		buffer.append(getLineDelimiter());
+		return buffer.toString();
+	}
+	
 	protected String writeAttributes() {
 
 		StringBuffer buffer = new StringBuffer();
@@ -567,9 +598,8 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	protected String getLineDelimiter() {
-		// TODO: MP: TEO: Better way using Java library method?
 		// Subclasses to override
-		return "\n"; //$NON-NLS-1$
+		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -590,16 +620,15 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
 	 */
-	public void setXMLAttribute(String name, String value) {
+	public boolean setXMLAttribute(String name, String value) {
 		// Not used by text edit operations
 
-		// Convenience method
 		// Ensure name is defined
 		if ((name == null) || 
 				(name.length() == 0)) {
-			return;
+			return false;
 		}
-		// Null values not allowed
+		// Null values are not allowed
 		if (value == null) {
 			value = ""; //$NON-NLS-1$
 		}		
@@ -607,10 +636,11 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		// Check if the value is different
 		if ((oldValue != null) && 
 				oldValue.equals(value)) {
-			return;
+			return false;
 		}
 		// Check to see if the attribute already exists
-		IDocumentAttribute attribute = (IDocumentAttribute)getNodeAttributesMap().get(name);
+		IDocumentAttribute attribute = 
+			(IDocumentAttribute)getNodeAttributesMap().get(name);
 		try {
 			if (attribute == null) {
 				// Attribute does not exist
@@ -619,44 +649,36 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 				attribute.setEnclosingElement(this);
 				setXMLAttribute(attribute);
 			}
+			// Update the value
 			attribute.setAttributeValue(value);
 		} catch (CoreException e) {
 			// Ignore
-			return;
+			return false;
 		}
+		return true;
 	}		
-	
-	/**
-	 * @param text Must be already trimmed and formatted
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#setXMLContent(java.lang.String)
 	 */
-	public void setXMLContent(String text) {
+	public boolean setXMLContent(String text) {
 		// Not used by text edit operations
 		// Null text not allowed
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}	
-		// Not going to check if the old value is equal to the new one
-		// Too expensive
-		// Check to see if the content already exists
+		// Check to see if the node already exists
 		IDocumentTextNode node = getTextNode();
-		//String oldText = ""; 
 		if (node == null) {
-			// Text does not exist
+			// Text does not exist, create it
 			node = new DocumentTextNode();
 			node.setEnclosingElement(this);
 			addTextNode(node);
 		}
-//		else {
-//			// Text exists
-//			oldText = node.getText();
-//		}
+		// Update text on node
 		node.setText(text);
-		// Fire an event if in the model
-		// TODO: MP: TEO: Should we fire the change here?
-//		if (shouldFireEvent()) {
-//			// TODO: MP: TEO: Create constant
-//			firePropertyChanged(node, "TEXT", oldText, text);
-//		}
+		// Always changed
+		return true;
 	}	
 	
 }

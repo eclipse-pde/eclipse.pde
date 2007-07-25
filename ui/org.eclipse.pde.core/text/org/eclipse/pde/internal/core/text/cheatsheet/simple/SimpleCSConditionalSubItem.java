@@ -30,11 +30,10 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSConditionalSubItem(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_CONDITIONAL_SUBITEM);
 	}
 
 	/* (non-Javadoc)

@@ -162,11 +162,11 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLAttribute(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public void setXMLAttribute(String name, String value) {
+	public boolean setXMLAttribute(String name, String value) {
 		// Overrided by necessity - dealing with different objects
 		String oldValue = getXMLAttributeValue(name);
 		if (oldValue != null && oldValue.equals(value))
-			return;
+			return false;
 		PluginAttribute attr = (PluginAttribute) getNodeAttributesMap().get(name);
 		try {
 			if (value == null)
@@ -183,6 +183,7 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		if (fInTheModel)
 			firePropertyChanged(attr.getEnclosingElement(), attr
 					.getAttributeName(), oldValue, value);
+		return true;
 	}
 
 	protected void firePropertyChanged(IDocumentRange node, String property,
@@ -301,6 +302,17 @@ public class PluginObjectNode extends PluginDocumentNode implements
 		// Used by text edit operations
 		// Subclasses to override
 		return ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
+	 */
+	protected String getFileEncoding() {
+		if ((fModel != null) &&
+				(fModel instanceof IEditingModel)) {
+			return ((IEditingModel)fModel).getCharset();
+		}
+		return super.getFileEncoding();
 	}	
 	
 }

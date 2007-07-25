@@ -26,11 +26,10 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * @param model
 	 */
 	public SimpleCSCommand(ISimpleCSModel model) {
-		super(model);
-		// TODO: MP: CURRENT: IMPLEMENT
+		super(model, ELEMENT_COMMAND);
 	}
 
 	/* (non-Javadoc)
