@@ -11,15 +11,17 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.text.DocumentObject;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
  * SimpleCSItem
@@ -40,48 +42,45 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		((DocumentObject)subitem).setInTheModel(true);
+		addChildNode((IDocumentNode)subitem);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		((DocumentObject)subitem).setInTheModel(true);
+		addChildNode((IDocumentNode)subitem, index);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDescription()
 	 */
 	public ISimpleCSDescription getDescription() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSDescription)getChildNode(ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDialog()
 	 */
 	public boolean getDialog() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return getBooleanAttributeValue(ATTRIBUTE_DIALOG, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSSubItemObject)getNextSibling((IDocumentNode)subitem, 
+				ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getOnCompletion()
 	 */
 	public ISimpleCSOnCompletion getOnCompletion() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSOnCompletion)getChildNode(ISimpleCSOnCompletion.class);
 	}
 
 	/* (non-Javadoc)
@@ -89,204 +88,192 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public ISimpleCSSubItemObject getPreviousSibling(
 			ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSSubItemObject)getPreviousSibling((IDocumentNode)subitem, 
+				ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSkip()
 	 */
 	public boolean getSkip() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return getBooleanAttributeValue(ATTRIBUTE_SKIP, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItemCount()
 	 */
 	public int getSubItemCount() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
+		return getChildNodeCount(ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItems()
 	 */
 	public ISimpleCSSubItemObject[] getSubItems() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSSubItemObject[])getChildNodes(ISimpleCSSubItemObject.class, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getTitle()
 	 */
 	public String getTitle() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_TITLE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#hasSubItems()
 	 */
 	public boolean hasSubItems() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return hasChildNodes(ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
+		return indexOf((IDocumentNode)subitem);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return isFirstChildNode((IDocumentNode)subitem, ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isLastSubItem(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return isLastChildNode((IDocumentNode)subitem, ISimpleCSSubItemObject.class);	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#moveSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject, int)
 	 */
 	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		moveChildNode((IDocumentNode)subitem, newRelativeIndex);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		removeChildNode((IDocumentNode)subitem);
+		((DocumentObject)subitem).setInTheModel(false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(int)
 	 */
 	public void removeSubItem(int index) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		ISimpleCSSubItemObject item = 
+			(ISimpleCSSubItemObject)removeChildNode(index, ISimpleCSSubItemObject.class);
+		if (item != null) {
+			((DocumentObject)item).setInTheModel(false);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDescription(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)description, ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDialog(boolean)
 	 */
 	public void setDialog(boolean dialog) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setBooleanAttributeValue(ATTRIBUTE_DIALOG, dialog);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setOnCompletion(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion)
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)onCompletion, ISimpleCSOnCompletion.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setSkip(boolean)
 	 */
 	public void setSkip(boolean skip) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setBooleanAttributeValue(ATTRIBUTE_SKIP, skip);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setTitle(java.lang.String)
 	 */
 	public void setTitle(String title) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_TITLE, title);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#getContextId()
 	 */
 	public String getContextId() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_CONTEXTID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#getHref()
 	 */
 	public String getHref() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_HREF);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_CONTEXTID, contextId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_HREF, href);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSRunContainerObject)getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)executable, ISimpleCSRunContainerObject.class);
 	}
 
-	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getTitle();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
+		return TYPE_ITEM;
 	}
 
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		// Add subitems
+		// Add unsupported perform-when if it is set as the executable
+		Class[] classes = { ISimpleCSSubItemObject.class,
+							ISimpleCSPerformWhen.class };
+		return getChildNodesList(classes, true);
+	}	
+	
 }

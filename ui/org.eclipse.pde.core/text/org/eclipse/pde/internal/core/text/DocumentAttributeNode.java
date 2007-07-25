@@ -148,7 +148,6 @@ public class DocumentAttributeNode implements IDocumentAttribute {
 	public String write() {
 		return fName + 
 				"=\"" +  //$NON-NLS-1$
-				// TODO: MP: TEO: Should trim the value?
 				PDEXMLHelper.getWritableAttributeString(fValue) + 
 				"\"";  //$NON-NLS-1$
 	}

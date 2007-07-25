@@ -125,6 +125,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		super.reconnect(parent, model);
 		// Transient field:  In The Model
 		// Value set to true when added to the parent
+		// TODO: MP: TEO: Need to set recursively to true on add for children? Only affects parent?
 		fInTheModel = false;
 		// Transient field:  Model
 		fModel = model;
@@ -270,8 +271,10 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @param newNode
 	 * @param oldNode
 	 */
-	protected void setChildNode(IDocumentNode newNode, IDocumentNode oldNode) {
-
+	protected void setChildNode(IDocumentNode newNode, Class clazz) {
+		// Get the old node
+		IDocumentNode oldNode = getChildNode(clazz);
+		
 		if ((newNode == null) &&
 				(oldNode == null)) {
 			// NEW = NULL, OLD = NULL
@@ -337,17 +340,47 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected IDocumentNode[] getChildNodes(Class clazz) {
+	protected IDocumentNode[] getChildNodes(Class clazz, boolean match) {
+		ArrayList filteredChildren = getChildNodesList(clazz, match);
+		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);	
+	}
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected ArrayList getChildNodesList(Class clazz, boolean match) {
+		return getChildNodesList(new Class[]{ clazz }, match);
+	}
+	
+	/**
+	 * @param clazz
+	 * @return
+	 */
+	protected IDocumentNode[] getChildNodes(Class[] classes, boolean match) {
+		ArrayList filteredChildren = getChildNodesList(classes, match);
+		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);		
+	}	
+	
+	/**
+	 * @param classes
+	 * @return
+	 */
+	protected ArrayList getChildNodesList(Class[] classes, boolean match) {
 		ArrayList filteredChildren = new ArrayList();
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentNode node = (IDocumentNode)iterator.next();
-			if (clazz.isInstance(node)) {
-				filteredChildren.add(node);
+			for (int i = 0; i < classes.length; i++) {
+				Class clazz = classes[i];
+				if (clazz.isInstance(node) == match) {
+					filteredChildren.add(node);
+					break;
+				}				
 			}
 		}		
-		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);		
+		return filteredChildren;
 	}
 	
 	/**
@@ -500,6 +533,33 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		// desired
 		// Add the node back at the specified index
 		addChildNode(node, newIndex);
+	}
+	
+	/**
+	 * @param name
+	 * @param defaultValue
+	 * @return
+	 */
+	protected boolean getBooleanAttributeValue(String name, boolean defaultValue) {
+		String value = getXMLAttributeValue(name);
+		if (value == null) {
+			return defaultValue;
+		} else if (value.equalsIgnoreCase(ATTRIBUTE_VALUE_TRUE)) {
+			return true;
+		} else if (value.equalsIgnoreCase(ATTRIBUTE_VALUE_FALSE)) {
+			return false;
+		}
+		return defaultValue;
+	}
+	
+	/**
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	protected boolean setBooleanAttributeValue(String name, boolean value) {
+		String newValue = Boolean.valueOf(value).toString();
+		return setXMLAttribute(name, newValue);
 	}
 	
 	/**

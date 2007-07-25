@@ -47,7 +47,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setDescription(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
-		setChildNode((IDocumentNode)description, (IDocumentNode)getDescription());
+		setChildNode((IDocumentNode)description, ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)

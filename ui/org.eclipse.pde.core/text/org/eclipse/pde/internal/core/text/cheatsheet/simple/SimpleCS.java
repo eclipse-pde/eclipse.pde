@@ -67,7 +67,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getItems()
 	 */
 	public ISimpleCSItem[] getItems() {
-		return (ISimpleCSItem[])getChildNodes(ISimpleCSItem.class);
+		return (ISimpleCSItem[])getChildNodes(ISimpleCSItem.class, true);
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +149,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#setIntro(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro)
 	 */
 	public void setIntro(ISimpleCSIntro intro) {
-		setChildNode((IDocumentNode)intro, (IDocumentNode)getIntro());
+		setChildNode((IDocumentNode)intro, ISimpleCSIntro.class);
 	}
 
 	/* (non-Javadoc)

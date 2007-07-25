@@ -18,7 +18,7 @@ package org.eclipse.pde.internal.core.icheatsheet;
 public interface ICSConstants {
 
 	// Attribute Values
-	
+	// TODO: MP: TEO: Delete all 
 	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$

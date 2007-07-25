@@ -142,6 +142,8 @@ public class PDEXMLHelper {
 		if (source == null) {
 			return ""; //$NON-NLS-1$
 		}
+		// Trim the leading and trailing whitespace if any
+		source = source.trim();
 		// Translate source using a buffer
 		StringBuffer buffer = new StringBuffer();
 		// Translate source character by character

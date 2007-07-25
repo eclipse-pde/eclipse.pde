@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.DocumentObject;
+import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 import org.w3c.dom.Element;
 
 /**
@@ -67,7 +68,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		return getChildNodesListFiltered();
+		return getChildNodesList(DocumentGenericNode.class, false);
 	}
 
 	/* (non-Javadoc)

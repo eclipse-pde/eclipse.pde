@@ -27,6 +27,12 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
+
+	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
+	
+	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$	
+	
 	private transient IDocumentNode fParent;
 	private transient boolean fIsErrorNode;
 	private transient int fLength;
@@ -66,21 +72,6 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	public ArrayList getChildNodesList() {
 		// Not used by text edit operations
 		return fChildren;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getChildNodesListFiltered()
-	 */
-	public ArrayList getChildNodesListFiltered() {
-		ArrayList filteredChildren = new ArrayList();
-		Iterator iterator = fChildren.iterator();
-		while (iterator.hasNext()) {
-			IDocumentNode node = (IDocumentNode)iterator.next();
-			if ((node instanceof DocumentGenericNode) == false) {
-				filteredChildren.add(node);
-			}
-		}		
-		return filteredChildren;
 	}
 	
 	/* (non-Javadoc)
@@ -565,7 +556,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	protected String getFileEncoding() {
-		return "UTF-8"; //$NON-NLS-1$
+		return ATTRIBUTE_VALUE_ENCODING;
 	}
 	
 	protected String writeXMLDecl() {

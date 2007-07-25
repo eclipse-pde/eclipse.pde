@@ -81,8 +81,6 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	// Not used by text edit operations
 	public ArrayList getChildNodesList();
 	// Not used by text edit operations
-	public ArrayList getChildNodesListFiltered();	
-	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent, IModel model);
 	// Not used by text edit operations
 	
