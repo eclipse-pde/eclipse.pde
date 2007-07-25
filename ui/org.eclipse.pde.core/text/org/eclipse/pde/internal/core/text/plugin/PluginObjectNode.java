@@ -260,8 +260,11 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	public void reconnect(IDocumentNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient field:  In The Model
-		// Value set to true when added to the parent
-		fInTheModel = false;
+		// Value set to true when added to the parent; however, serialized
+		// children's value remains unchanged.  Since, reconnect and add calls
+		// are made so close together, set value to true for parent and all
+		// children
+		fInTheModel = true;
 		// Transient field:  Model
 		if (model instanceof ISharedPluginModel) {
 			fModel = (ISharedPluginModel)model;
