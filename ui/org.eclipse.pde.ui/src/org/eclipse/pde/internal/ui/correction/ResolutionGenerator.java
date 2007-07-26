@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,6 +89,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {
 						new CreateClassXMLResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker),
 						new ChooseClassXMLResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
+			case PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE:
+				return new IMarkerResolution[] {new RenameProvidePackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 		}
 		return NO_RESOLUTIONS;
 	}

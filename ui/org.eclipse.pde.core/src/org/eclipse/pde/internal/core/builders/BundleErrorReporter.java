@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -108,6 +109,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateTranslatableHeaders();
 		validateImportExportServices();
 		validateBundleLocalization();
+		validateProvidePackage();
 	}
 
 	private void validateExportPackages() {
@@ -1115,6 +1117,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					marker.setAttribute("bundleId", element.getValue()); //$NON-NLS-1$
 				} catch (CoreException e) {} 
 			}
+		}
+	}
+	
+	private void validateProvidePackage() {
+		IHeader header = getHeader(ICoreConstants.PROVIDE_PACKAGE);
+		if(header == null)
+			return;
+		
+		if (fOsgiR4 && isCheckDeprecated()) {
+			report(PDECoreMessages.BundleErrorReporter_providePackageHeaderDeprecated,
+					header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED,
+					PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE,
+					PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 }

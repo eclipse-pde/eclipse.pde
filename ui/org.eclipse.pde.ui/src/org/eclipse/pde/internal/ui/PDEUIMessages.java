@@ -329,6 +329,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String RenameProjectChange_taskTitle;
 
+	public static String RenameProvidePackageResolution_desc;
+
+	public static String RenameProvidePackageResolution_label;
+
 	public static String RequiresSection_sortAlpha;
 
 	public static String SchemaDtdDetailsSection_title;
