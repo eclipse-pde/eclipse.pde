@@ -1079,6 +1079,22 @@
             class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectFilter"
             id="org.eclipse.pde.ui.BinaryProjectFilter2">
       </filter>
+      <filter
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="%externalPluginLibrariesFilter.name"
+            enabled="true"
+            description="%externalPluginLibrariesFilter.desc"
+            class="org.eclipse.pde.internal.ui.wizards.imports.ExternalPluginLibrariesFilter"
+            id="org.eclipse.pde.ui.ExternalPluginLibrariesFilter1">
+      </filter>
+      <filter
+            targetId="org.eclipse.jdt.ui.ProjectsView"
+            name="%externalPluginLibrariesFilter.name"
+            enabled="true"
+            description="%externalPluginLibrariesFilter.desc"
+            class="org.eclipse.pde.internal.ui.wizards.imports.ExternalPluginLibrariesFilter"
+            id="org.eclipse.pde.ui.ExternalPluginLibrariesFilter2">
+      </filter>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
