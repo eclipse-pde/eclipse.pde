@@ -252,21 +252,7 @@ public class ElementSection extends TreeSection {
 			if (selectedObject == null) {
 				return true;
 			}
-			// Get the current index of the first selected object in the model
-			int index = fSchema.indexOf(selectedObject);
-			// Delete the selection
 			handleDelete(sel);
-			// The the item deleted was the last item, select the second-last
-			// item (if their is one)
-			if (index == fSchema.getElementCount()) {
-				--index;
-			}
-			// Make the selection if the index exists (e.g. there are still 
-			// items after the deletion)
-			if (index != -1) {
-				fTreeViewer.setSelection(
-						new StructuredSelection(fSchema.getElementAt(index)));
-			}
 			// if cutting delete here and let the editor transfer
 			// the selection to the clipboard
 			return !cut;
@@ -379,37 +365,172 @@ public class ElementSection extends TreeSection {
 	}
 
 	private void handleDelete(IStructuredSelection selection) {
+		IStructuredSelection nextSelection = null;
+		Object selectionSource = null;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			handleDelete(iter.next());
+			Object thisObject = iter.next();
+			// Do the delete and generate a new selection in one of the following cases:
+			//   1. No selection has been generated
+			//   2. This object is higher up in the hierarchy than the previous
+			//      object used to generate the selection
+			//   3. The object selected for deletion is currently set as the next selection
+			IStructuredSelection result = handleDelete(thisObject,
+					nextSelection == null ||
+					schemaObjectHigherThan(thisObject, selectionSource) ||
+					nextSelection.getFirstElement().equals(thisObject));
+			if (result != null) {
+				nextSelection = result;
+				selectionSource = thisObject;
+			}
 		}
+		if (nextSelection != null)
+			getTreeViewer().setSelection(nextSelection);
 	}
 
-	private void handleDelete(Object object) {
-		if (object instanceof ISchemaRootElement)
-		{	// Semantic rule: The root "extension" element of a schema
+	private IStructuredSelection handleDelete(Object object, boolean generateSelection) {
+		IStructuredSelection newSelection = null;
+		if (object instanceof ISchemaRootElement) {
+			// Semantic rule: The root "extension" element of a schema
 			// cannot be removed
 
 			// Produce audible beep
-			Display.getCurrent().beep();				
+			Display.getCurrent().beep();
 		}
 		else if (object instanceof SchemaElementReference) {
-			fRearranger.deleteReference((SchemaElementReference)object);
+			newSelection = handleReferenceDelete((SchemaElementReference)object,generateSelection);
 		} else if (object instanceof ISchemaElement) {
-			fRearranger.deleteElement((ISchemaElement)object);
+			newSelection = handleElementDelete((ISchemaElement)object, generateSelection);
 		} else if (object instanceof ISchemaAttribute) {
-			if(!(((ISchemaAttribute)object).getParent() instanceof ISchemaRootElement))
-			{	fRearranger.deleteAttribute((ISchemaAttribute)object);
+			ISchemaAttribute att = (ISchemaAttribute)object;
+			if(!(att.getParent() instanceof ISchemaRootElement)) {
+				newSelection = handleAttributeDelete(att, generateSelection);
 			}
-			else
-			{	// Semantic rule: Attributes of the root "extension" element
+			else {
+				// Semantic rule: Attributes of the root "extension" element
 				// of a schema cannot be removed
 
 				// Produce audible beep
 				Display.getCurrent().beep();
 			}
 		} else if (object instanceof ISchemaCompositor) {
-			fRearranger.deleteCompositor((ISchemaCompositor)object);
+			newSelection = handleCompositorDelete((ISchemaCompositor)object, generateSelection);
 		}
+		return newSelection;
+	}
+	
+	private IStructuredSelection handleReferenceDelete (SchemaElementReference ref, boolean generateSelection) {
+		IStructuredSelection newSelection = null;
+		if (generateSelection) {
+			SchemaCompositor parent = (SchemaCompositor)ref.getParent();
+			ISchemaObject[] children = parent.getChildren();
+			int index = getNewSelectionIndex(getArrayIndex(children, ref), children.length);
+			if (index == -1)
+				newSelection = new StructuredSelection(parent);
+			else
+				newSelection = new StructuredSelection(children[index]);
+		}
+		fRearranger.deleteReference(ref);
+		return newSelection;
+	}
+	
+	private IStructuredSelection handleElementDelete (ISchemaElement element, boolean generateSelection) {
+		IStructuredSelection newSelection = null;
+		if (generateSelection) {
+			ISchema parent = element.getSchema();
+			ISchemaElement[] children = parent.getElements();
+			int index = getNewSelectionIndex(getArrayIndex(children, element), children.length);
+			if (index != -1)
+				newSelection = new StructuredSelection(children[index]);
+		}
+		fRearranger.deleteElement(element);
+		return newSelection;
+	}
+	
+	private IStructuredSelection handleAttributeDelete (ISchemaAttribute att, boolean generateSelection) {
+		IStructuredSelection newSelection = null;
+		if (generateSelection) {
+			ISchemaElement parent = (ISchemaElement)att.getParent();
+			ISchemaAttribute[] children = parent.getAttributes();
+			int index = getNewSelectionIndex(getArrayIndex(children, att), children.length);
+			if (index == -1) {
+				ISchemaType type = parent.getType();
+				if (type instanceof ISchemaComplexType) {
+					ISchemaCompositor comp = ((ISchemaComplexType)type).getCompositor();
+					if (comp != null)
+						newSelection = new StructuredSelection(comp);
+					else
+						newSelection = new StructuredSelection(parent);
+				}
+			}
+			else
+				newSelection = new StructuredSelection(children[index]);
+		}
+		fRearranger.deleteAttribute(att);
+		return newSelection;
+	}
+	
+	private IStructuredSelection handleCompositorDelete (ISchemaCompositor comp, boolean generateSelection) {
+		IStructuredSelection newSelection = null;
+		if (generateSelection) {
+			ISchemaObject parent = comp.getParent();
+			if (parent instanceof ISchemaElement) {
+				ISchemaElement element = (ISchemaElement)parent;
+				ISchemaAttribute[] attributes = element.getAttributes();
+				if (attributes.length > 0)
+					newSelection = new StructuredSelection(attributes[0]);
+				else
+					newSelection = new StructuredSelection(element);
+			} else {
+				ISchemaCompositor parentComp = (ISchemaCompositor)parent;
+				ISchemaObject[] children = parentComp.getChildren();
+				int index = getNewSelectionIndex(getArrayIndex(children, comp), children.length);
+				if (index == -1)
+					newSelection = new StructuredSelection(parent);
+				else
+					newSelection = new StructuredSelection(children[index]);
+			}
+		}
+		fRearranger.deleteCompositor(comp);
+		return newSelection;
+	}
+	
+	// returns true if object a is a SchemaObject higher in the hierarchy than object b
+	// returns false if b is higher or they are equal
+	private boolean schemaObjectHigherThan (Object a, Object b) {
+		if (!(b instanceof ISchemaObject))
+			return true;
+		if (!(a instanceof ISchemaObject))
+			return false;
+		return (computeNestLevel((ISchemaObject)a) < computeNestLevel((ISchemaObject)b));
+	}
+	
+	// determines how deeply nested an ISchemaObject is
+	// returns 0 if this is an element, 1 if it's a direct child, etc.
+	private int computeNestLevel(ISchemaObject o) {
+		int result = 0;
+		while ((o instanceof SchemaElementReference) || !(o instanceof ISchemaElement)) {
+			o = o.getParent();
+			result++;
+		}
+		return result;
+	}
+	
+	// gets the index of the desired new selection as follows
+	//   if this is the only item, return -1 (meaning select the parent)
+	//   if this is the last item, return the index of the predecessor
+	//   otherwise, return the index of the successor
+	private int getNewSelectionIndex(int thisIndex, int length) {
+		if (thisIndex == length-1)
+			return thisIndex-1;
+		return thisIndex+1;
+	}
+	
+	private int getArrayIndex(Object[] array, Object object) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(object))
+				return i;
+		}
+		return -1;
 	}
 
 	private void handleNewAttribute() {
@@ -478,10 +599,9 @@ public class ElementSection extends TreeSection {
 					fTreeViewer.refresh(parent);
 					fTreeViewer.setSelection(new StructuredSelection(obj), true);
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					ISchemaObject sobj = (ISchemaObject) obj;
-					ISchemaObject parent = sobj.getParent();
 					fTreeViewer.remove(obj);
-					fTreeViewer.setSelection(new StructuredSelection(parent), true);
+					// the new selection is handled by the handleDelete method for cuts and deletes,
+					// for moves it is handled by the subsequent insert
 				}
 			} else if (obj instanceof ISchemaCompositor || obj instanceof ISchemaObjectReference) {
 				final ISchemaObject sobj = (ISchemaObject) obj;
@@ -497,7 +617,8 @@ public class ElementSection extends TreeSection {
 					});
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					fTreeViewer.remove(sobj);
-					fTreeViewer.setSelection(new StructuredSelection(parent), true);
+					// the new selection is handled by the handleDelete method for cuts and deletes,
+					// for moves it is handled by the subsequent insert
 				}
 			} else if (obj instanceof ISchemaComplexType) {
 				// first compositor added/removed
