@@ -17,9 +17,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,9 +34,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
@@ -67,7 +65,6 @@ import org.eclipse.ui.forms.widgets.Section;
 public class InfoSection extends PDESection {
 	private IDocument fDocument;
 
-	private IDocumentPartitioner fPartitioner;
 
 	private XMLConfiguration fSourceConfiguration;
 
@@ -99,11 +96,7 @@ public class InfoSection extends PDESection {
 		getSection().setDescription(description);
 		fSourceConfiguration = new XMLConfiguration(colorManager);
 		fDocument = new Document();
-		fPartitioner = new FastPartitioner(new XMLPartitionScanner(),
-				new String[] { XMLPartitionScanner.XML_TAG,
-						XMLPartitionScanner.XML_COMMENT });
-		fPartitioner.connect(fDocument);
-		fDocument.setDocumentPartitioner(fPartitioner);
+		new XMLDocumentSetupParticpant().setup(fDocument);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 

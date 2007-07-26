@@ -20,6 +20,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
@@ -71,6 +72,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
+		reconciler.setDocumentPartitioning(XMLDocumentSetupParticpant.XML_PARTITIONING);
 
 		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getPDEScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
@@ -176,4 +178,9 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_XML_IMP;
 	}
+	
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return XMLDocumentSetupParticpant.XML_PARTITIONING;
+	}
+
 }

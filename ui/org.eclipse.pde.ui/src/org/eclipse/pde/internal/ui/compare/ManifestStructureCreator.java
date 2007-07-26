@@ -197,7 +197,7 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 	
-	private static String readString(IStreamContentAccessor sa) throws CoreException {
+	public static String readString(IStreamContentAccessor sa) throws CoreException {
 		InputStream is= sa.getContents();
 		if (is != null) {
 			String encoding= null;

@@ -265,6 +265,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PackageFinder_taskName;
 
+	public static String PluginContentMergeViewer_title;
+
 	public static String PluginExportJob_name;
 
 	public static String PluginListPage_initializeFromLaunch;
@@ -288,6 +290,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTabToolBar_filter_options;
 
 	public static String PluginsTabToolBar_validate;
+
+	public static String PluginStructureCreator_name;
 
 	public static String PointSelectionPage_cannotFindTemplate;
 

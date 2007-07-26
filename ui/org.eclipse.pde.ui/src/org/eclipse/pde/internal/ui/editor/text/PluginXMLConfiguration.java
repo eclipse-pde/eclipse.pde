@@ -53,4 +53,5 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 			fTextHover = new PluginXMLTextHover(fSourcePage);
 		return fTextHover;
 	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
-import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IViewerCreator;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Composite;
 
-/**
- * A factory object for the <code>TextMergeViewer</code>.
- * This indirection is necessary because only objects with a default
- * constructor can be created via an extension point
- * (this precludes Viewers).
- */
-public class XMLStructureViewerCreator implements IViewerCreator {
+public class PluginContentMergeViewerCreator implements IViewerCreator {
 
-	public Viewer createViewer(Composite parent, CompareConfiguration mp) {
-		return new XMLStructureViewer(parent, mp);
+	public Viewer createViewer(Composite parent, CompareConfiguration config) {
+		return new PluginContentMergeViewer(parent, config);
 	}
 }

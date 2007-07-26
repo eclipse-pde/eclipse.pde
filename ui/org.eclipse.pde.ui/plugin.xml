@@ -1394,13 +1394,13 @@
       <contentTypeBinding
             contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
-      <!--<viewer
-            extensions="xml"
-            class="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
-            id="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator" />
+      <viewer
+            class="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
+            extensions="PLUGIN"
+            id="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator" />
       <contentTypeBinding
-            structureMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
-            contentTypeId="org.eclipse.pde.pluginManifest" />-->
+            structureMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
+            contentTypeId="org.eclipse.pde.pluginManifest" />
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
@@ -1411,13 +1411,13 @@
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.bundleManifest"/>
-      <!--<viewer
-            class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
-            extensions="xml"
-            id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"/>
+      <viewer
+            class="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
+            extensions="PLUGIN,PLUGIN2"
+            id="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"/>
       <contentTypeBinding
-            contentMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
-            contentTypeId="org.eclipse.pde.pluginManifest" />-->
+            contentMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
+            contentTypeId="org.eclipse.pde.pluginManifest" />
    </extension>
     <extension
          point="org.eclipse.ui.themes">
@@ -1431,18 +1431,18 @@
          </description>
       </fontDefinition>
     </extension>
-    <!--<extension
+    <extension
          point="org.eclipse.ui.themes">
        <fontDefinition
             label="%fontDefinition.label.1"
             defaultsTo="org.eclipse.jface.textfont"
             categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
-            id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewer">
+            id="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewer">
          <description>
             %fontDefinition.description.1
          </description>
        </fontDefinition>
-    </extension>-->
+    </extension>
     <extension point="org.eclipse.debug.core.sourceLocators">
    		<sourceLocator
    			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
