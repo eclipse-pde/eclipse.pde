@@ -74,6 +74,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -239,6 +241,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		createSectionToolbar(section, toolkit);
 		// Create the adapted listener for the filter entry field
 		fFilteredTree.createUIListenerEntryFilter(this);
+		fFilteredTree.getFilterControl().addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				StructuredViewer viewer = getStructuredViewerPart().getViewer();
+				IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+				updateButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
+			}
+		});
 	}
 	
 	/**
@@ -275,7 +284,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		updateUpDownButtons(selection.getFirstElement());
+		updateButtons(selection.getFirstElement());
 		getTreePart().setButtonEnabled(1, isSelectionEditable(selection));
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -1046,7 +1055,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}
 		}
 	}
-	private void updateUpDownButtons(Object item) {
+	
+	private void updateButtons(Object item) {
 		if (getPage().getModel().isEditable() == false)
 			return;
 		boolean sorted = fSortAction != null && fSortAction.isChecked();
@@ -1056,28 +1066,38 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		}
 		
+		boolean filtered = fFilteredTree.isFiltered();
+		boolean addEnabled = true;
 		boolean upEnabled = false;
 		boolean downEnabled = false;
-		if (item instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) item;
-			IPluginParent parent = (IPluginParent) element.getParent();
-			// check up
-			int index = parent.getIndexOf(element);
-			if (index > 0)
-				upEnabled = true;
-			if (index < parent.getChildCount() - 1)
-				downEnabled = true;
-		} else if (item instanceof IPluginExtension) {
-			IPluginExtension extension = (IPluginExtension) item;
-			IExtensions extensions = (IExtensions) extension.getParent();
-			int index = extensions.getIndexOf(extension);
-			int size = extensions.getExtensions().length;
-			if (index > 0)
-				upEnabled = true;
-			if (index < size - 1)
-				downEnabled = true;
+		if (filtered) {
+			// Fix for bug 194529 and bug 194828
+			addEnabled = false;
+			upEnabled = false;
+			downEnabled = false;
 		}
-		
+		else {
+			if (item instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) item;
+				IPluginParent parent = (IPluginParent) element.getParent();
+				// check up
+				int index = parent.getIndexOf(element);
+				if (index > 0)
+					upEnabled = true;
+				if (index < parent.getChildCount() - 1)
+					downEnabled = true;
+			} else if (item instanceof IPluginExtension) {
+				IPluginExtension extension = (IPluginExtension) item;
+				IExtensions extensions = (IExtensions) extension.getParent();
+				int index = extensions.getIndexOf(extension);
+				int size = extensions.getExtensions().length;
+				if (index > 0)
+					upEnabled = true;
+				if (index < size - 1)
+					downEnabled = true;
+			}
+		}
+		getTreePart().setButtonEnabled(0, addEnabled);
 		getTreePart().setButtonEnabled(3, upEnabled);
 		getTreePart().setButtonEnabled(4, downEnabled);
 	}
@@ -1095,7 +1115,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			StructuredViewer viewer = getStructuredViewerPart().getViewer();
 			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
-			updateUpDownButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
+			updateButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
 		}
 	}
 

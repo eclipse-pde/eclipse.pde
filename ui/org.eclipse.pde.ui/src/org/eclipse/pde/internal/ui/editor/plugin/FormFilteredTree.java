@@ -121,4 +121,12 @@ public class FormFilteredTree extends FilteredTree {
 		});
 	}
 	
+	/**
+	 * @return a boolean indicating whether the tree is filtered or not.
+	 */
+	public boolean isFiltered() {
+		String filterText = getFilterControl().getText();
+		boolean filtered = (filterText != null && filterText.length() > 0 && !filterText.equals(getInitialText()));
+		return filtered;
+	}
 }
