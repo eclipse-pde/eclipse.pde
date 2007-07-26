@@ -1417,6 +1417,9 @@
       <contentTypeBinding
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
             contentTypeId="org.eclipse.pde.pluginManifest" />
+      <contentTypeBinding
+            structureMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
+            contentTypeId="org.eclipse.pde.fragmentManifest" />
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
@@ -1434,6 +1437,9 @@
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.pluginManifest" />
+      <contentTypeBinding
+            contentMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
+            contentTypeId="org.eclipse.pde.fragmentManifest" />
    </extension>
     <extension
          point="org.eclipse.ui.themes">
