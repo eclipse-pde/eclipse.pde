@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Peter Friese <peter.freise@openarchitectureware.org> - bug 194694
+ *     Peter Friese <peter.friese@gentleware.com> - bug 194694
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
