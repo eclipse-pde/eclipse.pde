@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.freise@openarchitectureware.org> - bug 194529
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
