@@ -13,11 +13,11 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 
-public class RenamePluginRefactor extends ProcessorBasedRefactoring {
+public class PDERefactor extends ProcessorBasedRefactoring {
 	
 	RefactoringProcessor fProcessor;
 	
-	public RenamePluginRefactor(RefactoringProcessor processor) {
+	public PDERefactor(RefactoringProcessor processor) {
 		super(processor);
 		fProcessor = processor;
 	}

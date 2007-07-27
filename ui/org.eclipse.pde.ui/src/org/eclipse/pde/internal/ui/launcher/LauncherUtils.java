@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -39,11 +39,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -55,8 +54,7 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.tools.IOrganizeManifestsSettings;
-import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsOperation;
+import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsProcessor;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -178,18 +176,19 @@ public class LauncherUtils {
 			if (!projects.isEmpty())
 				Display.getDefault().syncExec(new Runnable() {
 					public void run() {
-						OrganizeManifestsOperation op = new OrganizeManifestsOperation(projects);
-						op.setOperations(getSettings());
+						OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
+						initializeProcessor(processor);
 						try {
-							op.run(monitor);
+							Change change = processor.createChange(monitor);
+							change.perform(monitor);
 							// update table for each project with current time stamp
 							Properties table = getLastRun();
 							String ts = Long.toString(System.currentTimeMillis());
 							Iterator it = projects.iterator();
 							while (it.hasNext()) 
 								table.put(((IProject)it.next()).getName(), ts);
-						} catch (InvocationTargetException e) {
-						} catch (InterruptedException e) {
+						} catch (OperationCanceledException e) {
+						} catch (CoreException e) {
 						} 
 					}
 				});
@@ -204,17 +203,18 @@ public class LauncherUtils {
 		} catch (CoreException e) {
 		}
 	}
-
-	private static IDialogSettings getSettings() {
-		IDialogSettings settings = new DialogSettings("");  //$NON-NLS-1$
-		settings.put(IOrganizeManifestsSettings.PROP_ADD_MISSING, true);
-		settings.put(IOrganizeManifestsSettings.PROP_MARK_INTERNAL, true);
-		settings.put(IOrganizeManifestsSettings.PROP_REMOVE_UNRESOLVED_EX, true);
-		settings.put(IOrganizeManifestsSettings.PROP_MODIFY_DEP, true);
-		settings.put(IOrganizeManifestsSettings.PROP_RESOLVE_IMP_MARK_OPT, true);
-		settings.put(IOrganizeManifestsSettings.PROP_REMOVE_LAZY, true);
-		settings.put(IOrganizeManifestsSettings.PROP_ADD_DEPENDENCIES, true);
-		return settings;
+	
+	private static void initializeProcessor(OrganizeManifestsProcessor processor) {
+		processor.setAddMissing(false);
+		processor.setRemoveUnresolved(false);
+		processor.setModifyDep(false);
+		processor.setRemoveLazy(false);
+		processor.setAddDependencies(true);
+		processor.setCalculateUses(false);
+		processor.setMarkInternal(false);
+		processor.setPrefixIconNL(false);
+		processor.setUnusedDependencies(false);
+		processor.setUnusedKeys(false);
 	}
 
 	private static String getTimeStamp(IProject project) {

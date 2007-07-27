@@ -17,12 +17,14 @@ import java.util.Iterator;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
@@ -302,75 +304,108 @@ public class PDEModelUtility {
 			// open editor found, should have underlying text listeners -> apply modification
 			modifyEditorModel(modification, editor, model, monitor);
 		} else {
-			// create own model, attach listeners and grab text edits
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			IFile[] files;
-			if (modification.isFullBundleModification()) {
-				files = new IFile[2];
-				files[F_Bi] = modification.getManifestFile();
-				files[F_Xi] = modification.getXMLFile();
-			} else {
-				files = new IFile[] { modification.getFile() };
-			}
-			// need to monitor number of successfull buffer connections for disconnection purposes
-			// @see } finally { statement
-			int sc = 0;
-			try {
-				ITextFileBuffer[] buffers = new ITextFileBuffer[files.length];
-				IDocument[] documents = new IDocument[files.length];
-				for (int i = 0; i < files.length; i++) {
-					if (files[i] == null || !files[i].exists())
-						continue;
-					manager.connect(files[i].getFullPath(), monitor);
-					sc++;
-					buffers[i] = manager.getTextFileBuffer(files[i].getFullPath());
-					if (buffers[i].isDirty())
-						buffers[i].commit(monitor, true);
-					documents[i] = buffers[i].getDocument();
+			generateModelEdits(modification, monitor, true);
+		}
+	}
+	
+	public static TextFileChange[] changesForModelModication (final ModelModification modification, final IProgressMonitor monitor) {
+		final PDEFormEditor editor = getOpenEditor(modification);
+		if (editor != null) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					if (editor.isDirty())
+						editor.flushEdits();
 				}
-				
-				IBaseModel editModel;
-				if (modification.isFullBundleModification())
-					editModel = prepareBundlePluginModel(files, documents);
-				else
-					editModel = prepareAbstractEditingModel(files[0], documents[0]);
-				
-				modification.modifyModel(editModel, monitor);
-				
-				IModelTextChangeListener[] listeners = gatherListeners(editModel);
-				for (int i = 0; i < listeners.length; i++) {
-					if (listeners[i] == null)
-						continue;
-					TextEdit[] edits = listeners[i].getTextOperations();
-					if (edits.length > 0) {
-						MultiTextEdit multi = new MultiTextEdit();
-						multi.addChildren(edits);
+			});
+		}
+		return generateModelEdits(modification, monitor, false);
+	}
+	
+	private static TextFileChange[] generateModelEdits (final ModelModification modification, final IProgressMonitor monitor,
+			boolean performEdits) {
+		ArrayList edits = new ArrayList();
+		// create own model, attach listeners and grab text edits
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		IFile[] files;
+		if (modification.isFullBundleModification()) {
+			files = new IFile[2];
+			files[F_Bi] = modification.getManifestFile();
+			files[F_Xi] = modification.getXMLFile();
+		} else {
+			files = new IFile[] { modification.getFile() };
+		}
+		// need to monitor number of successful buffer connections for disconnection purposes
+		// @see } finally { statement
+		int sc = 0;
+		try {
+			ITextFileBuffer[] buffers = new ITextFileBuffer[files.length];
+			IDocument[] documents = new IDocument[files.length];
+			for (int i = 0; i < files.length; i++) {
+				if (files[i] == null || !files[i].exists())
+					continue;
+				manager.connect(files[i].getFullPath(), LocationKind.IFILE, monitor);
+				sc++;
+				buffers[i] = manager.getTextFileBuffer(files[i].getFullPath(), LocationKind.IFILE);
+				if (performEdits && buffers[i].isDirty())
+					buffers[i].commit(monitor, true);
+				documents[i] = buffers[i].getDocument();
+			}
+			
+			IBaseModel editModel;
+			if (modification.isFullBundleModification())
+				editModel = prepareBundlePluginModel(files, documents);
+			else
+				editModel = prepareAbstractEditingModel(files[0], documents[0]);
+			
+			modification.modifyModel(editModel, monitor);
+			
+			IModelTextChangeListener[] listeners = gatherListeners(editModel);
+			for (int i = 0; i < listeners.length; i++) {
+				if (listeners[i] == null)
+					continue;
+				TextEdit[] currentEdits = listeners[i].getTextOperations();
+				if (currentEdits.length > 0) {
+					MultiTextEdit multi = new MultiTextEdit();
+					multi.addChildren(currentEdits);
+					if (performEdits) {
 						multi.apply(documents[i]);
 						buffers[i].commit(monitor, true);
 					}
+					TextFileChange change = new TextFileChange(files[i].getName(), files[i]);
+					change.setEdit(multi);
+					// save the file after the change applied
+					change.setSaveMode(TextFileChange.FORCE_SAVE);
+					// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
+					// with the PluginContentMergeViewer
+					String textType = files[i].getName().equals("plugin.xml") || //$NON-NLS-1$
+							files[i].getName().equals("fragment.xml") ? //$NON-NLS-1$
+							"PLUGIN2" : files[i].getFileExtension(); //$NON-NLS-1$
+					change.setTextType(textType);
+					edits.add(change);
 				}
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			} catch (MalformedTreeException e) {
-				PDEPlugin.log(e);
-			} catch (BadLocationException e) {
-				PDEPlugin.log(e);
-			} finally {
-				// don't want to over-disconnect in case we ran into an exception during connections
-				// dc <= sc stops this from happening
-				int dc = 0;
-				for (int i = 0; i < files.length && dc <= sc; i++) {
-					if (files[i] == null || !files[i].exists())
-						continue;
-					try {
-						manager.disconnect(files[i].getFullPath(), monitor);
-						dc++;
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		} catch (MalformedTreeException e) {
+			PDEPlugin.log(e);
+		} catch (BadLocationException e) {
+			PDEPlugin.log(e);
+		} finally {
+			// don't want to over-disconnect in case we ran into an exception during connections
+			// dc <= sc stops this from happening
+			int dc = 0;
+			for (int i = 0; i < files.length && dc <= sc; i++) {
+				if (files[i] == null || !files[i].exists())
+					continue;
+				try {
+					manager.disconnect(files[i].getFullPath(), LocationKind.IFILE, monitor);
+					dc++;
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		}
+		return (TextFileChange[])edits.toArray(new TextFileChange[edits.size()]);
 	}
 	
 	private static void modifyEditorModel(

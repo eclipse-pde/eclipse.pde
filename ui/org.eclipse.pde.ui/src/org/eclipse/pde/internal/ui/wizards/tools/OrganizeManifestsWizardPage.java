@@ -12,10 +12,11 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-public class OrganizeManifestsWizardPage extends WizardPage implements IPreferenceConstants, IOrganizeManifestsSettings {
+public class OrganizeManifestsWizardPage extends UserInputWizardPage implements IPreferenceConstants, IOrganizeManifestsSettings {
 	
 	private Button fRemoveUnresolved;
 	private Button fCalculateUses;
@@ -46,8 +47,8 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private Button fRemoveLazy;
 	
 	private Button[] fTopLevelButtons; // used for setting page complete state
-	private Button[] fParentButtons; // parents with children that need to be dis/enabled
 	
+	private OrganizeManifestsProcessor fProcessor;
 	
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
 	protected OrganizeManifestsWizardPage() {
@@ -60,6 +61,8 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		fProcessor = (OrganizeManifestsProcessor)((PDERefactor)getRefactoring()).getProcessor();
 		
 		createExportedPackagesGroup(container);
 		createRequireImportGroup(container);
@@ -167,25 +170,56 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private void presetOptions() {
 		IDialogSettings settings = getDialogSettings();
 		
-		fAddMissing.setSelection(!settings.getBoolean(PROP_ADD_MISSING));
-		fMarkInternal.setSelection(!settings.getBoolean(PROP_MARK_INTERNAL));
+		boolean selection = !settings.getBoolean(PROP_ADD_MISSING);
+		fAddMissing.setSelection(selection);
+		fProcessor.setAddMissing(selection);
+		
+		selection = !settings.getBoolean(PROP_MARK_INTERNAL);
+		fMarkInternal.setSelection(selection);
+		fProcessor.setMarkInternal(selection);
+		
 		String filter = settings.get(PROP_INTERAL_PACKAGE_FILTER);
-		fPackageFilter.setText(filter != null ? filter : VALUE_DEFAULT_FILTER);
-		fRemoveUnresolved.setSelection(!settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX));
-		fCalculateUses.setSelection(settings.getBoolean(PROP_CALCULATE_USES));
+		if (filter == null)
+			filter = VALUE_DEFAULT_FILTER;
+		fPackageFilter.setText(filter);
+		fProcessor.setPackageFilter(filter);
 		
-		fModifyDependencies.setSelection(!settings.getBoolean(PROP_MODIFY_DEP));
+		selection = !settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX);
+		fRemoveUnresolved.setSelection(selection);
+		fProcessor.setRemoveUnresolved(selection);
+		
+		selection = settings.getBoolean(PROP_CALCULATE_USES);
+		fCalculateUses.setSelection(selection);
+		fProcessor.setCalculateUses(selection);
+		
+		selection = !settings.getBoolean(PROP_MODIFY_DEP);
+		fModifyDependencies.setSelection(selection);
+		fProcessor.setModifyDep(selection);
 
-		fRemoveImport.setSelection(!settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT));
-		fOptionalImport.setSelection(settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT));
+		selection = settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT);
+		fRemoveImport.setSelection(!selection);
+		fOptionalImport.setSelection(selection);
+		fProcessor.setRemoveDependencies(!selection);
 
-		fUnusedDependencies.setSelection(settings.getBoolean(PROP_UNUSED_DEPENDENCIES));
-		fAdditonalDependencies.setSelection(settings.getBoolean(PROP_ADD_DEPENDENCIES));
+		selection = settings.getBoolean(PROP_UNUSED_DEPENDENCIES);
+		fUnusedDependencies.setSelection(selection);
+		fProcessor.setUnusedDependencies(selection);
 		
-		fRemoveLazy.setSelection(!settings.getBoolean(PROP_REMOVE_LAZY));
+		selection = settings.getBoolean(PROP_ADD_DEPENDENCIES);
+		fAdditonalDependencies.setSelection(selection);
+		fProcessor.setAddDependencies(selection);
 		
-		fFixIconNLSPaths.setSelection(settings.getBoolean(PROP_NLS_PATH));
-		fRemovedUnusedKeys.setSelection(settings.getBoolean(PROP_UNUSED_KEYS));
+		selection = !settings.getBoolean(PROP_REMOVE_LAZY);
+		fRemoveLazy.setSelection(selection);
+		fProcessor.setRemoveLazy(selection);
+		
+		selection = settings.getBoolean(PROP_NLS_PATH);
+		fFixIconNLSPaths.setSelection(selection);
+		fProcessor.setPrefixIconNL(selection);
+		
+		selection = settings.getBoolean(PROP_UNUSED_KEYS);
+		fRemovedUnusedKeys.setSelection(selection);
+		fProcessor.setUnusedKeys(selection);
 
 		setEnabledStates();
 		setPageComplete();
@@ -228,9 +262,6 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 			fRemoveUnresolved, fAddMissing,	fModifyDependencies, fMarkInternal,
 			fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy, fCalculateUses	
 		};
-		fParentButtons = new Button[] {
-			fMarkInternal, fModifyDependencies
-		};
 	}
 	
 	private void setPageComplete() {
@@ -245,25 +276,59 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	}
 	
 	private void hookListeners() {
-		hookListener(fParentButtons, new SelectionAdapter() {
+		hookListener(new Button[] {fMarkInternal, fModifyDependencies}, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setEnabledStates();
+				doProcessorSetting(e.getSource());
 			}
 		});
 		hookListener(fTopLevelButtons, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete();
+				doProcessorSetting(e.getSource());
 			}
 		});
+		hookListener(new Button[] { fRemoveImport, fOptionalImport }, new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doProcessorSetting(e.getSource());
+			}
+		});
+	}
+
+	private void doProcessorSetting(Object source) {
+		if (fProcessor == null)
+			return;
+		if (fAddMissing.equals(source))
+			fProcessor.setAddMissing(fAddMissing.getSelection());
+		else if (fMarkInternal.equals(source))
+			fProcessor.setMarkInternal(fMarkInternal.getSelection());
+		else if (fPackageFilter.equals(source))
+			fProcessor.setPackageFilter(fPackageFilter.getText());
+		else if (fRemoveUnresolved.equals(source))
+			fProcessor.setRemoveUnresolved(fRemoveUnresolved.getSelection());
+		else if (fCalculateUses.equals(source))
+			fProcessor.setCalculateUses(fCalculateUses.getSelection());
+		else if (fModifyDependencies.equals(source))
+			fProcessor.setModifyDep(fModifyDependencies.getSelection());
+		else if (fOptionalImport.equals(source))
+			fProcessor.setRemoveDependencies(!fOptionalImport.getSelection());
+		else if (fRemoveImport.equals(source))
+			fProcessor.setRemoveDependencies(fRemoveImport.getSelection());
+		else if (fUnusedDependencies.equals(source))
+			fProcessor.setUnusedDependencies(fUnusedDependencies.getSelection());
+		else if (fAdditonalDependencies.equals(source))
+			fProcessor.setAddDependencies(fAdditonalDependencies.getSelection());
+		else if (fRemoveLazy.equals(source))
+			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
+		else if (fFixIconNLSPaths.equals(source))
+			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
+		else if (fRemovedUnusedKeys.equals(source))
+			fProcessor.setUnusedKeys(fRemovedUnusedKeys.getSelection());
 	}
 	
 	private void hookListener(Button[] buttons, SelectionAdapter adapter) {
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i].addSelectionListener(adapter);
 		}
-	}
-	
-	protected IDialogSettings getSettings() {
-		return getDialogSettings();
 	}
 }

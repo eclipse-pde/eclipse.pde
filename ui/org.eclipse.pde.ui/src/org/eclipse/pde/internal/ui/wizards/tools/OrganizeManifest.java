@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -225,7 +226,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		
 	}
 	
-	public static void removeUnusedKeys(
+	public static TextFileChange[] removeUnusedKeys(
 			final IProject project,
 			final IBundle bundle, 
 			final IPluginModelBase modelBase) {
@@ -234,9 +235,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			localization = "plugin"; //$NON-NLS-1$
 		IFile propertiesFile = project.getFile(localization + ".properties"); //$NON-NLS-1$
 		if (!propertiesFile.exists())
-			return;
+			return new TextFileChange[0];
 		
-		PDEModelUtility.modifyModel(new ModelModification(propertiesFile) {
+		return PDEModelUtility.changesForModelModication(new ModelModification(propertiesFile) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBuildModel))
 					return;

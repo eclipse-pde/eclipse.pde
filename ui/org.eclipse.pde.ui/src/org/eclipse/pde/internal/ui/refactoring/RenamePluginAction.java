@@ -31,7 +31,7 @@ public class RenamePluginAction extends Action {
 
 	public void run() {
 		RenamePluginProcessor processor = new RenamePluginProcessor(fInfo);
-		RenamePluginRefactor refactor = new RenamePluginRefactor(processor);
+		PDERefactor refactor = new PDERefactor(processor);
 		RenamePluginWizard wizard = new RenamePluginWizard(refactor, fInfo);
 		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );
 		

@@ -70,6 +70,7 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -459,6 +460,19 @@ public abstract class PDEFormEditor extends FormEditor
 		    spage.doRevertToSaved();
 		}
 		editorDirtyStateChanged();
+	}
+	
+	public void flushEdits() {
+		IFormPage[] pages = getPages();
+		IManagedForm mForm = pages[getActivePage()].getManagedForm();
+		if (mForm != null)
+			mForm.commit(false);
+		for (int i = 0; i < pages.length; i++) {
+			if (pages[i] instanceof PDESourcePage) {
+				PDESourcePage sourcePage = (PDESourcePage)pages[i];
+				sourcePage.getInputContext().flushEditorInput();
+			}
+		}
 	}
 	
 	/**

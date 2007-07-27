@@ -73,6 +73,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String JavaArgumentsTab_appendLauncherIni;
 
+	public static String OrganizeManifestsProcessor_invalidParam;
+
+	public static String OrganizeManifestsProcessor_rootMessage;
+
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
 	public static String CommandComposerPart_formTitle;
@@ -284,10 +288,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTab_selectedPlugins;
 
 	public static String PluginsTabToolBar_auto_validate;
-
-	public static String PluginsTabToolBar_filter_disabled;
-
-	public static String PluginsTabToolBar_filter_options;
 
 	public static String PluginsTabToolBar_validate;
 
@@ -1650,13 +1650,11 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyAnalysisSection_title;
 	public static String DependencyAnalysisSection_loops;
 	public static String DependencyAnalysisSection_noCycles;
-	public static String DependencyAnalysisSection_references;
 	public static String DependencyExtentOperation_searching;
 	public static String DependencyExtentOperation_inspecting;
 	public static String DependencyExtentSearchResult_dependency;
 	public static String DependencyExtentSearchResult_dependencies;
 	public static String DependencyAnalysisSection_fragment_editable;
-	public static String DependencyAnalysisSection_noReferencesFound;
 	public static String DependencyAnalysisSection_fragment_notEditable;
 	public static String DependencyAnalysisSection_plugin_editable;
 	public static String DependencyAnalysisSection_plugin_notEditable;
@@ -2431,8 +2429,6 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaDetails_deprecated;
 
 	public static String SchemaAttributeDetails_use;
-
-	public static String SchemaAttributeDetails_defaultValue;
 
 	public static String SchemaAttributeDetails_type;
 
