@@ -148,7 +148,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		super(page, parent, Section.DESCRIPTION, new String[]{
 				PDEUIMessages.ManifestEditor_DetailExtension_new, 
 				PDEUIMessages.ManifestEditor_DetailExtension_edit,
-				null,
 				PDEUIMessages.ManifestEditor_DetailExtension_up,
 				PDEUIMessages.ManifestEditor_DetailExtension_down});
 		fHandleDefaultButton = false;
@@ -286,7 +285,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons(selection.getFirstElement());
-		getTreePart().setButtonEnabled(1, isSelectionEditable(selection));
+		getTreePart().getButton(1).setVisible(isSelectionEditable(selection));
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		/*
@@ -302,13 +301,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		case 1 :
 			handleEdit();
 			break;
-		case 2:
-			// blank
-			break;
-		case 3 :
+		case 2 :
 			handleMove(true);
 			break;
-		case 4 :
+		case 3 :
 			handleMove(false);
 			break;
 		}
@@ -1062,8 +1058,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		boolean sorted = fSortAction != null && fSortAction.isChecked();
 		if (sorted) {
+			getTreePart().setButtonEnabled(2, false);
 			getTreePart().setButtonEnabled(3, false);
-			getTreePart().setButtonEnabled(4, false);
 			return;
 		}
 		
@@ -1099,8 +1095,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}
 		}
 		getTreePart().setButtonEnabled(0, addEnabled);
-		getTreePart().setButtonEnabled(3, upEnabled);
-		getTreePart().setButtonEnabled(4, downEnabled);
+		getTreePart().setButtonEnabled(2, upEnabled);
+		getTreePart().setButtonEnabled(3, downEnabled);
 	}
 
 	/* (non-Javadoc)
