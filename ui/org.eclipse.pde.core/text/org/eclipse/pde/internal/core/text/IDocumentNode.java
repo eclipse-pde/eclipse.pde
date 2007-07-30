@@ -82,13 +82,15 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	public ArrayList getChildNodesList();
 	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent, IModel model);
+
 	// Not used by text edit operations
-	
 	/**
 	 * @param text String already trimmed and formatted
 	 * @return
 	 */
 	public boolean setXMLContent(String text);
+	// Not used by text edit operations
+	public String getXMLContent();
 	
 	// TODO: MP: TEO:  Rename to IDocumentElementNode
 	// TODO: MP: TEO:  Space out, comment and rename methods

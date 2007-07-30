@@ -111,6 +111,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 	
 	protected abstract IDocumentAttribute getDocumentAttribute(String name, String value, IDocumentNode parent);
 	
+	protected abstract IDocumentTextNode getDocumentTextNode(String content, 
+			IDocumentNode parent);
+	
 	private int getStartOffset(String elementName) throws BadLocationException {
 		int line = fLocator.getLineNumber();
 		int col = fLocator.getColumnNumber();
@@ -293,17 +296,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(ch, start, length);
-		IDocumentTextNode textNode = parent.getTextNode();
-		if (textNode == null) {
-			if (buffer.toString().trim().length() > 0) {
-				textNode = new DocumentTextNode();
-				textNode.setEnclosingElement(parent);
-				parent.addTextNode(textNode);
-				textNode.setText(buffer.toString().trim());
-			}
-		} else {
-			textNode.setText(buffer.insert(0, textNode.getText()).toString());
-		}
+		getDocumentTextNode(buffer.toString(), parent);
 	}
 	
 	private void removeOrphanAttributes(IDocumentNode node) {

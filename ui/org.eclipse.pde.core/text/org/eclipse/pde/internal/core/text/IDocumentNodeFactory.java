@@ -21,4 +21,7 @@ public interface IDocumentNodeFactory {
 
 	public IDocumentNode createDocumentNode(String name, IDocumentNode parent);
 	
+	public IDocumentTextNode createDocumentTextNode(String content, 
+			IDocumentNode parent);
+	
 }

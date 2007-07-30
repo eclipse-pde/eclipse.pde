@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.text.DocumentHandler;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.xml.sax.SAXException;
 
 public class PluginDocumentHandler extends DocumentHandler {
@@ -141,6 +142,24 @@ public class PluginDocumentHandler extends DocumentHandler {
 		} catch (CoreException e) {
 		}
 		return attr;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
+	 */
+	protected IDocumentTextNode getDocumentTextNode(String content, 
+			IDocumentNode parent) {
+		
+		IDocumentTextNode textNode = parent.getTextNode();
+		if (textNode == null) {
+			if (content.trim().length() > 0) {
+				textNode = fFactory.createDocumentTextNode(content, parent);
+			}
+		} else {
+			String newContent = textNode.getText() + content;
+			textNode.setText(newContent);
+		}
+		return textNode;
 	}
 	
 }

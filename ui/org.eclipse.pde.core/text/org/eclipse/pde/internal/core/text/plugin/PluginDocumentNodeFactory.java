@@ -19,9 +19,11 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocumentNodeFactory {
 	
@@ -141,5 +143,17 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		node.setModel(fModel);
 		node.setXMLTagName("extension-point"); //$NON-NLS-1$
 		return node;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
+	public IDocumentTextNode createDocumentTextNode(String content,
+			IDocumentNode parent) {
+		DocumentTextNode textNode = new DocumentTextNode();
+		textNode.setEnclosingElement(parent);
+		parent.addTextNode(textNode);
+		textNode.setText(content.trim());
+		return textNode;
 	}
 }

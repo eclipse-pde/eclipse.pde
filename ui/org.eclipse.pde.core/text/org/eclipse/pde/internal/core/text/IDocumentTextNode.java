@@ -26,5 +26,7 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable {
 	
 	// Not used by text edit operations
 	public void reconnect(IDocumentNode parent);
+	// Not used by text edit operations
+	public String write();
 	
 }

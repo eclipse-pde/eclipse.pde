@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 public abstract class PluginDocumentNode implements IDocumentNode {
 	
@@ -109,6 +110,8 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 */
 	public String write(boolean indent) {
 		// Used by text edit operations
+		// TODO: MP: TEO: Refactor into smaller methods
+		// TODO: MP: TEO: Do we care about the indent flag? If so make consistent with write attributes and content
 		StringBuffer buffer = new StringBuffer();	
 		// Print XML decl if root
 		if (isRoot()) {
@@ -126,6 +129,8 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			children[i].setLineIndent(getLineIndent() + 3);
 			buffer.append(getLineDelimiter() + children[i].write(true));
 		}
+		// Print text content
+		buffer.append(writeXMLContent());
 		// Print end element
 		buffer.append(getLineDelimiter() + getIndent());
 		// TODO: MP: TEO: Replace with XMLPrintHandler constants
@@ -136,7 +141,29 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		return buffer.toString();
 	}
 
+	protected String writeXMLContent() {
+		StringBuffer buffer = new StringBuffer();
+		if (isDefined(fTextNode)) {
+			buffer.append(getContentIndent());
+			buffer.append(fTextNode.write());
+		}
+		return buffer.toString();
+	}
 
+	protected String writeAttributes() {
+		StringBuffer buffer = new StringBuffer();
+		IDocumentAttribute[] attributes = getNodeAttributes();
+		// Write all attributes
+		for (int i = 0; i < attributes.length; i++) {
+			IDocumentAttribute attribute = attributes[i];
+			if (isDefined(attribute)) {
+				buffer.append(getAttributeIndent() + attribute.write());
+			}			
+		}
+		return buffer.toString();
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getChildNodes()
 	 */
@@ -568,24 +595,17 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		return buffer.toString();
 	}
 	
-	protected String writeAttributes() {
-
-		StringBuffer buffer = new StringBuffer();
-		IDocumentAttribute[] attributes = getNodeAttributes();
-
-		for (int i = 0; i < attributes.length; i++) {
-			IDocumentAttribute attribute = attributes[i];
-			if (isDefined(attribute)) {
-				buffer.append(getAttributeIndent() + attribute.write());
-			}			
-		}
-		return buffer.toString();
-	}
-	
 	protected String getAttributeIndent() {
 		return getLineDelimiter() + 
 			   getIndent() + 
 			   "      "; //$NON-NLS-1$
+	}
+	
+	protected String getContentIndent() {
+		// TODO: MP: TEO: Add indent methods on documenttextnode
+		return getLineDelimiter() + 
+		   getIndent() + 
+		   "   "; //$NON-NLS-1$
 	}
 	
 	protected String getLineDelimiter() {
@@ -598,15 +618,24 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @return
 	 */
 	protected boolean isDefined(IDocumentAttribute attribute) {
-		
 		if (attribute == null) {
 			return false;
 		} else if (attribute.getAttributeValue().trim().length() <= 0) {
 			return false;
 		}
-		
 		return true;
 	}	
+	
+	/**
+	 * @param node
+	 * @return
+	 */
+	protected boolean isDefined(IDocumentTextNode node) {
+		if (node == null) {
+			return false;
+		}
+		return PDETextHelper.isDefinedAfterTrim(node.getText());
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
@@ -671,5 +700,17 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		// Always changed
 		return true;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getXMLContent()
+	 */
+	public String getXMLContent() {
+		IDocumentTextNode node = getTextNode();
+		if (node == null) {
+			// No text node
+			return null;
+		}
+		return node.getText();
+	}
 	
 }

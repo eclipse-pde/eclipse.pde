@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
@@ -26,17 +25,15 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
-import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 /**
  * SimpleCSDocumentFactory
  *
  */
-public class SimpleCSDocumentFactory implements IDocumentNodeFactory,
+public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		ISimpleCSModelFactory {
 
 	private SimpleCSModel fModel;
@@ -45,29 +42,22 @@ public class SimpleCSDocumentFactory implements IDocumentNodeFactory,
 	 * @param model
 	 */
 	public SimpleCSDocumentFactory(SimpleCSModel model) {
+		super();
 		fModel = model;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.DocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public IDocumentAttribute createAttribute(String name, String value,
-			IDocumentNode enclosingElement) {
-
-		IDocumentAttribute attribute = new DocumentAttributeNode();
-		try {
-			attribute.setAttributeName(name);
-			attribute.setAttributeValue(value);
-		} catch (CoreException e) {
-			// Ignore
-		}
-		attribute.setEnclosingElement(enclosingElement);
-		// TODO: MP: TEO: Remove if not needed
-		//attribute.setModel(fModel);
-		//attribute.setInTheModel(true);
-		return attribute;
+	public IDocumentTextNode createDocumentTextNode(String content,
+			IDocumentNode parent) {
+		IDocumentTextNode textNode = new SimpleCSDocumentTextNode();
+		textNode.setEnclosingElement(parent);
+		parent.addTextNode(textNode);
+		textNode.setText(content.trim());
+		return textNode;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
@@ -78,8 +68,6 @@ public class SimpleCSDocumentFactory implements IDocumentNodeFactory,
 		
 		// TODO: MP: TEO: Parent is not needed as it is set in the DocumentHandler
 		// TODO: MP: TEO: Could delegate to model classes to do creation?
-		// TODO: MP: TEO: Enforce model validity rules? Do not read in extraneous elements?
-		// Note: Cannot return null
 		// TODO: MP: TEO:  Change to interfaces for checking instance of and cast
 		// TODO: MP: TEO:  Prioritize "if" order
 		
@@ -161,10 +149,7 @@ public class SimpleCSDocumentFactory implements IDocumentNodeFactory,
 		// Action has no children
 		// Command has no children
 		// OnCompletion has no children
-		
-		// Cannot return null
-		// Foreign elements are stored as generics
-		return createGeneric(name);
+		return super.createDocumentNode(name, parent);
 	}
 
 	/**
@@ -346,13 +331,5 @@ public class SimpleCSDocumentFactory implements IDocumentNodeFactory,
 	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent) {
 		return new SimpleCSSubItem(fModel);
 	}
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	private IDocumentNode createGeneric(String name) {
-		return new DocumentGenericNode(name);
-	}	
 	
 }

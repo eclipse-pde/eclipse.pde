@@ -10,10 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
+import java.util.HashMap;
+
+import org.eclipse.pde.internal.core.util.PDETextHelper;
+
 
 public class DocumentTextNode implements IDocumentTextNode {
 	
 	private static final long serialVersionUID = 1L;
+	
+	protected static final HashMap SUBSTITUTE_CHARS = new HashMap(5);
+	
+	static {
+		SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
+	}		
 	
 	private transient int fOffset;
 	private transient int fLength;
@@ -97,6 +111,15 @@ public class DocumentTextNode implements IDocumentTextNode {
 		fLength = -1;
 		// Transient field:  Offset
 		fOffset = -1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#write()
+	 */
+	public String write() {
+		String content = getText().trim();
+		return PDETextHelper.translateWriteText(content,
+				SUBSTITUTE_CHARS);
 	}
 	
 }

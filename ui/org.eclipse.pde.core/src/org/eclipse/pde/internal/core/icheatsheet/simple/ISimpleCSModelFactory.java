@@ -11,11 +11,13 @@
 
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
+import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
+
 /**
  * ISimpleCheatSheetModelFactory
  *
  */
-public interface ISimpleCSModelFactory {
+public interface ISimpleCSModelFactory extends IDocumentNodeFactory {
 
 	/**
 	 * @return

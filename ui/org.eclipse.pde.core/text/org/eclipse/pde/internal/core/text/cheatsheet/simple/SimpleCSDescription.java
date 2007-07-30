@@ -11,7 +11,7 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -24,8 +24,6 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 public class SimpleCSDescription extends SimpleCSObject implements
 		ISimpleCSDescription {
 
-	// TODO: MP: TEO: Should extend DocumentTextNode
-	
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -39,36 +37,35 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription#getContent()
 	 */
 	public String getContent() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLContent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription#setContent(java.lang.String)
 	 */
 	public void setContent(String content) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLContent(content);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return new ArrayList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getContent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_DESCRIPTION;
 	}
 
 }
