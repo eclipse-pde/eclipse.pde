@@ -467,15 +467,45 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
 			IPluginObject object = (IPluginObject) iter.next();
 			try {
+				IStructuredSelection newSelection = null;
+				boolean sorted = fSortAction != null && fSortAction.isChecked();
 				if (object instanceof IPluginElement) {
 					IPluginElement ee = (IPluginElement) object;
 					IPluginParent parent = (IPluginParent) ee.getParent();
+					if (!sorted) {
+						int index = getNewSelectionIndex(parent.getIndexOf(ee),parent.getChildCount());
+						newSelection =  index == -1 ? new StructuredSelection(parent) : new StructuredSelection(parent.getChildren()[index]);
+					} else {
+						IPluginObject original[] = parent.getChildren();
+						IPluginObject objects[] = new IPluginObject[original.length];
+						for (int i = 0; i < original.length; i++)
+							objects[i] = original[i];
+						fExtensionTree.getComparator().sort(fExtensionTree, objects);
+						int index = getNewSelectionIndex(getArrayIndex(objects, ee),objects.length);
+						newSelection =  index == -1 ? new StructuredSelection(parent) : new StructuredSelection(objects[index]);
+					}
 					parent.remove(ee);
 				} else if (object instanceof IPluginExtension) {
 					IPluginExtension extension = (IPluginExtension) object;
 					IPluginBase plugin = extension.getPluginBase();
+					if (!sorted) {
+						int index = getNewSelectionIndex(plugin.getIndexOf(extension),plugin.getExtensions().length);
+						if (index != -1)
+							newSelection = new StructuredSelection(plugin.getExtensions()[index]);
+					} else {
+						IPluginExtension original[] = plugin.getExtensions();
+						IPluginExtension extensions[] = new IPluginExtension[original.length];
+						for (int i = 0; i < original.length; i++)
+							extensions[i] = original[i];
+						fExtensionTree.getComparator().sort(fExtensionTree, extensions);
+						int index = getNewSelectionIndex(getArrayIndex(extensions, extension),extensions.length);
+						if (index != -1)
+							newSelection = new StructuredSelection(extensions[index]);
+					}
 					plugin.remove(extension);
 				}
+				if (newSelection != null)
+					fExtensionTree.setSelection(newSelection);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}

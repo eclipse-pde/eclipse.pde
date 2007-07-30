@@ -226,10 +226,14 @@ public class ExtensionPointsSection extends TableSection {
 		for (int i = 0; i < selection.length; i++) {
 			Object object = selection[i];
 			if (object != null && object instanceof IPluginExtensionPoint) {
+				IStructuredSelection newSelection = null;
 				IPluginExtensionPoint ep = (IPluginExtensionPoint) object;
 				IPluginBase plugin = ep.getPluginBase();
+				IPluginExtensionPoint[] points = plugin.getExtensionPoints();
+				int index = getNewSelectionIndex(getArrayIndex(points, ep), points.length);
+				if (index != -1)
+						newSelection = new StructuredSelection(points[index]);
 				try {
-					plugin.remove(ep);
 					String schema = ep.getSchema();
 					IProject project = ep.getModel().getUnderlyingResource()
 							.getProject();
@@ -241,6 +245,9 @@ public class ExtensionPointsSection extends TableSection {
 								+ schemaFile.getProjectRelativePath().toString() + "?")) //$NON-NLS-1$
 							schemaFile.delete(true, false,
 									new NullProgressMonitor());
+					plugin.remove(ep);
+					if (newSelection != null)
+						pointTable.setSelection(newSelection);
 
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);

@@ -514,24 +514,6 @@ public class ElementSection extends TreeSection {
 		}
 		return result;
 	}
-	
-	// gets the index of the desired new selection as follows
-	//   if this is the only item, return -1 (meaning select the parent)
-	//   if this is the last item, return the index of the predecessor
-	//   otherwise, return the index of the successor
-	private int getNewSelectionIndex(int thisIndex, int length) {
-		if (thisIndex == length-1)
-			return thisIndex-1;
-		return thisIndex+1;
-	}
-	
-	private int getArrayIndex(Object[] array, Object object) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(object))
-				return i;
-		}
-		return -1;
-	}
 
 	private void handleNewAttribute() {
 		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
