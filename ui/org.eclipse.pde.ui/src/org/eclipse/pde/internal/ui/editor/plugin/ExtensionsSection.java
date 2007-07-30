@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -104,6 +105,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		"label", //$NON-NLS-1$
 		"name", //$NON-NLS-1$
 		"id"}; //$NON-NLS-1$
+	
+	private static final String[] VALID_IMAGE_TYPES = {
+		"png", "bmp", "ico", "gif", "jpg", "tiff" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	
 
 	class ExtensionContentProvider extends DefaultContentProvider
 	implements
@@ -742,9 +747,19 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			if (att != null && att.getValue() != null) {
 				iconPath = att.getValue();
 			}
+			// we have a value from a resource attribute
 			if (iconPath != null) {
-				//OK, we have an icon path relative to the plug-in
-				return getImageFromPlugin(element, iconPath);
+				String ext = new Path(iconPath).getFileExtension();
+				boolean valid = false;
+				// ensure the resource is an image
+				for (int i = 0; i < VALID_IMAGE_TYPES.length; i++) {
+					if (ext.equalsIgnoreCase(VALID_IMAGE_TYPES[i])) {
+						valid = true;
+						break;
+					}
+				}
+				// if the resource is an image, get the image, otherwise return null
+				return valid ? getImageFromPlugin(element, iconPath) : null;
 			}
 		}
 		return null;

@@ -161,25 +161,23 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	public String getIconProperty() {
 		if (iconName != null)
 			return iconName;
-		String result = null;
 		ISchemaAttribute[] attributes = getAttributes();
-		for (int i = 0; i < attributes.length && result == null; i++) {
+		for (int i = 0; i < attributes.length; i++) {
 			if (isValidIconProperty(attributes[i]))
-				result = attributes[i].getName();
+				return attributes[i].getName();
 		}
-		return result;
+		return null;
 	}
 
 	public String getLabelProperty() {
 		if (labelProperty != null)
 			return labelProperty;
-		String result = null;
 		ISchemaAttribute[] attributes = getAttributes();
-		for (int i = 0; i < attributes.length && result == null; i++) {
+		for (int i = 0; i < attributes.length; i++) {
 			if (isValidLabelProperty(attributes[i]))
-				result = attributes[i].getName();
+				return attributes[i].getName();
 		}
-		return result;
+		return null;
 	}
 	
 	private boolean isValidLabelProperty(ISchemaAttribute a) {
