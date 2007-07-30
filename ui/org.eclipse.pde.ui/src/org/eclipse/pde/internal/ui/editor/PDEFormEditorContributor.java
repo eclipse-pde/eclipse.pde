@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joern Dinkla <devnull@dinkla.com> - bug 197821
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -27,6 +28,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -50,7 +52,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	private ClipboardAction fPasteAction;
 
 	private Hashtable fGlobalActions = new Hashtable();
-
+	
+	private ISharedImages fSharedImages;
+	
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 
@@ -89,6 +93,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		public CutAction() {
 			super(ActionFactory.CUT.getId());
 			setText(PDEUIMessages.EditorActions_cut);
+			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+            setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -100,6 +107,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		public CopyAction() {
 			super(ActionFactory.COPY.getId());
 			setText(PDEUIMessages.EditorActions_copy);
+			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+            setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -111,6 +121,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		public PasteAction() {
 			super(ActionFactory.PASTE.getId());
 			setText(PDEUIMessages.EditorActions_paste);
+			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+            setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -290,4 +303,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
     	makeActions();
     }
 
+    protected ISharedImages getSharedImages() {
+    	if ( fSharedImages == null )
+        	fSharedImages = getPage().getWorkbenchWindow().getWorkbench().getSharedImages();
+    	return fSharedImages;
+    }
 }
