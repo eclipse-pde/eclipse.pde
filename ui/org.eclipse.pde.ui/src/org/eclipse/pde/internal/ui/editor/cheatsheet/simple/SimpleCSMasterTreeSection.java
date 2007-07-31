@@ -513,6 +513,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		
+		// TODO: MP: TEO: Mark stale, see manifest editor, move code below to refresh
+		
 		Object[] objects = event.getChangedObjects();
 		ISimpleCSObject object = (ISimpleCSObject) objects[0];		
 		if (object == null) {
