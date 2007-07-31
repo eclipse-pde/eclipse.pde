@@ -38,7 +38,7 @@ public class TocSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
 	public boolean isQuickOutlineEnabled() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
