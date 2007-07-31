@@ -20,7 +20,6 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
-import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
@@ -42,7 +41,6 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
-		((DocumentObject)subitem).setInTheModel(true);
 		addChildNode((IDocumentNode)subitem, true);
 	}
 
@@ -50,7 +48,6 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
-		((DocumentObject)subitem).setInTheModel(true);
 		addChildNode((IDocumentNode)subitem, index, true);
 	}
 
@@ -160,18 +157,13 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
 		removeChildNode((IDocumentNode)subitem, true);
-		((DocumentObject)subitem).setInTheModel(false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(int)
 	 */
 	public void removeSubItem(int index) {
-		ISimpleCSSubItemObject item = 
-			(ISimpleCSSubItemObject)removeChildNode(index, ISimpleCSSubItemObject.class, true);
-		if (item != null) {
-			((DocumentObject)item).setInTheModel(false);
-		}
+		removeChildNode(index, ISimpleCSSubItemObject.class, true);
 	}
 
 	/* (non-Javadoc)

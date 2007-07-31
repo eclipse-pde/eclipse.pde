@@ -15,7 +15,6 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.text.DocumentObject;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
@@ -37,7 +36,6 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void addItem(ISimpleCSItem item) {
-		((DocumentObject)item).setInTheModel(true);
 		addChildNode((IDocumentNode)item, true);
 	}
 
@@ -45,7 +43,6 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void addItem(int index, ISimpleCSItem item) {
-		((DocumentObject)item).setInTheModel(true);
 		addChildNode((IDocumentNode)item, index, true);
 	}
 	
@@ -132,17 +129,13 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public void removeItem(ISimpleCSItem item) {
 		removeChildNode((IDocumentNode)item, true);
-		((DocumentObject)item).setInTheModel(false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItem(int)
 	 */
 	public void removeItem(int index) {
-		ISimpleCSItem item = (ISimpleCSItem)removeChildNode(index, ISimpleCSItem.class, true);
-		if (item != null) {
-			((DocumentObject)item).setInTheModel(false);
-		}
+		removeChildNode(index, ISimpleCSItem.class, true);
 	}
 
 	/* (non-Javadoc)

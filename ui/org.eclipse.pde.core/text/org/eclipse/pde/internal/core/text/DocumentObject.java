@@ -206,13 +206,33 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		}
 	}		
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
+	public void addChildNode(IDocumentNode child) {
+		if (child instanceof IDocumentObject) {
+			((IDocumentObject)child).setInTheModel(true);
+		}
+		super.addChildNode(child);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentNode, int)
+	 */
+	public void addChildNode(IDocumentNode child, int position) {
+		if (child instanceof IDocumentObject) {
+			((IDocumentObject)child).setInTheModel(true);
+		}
+		super.addChildNode(child, position);
+	}
+	
 	/**
 	 * @param child
 	 * @param position
 	 * @param fireEvent
 	 */
 	protected void addChildNode(IDocumentNode child, int position, boolean fireEvent) {
-		super.addChildNode(child, position);
+		addChildNode(child, position);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
@@ -224,11 +244,35 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @param fireEvent
 	 */
 	protected void addChildNode(IDocumentNode child, boolean fireEvent) {
-		super.addChildNode(child);
+		addChildNode(child);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
 		}		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
+	public IDocumentNode removeChildNode(IDocumentNode child) {
+		IDocumentNode node = super.removeChildNode(child);
+		if ((node != null) &&
+				(node instanceof IDocumentObject)) {
+			((IDocumentObject)node).setInTheModel(false);
+		}
+		return node;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
+	 */
+	public IDocumentNode removeChildNode(int index) {
+		IDocumentNode node = super.removeChildNode(index);
+		if ((node != null) &&
+				(node instanceof IDocumentObject)) {
+			((IDocumentObject)node).setInTheModel(false);
+		}
+		return node;		
 	}
 	
 	/**
@@ -237,7 +281,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @return
 	 */
 	protected IDocumentNode removeChildNode(IDocumentNode child, boolean fireEvent) {
-		IDocumentNode node = super.removeChildNode(child);
+		IDocumentNode node = removeChildNode(child);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.REMOVE);
@@ -261,7 +305,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 			return null;
 		}
 		// Remove the node
-		IDocumentNode node = super.removeChildNode(index);
+		IDocumentNode node = removeChildNode(index);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(node, IModelChangedEvent.REMOVE);
