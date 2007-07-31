@@ -758,6 +758,7 @@ public class ElementSection extends TreeSection {
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
+		super.handleDoubleClick(selection);
 		Object object = selection.getFirstElement();
 		if (object instanceof SchemaElementReference) {
 			ISchemaElement element = ((SchemaElementReference) object).getReferencedElement();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -390,6 +390,7 @@ public class CategorySection extends TreeSection implements
 	}
 
 	protected void handleDoubleClick(IStructuredSelection ssel) {
+		super.handleDoubleClick(ssel);
 		Object selected = ssel.getFirstElement();
 		if (selected instanceof SiteFeatureAdapter) {
 			IFeature feature = findFeature(((SiteFeatureAdapter) selected).feature);

@@ -292,12 +292,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		updateButtons(selection.getFirstElement());
 		getTreePart().getButton(1).setVisible(isSelectionEditable(selection));
 	}
-	protected void handleDoubleClick(IStructuredSelection selection) {
-		/*
-		 * PropertiesAction action = new
-		 * PropertiesAction(getFormPage().getEditor()); action.run();
-		 */
-	}
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case 0 :

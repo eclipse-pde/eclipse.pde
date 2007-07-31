@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,15 @@ public abstract class TreeSection extends StructuredViewerSection {
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {}
-	protected void handleDoubleClick(IStructuredSelection selection) {}
+	
+	/**
+	 * Expands or collapsed selected node according to its current state
+	 * @param selection
+	 */
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		TreeViewer viewer = (TreeViewer) fViewerPart.getViewer();
+		boolean expandedState = viewer.getExpandedState(selection.getFirstElement());
+		viewer.setExpandedState(selection.getFirstElement(), !expandedState);
+	}
 	protected void enableButtons() {}
 }
