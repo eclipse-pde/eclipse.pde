@@ -11,6 +11,11 @@
 
 package org.eclipse.pde.internal.core.text;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -581,12 +586,46 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		}
 		// Remove the node
 		removeChildNode(node, true);
+		// Clone the node
+		// Needed to create a text edit operation that inserts a new element
+		// rather than replacing the old one
+		IDocumentNode clone = clone(node);
 		// Removing the node and moving it to a positive relative index alters
 		// the indexing for insertion; however, this pads the new relative
 		// index by 1, allowing it to be inserted one position after as 
 		// desired
 		// Add the node back at the specified index
-		addChildNode(node, newIndex, true);
+		addChildNode(clone, newIndex, true);
+	}
+	
+	/**
+	 * @param node
+	 * @return
+	 */
+	protected IDocumentNode clone(IDocumentNode node) {
+		IDocumentNode clone = null;
+		try {
+			// Serialize
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bout);
+			out.writeObject(node);
+			out.flush();
+			out.close();
+			byte[] bytes = bout.toByteArray();
+			// Deserialize
+			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+			ObjectInputStream in = new ObjectInputStream(bin);
+			clone = (IDocumentNode)in.readObject();
+			in.close();	
+			// Reconnect
+			clone.reconnect(this, fModel);
+		} catch (IOException e) {
+			clone = null;
+		} catch (ClassNotFoundException e) {
+			clone = null;
+		}
+		
+		return clone;
 	}
 	
 	/**
