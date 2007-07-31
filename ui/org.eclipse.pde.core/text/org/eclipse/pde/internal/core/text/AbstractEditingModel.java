@@ -95,6 +95,15 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public boolean isLoaded() {
 		return fLoaded;
 	}
+	
+	/**
+	 * @param loaded
+	 */
+	public void setLoaded(boolean loaded) {
+		// TODO: MP: TEO: Set as API?
+		fLoaded = loaded;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */

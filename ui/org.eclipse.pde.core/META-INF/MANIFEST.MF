@@ -28,6 +28,7 @@ Export-Package:
  org.eclipse.pde.internal.core.ischema;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.isite;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.itarget;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.itoc;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.natures;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.plugin;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.product;x-friends:="org.eclipse.pde.ui",
@@ -39,6 +40,8 @@ Export-Package:
  org.eclipse.pde.internal.core.text.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.bundle;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.plugin;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.text.toc;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.toc;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.util;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.variables;x-internal:=true
 Require-Bundle: 

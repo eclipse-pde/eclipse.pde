@@ -43,7 +43,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
 		((DocumentObject)subitem).setInTheModel(true);
-		addChildNode((IDocumentNode)subitem);
+		addChildNode((IDocumentNode)subitem, true);
 	}
 
 	/* (non-Javadoc)
@@ -51,7 +51,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
 		((DocumentObject)subitem).setInTheModel(true);
-		addChildNode((IDocumentNode)subitem, index);
+		addChildNode((IDocumentNode)subitem, index, true);
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +159,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
-		removeChildNode((IDocumentNode)subitem);
+		removeChildNode((IDocumentNode)subitem, true);
 		((DocumentObject)subitem).setInTheModel(false);
 	}
 
@@ -168,7 +168,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void removeSubItem(int index) {
 		ISimpleCSSubItemObject item = 
-			(ISimpleCSSubItemObject)removeChildNode(index, ISimpleCSSubItemObject.class);
+			(ISimpleCSSubItemObject)removeChildNode(index, ISimpleCSSubItemObject.class, true);
 		if (item != null) {
 			((DocumentObject)item).setInTheModel(false);
 		}

@@ -396,7 +396,55 @@ public class PDEUIMessages extends NLS {
 	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;
-	
+
+	public static String TocPage_title;
+	public static String TocPage_msgTOCLoadFailure;
+	public static String TocPage_msgTOCParsingFailure;
+	public static String TocPage_addTopic;
+	public static String TocPage_addLink;
+	public static String TocPage_addAnchor;
+	public static String TocPage_remove;
+	public static String TocPage_up;
+	public static String TocPage_down;
+
+	public static String TocPage_TocTopic;
+	public static String TocPage_TocLink;
+	public static String TocPage_TocAnchor;
+
+	public static String TocTreeSection_title;
+	public static String TocTreeSection_sectionDescription;
+
+	public static String TocDetails_title;
+	public static String TocDetails_name_desc;
+	public static String TocDetails_name;
+	public static String TocDetails_anchor_desc;
+	public static String TocDetails_anchor;
+	public static String TocDetails_topic_desc;
+	public static String TocDetails_topic;
+
+	public static String TocAnchorDetails_title;
+	public static String TocAnchorDetails_id;
+	public static String TocAnchorDetails_sectionDescription;
+	public static String TocAnchorDetails_id_desc;
+
+	public static String TocLinkDetails_title;
+	public static String TocLinkDetails_tocPath;
+	public static String TocLinkDetails_sectionDescription;
+	public static String TocLinkDetails_tocPath_desc;
+
+	public static String TocTopicDetails_title;
+	public static String TocTopicDetails_sectionDescription;
+	public static String TocTopicDetails_name_desc;
+	public static String TocTopicDetails_page_desc;
+
+	public static String TocFileValidator_errorInvalidTOC;
+
+	public static String TocDetails_browseSelection;
+	public static String TocDetails_browseMessage;
+
+	public static String TocLinkDetails_browseSelection;
+	public static String TocLinkDetails_browseMessage;
+
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
 	public static String UpdateSiteWizardPage_description;
@@ -1394,6 +1442,12 @@ public class PDEUIMessages extends NLS {
 	public static String NewExtensionPointWizard_title;
 	public static String NewExtensionPointWizard_desc;
 
+	public static String NewTocFileWizard_title;
+	public static String TocWizardPage_title;
+	public static String TocWizardPage_desc;
+	public static String TocWizardPage_tocName;
+	public static String TocWizardPage_emptyTocName;
+	
 	public static String NewSchemaFileWizard_wtitle;
 	public static String NewSchemaFileWizard_title;
 	public static String NewSchemaFileWizard_desc;

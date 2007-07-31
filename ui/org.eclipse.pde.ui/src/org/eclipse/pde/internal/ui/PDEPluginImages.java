@@ -105,6 +105,12 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.gif"); //$NON-NLS-1$
 	
+	public static final ImageDescriptor DESC_TOC_OBJ = create(PATH_OBJ, "toc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_TOPIC_OBJ = create(PATH_OBJ, "toc_topic_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_LEAFTOPIC_OBJ = create(PATH_OBJ, "toc_leaftopic_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_LINK_OBJ = create(PATH_OBJ, "toc_link_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_ANCHOR_OBJ = create(PATH_OBJ, "toc_anchor_obj.gif"); //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_COMGROUP_OBJ = create(PATH_OBJ, "keygroups_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENCOM_OBJ = create(PATH_OBJ, "command_obj.gif"); //$NON-NLS-1$
 	

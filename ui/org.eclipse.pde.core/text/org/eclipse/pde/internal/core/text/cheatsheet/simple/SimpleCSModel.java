@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -81,6 +82,13 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 		// TODO: MP: TEO: Remove cast once interface method created
 		((SimpleCSObject)fSimpleCS).setInTheModel(true);
 		return fSimpleCS;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#getRoot()
+	 */
+	protected IWritable getRoot() {
+		return getSimpleCS();
 	}
 
 }

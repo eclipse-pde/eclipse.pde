@@ -257,13 +257,16 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		IDocumentNode child = (IDocumentNode)fChildren.get(index);
 		// Remove the child
 		fChildren.remove(child);
-		// Determine the new previous sibling
-		IDocumentNode prevSibling = null;
-		if (index != 0) {
-			prevSibling = (IDocumentNode)fChildren.get(index - 1);
+		// Determine the new previous sibling for the new element at the
+		// specified index
+		if (index < fChildren.size()) {
+			IDocumentNode previousSibling = null;
+			if (index != 0) {
+				previousSibling = (IDocumentNode)fChildren.get(index - 1);
+			}
+			IDocumentNode newNode = (IDocumentNode)fChildren.get(index);
+			newNode.setPreviousSibling(previousSibling);
 		}
-		child.setPreviousSibling(prevSibling);
-		
 		return child;
 	}	
 	

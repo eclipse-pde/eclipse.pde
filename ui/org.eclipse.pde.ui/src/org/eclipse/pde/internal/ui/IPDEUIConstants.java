@@ -23,6 +23,7 @@ public interface IPDEUIConstants {
 	String PRODUCT_EDITOR_ID = PLUGIN_ID + ".productEditor"; //$NON-NLS-1$
 	String SIMPLE_CHEAT_SHEET_EDITOR_ID = PLUGIN_ID + ".simpleCheatSheetEditor"; //$NON-NLS-1$
 	String COMPOSITE_CHEAT_SHEET_EDITOR_ID = PLUGIN_ID + ".compositeCheatSheetEditor"; //$NON-NLS-1$
+	String TABLE_OF_CONTENTS_EDITOR_ID = PLUGIN_ID + ".tocEditor"; //$NON-NLS-1$
 	String TARGET_EDITOR_ID = PLUGIN_ID + ".targetEditor"; //$NON-NLS-1$
 	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView"; //$NON-NLS-1$
 	String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView"; //$NON-NLS-1$

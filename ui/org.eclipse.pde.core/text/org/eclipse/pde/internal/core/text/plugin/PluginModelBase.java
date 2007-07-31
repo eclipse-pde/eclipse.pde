@@ -16,6 +16,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
@@ -55,7 +56,11 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		fPluginBase.setModel(this);
 		return fPluginBase;
 	}
-	
+
+	protected IWritable getRoot() {
+		return getPluginBase();
+	}
+
 	public IPluginBase createPluginBase() {
 		return createPluginBase(isFragmentModel());
 	}

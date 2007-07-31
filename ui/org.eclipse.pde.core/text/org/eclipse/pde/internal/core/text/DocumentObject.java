@@ -206,44 +206,52 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		}
 	}		
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentNode, int)
+	/**
+	 * @param child
+	 * @param position
+	 * @param fireEvent
 	 */
-	public void addChildNode(IDocumentNode child, int position) {
+	protected void addChildNode(IDocumentNode child, int position, boolean fireEvent) {
 		super.addChildNode(child, position);
 		// Fire event
-		if (shouldFireEvent()) {
+		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentNode)
+	/**
+	 * @param child
+	 * @param fireEvent
 	 */
-	public void addChildNode(IDocumentNode child) {
+	protected void addChildNode(IDocumentNode child, boolean fireEvent) {
 		super.addChildNode(child);
 		// Fire event
-		if (shouldFireEvent()) {
+		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentNode)
+	/**
+	 * @param child
+	 * @param fireEvent
+	 * @return
 	 */
-	public IDocumentNode removeChildNode(IDocumentNode child) {
+	protected IDocumentNode removeChildNode(IDocumentNode child, boolean fireEvent) {
 		IDocumentNode node = super.removeChildNode(child);
 		// Fire event
-		if (shouldFireEvent()) {
-			fireStructureChanged(node, IModelChangedEvent.REMOVE);
+		if (fireEvent && shouldFireEvent()) {
+			fireStructureChanged(child, IModelChangedEvent.REMOVE);
 		}	
 		return node;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
+	/**
+	 * @param index
+	 * @param clazz
+	 * @param fireEvent
+	 * @return
 	 */
-	public IDocumentNode removeChildNode(int index, Class clazz) {
+	protected IDocumentNode removeChildNode(int index, Class clazz, boolean fireEvent) {
 		// Validate index
 		if ((index < 0) ||
 				(index >= getChildCount()) ||
@@ -255,7 +263,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		// Remove the node
 		IDocumentNode node = super.removeChildNode(index);
 		// Fire event
-		if (shouldFireEvent()) {
+		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(node, IModelChangedEvent.REMOVE);
 		}	
 		return node;
@@ -285,17 +293,17 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		} else if (newNode == null) {
 			// NEW = NULL, OLD = DEF
 			// Remove the old node
-			removeChildNode((IDocumentNode)oldNode);
+			removeChildNode((IDocumentNode)oldNode, true);
 		} else if (oldNode == null) {
 			// NEW = DEF, OLD = NULL
 			// Add the new node as the first child
-			addChildNode((IDocumentNode)newNode, 0);
+			addChildNode((IDocumentNode)newNode, 0, true);
 		} else {
 			// NEW = DEF, OLD = DEF
 			// Remove the old node
-			removeChildNode((IDocumentNode)oldNode);
+			removeChildNode((IDocumentNode)oldNode, true);
 			// Add the new node as the first child
-			addChildNode((IDocumentNode)newNode, 0);
+			addChildNode((IDocumentNode)newNode, 0, true);
 		}
 		
 		if (shouldFireEvent()) {
@@ -528,13 +536,13 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 			return;
 		}
 		// Remove the node
-		removeChildNode(node);
+		removeChildNode(node, true);
 		// Removing the node and moving it to a positive relative index alters
 		// the indexing for insertion; however, this pads the new relative
 		// index by 1, allowing it to be inserted one position after as 
 		// desired
 		// Add the node back at the specified index
-		addChildNode(node, newIndex);
+		addChildNode(node, newIndex, true);
 	}
 	
 	/**

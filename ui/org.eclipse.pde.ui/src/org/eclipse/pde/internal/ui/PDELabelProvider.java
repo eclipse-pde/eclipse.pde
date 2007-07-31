@@ -68,9 +68,11 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -120,6 +122,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ICompCSObject) {
 			return getObjectText((ICompCSObject) obj);
 		}		
+		if (obj instanceof TocObject) {
+			return getObjectText((TocObject) obj);
+		}
 		if (obj instanceof FeaturePlugin) {
 			return getObjectText((FeaturePlugin) obj);
 		}
@@ -312,6 +317,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return PDETextHelper.truncateAndTrailOffText(
 				PDETextHelper.translateReadText(obj.getName()), limit);
 	}	
+
+	/**
+	 * @param obj
+	 * @return
+	 */
+	public String getObjectText(TocObject obj) {
+		return PDETextHelper.translateReadText(obj.getName());
+	}
 	
 	public String getObjectText(FeaturePlugin obj) {
 		String name =
@@ -460,7 +473,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}		
 		if (obj instanceof ICompCSObject) {
 			return getObjectImage((ICompCSObject)obj);
-		}		
+		}
+		if (obj instanceof TocObject) {
+			return getObjectImage((TocObject)obj);
+		}
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
 		}
@@ -714,6 +730,34 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}		
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	private Image getObjectImage(TocObject object) {
+		switch(object.getType())
+		{	case ITocConstants.TYPE_TOC:
+			{	return get(PDEPluginImages.DESC_TOC_OBJ);
+			}
+			case ITocConstants.TYPE_TOPIC:
+			{	//Return the leaf topic icon for a topic with no children
+				if(object.getChildren().isEmpty())
+				{	return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
+				}
+				//Return the regular topic icon for a topic with children
+				return get(PDEPluginImages.DESC_TOC_TOPIC_OBJ);
+			}
+			case ITocConstants.TYPE_LINK:
+			{	return get(PDEPluginImages.DESC_TOC_LINK_OBJ);
+			}
+			case ITocConstants.TYPE_ANCHOR:
+			{	return get(PDEPluginImages.DESC_TOC_ANCHOR_OBJ);
+			}
+			default:
+				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
+		}
+	}
 	
 	private Image getObjectImage(ISchemaElement element) {
 		int flags = 0;

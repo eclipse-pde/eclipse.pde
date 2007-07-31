@@ -206,6 +206,16 @@
             id="org.eclipse.pde.userAssistance"
             name="%category.name.user.assistance">
       </category>
+      <wizard
+            category="org.eclipse.pde.userAssistance"
+            class="org.eclipse.pde.internal.ui.wizards.toc.NewTocFileWizard"
+            icon="icons/obj16/toc_obj.gif"
+            id="org.eclipse.pde.ui.wizard1"
+            name="%new.toc.name">
+         <description>
+            %new.toc.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -399,6 +409,17 @@
             name="%editors.schema.launcher.name">
          <contentTypeBinding
                contentTypeId="org.eclipse.pde.schema">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.pde.internal.ui.editor.toc.TocEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.toc.TocEditorContributor"
+            default="true"
+            icon="$nl$/icons/obj16/toc_obj.gif"
+            id="org.eclipse.pde.ui.tocEditor"
+            name="%toc.editor">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.tocFile">
          </contentTypeBinding>
       </editor>
    </extension>
