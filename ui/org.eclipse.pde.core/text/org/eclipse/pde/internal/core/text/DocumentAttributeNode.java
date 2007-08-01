@@ -171,4 +171,36 @@ public class DocumentAttributeNode implements IDocumentAttribute {
 		fValueOffset = -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentRange#getLength()
+	 */
+	public int getLength() {
+		// Implemented for backwards compatibility with utility methods that
+		// assume that an attribute is a document range.
+		// Stems from the problem that attributes are considered as elements
+		// in the hierarchy in the manifest model
+		
+		// Includes:  name length + equal + start quote
+		int len1 = getValueOffset() - getNameOffset();
+		// Includes:  value length
+		int len2 = getValueLength();
+		// Includes:  end quote
+		int len3 = 1;
+		// Total
+		int length = len1 + len2 + len3;
+		
+		return length;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentRange#getOffset()
+	 */
+	public int getOffset() {
+		// Implemented for backwards compatibility with utility methods that
+		// assume that an attribute is a document range.
+		// Stems from the problem that attributes are considered as elements
+		// in the hierarchy in the manifest model
+		return getNameOffset();
+	}
+
 }

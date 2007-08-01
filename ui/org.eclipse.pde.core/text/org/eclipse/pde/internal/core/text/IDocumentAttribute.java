@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 import org.eclipse.core.runtime.CoreException;
 
-public interface IDocumentAttribute extends Serializable {
+public interface IDocumentAttribute extends IDocumentRange, Serializable {
 	
 	// Used by text edit operations
 	
