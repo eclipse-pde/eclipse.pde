@@ -628,10 +628,22 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 
 	/**
 	 * Utility method for getRangeElement(int, boolean)
-	 * @param nodes
+	 * @param node
 	 * @param offset
 	 * @param searchChildren
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[], int, boolean)
 	 * @return
+	 */
+	protected IDocumentRange findNode(IDocumentNode node, int offset, boolean searchChildren) {
+		return findNode(new Object[]{ node }, offset, searchChildren);
+	}
+	
+	/**
+	 * Utility method for getRangeElement(int, boolean)
+	 * @param nodes All entries should be instances of IDocumentNode
+	 * @param offset The offset the cursor is currently on in the document
+	 * @param searchChildren <code>true</code> to search child nodes; <code>false</code> otherwise.
+	 * @return Node the offset is in
 	 */
 	protected IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
 		for (int i = 0; i < nodes.length; i++) {
@@ -664,7 +676,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 					for (int c = 0; c < children.length; c++)
 						if (children[c].getOffset() <= offset &&
 								offset < children[c].getOffset() + children[c].getLength())
-							return findNode(new Object[] {children[c]}, offset, searchChildren);
+							return findNode(children[c], offset, searchChildren);
 				
 				// not contained inside any sub elements, must be inside node
 				return node;
