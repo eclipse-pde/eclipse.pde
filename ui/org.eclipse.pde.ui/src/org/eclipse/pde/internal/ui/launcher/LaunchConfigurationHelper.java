@@ -66,7 +66,10 @@ public class LaunchConfigurationHelper {
 	}
 	
 	public static File getConfigurationLocation(ILaunchConfiguration config) {
-		File dir = new File(PDECore.getDefault().getStateLocation().toOSString(), config.getName());
+		//bug 170213 change config location if config name contains #
+		String configName = config.getName();
+		configName = configName.replace('#', 'h');
+		File dir = new File(PDECore.getDefault().getStateLocation().toOSString(), configName);
 		try {
 			if (!config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
 				String userPath = config.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, (String)null);

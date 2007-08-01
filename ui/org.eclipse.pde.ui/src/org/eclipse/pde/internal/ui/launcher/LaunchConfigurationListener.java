@@ -15,7 +15,6 @@ import java.io.File;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 
@@ -37,14 +36,13 @@ public class LaunchConfigurationListener implements ILaunchConfigurationListener
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		File metadataLocation = new File(PDECore.getDefault().getStateLocation().toOSString());
-		File configDir = new File(metadataLocation, configuration.getName());
+		File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
 		if (configDir.exists()) {
 			// rename the config area if it was auto-set by PDE when the launch configuration is renamed
 			ILaunchConfiguration destination = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
 			boolean delete = true;
 			if (destination != null) {
-				delete = !configDir.renameTo(new File(metadataLocation, destination.getName()));
+				delete = !configDir.renameTo(LaunchConfigurationHelper.getConfigurationLocation(destination));
 			}
 			if (delete)
 				CoreUtility.deleteContent(configDir);
