@@ -167,4 +167,45 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/plugins/single.source_1.0.0/src/a.bundle_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
+	
+	// Test the use of plugin@foo;unpack="false" in the generate.feature property 
+	public void testBug107372() throws Exception {
+		IFolder buildFolder = newTest("107372");
+		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
+		IFolder bundleDoc = Utils.createFolder(buildFolder, "plugins/bundleDoc");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateBundle(bundleA, "bundleA");
+		File src = new File(bundleA.getLocation().toFile(), "src/a.java");
+		src.getParentFile().mkdir();
+		FileOutputStream outputStream = new FileOutputStream(src);
+		outputStream.write("//L33T CODEZ\n".getBytes());
+		outputStream.close();
+		
+		Utils.generateBundle(bundleDoc, "bundleDoc");
+		src = new File(bundleDoc.getLocation().toFile(), "src/a.java");
+		src.getParentFile().mkdir();
+		outputStream = new FileOutputStream(src);
+		outputStream.write("//L33T CODEZ\n".getBytes());
+		outputStream.close();
+		
+		//generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@rcp.source", "rcp,plugin@bundleDoc;unpack=\"false\"");
+		Utils.storeBuildProperties(sdk, properties);
+		
+		//RCP Feature
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
+
+		Utils.generateAllElements(buildFolder, "sdk");
+		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+		runBuild(buildFolder);
+		
+		//bundleDoc only gets in the build by being added to the generated source feature,
+		//check that it is there in the result and is in jar form.
+		Set entries = new HashSet();
+		entries.add("eclipse/plugins/bundleDoc_1.0.0.jar");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
+	}
 }

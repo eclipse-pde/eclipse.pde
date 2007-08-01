@@ -47,8 +47,8 @@ public class BuildConfiguration {
 			defaultScriptConfig.put("groupConfigurations", FALSE);
 		if (!defaultBuildConfig.containsKey("pluginPath"))
 			defaultScriptConfig.put("pluginPath", "");
-		if (!defaultBuildConfig.containsKey("filteredDepenedencyCheck"))
-			defaultScriptConfig.put("filteredDepenedencyCheck", FALSE);
+		if (!defaultBuildConfig.containsKey("filteredDependencyCheck"))
+			defaultScriptConfig.put("filteredDependencyCheck", FALSE);
 	}
 
 	private static Properties getBuildConfig() {

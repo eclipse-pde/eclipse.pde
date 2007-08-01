@@ -205,7 +205,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(bundleB, "B", "1.0.0", manifestAdditions);
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "B"));
-		
+
 		assertResourceFile(bundleB, "build.xml");
 		//if the & was not escaped, it won't be a valid ant script
 		assertValidAntScript(bundleB.getFile("build.xml"));
@@ -229,11 +229,55 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertNotNull(child);
 		assertTrue(child instanceof Path);
 		String path = child.toString();
-		
+
 		//Assert classpath has correct contents
 		int idx[] = {0, path.indexOf("org.eclipse.equinox.preferences"), path.indexOf("org.eclipse.osgi"), path.indexOf("org.eclipse.equinox.common"), path.indexOf("org.eclipse.equinox.registry"), path.indexOf("org.eclipse.core.jobs")};
 		for (int i = 0; i < idx.length - 1; i++) {
 			assertTrue(idx[i] < idx[i + 1]);
 		}
+	}
+
+	public void testPluginPath() throws Exception {
+		IFolder buildFolder = newTest("PluginPath");
+		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
+		IFolder bundleB = Utils.createFolder(buildFolder, "other/bundleB");
+
+		Utils.generateBundle(bundleA, "bundleA");
+		Utils.generateBundle(bundleB, "bundleB");
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA", "bundleB"});
+
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
+		props.put("pluginPath", bundleB.getLocation().toOSString());
+
+		// generateScripts will assert if bundleB is not found
+		generateScripts(buildFolder, props);
+	}
+
+	public void testBug128901_filteredDependencyCheck() throws Exception {
+		IFolder buildFolder = newTest("128901");
+		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/bundle");
+		
+		Utils.generatePluginBuildProperties(bundleFolder, null);
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.equinox.registry");
+		Utils.generateBundleManifest(bundleFolder, "bundle", "1.0.0", manifestAdditions);
+		
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundle", "org.eclipse.osgi", "org.eclipse.equinox.common", "org.eclipse.equinox.registry", "org.eclipse.core.jobs"});
+
+		
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
+		props.put("filteredDependencyCheck", "true");
+		
+		generateScripts(buildFolder, props);
+		
+		// org.eclipse.core.runtime.compatibility.registry is an optional bundle, which should have been excluded 
+		//from the state by the filtering, check that is isn't in the classpath 
+		IFile buildScript = bundleFolder.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Object child = AntUtils.getFirstChildByName(dot, "path");
+		assertTrue(child instanceof Path);
+		String path = child.toString();
+		assertTrue( path.indexOf("org.eclipse.core.runtime.compatibility.registry") == -1);
 	}
 }
