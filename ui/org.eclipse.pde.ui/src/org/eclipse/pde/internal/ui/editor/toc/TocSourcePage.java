@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.toc;
 
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -77,6 +78,12 @@ public class TocSourcePage extends XMLSourcePage {
 		return true;
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector.class.equals(adapter))
+			return new TocHyperlinkDetector(this);
+		return super.getAdapter(adapter);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
@@ -99,6 +106,6 @@ public class TocSourcePage extends XMLSourcePage {
 	
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		TocObject toc = ((TocModel)getInputContext().getModel()).getToc();
-		return findNode(toc.getChildren().toArray(), offset, searchChildren);
+		return findNode(toc, offset, searchChildren);
 	}
 }
