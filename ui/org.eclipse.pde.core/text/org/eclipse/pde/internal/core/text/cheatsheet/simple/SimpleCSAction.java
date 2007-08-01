@@ -11,7 +11,7 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
@@ -25,6 +25,10 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final int F_MAX_PARAMS = 9;
+
+	// TODO: MP: TEO: Verify translate of paramaters on write is okay - no translate before
+	
 	/**
 	 * @param model
 	 */
@@ -36,124 +40,137 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#getClazz()
 	 */
 	public String getClazz() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_CLASS);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#getParam(int)
 	 */
 	public String getParam(int index) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Ensure in valid range
+		if ((index < 1) ||
+				(index > F_MAX_PARAMS)) {
+			return null;
+		}
+		StringBuffer buffer = new StringBuffer(ATTRIBUTE_PARAM);
+		buffer.append(index);
+		// Get paramN
+		return getXMLAttributeValue(buffer.toString());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#getParams()
 	 */
 	public String[] getParams() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		ArrayList list = new ArrayList();
+		// Get all set parameters
+		for (int i = 1; i <= F_MAX_PARAMS; i++) {
+			String parameter = getParam(i);
+			if (parameter == null) {
+				break;
+			}
+			list.add(parameter);
+		}
+		return (String[])list.toArray(new String[list.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#getPluginId()
 	 */
 	public String getPluginId() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_PLUGINID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#setClazz(java.lang.String)
 	 */
 	public void setClazz(String clazz) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_CLASS, clazz);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#setParam(java.lang.String, int)
 	 */
 	public void setParam(String param, int index) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		// Ensure proper index
+		if ((index < 1) ||
+				(index > F_MAX_PARAMS)) {
+			return;
+		}
+		StringBuffer buffer = new StringBuffer(ATTRIBUTE_PARAM);
+		buffer.append(index);
+		setXMLAttribute(buffer.toString(), param);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#setPluginId(java.lang.String)
 	 */
 	public void setPluginId(String pluginId) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_PLUGINID, pluginId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getConfirm()
 	 */
 	public boolean getConfirm() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return getBooleanAttributeValue(ATTRIBUTE_CONFIRM, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
 	 */
 	public String getTranslate() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_TRANSLATE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen()
 	 */
 	public String getWhen() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_WHEN);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setConfirm(boolean)
 	 */
 	public void setConfirm(boolean confirm) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setBooleanAttributeValue(ATTRIBUTE_CONFIRM, confirm);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
 	 */
 	public void setTranslate(String translate) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_TRANSLATE, translate);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return new ArrayList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Leave as is.  Not a separate node in tree view
+		return ELEMENT_ACTION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_ACTION;
 	}
 
 }

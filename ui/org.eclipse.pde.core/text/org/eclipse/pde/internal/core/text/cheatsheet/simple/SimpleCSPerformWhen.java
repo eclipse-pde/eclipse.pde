@@ -11,12 +11,13 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
  * SimpleCSPerformWhen
@@ -38,60 +39,57 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#addExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void addExecutable(ISimpleCSRunObject executable) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		addChildNode((IDocumentNode)executable, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#getCondition()
 	 */
 	public String getCondition() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_CONDITION);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#getExecutables()
 	 */
 	public ISimpleCSRunObject[] getExecutables() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSRunObject[])getChildNodes(ISimpleCSRunObject.class, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#removeExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void removeExecutable(ISimpleCSRunObject executable) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		removeChildNode((IDocumentNode)executable, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#setCondition(java.lang.String)
 	 */
 	public void setCondition(String condition) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_CONDITION, condition);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return new ArrayList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Leave as is.  Not supported in editor UI
+		return ELEMENT_PERFORM_WHEN;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_PERFORM_WHEN;
 	}
 
 }

@@ -11,12 +11,13 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
  * SimpleCSSubItem
@@ -37,84 +38,79 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getLabel()
 	 */
 	public String getLabel() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_LABEL);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getSkip()
 	 */
 	public boolean getSkip() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return getBooleanAttributeValue(ATTRIBUTE_SKIP, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#getWhen()
 	 */
 	public String getWhen() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_WHEN);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setLabel(java.lang.String)
 	 */
 	public void setLabel(String label) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_LABEL, label);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setSkip(boolean)
 	 */
 	public void setSkip(boolean skip) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setBooleanAttributeValue(ATTRIBUTE_SKIP, skip);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSRunContainerObject)getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)executable, ISimpleCSRunContainerObject.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// TODO: MP: TEO: Revisit children returned that only can have one - do not return full list
+		// Add unsupported perform-when if it is set as the executable
+		return getChildNodesList(ISimpleCSPerformWhen.class, true);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getLabel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_SUBITEM;
 	}
 
 }

@@ -11,12 +11,12 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 /**
  * SimpleCSRepeatedSubItem
@@ -38,52 +38,52 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#getSubItem()
 	 */
 	public ISimpleCSSubItem getSubItem() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return (ISimpleCSSubItem)getChildNode(ISimpleCSSubItem.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#getValues()
 	 */
 	public String getValues() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_VALUES);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void setSubItem(ISimpleCSSubItem subitem) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setChildNode((IDocumentNode)subitem, ISimpleCSSubItem.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setValues(java.lang.String)
 	 */
 	public void setValues(String values) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_VALUES, values);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Add subitem
+		// TODO: MP: TEO: Write general method to return first occurrence only?
+		return getChildNodesList(ISimpleCSSubItem.class, true);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Leave as is.  Not supported in editor UI		
+		return ELEMENT_REPEATED_SUBITEM;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_REPEATED_SUBITEM;
 	}
 
 }

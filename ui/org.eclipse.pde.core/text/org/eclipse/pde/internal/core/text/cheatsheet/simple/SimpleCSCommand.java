@@ -11,7 +11,7 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
@@ -25,6 +25,9 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 
 	private static final long serialVersionUID = 1L;
 
+	// TODO: MP: TEO: Verify translate attribute values okay - no translate before
+	// TODO: MP: TEO: Implement required attribute 
+	
 	/**
 	 * @param model
 	 */
@@ -36,100 +39,92 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#getReturns()
 	 */
 	public String getReturns() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_RETURNS);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#getSerialization()
 	 */
 	public String getSerialization() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_SERIALIZATION);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setReturns(java.lang.String)
 	 */
 	public void setReturns(String returns) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_RETURNS, returns);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setSerialization(java.lang.String)
 	 */
 	public void setSerialization(String serialization) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_SERIALIZATION, serialization);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getConfirm()
 	 */
 	public boolean getConfirm() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return false;
+		return getBooleanAttributeValue(ATTRIBUTE_CONFIRM, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
 	 */
 	public String getTranslate() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_TRANSLATE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen()
 	 */
 	public String getWhen() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return getXMLAttributeValue(ATTRIBUTE_WHEN);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setConfirm(boolean)
 	 */
 	public void setConfirm(boolean confirm) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setBooleanAttributeValue(ATTRIBUTE_CONFIRM, confirm);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
 	 */
 	public void setTranslate(String translate) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_TRANSLATE, translate);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
-		// TODO: MP: CURRENT: IMPLEMENT
-
+		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
 	public List getChildren() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		return new ArrayList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getName()
+	 */
 	public String getName() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return null;
+		// Leave as is.  Not a separate node in tree view
+		return ELEMENT_COMMAND;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getType()
+	 */
 	public int getType() {
-		// TODO: MP: CURRENT: IMPLEMENT
-		return 0;
-	}
-
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
+		return TYPE_COMMAND;
 	}
 
 }
