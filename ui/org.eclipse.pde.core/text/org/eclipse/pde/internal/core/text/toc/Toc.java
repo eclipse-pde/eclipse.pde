@@ -31,7 +31,7 @@ public class Toc extends TocTopic {
 	 * @param model The model associated with this TOC.
 	 */
 	public Toc(TocModel model)
-	{	super(model);
+	{	super(model, ELEMENT_TOC);
 	}
 
 	/* (non-Javadoc)

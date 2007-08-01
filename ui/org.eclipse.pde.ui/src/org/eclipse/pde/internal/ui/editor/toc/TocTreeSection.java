@@ -316,6 +316,13 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	/**
+	 * @param selection the new selection for the tree section
+	 */
+	public void setSelection(ISelection selection) {
+		fTocTree.setSelection(selection);
+	}
+
+	/**
 	 * Fire a selection change event and refresh the viewer's selection
 	 */
 	public void fireSelection() {
@@ -326,6 +333,7 @@ public class TocTreeSection extends TreeSection {
 	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}
 

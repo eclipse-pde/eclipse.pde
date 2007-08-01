@@ -15,6 +15,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.toc.TocModel;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -83,9 +86,19 @@ public class TocSourcePage extends XMLSourcePage {
 			fSelection = object;
 			setHighlightRange((IDocumentNode)object, true);
 			setSelectedRange((IDocumentNode)object, false);
-		} else {
-			//resetHighlightRange();
 		}
 	}
 	
+	protected IDocumentRange findRange() {
+		if (fSelection instanceof IDocumentNode)
+		{	return (IDocumentNode)fSelection;
+		}
+
+		return null;
+	}
+	
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
+		TocObject toc = ((TocModel)getInputContext().getModel()).getToc();
+		return findNode(toc.getChildren().toArray(), offset, searchChildren);
+	}
 }

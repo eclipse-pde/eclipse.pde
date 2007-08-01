@@ -11,10 +11,15 @@
 
 package org.eclipse.pde.internal.ui.editor.toc;
 
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.toc.Toc;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -24,8 +29,10 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
@@ -170,5 +177,33 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
+	public void updateFormSelection() {
+		super.updateFormSelection();
+		IFormPage page = getPDEEditor().findPage(TocInputContext.CONTEXT_ID);
+		if (page instanceof TocSourcePage) {
+			ISourceViewer viewer = ((TocSourcePage)page).getViewer();
+			if (viewer == null)
+				return;
+			StyledText text = viewer.getTextWidget();
+			if (text == null)
+				return;
+			int offset = text.getCaretOffset();
+			if (offset < 0)
+				return;
+			
+			IDocumentRange range = ((TocSourcePage)page).getRangeElement(offset, true);
+
+			if (range instanceof IDocumentAttribute)
+			{	range = ((IDocumentAttribute)range).getEnclosingElement();
+			}
+			else if (range instanceof IDocumentTextNode)
+			{	range = ((IDocumentTextNode)range).getEnclosingElement();
+			}
+
+			if (range instanceof TocObject)
+			{	fBlock.getMasterSection().setSelection(new StructuredSelection(range));
+			}
+		}
+	}
 }
 

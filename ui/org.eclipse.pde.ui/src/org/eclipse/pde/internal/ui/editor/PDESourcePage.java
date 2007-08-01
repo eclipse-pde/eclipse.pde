@@ -20,8 +20,10 @@ import java.util.ResourceBundle;
 
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -294,6 +296,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 	 */
 	public void setActive(boolean active) {
 		fInputContext.setSourceEditingMode(active);
+		// Update the text selection if this page is being activated
+		if (active) {
+			updateTextSelection();
+		}
 	}
 
 	public boolean canLeaveThePage() {
@@ -620,6 +626,53 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 		synchronizeOutlinePage(current_offset);
 	}
 
+	/**
+	 * Utility method for getRangeElement(int, boolean)
+	 * @param nodes
+	 * @param offset
+	 * @param searchChildren
+	 * @return
+	 */
+	protected IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
+		for (int i = 0; i < nodes.length; i++) {
+			IDocumentNode node = (IDocumentNode)nodes[i];
+			if (node.getOffset() <= offset 
+					&& offset < node.getOffset() + node.getLength()) {
+				
+				if (!searchChildren)
+					return node;
+				
+				if (node.getOffset() < offset && 
+						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
+					return node;
+				
+				IDocumentAttribute[] attrs = node.getNodeAttributes();
+				if (attrs != null)
+					for (int a = 0; a < attrs.length; a++)
+						if (attrs[a].getNameOffset() <= offset &&
+								offset <= attrs[a].getValueOffset() + attrs[a].getValueLength())
+							return attrs[a];
+				
+				IDocumentTextNode textNode = node.getTextNode();
+				if (textNode != null && 
+						textNode.getOffset() <= offset &&
+						offset < textNode.getOffset() + textNode.getLength())
+					return textNode;
+				
+				IDocumentNode[] children = node.getChildNodes();
+				if (children != null)
+					for (int c = 0; c < children.length; c++)
+						if (children[c].getOffset() <= offset &&
+								offset < children[c].getOffset() + children[c].getLength())
+							return findNode(new Object[] {children[c]}, offset, searchChildren);
+				
+				// not contained inside any sub elements, must be inside node
+				return node;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Override the getAdapter function to return a list of targets
 	 * for the "Show In >" action in the context menu.

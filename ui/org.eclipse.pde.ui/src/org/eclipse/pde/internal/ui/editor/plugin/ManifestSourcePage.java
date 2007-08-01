@@ -23,10 +23,8 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -224,46 +222,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			node = findNode(new IPluginObject[] { base }, offset, searchChildren);
 		
 		return node;
-	}
-
-	private IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
-		for (int i = 0; i < nodes.length; i++) {
-			IDocumentNode node = (IDocumentNode)nodes[i];
-			if (node.getOffset() <= offset 
-					&& offset < node.getOffset() + node.getLength()) {
-				
-				if (!searchChildren)
-					return node;
-				
-				if (node.getOffset() < offset && 
-						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
-					return node;
-				
-				IDocumentAttribute[] attrs = node.getNodeAttributes();
-				if (attrs != null)
-					for (int a = 0; a < attrs.length; a++)
-						if (attrs[a].getNameOffset() <= offset &&
-								offset <= attrs[a].getValueOffset() + attrs[a].getValueLength())
-							return (IDocumentNode)attrs[a];
-				
-				IDocumentTextNode textNode = node.getTextNode();
-				if (textNode != null && 
-						textNode.getOffset() <= offset &&
-						offset < textNode.getOffset() + textNode.getLength())
-					return textNode;
-				
-				IDocumentNode[] children = node.getChildNodes();
-				if (children != null)
-					for (int c = 0; c < children.length; c++)
-						if (children[c].getOffset() <= offset &&
-								offset < children[c].getOffset() + children[c].getLength())
-							return findNode(new Object[] {children[c]}, offset, searchChildren);
-				
-				// not contained inside any sub elements, must be inside node
-				return node;
-			}
-		}
-		return null;
 	}
 	
 	public IDocumentRange findRange() {

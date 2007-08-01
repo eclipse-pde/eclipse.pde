@@ -117,7 +117,6 @@ public class TocTopic extends TocObject
 	 * @param child The child to add to the TocObject
 	 */
 	public void addChild(TocObject child) {
-		child.setInTheModel(true);
 		addChildNode(child, true);
 	}
 
@@ -135,7 +134,7 @@ public class TocTopic extends TocObject
 		if(!insertBefore)
 		{	currentIndex++;
 		}
-		child.setInTheModel(true);
+
 		addChildNode(child, currentIndex, true);
 	}
 
@@ -154,7 +153,6 @@ public class TocTopic extends TocObject
 	 */
 	public void removeChild(TocObject tocObject) {
 		removeChildNode(tocObject, true);
-		tocObject.setInTheModel(false);
 	}
 
 	/**
