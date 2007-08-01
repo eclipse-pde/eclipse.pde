@@ -12,9 +12,7 @@
       &lt;foo!&gt;
    </copyright>
 
-   <license url="http://www.example.com/license">
-      &lt;foo!&gt;
-   </license>
+   <license url="http://www.example.com/license"/>
 
    <plugin
          id="org.eclipse.osgi"

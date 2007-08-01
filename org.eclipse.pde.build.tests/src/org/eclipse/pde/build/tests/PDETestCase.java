@@ -24,6 +24,7 @@ import org.apache.tools.zip.ZipFile;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.build.internal.tests.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -118,14 +119,43 @@ public abstract class PDETestCase extends TestCase {
 	}
 
 	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties) throws Exception {
-		AntRunner runner = new AntRunner();
-		String[] args = new String[5 + targets.length + (additionalProperties != null ? additionalProperties.size() : 0)];
+		runAntScript(script, targets, antHome, additionalProperties, null, null);
+	}
+
+	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties, String listener, String logger) throws Exception {
+		String[] args = createAntRunnerArgs(script, targets, antHome, additionalProperties, listener, logger);
+		try {
+			AntRunner runner = new AntRunner();
+			runner.run((Object) args);
+		} catch (InvocationTargetException e) {
+			Throwable target = e.getTargetException();
+			if (target instanceof Exception)
+				throw (Exception) target;
+			throw e;
+		}
+	}
+
+	protected String[] createAntRunnerArgs(String script, String[] targets, String antHome, Properties additionalProperties, String listener, String logger) {
+		int numArgs = 5 + targets.length + (additionalProperties != null ? additionalProperties.size() : 0);
+		if (listener != null)
+			numArgs += 2;
+		if (logger != null)
+			numArgs += 2;
+		String[] args = new String[numArgs];
 		int idx = 0;
 		args[idx++] = "-buildfile";
 		args[idx++] = script;
 		args[idx++] = "-logfile";
 		args[idx++] = antHome + "/log.log";
 		args[idx++] = "-Dbuilder=" + antHome;
+		if (listener != null) {
+			args[idx++] = "-listener";
+			args[idx++] = listener;
+		}
+		if (logger != null) {
+			args[idx++] = "-logger";
+			args[idx++] = logger;
+		}
 		if (additionalProperties != null && additionalProperties.size() > 0) {
 			Enumeration e = additionalProperties.keys();
 			while (e.hasMoreElements()) {
@@ -141,14 +171,7 @@ public abstract class PDETestCase extends TestCase {
 		for (int i = 0; i < targets.length; i++) {
 			args[idx++] = targets[i];
 		}
-		try {
-			runner.run((Object) args);
-		} catch (InvocationTargetException e) {
-			Throwable target = e.getTargetException();
-			if (target instanceof Exception)
-				throw (Exception) target;
-			throw e;
-		}
+		return args;
 	}
 
 	/**
@@ -253,6 +276,9 @@ public abstract class PDETestCase extends TestCase {
 		project.addReference("ant.targets", context.getTargets());
 		context.setCurrentTargets(new HashMap());
 
+		AntUtils.setupProject(project);
+		project.init();
+		
 		// this will throw an exception if it is not a valid ant script
 		helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
 		return project;

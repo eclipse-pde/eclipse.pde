@@ -89,12 +89,14 @@ public class SourceTests extends PDETestCase {
 	}
 
 	// test that '<' and '>' are properly escaped in generated source feature
+	// Also tests bug 191756: features with empty <license> entries
 	public void testbug184920() throws Exception {
 		//the provided resource features/a.feature/feature.xml contains &lt;foo!&gt; 
 		//which must be handled properly
 		IFolder buildFolder = newTest("184920");
 
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "a.feature.sdk");
+		//191756: This will NPE if empty license entry is a problem 
 		generateScripts(buildFolder, properties);
 
 		assertResourceFile(buildFolder, "features/a.feature.source/feature.xml");

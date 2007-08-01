@@ -13,6 +13,9 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
@@ -37,7 +40,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
 
-		/* test passes if generateScripts did not throw an exception */
+		// test passes if generateScripts did not throw an exception 
 		assertResourceFile(buildFolder, "build.xml");
 	}
 
@@ -96,7 +99,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
 
-		/* test passes if generateScripts did not throw an exception */
+		// test passes if generateScripts did not throw an exception 
 		assertResourceFile(buildFolder, "build.xml");
 	}
 
@@ -206,5 +209,31 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(bundleB, "build.xml");
 		//if the & was not escaped, it won't be a valid ant script
 		assertValidAntScript(bundleB.getFile("build.xml"));
+	}
+
+	public void testSimpleClasspath() throws Exception {
+		IFolder buildFolder = newTest("SimpleClasspath");
+
+		Utils.generatePluginBuildProperties(buildFolder, null);
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.equinox.preferences");
+		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0", manifestAdditions);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
+
+		IFile buildScript = buildFolder.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		assertNotNull(dot);
+		Object child = AntUtils.getFirstChildByName(dot, "path");
+		assertNotNull(child);
+		assertTrue(child instanceof Path);
+		String path = child.toString();
+		
+		//Assert classpath has correct contents
+		int idx[] = {0, path.indexOf("org.eclipse.equinox.preferences"), path.indexOf("org.eclipse.osgi"), path.indexOf("org.eclipse.equinox.common"), path.indexOf("org.eclipse.equinox.registry"), path.indexOf("org.eclipse.core.jobs")};
+		for (int i = 0; i < idx.length - 1; i++) {
+			assertTrue(idx[i] < idx[i + 1]);
+		}
 	}
 }
