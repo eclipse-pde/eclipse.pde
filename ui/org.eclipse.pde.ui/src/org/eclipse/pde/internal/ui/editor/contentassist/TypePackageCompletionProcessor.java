@@ -153,7 +153,9 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						|| project.equals(roots[i].getCorrespondingResource())
 						|| (roots[i].isArchive() && !roots[i].isExternal())) {
 					IJavaElement[] elems = roots[i].getChildren();
-					if (elems.length > 0 && elems[i] instanceof IPackageFragment) {
+					if ((elems.length > 0) &&
+							(i < elems.length) && 
+							(elems[i] instanceof IPackageFragment)) {
 						frag = (IPackageFragment)elems[i];
 						break;
 					}
