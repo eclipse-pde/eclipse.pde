@@ -15,6 +15,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
@@ -110,9 +111,12 @@ public class TocSourcePage extends XMLSourcePage {
 	}
 	
 	protected void synchronizeOutlinePage(int offset) {
-		// TODO: MP: OUTLINE: Should be true in parent class
 		IDocumentRange rangeElement = getRangeElement(offset, true);
 		updateHighlightRange(rangeElement);
+		// TODO: MP: TEO-SIMPLECS: Generalize for parent - search children = true and handle attributes
+		if(rangeElement instanceof IDocumentAttribute)
+		{	rangeElement = ((IDocumentAttribute)rangeElement).getEnclosingElement();
+		}
 		updateOutlinePageSelection(rangeElement);
 	}
 }
