@@ -21,7 +21,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	private OrganizeManifestsWizardPage fMainPage;
 	
 	public OrganizeManifestsWizard(PDERefactor refactoring) {
-		super(refactoring, RefactoringWizard.DIALOG_BASED_USER_INTERFACE);
+		super(refactoring, WIZARD_BASED_USER_INTERFACE);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.OrganizeManifestsWizard_title);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());

@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
@@ -26,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.nls.ExternalizeStringsOperation;
@@ -53,11 +61,11 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			localization += ModelChange.LOCALIZATION_FILE_SUFFIX;
 			IProject project = model.getUnderlyingResource().getProject();
 			IFile file = project.getFile(localization);
-			ExternalizeStringsOperation.checkPropertiesFile(file);
+			checkPropertiesFile(file);
 			try {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-				manager.connect(file.getFullPath(), null);
-				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+				manager.connect(file.getFullPath(), LocationKind.IFILE, null);
+				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 				if (buffer.isDirty())
 					buffer.commit(null, true);
 				
@@ -72,7 +80,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				PDEPlugin.log(e);
 			} finally {
 				try {
-					FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), null);
+					FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.IFILE, null);
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
@@ -123,4 +131,20 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		PDEModelUtility.modifyModel(modification, null);
 	}
 
+	private void checkPropertiesFile(IFile file) {
+		if (!file.exists()) {
+			String propertiesFileComment = ExternalizeStringsOperation.getPropertiesFileComment(file);
+			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
+			try {
+				IContainer container = file.getParent();
+				if (!container.exists())
+					// project will exists, therefore we can assume if !IContainer.exist(), the object is an IFolder
+					CoreUtility.createFolder((IFolder)container);
+				file.create(pStream, true, new NullProgressMonitor());
+				pStream.close();
+			} catch (CoreException e1) {
+			} catch (IOException e) {
+			}
+		}
+	}
 }

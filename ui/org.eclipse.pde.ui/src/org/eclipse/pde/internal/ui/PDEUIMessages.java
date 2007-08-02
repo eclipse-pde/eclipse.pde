@@ -71,6 +71,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
 
+	public static String ExternalizeStringsOperation_pluginChangeName;
+
+	public static String ExternalizeStringsProcessor_errorMessage;
+
 	public static String JavaArgumentsTab_appendLauncherIni;
 
 	public static String OrganizeManifestsProcessor_invalidParam;

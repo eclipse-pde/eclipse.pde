@@ -37,7 +37,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -70,7 +71,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
-public class ExternalizeStringsWizardPage extends WizardPage {
+public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 	public static final String PAGE_NAME = "ExternalizeStringsWizardPage"; //$NON-NLS-1$
 	
@@ -572,5 +573,14 @@ public class ExternalizeStringsWizardPage extends WizardPage {
     		fSelectAll.setEnabled(enabled);
     	if (!exception.equals(fDeselectAll))
     		fDeselectAll.setEnabled(enabled);
+    }
+    
+    public void setPageComplete(boolean complete) {
+    	super.setPageComplete(complete);
+    	// if the page is ready to be completed set the selection on the processor so it knows
+    	// what work needs to be done
+    	if (complete)
+			((ExternalizeStringsProcessor)((PDERefactor)getRefactoring()).getProcessor()).
+				setChangeFiles(fInputViewer.getCheckedElements());
     }
 }

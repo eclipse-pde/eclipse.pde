@@ -15,10 +15,10 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
@@ -41,13 +41,15 @@ public class GetNonExternalizedStringsAction implements IWorkbenchWindowActionDe
 				return;
 			ModelChangeTable changeTable = runnable.getChangeTable();
 			if (!changeTable.isEmpty()) {
-				ExternalizeStringsWizard wizard = new ExternalizeStringsWizard(changeTable);
-				final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-				BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
-					public void run() {
-						dialog.open();
-					}
-				});
+				ExternalizeStringsProcessor processor = new ExternalizeStringsProcessor();
+				PDERefactor refactor = new PDERefactor(processor);
+				ExternalizeStringsWizard wizard = new ExternalizeStringsWizard(changeTable, refactor);
+				RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );
+				
+			    try {
+			      op.run( PDEPlugin.getActiveWorkbenchShell(), "" ); //$NON-NLS-1$
+			    } catch( final InterruptedException irex ) {
+			    }
 			} else
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
 						PDEUIMessages.GetNonExternalizedStringsAction_allExternalizedTitle, 

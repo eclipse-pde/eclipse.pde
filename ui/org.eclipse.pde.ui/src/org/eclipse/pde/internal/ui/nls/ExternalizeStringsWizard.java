@@ -10,36 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 
-public class ExternalizeStringsWizard extends Wizard {
+public class ExternalizeStringsWizard extends RefactoringWizard {
 	private ExternalizeStringsWizardPage page1;
 	private ModelChangeTable fModelChangeTable;
 
-	public ExternalizeStringsWizard(ModelChangeTable changeTable) {
+	public ExternalizeStringsWizard(ModelChangeTable changeTable, PDERefactor refactoring) {
+		super(refactoring, WIZARD_BASED_USER_INTERFACE);
 		setWindowTitle(PDEUIMessages.ExternalizeStringsWizard_title);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_EXTSTR_WIZ);
 		setNeedsProgressMonitor(true);
 		fModelChangeTable = changeTable;
 	}
-	
-	public boolean performFinish() {
-		try {
-			getContainer().run(false, false,
-					new ExternalizeStringsOperation(page1.getChangeFiles()));
-		} catch (InvocationTargetException e) {
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
-		return true;
-	}
-	
-	public void addPages() {
+	protected void addUserInputPages() {
+		setDefaultPageTitle( getRefactoring().getName() );
 		page1 = new ExternalizeStringsWizardPage(fModelChangeTable);
 		addPage(page1);
 	}
