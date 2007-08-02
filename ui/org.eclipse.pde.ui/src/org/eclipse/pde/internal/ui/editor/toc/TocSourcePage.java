@@ -108,4 +108,11 @@ public class TocSourcePage extends XMLSourcePage {
 		TocObject toc = ((TocModel)getInputContext().getModel()).getToc();
 		return findNode(toc, offset, searchChildren);
 	}
+	
+	protected void synchronizeOutlinePage(int offset) {
+		// TODO: MP: OUTLINE: Should be true in parent class
+		IDocumentRange rangeElement = getRangeElement(offset, true);
+		updateHighlightRange(rangeElement);
+		updateOutlinePageSelection(rangeElement);
+	}
 }
