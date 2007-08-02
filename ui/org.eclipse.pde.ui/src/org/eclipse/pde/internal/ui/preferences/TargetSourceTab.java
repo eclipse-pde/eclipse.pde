@@ -247,7 +247,10 @@ public class TargetSourceTab {
 		});
 
 		fTreeViewer = new TreeViewer(container, SWT.BORDER);
-		fTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 1;
+		gd.heightHint = 1;
+		fTreeViewer.getTree().setLayoutData(gd);
 		fTreeViewer.setContentProvider(new SourceProvider());
 		fTreeViewer.setLabelProvider(new SourceLabelProvider());
 		fTreeViewer.setInput(this);
