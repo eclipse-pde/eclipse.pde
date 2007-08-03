@@ -23,10 +23,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class JavaSearchOperation implements IRunnableWithProgress {
 	
@@ -59,7 +61,7 @@ public class JavaSearchOperation implements IRunnableWithProgress {
 		if (project.exists())
 			return project;
 		
-		monitor.beginTask("", 5); //$NON-NLS-1$
+		monitor.beginTask(NLS.bind(PDEUIMessages.JavaSearchOperation_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5); 
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new SubProgressMonitor(monitor, 1));
 		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, new SubProgressMonitor(monitor, 1));
