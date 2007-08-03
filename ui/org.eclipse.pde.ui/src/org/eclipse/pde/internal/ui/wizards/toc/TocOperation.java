@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.internal.core.toc.Toc;
-import org.eclipse.pde.internal.core.toc.TocModelFactory;
-import org.eclipse.pde.internal.core.toc.TocTopic;
-import org.eclipse.pde.internal.core.toc.TocWorkspaceModel;
+import org.eclipse.pde.internal.core.text.toc.TocModel;
+import org.eclipse.pde.internal.core.text.toc.TocDocumentFactory;
+import org.eclipse.pde.internal.core.text.toc.TocTopic;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -45,28 +45,30 @@ public class TocOperation extends WorkspaceModifyOperation {
 
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-        TocWorkspaceModel model = new TocWorkspaceModel(fFile, false);
-        initializeToc(model.getToc());
+		// TODO: MP: TEO-SIMPLECS:  Do the same for cheat sheet editor wizard
+        TocModel model = new TocModel(CoreUtility.getTextDocument(fFile.getContents()), false);
+        model.setUnderlyingResource(fFile);
+        initializeToc(model);
         model.save();
         model.dispose();
         openFile();
         monitor.done();
 	}
 	
-	private void initializeToc(Toc toc) {
+	private void initializeToc(TocModel model) {
 		// Create Topic
-		TocTopic topic = createTopic(toc);
+		TocTopic topic = createTopic(model);
 
 		// Bind the created topic to this TOC
-		toc.addChild(topic);
+		model.getToc().addChild(topic);
 		
 		// Set the initial TOC name 
-		toc.setFieldLabel(fTocName);
+		model.getToc().setFieldLabel(fTocName);
 	}
 
-	private TocTopic createTopic(Toc toc) {
-		TocModelFactory factory = toc.getModel().getFactory();
-		TocTopic topic = factory.createTocTopic(toc);
+	private TocTopic createTopic(TocModel model) {
+		TocDocumentFactory factory = model.getFactory();
+		TocTopic topic = factory.createTocTopic();
 		
 		topic.setFieldLabel(PDEUIMessages.TocPage_TocTopic);
 		

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.text.toc;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.pde.core.IModel;
@@ -35,20 +34,6 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 */
 	public TocObject(TocModel model, String tagName)
 	{	super(model, tagName);
-	}
-
-	public void setInTheModel(boolean inModel, boolean recurse)
-	{	setInTheModel(inModel);
-
-		if(recurse)
-		{	List children = getChildren();
-			for(Iterator i = children.iterator(); i.hasNext();)
-			{	Object obj = i.next();
-				if(obj != null && obj instanceof TocObject)
-				{	((TocObject)obj).setInTheModel(inModel, true);
-				}
-			}
-		}
 	}
 
 	/**

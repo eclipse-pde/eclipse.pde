@@ -74,7 +74,6 @@ public class TocInputContext extends XMLInputContext {
 			}
 
 			model.load();
-			model.getToc().setInTheModel(true, true);
 
 			return model;
 		}
