@@ -71,6 +71,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String EclipsePluginValidationOperation_pluginMissing;
 
+	public static String ExternalizeStringsOperation_editNames_addComment;
+
+	public static String ExternalizeStringsOperation_editNames_insertProperty;
+
+	public static String ExternalizeStringsOperation_editNames_replaceText;
+
 	public static String ExternalizeStringsOperation_pluginChangeName;
 
 	public static String ExternalizeStringsProcessor_errorMessage;

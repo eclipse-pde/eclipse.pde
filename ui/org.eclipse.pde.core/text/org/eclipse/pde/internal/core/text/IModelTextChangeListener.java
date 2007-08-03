@@ -17,4 +17,14 @@ public interface IModelTextChangeListener extends IModelChangedListener {
 	
 	TextEdit[] getTextOperations();
 
+	/**
+	 * Get a human readable name for the given TextEdit for use in a refactoring
+	 * preview, for instance.
+	 * 
+	 * @param edit
+	 * 			the edit to get a name for
+	 * @return
+	 * 			the name associated to the given edit, or null if there is none
+	 */
+	String getReadableName(TextEdit edit);
 }

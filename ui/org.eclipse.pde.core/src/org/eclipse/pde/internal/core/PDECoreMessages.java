@@ -41,12 +41,26 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_unsupportedSingletonDirective;
 
+	public static String BundleTextChangeListener_editNames_insert;
+
+	public static String BundleTextChangeListener_editNames_modify;
+
+	public static String BundleTextChangeListener_editNames_newLine;
+
+	public static String BundleTextChangeListener_editNames_remove;
+
 	public static String ExtensionsErrorReporter_maxOccurrence;
 
 	public static String ExtensionsErrorReporter_minOccurrence;
 
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;
+
+	public static String PropertiesTextChangeListener_editNames_delete;
+
+	public static String PropertiesTextChangeListener_editNames_insert;
+
+	public static String PropertiesTextChangeListener_editNames_remove;
 	public static String RequiredPluginsClasspathContainer_description;
 	public static String ExternalJavaSearchClasspathContainer_description;
 
@@ -238,5 +252,19 @@ public class PDECoreMessages extends NLS {
 	public static String PluginConverter_EclipseConverterFileNotFound;
 	
 	public static String PluginParser_EclipseConverterMissingAttribute;
+
+	public static String XMLTextChangeListener_editNames_addAttribute;
+
+	public static String XMLTextChangeListener_editNames_addContent;
+
+	public static String XMLTextChangeListener_editNames_insertNode;
+
+	public static String XMLTextChangeListener_editNames_modifyAttribute;
+
+	public static String XMLTextChangeListener_editNames_modifyNode;
+
+	public static String XMLTextChangeListener_editNames_removeAttribute;
+
+	public static String XMLTextChangeListener_editNames_removeNode;
 	
 }

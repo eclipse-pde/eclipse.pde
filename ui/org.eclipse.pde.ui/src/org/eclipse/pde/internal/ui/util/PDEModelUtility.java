@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -353,9 +354,9 @@ public class PDEModelUtility {
 			
 			IBaseModel editModel;
 			if (modification.isFullBundleModification())
-				editModel = prepareBundlePluginModel(files, documents);
+				editModel = prepareBundlePluginModel(files, documents, !performEdits);
 			else
-				editModel = prepareAbstractEditingModel(files[0], documents[0]);
+				editModel = prepareAbstractEditingModel(files[0], documents[0], !performEdits);
 			
 			modification.modifyModel(editModel, monitor);
 			
@@ -373,6 +374,14 @@ public class PDEModelUtility {
 					}
 					TextFileChange change = new TextFileChange(files[i].getName(), files[i]);
 					change.setEdit(multi);
+					// If the edits were performed right away (performEdits == true) then
+					// all the names are null and we don't need the granular detail anyway.
+					if (!performEdits) {
+						for (int j = 0; j < currentEdits.length; j++) {
+							String name = listeners[i].getReadableName(currentEdits[j]);
+							if (name != null) change.addTextEditGroup(new TextEditGroup(name, currentEdits[j]));
+						}
+					}
 					// save the file after the change applied
 					change.setSaveMode(TextFileChange.FORCE_SAVE);
 					// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
@@ -479,17 +488,17 @@ public class PDEModelUtility {
 		return null;
 	}
 	
-	private static IModelTextChangeListener createListener(String filename, IDocument doc) {
+	private static IModelTextChangeListener createListener(String filename, IDocument doc, boolean generateEditNames) {
 		if (filename.equals(F_PLUGIN) || filename.equals(F_FRAGMENT))
-			return new XMLTextChangeListener(doc);
+			return new XMLTextChangeListener(doc, generateEditNames);
 		else if (filename.equals(F_MANIFEST))
-			return new BundleTextChangeListener(doc);
+			return new BundleTextChangeListener(doc, generateEditNames);
 		else if (filename.endsWith(F_PROPERTIES))
-			return new PropertiesTextChangeListener(doc);
+			return new PropertiesTextChangeListener(doc, generateEditNames);
 		return null;
 	}
 	
-	private static AbstractEditingModel prepareAbstractEditingModel(IFile file, IDocument doc) {
+	private static AbstractEditingModel prepareAbstractEditingModel(IFile file, IDocument doc, boolean generateEditNames) {
 		AbstractEditingModel model;
 		String filename = file.getName();
 		if (filename.equals(F_MANIFEST))
@@ -505,7 +514,7 @@ public class PDEModelUtility {
 		model.setUnderlyingResource(file);
 		try {
 			model.load();
-			IModelTextChangeListener listener = createListener(filename, doc);
+			IModelTextChangeListener listener = createListener(filename, doc, generateEditNames);
 			model.addModelChangedListener(listener);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
@@ -513,11 +522,11 @@ public class PDEModelUtility {
 		return model;
 	}
 	
-	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs) throws CoreException {
+	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs, boolean generateEditNames) throws CoreException {
 		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];
 		
 		boolean isFragment = false;
-		models[F_Bi] = prepareAbstractEditingModel(files[F_Bi], docs[F_Bi]);
+		models[F_Bi] = prepareAbstractEditingModel(files[F_Bi], docs[F_Bi], generateEditNames);
 		if (models[F_Bi] instanceof IBundleModel)
 			isFragment = ((IBundleModel)models[F_Bi]).getBundle().getHeader(Constants.FRAGMENT_HOST) != null;
 		
@@ -529,7 +538,7 @@ public class PDEModelUtility {
 		
 		pluginModel.setBundleModel((IBundleModel)models[F_Bi]);
 		if (files.length > F_Xi && files[F_Xi] != null) {
-			models[F_Xi] = prepareAbstractEditingModel(files[F_Xi], docs[F_Xi]);
+			models[F_Xi] = prepareAbstractEditingModel(files[F_Xi], docs[F_Xi], generateEditNames);
 			pluginModel.setExtensionsModel((ISharedExtensionsModel)models[F_Xi]);
 		}
 		return pluginModel;

@@ -85,12 +85,15 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		CompositeChange change = new CompositeChange(""); //$NON-NLS-1$
 		change.markAsSynthetic();
 		pm.beginTask(PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
-		for (Iterator i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();)
-			change.add(cleanProject((IProject)i.next(), new SubProgressMonitor(pm, 1)));
+		for (Iterator i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
+			CompositeChange projectChange = cleanProject((IProject)i.next(), new SubProgressMonitor(pm, 1));
+			if (projectChange.getChildren().length > 0)
+				change.add(projectChange);
+		}
 		return change;
 	}
 	
-	private Change cleanProject(IProject project, IProgressMonitor monitor) {
+	private CompositeChange cleanProject(IProject project, IProgressMonitor monitor) {
 		fCurrentProject = project;
 		CompositeChange change = new CompositeChange(NLS.bind(PDEUIMessages.OrganizeManifestsProcessor_rootMessage, new String[] {fCurrentProject.getName()}));
 		monitor.beginTask(NLS.bind(PDEUIMessages.OrganizeManifestsProcessor_rootMessage, new String[] {fCurrentProject.getName()}), getTotalTicksPerProject());

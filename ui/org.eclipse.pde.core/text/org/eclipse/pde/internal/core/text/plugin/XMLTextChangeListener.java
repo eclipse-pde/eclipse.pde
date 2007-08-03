@@ -11,50 +11,47 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MoveSourceEdit;
 import org.eclipse.text.edits.MoveTargetEdit;
-import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
 public class XMLTextChangeListener extends AbstractTextChangeListener {
 	
 	private ArrayList fOperationList = new ArrayList();
+	private HashMap fReadableNames = null;
 	
 	public XMLTextChangeListener(IDocument document) {
+		this(document, false);
+	}
+	public XMLTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document);
+		// if we are not generating names, leave the HashMap null
+		// this way a null test on the map can be used to determine if names should be generated
+		if (generateReadableNames)
+			fReadableNames = new HashMap();
 	}
 
 	public TextEdit[] getTextOperations() {
 		if (fOperationList.size() == 0)
 			return new TextEdit[0];
-		
-		MultiTextEdit edit = new MultiTextEdit();
-		try {
-			if (PropertiesUtil.isNewlineNeeded(fDocument))
-				insert(edit, new InsertEdit(fDocument.getLength(), TextUtilities.getDefaultLineDelimiter(fDocument)));
-		} catch (BadLocationException e) {
-		}
-		Object[] operations = fOperationList.toArray();
-		for (int i = 0; i < operations.length; i++)
-			insert(edit, (TextEdit)operations[i]);
-		
-		return new TextEdit[] {edit};
+		return (TextEdit[])fOperationList.toArray(new TextEdit[fOperationList.size()]);
 	}
 	
 	protected static void insert(TextEdit parent, TextEdit edit) {
@@ -88,7 +85,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			parent.addChild(((MoveSourceEdit)edit).getTargetEdit());
 		}
 	}
-	
+
 	protected static boolean covers(TextEdit thisEdit, TextEdit otherEdit) {
 		if (thisEdit.getLength() == 0)	// an insertion point can't cover anything
 			return false;
@@ -111,6 +108,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		if (old != null) {
 			Object op = fOperationTable.remove(node);
 			fOperationList.remove(op);
+			if (fReadableNames != null)
+				fReadableNames.remove(op);
 		}
 		
 		// if node has an offset, delete it
@@ -119,6 +118,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			TextEdit op = getDeleteNodeOperation(node);
 			fOperationTable.put(node, op);
 			fOperationList.add(op);
+			if (fReadableNames != null)
+				fReadableNames.put(op, NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_removeNode, node.getXMLTagName()));
 		} else if (old == null){
 			// No previous op on this non-offset node, just rewrite highest ancestor with an offset
 			insertNode(node);
@@ -152,6 +153,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 		fOperationTable.put(node, op);
 		fOperationList.add(op);
+		if (fReadableNames != null)
+			fReadableNames.put(op, NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_insertNode, node.getXMLTagName()));
 	}
 
 	private InsertEdit insertAfterSibling(IDocumentNode node) {
@@ -197,6 +200,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			source.setTargetEdit(new MoveTargetEdit(region.getOffset()));		
 			fOperationTable.put(node, source);
 			fOperationList.add(source);
+			if (fReadableNames != null)
+				fReadableNames.put(source, NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_modifyNode, node.getXMLTagName()));
 		} else {
 			// one node with offset, the other without offset.  Delete/reinsert the one without offset
 			insertNode((node1.getOffset() < 0) ? node1 : node2);
@@ -224,13 +229,18 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
+		String name = null;
 		TextEdit op = null;
 		if (offset > -1) {
 			if (newValue == null || newValue.toString().length() == 0) {
 				int length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
 				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
+				if (fReadableNames != null)
+					name = NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_removeAttribute, new String[] { attr.getAttributeName(), attr.getEnclosingElement().getXMLTagName() });
 			} else {
 				op = new ReplaceEdit(offset, attr.getValueLength(), getWritableString(event.getNewValue().toString()));
+				if (fReadableNames != null)
+					name = NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_modifyAttribute, new String[] { attr.getAttributeName(), attr.getEnclosingElement().getXMLTagName() });
 			}
 		} 
 				
@@ -240,6 +250,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 				changedObject = node;
 				int len = getNextPosition(fDocument, node.getOffset(), '>');
 				op = new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(fDocument, node.getOffset() + len)));		
+				if (fReadableNames != null)
+					name = NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_addAttribute, new String[] { attr.getAttributeName(), attr.getEnclosingElement().getXMLTagName() });
 			} else {
 				insertNode(node);
 				return;
@@ -247,6 +259,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 		fOperationTable.put(changedObject, op);
 		fOperationList.add(op);
+		if (fReadableNames != null && name != null)
+			fReadableNames.put(op, name);
 	}
 	
 	protected void addElementContentOperation(IDocumentTextNode textNode) {
@@ -283,6 +297,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 		fOperationTable.put(changedObject, op);
 		fOperationList.add(op);
+		if (fReadableNames != null)
+			fReadableNames.put(op, NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_addContent, textNode.getEnclosingElement().getXMLTagName()));
 	}
 
 	private boolean shouldTerminateElement(IDocument doc, int offset) {
@@ -428,6 +444,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			IDocumentNode node = (IDocumentNode)objects[i];
 			Object op = fOperationTable.remove(node);
 			fOperationList.remove(op);
+			if (fReadableNames != null)
+				fReadableNames.remove(op);
 			switch (event.getChangeType()) {
 				case IModelChangedEvent.REMOVE:
 					deleteNode(node);
@@ -449,5 +467,11 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 					}
 			}
 		}
+	}
+
+	public String getReadableName(TextEdit edit) {
+		if (fReadableNames != null && fReadableNames.containsKey(edit))
+			return (String)fReadableNames.get(edit);
+		return null;
 	}
 }

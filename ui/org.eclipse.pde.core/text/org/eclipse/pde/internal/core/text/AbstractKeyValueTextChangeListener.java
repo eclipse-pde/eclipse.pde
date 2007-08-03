@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import org.eclipse.jface.text.BadLocationException;
+import java.util.HashMap;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.text.edits.DeleteEdit;
@@ -20,42 +21,51 @@ import org.eclipse.text.edits.TextEdit;
 
 public abstract class AbstractKeyValueTextChangeListener extends AbstractTextChangeListener {
 
-	public AbstractKeyValueTextChangeListener(IDocument document) {
+	protected HashMap fReadableNames = null;
+	
+	public AbstractKeyValueTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document);
+		if (generateReadableNames)
+			fReadableNames = new HashMap();
 	}
 	
 	public TextEdit[] getTextOperations() {
 		if (fOperationTable.size() == 0)
 			return new TextEdit[0];
-		
-		TextEdit[] ops = (TextEdit[])fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
-		try {
-			if (!PropertiesUtil.isNewlineNeeded(fDocument))
-				return ops;
-		} catch (BadLocationException e) {
-		}
-		
-		TextEdit[] result = new TextEdit[fOperationTable.size() + 1];
-		result[0] = new InsertEdit(PropertiesUtil.getInsertOffset(fDocument), fSep);
-		System.arraycopy(ops, 0, result, 1, ops.length);
-		return result;
+		return (TextEdit[])fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
 	}
 
-	protected void insertKey(IDocumentKey key) {
+	protected void insertKey(IDocumentKey key, String name) {
 		int offset = PropertiesUtil.getInsertOffset(fDocument);
-		fOperationTable.put(key, new InsertEdit(offset, key.write()));
+		InsertEdit edit = new InsertEdit(offset, key.write());
+		fOperationTable.put(key, edit);
+		if (fReadableNames != null)
+			fReadableNames.put(edit, name);
 	}
 	
-	protected void deleteKey(IDocumentKey key) {
-		if (key.getOffset() >= 0) 
-			fOperationTable.put(key, new DeleteEdit(key.getOffset(), key.getLength()));
+	protected void deleteKey(IDocumentKey key, String name) {
+		if (key.getOffset() >= 0) {
+			DeleteEdit edit = new DeleteEdit(key.getOffset(), key.getLength());
+			fOperationTable.put(key, edit);
+			if (fReadableNames != null)
+				fReadableNames.put(edit, name);
+		}
 	}
 	
-	protected void modifyKey(IDocumentKey key) {		
+	protected void modifyKey(IDocumentKey key, String name) {		
 		if (key.getOffset() == -1)
-			insertKey(key);
-		else
-			fOperationTable.put(key, new ReplaceEdit(key.getOffset(), key.getLength(), key.write()));
+			insertKey(key, name);
+		else {
+			ReplaceEdit edit = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
+			fOperationTable.put(key, edit);
+			if (fReadableNames != null)
+				fReadableNames.put(edit, name);
+		}
 	}
 
+	public String getReadableName(TextEdit edit) {
+		if (fReadableNames != null && fReadableNames.containsKey(edit))
+			return (String)fReadableNames.get(edit);
+		return null;
+	}
 }

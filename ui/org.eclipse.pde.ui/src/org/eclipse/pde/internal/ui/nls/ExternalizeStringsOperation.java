@@ -37,6 +37,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
@@ -44,13 +45,13 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	private Object[] fChangeFiles;
 	private CompositeChange fParentChange;
 	private HashMap fCompositeChanges;
-	private HashMap fFileEdits;
+	private HashMap fFileChanges;
 	
 	public ExternalizeStringsOperation(Object[] changeFiles, CompositeChange parentChange) {
 		fChangeFiles = changeFiles;
 		fParentChange = parentChange;
 		fCompositeChanges = new HashMap();
-		fFileEdits = new HashMap();
+		fFileChanges = new HashMap();
 	}
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		for (int i = 0; i < fChangeFiles.length; i++) {
@@ -61,8 +62,12 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				IFile pFile = change.getPropertiesFile();
 				// if the properties file does not exist and we have not already made a TextFileChange
 				// for it create the Change and insert a comment
-				if (!pFile.exists() && !fFileEdits.containsKey(pFile))
-					getEditForFile(pFile, pluginChange).addChild(new InsertEdit(0, getPropertiesFileComment(pFile)));
+				if (!pFile.exists() && !fFileChanges.containsKey(pFile)) {
+					TextFileChange fileChange = getChangeForFile(pFile, pluginChange);
+					InsertEdit edit = new InsertEdit(0, getPropertiesFileComment(pFile));
+					fileChange.getEdit().addChild(edit);
+					fileChange.addTextEditGroup(new TextEditGroup(PDEUIMessages.ExternalizeStringsOperation_editNames_addComment, edit));
+				}
 				if (!change.localizationSet())
 					addBundleLocalization(change, monitor, pluginChange);
 				
@@ -71,9 +76,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 					pManager.connect(pFile.getFullPath(), LocationKind.IFILE, monitor);
 					ITextFileBuffer pBuffer = pManager.getTextFileBuffer(pFile.getFullPath(), LocationKind.IFILE);
 					IDocument pDoc = pBuffer.getDocument();
-					MultiTextEdit pEdit = getEditForFile(pFile, pluginChange);
+					TextFileChange pChange = getChangeForFile(pFile, pluginChange);
 					
-					doReplace(changeFile, pDoc, pEdit, monitor, pluginChange);
+					doReplace(changeFile, pDoc, pChange, monitor, pluginChange);
 					
 				} catch (MalformedTreeException e) {
 				} finally {
@@ -90,9 +95,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		fParentChange.add(result);
 		return result;
 	}
-	private MultiTextEdit getEditForFile(IFile file, CompositeChange parentChange) {
-		if (fFileEdits.containsKey(file))
-			return (MultiTextEdit) fFileEdits.get(file);
+	private TextFileChange getChangeForFile(IFile file, CompositeChange parentChange) {
+		if (fFileChanges.containsKey(file))
+			return (TextFileChange) fFileChanges.get(file);
 		MultiTextEdit edit = new MultiTextEdit();
 		TextFileChange change = new TextFileChange(file.getName(), file);
 		change.setEdit(edit);
@@ -103,23 +108,27 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				"PLUGIN2" : file.getFileExtension(); //$NON-NLS-1$
 		change.setTextType(textType);
 		parentChange.add(change);
-		fFileEdits.put(file, edit);
-		return edit;
+		fFileChanges.put(file, change);
+		return change;
 	}
-	private void doReplace(ModelChangeFile changeFile, IDocument pDoc, MultiTextEdit pEdit, IProgressMonitor monitor, CompositeChange parentChange) throws CoreException {
+	private void doReplace(ModelChangeFile changeFile, IDocument pDoc, TextFileChange pChange, IProgressMonitor monitor, CompositeChange parentChange) throws CoreException {
 		IFile uFile = changeFile.getFile();
 		try {
-			MultiTextEdit uEdit = getEditForFile(uFile, parentChange);
+			TextFileChange uChange = getChangeForFile(uFile, parentChange);
 			
 			Iterator iter = changeFile.getChanges().iterator();
 			
 			while (iter.hasNext()) {
 				ModelChangeElement changeElement = (ModelChangeElement)iter.next();
 				if (changeElement.isExternalized()) {
-					uEdit.addChild(new ReplaceEdit(changeElement.getOffset(),
+					ReplaceEdit uEdit = new ReplaceEdit(changeElement.getOffset(),
 							changeElement.getLength(), 
-							changeElement.getExternKey()));
-					pEdit.addChild(getPropertiesInsertEdit(pDoc, changeElement));
+							changeElement.getExternKey());
+					uChange.getEdit().addChild(uEdit);
+					uChange.addTextEditGroup(new TextEditGroup(NLS.bind(PDEUIMessages.ExternalizeStringsOperation_editNames_replaceText, changeElement.getKey()), uEdit));
+					InsertEdit pEdit = getPropertiesInsertEdit(pDoc, changeElement);
+					pChange.getEdit().addChild(pEdit);
+					pChange.addTextEditGroup(new TextEditGroup(NLS.bind(PDEUIMessages.ExternalizeStringsOperation_editNames_insertProperty, changeElement.getKey()), pEdit));
 				}
 			}
 		} catch (MalformedTreeException e) {
@@ -132,7 +141,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		// if the edit for this manifest file is in the HashMap, then we must have added
 		// the localization already since it is checked first (this must be the second or subsequent
 		// change to the manifest for this plug-in)
-		if (fFileEdits.containsKey(manifest))
+		if (fFileChanges.containsKey(manifest))
 			return;
 		final String localiz = change.getBundleLocalization();
 		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
@@ -146,8 +155,11 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		}, mon);
 		// this model change just adds localization to the manifest, so we will only have one change
 		// with one edit
-		if (result.length > 0 && result[0] != null)
-			getEditForFile(manifest, parent).addChild(result[0].getEdit());
+		if (result.length > 0 && result[0] != null) {
+			// we know the manifest does not already have a change in the HashMap, so just add the resultant one
+			fFileChanges.put(manifest, result[0]);
+			parent.add(result[0]);
+		}
 	}
 	
 	public static InsertEdit getPropertiesInsertEdit(IDocument doc, ModelChangeElement element) {
