@@ -116,6 +116,7 @@ public interface IHelpContextIds {
 	public static final String CHEAT_SHEET_PAGE = PREFIX + "cheat_sheet_page"; //$NON-NLS-1$
 	public static final String PRODUCT_FILE_PAGE = PREFIX + "product_file_page"; //$NON-NLS-1$
 	public static final String TARGET_DEFINITION_PAGE = PREFIX + "target_definition_page"; //$NON-NLS-1$
+	public static final String TOC_PAGE = PREFIX + "toc_page"; //$NON-NLS-1$
 
 	public static final String XHTML_CONVERSION_PAGE = PREFIX + "xhtml_conversion_page"; //$NON-NLS-1$
 
@@ -178,6 +179,9 @@ public interface IHelpContextIds {
 	// Composite Cheat Sheet Editor
 	public static final String COMPOSITE_CS_EDITOR = PREFIX + "composite_cs_editor";	 //$NON-NLS-1$
 	
+	// Table of Contents Editor
+	public static final String TOC_EDITOR = PREFIX + "toc_editor";	 //$NON-NLS-1$
+
 	// Editor Outline
 	public static final String OUTLINE_SORT_ACTION = PREFIX + "outline_sort_action";	 //$NON-NLS-1$
 	

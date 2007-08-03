@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -118,5 +119,10 @@ public class TocSourcePage extends XMLSourcePage {
 		{	rangeElement = ((IDocumentAttribute)rangeElement).getEnclosingElement();
 		}
 		updateOutlinePageSelection(rangeElement);
+	}
+	
+	protected void initializeEditor() {
+		super.initializeEditor();
+		setHelpContextId(IHelpContextIds.TOC_EDITOR);
 	}
 }

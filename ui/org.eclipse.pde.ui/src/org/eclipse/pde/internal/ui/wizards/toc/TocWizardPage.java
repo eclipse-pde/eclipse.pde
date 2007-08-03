@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.toc;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
@@ -21,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class TocWizardPage extends PDEWizardNewFileCreationPage {
 	
@@ -45,8 +47,7 @@ public class TocWizardPage extends PDEWizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		
-//TODO: Implement a Help context for this wizard
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE );
 	}
 	
 	protected void createAdvancedControls(Composite parent) 
