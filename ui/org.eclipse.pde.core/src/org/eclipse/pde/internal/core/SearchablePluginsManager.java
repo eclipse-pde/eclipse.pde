@@ -164,9 +164,19 @@ public class SearchablePluginsManager
 		while (iter.hasNext()) {
 			ModelEntry entry = PluginRegistry.findEntry(iter.next().toString());
 			if (entry != null) {
+				boolean addModel = true;
+				wModels = entry.getWorkspaceModels();
+				for (int i = 0; i < wModels.length; i++) {
+					IProject project = wModels[i].getUnderlyingResource().getProject();
+					if (project.hasNature(JavaCore.NATURE_ID))
+						addModel = false;
+				}
+				if (!addModel)
+					break;
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (int i = 0; i < models.length; i++) {
-					ClasspathUtilCore.addLibraries(models[i], result);
+					if (models[i].isEnabled())
+						ClasspathUtilCore.addLibraries(models[i], result);
 				}
 			}
 		}
