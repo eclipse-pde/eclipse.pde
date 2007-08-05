@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - bug 189533
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -271,11 +272,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		container.setLayout(layout);
 		
 		super.createControl(container, SWT.NONE, 2, null);
-				
-		fCounterLabel = new Label (container, SWT.NONE);
+		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fCounterLabel.setLayoutData(gd);
 		
 		fGroupPlugins = new Button (container, SWT.CHECK);
 		gd = new GridData();
@@ -291,6 +289,19 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		initializeView();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLUGINS_PREFERENCE_PAGE);
 		return container;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.parts.SharedPartWithButtons#createButtons(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 */
+	protected void createButtons(Composite parent, FormToolkit toolkit) {
+		super.createButtons(parent, toolkit);
+		
+		fCounterLabel = new Label(fButtonContainer, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessVerticalSpace = true;
+		gd.verticalAlignment = SWT.BOTTOM;
+		fCounterLabel.setLayoutData(gd);
 	}
 	
 	protected void initializeView() {
