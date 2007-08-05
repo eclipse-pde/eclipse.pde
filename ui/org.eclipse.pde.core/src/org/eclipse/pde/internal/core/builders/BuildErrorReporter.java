@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - bug 191545
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -130,7 +131,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private void validateBuild(IBuild build) {
 
 		IBuildEntry binIncludes = null;
+		IBuildEntry binExcludes = null;
 		IBuildEntry srcIncludes = null;
+		IBuildEntry srcExcludes = null;
 		IBuildEntry jarsExtra = null;
 		IBuildEntry bundleList = null;
 		ArrayList sourceEntries = new ArrayList();
@@ -145,8 +148,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						PDEMarkerFactory.CAT_FATAL);
 			else if (name.equals(PROPERTY_BIN_INCLUDES))
 				binIncludes = entries[i];
+			else if (name.equals(PROPERTY_BIN_EXCLUDES))
+				binExcludes = entries[i];
 			else if (name.equals(PROPERTY_SRC_INCLUDES))
 				srcIncludes = entries[i];
+			else if (name.equals(PROPERTY_SRC_EXCLUDES))
+				srcExcludes = entries[i];
 			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntries.add(entries[i]);
 			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
@@ -178,7 +185,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return;
 
 		validateIncludes(binIncludes, sourceEntryKeys);
+		validateIncludes(binExcludes, sourceEntryKeys);
 		validateIncludes(srcIncludes, sourceEntryKeys);
+		validateIncludes(srcExcludes, sourceEntryKeys);
 
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
