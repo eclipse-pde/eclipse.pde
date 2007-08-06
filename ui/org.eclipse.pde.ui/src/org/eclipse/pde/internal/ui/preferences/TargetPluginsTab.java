@@ -896,7 +896,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	protected void buttonSelected(Button button, int index) {
 		switch (index) {
 		case 0:
-			handleReload();
+			// Upon hitting 'Reload', erase the additional directories and load just the main path
+			handleReload(new ArrayList());
 			fPage.resetTargetProfile();
 			break;
 		case 1:
