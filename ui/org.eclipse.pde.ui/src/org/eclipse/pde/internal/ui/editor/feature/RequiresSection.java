@@ -304,7 +304,8 @@ public class RequiresSection extends TableSection implements
 		IFeatureImport[] features = feature.getImports();
 
 		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(cfeature.getId())
+			if (features[i].getId().equals(cfeature.getId()) 
+					&& features[i].getVersion() != null
 					&& features[i].getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
