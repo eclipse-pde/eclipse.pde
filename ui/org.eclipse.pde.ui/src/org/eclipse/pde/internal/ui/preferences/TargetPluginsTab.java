@@ -516,7 +516,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		IPluginModelBase workspacePlugins[] = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		for (int i = 0; i < workspacePlugins.length; i++) {
 			if (workspacePlugins[i].isEnabled())
-				required.remove(workspacePlugins[i].getBundleDescription().getSymbolicName());
+				required.remove(workspacePlugins[i].getPluginBase().getId());
 		}
 		
 		IPluginModelBase[] models = getCurrentModels();
