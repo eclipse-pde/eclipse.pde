@@ -17,7 +17,11 @@ import java.util.Locale;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -30,6 +34,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -248,6 +253,21 @@ public class Feature extends VersionableObject implements IFeature {
 			IPluginModelBase model = PluginRegistry.findModel(fp.getId());
 			if (model != null) {
 				addPluginImports(preservedImports, newImports, model.getPluginBase());
+				if (model.isFragmentModel()) {
+					BundleDescription desc = model.getBundleDescription();
+					if (desc == null)
+						continue;
+					HostSpecification hostSpec = desc.getHost();
+					String id = hostSpec.getName();
+					String version = null;
+					int match = IMatchRules.NONE;
+					VersionRange versionRange = hostSpec.getVersionRange();
+					if (!(versionRange == null || VersionRange.emptyRange.equals(versionRange))) {
+						version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+						match = PluginBase.getMatchRule(versionRange);
+					}
+					addNewDependency(id, version, match, preservedImports, newImports);
+				}
 			}
 		}
 		// preserve imports of features
@@ -297,32 +317,36 @@ public class Feature extends VersionableObject implements IFeature {
 			String id = pluginImport.getId();
 			String version = pluginImport.getVersion();
 			int match = pluginImport.getMatch();
-			if (findFeaturePlugin(id, version, match) != null) {
-				// don't add imports to local plug-ins
-				continue;
-			}
-			if (findImport(preservedImports, id, version, match) != null) {
-				// already seen
-				continue;
-			}
-			if (findImport(newImports, id, version, match) != null) {
-				// already seen
-				continue;
-			}
-			IFeatureImport iimport = findImport(fImports, id, version, match);
-			if (iimport != null) {
-				// import still valid
-				preservedImports.add(iimport);
-				continue;
-			}
-			// a new one is needed
-			iimport = getModel().getFactory().createImport();
-			iimport.setId(id);
-			iimport.setVersion(version);
-			iimport.setMatch(match);
-			((FeatureImport) iimport).setInTheModel(true);
-			newImports.add(iimport);
+			addNewDependency(id, version, match, preservedImports, newImports);
 		}
+	}
+	
+	private void addNewDependency(String id, String version, int match, List preservedImports, List newImports) throws CoreException {
+		if (findFeaturePlugin(id, version, match) != null) {
+			// don't add imports to local plug-ins
+			return;
+		}
+		if (findImport(preservedImports, id, version, match) != null) {
+			// already seen
+			return;
+		}
+		if (findImport(newImports, id, version, match) != null) {
+			// already seen
+			return;
+		}
+		IFeatureImport iimport = findImport(fImports, id, version, match);
+		if (iimport != null) {
+			// import still valid
+			preservedImports.add(iimport);
+			return;
+		}
+		// a new one is needed
+		iimport = getModel().getFactory().createImport();
+		iimport.setId(id);
+		iimport.setVersion(version);
+		iimport.setMatch(match);
+		((FeatureImport) iimport).setInTheModel(true);
+		newImports.add(iimport);
 	}
 
 	/**
@@ -354,7 +378,7 @@ public class Feature extends VersionableObject implements IFeature {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
-			if (VersionUtil.compare(id, version, pid, pversion, match))
+			if (VersionUtil.compare(pid, pversion, id, version, match))
 				return fp;
 		}
 		return null;
