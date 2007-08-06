@@ -63,7 +63,7 @@ public class FeatureImport
 				IFeature feature = model.getFeature();
 				String pid = feature.getId();
 				String pversion = feature.getVersion();
-				if (VersionUtil.compare(id, version, pid, pversion, match))
+				if (VersionUtil.compare(pid, pversion, id, version, match))
 					return feature;
 			}
 			return null;
