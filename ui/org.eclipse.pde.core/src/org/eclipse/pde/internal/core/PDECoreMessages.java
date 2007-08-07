@@ -165,6 +165,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_singletonRequired;
 	public static String BundleErrorReporter_headerMissing;
 	public static String BundleErrorReporter_NoSymbolicName;
+	public static String BundleErrorReporter_illegalManifestVersion;
 	public static String BundleErrorReporter_ClasspathNotEmpty;
 	public static String BundleErrorReporter_fragmentActivator;
 	public static String BundleErrorReporter_NoExist;
