@@ -89,7 +89,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
-		setOsgiR4();
+		
+		// verify we have a valid manifest version
+		if (!validateBundleManifestVersion())
+			return;
 
 		validateFragmentHost();	
 		validateRequiredHeader(Constants.BUNDLE_NAME);
@@ -110,6 +113,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateImportExportServices();
 		validateBundleLocalization();
 		validateProvidePackage();
+	}
+
+	private boolean validateBundleManifestVersion() {
+		IHeader header = getHeader(Constants.BUNDLE_MANIFESTVERSION);
+		if (header != null) {		
+			String version = header.getValue();
+			if(!(fOsgiR4 = "2".equals(version)) &&!"1".equals(version)) { //$NON-NLS-1$ //$NON-NLS-2$
+				report(PDECoreMessages.BundleErrorReporter_illegalManifestVersion, header.getLineNumber() + 1, 
+						CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void validateExportPackages() {
@@ -163,17 +179,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		}
 
-	}
-
-	private void setOsgiR4() {
-		IHeader header = getHeader(Constants.BUNDLE_MANIFESTVERSION);
-		if (header != null) {		
-			String version = header.getValue();
-			try {
-				fOsgiR4 = version != null && Integer.parseInt(version) > 1 ;
-			}  catch (NumberFormatException e) {			
-			}
-		}
 	}
 
 	/**
