@@ -328,7 +328,7 @@ public class XMLInsertionComputer {
 				} else if (attribute.getUse() == ISchemaAttribute.DEFAULT) {
 					Object value = attribute.getValue();
 					if (value instanceof String) {
-						if (attribute.getKind() == IMetaAttribute.STRING) {
+						if (attribute.getKind() != IMetaAttribute.JAVA) {
 							// if type == boolean, make sure the default value is valid
 							if (attribute.getType().getName().equals("boolean") && //$NON-NLS-1$
 									!(((String)value).equalsIgnoreCase("true") || //$NON-NLS-1$
