@@ -196,6 +196,8 @@ public class ViewTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
+		if (contextHelp.isSelected())
+			return new String[] {"icons/","contexts.xml"};  //$NON-NLS-1$ //$NON-NLS-2$
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 	
