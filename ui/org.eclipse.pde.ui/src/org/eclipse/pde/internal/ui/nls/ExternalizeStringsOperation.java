@@ -29,7 +29,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -146,8 +146,8 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		final String localiz = change.getBundleLocalization();
 		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModel) {
-					IBundlePluginModel bundleModel = (IBundlePluginModel) model;
+				if (model instanceof IBundlePluginModelBase) {
+					IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) model;
 					IBundle bundle = bundleModel.getBundleModel().getBundle();
 					bundle.setLocalization(localiz);
 				}
