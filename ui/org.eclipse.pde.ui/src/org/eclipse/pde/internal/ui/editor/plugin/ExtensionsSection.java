@@ -744,6 +744,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// we have a value from a resource attribute
 			if (iconPath != null) {
 				String ext = new Path(iconPath).getFileExtension();
+				// if the resource targets a folder, the file extension will be null
+				if (ext == null)
+					return null;
 				boolean valid = false;
 				// ensure the resource is an image
 				for (int i = 0; i < VALID_IMAGE_TYPES.length; i++) {
