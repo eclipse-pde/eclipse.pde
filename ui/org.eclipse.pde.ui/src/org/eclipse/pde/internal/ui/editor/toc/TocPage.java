@@ -181,31 +181,37 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	public void updateFormSelection() {
-		super.updateFormSelection();
-		IFormPage page = getPDEEditor().findPage(TocInputContext.CONTEXT_ID);
-		if (page instanceof TocSourcePage) {
-			ISourceViewer viewer = ((TocSourcePage)page).getViewer();
-			if (viewer == null)
-				return;
-			StyledText text = viewer.getTextWidget();
-			if (text == null)
-				return;
-			int offset = text.getCaretOffset();
-			if (offset < 0)
-				return;
-			
-			IDocumentRange range = ((TocSourcePage)page).getRangeElement(offset, true);
+	public void setActive(boolean active) {
+		super.setActive(active);
+		if(active)
+		{	IFormPage page = getPDEEditor().findPage(TocInputContext.CONTEXT_ID);
+			if (page instanceof TocSourcePage && ((TocSourcePage)page).getInputContext().isInSourceMode())
+			{	ISourceViewer viewer = ((TocSourcePage)page).getViewer();
+				if (viewer == null)
+				{	return;
+				}
 
-			if (range instanceof IDocumentAttribute)
-			{	range = ((IDocumentAttribute)range).getEnclosingElement();
-			}
-			else if (range instanceof IDocumentTextNode)
-			{	range = ((IDocumentTextNode)range).getEnclosingElement();
-			}
+				StyledText text = viewer.getTextWidget();
+				if (text == null)
+				{	return;
+				}
 
-			if (range instanceof TocObject)
-			{	fBlock.getMasterSection().setSelection(new StructuredSelection(range));
+				int offset = text.getCaretOffset();
+				if (offset < 0)
+				{	return;
+				}
+
+				IDocumentRange range = ((TocSourcePage)page).getRangeElement(offset, true);
+				if (range instanceof IDocumentAttribute)
+				{	range = ((IDocumentAttribute)range).getEnclosingElement();
+				}
+				else if (range instanceof IDocumentTextNode)
+				{	range = ((IDocumentTextNode)range).getEnclosingElement();
+				}
+
+				if (range instanceof TocObject)
+				{	fBlock.getMasterSection().setSelection(new StructuredSelection(range));
+				}
 			}
 		}
 	}
