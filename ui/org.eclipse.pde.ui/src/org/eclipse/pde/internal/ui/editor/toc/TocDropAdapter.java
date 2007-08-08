@@ -117,6 +117,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * if necessary.
 	 */
 	public void dragOperationChanged(DropTargetEvent event) {
+		validateFileDrop(event);
 		setDNDMode(event);
 	}
 
