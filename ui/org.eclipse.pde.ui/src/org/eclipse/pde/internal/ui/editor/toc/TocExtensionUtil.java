@@ -6,7 +6,7 @@ import java.util.Locale;
 import org.eclipse.core.runtime.IPath;
 
 public class TocExtensionUtil {
-	public static final String[] pageExtensions = {"htm","shtml","html"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public static final String[] pageExtensions = {"htm","shtml","html","xhtml"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	public static final String tocExtension = "xml"; //$NON-NLS-1$
 	private static HashSet pageExtensionSet = new HashSet(3);
 
