@@ -12,11 +12,15 @@ package org.eclipse.pde.internal.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
@@ -36,7 +40,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		super(parent, config);
 	}
 
-	protected void configureTextViewer(TextViewer textViewer) {
+	protected void configureTextViewer(final TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
 			if (fColorManager == null)
 				fColorManager = ColorManager.getDefault();
@@ -44,6 +48,19 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			textViewer.getControl().addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					configuration.dispose();
+				}
+			});
+			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+			store.addPropertyChangeListener(new IPropertyChangeListener(){
+				public void propertyChange(PropertyChangeEvent event) {
+					// the configuration will test if the properties affect the presentation also,
+					// but checking it here allows us to prevent the viewer from being invalidated
+					// and saves some unnecessary work
+					if (configuration.affectsColorPresentation(event) ||
+							configuration.affectsTextPresentation(event)) {
+						configuration.adaptToPreferenceChange(event);
+						textViewer.invalidateTextPresentation();
+					}
 				}
 			});
 			((SourceViewer)textViewer).configure(configuration);
