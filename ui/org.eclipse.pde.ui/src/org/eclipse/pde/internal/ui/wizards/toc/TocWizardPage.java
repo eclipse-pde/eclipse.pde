@@ -14,27 +14,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class TocWizardPage extends PDEWizardNewFileCreationPage {
 	
 	private static String EXTENSION = "xml"; //$NON-NLS-1$
-	private Label fTocNameLabel;
-	private Text fTocNameText;
-	
-	private ModifyListener tocNameListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			setPageComplete(validatePage());
-		}
-	};
 	
 	public TocWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -50,30 +35,9 @@ public class TocWizardPage extends PDEWizardNewFileCreationPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE );
 	}
 	
-	protected void createAdvancedControls(Composite parent) 
-	{	Composite tocNameGroup = createTocNameGroup(parent);
-		
-		fTocNameLabel = new Label(tocNameGroup, SWT.NONE);
-		fTocNameLabel.setText(PDEUIMessages.TocWizardPage_tocName);
-		
-		fTocNameText = new Text(tocNameGroup, SWT.BORDER | SWT.SINGLE);
-		fTocNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fTocNameText.addModifyListener(tocNameListener);
+	protected void createAdvancedControls(Composite parent) {
 	}
 
-	private Composite createTocNameGroup(Composite parent) {
-		Composite tocNameGroup = new Composite(parent, SWT.NONE);
-		
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 2;	
-		tocNameGroup.setLayout(layout);
-		tocNameGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		return tocNameGroup;
-	}
-    
 	protected boolean validatePage() {
 		String tocName = getTocName();
 		if(tocName == null)
@@ -92,10 +56,7 @@ public class TocWizardPage extends PDEWizardNewFileCreationPage {
 	}
 	
 	public String getTocName()
-	{	if(fTocNameText != null)
-		{	return fTocNameText.getText();
-		}
-
-		return null;
+	{	
+		return PDEUIMessages.TocWizardPage_book;
 	}
 }

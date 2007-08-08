@@ -457,6 +457,8 @@ public class PDEUIMessages extends NLS {
 	public static String TocLinkDetails_browseSelection;
 	public static String TocLinkDetails_browseMessage;
 
+	public static String TocWizardPage_book;
+
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
 	public static String UpdateSiteWizardPage_description;
@@ -1457,7 +1459,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewTocFileWizard_title;
 	public static String TocWizardPage_title;
 	public static String TocWizardPage_desc;
-	public static String TocWizardPage_tocName;
 	public static String TocWizardPage_emptyTocName;
 	
 	public static String NewSchemaFileWizard_wtitle;
@@ -2981,8 +2982,6 @@ public class PDEUIMessages extends NLS {
 	
 	public static String PDEJavaHelper_msgContentAssistAvailable;
 
-	public static String XMLStructureViewer_taskName;
-	
 	public static String AddExportPackageResolution_Label;
 	
 	// target provisioning stuff
