@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -42,6 +43,7 @@ import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.text.plugin.PluginNode;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -52,8 +54,8 @@ public class PluginManifestChange {
 			throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 			
 			MultiTextEdit multiEdit = new MultiTextEdit();
 			
@@ -101,6 +103,7 @@ public class PluginManifestChange {
 					}
 					TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
 					change.setEdit(multiEdit);
+					PDEModelUtility.setChangeTextType(change, file);
 					return change;
 				}
 			} catch (CoreException e) {
@@ -108,7 +111,7 @@ public class PluginManifestChange {
 			}	
 			return null;
 		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
+			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}	
 	}
 	

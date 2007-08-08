@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +38,7 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -59,7 +61,7 @@ public class BundleManifestChange {
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
 		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), monitor);
+			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
 		return null;
 	}
@@ -91,6 +93,7 @@ public class BundleManifestChange {
 				MultiTextEdit edit = new MultiTextEdit();
 				edit.addChildren(operations);
 				change.setEdit(edit);
+				PDEModelUtility.setChangeTextType(change, file);
 				if (list.size() > 0)
 					change.setMovedElements((PDEManifestElement[])list.toArray(new PDEManifestElement[list.size()]));
 				return change;
@@ -99,7 +102,7 @@ public class BundleManifestChange {
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
 		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), monitor);
+			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
 		return null;
 	}
@@ -153,7 +156,7 @@ public class BundleManifestChange {
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
 		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), monitor);
+			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
 		return null;
 	}
@@ -165,6 +168,7 @@ public class BundleManifestChange {
 			MultiTextEdit edit = new MultiTextEdit();
 			edit.addChildren(operations);
 			change.setEdit(edit);
+			PDEModelUtility.setChangeTextType(change, file);
 			return change;
 		}
 		return null;
@@ -234,9 +238,9 @@ public class BundleManifestChange {
 
 	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		manager.connect(file.getFullPath(), monitor);
+		manager.connect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		
-		IDocument document = manager.getTextFileBuffer(file.getFullPath()).getDocument();		
+		IDocument document = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE).getDocument();		
 		BundleModel model = new BundleModel(document, false);
 		model.load();
 		return model.isLoaded() ? (Bundle)model.getBundle() : null;		

@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -132,6 +133,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 		edit.addChildren(edits);
 		TextFileChange change = new TextFileChange("", manifest); //$NON-NLS-1$
 		change.setEdit(edit);
+		PDEModelUtility.setChangeTextType(change, manifest);
 		return change;
 	}
 }

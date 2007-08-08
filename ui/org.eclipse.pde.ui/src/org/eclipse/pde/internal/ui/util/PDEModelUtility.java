@@ -344,9 +344,9 @@ public class PDEModelUtility {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i] == null || !files[i].exists())
 					continue;
-				manager.connect(files[i].getFullPath(), LocationKind.IFILE, monitor);
+				manager.connect(files[i].getFullPath(), LocationKind.NORMALIZE, monitor);
 				sc++;
-				buffers[i] = manager.getTextFileBuffer(files[i].getFullPath(), LocationKind.IFILE);
+				buffers[i] = manager.getTextFileBuffer(files[i].getFullPath(), LocationKind.NORMALIZE);
 				if (performEdits && buffers[i].isDirty())
 					buffers[i].commit(monitor, true);
 				documents[i] = buffers[i].getDocument();
@@ -384,12 +384,7 @@ public class PDEModelUtility {
 					}
 					// save the file after the change applied
 					change.setSaveMode(TextFileChange.FORCE_SAVE);
-					// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
-					// with the PluginContentMergeViewer
-					String textType = files[i].getName().equals("plugin.xml") || //$NON-NLS-1$
-							files[i].getName().equals("fragment.xml") ? //$NON-NLS-1$
-							"PLUGIN2" : files[i].getFileExtension(); //$NON-NLS-1$
-					change.setTextType(textType);
+					setChangeTextType(change, files[i]);
 					edits.add(change);
 				}
 			}
@@ -407,7 +402,7 @@ public class PDEModelUtility {
 				if (files[i] == null || !files[i].exists())
 					continue;
 				try {
-					manager.disconnect(files[i].getFullPath(), LocationKind.IFILE, monitor);
+					manager.disconnect(files[i].getFullPath(), LocationKind.NORMALIZE, monitor);
 					dc++;
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
@@ -415,6 +410,20 @@ public class PDEModelUtility {
 			}
 		}
 		return (TextFileChange[])edits.toArray(new TextFileChange[edits.size()]);
+	}
+	
+	public static void setChangeTextType (TextFileChange change, IFile file) {
+		// null guard in case a folder gets passed for whatever reason
+		String name = file.getName();
+		if (name == null)
+			return;
+		// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
+		// with the PluginContentMergeViewer
+		String textType = name.equals("plugin.xml") || //$NON-NLS-1$
+				name.equals("fragment.xml") ? //$NON-NLS-1$
+				"PLUGIN2" : file.getFileExtension(); //$NON-NLS-1$
+		// if the file extension is null, the setTextType method will use type "txt", so no null guard needed
+		change.setTextType(textType);
 	}
 	
 	private static void modifyEditorModel(

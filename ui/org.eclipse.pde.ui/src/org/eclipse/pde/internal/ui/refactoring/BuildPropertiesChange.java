@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,6 +28,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 
@@ -36,8 +38,8 @@ public class BuildPropertiesChange {
 	throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 			
 			IDocument document = buffer.getDocument();
 			
@@ -69,6 +71,7 @@ public class BuildPropertiesChange {
 					MultiTextEdit edit = new MultiTextEdit();
 					edit.addChildren(operations);
 					change.setEdit(edit);
+					PDEModelUtility.setChangeTextType(change, file);
 					return change;
 				}
 			} catch (CoreException e) {
@@ -76,7 +79,7 @@ public class BuildPropertiesChange {
 			}	
 			return null;
 		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
+			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}	
 	}
 

@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.osgi.framework.Constants;
@@ -100,6 +101,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 					MultiTextEdit edit = new MultiTextEdit();
 					edit.addChildren(listener.getTextOperations());
 					change.setEdit(edit);
+					PDEModelUtility.setChangeTextType(change, manifest);
 					result.add(change);
 					
 					// find all the references to the changing Bundle-SymbolicName and update all references to it
