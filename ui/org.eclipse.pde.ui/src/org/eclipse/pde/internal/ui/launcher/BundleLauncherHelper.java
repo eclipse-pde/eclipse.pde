@@ -55,10 +55,12 @@ public class BundleLauncherHelper {
 				String id = models[i].getPluginBase().getId();
 				if (id == null)
 					continue;
-				if (set != null)
-					set.add(id);
-				if (!map.containsKey(models[i]) && !deselectedPlugins.contains(id)) {
-					map.put(models[i], "default:default"); //$NON-NLS-1$
+				if (!deselectedPlugins.contains(id)) {
+					if (set != null)
+						set.add(id);
+					if (!map.containsKey(models[i])) {
+						map.put(models[i], "default:default"); //$NON-NLS-1$
+					}
 				}
 			}
 		}
