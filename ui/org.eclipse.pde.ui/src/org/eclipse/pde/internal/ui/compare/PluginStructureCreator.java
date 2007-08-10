@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class PluginStructureCreator extends StructureCreator {
 
+	public static final int ROOT = 0;
 	public static final int LIBRARY = 1;
 	public static final int IMPORT = 2;
 	public static final int EXTENSION_POINT = 3;
@@ -120,14 +121,20 @@ public class PluginStructureCreator extends StructureCreator {
 		boolean isFragment = isFragment(input);
 		PluginModelBase model = createModel(input, document, isFragment);
 		try {
-			createChildren(rootNode, model, labelProvider, resources);
+			String id = isFragment ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
+			ImageDescriptor icon = isFragment ? PDEPluginImages.DESC_FRAGMENT_MF_OBJ : PDEPluginImages.DESC_PLUGIN_MF_OBJ;
+			PluginNode parent = new PluginNode(rootNode, ROOT, id,
+					resources.createImage(icon), document, 0, document.getLength());
+			createChildren(parent, model, labelProvider, resources);
 		} finally {
 			model.dispose();
 		}
 	}
 	
 	private boolean isFragment(Object input) {
-		//TODO
+		if (input instanceof ITypedElement &&
+				((ITypedElement)input).getName().equals("fragment.xml")) //$NON-NLS-1$
+			return true;
 		return false;
 	}
 

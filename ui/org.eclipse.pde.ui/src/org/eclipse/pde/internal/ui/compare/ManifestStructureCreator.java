@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,9 @@ public class ManifestStructureCreator extends StructureCreator {
 		args[1] = 0;	// and here the offset of the first character of the line 
 		
 		try {
+			String id = "Manifest"; //$NON-NLS-1$
+			ManifestNode parent = new ManifestNode(root, 0, id,
+					doc, 0, doc.getLength());
 			monitor = beginWork(monitor);
 			StringBuffer headerBuffer = new StringBuffer();
 			int headerStart = 0;
@@ -102,7 +105,7 @@ public class ManifestStructureCreator extends StructureCreator {
 					return;
 					
 				if (line.length() <= 0) {
-					saveNode(root, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
+					saveNode(parent, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
 					continue;
 				}
 				if (line.charAt(0) == ' ') {
@@ -112,7 +115,7 @@ public class ManifestStructureCreator extends StructureCreator {
 				}
 				
 				// save old buffer and start loading again
-				saveNode(root, doc, headerBuffer.toString(), headerStart);
+				saveNode(parent, doc, headerBuffer.toString(), headerStart);
 				
 				headerStart = lineStart;
 				headerBuffer.replace(0, headerBuffer.length(), line);
@@ -138,7 +141,7 @@ public class ManifestStructureCreator extends StructureCreator {
 	private void saveNode(DocumentRangeNode root, IDocument doc, String header, int start) {
 		if (header.length() > 0)
 			new ManifestNode(
-				root, 0, extractKey(header),
+				root, 1, extractKey(header),
 				doc, start, header.length());
 	}
 
