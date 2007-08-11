@@ -11,7 +11,12 @@
 package org.eclipse.pde.internal.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.widgets.Composite;
 
 public class PluginStructureViewer extends StructureDiffViewer {
@@ -19,6 +24,34 @@ public class PluginStructureViewer extends StructureDiffViewer {
 	public PluginStructureViewer(Composite parent, CompareConfiguration config) {
 		super(parent, config);
 		setStructureCreator(new PluginStructureCreator());
+		setComparator(new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (e1 instanceof DiffNode){
+					if (e2 instanceof DiffNode) {
+						ITypedElement e1Element = ((DiffNode)e1).getAncestor();
+						ITypedElement e2Element = ((DiffNode)e2).getAncestor();
+						if (!(e1Element instanceof DocumentRangeNode))
+							e1Element = ((DiffNode)e1).getLeft();
+						if (!(e2Element instanceof DocumentRangeNode))
+							e2Element = ((DiffNode)e2).getLeft();
+						if (e1Element instanceof DocumentRangeNode && e2Element instanceof DocumentRangeNode) {
+							float e1off = getRelativeOffset(((DocumentRangeNode)e1Element));
+							float e2off = getRelativeOffset(((DocumentRangeNode)e2Element));
+							return e1off - e2off < 0 ? -1 : 1;
+						}
+						return 0;
+					}
+					return -1;
+				}
+				return 1;
+			}
+			// we may be comparing the ancestor to the left (local) document
+			// since the lengths may be different, base the comparison on the relative position in the doc
+			private float getRelativeOffset(DocumentRangeNode node) {
+				float absoluteOffset = node.getRange().getOffset();
+				float documentLength = node.getDocument().getLength();
+				return absoluteOffset/documentLength;
+			}
+		});
 	}
-
 }
