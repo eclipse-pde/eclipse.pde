@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -56,7 +56,7 @@ public class PluginXMLTextHover extends PDETextHover {
 			if (sObj == null) {
 				return null;
 			} else if (range instanceof IPluginAttribute && sObj instanceof ISchemaElement) {
-				IDocumentAttribute da = (IDocumentAttribute)range;
+				IDocumentAttributeNode da = (IDocumentAttributeNode)range;
 				if (da.getNameOffset() <= offset && 
 						offset <= da.getNameOffset() + da.getNameLength() - 1)
 					// inside name
@@ -85,15 +85,15 @@ public class PluginXMLTextHover extends PDETextHover {
 				} catch (BadLocationException e) {
 				}
 			}
-		} else if (range instanceof IDocumentAttribute &&
-					((IDocumentAttribute)range).getEnclosingElement() instanceof IPluginExtensionPoint)
+		} else if (range instanceof IDocumentAttributeNode &&
+					((IDocumentAttributeNode)range).getEnclosingElement() instanceof IPluginExtensionPoint)
 				return getExtensionPointHoverInfo((IPluginObject)range, offset);
 		
 		return null;
 	}
 
 	private String getExtensionPointHoverInfo(IPluginObject object, int offset) {
-		IDocumentAttribute da = (IDocumentAttribute)object;
+		IDocumentAttributeNode da = (IDocumentAttributeNode)object;
 		if (da.getValueOffset() <= offset && 
 				offset <= da.getValueOffset() + da.getValueLength() - 1) {
 			String value = da.getAttributeValue();
@@ -106,8 +106,8 @@ public class PluginXMLTextHover extends PDETextHover {
 	
 	private ISchema getExtensionSchema(IPluginObject object) {
 		IPluginObject extension = object;
-		if (object instanceof IDocumentAttribute)
-			extension = (IPluginObject)((IDocumentAttribute)object).getEnclosingElement();
+		if (object instanceof IDocumentAttributeNode)
+			extension = (IPluginObject)((IDocumentAttributeNode)object).getEnclosingElement();
 		while (extension != null && !(extension instanceof IPluginExtension))
 			extension = extension.getParent();
 		
@@ -124,8 +124,8 @@ public class PluginXMLTextHover extends PDETextHover {
 			return schema.findElement(((IPluginElement)object).getName());
 		if (object instanceof IPluginExtension)
 			return schema.findElement("extension"); //$NON-NLS-1$
-		if (object instanceof IDocumentAttribute)
-			return schema.findElement(((IDocumentAttribute)object).getEnclosingElement().getXMLTagName());
+		if (object instanceof IDocumentAttributeNode)
+			return schema.findElement(((IDocumentAttributeNode)object).getEnclosingElement().getXMLTagName());
 		return null;
 	}
 	

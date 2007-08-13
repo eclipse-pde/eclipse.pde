@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
  * DocumentAttributeNode
  *
  */
-public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentAttribute {
+public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentAttributeNode {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,105 +45,105 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getAttributeName()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getAttributeName()
 	 */
 	public String getAttributeName() {
 		return fName;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getAttributeValue()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getAttributeValue()
 	 */
 	public String getAttributeValue() {
 		return fValue;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getEnclosingElement()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getEnclosingElement()
 	 */
 	public IDocumentNode getEnclosingElement() {
 		return fEnclosingElement;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getNameLength()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getNameLength()
 	 */
 	public int getNameLength() {
 		return fNameLength;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getNameOffset()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getNameOffset()
 	 */
 	public int getNameOffset() {
 		return fNameOffset;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getValueLength()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getValueLength()
 	 */
 	public int getValueLength() {
 		return fValueLength;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#getValueOffset()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getValueOffset()
 	 */
 	public int getValueOffset() {
 		return fValueOffset;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeName(java.lang.String)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
 	public void setAttributeName(String name) throws CoreException {
 		fName = name;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeValue(java.lang.String)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
 	public void setAttributeValue(String value) throws CoreException {
 		fValue = value;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setEnclosingElement(org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
 	public void setEnclosingElement(IDocumentNode node) {
 		fEnclosingElement = node;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setNameLength(int)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setNameLength(int)
 	 */
 	public void setNameLength(int length) {
 		fNameLength = length;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setNameOffset(int)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setNameOffset(int)
 	 */
 	public void setNameOffset(int offset) {
 		fNameOffset = offset;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setValueLength(int)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setValueLength(int)
 	 */
 	public void setValueLength(int length) {
 		fValueLength = length;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setValueOffset(int)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setValueOffset(int)
 	 */
 	public void setValueOffset(int offset) {
 		fValueOffset = offset;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#write()
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#write()
 	 */
 	public String write() {
 		return fName + 
@@ -153,7 +153,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#reconnect(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#reconnect(org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
 	public void reconnect(IDocumentNode parent) {
 		// Transient field:  Enclosing element

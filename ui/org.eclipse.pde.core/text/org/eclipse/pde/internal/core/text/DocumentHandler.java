@@ -78,7 +78,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 			for (int i = 0; i < attributes.getLength(); i++) {
 				String attName = attributes.getQName(i);
 				String attValue = attributes.getValue(i);
-				IDocumentAttribute attribute = getDocumentAttribute(attName, attValue, node);
+				IDocumentAttributeNode attribute = getDocumentAttribute(attName, attValue, node);
 				if (attribute != null) {
 					IRegion region = getAttributeRegion(attName, attValue, nodeOffset);
 					if (region == null) {
@@ -119,7 +119,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	
 	protected abstract IDocumentNode getDocumentNode(String name, IDocumentNode parent);
 	
-	protected abstract IDocumentAttribute getDocumentAttribute(String name, String value, IDocumentNode parent);
+	protected abstract IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentNode parent);
 	
 	protected abstract IDocumentTextNode getDocumentTextNode(String content, 
 			IDocumentNode parent);
@@ -313,7 +313,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		// when typing by hand, one element may overwrite a different existing one
 		// remove all attributes from previous element, if any.
 		if (fReconciling) {
-			IDocumentAttribute[] attrs = node.getNodeAttributes();
+			IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 			for (int i = 0; i < attrs.length; i++) {
 				if (attrs[i].getNameOffset() == -1)
 					node.removeDocumentAttribute(attrs[i]);

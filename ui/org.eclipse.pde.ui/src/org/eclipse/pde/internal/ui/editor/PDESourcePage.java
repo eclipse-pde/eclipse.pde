@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -658,7 +658,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
 					return node;
 				
-				IDocumentAttribute[] attrs = node.getNodeAttributes();
+				IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 				if (attrs != null)
 					for (int a = 0; a < attrs.length; a++)
 						if (attrs[a].getNameOffset() <= offset &&

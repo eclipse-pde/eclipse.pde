@@ -12,7 +12,7 @@
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 import org.xml.sax.Attributes;
@@ -135,7 +135,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 		for (int i = 0; i < attributes.getLength(); i++) {
 			String attName = attributes.getQName(i);
 			String attValue = attributes.getValue(i);
-			IDocumentAttribute attribute = getDocumentAttribute(attName, attValue, node);
+			IDocumentAttributeNode attribute = getDocumentAttribute(attName, attValue, node);
 			if (attribute != null) {
 				node.setXMLAttribute(attribute);
 			}

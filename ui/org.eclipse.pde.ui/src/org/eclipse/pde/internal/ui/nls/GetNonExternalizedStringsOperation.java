@@ -41,7 +41,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -132,7 +132,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		if (base instanceof IDocumentNode) {
 			// old style xml plugin
 			// check xml name declaration
-			IDocumentAttribute attr = ((IDocumentNode)base).getDocumentAttribute(IPluginObject.P_NAME);
+			IDocumentAttributeNode attr = ((IDocumentNode)base).getDocumentAttribute(IPluginObject.P_NAME);
 			if (attr != null && isNotTranslated(attr.getAttributeValue()))
 				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
 			

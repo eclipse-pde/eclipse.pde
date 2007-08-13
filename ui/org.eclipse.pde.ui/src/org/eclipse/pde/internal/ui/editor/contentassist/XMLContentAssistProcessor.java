@@ -44,7 +44,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -147,7 +147,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			// when this happens --> reset it and reconcile
 			// how can we tell if we are looking at the wrong one... ?
 			boolean resetAndReconcile = false;
-			if (!(fRange instanceof IDocumentAttribute))
+			if (!(fRange instanceof IDocumentAttributeNode))
 				// too easy to reconcile.. this is temporary
 				resetAndReconcile = true;
 				
@@ -162,8 +162,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 		if (caText != null) {
 			return computeCATextProposal(doc, offset, caText);
-		} else if (fRange instanceof IDocumentAttribute) {
-			return computeCompletionProposal((IDocumentAttribute)fRange, offset, doc);
+		} else if (fRange instanceof IDocumentAttributeNode) {
+			return computeCompletionProposal((IDocumentAttributeNode)fRange, offset, doc);
 		} else if (fRange instanceof IDocumentNode) {
 			return computeCompletionProposal((IDocumentNode)fRange, offset, doc);
 		} else if (fRange instanceof IDocumentTextNode) {
@@ -202,9 +202,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return;
 		// if we are rigth AT (cursor before) the range, we want to contribute
 		// to its parent
-		if (fRange instanceof IDocumentAttribute) {
-			if (((IDocumentAttribute)fRange).getNameOffset() == offset)
-				fRange = ((IDocumentAttribute)fRange).getEnclosingElement();
+		if (fRange instanceof IDocumentAttributeNode) {
+			if (((IDocumentAttributeNode)fRange).getNameOffset() == offset)
+				fRange = ((IDocumentAttributeNode)fRange).getEnclosingElement();
 		} else if (fRange instanceof IDocumentNode) {
 			if (((IDocumentNode)fRange).getOffset() == offset)
 				fRange = ((IDocumentNode)fRange).getParentNode();
@@ -231,7 +231,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 	
-	private ICompletionProposal[] computeCompletionProposal(IDocumentAttribute attr, int offset, IDocument doc) {
+	private ICompletionProposal[] computeCompletionProposal(IDocumentAttributeNode attr, int offset, IDocument doc) {
 		if (offset < attr.getValueOffset())
 			return null;
 		int[] offests = new int[] {offset, offset, offset};
@@ -307,7 +307,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 * @return
 	 */
 	private ICompletionProposal[] computeExtPointAttrProposals(
-			IDocumentAttribute attribute, int offset, String currentAttributeValue) {
+			IDocumentAttributeNode attribute, int offset, String currentAttributeValue) {
 		// Get all the applicable extension points
 		ArrayList allExtensionPoints = 
 			getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
@@ -411,7 +411,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 	}
 	
-	private ICompletionProposal[] computeAttributeProposal(IDocumentAttribute attr, int offset, String currValue, ArrayList validValues) {
+	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, ArrayList validValues) {
 		if (validValues == null)
 			return null;
 		ArrayList list = new ArrayList();
@@ -609,7 +609,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 	
 	private ICompletionProposal[] computeBrokenModelAttributeContentProposal(IDocumentNode parent, int offset, String element, String attr, String filter) {
-		// TODO use computeCompletionProposal(IDocumentAttribute attr, int offset) if possible
+		// TODO use computeCompletionProposal(IDocumentAttributeNode attr, int offset) if possible
 		// or refactor above to be used here
 		// CURRENTLY: attribute completion only works in non-broken models
 		return null;
@@ -682,7 +682,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAttributeProposals(ISchemaObject[] sAttrs, IDocumentNode node, int offset, String filter, String parentName) {
 		if (sAttrs == null || sAttrs.length == 0)
 			return null;
-		IDocumentAttribute[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttribute[0];
+		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];
 		
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sAttrs.length; i++) {

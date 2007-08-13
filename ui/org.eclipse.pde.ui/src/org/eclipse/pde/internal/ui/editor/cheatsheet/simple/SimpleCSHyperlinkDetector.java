@@ -17,7 +17,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
@@ -39,9 +39,9 @@ public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector#detectAttributeHyperlink(org.eclipse.pde.internal.core.text.IDocumentAttribute)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector#detectAttributeHyperlink(org.eclipse.pde.internal.core.text.IDocumentAttributeNode)
 	 */
-	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attribute) {
+	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attribute) {
 		// Get the attribute value
 		String attributeValue = attribute.getAttributeValue();
 		// Ensure the value is defined

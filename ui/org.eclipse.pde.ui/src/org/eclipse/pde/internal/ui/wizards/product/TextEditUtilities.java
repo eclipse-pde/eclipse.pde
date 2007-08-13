@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.text.edits.InsertEdit;
@@ -39,7 +39,7 @@ public class TextEditUtilities {
 		return (op != null) ? op : insertAsFirstChild(node, doc);
 	}
 	
-	public static TextEdit addAttributeOperation(IDocumentAttribute attr, String newValue, IDocument doc) {
+	public static TextEdit addAttributeOperation(IDocumentAttributeNode attr, String newValue, IDocument doc) {
 		int offset = attr.getValueOffset();
 		if (offset > -1)
 			return new ReplaceEdit(offset, attr.getValueLength(), PDEXMLHelper.getWritableString(newValue));

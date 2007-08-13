@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.core.text;
  */
 public interface IDocumentNodeFactory {
 
-	public IDocumentAttribute createAttribute(String name, String value, IDocumentNode enclosingElement);
+	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentNode enclosingElement);
 
 	public IDocumentNode createDocumentNode(String name, IDocumentNode parent);
 	

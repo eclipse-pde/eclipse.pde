@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrary {
@@ -208,7 +208,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	public String writeShallow(boolean terminate) {
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
-		IDocumentAttribute[] attrs = getNodeAttributes();
+		IDocumentAttributeNode[] attrs = getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			appendAttribute(buffer, attrs[i].getAttributeName());
 		}

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
@@ -69,7 +69,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 					case IModelChangedEvent.CHANGE :
 						if (object instanceof IDocumentNode) {
 							IDocumentNode node = (IDocumentNode) object;
-							IDocumentAttribute attr = node.getDocumentAttribute(event.getChangedProperty());
+							IDocumentAttributeNode attr = node.getDocumentAttribute(event.getChangedProperty());
 							if (attr != null) {
 								addAttributeOperation(attr, ops, event);
 							} else if (event.getOldValue() instanceof IDocumentNode && event.getNewValue() instanceof IDocumentNode){
@@ -225,7 +225,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new Region(offset - i, length + i);		
 	}
 
-	private void addAttributeOperation(IDocumentAttribute attr, ArrayList ops, IModelChangedEvent event) {
+	private void addAttributeOperation(IDocumentAttributeNode attr, ArrayList ops, IModelChangedEvent event) {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
@@ -483,7 +483,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			if (object instanceof IDocumentNode) {
 				IDocumentNode node = (IDocumentNode)object;
 				if (node.getOffset() > -1) {
-					IDocumentAttribute[] attrs = node.getNodeAttributes();
+					IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 					for (int i = 0; i < attrs.length; i++) {
 						Object op = fOperationTable.remove(attrs[i]);
 						if (op != null)

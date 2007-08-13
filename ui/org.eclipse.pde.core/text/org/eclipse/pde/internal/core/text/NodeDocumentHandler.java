@@ -47,8 +47,8 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentAttribute getDocumentAttribute(String name, String value, IDocumentNode parent) {
-		IDocumentAttribute attr = parent.getDocumentAttribute(name);
+	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentNode parent) {
+		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
 				attr = fFactory.createAttribute(name, value, parent);				
@@ -94,7 +94,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		if (node == null)
 			return fFactory.createDocumentNode(name, parent);
 		
-		IDocumentAttribute[] attrs = node.getNodeAttributes();
+		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			attrs[i].setNameOffset(-1);
 			attrs[i].setNameLength(-1);

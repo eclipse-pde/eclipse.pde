@@ -57,7 +57,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
@@ -379,7 +379,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		if (textValue != null && !list.contains(textValue))
 			list.add(textValue);
 		
-		IDocumentAttribute[] attributes = parent.getNodeAttributes();
+		IDocumentAttributeNode[] attributes = parent.getNodeAttributes();
 		for (int j = 0; j < attributes.length; j++) {
 			String attrValue = getTranslatedKey(attributes[j].getAttributeValue());
 			if (attrValue != null && !list.contains(attrValue))

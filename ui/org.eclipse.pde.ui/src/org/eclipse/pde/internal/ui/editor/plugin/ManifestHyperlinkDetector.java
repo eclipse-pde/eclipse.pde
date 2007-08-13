@@ -21,7 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
@@ -41,7 +41,7 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 		super(page);
 	}
 
-	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
+	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
 			return null;

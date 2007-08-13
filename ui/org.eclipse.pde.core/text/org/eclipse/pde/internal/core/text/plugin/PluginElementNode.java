@@ -20,7 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
@@ -123,7 +123,7 @@ public class PluginElementNode extends PluginParentNode implements
 		String sep = getLineDelimiter();
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
-		IDocumentAttribute[] attrs = getNodeAttributes();
+		IDocumentAttributeNode[] attrs = getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			if (attrs[i].getAttributeValue().length() > 0)
 				buffer.append(sep + getIndent() + "      " + attrs[i].write()); //$NON-NLS-1$

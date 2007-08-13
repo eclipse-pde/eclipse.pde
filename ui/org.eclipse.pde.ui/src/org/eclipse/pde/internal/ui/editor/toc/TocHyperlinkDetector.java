@@ -5,7 +5,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -22,7 +22,7 @@ public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 		super(page);
 	}
 
-	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
+	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
 			return null;

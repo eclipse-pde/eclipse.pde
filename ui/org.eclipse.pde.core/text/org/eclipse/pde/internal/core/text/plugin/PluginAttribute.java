@@ -15,11 +15,11 @@ import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class PluginAttribute extends PluginObjectNode implements
-		IPluginAttribute, IDocumentAttribute {
+		IPluginAttribute, IDocumentAttributeNode {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -157,14 +157,14 @@ public class PluginAttribute extends PluginObjectNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeName(java.lang.String)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
 	public void setAttributeName(String name) throws CoreException {
 		setName(name);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttribute#setAttributeValue(java.lang.String)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);

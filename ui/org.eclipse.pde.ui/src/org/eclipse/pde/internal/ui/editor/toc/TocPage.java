@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.toc.Toc;
@@ -202,8 +202,8 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 				}
 
 				IDocumentRange range = ((TocSourcePage)page).getRangeElement(offset, true);
-				if (range instanceof IDocumentAttribute)
-				{	range = ((IDocumentAttribute)range).getEnclosingElement();
+				if (range instanceof IDocumentAttributeNode)
+				{	range = ((IDocumentAttributeNode)range).getEnclosingElement();
 				}
 				else if (range instanceof IDocumentTextNode)
 				{	range = ((IDocumentTextNode)range).getEnclosingElement();

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.text.DocumentHandler;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.xml.sax.SAXException;
@@ -101,7 +101,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 		if (node == null)
 			return fFactory.createDocumentNode(name, parent);
 		
-		IDocumentAttribute[] attrs = node.getNodeAttributes();
+		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			attrs[i].setNameOffset(-1);
 			attrs[i].setNameLength(-1);
@@ -128,8 +128,8 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentAttribute getDocumentAttribute(String name, String value, IDocumentNode parent) {
-		IDocumentAttribute attr = parent.getDocumentAttribute(name);
+	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentNode parent) {
+		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
 				attr = fFactory.createAttribute(name, value, parent);				

@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -43,8 +43,8 @@ public abstract class XMLUtil {
 	 */
 	public static IPluginObject getTopLevelParent(IDocumentRange range) {
 		IDocumentNode node = null;
-		if (range instanceof IDocumentAttribute)
-			node = ((IDocumentAttribute)range).getEnclosingElement();
+		if (range instanceof IDocumentAttributeNode)
+			node = ((IDocumentAttributeNode)range).getEnclosingElement();
 		else if (range instanceof IDocumentTextNode)
 			node = ((IDocumentTextNode)range).getEnclosingElement();
 		else if (range instanceof IPluginElement)
@@ -66,10 +66,10 @@ public abstract class XMLUtil {
 	}
 	
 	public static boolean withinRange(IDocumentRange range, int offset) {
-		if (range instanceof IDocumentAttribute)
+		if (range instanceof IDocumentAttributeNode)
 			return withinRange(
-					((IDocumentAttribute)range).getValueOffset(),
-					((IDocumentAttribute)range).getValueLength(),
+					((IDocumentAttributeNode)range).getValueOffset(),
+					((IDocumentAttributeNode)range).getValueLength(),
 					offset);
 		if (range instanceof IDocumentNode)
 			return withinRange(
@@ -106,12 +106,12 @@ public abstract class XMLUtil {
 	}
 	
 	/**
-	 * Get the ISchemaAttribute corresponding to this IDocumentAttribute
+	 * Get the ISchemaAttribute corresponding to this IDocumentAttributeNode
 	 * @param attr
 	 * @param extensionPoint the extension point of the schema, if <code>null</code> it will be deduced
 	 * @return the ISchemaAttribute for <code>attr</code>
 	 */
-	public static ISchemaAttribute getSchemaAttribute(IDocumentAttribute attr, String extensionPoint) {
+	public static ISchemaAttribute getSchemaAttribute(IDocumentAttributeNode attr, String extensionPoint) {
 		ISchemaElement ele = getSchemaElement(attr.getEnclosingElement(), extensionPoint);
 		if (ele == null)
 			return null;

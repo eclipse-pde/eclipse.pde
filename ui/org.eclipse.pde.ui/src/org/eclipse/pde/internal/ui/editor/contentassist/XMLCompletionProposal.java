@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
@@ -160,8 +160,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param documentInsertBuffer
 	 */
 	private void applyAttributeValue(IDocument document, StringBuffer documentInsertBuffer) {
-		if (fRange instanceof IDocumentAttribute) {
-			fOffset = ((IDocumentAttribute)fRange).getValueOffset();
+		if (fRange instanceof IDocumentAttributeNode) {
+			fOffset = ((IDocumentAttributeNode)fRange).getValueOffset();
 			String value = fSchemaObject.getName();
 			try {
 				// add indentation
@@ -309,9 +309,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			if (fSchemaObject instanceof VirtualSchemaObject) {
 				switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
 				case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-					if (!(fRange instanceof IDocumentAttribute))
+					if (!(fRange instanceof IDocumentAttributeNode))
 						break;
-					int offset = ((IDocumentAttribute)fRange).getEnclosingElement().getOffset();
+					int offset = ((IDocumentAttributeNode)fRange).getEnclosingElement().getOffset();
 					IPluginExtension[] extensions = base.getExtensions();
 					for (int i = 0; i < extensions.length; i++) {
 						if (((IDocumentNode)extensions[i]).getOffset() == offset) {

@@ -25,7 +25,7 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
@@ -222,7 +222,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return null;
 	}
 
-	public IDocumentAttribute getDocumentAttribute(String name) {
+	public IDocumentAttributeNode getDocumentAttribute(String name) {
 		return null;
 	}
 
@@ -234,7 +234,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return 0;
 	}
 
-	public IDocumentAttribute[] getNodeAttributes() {
+	public IDocumentAttributeNode[] getNodeAttributes() {
 		return null;
 	}
 
@@ -289,7 +289,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return null;
 	}
 
-	public void removeDocumentAttribute(IDocumentAttribute attr) {
+	public void removeDocumentAttribute(IDocumentAttributeNode attr) {
 	}
 
 	public void removeTextNode() {
@@ -313,7 +313,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	public void setPreviousSibling(IDocumentNode sibling) {
 	}
 
-	public void setXMLAttribute(IDocumentAttribute attribute) {
+	public void setXMLAttribute(IDocumentAttributeNode attribute) {
 	}
 
 	public boolean setXMLAttribute(String name, String value) {

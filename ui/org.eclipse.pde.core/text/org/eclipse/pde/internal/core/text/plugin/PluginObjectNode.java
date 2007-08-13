@@ -24,7 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -229,7 +229,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	}
 	
 	protected void appendAttribute(StringBuffer buffer, String attrName, String defaultValue) {
-		IDocumentAttribute attr = getDocumentAttribute(attrName);
+		IDocumentAttributeNode attr = getDocumentAttribute(attrName);
 		if (attr != null) {
 			String value = attr.getAttributeValue();
 			if (value != null && value.trim().length() > 0 && !value.equals(defaultValue))

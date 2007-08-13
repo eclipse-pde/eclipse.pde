@@ -16,7 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -157,8 +157,8 @@ public class ExtensionsPage extends PDEFormPage {
 				return;
 			
 			IDocumentRange range = ((ManifestSourcePage)page).getRangeElement(offset, true);
-			if (range instanceof IDocumentAttribute)
-				range = ((IDocumentAttribute)range).getEnclosingElement();
+			if (range instanceof IDocumentAttributeNode)
+				range = ((IDocumentAttributeNode)range).getEnclosingElement();
 			else if (range instanceof IDocumentTextNode)
 				range = ((IDocumentTextNode)range).getEnclosingElement();
 			if ((range instanceof IPluginExtension) || 

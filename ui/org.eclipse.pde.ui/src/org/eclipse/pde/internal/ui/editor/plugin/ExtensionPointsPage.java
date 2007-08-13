@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -105,8 +105,8 @@ public class ExtensionPointsPage extends PDEFormPage {
 				return;
 			
 			IDocumentRange range = ((ManifestSourcePage)page).getRangeElement(offset, true);
-			if (range instanceof IDocumentAttribute)
-				range = ((IDocumentAttribute)range).getEnclosingElement();
+			if (range instanceof IDocumentAttributeNode)
+				range = ((IDocumentAttributeNode)range).getEnclosingElement();
 			if (range instanceof IPluginExtensionPoint)
 				fExtensionPointsSection.selectExtensionPoint(new StructuredSelection(range));
 		}

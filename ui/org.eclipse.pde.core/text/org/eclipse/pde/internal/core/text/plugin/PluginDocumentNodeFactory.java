@@ -20,7 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -64,7 +64,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		return node;
 	}
 	
-	public IDocumentAttribute createAttribute(String name, String value, IDocumentNode enclosingElement) {
+	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentNode enclosingElement) {
 		PluginAttribute attribute = new PluginAttribute();
 		try {
 			attribute.setName(name);

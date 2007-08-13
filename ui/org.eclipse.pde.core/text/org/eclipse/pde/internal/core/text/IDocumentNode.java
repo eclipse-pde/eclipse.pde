@@ -49,16 +49,16 @@ public interface IDocumentNode extends Serializable, IDocumentRange, IDocumentXM
 	void setXMLTagName(String tag);	
 	String getXMLTagName();
 	
-	void setXMLAttribute(IDocumentAttribute attribute);	
+	void setXMLAttribute(IDocumentAttributeNode attribute);	
 	
 	// Not used by text edit operations
 	public boolean setXMLAttribute(String name, String value);	
 	// Not used by text edit operations
 	String getXMLAttributeValue(String name);
 	
-	IDocumentAttribute getDocumentAttribute(String name);
-	IDocumentAttribute[] getNodeAttributes();
-	void removeDocumentAttribute(IDocumentAttribute attr);
+	IDocumentAttributeNode getDocumentAttribute(String name);
+	IDocumentAttributeNode[] getNodeAttributes();
+	void removeDocumentAttribute(IDocumentAttributeNode attr);
 	
 	boolean isErrorNode();	
 	void setIsErrorNode(boolean isErrorNode);

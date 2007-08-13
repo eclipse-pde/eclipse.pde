@@ -18,7 +18,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class PluginExtensionNode extends PluginParentNode implements
@@ -111,7 +111,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		String sep = getLineDelimiter();
 		String attrIndent = "      "; //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer("<extension"); //$NON-NLS-1$
-		IDocumentAttribute attr = getDocumentAttribute(P_ID);
+		IDocumentAttributeNode attr = getDocumentAttribute(P_ID);
 		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		attr = getDocumentAttribute(P_NAME);

@@ -19,7 +19,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
@@ -115,12 +115,12 @@ public class ExtensionAttributePointDectector implements MouseListener,
 			return;
 		}
 		// Ensure we have a document attribute 
-		if ((element instanceof IDocumentAttribute) == false) {
+		if ((element instanceof IDocumentAttributeNode) == false) {
 			return;
 		}
 		// Ignore IDocumentNode
 		// Ignore IDocumentTextNode
-		IDocumentAttribute documentAttribute = ((IDocumentAttribute)element);
+		IDocumentAttributeNode documentAttribute = ((IDocumentAttributeNode)element);
 		String attributeValue = documentAttribute.getAttributeValue();
 		// Ensure the attribute value is defined
 		if ((attributeValue == null) || 

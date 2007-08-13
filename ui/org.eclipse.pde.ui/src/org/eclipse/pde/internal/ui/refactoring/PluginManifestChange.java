@@ -38,7 +38,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
@@ -75,7 +75,7 @@ public class PluginManifestChange {
 				for (int i = 0; i < affectedElements.length; i++) {
 					if (model instanceof PluginModel && affectedElements[i] instanceof IJavaElement) {
 						PluginNode plugin = (PluginNode)model.getPluginBase();
-						IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
+						IDocumentAttributeNode attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
 						TextEdit edit = createTextEdit(attr, (IJavaElement)affectedElements[i], newNames[i]);
 						if (edit != null)
 							multiEdit.addChild(edit);					
@@ -127,12 +127,12 @@ public class PluginManifestChange {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null) {
 						if (element instanceof IJavaElement && attInfo.getKind() == IMetaAttribute.JAVA) {
-							IDocumentAttribute docAttr = (IDocumentAttribute)attr;
+							IDocumentAttributeNode docAttr = (IDocumentAttributeNode)attr;
 							TextEdit edit = createTextEdit(docAttr, (IJavaElement)element, newName);
 							if (edit != null)
 								multi.addChild(edit);
 						} else if (element instanceof IResource && attInfo.getKind() == IMetaAttribute.RESOURCE) {
-							IDocumentAttribute docAttr = (IDocumentAttribute)attr;
+							IDocumentAttributeNode docAttr = (IDocumentAttributeNode)attr;
 							TextEdit edit = createTextEdit(docAttr, (IResource)element, newName);
 							if (edit != null)
 								multi.addChild(edit);
@@ -144,7 +144,7 @@ public class PluginManifestChange {
 		}
 	}
 	
-	private static TextEdit createTextEdit(IDocumentAttribute attr, IJavaElement element, String newName) {
+	private static TextEdit createTextEdit(IDocumentAttributeNode attr, IJavaElement element, String newName) {
 		if (attr == null)
 			return null;
 		
@@ -160,7 +160,7 @@ public class PluginManifestChange {
 		return null;
 	}
 	
-	private static TextEdit createTextEdit(IDocumentAttribute attr, IResource resource, String newName) {
+	private static TextEdit createTextEdit(IDocumentAttributeNode attr, IResource resource, String newName) {
 		if (attr != null) {
 			String oldName = resource.getProjectRelativePath().toString();
 			String value = attr.getAttributeValue();

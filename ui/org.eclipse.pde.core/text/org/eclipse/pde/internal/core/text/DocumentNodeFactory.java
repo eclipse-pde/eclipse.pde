@@ -30,10 +30,10 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
 	 */
-	public IDocumentAttribute createAttribute(String name, String value,
+	public IDocumentAttributeNode createAttribute(String name, String value,
 			IDocumentNode enclosingElement) {
 
-		IDocumentAttribute attribute = new DocumentAttributeNode();
+		IDocumentAttributeNode attribute = new DocumentAttributeNode();
 		try {
 			attribute.setAttributeName(name);
 			attribute.setAttributeValue(value);

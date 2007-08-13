@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
@@ -123,7 +123,7 @@ public class SimpleCSModelFactory implements ISimpleCSModelFactory {
 	}
 
 	
-	public IDocumentAttribute createAttribute(String name, String value,
+	public IDocumentAttributeNode createAttribute(String name, String value,
 			IDocumentNode enclosingElement) {
 		// TODO: MP: TEO: LOW: Not used - Delete class when done
 		return null;

@@ -49,7 +49,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -169,7 +169,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null 
 							&& attInfo.getKind() == IMetaAttribute.JAVA
-							&& attr instanceof IDocumentAttribute)
+							&& attr instanceof IDocumentAttributeNode)
 						checkMatch(attr, file);
 				}
 			}
@@ -190,7 +190,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 		if (matcher.matches()) {
 			String group = matcher.group(0);
-			int offset = ((IDocumentAttribute)attr).getValueOffset() + value.indexOf(group);
+			int offset = ((IDocumentAttributeNode)attr).getValueOffset() + value.indexOf(group);
 			int attOffset = attr.getValue().indexOf(value);
 			if (attOffset != -1)
 				offset += attOffset;

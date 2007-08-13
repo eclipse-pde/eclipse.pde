@@ -171,10 +171,10 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	protected String writeAttributes() {
 		StringBuffer buffer = new StringBuffer();
-		IDocumentAttribute[] attributes = getNodeAttributes();
+		IDocumentAttributeNode[] attributes = getNodeAttributes();
 		// Write all attributes
 		for (int i = 0; i < attributes.length; i++) {
-			IDocumentAttribute attribute = attributes[i];
+			IDocumentAttributeNode attribute = attributes[i];
 			if (isDefined(attribute)) {
 				buffer.append(getAttributeIndent() + attribute.write());
 			}			
@@ -340,7 +340,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
 	 */
-	public void setXMLAttribute(IDocumentAttribute attribute) {
+	public void setXMLAttribute(IDocumentAttributeNode attribute) {
 		// Used by text edit operations
 		fAttributes.put(attribute.getAttributeName(), attribute);
 	}
@@ -350,7 +350,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Not used by text edit operations
-		IDocumentAttribute attribute  = (IDocumentAttribute)fAttributes.get(name);
+		IDocumentAttributeNode attribute  = (IDocumentAttributeNode)fAttributes.get(name);
 		if (attribute == null) {
 			return null;
 		}
@@ -376,9 +376,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getDocumentAttribute(java.lang.String)
 	 */
-	public IDocumentAttribute getDocumentAttribute(String name) {
+	public IDocumentAttributeNode getDocumentAttribute(String name) {
 		// Used by text edit operations
-		return (IDocumentAttribute)fAttributes.get(name);
+		return (IDocumentAttributeNode)fAttributes.get(name);
 	}
 	
 	/* (non-Javadoc)
@@ -400,13 +400,13 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getAttributes()
 	 */
-	public IDocumentAttribute[] getNodeAttributes() {
+	public IDocumentAttributeNode[] getNodeAttributes() {
 		// Used by text edit operations
 		ArrayList list = new ArrayList();
 		Iterator iter = fAttributes.values().iterator();
 		while (iter.hasNext())
 			list.add(iter.next());
-		return (IDocumentAttribute[])list.toArray(new IDocumentAttribute[list.size()]);
+		return (IDocumentAttributeNode[])list.toArray(new IDocumentAttributeNode[list.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -484,7 +484,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeDocumentAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
 	 */
-	public void removeDocumentAttribute(IDocumentAttribute attr) {
+	public void removeDocumentAttribute(IDocumentAttributeNode attr) {
 		// Used by text edit operations
 		fAttributes.remove(attr.getAttributeName());
 	}
@@ -522,7 +522,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Fill in appropriate transient field values for all attributes
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
-			IDocumentAttribute attribute = (IDocumentAttribute)fAttributes.get(key);
+			IDocumentAttributeNode attribute = (IDocumentAttributeNode)fAttributes.get(key);
 			attribute.reconnect(this);
 		}
 	}
@@ -638,7 +638,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 * @param attribute
 	 * @return
 	 */
-	protected boolean isDefined(IDocumentAttribute attribute) {
+	protected boolean isDefined(IDocumentAttributeNode attribute) {
 		if (attribute == null) {
 			return false;
 		} else if (attribute.getAttributeValue().trim().length() <= 0) {
@@ -684,9 +684,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	public int getNodeAttributesCount() {
 		// Returns the number of attributes with defined values
 		int count = 0; 
-		IDocumentAttribute[] attributes = getNodeAttributes();
+		IDocumentAttributeNode[] attributes = getNodeAttributes();
 		for (int i = 0; i < attributes.length; i++) {
-			IDocumentAttribute attribute = attributes[i];
+			IDocumentAttributeNode attribute = attributes[i];
 			if (isDefined(attribute)) {
 				count++;
 			}
@@ -726,8 +726,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			return false;
 		}
 		// Check to see if the attribute already exists
-		IDocumentAttribute attribute = 
-			(IDocumentAttribute)getNodeAttributesMap().get(name);
+		IDocumentAttributeNode attribute = 
+			(IDocumentAttributeNode)getNodeAttributesMap().get(name);
 		try {
 			if (attribute == null) {
 				// Attribute does not exist
@@ -804,7 +804,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/**
 	 * @return
 	 */
-	protected IDocumentAttribute createDocumentAttributeNode() {
+	protected IDocumentAttributeNode createDocumentAttributeNode() {
 		return new DocumentAttributeNode();
 	}
 	

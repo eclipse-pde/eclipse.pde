@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -131,9 +131,9 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 */
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Adapt the range to node that is viewable in the outline view
-		if (range instanceof IDocumentAttribute) {
+		if (range instanceof IDocumentAttributeNode) {
 			// Attribute
-			return adaptRange(((IDocumentAttribute)range).getEnclosingElement());
+			return adaptRange(((IDocumentAttributeNode)range).getEnclosingElement());
 		} else if (range instanceof IDocumentTextNode) {
 			// Content
 			return adaptRange(((IDocumentTextNode)range).getEnclosingElement());

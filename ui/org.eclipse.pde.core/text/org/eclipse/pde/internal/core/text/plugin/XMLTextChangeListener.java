@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
@@ -225,7 +225,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		return new Region(offset - i, length + i);		
 	}
 
-	protected void addAttributeOperation(IDocumentAttribute attr, IModelChangedEvent event) {
+	protected void addAttributeOperation(IDocumentAttributeNode attr, IModelChangedEvent event) {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
@@ -454,7 +454,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 					insertNode(node);
 					break;
 				case IModelChangedEvent.CHANGE:
-					IDocumentAttribute attr = node.getDocumentAttribute(event.getChangedProperty());
+					IDocumentAttributeNode attr = node.getDocumentAttribute(event.getChangedProperty());
 					if (attr != null) {
 						addAttributeOperation(attr, event);
 					} else {

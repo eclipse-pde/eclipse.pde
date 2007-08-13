@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
@@ -55,7 +55,7 @@ public class ModelChangeElement {
 			PluginExtensionPointNode extP = (PluginExtensionPointNode)incoming;
 			fValue = extP.getName();
 			generateValidKey("extension-point", "name"); //$NON-NLS-1$ //$NON-NLS-2$
-			IDocumentAttribute attr = extP.getDocumentAttribute("name"); //$NON-NLS-1$
+			IDocumentAttributeNode attr = extP.getDocumentAttribute("name"); //$NON-NLS-1$
 			fOffset = attr.getValueOffset();
 			fLength = attr.getValueLength();
 		} else if (incoming instanceof ManifestHeader) {
