@@ -11,11 +11,13 @@
 
 package org.eclipse.pde.internal.core.text.plugin;
 
+import org.eclipse.pde.internal.core.text.DocumentElementNode;
+
 /**
  * DocumentGenericNode
  *
  */
-public class DocumentGenericNode extends PluginDocumentNode {
+public class DocumentGenericNode extends DocumentElementNode {
 
 	private static final long serialVersionUID = 1L;
 

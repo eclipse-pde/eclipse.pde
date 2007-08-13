@@ -28,9 +28,10 @@ import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.text.DocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-public class PluginObjectNode extends PluginDocumentNode implements
+public class PluginObjectNode extends DocumentElementNode implements
 		IPluginObject, IWritableDelimiter {
 
 	private transient boolean fInTheModel;

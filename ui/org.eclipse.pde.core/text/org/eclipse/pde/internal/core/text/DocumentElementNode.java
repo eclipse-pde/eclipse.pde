@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.text.plugin;
+package org.eclipse.pde.internal.core.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,15 +17,9 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.DocumentTextNode;
-import org.eclipse.pde.internal.core.text.DocumentXMLNode;
-import org.eclipse.pde.internal.core.text.IDocumentAttribute;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
-public abstract class PluginDocumentNode extends DocumentXMLNode implements IDocumentNode {
+public abstract class DocumentElementNode extends DocumentXMLNode implements IDocumentNode {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -47,14 +41,12 @@ public abstract class PluginDocumentNode extends DocumentXMLNode implements IDoc
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
-	// TODO: MP: TEO: LOW: Rename to DocumentElementNode
-	// TODO: MP: TEO: LOW: Move to core.text package
 	// TODO: MP: TEO: LOW: Regenerate comments
 	
 	/**
 	 * 
 	 */
-	public PluginDocumentNode() {
+	public DocumentElementNode() {
 		fParent = null;
 		fIsErrorNode = false;
 		fLength = -1;

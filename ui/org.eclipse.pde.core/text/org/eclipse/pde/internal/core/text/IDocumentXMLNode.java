@@ -23,8 +23,6 @@ public interface IDocumentXMLNode {
 
 	public static final int F_TYPE_TEXT = 2;
 	
-	// TODO: MP: TEO: LOW: Change name to IDocumentNode ?
-	
 	public int getXMLType();
 	
 }

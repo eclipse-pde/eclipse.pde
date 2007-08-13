@@ -26,13 +26,12 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode;
 
 /**
  * DocumentObject
  *
  */
-public abstract class DocumentObject extends PluginDocumentNode implements
+public abstract class DocumentObject extends DocumentElementNode implements
 		IDocumentObject {
 	
 	// TODO: MP: TEO: LOW: Integrate with plugin model?
