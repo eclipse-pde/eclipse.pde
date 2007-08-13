@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.friese@gentleware.com> - bug 199431
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.runtime.CoreException;
@@ -19,6 +20,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -29,7 +32,11 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -37,6 +44,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.osgi.framework.Constants;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
 
 public abstract class GeneralInfoSection extends PDESection {
 	private static String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
@@ -57,7 +66,9 @@ public abstract class GeneralInfoSection extends PDESection {
 
 	private TextValidator fPlatformEntryValidator;
 	
-	private IPluginModelBase fModel; 
+	private IPluginModelBase fModel;
+
+	protected Button fSingleton; 
 	
 	
 	public GeneralInfoSection(PDEFormPage page, Composite parent) {
@@ -350,6 +361,11 @@ public abstract class GeneralInfoSection extends PDESection {
 				fPlatformFilterEntry.setValue(bundle.getHeader(PLATFORM_FILTER), true);
 		}
 		getPage().getPDEEditor().updateTitle();
+		if (fSingleton != null) {
+			IManifestHeader header = getSingletonHeader();
+			fSingleton.setSelection(header instanceof BundleSymbolicNameHeader 
+					&& ((BundleSymbolicNameHeader)header).isSingleton());
+		}
 		super.refresh();
 	}
 	
@@ -383,6 +399,31 @@ public abstract class GeneralInfoSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return (d.getFocusControl() instanceof Text);
+	}
+	
+
+	IManifestHeader getSingletonHeader() {
+		IBundle bundle = getBundle();
+		if (bundle instanceof Bundle) {
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+			return header;
+		}
+		return null;
+	}
+	
+	protected void createSingleton(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
+		fSingleton = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_singleton, SWT.CHECK);
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		fSingleton.setLayoutData(td);
+		fSingleton.setEnabled(isEditable());
+		fSingleton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IManifestHeader header = getSingletonHeader();
+				if (header instanceof BundleSymbolicNameHeader)
+					((BundleSymbolicNameHeader)header).setSingleton(fSingleton.getSelection());
+			}
+		});
 	}
 	
 }

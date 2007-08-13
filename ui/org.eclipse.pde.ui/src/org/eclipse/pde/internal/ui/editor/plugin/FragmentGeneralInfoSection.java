@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.friese@gentleware.com> - bug 199431
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -74,6 +75,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		createPluginVersionEntry(parent, toolkit, actionBars);
 		if (!isBundle())
 			createMatchCombo(parent, toolkit, actionBars);
+		createSingleton(parent, toolkit, actionBars);
 	}
 	
 	private void createPluginIdEntry(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
