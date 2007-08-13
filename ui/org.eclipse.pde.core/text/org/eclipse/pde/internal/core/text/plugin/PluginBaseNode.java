@@ -21,7 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 		
@@ -31,7 +31,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("runtime", true); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("runtime", true); //$NON-NLS-1$
 		if (library instanceof PluginLibraryNode) {
 			PluginLibraryNode node = (PluginLibraryNode)library;
 			node.setModel(getModel());
@@ -43,7 +43,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		if (pluginImport instanceof PluginImportNode) {
 			PluginImportNode node = (PluginImportNode)pluginImport;
 			parent.addChildNode(node);
@@ -52,7 +52,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	}
 	
 	public void add(IPluginImport[] pluginImports) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		for (int i = 0; i < pluginImports.length; i++) {
 			if (pluginImports[i] != null && pluginImports[i] instanceof PluginImportNode) {
 				PluginImportNode node = (PluginImportNode)pluginImports[i];
@@ -65,19 +65,19 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
-			parent.removeChildNode((IDocumentNode)pluginImport);
+			parent.removeChildNode((IDocumentElementNode)pluginImport);
 			pluginImport.setInTheModel(false);
 			fireStructureChanged(pluginImport, IModelChangedEvent.REMOVE);
 		}	
 	}
 	
 	public void remove(IPluginImport[] pluginImports) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
 			for (int i = 0; i < pluginImports.length; i++) {
-				parent.removeChildNode((IDocumentNode)pluginImports[i]);
+				parent.removeChildNode((IDocumentElementNode)pluginImports[i]);
 				pluginImports[i].setInTheModel(false);
 			}
 			fireStructureChanged(pluginImports, IModelChangedEvent.REMOVE);
@@ -89,9 +89,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginLibrary[] getLibraries() {
 		ArrayList result = new ArrayList();
-		IDocumentNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
+		IDocumentElementNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (requiresNode != null) {
-			IDocumentNode[] children = requiresNode.getChildNodes();
+			IDocumentElementNode[] children = requiresNode.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof IPluginLibrary)
 					result.add(children[i]);
@@ -101,9 +101,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		return (IPluginLibrary[]) result.toArray(new IPluginLibrary[result.size()]);
 	}
 	
-	private IDocumentNode getEnclosingElement(String elementName, boolean create) {
+	private IDocumentElementNode getEnclosingElement(String elementName, boolean create) {
 		PluginElementNode element = null;
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginElement) {
 				if (((PluginElementNode)children[i]).getXMLTagName().equals(elementName)) {
@@ -136,9 +136,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginImport[] getImports() {
 		ArrayList result = new ArrayList();
-		IDocumentNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
+		IDocumentElementNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requiresNode != null) {
-			IDocumentNode[] children = requiresNode.getChildNodes();
+			IDocumentElementNode[] children = requiresNode.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof IPluginImport)
 					result.add(children[i]);
@@ -163,9 +163,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void remove(IPluginLibrary library) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("runtime", false); //$NON-NLS-1$
+		IDocumentElementNode parent = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (parent != null) {
-			parent.removeChildNode((IDocumentNode)library);
+			parent.removeChildNode((IDocumentElementNode)library);
 			library.setInTheModel(false);
 			fireStructureChanged(library, IModelChangedEvent.REMOVE);
 		}	
@@ -186,9 +186,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary, org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
-		IDocumentNode node = getEnclosingElement("runtime", false); //$NON-NLS-1$
+		IDocumentElementNode node = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (node != null) {
-			node.swap((IDocumentNode)l1, (IDocumentNode)l2);
+			node.swap((IDocumentElementNode)l1, (IDocumentElementNode)l2);
 			firePropertyChanged(node, P_LIBRARY_ORDER, l1, l2);
 		}
 	}
@@ -226,13 +226,13 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			node.setParentNode(this);
 			IPluginExtensionPoint[] extPoints = getExtensionPoints();
 			if (extPoints.length > 0)
-				addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
+				addChildNode(node, indexOf((IDocumentElementNode)extPoints[extPoints.length - 1]) + 1);
 			else {
-				IDocumentNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
+				IDocumentElementNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
 				if (requires != null) {
 					addChildNode(node, indexOf(requires) + 1);
 				} else {
-					IDocumentNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
+					IDocumentElementNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
 					if (runtime != null)
 						addChildNode(node, indexOf(runtime) + 1);
 					else
@@ -247,7 +247,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		ArrayList result = new ArrayList();
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtensionPoint)
 				result.add(children[i]);
@@ -259,7 +259,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginExtension[] getExtensions() {
 		ArrayList result = new ArrayList();
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtension)
 				result.add(children[i]);
@@ -278,8 +278,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void remove(IPluginExtension extension) throws CoreException {
-		if (extension instanceof IDocumentNode) {
-			removeChildNode((IDocumentNode)extension);
+		if (extension instanceof IDocumentElementNode) {
+			removeChildNode((IDocumentElementNode)extension);
 			extension.setInTheModel(false);
 			fireStructureChanged(extension, IModelChangedEvent.REMOVE);
 		}
@@ -289,16 +289,16 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void remove(IPluginExtensionPoint extensionPoint)
 			throws CoreException {
-		if (extensionPoint instanceof IDocumentNode) {
-			removeChildNode((IDocumentNode)extensionPoint);
+		if (extensionPoint instanceof IDocumentElementNode) {
+			removeChildNode((IDocumentElementNode)extensionPoint);
 			extensionPoint.setInTheModel(false);
 			fireStructureChanged(extensionPoint, IModelChangedEvent.REMOVE);
 		}
 	}
 	
 	public void remove(IPluginObject node) {
-		if (node instanceof IDocumentNode) {
-			removeChildNode((IDocumentNode)node);
+		if (node instanceof IDocumentElementNode) {
+			removeChildNode((IDocumentElementNode)node);
 			node.setInTheModel(false);
 			fireStructureChanged(node, IModelChangedEvent.REMOVE);
 		}
@@ -308,7 +308,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 			throws CoreException {
-		swap((IDocumentNode)e1, (IDocumentNode)e2);
+		swap((IDocumentElementNode)e1, (IDocumentElementNode)e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
 	
@@ -317,9 +317,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void swap(IPluginImport import1, IPluginImport import2)
 			throws CoreException {
-		IDocumentNode node = getEnclosingElement("requires", false); //$NON-NLS-1$
+		IDocumentElementNode node = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (node != null) {
-			node.swap((IDocumentNode)import1, (IDocumentNode)import2);
+			node.swap((IDocumentElementNode)import1, (IDocumentElementNode)import2);
 			firePropertyChanged(node, P_IMPORT_ORDER, import1, import2);
 		}
 	}
@@ -362,13 +362,13 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		
 		buffer.append(writeShallow(false) + newLine);
 		
-		IDocumentNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
+		IDocumentElementNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (runtime != null) {
 			runtime.setLineIndent(getLineIndent() + 3);
 			buffer.append(runtime.write(true) + newLine);
 		}
 		
-		IDocumentNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
+		IDocumentElementNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requires != null) {
 			requires.setLineIndent(getLineIndent() + 3);
 			buffer.append(requires.write(true) + newLine);
@@ -376,14 +376,14 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		
 		IPluginExtensionPoint[] extPoints = getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
-			IDocumentNode extPoint = (IDocumentNode)extPoints[i];
+			IDocumentElementNode extPoint = (IDocumentElementNode)extPoints[i];
 			extPoint.setLineIndent(getLineIndent() + 3);
 			buffer.append(extPoint.write(true) + newLine);
 		}
 		
 		IPluginExtension[] extensions = getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			IDocumentNode extension = (IDocumentNode)extensions[i];
+			IDocumentElementNode extension = (IDocumentElementNode)extensions[i];
 			extension.setLineIndent(getLineIndent() + 3);
 			buffer.append(extension.write(true) + newLine);
 		}

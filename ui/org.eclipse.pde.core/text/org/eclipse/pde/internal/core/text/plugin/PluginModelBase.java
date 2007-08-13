@@ -25,7 +25,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.XMLEditingModel;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -161,7 +161,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return fHandler;
 	}
 		
-	public IDocumentNode getLastErrorNode() {
+	public IDocumentElementNode getLastErrorNode() {
 		if (fHandler != null)
 			return fHandler.getLastErrorNode();
 		return null;

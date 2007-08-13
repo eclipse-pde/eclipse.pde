@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class PluginParentNode extends PluginObjectNode implements IPluginParent {
 
@@ -26,7 +26,7 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#add(int, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void add(int index, IPluginObject child) throws CoreException {
-		addChildNode((IDocumentNode)child, index);
+		addChildNode((IDocumentElementNode)child, index);
 		fireStructureChanged(child, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
@@ -47,14 +47,14 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#getIndexOf(org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public int getIndexOf(IPluginObject child) {
-		return indexOf((IDocumentNode)child);
+		return indexOf((IDocumentElementNode)child);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#swap(org.eclipse.pde.core.plugin.IPluginObject, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void swap(IPluginObject child1, IPluginObject child2)
 			throws CoreException {
-		swap((IDocumentNode)child1, (IDocumentNode)child2);
+		swap((IDocumentElementNode)child1, (IDocumentElementNode)child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
 	}
 	/* (non-Javadoc)
@@ -62,7 +62,7 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 */
 	public IPluginObject[] getChildren() {
 		ArrayList result = new ArrayList();
-		IDocumentNode[] nodes = getChildNodes();
+		IDocumentElementNode[] nodes = getChildNodes();
 		for (int i = 0; i < nodes.length; i++)
 			result.add(nodes[i]);
 					  
@@ -72,7 +72,7 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#remove(org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void remove(IPluginObject child) throws CoreException {
-		removeChildNode((IDocumentNode)child);
+		removeChildNode((IDocumentElementNode)child);
 		child.setInTheModel(false);
 		fireStructureChanged(child, IModelChangedEvent.REMOVE);
 	}

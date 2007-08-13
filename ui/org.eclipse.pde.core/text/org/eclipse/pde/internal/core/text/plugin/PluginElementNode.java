@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginElementNode extends PluginParentNode implements
@@ -91,7 +91,7 @@ public class PluginElementNode extends PluginParentNode implements
 		if (indent)
 			buffer.append(getIndent());
 		
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		String text = getText();
 		buffer.append(writeShallow(false));
 		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
@@ -153,7 +153,7 @@ public class PluginElementNode extends PluginParentNode implements
 	 */
 	public Object getElementInfo() {
 		if (elementInfo == null) {
-			IDocumentNode node = getParentNode();
+			IDocumentElementNode node = getParentNode();
 			for (;;) {
 				if (node == null || node instanceof IPluginExtension)
 					break;
@@ -171,9 +171,9 @@ public class PluginElementNode extends PluginParentNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent, IModel model) {
+	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient Field:  Element Info
 		// Not necessary to reconnect schema.

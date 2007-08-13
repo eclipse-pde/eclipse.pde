@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
@@ -66,7 +66,7 @@ public class PluginXMLTextHover extends PDETextHover {
 					// inside value
 					return getAttributeValueText((IPluginAttribute)range, (ISchemaElement)sObj);
 			} else if (range instanceof IPluginElement) {
-				IDocumentNode dn = (IDocumentNode)range;
+				IDocumentElementNode dn = (IDocumentElementNode)range;
 				int dnOff = dn.getOffset();
 				int dnLen = dn.getLength();
 				String dnName = dn.getXMLTagName();

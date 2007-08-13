@@ -31,7 +31,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	
 	private transient int fOffset;
 	private transient int fLength;
-	private transient IDocumentNode fEnclosingElement;
+	private transient IDocumentElementNode fEnclosingElement;
 	
 	private String fText;
 
@@ -47,14 +47,14 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	public void setEnclosingElement(IDocumentNode node) {
+	public void setEnclosingElement(IDocumentElementNode node) {
 		fEnclosingElement = node;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getEnclosingElement()
 	 */
-	public IDocumentNode getEnclosingElement() {
+	public IDocumentElementNode getEnclosingElement() {
 		return fEnclosingElement;
 	}
 	
@@ -101,9 +101,9 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#reconnectText(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentTextNode#reconnectText(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent) {
+	public void reconnect(IDocumentElementNode parent) {
 		// Transient field:  Enclosing Element
 		// Essentially the parent (an element)
 		fEnclosingElement = parent;

@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
@@ -89,11 +89,11 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
-		if ((object instanceof IDocumentNode) &&
-				(((IDocumentNode)object).isErrorNode() == false)) {
+		if ((object instanceof IDocumentElementNode) &&
+				(((IDocumentElementNode)object).isErrorNode() == false)) {
 			fSelection = object;
-			setHighlightRange((IDocumentNode)object, true);
-			setSelectedRange((IDocumentNode)object, false);
+			setHighlightRange((IDocumentElementNode)object, true);
+			setSelectedRange((IDocumentElementNode)object, false);
 		}
 	}
 
@@ -101,8 +101,8 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
 	 */
 	protected IDocumentRange findRange() {
-		if (fSelection instanceof IDocumentNode) {
-			return (IDocumentNode)fSelection;
+		if (fSelection instanceof IDocumentElementNode) {
+			return (IDocumentElementNode)fSelection;
 		}
 		return null;
 	}
@@ -111,7 +111,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
 	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
-		IDocumentNode rootNode = ((SimpleCSModel)getInputContext().getModel()).getSimpleCS();
+		IDocumentElementNode rootNode = ((SimpleCSModel)getInputContext().getModel()).getSimpleCS();
 		return findNode(rootNode, offset, searchChildren);
 	}
 	
@@ -137,7 +137,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		} else if (range instanceof IDocumentTextNode) {
 			// Content
 			return adaptRange(((IDocumentTextNode)range).getEnclosingElement());
-		} else if (range instanceof IDocumentNode) {
+		} else if (range instanceof IDocumentElementNode) {
 			// Element
 			if (range instanceof ISimpleCS) {
 				return range;
@@ -150,7 +150,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 			} else if (range instanceof ISimpleCSPerformWhen) {
 				return range;
 			} else {
-				return adaptRange(((IDocumentNode)range).getParentNode());
+				return adaptRange(((IDocumentElementNode)range).getParentNode());
 			}
 		}
 		return null;

@@ -23,7 +23,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
@@ -69,8 +69,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 			if (obj == fExtensions)
 				return PDEUIMessages.ManifestSourcePage_extensions; 
 			String text = fProvider.getText(obj);
-			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentNode)
-				text = ((IDocumentNode)obj).getXMLTagName();
+			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentElementNode)
+				text = ((IDocumentElementNode)obj).getXMLTagName();
 			return text;
 		}
 
@@ -85,7 +85,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 				return fProvider.get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			
 			Image image = fProvider.getImage(obj);
-			int flags = ((IDocumentNode)obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
+			int flags = ((IDocumentElementNode)obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
 			return (flags == 0) ? image : fProvider.get(image, flags);
 		}
 	}
@@ -130,8 +130,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object element) {
-			if (element instanceof IDocumentNode)
-				return ((IDocumentNode)element).getParentNode();
+			if (element instanceof IDocumentElementNode)
+				return ((IDocumentElementNode)element).getParentNode();
 			return null;
 		}
 
@@ -140,7 +140,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		 */
 		public boolean hasChildren(Object element) {
 			if (element instanceof IPluginBase) {
-				return ((IDocumentNode) element).getChildNodes().length > 0;
+				return ((IDocumentElementNode) element).getChildNodes().length > 0;
 			}
 			return element == fLibraries || element == fImports
 			|| element == fExtensionPoints || element == fExtensions;
@@ -191,11 +191,11 @@ public class ManifestSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
-		if ((object instanceof IDocumentNode) && 
-				!((IDocumentNode)object).isErrorNode()) {
+		if ((object instanceof IDocumentElementNode) && 
+				!((IDocumentElementNode)object).isErrorNode()) {
 			fSelection = object;
-			setHighlightRange((IDocumentNode)object, true);
-			setSelectedRange((IDocumentNode)object, false);
+			setHighlightRange((IDocumentElementNode)object, true);
+			setSelectedRange((IDocumentElementNode)object, false);
 		} else {
 			//resetHighlightRange();
 		}
@@ -227,8 +227,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 	public IDocumentRange findRange() {
 		if (fSelection instanceof ImportObject)
 			fSelection = ((ImportObject)fSelection).getImport();
-		if (fSelection instanceof IDocumentNode)
-			return (IDocumentNode)fSelection;
+		if (fSelection instanceof IDocumentElementNode)
+			return (IDocumentElementNode)fSelection;
 		return null;
 	}
 	

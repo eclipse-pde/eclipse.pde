@@ -42,7 +42,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -129,15 +129,15 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			file = (IFile)model.getUnderlyingResource();
 		
 		IPluginBase base = model.getPluginBase();
-		if (base instanceof IDocumentNode) {
+		if (base instanceof IDocumentElementNode) {
 			// old style xml plugin
 			// check xml name declaration
-			IDocumentAttributeNode attr = ((IDocumentNode)base).getDocumentAttribute(IPluginObject.P_NAME);
+			IDocumentAttributeNode attr = ((IDocumentElementNode)base).getDocumentAttribute(IPluginObject.P_NAME);
 			if (attr != null && isNotTranslated(attr.getAttributeValue()))
 				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
 			
 			// check xml provider declaration
-			attr = ((IDocumentNode)base).getDocumentAttribute(IPluginBase.P_PROVIDER);
+			attr = ((IDocumentElementNode)base).getDocumentAttribute(IPluginBase.P_PROVIDER);
 			if (attr != null && isNotTranslated(attr.getAttributeValue()))
 				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
 		}

@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.core.text.toc;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 
 /**
@@ -32,31 +32,31 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentNode createDocumentNode(String name, IDocumentNode parent) {
+	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 
 		// Semantics:
 		// org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_help_toc.html
 
 		if (isToc(name))
 		{	// Root
-			return (IDocumentNode)createToc();
+			return (IDocumentElementNode)createToc();
 		}
 
 		if (isTopic(name))
 		{	// Topic
-			return (IDocumentNode)createTocTopic();
+			return (IDocumentElementNode)createTocTopic();
 		}
 
 		if (isLink(name))
 		{	// Link
-			return (IDocumentNode)createTocLink();
+			return (IDocumentElementNode)createTocLink();
 		}			
 
 		if (isAnchor(name))
 		{	// Anchor
-			return (IDocumentNode)createTocAnchor();
+			return (IDocumentElementNode)createTocAnchor();
 		}
 
 		return super.createDocumentNode(name, parent);

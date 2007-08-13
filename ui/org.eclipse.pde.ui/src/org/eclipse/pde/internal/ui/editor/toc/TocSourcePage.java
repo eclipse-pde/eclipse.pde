@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -90,17 +90,17 @@ public class TocSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object)
-	{	if ((object instanceof IDocumentNode) && 
-				!((IDocumentNode)object).isErrorNode()) {
+	{	if ((object instanceof IDocumentElementNode) && 
+				!((IDocumentElementNode)object).isErrorNode()) {
 			fSelection = object;
-			setHighlightRange((IDocumentNode)object, true);
-			setSelectedRange((IDocumentNode)object, false);
+			setHighlightRange((IDocumentElementNode)object, true);
+			setSelectedRange((IDocumentElementNode)object, false);
 		}
 	}
 	
 	protected IDocumentRange findRange() {
-		if (fSelection instanceof IDocumentNode)
-		{	return (IDocumentNode)fSelection;
+		if (fSelection instanceof IDocumentElementNode)
+		{	return (IDocumentElementNode)fSelection;
 		}
 
 		return null;

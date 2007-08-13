@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.text.DocumentObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * TocObject - All objects modeled in a Table of Contents subclass TocObject
@@ -46,7 +46,7 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 		ArrayList list = new ArrayList();
 
 		// Add children of this topic
-		IDocumentNode[] childNodes = getChildNodes();
+		IDocumentElementNode[] childNodes = getChildNodes();
 		if (childNodes.length > 0)
 		{	for(int i = 0; i < childNodes.length; ++i)
 			{	if(childNodes[i] instanceof TocObject)
@@ -104,7 +104,7 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 * <code>null</code> if the TocObject has no parent.
 	 */
 	public TocObject getParent() {
-		IDocumentNode parent = getParentNode();
+		IDocumentElementNode parent = getParentNode();
 		return parent instanceof TocObject ? (TocObject)parent : null;
 	}
 

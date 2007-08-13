@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class StructureXMLModelTestCase extends XMLModelTestCase {
 	
@@ -296,7 +296,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);
-		IDocumentNode parent = (IDocumentNode)fModel.getPluginBase();
+		IDocumentElementNode parent = (IDocumentElementNode)fModel.getPluginBase();
 		assertTrue(commentIndex >= parent.getOffset());
 		assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
 	}
@@ -323,7 +323,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);
-		IDocumentNode parent = (IDocumentNode)fModel.getPluginBase();
+		IDocumentElementNode parent = (IDocumentElementNode)fModel.getPluginBase();
 		assertTrue(commentIndex >= parent.getOffset());
 		assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
 	}

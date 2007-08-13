@@ -18,8 +18,8 @@ public interface IDocumentAttributeNode extends IDocumentRange, Serializable, ID
 	
 	// Used by text edit operations
 	
-	void setEnclosingElement(IDocumentNode node);	
-	IDocumentNode getEnclosingElement();
+	void setEnclosingElement(IDocumentElementNode node);	
+	IDocumentElementNode getEnclosingElement();
 	
 	void setNameOffset(int offset);
 	int getNameOffset();
@@ -42,6 +42,6 @@ public interface IDocumentAttributeNode extends IDocumentRange, Serializable, ID
 	String write();
 	
 	// Not used by text edit operations
-	public void reconnect(IDocumentNode parent);
+	public void reconnect(IDocumentElementNode parent);
 	
 }

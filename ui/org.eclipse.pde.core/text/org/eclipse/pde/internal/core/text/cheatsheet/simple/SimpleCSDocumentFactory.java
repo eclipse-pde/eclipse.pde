@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 
@@ -48,10 +48,10 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.DocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.DocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentTextNode createDocumentTextNode(String content,
-			IDocumentNode parent) {
+			IDocumentElementNode parent) {
 		IDocumentTextNode textNode = new SimpleCSDocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);
@@ -60,9 +60,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentNode createDocumentNode(String name, IDocumentNode parent) {
+	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 
 		// Semantics:
 		// org.eclipse.platform.doc.isv/reference/extension-points/cheatSheetContentFileSpec.html
@@ -74,75 +74,75 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		if (parent == null) {
 			if (isSimpleCS(name)) {
 				// Root
-				return (IDocumentNode)createSimpleCS();
+				return (IDocumentElementNode)createSimpleCS();
 			}
 		} else if (parent instanceof SimpleCS) {
 			if (isIntro(name)) {
 				// Intro
-				return (IDocumentNode)createSimpleCSIntro((SimpleCS)parent);
+				return (IDocumentElementNode)createSimpleCSIntro((SimpleCS)parent);
 			} else if (isItem(name)) {
 				// Item
-				return (IDocumentNode)createSimpleCSItem((SimpleCS)parent);
+				return (IDocumentElementNode)createSimpleCSItem((SimpleCS)parent);
 			}			
 		} else if (parent instanceof SimpleCSIntro) {
 			if (isDescription(name)) {
 				// Description
-				return (IDocumentNode)createSimpleCSDescription((SimpleCSIntro)parent);
+				return (IDocumentElementNode)createSimpleCSDescription((SimpleCSIntro)parent);
 			}
 		} else if (parent instanceof SimpleCSItem) {
 			if (isDescription(name)) {
 				// Description
-				return (IDocumentNode)createSimpleCSDescription((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSDescription((SimpleCSItem)parent);
 			} else if (isAction(name)) {
 				// Action
-				return (IDocumentNode)createSimpleCSAction((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSAction((SimpleCSItem)parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentNode)createSimpleCSCommand((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSCommand((SimpleCSItem)parent);
 			} else if (isPerformWhen(name)) {
 				// Perform When
-				return (IDocumentNode)createSimpleCSPerformWhen((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSPerformWhen((SimpleCSItem)parent);
 			} else if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentNode)createSimpleCSSubItem((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSSubItem((SimpleCSItem)parent);
 			} else if (isConditionalSubitem(name)) {
 				// Conditional Subitem
-				return (IDocumentNode)createSimpleCSConditionalSubItem((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSConditionalSubItem((SimpleCSItem)parent);
 			} else if (isRepeatedSubitem(name)) {
 				// Repeated Subitem
-				return (IDocumentNode)createSimpleCSRepeatedSubItem((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSRepeatedSubItem((SimpleCSItem)parent);
 			} else if (isOnCompletion(name)) {
 				// On Completion
-				return (IDocumentNode)createSimpleCSOnCompletion((SimpleCSItem)parent);
+				return (IDocumentElementNode)createSimpleCSOnCompletion((SimpleCSItem)parent);
 			}
 		} else if (parent instanceof SimpleCSSubItem) {
 			if (isPerformWhen(name)) {
 				// Perform When
-				return (IDocumentNode)createSimpleCSPerformWhen((SimpleCSSubItem)parent);
+				return (IDocumentElementNode)createSimpleCSPerformWhen((SimpleCSSubItem)parent);
 			} else if (isAction(name)) {
 				// Action
-				return (IDocumentNode)createSimpleCSAction((SimpleCSSubItem)parent);
+				return (IDocumentElementNode)createSimpleCSAction((SimpleCSSubItem)parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentNode)createSimpleCSCommand((SimpleCSSubItem)parent);
+				return (IDocumentElementNode)createSimpleCSCommand((SimpleCSSubItem)parent);
 			}
 		} else if (parent instanceof SimpleCSConditionalSubItem) {
 			if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentNode)createSimpleCSSubItem((SimpleCSConditionalSubItem)parent);
+				return (IDocumentElementNode)createSimpleCSSubItem((SimpleCSConditionalSubItem)parent);
 			}
 		} else if (parent instanceof SimpleCSRepeatedSubItem) {
 			if (isSubitem(name)) {
 				// Subitem
-				return (IDocumentNode)createSimpleCSSubItem((SimpleCSRepeatedSubItem)parent);
+				return (IDocumentElementNode)createSimpleCSSubItem((SimpleCSRepeatedSubItem)parent);
 			}
 		} else if (parent instanceof SimpleCSPerformWhen) {
 			if (isAction(name)) {
 				// Action
-				return (IDocumentNode)createSimpleCSAction((SimpleCSPerformWhen)parent);
+				return (IDocumentElementNode)createSimpleCSAction((SimpleCSPerformWhen)parent);
 			} else if (isCommand(name)) {
 				// Command
-				return (IDocumentNode)createSimpleCSCommand((SimpleCSPerformWhen)parent);
+				return (IDocumentElementNode)createSimpleCSCommand((SimpleCSPerformWhen)parent);
 			}
 		} else if (parent instanceof SimpleCSDescription) {
 			if (isBr(name)) {
@@ -353,7 +353,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	/**
 	 * @return
 	 */
-	protected IDocumentNode createBr() {
+	protected IDocumentElementNode createBr() {
 		return new DocumentGenericNode(ISimpleCSConstants.ELEMENT_BR) {
 			private static final long serialVersionUID = 1L;
 

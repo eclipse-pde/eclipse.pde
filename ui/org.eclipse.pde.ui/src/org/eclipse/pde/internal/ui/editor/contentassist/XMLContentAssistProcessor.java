@@ -45,7 +45,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
@@ -164,8 +164,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return computeCATextProposal(doc, offset, caText);
 		} else if (fRange instanceof IDocumentAttributeNode) {
 			return computeCompletionProposal((IDocumentAttributeNode)fRange, offset, doc);
-		} else if (fRange instanceof IDocumentNode) {
-			return computeCompletionProposal((IDocumentNode)fRange, offset, doc);
+		} else if (fRange instanceof IDocumentElementNode) {
+			return computeCompletionProposal((IDocumentElementNode)fRange, offset, doc);
 		} else if (fRange instanceof IDocumentTextNode) {
 			return null;
 		} else if (model instanceof PluginModelBase) {
@@ -205,9 +205,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (fRange instanceof IDocumentAttributeNode) {
 			if (((IDocumentAttributeNode)fRange).getNameOffset() == offset)
 				fRange = ((IDocumentAttributeNode)fRange).getEnclosingElement();
-		} else if (fRange instanceof IDocumentNode) {
-			if (((IDocumentNode)fRange).getOffset() == offset)
-				fRange = ((IDocumentNode)fRange).getParentNode();
+		} else if (fRange instanceof IDocumentElementNode) {
+			if (((IDocumentElementNode)fRange).getOffset() == offset)
+				fRange = ((IDocumentElementNode)fRange).getParentNode();
 		} else if (fRange instanceof IDocumentTextNode) {
 			if (((IDocumentTextNode)fRange).getOffset() == offset)
 				fRange = ((IDocumentTextNode)fRange).getEnclosingElement();
@@ -224,8 +224,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			fRange = ((IDocumentTextNode)fRange).getEnclosingElement();
 		}
 		if ((fRange != null) && 
-				(fRange instanceof IDocumentNode)) {
-			return computeAddChildProposal((IDocumentNode)fRange, 
+				(fRange instanceof IDocumentElementNode)) {
+			return computeAddChildProposal((IDocumentElementNode)fRange, 
 					caText.getStartOffset(), doc, caText.getText());
 		}
 		return null;
@@ -242,7 +242,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 //		String attribute = guess[1];
 		String attrValue = guess[2];
 		
-		IPluginObject obj = XMLUtil.getTopLevelParent((IDocumentNode)attr);
+		IPluginObject obj = XMLUtil.getTopLevelParent((IDocumentElementNode)attr);
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
 					offset >= attr.getValueOffset()) {
@@ -338,7 +338,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 * @return
 	 */
 	private ICompletionProposal[] computeRootNodeProposals(
-			IDocumentNode node, int offset, String filter) {
+			IDocumentElementNode node, int offset, String filter) {
 		// Create the filtered proposal list
 		ArrayList filteredProposalList = new ArrayList();
 		// Add extension to the list
@@ -421,7 +421,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return convertListToProposal(list, (IDocumentRange)attr, offset);
 	}
 
-	private ICompletionProposal[] computeCompletionProposal(IDocumentNode node, int offset, IDocument doc) {
+	private ICompletionProposal[] computeCompletionProposal(IDocumentElementNode node, int offset, IDocument doc) {
 		int prop_type = determineAssistType(node, doc, offset);
 		switch (prop_type) {
 		case F_ADD_ATTRIB:
@@ -434,7 +434,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 	
-	private int determineAssistType(IDocumentNode node, IDocument doc, int offset) {
+	private int determineAssistType(IDocumentElementNode node, IDocument doc, int offset) {
 		int len = node.getLength();
 		int off = node.getOffset();
 		if (len == -1 || off == -1)
@@ -471,7 +471,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					(Character.isWhitespace(c) || c == '/' || c == '>');
 	}
 	
-	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
+	private ICompletionProposal[] computeAddChildProposal(IDocumentElementNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
 			return computeRootNodeProposals(node, offset, filter);	
@@ -502,7 +502,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return convertListToProposal(propList, node, offset);
 	}
 	
-	private ICompletionProposal[] computeOpenTagProposal(IDocumentNode node, int offset, IDocument doc) {
+	private ICompletionProposal[] computeOpenTagProposal(IDocumentElementNode node, int offset, IDocument doc) {
 		IPluginObject obj = XMLUtil.getTopLevelParent(node);
 		if (obj instanceof IPluginExtension) {
 			ISchemaElement sElem = XMLUtil.getSchemaElement(node, ((IPluginExtension)obj).getPoint());
@@ -515,7 +515,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 
-	private ICompletionProposal[] computeAddAttributeProposal(int type, IDocumentNode node, int offset, IDocument doc, String filter, String tag) {
+	private ICompletionProposal[] computeAddAttributeProposal(int type, IDocumentElementNode node, int offset, IDocument doc, String filter, String tag) {
 		String nodeName = tag;
 		if (nodeName == null && node != null)
 			nodeName = node.getXMLTagName();
@@ -561,7 +561,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 	}
 	
-	private ICompletionProposal[] computeBrokenModelProposal(IDocumentNode parent, int offset, IDocument doc) {
+	private ICompletionProposal[] computeBrokenModelProposal(IDocumentElementNode parent, int offset, IDocument doc) {
 		if (parent == null)
 			return null;
 		
@@ -608,7 +608,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 	
-	private ICompletionProposal[] computeBrokenModelAttributeContentProposal(IDocumentNode parent, int offset, String element, String attr, String filter) {
+	private ICompletionProposal[] computeBrokenModelAttributeContentProposal(IDocumentElementNode parent, int offset, String element, String attr, String filter) {
 		// TODO use computeCompletionProposal(IDocumentAttributeNode attr, int offset) if possible
 		// or refactor above to be used here
 		// CURRENTLY: attribute completion only works in non-broken models
@@ -679,7 +679,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		fSourcePage.getInputContext().flushEditorInput();
 	}
 	
-	private ICompletionProposal[] computeAttributeProposals(ISchemaObject[] sAttrs, IDocumentNode node, int offset, String filter, String parentName) {
+	private ICompletionProposal[] computeAttributeProposals(ISchemaObject[] sAttrs, IDocumentElementNode node, int offset, String filter, String parentName) {
 		if (sAttrs == null || sAttrs.length == 0)
 			return null;
 		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];

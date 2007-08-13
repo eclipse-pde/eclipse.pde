@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * SimpleCS
@@ -40,14 +40,14 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void addItem(ISimpleCSItem item) {
-		addChildNode((IDocumentNode)item, true);
+		addChildNode((IDocumentElementNode)item, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void addItem(int index, ISimpleCSItem item) {
-		addChildNode((IDocumentNode)item, index, true);
+		addChildNode((IDocumentElementNode)item, index, true);
 	}
 	
 	/* (non-Javadoc)
@@ -76,14 +76,14 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public ISimpleCSItem getNextSibling(ISimpleCSItem item) {
-		return (ISimpleCSItem)getNextSibling((IDocumentNode)item, ISimpleCSItem.class);
+		return (ISimpleCSItem)getNextSibling((IDocumentElementNode)item, ISimpleCSItem.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getPreviousSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public ISimpleCSItem getPreviousSibling(ISimpleCSItem item) {
-		return (ISimpleCSItem)getPreviousSibling((IDocumentNode)item, ISimpleCSItem.class);
+		return (ISimpleCSItem)getPreviousSibling((IDocumentElementNode)item, ISimpleCSItem.class);
 		
 	}
 
@@ -105,35 +105,35 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#indexOfItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public int indexOfItem(ISimpleCSItem item) {
-		return indexOf((IDocumentNode)item);
+		return indexOf((IDocumentElementNode)item);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#isFirstItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public boolean isFirstItem(ISimpleCSItem item) {
-		return isFirstChildNode((IDocumentNode)item, ISimpleCSItem.class);
+		return isFirstChildNode((IDocumentElementNode)item, ISimpleCSItem.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#isLastItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public boolean isLastItem(ISimpleCSItem item) {
-		return isLastChildNode((IDocumentNode)item, ISimpleCSItem.class);	
+		return isLastChildNode((IDocumentElementNode)item, ISimpleCSItem.class);	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#moveItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem, int)
 	 */
 	public void moveItem(ISimpleCSItem item, int newRelativeIndex) {
-		moveChildNode((IDocumentNode)item, newRelativeIndex, true);
+		moveChildNode((IDocumentElementNode)item, newRelativeIndex, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void removeItem(ISimpleCSItem item) {
-		removeChildNode((IDocumentNode)item, true);
+		removeChildNode((IDocumentElementNode)item, true);
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +147,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#setIntro(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro)
 	 */
 	public void setIntro(ISimpleCSIntro intro) {
-		setChildNode((IDocumentNode)intro, ISimpleCSIntro.class);
+		setChildNode((IDocumentElementNode)intro, ISimpleCSIntro.class);
 	}
 
 	/* (non-Javadoc)

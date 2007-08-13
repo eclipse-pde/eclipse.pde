@@ -21,7 +21,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -59,20 +59,20 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				Object object = objects[i];
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.REMOVE :
-						if (object instanceof IDocumentNode)
-							removeNode((IDocumentNode) object, ops);
+						if (object instanceof IDocumentElementNode)
+							removeNode((IDocumentElementNode) object, ops);
 						break;
 					case IModelChangedEvent.INSERT :
-						if (object instanceof IDocumentNode)
-							insertNode((IDocumentNode) object, ops);
+						if (object instanceof IDocumentElementNode)
+							insertNode((IDocumentElementNode) object, ops);
 						break;
 					case IModelChangedEvent.CHANGE :
-						if (object instanceof IDocumentNode) {
-							IDocumentNode node = (IDocumentNode) object;
+						if (object instanceof IDocumentElementNode) {
+							IDocumentElementNode node = (IDocumentElementNode) object;
 							IDocumentAttributeNode attr = node.getDocumentAttribute(event.getChangedProperty());
 							if (attr != null) {
 								addAttributeOperation(attr, ops, event);
-							} else if (event.getOldValue() instanceof IDocumentNode && event.getNewValue() instanceof IDocumentNode){
+							} else if (event.getOldValue() instanceof IDocumentElementNode && event.getNewValue() instanceof IDocumentElementNode){
 								// swapping of nodes
 								modifyNode(node, ops, event);
 							}
@@ -86,7 +86,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 	
-	private void removeNode(IDocumentNode node, ArrayList ops) {
+	private void removeNode(IDocumentElementNode node, ArrayList ops) {
 		// delete previous op on this node, if any
 		TextEdit old = (TextEdit)fOperationTable.get(node);
 		if (old != null) {
@@ -110,7 +110,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 
-	private void insertNode(IDocumentNode node, ArrayList ops) {
+	private void insertNode(IDocumentElementNode node, ArrayList ops) {
 		TextEdit op = null;
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
@@ -140,8 +140,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 
-	private InsertEdit insertAfterSibling(IDocumentNode node) {
-		IDocumentNode sibling = node.getPreviousSibling();
+	private InsertEdit insertAfterSibling(IDocumentElementNode node) {
+		IDocumentElementNode sibling = node.getPreviousSibling();
 		for (;;) {
 			if (sibling == null)
 				break;
@@ -155,7 +155,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return null;
 	}
 	
-	private InsertEdit insertAsFirstChild(IDocumentNode node) {
+	private InsertEdit insertAsFirstChild(IDocumentElementNode node) {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(getDocumentProvider().getDocument(getInput()), offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
@@ -164,12 +164,12 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 
-	private void modifyNode(IDocumentNode node, ArrayList ops, IModelChangedEvent event) {
-		IDocumentNode oldNode = (IDocumentNode)event.getOldValue();
-		IDocumentNode newNode = (IDocumentNode)event.getNewValue();
+	private void modifyNode(IDocumentElementNode node, ArrayList ops, IModelChangedEvent event) {
+		IDocumentElementNode oldNode = (IDocumentElementNode)event.getOldValue();
+		IDocumentElementNode newNode = (IDocumentElementNode)event.getNewValue();
 		
-		IDocumentNode node1 = (oldNode.getPreviousSibling() == null || oldNode.equals(newNode.getPreviousSibling())) ? oldNode : newNode;
-		IDocumentNode node2 = node1.equals(oldNode) ? newNode : oldNode;
+		IDocumentElementNode node1 = (oldNode.getPreviousSibling() == null || oldNode.equals(newNode.getPreviousSibling())) ? oldNode : newNode;
+		IDocumentElementNode node2 = node1.equals(oldNode) ? newNode : oldNode;
 		
 		if (node1.getOffset() < 0 && node2.getOffset() < 2) {
 			TextEdit op = (TextEdit)fOperationTable.get(node1);
@@ -207,7 +207,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}		
 	}
 	
-	private IRegion getMoveRegion(IDocumentNode node) {
+	private IRegion getMoveRegion(IDocumentElementNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		int i = 1;
@@ -240,7 +240,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		} 
 				
 		if (op == null) {
-			IDocumentNode node = attr.getEnclosingElement();
+			IDocumentElementNode node = attr.getEnclosingElement();
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			if (node.getOffset() > -1) {
 				changedObject = node;
@@ -265,7 +265,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			String newText = getWritableTextNodeString(textNode);
 			op = new ReplaceEdit(textNode.getOffset(), textNode.getLength(), newText);
 		} else {
-			IDocumentNode parent = textNode.getEnclosingElement();
+			IDocumentElementNode parent = textNode.getEnclosingElement();
 			if (parent.getOffset() > -1) {
 				IDocument doc = getDocumentProvider().getDocument(getInput());
 				try {
@@ -357,7 +357,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 
-	private DeleteEdit getDeleteNodeOperation(IDocumentNode node) {
+	private DeleteEdit getDeleteNodeOperation(IDocumentElementNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		try {
@@ -435,8 +435,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 	
-	private IDocumentNode getHighestNodeToBeWritten(IDocumentNode node) {
-		IDocumentNode parent = node.getParentNode();
+	private IDocumentElementNode getHighestNodeToBeWritten(IDocumentElementNode node) {
+		IDocumentElementNode parent = node.getParentNode();
 		if (parent == null)
 			return node;
 		if (parent.getOffset() > -1) {
@@ -459,9 +459,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		removeUnnecessaryOperations();
 		if (fOperationTable.size() == 1) {
 			Object object = fOperationTable.keySet().iterator().next();
-			if (object instanceof IDocumentNode && fEditOperations.get(0) instanceof InsertEdit) {
-				if (((IDocumentNode)object).getParentNode() == null) {
-					doc.set(((IDocumentNode)object).write(true));
+			if (object instanceof IDocumentElementNode && fEditOperations.get(0) instanceof InsertEdit) {
+				if (((IDocumentElementNode)object).getParentNode() == null) {
+					doc.set(((IDocumentElementNode)object).write(true));
 					fOperationTable.clear();
 					fEditOperations.clear();
 					return;
@@ -480,8 +480,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		Iterator iter = fOperationTable.values().iterator();
 		while (iter.hasNext()) {
 			Object object = iter.next();
-			if (object instanceof IDocumentNode) {
-				IDocumentNode node = (IDocumentNode)object;
+			if (object instanceof IDocumentElementNode) {
+				IDocumentElementNode node = (IDocumentElementNode)object;
 				if (node.getOffset() > -1) {
 					IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 					for (int i = 0; i < attrs.length; i++) {

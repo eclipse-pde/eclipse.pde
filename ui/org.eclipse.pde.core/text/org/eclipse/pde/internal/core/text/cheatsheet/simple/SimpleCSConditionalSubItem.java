@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * SimpleCSConditionalSubItem
@@ -38,7 +38,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void addSubItem(ISimpleCSSubItem subitem) {
-		addChildNode((IDocumentNode)subitem, true);
+		addChildNode((IDocumentElementNode)subitem, true);
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void removeSubItem(ISimpleCSSubItem subitem) {
-		removeChildNode((IDocumentNode)subitem, true);
+		removeChildNode((IDocumentElementNode)subitem, true);
 	}
 
 	/* (non-Javadoc)

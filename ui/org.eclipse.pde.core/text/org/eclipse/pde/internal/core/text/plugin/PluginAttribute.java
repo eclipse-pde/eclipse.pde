@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class PluginAttribute extends PluginObjectNode implements
 		IPluginAttribute, IDocumentAttributeNode {
@@ -58,14 +58,14 @@ public class PluginAttribute extends PluginObjectNode implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	public void setEnclosingElement(IDocumentNode node) {
+	public void setEnclosingElement(IDocumentElementNode node) {
 		fAttribute.setEnclosingElement(node);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getEnclosingElement()
 	 */
-	public IDocumentNode getEnclosingElement() {
+	public IDocumentElementNode getEnclosingElement() {
 		return fAttribute.getEnclosingElement();
 	}
 	
@@ -171,9 +171,9 @@ public class PluginAttribute extends PluginObjectNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent) {
+	public void reconnect(IDocumentElementNode parent) {
 		// Inconsistency in model
 		// A document attribute node should not extend plugin object because plugin object extends 
 		// document element node

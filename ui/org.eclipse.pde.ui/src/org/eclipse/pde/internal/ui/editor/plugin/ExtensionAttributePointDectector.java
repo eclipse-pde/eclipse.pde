@@ -20,7 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.custom.StyledText;
@@ -118,7 +118,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		if ((element instanceof IDocumentAttributeNode) == false) {
 			return;
 		}
-		// Ignore IDocumentNode
+		// Ignore IDocumentElementNode
 		// Ignore IDocumentTextNode
 		IDocumentAttributeNode documentAttribute = ((IDocumentAttributeNode)element);
 		String attributeValue = documentAttribute.getAttributeValue();
@@ -129,7 +129,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		}
 		// Get the parent node: either extension or extension point
 		IPluginObject node = 
-			XMLUtil.getTopLevelParent((IDocumentNode)documentAttribute);
+			XMLUtil.getTopLevelParent((IDocumentElementNode)documentAttribute);
 		// Ensure the node is defined and comes from and editable model
 		if ((node == null) || 
 				(node.getModel().isEditable() == false)) {

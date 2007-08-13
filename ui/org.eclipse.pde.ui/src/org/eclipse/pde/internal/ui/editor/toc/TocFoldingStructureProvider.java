@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -37,14 +37,14 @@ public class TocFoldingStructureProvider extends AbstractFoldingStructureProvide
 	throws BadLocationException {
 		TocObject toc = ((TocModel) model).getToc();
 		List childList = toc.getChildren();
-		IDocumentNode[] children = (IDocumentNode[])childList.toArray(new IDocumentNode[childList.size()]);
+		IDocumentElementNode[] children = (IDocumentElementNode[])childList.toArray(new IDocumentElementNode[childList.size()]);
 
 		addFoldingRegions(currentRegions, children, model.getDocument());
 	}
 
-	private void addFoldingRegions(Set regions, IDocumentNode[] nodes, IDocument document) throws BadLocationException  {
+	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException  {
 		for(int i = 0; i < nodes.length; i++) {
-			IDocumentNode element = nodes[i];
+			IDocumentElementNode element = nodes[i];
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());
 			if (startLine < endLine) {
@@ -54,7 +54,7 @@ public class TocFoldingStructureProvider extends AbstractFoldingStructureProvide
 				regions.add(position);
 				fPositionToElement.put(position, element);
 			}
-			IDocumentNode[] children = element.getChildNodes();
+			IDocumentElementNode[] children = element.getChildNodes();
 			if (children != null) {
 				addFoldingRegions(regions, children, document);
 			}

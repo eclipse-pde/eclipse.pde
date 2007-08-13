@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -416,8 +416,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 
 		int offset;
 		int length;
-		if (range instanceof IDocumentNode && !fullNodeSelection) {
-			length = ((IDocumentNode)range).getXMLTagName().length();
+		if (range instanceof IDocumentElementNode && !fullNodeSelection) {
+			length = ((IDocumentElementNode)range).getXMLTagName().length();
 			offset = range.getOffset() + 1;
 		} else {
 			length = range.getLength();
@@ -634,20 +634,20 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[], int, boolean)
 	 * @return
 	 */
-	protected IDocumentRange findNode(IDocumentNode node, int offset, boolean searchChildren) {
+	protected IDocumentRange findNode(IDocumentElementNode node, int offset, boolean searchChildren) {
 		return findNode(new Object[]{ node }, offset, searchChildren);
 	}
 	
 	/**
 	 * Utility method for getRangeElement(int, boolean)
-	 * @param nodes All entries should be instances of IDocumentNode
+	 * @param nodes All entries should be instances of IDocumentElementNode
 	 * @param offset The offset the cursor is currently on in the document
 	 * @param searchChildren <code>true</code> to search child nodes; <code>false</code> otherwise.
 	 * @return Node the offset is in
 	 */
 	protected IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
 		for (int i = 0; i < nodes.length; i++) {
-			IDocumentNode node = (IDocumentNode)nodes[i];
+			IDocumentElementNode node = (IDocumentElementNode)nodes[i];
 			if (node.getOffset() <= offset 
 					&& offset < node.getOffset() + node.getLength()) {
 				
@@ -671,7 +671,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 						offset < textNode.getOffset() + textNode.getLength())
 					return textNode;
 				
-				IDocumentNode[] children = node.getChildNodes();
+				IDocumentElementNode[] children = node.getChildNodes();
 				if (children != null)
 					for (int c = 0; c < children.length; c++)
 						if (children[c].getOffset() <= offset &&

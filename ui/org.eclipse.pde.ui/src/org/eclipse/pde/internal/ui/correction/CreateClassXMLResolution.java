@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
@@ -52,7 +52,7 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 
 	private ISchemaAttribute getAttribute(PluginAttribute attr) {
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-		IDocumentNode element = attr.getEnclosingElement();
+		IDocumentElementNode element = attr.getEnclosingElement();
 		IPluginExtension extension = null;
 		while (element.getParentNode() != null) {
 			if (element instanceof IPluginExtension) {

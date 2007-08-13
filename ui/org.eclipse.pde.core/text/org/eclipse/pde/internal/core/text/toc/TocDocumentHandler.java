@@ -12,7 +12,7 @@
 package org.eclipse.pde.internal.core.text.toc;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 
 /**
@@ -41,8 +41,8 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
-	protected IDocumentNode getRootNode() {
-		return (IDocumentNode)fModel.getToc();
+	protected IDocumentElementNode getRootNode() {
+		return (IDocumentElementNode)fModel.getToc();
 	}	
 
 }

@@ -47,7 +47,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentNode parent) {
+	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentElementNode parent) {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
@@ -66,13 +66,13 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	/**
 	 * @return
 	 */
-	protected abstract IDocumentNode getRootNode();
+	protected abstract IDocumentElementNode getRootNode();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentNode getDocumentNode(String name, IDocumentNode parent) {
-		IDocumentNode node = null;
+	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
+		IDocumentElementNode node = null;
 		if (parent == null) {
 			node = getRootNode();
 			if (node != null) {
@@ -80,7 +80,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 				node.setLength(-1);
 			}
 		} else {
-			IDocumentNode[] children = parent.getChildNodes();
+			IDocumentElementNode[] children = parent.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].getOffset() < 0) {
 					if (name.equals(children[i].getXMLTagName())) {
@@ -103,7 +103,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		}
 		
 		for (int i = 0; i < node.getChildNodes().length; i++) {
-			IDocumentNode child = node.getChildAt(i);
+			IDocumentElementNode child = node.getChildAt(i);
 			child.setOffset(-1);
 			child.setLength(-1);
 		}
@@ -122,7 +122,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
 	 */
 	protected IDocumentTextNode getDocumentTextNode(String content, 
-			IDocumentNode parent) {
+			IDocumentElementNode parent) {
 		
 		IDocumentTextNode textNode = parent.getTextNode();
 		if (textNode == null) {

@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 /**
@@ -197,16 +197,16 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	public void setSharedModel(IModel model) {
 	}
 
-	public void addChildNode(IDocumentNode child) {
+	public void addChildNode(IDocumentElementNode child) {
 	}
 
-	public void addChildNode(IDocumentNode child, int position) {
+	public void addChildNode(IDocumentElementNode child, int position) {
 	}
 
 	public void addTextNode(IDocumentTextNode textNode) {
 	}
 
-	public IDocumentNode getChildAt(int index) {
+	public IDocumentElementNode getChildAt(int index) {
 		return null;
 	}
 
@@ -214,7 +214,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return 0;
 	}
 
-	public IDocumentNode[] getChildNodes() {
+	public IDocumentElementNode[] getChildNodes() {
 		return null;
 	}
 
@@ -242,11 +242,11 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return null;
 	}
 
-	public IDocumentNode getParentNode() {
+	public IDocumentElementNode getParentNode() {
 		return null;
 	}
 
-	public IDocumentNode getPreviousSibling() {
+	public IDocumentElementNode getPreviousSibling() {
 		return null;
 	}
 
@@ -266,7 +266,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return null;
 	}
 
-	public int indexOf(IDocumentNode child) {
+	public int indexOf(IDocumentElementNode child) {
 		return 0;
 	}
 
@@ -278,14 +278,14 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return false;
 	}
 
-	public void reconnect(IDocumentNode parent, IModel model) {
+	public void reconnect(IDocumentElementNode parent, IModel model) {
 	}
 
-	public IDocumentNode removeChildNode(IDocumentNode child) {
+	public IDocumentElementNode removeChildNode(IDocumentElementNode child) {
 		return null;
 	}
 
-	public IDocumentNode removeChildNode(int index) {
+	public IDocumentElementNode removeChildNode(int index) {
 		return null;
 	}
 
@@ -307,10 +307,10 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	public void setOffset(int offset) {
 	}
 
-	public void setParentNode(IDocumentNode node) {
+	public void setParentNode(IDocumentElementNode node) {
 	}
 
-	public void setPreviousSibling(IDocumentNode sibling) {
+	public void setPreviousSibling(IDocumentElementNode sibling) {
 	}
 
 	public void setXMLAttribute(IDocumentAttributeNode attribute) {
@@ -327,7 +327,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	public void setXMLTagName(String tag) {
 	}
 
-	public void swap(IDocumentNode child1, IDocumentNode child2) {
+	public void swap(IDocumentElementNode child1, IDocumentElementNode child2) {
 	}
 
 	public String write(boolean indent) {

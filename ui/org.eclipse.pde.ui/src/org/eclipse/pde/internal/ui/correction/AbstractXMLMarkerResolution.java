@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResolution {
 
@@ -53,14 +53,14 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			return bundle.getManifestHeader(fLocationPath);
 		}
 		
-		IDocumentNode node = null;
+		IDocumentElementNode node = null;
 		StringTokenizer strtok = new StringTokenizer(
 				fLocationPath,
 				Character.toString(XMLErrorReporter.F_CHILD_SEP));
 		while (strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
 			if (node != null) {
-				IDocumentNode[] children = node.getChildNodes();
+				IDocumentElementNode[] children = node.getChildNodes();
 				int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
 				if ((childIndex >= 0) || 
 						(childIndex < children.length)) {
@@ -70,9 +70,9 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			} else if (base instanceof IBundlePluginModelBase) {
 				ISharedExtensionsModel sharedModel = ((IBundlePluginModelBase)base).getExtensionsModel();
 				if (sharedModel instanceof IPluginModelBase) 
-					node = (IDocumentNode)((IPluginModelBase)sharedModel).getPluginBase();
+					node = (IDocumentElementNode)((IPluginModelBase)sharedModel).getPluginBase();
 			} else
-				node = (IDocumentNode)base.getPluginBase();
+				node = (IDocumentElementNode)base.getPluginBase();
 			
 			int attr = token.indexOf(XMLErrorReporter.F_ATT_PREFIX); 
 			if (attr != -1) {

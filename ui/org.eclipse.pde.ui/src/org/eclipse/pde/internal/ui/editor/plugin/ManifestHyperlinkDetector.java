@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -85,7 +85,7 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 		return null;
 	}
 	
-	protected IHyperlink[] detectNodeHyperlink(IDocumentNode node) {
+	protected IHyperlink[] detectNodeHyperlink(IDocumentElementNode node) {
 		// TODO what can we do here?
 		// suggestions:
 		//   - use SchemaEditor.openToElement(IPath path, ISchemaElement element)
@@ -109,7 +109,7 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 	}
 	
 	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
-		IDocumentNode enclosing = node.getEnclosingElement();
+		IDocumentElementNode enclosing = node.getEnclosingElement();
 		if (!(enclosing instanceof IPluginObject))
 			return null;
 		IPluginModelBase base = ((IPluginObject)enclosing).getPluginModel();

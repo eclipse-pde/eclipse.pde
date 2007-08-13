@@ -22,7 +22,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.text.edits.DeleteEdit;
@@ -102,7 +102,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 	
 	
-	protected void deleteNode(IDocumentNode node) {
+	protected void deleteNode(IDocumentElementNode node) {
 		// delete previous op on this node, if any
 		TextEdit old = (TextEdit)fOperationTable.get(node);
 		if (old != null) {
@@ -126,7 +126,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 	}
 
-	protected void insertNode(IDocumentNode node) {
+	protected void insertNode(IDocumentElementNode node) {
 		TextEdit op = null;
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
@@ -157,8 +157,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			fReadableNames.put(op, NLS.bind(PDECoreMessages.XMLTextChangeListener_editNames_insertNode, node.getXMLTagName()));
 	}
 
-	private InsertEdit insertAfterSibling(IDocumentNode node) {
-		IDocumentNode sibling = node.getPreviousSibling();
+	private InsertEdit insertAfterSibling(IDocumentElementNode node) {
+		IDocumentElementNode sibling = node.getPreviousSibling();
 		for (;;) {
 			if (sibling == null)
 				break;
@@ -171,7 +171,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		return null;
 	}
 	
-	private InsertEdit insertAsFirstChild(IDocumentNode node) {
+	private InsertEdit insertAsFirstChild(IDocumentElementNode node) {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(fDocument, offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
@@ -179,12 +179,12 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 	
 
-	protected void modifyNode(IDocumentNode node, IModelChangedEvent event) {
-		IDocumentNode oldNode = (IDocumentNode)event.getOldValue();
-		IDocumentNode newNode = (IDocumentNode)event.getNewValue();
+	protected void modifyNode(IDocumentElementNode node, IModelChangedEvent event) {
+		IDocumentElementNode oldNode = (IDocumentElementNode)event.getOldValue();
+		IDocumentElementNode newNode = (IDocumentElementNode)event.getNewValue();
 		
-		IDocumentNode node1 = (oldNode.getPreviousSibling() == null || oldNode.equals(newNode.getPreviousSibling())) ? oldNode : newNode;
-		IDocumentNode node2 = node1.equals(oldNode) ? newNode : oldNode;
+		IDocumentElementNode node1 = (oldNode.getPreviousSibling() == null || oldNode.equals(newNode.getPreviousSibling())) ? oldNode : newNode;
+		IDocumentElementNode node2 = node1.equals(oldNode) ? newNode : oldNode;
 		
 		if (node1.getOffset() < 0 && node2.getOffset() < 0) {
 			TextEdit op = (TextEdit)fOperationTable.get(node1);
@@ -208,7 +208,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}		
 	}
 	
-	private IRegion getMoveRegion(IDocumentNode node) {
+	private IRegion getMoveRegion(IDocumentElementNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		int i = 1;
@@ -245,7 +245,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		} 
 				
 		if (op == null) {
-			IDocumentNode node = attr.getEnclosingElement();
+			IDocumentElementNode node = attr.getEnclosingElement();
 			if (node.getOffset() > -1) {
 				changedObject = node;
 				int len = getNextPosition(fDocument, node.getOffset(), '>');
@@ -270,7 +270,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			String newText = getWritableString(textNode.getText());
 			op = new ReplaceEdit(textNode.getOffset(), textNode.getLength(), newText);
 		} else {
-			IDocumentNode parent = textNode.getEnclosingElement();
+			IDocumentElementNode parent = textNode.getEnclosingElement();
 			if (parent.getOffset() > -1) {
 				try {
 					String endChars = fDocument.get(parent.getOffset() + parent.getLength() - 2, 2);
@@ -337,7 +337,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 	
 
-	private DeleteEdit getDeleteNodeOperation(IDocumentNode node) {
+	private DeleteEdit getDeleteNodeOperation(IDocumentElementNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
 		try {
@@ -414,8 +414,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		}
 	}
 	
-	private IDocumentNode getHighestNodeToBeWritten(IDocumentNode node) {
-		IDocumentNode parent = node.getParentNode();
+	private IDocumentElementNode getHighestNodeToBeWritten(IDocumentElementNode node) {
+		IDocumentElementNode parent = node.getParentNode();
 		if (parent == null)
 			return node;
 		if (parent.getOffset() > -1) {
@@ -439,9 +439,9 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		if (objects == null)
 			return;
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof IDocumentNode))
+			if (!(objects[i] instanceof IDocumentElementNode))
 				continue;
-			IDocumentNode node = (IDocumentNode)objects[i];
+			IDocumentElementNode node = (IDocumentElementNode)objects[i];
 			Object op = fOperationTable.remove(node);
 			fOperationList.remove(op);
 			if (fReadableNames != null)
@@ -460,7 +460,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 					} else {
 						if (event.getOldValue() instanceof IDocumentTextNode) {
 							addElementContentOperation((IDocumentTextNode)event.getOldValue());
-						} else if (event.getOldValue() instanceof IDocumentNode && event.getNewValue() instanceof IDocumentNode){
+						} else if (event.getOldValue() instanceof IDocumentElementNode && event.getNewValue() instanceof IDocumentElementNode){
 							// swapping of nodes
 							modifyNode(node, event);
 						}

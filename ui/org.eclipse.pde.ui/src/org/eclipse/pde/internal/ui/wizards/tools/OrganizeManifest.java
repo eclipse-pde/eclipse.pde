@@ -58,7 +58,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
@@ -369,11 +369,11 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		}
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++)
-			if (extensions[i] instanceof IDocumentNode)
-				inspectElementForTranslation((IDocumentNode)extensions[i], list);
+			if (extensions[i] instanceof IDocumentElementNode)
+				inspectElementForTranslation((IDocumentElementNode)extensions[i], list);
 	}
 	
-	private static void inspectElementForTranslation(IDocumentNode parent, ArrayList list) {
+	private static void inspectElementForTranslation(IDocumentElementNode parent, ArrayList list) {
 		IDocumentTextNode text = parent.getTextNode();
 		String textValue = getTranslatedKey(text != null ? text.getText() : null);
 		if (textValue != null && !list.contains(textValue))
@@ -391,8 +391,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		
 		IPluginObject[] children = ((IPluginParent)parent).getChildren();
 		for (int i = 0; i < children.length; i++)
-			if (children[i] instanceof IDocumentNode)
-				inspectElementForTranslation((IDocumentNode)children[i], list);	
+			if (children[i] instanceof IDocumentElementNode)
+				inspectElementForTranslation((IDocumentElementNode)children[i], list);	
 	}
 	
 	private static void findTranslatedMFStrings(IBundle bundle, ArrayList list) {

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
@@ -97,8 +97,8 @@ public class PluginInputContext extends XMLInputContext {
 		
 		while (iter.hasNext()) {
 			Object object = iter.next();
-			if (object instanceof IDocumentNode) {
-				IDocumentNode node = (IDocumentNode)object;
+			if (object instanceof IDocumentElementNode) {
+				IDocumentElementNode node = (IDocumentElementNode)object;
 				if (node.getParentNode() instanceof PluginBaseNode) {
 					TextEdit edit = (TextEdit)map.get(node);
 					if (edit instanceof InsertEdit) {

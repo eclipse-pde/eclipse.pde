@@ -40,7 +40,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
@@ -314,12 +314,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					int offset = ((IDocumentAttributeNode)fRange).getEnclosingElement().getOffset();
 					IPluginExtension[] extensions = base.getExtensions();
 					for (int i = 0; i < extensions.length; i++) {
-						if (((IDocumentNode)extensions[i]).getOffset() == offset) {
+						if (((IDocumentElementNode)extensions[i]).getOffset() == offset) {
 							if (extensions[i].getChildCount() != 0)
 								break; // don't modify existing extensions
 							fPluginParent = extensions[i];
 							fSchemaElement = XMLUtil.getSchemaElement(
-									(IDocumentNode)extensions[i],
+									(IDocumentElementNode)extensions[i],
 									extensions[i].getPoint());
 							break;
 						}
@@ -329,10 +329,10 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					findExtensionVirtualPointValue(base);
 					break;
 				}
-			} else if (fRange instanceof IDocumentNode && base instanceof IDocumentNode) {
+			} else if (fRange instanceof IDocumentElementNode && base instanceof IDocumentElementNode) {
 				Stack s = new Stack();
-				IDocumentNode node = (IDocumentNode)fRange;
-				IDocumentNode newSearch = (IDocumentNode)base;
+				IDocumentElementNode node = (IDocumentElementNode)fRange;
+				IDocumentElementNode newSearch = (IDocumentElementNode)base;
 				// traverse up old model, pushing all nodes onto the stack along the way
 				while (node != null && !(node instanceof IPluginBase)) {
 					s.push(node);
@@ -341,14 +341,14 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				
 				// traverse down new model to find new node, using stack as a guideline
 				while (!s.isEmpty()) {
-					node = (IDocumentNode)s.pop();
+					node = (IDocumentElementNode)s.pop();
 					int nodeIndex = 0;
 					while ((node = node.getPreviousSibling()) != null)
 						nodeIndex += 1;
 					newSearch = newSearch.getChildAt(nodeIndex);
 				}
 				if (newSearch != null) {
-					IDocumentNode[] children = newSearch.getChildNodes();
+					IDocumentElementNode[] children = newSearch.getChildNodes();
 					for (int i = 0; i < children.length; i++) {
 						if (children[i].getOffset() == fOffset && 
 								children[i] instanceof IPluginElement) {
@@ -393,16 +393,16 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		range = page.getRangeElement(fOffset, true);
 		// Ensure the range is an attribute
 		if ((range == null) ||
-				(range instanceof IDocumentNode) == false) {
+				(range instanceof IDocumentElementNode) == false) {
 			return;
 		}
 		// Get the offset of the extension element
-		int targetOffset = ((IDocumentNode)range).getOffset();
+		int targetOffset = ((IDocumentElementNode)range).getOffset();
 		// Search this plug-ins extensions for the proper one
 		IPluginExtension[] extensions = base.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			// Get the offset of the current extension
-			int extensionOffset = ((IDocumentNode)extensions[i]).getOffset();
+			int extensionOffset = ((IDocumentElementNode)extensions[i]).getOffset();
 			// If the offsets match we foudn the extension element
 			// Note: The extension element should have no children
 			if ((extensionOffset == targetOffset) &&
@@ -410,7 +410,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				fPluginParent = extensions[i];
 				// Get the corresponding schema element
 				fSchemaElement = XMLUtil.getSchemaElement(
-						(IDocumentNode)extensions[i],
+						(IDocumentElementNode)extensions[i],
 						extensions[i].getPoint());
 				break;
 			}
@@ -423,13 +423,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			IPluginObject[] children = ((IPluginExtension)pluginParent).getChildren();
 			if (children != null && children.length > 0 && children[0] instanceof IPluginParent) {
 				pluginParent = (IPluginParent)children[0];
-				schemaElement = XMLUtil.getSchemaElement((IDocumentNode)pluginParent, point);
+				schemaElement = XMLUtil.getSchemaElement((IDocumentElementNode)pluginParent, point);
 			}
 		}
 		
 		if (pluginParent instanceof IPluginElement) {
-			int offset = ((IDocumentNode)pluginParent).getOffset();
-			int len = ((IDocumentNode)pluginParent).getLength();
+			int offset = ((IDocumentElementNode)pluginParent).getOffset();
+			int len = ((IDocumentElementNode)pluginParent).getLength();
 			String value = null;
 			try {
 				value = document.get(offset, len);
@@ -518,8 +518,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			return fSchemaObject.getName();
 		if (fSchemaObject != null)
 			return fSchemaObject.getName();
-		if (fRange instanceof IDocumentNode)
-			return "...> </" + ((IDocumentNode)fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (fRange instanceof IDocumentElementNode)
+			return "...> </" + ((IDocumentElementNode)fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
 	}
 

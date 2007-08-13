@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
@@ -42,13 +42,13 @@ public abstract class XMLUtil {
 	 * @return the IPluginExtension or IPluginExtensionPoint that contains <code>node</code>
 	 */
 	public static IPluginObject getTopLevelParent(IDocumentRange range) {
-		IDocumentNode node = null;
+		IDocumentElementNode node = null;
 		if (range instanceof IDocumentAttributeNode)
 			node = ((IDocumentAttributeNode)range).getEnclosingElement();
 		else if (range instanceof IDocumentTextNode)
 			node = ((IDocumentTextNode)range).getEnclosingElement();
 		else if (range instanceof IPluginElement)
-			node = (IDocumentNode)range;
+			node = (IDocumentElementNode)range;
 		else if (range instanceof IPluginObject)
 			// not an attribute/text node/element -> return direct node
 			return (IPluginObject)range; 
@@ -71,10 +71,10 @@ public abstract class XMLUtil {
 					((IDocumentAttributeNode)range).getValueOffset(),
 					((IDocumentAttributeNode)range).getValueLength(),
 					offset);
-		if (range instanceof IDocumentNode)
+		if (range instanceof IDocumentElementNode)
 			return withinRange(
-					((IDocumentNode)range).getOffset(),
-					((IDocumentNode)range).getLength(),
+					((IDocumentElementNode)range).getOffset(),
+					((IDocumentElementNode)range).getLength(),
 					offset);
 		if (range instanceof IDocumentTextNode)
 			return withinRange(
@@ -85,12 +85,12 @@ public abstract class XMLUtil {
 	}
 	
 	/**
-	 * Get the ISchemaElement corresponding to this IDocumentNode
+	 * Get the ISchemaElement corresponding to this IDocumentElementNode
 	 * @param node
 	 * @param extensionPoint the extension point of the schema, if <code>null</code> it will be deduced
 	 * @return the ISchemaElement for <code>node</code>
 	 */
-	public static ISchemaElement getSchemaElement(IDocumentNode node, String extensionPoint) {
+	public static ISchemaElement getSchemaElement(IDocumentElementNode node, String extensionPoint) {
 		if (extensionPoint == null) {
 			IPluginObject obj = getTopLevelParent(node);
 			if (!(obj instanceof IPluginExtension))

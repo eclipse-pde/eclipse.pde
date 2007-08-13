@@ -16,7 +16,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
@@ -51,8 +51,8 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 		
 		if (element instanceof IDocumentAttributeNode)
 			return detectAttributeHyperlink((IDocumentAttributeNode)element);
-		if (element instanceof IDocumentNode)
-			return detectNodeHyperlink((IDocumentNode)element);
+		if (element instanceof IDocumentElementNode)
+			return detectNodeHyperlink((IDocumentElementNode)element);
 		if (element instanceof IDocumentTextNode)
 			return detectTextNodeHyperlink((IDocumentTextNode)element);
 		return null;		
@@ -70,7 +70,7 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	 * @param node
 	 * @return
 	 */
-	protected IHyperlink[] detectNodeHyperlink(IDocumentNode node) {
+	protected IHyperlink[] detectNodeHyperlink(IDocumentElementNode node) {
 		return null;
 	}
 	

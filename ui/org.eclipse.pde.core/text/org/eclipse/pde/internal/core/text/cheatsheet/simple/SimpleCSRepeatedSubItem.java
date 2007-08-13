@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * SimpleCSRepeatedSubItem
@@ -52,7 +52,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void setSubItem(ISimpleCSSubItem subitem) {
-		setChildNode((IDocumentNode)subitem, ISimpleCSSubItem.class);
+		setChildNode((IDocumentElementNode)subitem, ISimpleCSSubItem.class);
 	}
 
 	/* (non-Javadoc)

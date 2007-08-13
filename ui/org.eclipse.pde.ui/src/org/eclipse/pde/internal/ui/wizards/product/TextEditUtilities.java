@@ -14,7 +14,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -22,7 +22,7 @@ import org.eclipse.text.edits.TextEdit;
 
 public class TextEditUtilities {
 
-	public static TextEdit getInsertOperation(IDocumentNode node, IDocument doc) {
+	public static TextEdit getInsertOperation(IDocumentElementNode node, IDocument doc) {
 		node = getHighestNodeToBeWritten(node, doc);
 		if (node.getParentNode() == null)
 			return new InsertEdit(0, node.write(true));
@@ -44,7 +44,7 @@ public class TextEditUtilities {
 		if (offset > -1)
 			return new ReplaceEdit(offset, attr.getValueLength(), PDEXMLHelper.getWritableString(newValue));
 
-		IDocumentNode node = attr.getEnclosingElement();
+		IDocumentElementNode node = attr.getEnclosingElement();
 		if (node.getOffset() > -1) {
 			int len = getNextPosition(doc, node.getOffset(), '>');
 			return new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(doc, node.getOffset()+ len)));
@@ -60,8 +60,8 @@ public class TextEditUtilities {
 		return false;
 	}
 
-	private static IDocumentNode getHighestNodeToBeWritten(IDocumentNode node, IDocument doc) {
-		IDocumentNode parent = node.getParentNode();
+	private static IDocumentElementNode getHighestNodeToBeWritten(IDocumentElementNode node, IDocument doc) {
+		IDocumentElementNode parent = node.getParentNode();
 		if (parent == null)
 			return node;
 		if (parent.getOffset() > -1) {
@@ -76,8 +76,8 @@ public class TextEditUtilities {
 		return getHighestNodeToBeWritten(parent, doc);
 	}
 
-	private static InsertEdit insertAfterSibling(IDocumentNode node, IDocument doc) {
-		IDocumentNode sibling = node.getPreviousSibling();
+	private static InsertEdit insertAfterSibling(IDocumentElementNode node, IDocument doc) {
+		IDocumentElementNode sibling = node.getPreviousSibling();
 		for (;;) {
 			if (sibling == null)
 				break;
@@ -91,7 +91,7 @@ public class TextEditUtilities {
 		return null;
 	}
 	
-	private static InsertEdit insertAsFirstChild(IDocumentNode node, IDocument doc) {
+	private static InsertEdit insertAsFirstChild(IDocumentElementNode node, IDocument doc) {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(doc, offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);

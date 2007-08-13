@@ -15,7 +15,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.text.DocumentHandler;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.xml.sax.SAXException;
 
@@ -78,16 +78,16 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentNode getDocumentNode(String name, IDocumentNode parent) {
-		IDocumentNode node = null;
+	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
+		IDocumentElementNode node = null;
 		if (parent == null) {
-			node = (IDocumentNode)getModel().getPluginBase();
+			node = (IDocumentElementNode)getModel().getPluginBase();
 			if (node != null) {
 				node.setOffset(-1);
 				node.setLength(-1);
 			}
 		} else {
-			IDocumentNode[] children = parent.getChildNodes();
+			IDocumentElementNode[] children = parent.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].getOffset() < 0) {
 					if (name.equals(children[i].getXMLTagName())) {
@@ -110,7 +110,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 		}
 		
 		for (int i = 0; i < node.getChildNodes().length; i++) {
-			IDocumentNode child = node.getChildAt(i);
+			IDocumentElementNode child = node.getChildAt(i);
 			child.setOffset(-1);
 			child.setLength(-1);
 		}
@@ -128,7 +128,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
-	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentNode parent) {
+	protected IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentElementNode parent) {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
@@ -148,7 +148,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
 	 */
 	protected IDocumentTextNode getDocumentTextNode(String content, 
-			IDocumentNode parent) {
+			IDocumentElementNode parent) {
 		
 		IDocumentTextNode textNode = parent.getTextNode();
 		if (textNode == null) {

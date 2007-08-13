@@ -26,7 +26,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -250,9 +250,9 @@ public class FormOutlinePage extends PDEOutlinePage
 					selection = new StructuredSelection(((ImportObject) item)
 							.getImport());
 				}
-				if (item instanceof IDocumentNode) {
+				if (item instanceof IDocumentElementNode) {
 					while (null == fTreeViewer.testFindItem(item)) {
-						item = ((IDocumentNode) item).getParentNode();
+						item = ((IDocumentElementNode) item).getParentNode();
 						if (item == null) {
 							break;
 						} 

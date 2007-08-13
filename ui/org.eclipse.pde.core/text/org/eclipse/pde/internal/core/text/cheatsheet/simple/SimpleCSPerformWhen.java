@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * SimpleCSPerformWhen
@@ -39,7 +39,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#addExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void addExecutable(ISimpleCSRunObject executable) {
-		addChildNode((IDocumentNode)executable, true);
+		addChildNode((IDocumentElementNode)executable, true);
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +61,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#removeExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void removeExecutable(ISimpleCSRunObject executable) {
-		removeChildNode((IDocumentNode)executable, true);
+		removeChildNode((IDocumentElementNode)executable, true);
 	}
 
 	/* (non-Javadoc)

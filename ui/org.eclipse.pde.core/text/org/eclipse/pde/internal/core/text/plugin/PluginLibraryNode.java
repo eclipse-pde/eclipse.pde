@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrary {
 
@@ -26,7 +26,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getContentFilters()
 	 */
 	public String[] getContentFilters() {
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			PluginObjectNode node = (PluginObjectNode)children[i];
@@ -52,7 +52,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isExported()
 	 */
 	public boolean isExported() {
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			PluginObjectNode node = (PluginObjectNode)children[i];
 			if (node.getName().equals(P_EXPORTED))
@@ -64,7 +64,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isFullyExported()
 	 */
 	public boolean isFullyExported() {
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			PluginObjectNode node = (PluginObjectNode)children[i];
 			if (node.getName().equals(P_EXPORTED)) {
@@ -114,7 +114,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	public void removeContentFilter(String filter) throws CoreException {
 		if (!filter.endsWith(".*")) //$NON-NLS-1$
 			filter += ".*"; //$NON-NLS-1$
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getXMLTagName().equals(P_EXPORTED)
 				   && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
@@ -140,7 +140,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setExported(boolean)
 	 */
 	public void setExported(boolean exported) throws CoreException {
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		boolean alreadyExported = false;
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getXMLTagName().equals(P_EXPORTED)) {
@@ -188,7 +188,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		if (indent)
 			buffer.append(getIndent());
 		
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		if (children.length > 0) {
 			buffer.append(writeShallow(false) + sep);		
 			for (int i = 0; i < children.length; i++) {

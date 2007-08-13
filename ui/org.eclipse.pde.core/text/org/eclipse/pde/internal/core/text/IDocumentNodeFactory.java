@@ -17,11 +17,11 @@ package org.eclipse.pde.internal.core.text;
  */
 public interface IDocumentNodeFactory {
 
-	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentNode enclosingElement);
+	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement);
 
-	public IDocumentNode createDocumentNode(String name, IDocumentNode parent);
+	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent);
 	
 	public IDocumentTextNode createDocumentTextNode(String content, 
-			IDocumentNode parent);
+			IDocumentElementNode parent);
 	
 }

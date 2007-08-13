@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class PluginExtensionNode extends PluginParentNode implements
 		IPluginExtension {
@@ -87,7 +87,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		if (indent)
 			buffer.append(getIndent());
 		buffer.append(writeShallow(false));		
-		IDocumentNode[] children = getChildNodes();
+		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			children[i].setLineIndent(getLineIndent() + 3);
 			buffer.append(sep + children[i].write(true));
@@ -140,9 +140,9 @@ public class PluginExtensionNode extends PluginParentNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent, IModel model) {
+	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient Field:  Schema
 		// Not necessary to reconnect schema.

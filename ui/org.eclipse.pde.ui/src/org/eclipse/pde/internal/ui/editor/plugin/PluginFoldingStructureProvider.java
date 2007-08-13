@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.ui.editor.AbstractFoldingStructureProvider;
@@ -44,7 +44,7 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 
 	private void addFoldingRegions(Set regions, IPluginExtension[] nodes, IDocument document) throws BadLocationException  {
 		for(int i = 0; i < nodes.length; i++) {
-			IDocumentNode element = (IDocumentNode) nodes[i];
+			IDocumentElementNode element = (IDocumentElementNode) nodes[i];
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());
 			if (startLine < endLine) {
@@ -54,16 +54,16 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 				regions.add(position);
 				fPositionToElement.put(position, element);
 			}
-			IDocumentNode[] children = element.getChildNodes();
+			IDocumentElementNode[] children = element.getChildNodes();
 			if (children != null) {
 				addFoldingRegions(regions, children, document);
 			}
 		}
 	}
 
-	private void addFoldingRegions(Set regions, IDocumentNode[] nodes, IDocument document) throws BadLocationException  {
+	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException  {
 		for(int i = 0; i < nodes.length; i++) {
-			IDocumentNode element = nodes[i];
+			IDocumentElementNode element = nodes[i];
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());
 			if (startLine < endLine) {
@@ -73,7 +73,7 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 				regions.add(position);
 				fPositionToElement.put(position, element);
 			}
-			IDocumentNode[] children = element.getChildNodes();
+			IDocumentElementNode[] children = element.getChildNodes();
 			if (children != null) {
 				addFoldingRegions(regions, children, document);
 			}

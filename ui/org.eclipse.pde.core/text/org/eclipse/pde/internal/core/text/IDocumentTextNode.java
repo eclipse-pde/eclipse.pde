@@ -17,8 +17,8 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable, IDocume
 	public static final String F_PROPERTY_CHANGE_TYPE_PCDATA = "type_pcdata"; //$NON-NLS-1$
 	
 	// Used by text edit operations
-	void setEnclosingElement(IDocumentNode node);	
-	IDocumentNode getEnclosingElement();
+	void setEnclosingElement(IDocumentElementNode node);	
+	IDocumentElementNode getEnclosingElement();
 
 	void setText(String text);
 	String getText();
@@ -27,7 +27,7 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable, IDocume
 	void setLength(int length);
 	
 	// Not used by text edit operations
-	public void reconnect(IDocumentNode parent);
+	public void reconnect(IDocumentElementNode parent);
 	// Not used by text edit operations
 	public String write();
 	

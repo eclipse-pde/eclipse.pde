@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 /**
  * XMLElementProposalComputer
@@ -35,7 +35,7 @@ public class XMLElementProposalComputer {
 	 * <code>node</code>.
 	 */
 	public static TreeSet computeElementProposal(ISchemaElement sElement, 
-			IDocumentNode node) {
+			IDocumentElementNode node) {
 		// Calculate the number of occurrences of each XML tag name
 		// in the node's direct children
 		HashMap tagNameMap = countXMLChildrenByTagName(node);
@@ -69,8 +69,8 @@ public class XMLElementProposalComputer {
 	 * Key is children's XML tag name
 	 * Value is number of occurrences found amongst siblings
 	 */
-	private static HashMap countXMLChildrenByTagName(IDocumentNode node) {
-		IDocumentNode[] children = node.getChildNodes();
+	private static HashMap countXMLChildrenByTagName(IDocumentElementNode node) {
+		IDocumentElementNode[] children = node.getChildNodes();
 		HashMap tagNameMap = new HashMap();
 		for (int i = 0; i < children.length; i++) {
 			String key = children[i].getXMLTagName();

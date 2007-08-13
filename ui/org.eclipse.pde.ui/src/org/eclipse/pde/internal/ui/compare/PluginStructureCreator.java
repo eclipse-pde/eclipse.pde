@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.*;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -204,8 +204,8 @@ public class PluginStructureCreator extends StructureCreator {
 
 	private void createNode(DocumentRangeNode parent, int type,
 			Object element, PDELabelProvider labelProvider, ResourceManager resources) {
-		if (element instanceof IDocumentNode) {
-			IDocumentNode node = (IDocumentNode) element;
+		if (element instanceof IDocumentElementNode) {
+			IDocumentElementNode node = (IDocumentElementNode) element;
 			ImageDescriptor imageDescriptor = getImageDescriptor(element);
 			Image image = null;
 			if (imageDescriptor != null) {

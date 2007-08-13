@@ -16,35 +16,35 @@ import java.util.TreeMap;
 
 import org.eclipse.pde.core.IModel;
 
-public interface IDocumentNode extends Serializable, IDocumentRange, IDocumentXMLNode {
+public interface IDocumentElementNode extends Serializable, IDocumentRange, IDocumentXMLNode {
 		
 	public static final String F_PROPERTY_CHANGE_TYPE_SWAP = "type_swap"; //$NON-NLS-1$
 	
-	IDocumentNode getParentNode();	
-	void setParentNode(IDocumentNode node);
+	IDocumentElementNode getParentNode();	
+	void setParentNode(IDocumentElementNode node);
 	
-	void addChildNode(IDocumentNode child);
-	void addChildNode(IDocumentNode child, int position);
-	IDocumentNode removeChildNode(IDocumentNode child);	
+	void addChildNode(IDocumentElementNode child);
+	void addChildNode(IDocumentElementNode child, int position);
+	IDocumentElementNode removeChildNode(IDocumentElementNode child);	
 	// Not used by text edit operations
-	IDocumentNode removeChildNode(int index); 
+	IDocumentElementNode removeChildNode(int index); 
 	
-	IDocumentNode[] getChildNodes();
+	IDocumentElementNode[] getChildNodes();
 	
 	void addTextNode(IDocumentTextNode textNode);
 	IDocumentTextNode getTextNode();
 	void removeTextNode();
 	
 	// Not used by text edit operations
-	int indexOf(IDocumentNode child);
+	int indexOf(IDocumentElementNode child);
 	
-	IDocumentNode getChildAt(int index);
+	IDocumentElementNode getChildAt(int index);
 	
-	IDocumentNode getPreviousSibling();
-	void setPreviousSibling(IDocumentNode sibling);
+	IDocumentElementNode getPreviousSibling();
+	void setPreviousSibling(IDocumentElementNode sibling);
 	
 	// Not used by text edit operations
-	void swap(IDocumentNode child1, IDocumentNode child2);
+	void swap(IDocumentElementNode child1, IDocumentElementNode child2);
 	
 	void setXMLTagName(String tag);	
 	String getXMLTagName();
@@ -87,7 +87,7 @@ public interface IDocumentNode extends Serializable, IDocumentRange, IDocumentXM
 	// Not used by text edit operations
 	public ArrayList getChildNodesList();
 	// Not used by text edit operations
-	public void reconnect(IDocumentNode parent, IModel model);
+	public void reconnect(IDocumentElementNode parent, IModel model);
 
 	// Not used by text edit operations
 	/**
@@ -108,8 +108,6 @@ public interface IDocumentNode extends Serializable, IDocumentRange, IDocumentXM
 	// Not used by text edit operations
 	public boolean hasXMLAttributes();
 
-	
-	// TODO: MP: TEO: LOW: Rename to IDocumentElementNode
 	// TODO: MP: TEO: LOW: Space out, comment and rename methods
 
 }

@@ -54,7 +54,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -165,12 +165,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		
 		if ((elementInfo != null) &&
 				(elementInfo.getType() instanceof ISchemaComplexType) &&
-				(parent instanceof IDocumentNode)) {
+				(parent instanceof IDocumentElementNode)) {
 			// We have a schema complex type.  Either the element has attributes
 			// or the element has children.
 			// Generate the list of element proposals
 			TreeSet elementSet = XMLElementProposalComputer
-					.computeElementProposal(elementInfo, (IDocumentNode)parent);
+					.computeElementProposal(elementInfo, (IDocumentElementNode)parent);
 			
 			// Create a corresponding menu entry for each element proposal
 			Iterator iterator = elementSet.iterator();
@@ -888,7 +888,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Ensure the target object can have children 
 		if ((targetObject instanceof IPluginParent) == false) {
 			return false;
-		} else if ((targetObject instanceof IDocumentNode) == false) {
+		} else if ((targetObject instanceof IDocumentElementNode) == false) {
 			return false;
 		}
 		// Retrieve the schema corresponding to the target object		
@@ -922,7 +922,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Generate the list of element proposals
 		TreeSet elementSet = 
 			XMLElementProposalComputer.computeElementProposal(
-					schemaElement, (IDocumentNode)targetObject);
+					schemaElement, (IDocumentElementNode)targetObject);
 		// Determine whether we can paste the source elements as children of
 		// the target object
 		if (sourceObjects.length > 1) {
@@ -1038,23 +1038,23 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				Object sourceObject = sourceObjects[i];
 				
 				if ((sourceObject instanceof IPluginExtension) &&
-						(pluginBase instanceof IDocumentNode)) {
+						(pluginBase instanceof IDocumentElementNode)) {
 					// Extension object
-					IDocumentNode extension = (IDocumentNode)sourceObject;
+					IDocumentElementNode extension = (IDocumentElementNode)sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					extension.reconnect((IDocumentNode)pluginBase, model);
+					extension.reconnect((IDocumentElementNode)pluginBase, model);
 					// Add the extension to the plugin parent (plugin)
 					pluginBase.add((IPluginExtension)extension);
 
 				} else if ((sourceObject instanceof IPluginElement) &&
 						(targetObject instanceof IPluginParent) &&
-						(targetObject instanceof IDocumentNode)) {
+						(targetObject instanceof IDocumentElementNode)) {
 					// Element object
-					IDocumentNode element = (IDocumentNode)sourceObject;
+					IDocumentElementNode element = (IDocumentElementNode)sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					element.reconnect((IDocumentNode)targetObject, model);
+					element.reconnect((IDocumentElementNode)targetObject, model);
 					// Add the element to the plugin parent (extension or
 					// element)
 					((IPluginParent)targetObject).add((IPluginElement)element);

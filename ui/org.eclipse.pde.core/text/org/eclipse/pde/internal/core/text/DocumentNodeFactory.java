@@ -28,10 +28,10 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentAttributeNode createAttribute(String name, String value,
-			IDocumentNode enclosingElement) {
+			IDocumentElementNode enclosingElement) {
 
 		IDocumentAttributeNode attribute = new DocumentAttributeNode();
 		try {
@@ -45,10 +45,10 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentTextNode createDocumentTextNode(String content, 
-			IDocumentNode parent) {
+			IDocumentElementNode parent) {
 		IDocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);
@@ -57,9 +57,9 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentNode createDocumentNode(String name, IDocumentNode parent) {
+	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		// Cannot return null
 		return createGeneric(name);
 	}
@@ -68,7 +68,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	 * @param name
 	 * @return
 	 */
-	protected IDocumentNode createGeneric(String name) {
+	protected IDocumentElementNode createGeneric(String name) {
 		return new DocumentGenericNode(name);
 	}	
 	

@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -47,8 +47,8 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
-	protected IDocumentNode getRootNode() {
-		return (IDocumentNode)fModel.getSimpleCS();
+	protected IDocumentElementNode getRootNode() {
+		return (IDocumentElementNode)fModel.getSimpleCS();
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	public void startElement(String uri, String localName, String name,
 			Attributes attributes) throws SAXException {
 		
-		IDocumentNode parent = getLastParsedDocumentNode();
+		IDocumentElementNode parent = getLastParsedDocumentNode();
 		if ((parent != null) &&
 				(parent.isContentCollapsed() == true)) {
 			setCollapsibleParentName(parent.getXMLTagName());
@@ -93,7 +93,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 		}
 	
 		if ((getCollapsibleParentName() != null)) {
-			IDocumentNode parent = getLastParsedDocumentNode();
+			IDocumentElementNode parent = getLastParsedDocumentNode();
 			processCollapsedEndElement(name, parent);
 		} else {
 			super.endElement(uri, localName, name);
@@ -104,9 +104,9 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	 * @param name
 	 * @param parent
 	 */
-	private void processCollapsedEndElement(String name, IDocumentNode parent) {
+	private void processCollapsedEndElement(String name, IDocumentElementNode parent) {
 		// Get the document node
-		IDocumentNode node = getDocumentNode(name, parent);
+		IDocumentElementNode node = getDocumentNode(name, parent);
 		// If the start element is self-terminating, no end tag is required
 		boolean terminate = node.canTerminateStartTag();
 		if (terminate) {
@@ -128,9 +128,9 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	 * @param parent
 	 */
 	private void processCollapsedStartElement(String name, Attributes attributes,
-			IDocumentNode parent) {
+			IDocumentElementNode parent) {
 		// Create the document node
-		IDocumentNode node = getDocumentNode(name, parent);
+		IDocumentElementNode node = getDocumentNode(name, parent);
 		// Create the attributes
 		for (int i = 0; i < attributes.getLength(); i++) {
 			String attName = attributes.getQName(i);

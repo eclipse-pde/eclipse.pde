@@ -22,7 +22,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 
 	private static final long serialVersionUID = 1L;
 
-	private transient IDocumentNode fEnclosingElement;
+	private transient IDocumentElementNode fEnclosingElement;
 	private transient int fNameOffset;
 	private transient int fNameLength;
 	private transient int fValueOffset;
@@ -61,7 +61,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#getEnclosingElement()
 	 */
-	public IDocumentNode getEnclosingElement() {
+	public IDocumentElementNode getEnclosingElement() {
 		return fEnclosingElement;
 	}
 
@@ -108,9 +108,9 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setEnclosingElement(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setEnclosingElement(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void setEnclosingElement(IDocumentNode node) {
+	public void setEnclosingElement(IDocumentElementNode node) {
 		fEnclosingElement = node;
 	}
 
@@ -153,9 +153,9 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#reconnect(org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#reconnect(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent) {
+	public void reconnect(IDocumentElementNode parent) {
 		// Transient field:  Enclosing element
 		// Essentially is the parent (an element)
 		// Note: Parent field from plugin document node parent seems to be 

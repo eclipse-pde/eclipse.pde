@@ -18,7 +18,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
@@ -49,7 +49,7 @@ public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 			return null;
 		}
 		// Get attribute parent
-		IDocumentNode node = attribute.getEnclosingElement();
+		IDocumentElementNode node = attribute.getEnclosingElement();
 		// Ensure the node is defined
 		if (node == null) {
 			return null;

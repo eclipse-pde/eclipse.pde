@@ -25,7 +25,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.DocumentElementNode;
@@ -246,7 +246,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 		return TextUtilities.getDefaultLineDelimiter(document);
 	}
 	
-	public void addChildNode(IDocumentNode child, int position) {
+	public void addChildNode(IDocumentElementNode child, int position) {
 		super.addChildNode(child, position);
 		((IPluginObject)child).setInTheModel(true);
 	}
@@ -256,9 +256,9 @@ public class PluginObjectNode extends DocumentElementNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public void reconnect(IDocumentNode parent, IModel model) {
+	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient field:  In The Model
 		// Value set to true when added to the parent; however, serialized
@@ -290,7 +290,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#write(boolean)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#write(boolean)
 	 */
 	public String write(boolean indent) {
 		// Used by text edit operations
@@ -299,7 +299,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#writeShallow(boolean)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
 		// Used by text edit operations

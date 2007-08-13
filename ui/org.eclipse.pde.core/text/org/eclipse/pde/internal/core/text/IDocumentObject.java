@@ -18,7 +18,7 @@ import org.eclipse.pde.core.IWritable;
  * IDocumentObject
  *
  */
-public interface IDocumentObject extends IDocumentNode, IWritable {
+public interface IDocumentObject extends IDocumentElementNode, IWritable {
 
 	public IModel getSharedModel();
 
