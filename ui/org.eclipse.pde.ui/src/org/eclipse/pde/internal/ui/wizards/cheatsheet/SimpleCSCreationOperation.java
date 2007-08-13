@@ -12,13 +12,15 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSWorkspaceModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -45,8 +47,9 @@ public class SimpleCSCreationOperation extends
 	/**
 	 * 
 	 */
-	protected void createContent() {
-        SimpleCSWorkspaceModel model = new SimpleCSWorkspaceModel(fFile, false);
+	protected void createContent() throws CoreException {
+        SimpleCSModel model  = new SimpleCSModel(CoreUtility.getTextDocument(fFile.getContents()), false);
+        model.setUnderlyingResource(fFile);
         initializeCS(model.getSimpleCS());
         model.save();
         model.dispose();

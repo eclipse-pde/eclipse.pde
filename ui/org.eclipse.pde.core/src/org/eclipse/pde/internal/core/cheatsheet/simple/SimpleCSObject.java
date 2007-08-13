@@ -11,17 +11,23 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 /**
  * SimpleCSObject
@@ -29,6 +35,9 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
  */
 public abstract class SimpleCSObject extends PlatformObject implements ISimpleCSObject {
 
+	// TODO: MP: TEO: MED: Delete all old simple cs model objects
+	// TODO: MP: TEO: MED: Delete all old simple cs model package references in MANIFEST.MF - check plugin.xml too
+	
 	private transient ISimpleCSModel fModel;
 	
 	private transient ISimpleCSObject fParent;
@@ -147,7 +156,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	/**
 	 * @return
 	 */
-	protected boolean isEditable() {
+	public boolean isEditable() {
 		return fModel.isEditable();
 	}
 	
@@ -173,4 +182,200 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 */
 	public abstract List getChildren();
 
+	
+	public IModel getSharedModel() {
+		return null;
+	}
+
+	public boolean isInTheModel() {
+		return false;
+	}
+
+	public void setInTheModel(boolean inModel) {
+	}
+
+	public void setSharedModel(IModel model) {
+	}
+
+	public void addChildNode(IDocumentNode child) {
+	}
+
+	public void addChildNode(IDocumentNode child, int position) {
+	}
+
+	public void addTextNode(IDocumentTextNode textNode) {
+	}
+
+	public IDocumentNode getChildAt(int index) {
+		return null;
+	}
+
+	public int getChildCount() {
+		return 0;
+	}
+
+	public IDocumentNode[] getChildNodes() {
+		return null;
+	}
+
+	public ArrayList getChildNodesList() {
+		return null;
+	}
+
+	public IDocumentAttribute getDocumentAttribute(String name) {
+		return null;
+	}
+
+	public String getIndent() {
+		return null;
+	}
+
+	public int getLineIndent() {
+		return 0;
+	}
+
+	public IDocumentAttribute[] getNodeAttributes() {
+		return null;
+	}
+
+	public TreeMap getNodeAttributesMap() {
+		return null;
+	}
+
+	public IDocumentNode getParentNode() {
+		return null;
+	}
+
+	public IDocumentNode getPreviousSibling() {
+		return null;
+	}
+
+	public IDocumentTextNode getTextNode() {
+		return null;
+	}
+
+	public String getXMLAttributeValue(String name) {
+		return null;
+	}
+
+	public String getXMLContent() {
+		return null;
+	}
+
+	public String getXMLTagName() {
+		return null;
+	}
+
+	public int indexOf(IDocumentNode child) {
+		return 0;
+	}
+
+	public boolean isErrorNode() {
+		return false;
+	}
+
+	public boolean isRoot() {
+		return false;
+	}
+
+	public void reconnect(IDocumentNode parent, IModel model) {
+	}
+
+	public IDocumentNode removeChildNode(IDocumentNode child) {
+		return null;
+	}
+
+	public IDocumentNode removeChildNode(int index) {
+		return null;
+	}
+
+	public void removeDocumentAttribute(IDocumentAttribute attr) {
+	}
+
+	public void removeTextNode() {
+	}
+
+	public void setIsErrorNode(boolean isErrorNode) {
+	}
+
+	public void setLength(int length) {
+	}
+
+	public void setLineIndent(int indent) {
+	}
+
+	public void setOffset(int offset) {
+	}
+
+	public void setParentNode(IDocumentNode node) {
+	}
+
+	public void setPreviousSibling(IDocumentNode sibling) {
+	}
+
+	public void setXMLAttribute(IDocumentAttribute attribute) {
+	}
+
+	public boolean setXMLAttribute(String name, String value) {
+		return false;
+	}
+
+	public boolean setXMLContent(String text) {
+		return false;
+	}
+
+	public void setXMLTagName(String tag) {
+	}
+
+	public void swap(IDocumentNode child1, IDocumentNode child2) {
+	}
+
+	public String write(boolean indent) {
+		return null;
+	}
+
+	public String writeShallow(boolean terminate) {
+		return null;
+	}
+
+	public int getLength() {
+		return 0;
+	}
+
+	public int getOffset() {
+		return 0;
+	}
+
+	public int getXMLType() {
+		return 0;
+	}
+	
+	public boolean isContentCollapsed() {
+		return false;
+	}
+
+	public boolean isLeafNode() {
+		return false;
+	}
+	
+	public boolean hasXMLChildren() {
+		return false;
+	}
+
+	public boolean hasXMLContent() {
+		return false;
+	}
+	
+	public boolean hasXMLAttributes() {
+		return false;
+	}
+	
+	public int getNodeAttributesCount() {
+		return 0;
+	}
+
+	public boolean canTerminateStartTag() {
+		return false;
+	}
+	
 }

@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,14 +96,6 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public int getType() {
 		return TYPE_INTRO;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.text.DocumentObject#write(java.lang.String, java.io.PrintWriter)
-	 */
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: CURRENT: IMPLEMENT
-		
 	}
 
 }

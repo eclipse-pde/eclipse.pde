@@ -19,12 +19,13 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
+import org.eclipse.pde.internal.core.text.DocumentXMLNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
-public abstract class PluginDocumentNode implements IDocumentNode {
+public abstract class PluginDocumentNode extends DocumentXMLNode implements IDocumentNode {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -46,9 +47,9 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
-	// TODO: MP: TEO:  Rename to DocumentElementNode
-	// TODO: MP: TEO:  Move to core.text package
-	// TODO: MP: TEO:  Regenerate comments
+	// TODO: MP: TEO: LOW: Rename to DocumentElementNode
+	// TODO: MP: TEO: LOW: Move to core.text package
+	// TODO: MP: TEO: LOW: Regenerate comments
 	
 	/**
 	 * 
@@ -82,7 +83,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		// Not used by text edit operations
 		return fAttributes;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#writeShallow(boolean)
 	 */
@@ -106,13 +107,33 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#isContentCollapsed()
+	 */
+	public boolean isLeafNode() {
+		return false;
+	}
+	
+	public boolean canTerminateStartTag() {
+		if ((hasXMLChildren() == false) &&
+				(hasXMLContent() == false) &&
+				(isLeafNode() == true)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#write(boolean)
 	 */
 	public String write(boolean indent) {
 		// Used by text edit operations
-		// TODO: MP: TEO: Refactor into smaller methods
-		// TODO: MP: TEO: Do we care about the indent flag? If so make consistent with write attributes and content
-		StringBuffer buffer = new StringBuffer();	
+		// TODO: MP: TEO: LOW: Refactor into smaller methods
+		// TODO: MP: TEO: LOW: Do we care about the indent flag? If so make consistent with write attributes and content
+		StringBuffer buffer = new StringBuffer();
+		boolean hasChildren = hasXMLChildren();
+		boolean hasContent = hasXMLContent();
+		boolean terminate = canTerminateStartTag();
+		
 		// Print XML decl if root
 		if (isRoot()) {
 			buffer.append(writeXMLDecl());
@@ -122,21 +143,27 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			buffer.append(getIndent());
 		}
 		// Print start element and attributes
-		buffer.append(writeShallow(false));	
+		buffer.append(writeShallow(terminate));	
 		// Print child elements
-		IDocumentNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setLineIndent(getLineIndent() + 3);
-			buffer.append(getLineDelimiter() + children[i].write(true));
+		if (hasChildren) {
+			IDocumentNode[] children = getChildNodes();
+			for (int i = 0; i < children.length; i++) {
+				children[i].setLineIndent(getLineIndent() + 3);
+				buffer.append(getLineDelimiter() + children[i].write(true));
+			}
 		}
 		// Print text content
-		buffer.append(writeXMLContent());
+		if (hasContent) {
+			buffer.append(writeXMLContent());
+		}
 		// Print end element
 		buffer.append(getLineDelimiter() + getIndent());
-		// TODO: MP: TEO: Replace with XMLPrintHandler constants
-		buffer.append("</"); //$NON-NLS-1$
-		buffer.append(getXMLTagName());
-		buffer.append(">"); //$NON-NLS-1$
+		// TODO: MP: TEO: LOW: Replace with XMLPrintHandler constants
+		if (terminate == false) {
+			buffer.append("</"); //$NON-NLS-1$
+			buffer.append(getXMLTagName());
+			buffer.append(">"); //$NON-NLS-1$
+		}
 		
 		return buffer.toString();
 	}
@@ -331,7 +358,6 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Not used by text edit operations
-		// TODO: MP: TEO: MANIFEST MOD TEST
 		IDocumentAttribute attribute  = (IDocumentAttribute)fAttributes.get(name);
 		if (attribute == null) {
 			return null;
@@ -605,7 +631,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	protected String getContentIndent() {
-		// TODO: MP: TEO: Add indent methods on documenttextnode
+		// TODO: MP: TEO: LOW: Add indent methods on documenttextnode?
 		return getLineDelimiter() + 
 		   getIndent() + 
 		   "   "; //$NON-NLS-1$
@@ -641,6 +667,52 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#hasXMLChildren()
+	 */
+	public boolean hasXMLChildren() {
+		if (getChildCount() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#hasXMLContent()
+	 */
+	public boolean hasXMLContent() {
+		if (isDefined(fTextNode)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#getNodeAttributesCount()
+	 */
+	public int getNodeAttributesCount() {
+		// Returns the number of attributes with defined values
+		int count = 0; 
+		IDocumentAttribute[] attributes = getNodeAttributes();
+		for (int i = 0; i < attributes.length; i++) {
+			IDocumentAttribute attribute = attributes[i];
+			if (isDefined(attribute)) {
+				count++;
+			}
+		}
+		return count; 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#hasXMLAttributes()
+	 */
+	public boolean hasXMLAttributes() {
+		if (getNodeAttributesCount() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
 	 */
 	public boolean setXMLAttribute(String name, String value) {
@@ -667,7 +739,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		try {
 			if (attribute == null) {
 				// Attribute does not exist
-				attribute = new DocumentAttributeNode();
+				attribute = createDocumentAttributeNode();
 				attribute.setAttributeName(name);
 				attribute.setEnclosingElement(this);
 				setXMLAttribute(attribute);
@@ -694,7 +766,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		IDocumentTextNode node = getTextNode();
 		if (node == null) {
 			// Text does not exist, create it
-			node = new DocumentTextNode();
+			node = createDocumentTextNode();
 			node.setEnclosingElement(this);
 			addTextNode(node);
 		}
@@ -714,6 +786,41 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			return null;
 		}
 		return node.getText();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.DocumentXMLNode#write()
+	 */
+	public String write() {
+		return write(false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
+	 */
+	public int getXMLType() {
+		return F_TYPE_ELEMENT;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentNode#isContentCollapsed()
+	 */
+	public boolean isContentCollapsed() {
+		return false;
+	}
+	
+	/**
+	 * @return
+	 */
+	protected IDocumentAttribute createDocumentAttributeNode() {
+		return new DocumentAttributeNode();
+	}
+	
+	/**
+	 * @return
+	 */
+	protected IDocumentTextNode createDocumentTextNode() {
+		return new DocumentTextNode();
 	}
 	
 }

@@ -43,6 +43,8 @@ public interface ISimpleCSConstants extends ICSConstants{
 
 	public static final String ELEMENT_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
 	
+	public static final String ELEMENT_BR = "br"; //$NON-NLS-1$		
+	
 	// Attributes
 	
 	public static final String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$

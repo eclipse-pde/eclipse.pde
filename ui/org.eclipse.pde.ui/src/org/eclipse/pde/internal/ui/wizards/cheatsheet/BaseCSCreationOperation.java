@@ -68,7 +68,7 @@ public abstract class BaseCSCreationOperation extends
 	/**
 	 * 
 	 */
-	protected abstract void createContent();
+	protected abstract void createContent() throws CoreException;
 	
 	/**
 	 * 

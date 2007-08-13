@@ -68,4 +68,11 @@ public class SimpleCSDescription extends SimpleCSObject implements
 		return TYPE_DESCRIPTION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isContentCollapsed()
+	 */
+	public boolean isContentCollapsed() {
+		return true;
+	}
+	
 }

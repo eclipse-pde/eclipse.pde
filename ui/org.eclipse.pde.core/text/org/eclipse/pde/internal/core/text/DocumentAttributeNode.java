@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
  * DocumentAttributeNode
  *
  */
-public class DocumentAttributeNode implements IDocumentAttribute {
+public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentAttribute {
 
 	private static final long serialVersionUID = 1L;
 
@@ -201,6 +201,13 @@ public class DocumentAttributeNode implements IDocumentAttribute {
 		// Stems from the problem that attributes are considered as elements
 		// in the hierarchy in the manifest model
 		return getNameOffset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
+	 */
+	public int getXMLType() {
+		return F_TYPE_ATTRIBUTE;
 	}
 
 }

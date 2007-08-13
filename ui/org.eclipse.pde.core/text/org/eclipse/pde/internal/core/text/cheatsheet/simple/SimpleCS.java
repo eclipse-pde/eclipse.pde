@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
+import java.util.ArrayList;
+
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
@@ -30,6 +32,8 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public SimpleCS(ISimpleCSModel model) {
 		super(model, ELEMENT_CHEATSHEET);
+		// Root node
+		setInTheModel(true);
 	}
 	
 	/* (non-Javadoc)
@@ -64,7 +68,8 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getItems()
 	 */
 	public ISimpleCSItem[] getItems() {
-		return (ISimpleCSItem[])getChildNodes(ISimpleCSItem.class, true);
+		ArrayList filteredChildren = getChildNodesList(ISimpleCSItem.class, true);
+		return (ISimpleCSItem[])filteredChildren.toArray(new ISimpleCSItem[filteredChildren.size()]);	
 	}
 
 	/* (non-Javadoc)
@@ -121,7 +126,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#moveItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem, int)
 	 */
 	public void moveItem(ISimpleCSItem item, int newRelativeIndex) {
-		moveChildNode((IDocumentNode)item, newRelativeIndex);
+		moveChildNode((IDocumentNode)item, newRelativeIndex, true);
 	}
 
 	/* (non-Javadoc)

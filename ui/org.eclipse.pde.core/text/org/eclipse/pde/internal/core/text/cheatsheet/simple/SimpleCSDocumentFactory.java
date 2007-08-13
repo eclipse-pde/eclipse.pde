@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 
 /**
  * SimpleCSDocumentFactory
@@ -54,7 +55,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		IDocumentTextNode textNode = new SimpleCSDocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);
-		textNode.setText(content.trim());
+		textNode.setText(content);
 		return textNode;
 	}
 	
@@ -66,10 +67,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		// Semantics:
 		// org.eclipse.platform.doc.isv/reference/extension-points/cheatSheetContentFileSpec.html
 		
-		// TODO: MP: TEO: Parent is not needed as it is set in the DocumentHandler
-		// TODO: MP: TEO: Could delegate to model classes to do creation?
-		// TODO: MP: TEO:  Change to interfaces for checking instance of and cast
-		// TODO: MP: TEO:  Prioritize "if" order
+		// TODO: MP: TEO: MED: Change factory interface - Parent is not needed as it is set in the DocumentHandler
+		// TODO: MP: TEO: MED: Change to interfaces for checking instance of and cast
+		// TODO: MP: TEO: LOW: Prioritize "if" order
 		
 		if (parent == null) {
 			if (isSimpleCS(name)) {
@@ -144,6 +144,16 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 				// Command
 				return (IDocumentNode)createSimpleCSCommand((SimpleCSPerformWhen)parent);
 			}
+		} else if (parent instanceof SimpleCSDescription) {
+			if (isBr(name)) {
+				// Br
+				return createBr();
+			}
+		} else if (parent instanceof SimpleCSOnCompletion) {
+			if (isBr(name)) {
+				// Br
+				return createBr();
+			}			
 		}
 		// Description has no children
 		// Action has no children
@@ -252,6 +262,14 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_ONCOMPLETION);
 	}		
 	
+	/**
+	 * @param name
+	 * @return
+	 */
+	private boolean isBr(String name) {
+		return isCSElement(name, ISimpleCSConstants.ELEMENT_BR);
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCS()
 	 */
@@ -330,6 +348,19 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	 */
 	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent) {
 		return new SimpleCSSubItem(fModel);
+	}
+	
+	/**
+	 * @return
+	 */
+	protected IDocumentNode createBr() {
+		return new DocumentGenericNode(ISimpleCSConstants.ELEMENT_BR) {
+			private static final long serialVersionUID = 1L;
+
+			public boolean isLeafNode() {
+				return true;
+			}
+		};
 	}
 	
 }

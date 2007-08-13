@@ -27,7 +27,7 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 
 	private static final int F_MAX_PARAMS = 9;
 
-	// TODO: MP: TEO: Verify translate of paramaters on write is okay - no translate before
+	// TODO: MP: TEO: MED: Verify translate of paramaters on write is okay - no translate before
 	
 	/**
 	 * @param model
@@ -173,4 +173,11 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 		return TYPE_ACTION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isLeafNode()
+	 */
+	public boolean isLeafNode() {
+		return true;
+	}
+	
 }

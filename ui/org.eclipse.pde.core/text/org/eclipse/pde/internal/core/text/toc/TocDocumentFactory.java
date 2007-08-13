@@ -38,12 +38,6 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 
 		// Semantics:
 		// org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_help_toc.html
-		
-		// TODO: MP: TEO: Parent is not needed as it is set in the DocumentHandler
-		// TODO: MP: TEO: Could delegate to model classes to do creation?
-		// TODO: MP: TEO: Enforce model validity rules? Do not read in extraneous elements?
-		// Note: Cannot return null
-		// TODO: MP: TEO:  Change to interfaces for checking instance of and cast
 
 		if (isToc(name))
 		{	// Root

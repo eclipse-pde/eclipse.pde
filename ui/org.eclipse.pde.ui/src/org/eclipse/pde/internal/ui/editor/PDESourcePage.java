@@ -716,4 +716,14 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 			}
 		};
 	}
+	
+	/**
+	 * @param range
+	 * @return
+	 */
+	public IDocumentRange adaptRange(IDocumentRange range) {
+		// Subclasses to override
+		return range;
+	}
+	
 }

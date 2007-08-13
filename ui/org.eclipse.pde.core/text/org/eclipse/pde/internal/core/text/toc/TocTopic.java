@@ -142,7 +142,7 @@ public class TocTopic extends TocObject
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#moveChild(org.eclipse.pde.internal.core.toc.TocObject, int)
 	 */
 	public void moveChild(TocObject tocObject, int newRelativeIndex) {
-		moveChildNode(tocObject, newRelativeIndex);
+		moveChildNode(tocObject, newRelativeIndex, true);
 	}
 	
 	/**

@@ -13,13 +13,24 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
@@ -38,12 +49,12 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	public SimpleCSSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
 	public boolean isQuickOutlineEnabled() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -57,28 +68,92 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineContentProvider()
 	 */
 	public ITreeContentProvider createOutlineContentProvider() {
-		return null;
+		return new SimpleCSContentProvider();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineLabelProvider()
 	 */
 	public ILabelProvider createOutlineLabelProvider() {
-		return null;
+		return PDEPlugin.getDefault().getLabelProvider();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#isSelectionListener()
+	 */
+	protected boolean isSelectionListener() {
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
-		// NO-OP
+		if ((object instanceof IDocumentNode) &&
+				(((IDocumentNode)object).isErrorNode() == false)) {
+			fSelection = object;
+			setHighlightRange((IDocumentNode)object, true);
+			setSelectedRange((IDocumentNode)object, false);
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
 	 */
-	public void updateSelection(SelectionChangedEvent event) {
-		// NO-OP
+	protected IDocumentRange findRange() {
+		if (fSelection instanceof IDocumentNode) {
+			return (IDocumentNode)fSelection;
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
+	 */
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
+		IDocumentNode rootNode = ((SimpleCSModel)getInputContext().getModel()).getSimpleCS();
+		return findNode(rootNode, offset, searchChildren);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
+	 */
+	protected void synchronizeOutlinePage(int offset) {
+		IDocumentRange range = getRangeElement(offset, true);
+		updateHighlightRange(range);
+		range = adaptRange(range);
+		updateOutlinePageSelection(range);
+	}	
+	
+	/**
+	 * @param range
+	 * @return
+	 */
+	public IDocumentRange adaptRange(IDocumentRange range) {
+		// Adapt the range to node that is viewable in the outline view
+		if (range instanceof IDocumentAttribute) {
+			// Attribute
+			return adaptRange(((IDocumentAttribute)range).getEnclosingElement());
+		} else if (range instanceof IDocumentTextNode) {
+			// Content
+			return adaptRange(((IDocumentTextNode)range).getEnclosingElement());
+		} else if (range instanceof IDocumentNode) {
+			// Element
+			if (range instanceof ISimpleCS) {
+				return range;
+			} else if (range instanceof ISimpleCSItem) {
+				return range;
+			} else if (range instanceof ISimpleCSSubItemObject) {
+				return range;
+			} else if (range instanceof ISimpleCSIntro) {
+				return range;
+			} else if (range instanceof ISimpleCSPerformWhen) {
+				return range;
+			} else {
+				return adaptRange(((IDocumentNode)range).getParentNode());
+			}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -107,18 +182,28 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlinePage()
-	 */
-	protected ISortableContentOutlinePage createOutlinePage() {
-		// TODO: MP: SimpleCS:  Use until source page defined for source page
-		return new SimpleCSFormOutlinePage((PDEFormEditor)getEditor());
-	}	
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
 	 */
 	protected void setPartName(String partName) {
 		super.setPartName(PDEUIMessages.EditorSourcePage_name);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
+	 */
+	protected void initializeEditor() {
+		super.initializeEditor();
+		setHelpContextId(IHelpContextIds.SIMPLE_CS_EDITOR);
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector.class.equals(adapter)) {
+			return new SimpleCSHyperlinkDetector(this);
+		}
+		return super.getAdapter(adapter);
+	}	
 	
 }

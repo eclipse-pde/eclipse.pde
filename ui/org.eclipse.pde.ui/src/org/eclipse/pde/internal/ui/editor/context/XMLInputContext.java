@@ -235,7 +235,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				int length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
 				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
 			} else {
-				op = new ReplaceEdit(offset, attr.getValueLength(), getWritableString(event.getNewValue().toString()));
+				op = new ReplaceEdit(offset, attr.getValueLength(), getWritableAttributeNodeValue(event.getNewValue().toString()));
 			}
 		} 
 				
@@ -262,7 +262,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		TextEdit op = null;
 		Object changedObject = textNode;
 		if (textNode.getOffset() > -1) {
-			String newText = getWritableString(textNode.getText());
+			String newText = getWritableTextNodeString(textNode);
 			op = new ReplaceEdit(textNode.getOffset(), textNode.getLength(), newText);
 		} else {
 			IDocumentNode parent = textNode.getEnclosingElement();
@@ -283,7 +283,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				StringBuffer buffer = new StringBuffer(sep); 
 				for (int i = 0; i < parent.getLineIndent(); i++) 
 					buffer.append(" "); //$NON-NLS-1$
-				buffer.append("   " + getWritableString(textNode.getText())); //$NON-NLS-1$
+				buffer.append("   " + getWritableTextNodeString(textNode)); //$NON-NLS-1$
 				int offset = parent.getOffset();
 				int length = getNextPosition(doc, offset, '>');
 				op = new InsertEdit(offset+ length + 1, buffer.toString());	
@@ -500,9 +500,21 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}		
 	}
 	
-	
-	public String getWritableString(String source) {
+	/**
+	 * @param source
+	 * @return
+	 */
+	protected String getWritableAttributeNodeValue(String source) {
+		// TODO: MP: TEO: LOW: Shouldn't it be getWritableAttributeString ?
 		return PDEXMLHelper.getWritableString(source);
+	}
+	
+	/**
+	 * @param source
+	 * @return
+	 */
+	protected String getWritableTextNodeString(IDocumentTextNode textNode) {
+		return textNode.write();
 	}
 	
 	protected HashMap getOperationTable() {

@@ -51,12 +51,22 @@ public abstract class DocumentHandler extends DefaultHandler {
 		fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
 	}
 	
+	/**
+	 * @return
+	 */
+	protected IDocumentNode getLastParsedDocumentNode() {
+		if (fDocumentNodeStack.isEmpty()) {
+			return null;
+		}
+		return (IDocumentNode)fDocumentNodeStack.peek(); 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		IDocumentNode parent = fDocumentNodeStack.isEmpty() ? null : (IDocumentNode)fDocumentNodeStack.peek();		
+		IDocumentNode parent = getLastParsedDocumentNode();		
 		IDocumentNode node = getDocumentNode(qName, parent);
 		try {
 			int nodeOffset = getStartOffset(qName);

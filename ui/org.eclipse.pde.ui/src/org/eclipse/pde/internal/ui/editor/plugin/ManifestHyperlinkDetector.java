@@ -12,10 +12,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -25,8 +23,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
@@ -34,40 +32,21 @@ import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
-public class ManifestHyperlinkDetector implements IHyperlinkDetector {
+public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;
-	
 	/**
 	 * @param editor the editor in which to detect the hyperlink
 	 */
 	public ManifestHyperlinkDetector(PDESourcePage page) {
-		fSourcePage = page;
-	}
-	
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || canShowMultipleHyperlinks)
-			return null;
-
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
-		if (!XMLUtil.withinRange(element, region.getOffset()))
-			return null;
-		
-		if (element instanceof IDocumentAttribute)
-			return detectAttributeHyperlink((IDocumentAttribute)element);
-		if (element instanceof IDocumentNode)
-			return detectNodeHyperlink((IDocumentNode)element);
-		if (element instanceof IDocumentTextNode)
-			return detectTextNodeHyperlink((IDocumentTextNode)element);
-		return null;
+		super(page);
 	}
 
-	private IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
+	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
 			return null;
 		
-		IPluginObject node = XMLUtil.getTopLevelParent((IDocumentNode)attr);
+		IPluginObject node = XMLUtil.getTopLevelParent(attr);
 		if (node == null || !node.getModel().isEditable())
 			return null;
 		
@@ -106,7 +85,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		return null;
 	}
 	
-	private IHyperlink[] detectNodeHyperlink(IDocumentNode node) {
+	protected IHyperlink[] detectNodeHyperlink(IDocumentNode node) {
 		// TODO what can we do here?
 		// suggestions:
 		//   - use SchemaEditor.openToElement(IPath path, ISchemaElement element)
@@ -129,7 +108,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		return null;
 	}
 	
-	private IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
+	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
 		IDocumentNode enclosing = node.getEnclosingElement();
 		if (!(enclosing instanceof IPluginObject))
 			return null;

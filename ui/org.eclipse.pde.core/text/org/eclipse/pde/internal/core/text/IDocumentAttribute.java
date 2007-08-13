@@ -14,11 +14,11 @@ import java.io.Serializable;
 
 import org.eclipse.core.runtime.CoreException;
 
-public interface IDocumentAttribute extends IDocumentRange, Serializable {
+public interface IDocumentAttribute extends IDocumentRange, Serializable, IDocumentXMLNode {
 	
 	// Used by text edit operations
 	
-	// TODO: MP: TEO:  Rename to IDocumentAttributeNode
+	// TODO: MP: TEO: LOW: Rename to IDocumentAttributeNode
 	
 	void setEnclosingElement(IDocumentNode node);	
 	IDocumentNode getEnclosingElement();

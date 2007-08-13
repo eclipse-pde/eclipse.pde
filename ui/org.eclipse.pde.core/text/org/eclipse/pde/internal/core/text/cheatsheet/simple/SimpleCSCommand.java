@@ -25,8 +25,8 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 
 	private static final long serialVersionUID = 1L;
 
-	// TODO: MP: TEO: Verify translate attribute values okay - no translate before
-	// TODO: MP: TEO: Implement required attribute 
+	// TODO: MP: TEO: HIGH: Verify translate attribute values okay - no translate before
+	// TODO: MP: SimpleCS:  LOW: Implement 'required' attribute 
 	
 	/**
 	 * @param model
@@ -127,4 +127,11 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 		return TYPE_COMMAND;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isLeafNode()
+	 */
+	public boolean isLeafNode() {
+		return true;
+	}	
+	
 }

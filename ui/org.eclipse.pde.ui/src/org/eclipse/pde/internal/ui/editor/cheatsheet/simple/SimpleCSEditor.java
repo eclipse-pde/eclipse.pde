@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -194,5 +195,16 @@ public class SimpleCSEditor extends MultiSourceEditor {
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SimpleCSSourcePage(editor, title, name);
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#canCut(org.eclipse.jface.viewers.ISelection)
+	 */
+	public boolean canCut(ISelection selection) {
+		IFormPage page = getActivePageInstance();
+		if (page instanceof PDEFormPage) {
+			return ((PDEFormPage)page).canCut(selection);
+		}
+		return super.canCut(selection);
+	}
 	
 }

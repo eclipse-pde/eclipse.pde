@@ -31,13 +31,13 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
@@ -55,7 +55,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -70,13 +69,13 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 
 	private static final int F_BUTTON_ADD_SUBSTEP = 1;
 	
-	private static final int F_BUTTON_REMOVE = 2;
+	private static final int F_BUTTON_REMOVE = 4;
 	
-	private static final int F_BUTTON_UP = 3;
+	private static final int F_BUTTON_UP = 5;
 	
-	private static final int F_BUTTON_DOWN = 4;
+	private static final int F_BUTTON_DOWN = 6;
 
-	private static final int F_BUTTON_PREVIEW = 5;
+	private static final int F_BUTTON_PREVIEW = 9;
 	
 	private static final int F_UP_FLAG = -1;
 
@@ -110,9 +109,13 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				PDEUIMessages.SimpleCSElementSection_0,
 				PDEUIMessages.SimpleCSElementSection_6,
+				null,
+				null,
 				PDEUIMessages.SimpleCSElementSection_7,
 				PDEUIMessages.SimpleCSElementSection_1, 
-				PDEUIMessages.SimpleCSElementSection_2, 
+				PDEUIMessages.SimpleCSElementSection_2,
+				null,
+				null,
 				PDEUIMessages.SimpleCSElementSection_3});
 
 		// Create actions
@@ -139,7 +142,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		createTree(container, toolkit);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		initializeTreeViewer();
 		// Create section toolbar
 		createSectionToolbar(section, toolkit);
 	}
@@ -301,6 +303,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
+		// Update global selection used by source page to sychronize selections
+		// made in the master tree viewer with elements in the source view
+		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}	
 
@@ -503,50 +508,56 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
+		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE) &&
+				(event.getChangedProperty().equals(IDocumentNode.F_PROPERTY_CHANGE_TYPE_SWAP)) ) {
+			handleModelChangeTypeSwap(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
 		}		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		// Get the form page
+		SimpleCSDefinitionPage page = (SimpleCSDefinitionPage)getPage();			
+		// Replace the current dirty model with the model reloaded from
+		// file
+		fModel = (ISimpleCSModel)page.getModel();
+		// Re-initialize the tree viewer.  Makes a details page selection
+		initializeTreeViewer();
+		
+		super.refresh();
+	}
+	
 	/**
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
-		
-		// TODO: MP: TEO: Mark stale, see manifest editor, move code below to refresh
-		
+		// Section will be updated on refresh
+		markStale();
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelChangeTypeSwap(IModelChangedEvent event) {
+		// Swap event
 		Object[] objects = event.getChangedObjects();
-		ISimpleCSObject object = (ISimpleCSObject) objects[0];		
+		// Ensure right type
+		if ((objects[0] instanceof ISimpleCSObject) == false) {
+			return;
+		}
+		ISimpleCSObject object = (ISimpleCSObject)objects[0];		
 		if (object == null) {
 			// Ignore
-			return;
-		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-			// Get the form page
-			SimpleCSDefinitionPage page = (SimpleCSDefinitionPage)getPage();			
-			// Remember the currently selected page
-			IDetailsPage previousDetailsPage = 
-				page.getBlock().getDetailsPart().getCurrentPage();
-			// Replace the current dirty model with the model reloaded from
-			// file
-			fModel = ((ISimpleCS)object).getModel();
-			// Reset the treeviewer using the new model as input
-			fTreeViewer.setInput(fModel);
-			// Re-initialize the tree viewer.  Makes a details page selection
-			initializeTreeViewer();
-			// Get the current details page selection
-			IDetailsPage currentDetailsPage = 
-				page.getBlock().getDetailsPart().getCurrentPage();
-			// If the selected page before the revert is the same as the 
-			// selected page after the revert, then its fields will need to
-			// be updated
-			// TODO: MP: REVERT: LOW: Revisit to see if updating details page is necessary - especially after making static
-			if (currentDetailsPage.equals(previousDetailsPage) && 
-					currentDetailsPage instanceof ICSDetails) {
-				((ICSDetails)currentDetailsPage).updateFields();
-			}
-		}		
-		
-	}
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+			// Refresh the element
+			fTreeViewer.refresh(object);
+		}
+	}		
 	
 	/**
 	 * @param event
@@ -610,6 +621,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
+		// Ensure right type
+		if ((objects[0] instanceof ISimpleCSObject) == false) {
+			return;
+		}
 		ISimpleCSObject object = (ISimpleCSObject)objects[0];		
 		if (object == null) {
 			// Ignore
@@ -699,18 +714,29 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			fRemoveRunObjectAction.setEnabled(fModel.isEditable());
 			manager.add(fRemoveRunObjectAction);				
 		}
-		// Add normal edit operations
-		// TODO: MP: LOW: SimpleCS:  Enable context menu edit operations
-		//getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		//manager.add(new Separator());
+		// Add clipboard operations
+		manager.add(new Separator());
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(ActionFactory.DELETE.getId())) {
+		// Ensure model is editable
+		if (isEditable() == false) { 
+			return false;
+		} else if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
+			return true;
+		} else if (actionId.equals(ActionFactory.CUT.getId())) {
+			// Handle the delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDeleteAction();
+			return false;
+		} else if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
 			return true;
 		}		
 		return false;
@@ -777,4 +803,140 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		return false;
 	}
 
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validatePaste(Object targetObject, Object[] sourceObjects) {
+		if ((targetObject instanceof ISimpleCSObject) == false) {
+			return false;
+		} else if (sourceObjects.length == 0) {
+			return false;
+		} else if ((sourceObjects[0] instanceof ISimpleCSObject) == false) {
+			return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
+		// Validate arguments
+		if (validatePaste(targetObject, sourceObjects) == false) {
+			return false;
+		}
+		// Multi-select not supported
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;
+		// Validate paste
+		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				// Paste item as child of cheat sheet root 
+				return true;
+			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				// Paste item as sibling of item
+				return true;
+			}
+		} else if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				// Paste subitem as child of item
+				return true;
+			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+				// Paste subitem as sibling of subitem
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	 */
+	protected void doPaste(Object targetObject, Object[] sourceObjects) {
+		// Validate arguments
+		if (validatePaste(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
+			return;
+		}		
+		// Multi-select not supported
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;		
+		// Validate paste
+		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			ISimpleCSItem sourceItem = (ISimpleCSItem)sourceCSObject;
+			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				ISimpleCS targetCheatSheet = (ISimpleCS)targetCSObject;
+				// Adjust all the source object transient field values to
+				// acceptable values
+				sourceItem.reconnect(targetCheatSheet, fModel);				
+				// Paste item as the last child of cheat sheet root 
+				targetCheatSheet.addItem(sourceItem);
+			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCS targetCheatSheet = targetItem.getSimpleCS();
+				// Adjust all the source object transient field values to
+				// acceptable values
+				sourceItem.reconnect(targetCheatSheet, fModel);					
+				// Paste source item as sibling of the target item (right after it)
+				int index = targetCheatSheet.indexOfItem(targetItem) + 1;
+				targetCheatSheet.addItem(index, sourceItem);				
+			}
+		} else if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			ISimpleCSSubItem sourceSubitem = (ISimpleCSSubItem)sourceCSObject;
+			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				// Adjust all the source object transient field values to
+				// acceptable values
+				sourceSubitem.reconnect(targetItem, fModel);				
+				// Paste subitem as the last child of the item 
+				targetItem.addSubItem(sourceSubitem);
+			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) &&
+					(targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
+				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem)targetSubItem.getParent();
+				// Adjust all the source object transient field values to
+				// acceptable values
+				sourceSubitem.reconnect(targetItem, fModel);
+				// Paste source item as sibling of the target item (right after it)
+				int index = targetItem.indexOfSubItem(targetSubItem) + 1;
+				targetItem.addSubItem(index, sourceSubitem);
+			}
+		}		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canCut(org.eclipse.jface.viewers.ISelection)
+	 */
+	public boolean canCut(ISelection selection) {
+		// Validate selection
+		if (selection == null) {
+			return false;
+		} else if ((selection instanceof IStructuredSelection) == false) {
+			return false;
+		} else if (selection.isEmpty()) {
+			return false;
+		}
+		// Get the first element
+		Object object = ((IStructuredSelection)selection).getFirstElement();
+		// Ensure we have a CS object
+		if ((object instanceof ISimpleCSObject) == false) {
+			return false;
+		}
+		ISimpleCSObject csObject = (ISimpleCSObject)object;
+		// Can cut only items and subitems
+		if ((csObject.getType() == ISimpleCSConstants.TYPE_ITEM) &&
+				(csObject.getSimpleCS().getItemCount() != 1)) {
+			// Is an item and is not the last item
+			return true;
+		} else if (object instanceof ISimpleCSSubItem) {
+			// Is a subitem
+			return true;
+		}
+		// Cannot cut anything else
+		return false;
+	}
+	
 }

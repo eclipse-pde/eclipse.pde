@@ -40,5 +40,11 @@ public interface ICSMaster {
 	 * @return
 	 */
 	public Section getSection();
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	public boolean setFormInput(Object object);
 	
 }

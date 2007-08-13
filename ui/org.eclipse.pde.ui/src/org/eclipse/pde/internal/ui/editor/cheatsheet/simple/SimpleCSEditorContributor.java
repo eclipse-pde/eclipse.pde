@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,14 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
 
 /**
- * SimpleCSEditorContributor
+ * SimpleCSFormEditorContributor
  *
  */
-public class SimpleCSEditorContributor extends PDEFormEditorContributor {
+public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 
 	private SimpleCSPreviewAction fPreviewAction;
 	
@@ -29,7 +29,7 @@ public class SimpleCSEditorContributor extends PDEFormEditorContributor {
 	 * @param menuName
 	 */
 	public SimpleCSEditorContributor() {
-		super("simpleCSEditor"); //$NON-NLS-1$
+		super("&Simple Cheat Sheet"); //$NON-NLS-1$
 		fPreviewAction = null;
 	}
 
@@ -63,6 +63,13 @@ public class SimpleCSEditorContributor extends PDEFormEditorContributor {
 	 */
 	public SimpleCSPreviewAction getPreviewAction() {
 		return fPreviewAction;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor#supportsHyperlinking()
+	 */
+	public boolean supportsHyperlinking() {
+		return true;
 	}
 	
 }

@@ -79,7 +79,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 		if (fSimpleCS == null) {
 			fSimpleCS = getFactory().createSimpleCS();
 		}
-		// TODO: MP: TEO: Remove cast once interface method created
+		// TODO: MP: TEO: LOW: Remove cast once interface method created
 		((SimpleCSObject)fSimpleCS).setInTheModel(true);
 		return fSimpleCS;
 	}

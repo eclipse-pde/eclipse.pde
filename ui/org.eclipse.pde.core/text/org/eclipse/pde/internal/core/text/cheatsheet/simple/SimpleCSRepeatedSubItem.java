@@ -67,7 +67,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 */
 	public List getChildren() {
 		// Add subitem
-		// TODO: MP: TEO: Write general method to return first occurrence only?
+		// TODO: MP: TEO: LOW: Write general method to return first occurrence only?
 		return getChildNodesList(ISimpleCSSubItem.class, true);
 	}
 

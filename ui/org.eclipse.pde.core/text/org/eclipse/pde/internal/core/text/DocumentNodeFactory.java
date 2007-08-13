@@ -41,9 +41,6 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 			// Ignore
 		}
 		attribute.setEnclosingElement(enclosingElement);
-		// TODO: MP: TEO: Remove if not needed
-		//attribute.setModel(fModel);
-		//attribute.setInTheModel(true);
 		return attribute;
 	}
 
@@ -55,7 +52,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 		IDocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);
-		textNode.setText(content.trim());
+		textNode.setText(content);
 		return textNode;
 	}
 	

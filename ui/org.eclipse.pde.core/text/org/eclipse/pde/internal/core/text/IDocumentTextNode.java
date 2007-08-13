@@ -12,7 +12,9 @@ package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
 
-public interface IDocumentTextNode extends IDocumentRange, Serializable {
+public interface IDocumentTextNode extends IDocumentRange, Serializable, IDocumentXMLNode {
+	
+	public static final String F_PROPERTY_CHANGE_TYPE_PCDATA = "type_pcdata"; //$NON-NLS-1$
 	
 	// Used by text edit operations
 	void setEnclosingElement(IDocumentNode node);	

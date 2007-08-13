@@ -11,11 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
@@ -31,19 +34,59 @@ public class ResourceHyperlink extends AbstractHyperlink {
 	public void open() {
 		if (fResource == null)
 			return;
-		if (fElement.indexOf("$nl$/") == 0) //$NON-NLS-1$
-			fElement = fElement.substring(5);
-		fResource = fResource.getProject().findMember(fElement);
+
+		IResource resource = processAbsolutePathes();
+		if (resource == null) {
+			if (fElement.indexOf("$nl$/") == 0) //$NON-NLS-1$
+				fElement = fElement.substring(5);
+			resource = fResource.getProject().findMember(fElement);
+		}
 		try {
-			if (fResource instanceof IFile)
-				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)fResource, true);
-			else if (fResource != null) {
+			if (resource instanceof IFile) {
+				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+			} else if (resource != null) {
 				IPackagesViewPart part = (IPackagesViewPart)PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
-				part.selectAndReveal(fResource);
+				part.selectAndReveal(resource);
+			} else {
+				Display.getDefault().beep();
 			}
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
+	/**
+	 * @return
+	 */
+	private IResource processAbsolutePathes() {
+		// Check to see if we got an absolute path
+		if (fElement.startsWith("/") == false) { //$NON-NLS-1$
+			// Not an absolute path
+			return null;
+		}	
+		// Absolute path
+		// Format:  /<project-name>/<path-to-file>
+		// Remove the '/'
+		String path = fElement.substring(1);
+		// Parse the project name from the path
+		int index = path.indexOf('/');
+		String projectName = path.substring(0, index);
+		// Ensure we have a valid index
+		if ((index + 1) >= path.length()) {
+			return null;
+		}
+		// Parse the file name from the path (skip the '/')
+		String fileName = path.substring(index + 1);
+		// Get the workspace
+		IWorkspace workspace = fResource.getWorkspace();
+		// Find the project
+		IProject project = workspace.getRoot().getProject(projectName);
+		// Ensure the project was found
+		if (project == null) {
+			return null;
+		}
+		// Find the file
+		return project.findMember(fileName);
+	}
+	
 }

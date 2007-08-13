@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -107,7 +108,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItems()
 	 */
 	public ISimpleCSSubItemObject[] getSubItems() {
-		return (ISimpleCSSubItemObject[])getChildNodes(ISimpleCSSubItemObject.class, true);
+		ArrayList filteredChildren = getChildNodesList(ISimpleCSSubItemObject.class, true);
+		return (ISimpleCSSubItemObject[])filteredChildren.toArray(new ISimpleCSSubItemObject[filteredChildren.size()]);	
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +151,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#moveSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject, int)
 	 */
 	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
-		moveChildNode((IDocumentNode)subitem, newRelativeIndex);
+		moveChildNode((IDocumentNode)subitem, newRelativeIndex, true);
 	}
 
 	/* (non-Javadoc)

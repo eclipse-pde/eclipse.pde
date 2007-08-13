@@ -22,7 +22,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 
 	private IDocumentNodeFactory fFactory;
 	
-	// TODO: MP: TEO: Make PluginDocumentHandler extend this
+	// TODO: MP: TEO: LOW: Make PluginDocumentHandler extend this
 	
 	/**
 	 * @param reconciling

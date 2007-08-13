@@ -68,4 +68,11 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 		return TYPE_ON_COMPLETION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#isContentCollapsed()
+	 */
+	public boolean isContentCollapsed() {
+		return true;
+	}	
+	
 }

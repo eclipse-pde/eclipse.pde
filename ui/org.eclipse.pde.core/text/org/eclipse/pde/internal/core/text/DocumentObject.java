@@ -34,12 +34,10 @@ import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode;
  */
 public abstract class DocumentObject extends PluginDocumentNode implements
 		IDocumentObject {
-
-	// TODO: MP: TEO: Consider renaming class
 	
-	// TODO: MP: TEO: Integrate with plugin model?
+	// TODO: MP: TEO: LOW: Integrate with plugin model?
 	
-	// TODO: MP: TEO: Investigate document node to see if any methods to pull down
+	// TODO: MP: TEO: LOW: Investigate document node to see if any methods to pull down
 	
 	private transient IModel fModel;
 	
@@ -75,7 +73,7 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#reset()
 	 */
 	public void reset() {
-		// TODO: MP: TEO: reset parent fields? or super.reset?
+		// TODO: MP: TEO: LOW: Reset parent fields? or super.reset?
 		fModel = null;
 		fInTheModel = false;
 	}	
@@ -136,13 +134,6 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		fInTheModel = true;
 		// Transient field:  Model
 		fModel = model;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return write(false);
 	}	
 	
 	/**
@@ -399,27 +390,9 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected IDocumentNode[] getChildNodes(Class clazz, boolean match) {
-		ArrayList filteredChildren = getChildNodesList(clazz, match);
-		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);	
-	}
-	
-	/**
-	 * @param clazz
-	 * @return
-	 */
 	protected ArrayList getChildNodesList(Class clazz, boolean match) {
 		return getChildNodesList(new Class[]{ clazz }, match);
 	}
-	
-	/**
-	 * @param clazz
-	 * @return
-	 */
-	protected IDocumentNode[] getChildNodes(Class[] classes, boolean match) {
-		ArrayList filteredChildren = getChildNodesList(classes, match);
-		return (IDocumentNode[])filteredChildren.toArray(new IDocumentNode[filteredChildren.size()]);		
-	}	
 	
 	/**
 	 * @param classes
@@ -564,12 +537,30 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		return true;		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#swap(org.eclipse.pde.internal.core.text.IDocumentNode, org.eclipse.pde.internal.core.text.IDocumentNode)
+	 */
+	public void swap(IDocumentNode child1, IDocumentNode child2, boolean fireEvent) {
+		super.swap(child1, child2);
+		// Fire event
+		if (fireEvent && shouldFireEvent()) {
+			firePropertyChanged(this, IDocumentNode.F_PROPERTY_CHANGE_TYPE_SWAP, child1, child2);
+		}	
+	}
+	
 	/**
 	 * @param node
 	 * @param newRelativeIndex
 	 */
-	protected void moveChildNode(IDocumentNode node, int newRelativeIndex) {
-		// TODO: MP: TEO: Problem, if generic not viewable, may appear that node did not move
+	protected void moveChildNode(IDocumentNode node, int newRelativeIndex, boolean fireEvent) {
+
+		// TODO: MP: TEO: MED: Test Problem, if generic not viewable, may appear that node did not move
+		// TODO: MP: TEO: HIGH: TEST FOR DND:  new relative index > 1 or < -1  - BUG: add item to end, move existing item before it down, teo overwrites new item
+
+		if (newRelativeIndex == 0) {
+			// Nothing to do
+			return;
+		}
 		// Get the current index of the node
 		int currentIndex = indexOf(node);
 		// Ensure the node exists
@@ -584,18 +575,31 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 				(newIndex >= getChildCount())) {
 			return;
 		}
-		// Remove the node
-		removeChildNode(node, true);
-		// Clone the node
-		// Needed to create a text edit operation that inserts a new element
-		// rather than replacing the old one
-		IDocumentNode clone = clone(node);
-		// Removing the node and moving it to a positive relative index alters
-		// the indexing for insertion; however, this pads the new relative
-		// index by 1, allowing it to be inserted one position after as 
-		// desired
-		// Add the node back at the specified index
-		addChildNode(clone, newIndex, true);
+		// If we are only moving a node up and down one position use a swap
+		// operation.  Otherwise, delete the node, clone it and then re-insert
+		// the node
+		if ((newRelativeIndex == -1) ||
+				(newRelativeIndex == 1)) {
+			IDocumentNode sibling = getChildAt(newIndex);
+			// Ensure sibling exists
+			if (sibling == null) {
+				return;
+			}
+			swap(node, sibling, fireEvent);
+		} else {
+			// Remove the node
+			removeChildNode(node, fireEvent);
+			// Clone the node
+			// Needed to create a text edit operation that inserts a new element
+			// rather than replacing the old one
+			IDocumentNode clone = clone(node);
+			// Removing the node and moving it to a positive relative index alters
+			// the indexing for insertion; however, this pads the new relative
+			// index by 1, allowing it to be inserted one position after as 
+			// desired
+			// Add the node back at the specified index
+			addChildNode(clone, newIndex, fireEvent);
+		}
 	}
 	
 	/**
@@ -687,8 +691,10 @@ public abstract class DocumentObject extends PluginDocumentNode implements
 		
 		// Fire an event 
 		if (changed && shouldFireEvent()) {
-			// TODO: MP: TEO: Create constant
-			firePropertyChanged(node, "TEXT", oldText, text); //$NON-NLS-1$
+			firePropertyChanged(node, 
+					IDocumentTextNode.F_PROPERTY_CHANGE_TYPE_PCDATA, 
+					oldText, 
+					text);
 		}
 		return changed;
 	}

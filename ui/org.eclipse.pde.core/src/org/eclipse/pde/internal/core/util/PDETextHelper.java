@@ -229,7 +229,7 @@ public class PDETextHelper {
 			// Determine whether this bracket is part of a tag that is a
 			// valid tag exception
 			// Respect character array boundaries. Adjust accordingly
-			int limit = text.length() + index.getInteger() + 2;
+			int limit = text.length();
 			// Scan ahead buffer
 			StringBuffer parsedText = new StringBuffer();
 			// Scan ahead in text to parse out a possible element tag name

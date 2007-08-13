@@ -2,45 +2,27 @@ package org.eclipse.pde.internal.ui.editor.toc;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
+import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
-public class TocHyperlinkDetector implements IHyperlinkDetector {
+public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;
-	
 	/**
 	 * @param editor the editor in which to detect the hyperlink
 	 */
 	public TocHyperlinkDetector(PDESourcePage page) {
-		fSourcePage = page;
-	}
-	
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || canShowMultipleHyperlinks)
-			return null;
-
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
-		if (!XMLUtil.withinRange(element, region.getOffset()))
-			return null;
-		
-		if (element instanceof IDocumentAttribute)
-			return detectAttributeHyperlink((IDocumentAttribute)element);
-		return null;
+		super(page);
 	}
 
-	private IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
+	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
 			return null;

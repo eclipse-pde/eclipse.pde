@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,22 +9,31 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.core.icheatsheet;
+package org.eclipse.pde.internal.core.text;
 
 /**
- * ICSConstants
+ * DocumentXMLNode
  *
  */
-public interface ICSConstants {
+public abstract class DocumentXMLNode implements IDocumentXMLNode {
 
-	// Attribute Values
-	// TODO: MP: TEO: LOW: Delete all contstants once migration is complete
-	
-	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
+	/**
+	 * 
+	 */
+	public DocumentXMLNode() {
+		// NO-OP
+	}
 
-	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
-	
-	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return write();
+	}
+
+	/**
+	 * @return
+	 */
+	public abstract String write();
 	
 }

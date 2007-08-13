@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -62,10 +63,13 @@ public abstract class PDEFormPage extends FormPage {
 
 	private boolean fNewStyleHeader=true;
 	private Control fLastFocusControl;
-
+	
+	private boolean fStale;
+	
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fLastFocusControl = null;
+		fStale = false;
 	}
 
 	public PDEFormPage(FormEditor editor, String id, String title, boolean newStyleHeader) {
@@ -73,6 +77,37 @@ public abstract class PDEFormPage extends FormPage {
 		fNewStyleHeader = newStyleHeader;
 	}
 
+	/**
+	 * 
+	 */
+	protected void markStale() {
+		fStale = true;
+	}
+	
+	/**
+	 * @return
+	 */
+	protected boolean isStale() {
+		return fStale;
+	}
+	
+	/**
+	 * 
+	 */
+	protected void refresh() {
+		fStale = false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		super.setActive(active);
+		if (active && isStale()) {
+			refresh();
+		}
+	}	
+	
 	public void dispose() {
 		Control c = getPartControl();
 		if (c!=null && !c.isDisposed()) {
@@ -193,6 +228,40 @@ public abstract class PDEFormPage extends FormPage {
 		return false;
 	}
 
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCopy(ISelection selection) {
+		AbstractFormPart focusPart = getFocusSection();
+		if (focusPart != null) {
+			if (focusPart instanceof PDESection) {
+				return ((PDESection)focusPart).canCopy(selection);
+			}
+			if (focusPart instanceof PDEDetails) {
+				return ((PDEDetails)focusPart).canCopy(selection);
+			}
+		}
+		return false;		
+	}
+	
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCut(ISelection selection) {
+		AbstractFormPart focusPart = getFocusSection();
+		if (focusPart != null) {
+			if (focusPart instanceof PDESection) {
+				return ((PDESection)focusPart).canCut(selection);
+			}
+			if (focusPart instanceof PDEDetails) {
+				return ((PDEDetails)focusPart).canCut(selection);
+			}
+		}
+		return false;		
+	}	
+	
 	private AbstractFormPart getFocusSection() {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)

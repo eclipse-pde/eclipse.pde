@@ -11,14 +11,15 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -26,10 +27,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractPage;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
@@ -128,6 +132,10 @@ public class SimpleCSDefinitionPage extends CSAbstractPage implements IModelChan
 		
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object[] objects = event.getChangedObjects();
+			// Ensure right type
+			if ((objects[0] instanceof ISimpleCSObject) == false) {
+				return;
+			}
 			ISimpleCSObject object = (ISimpleCSObject) objects[0];
 			if (object == null) {
 				// Ignore
@@ -154,18 +162,8 @@ public class SimpleCSDefinitionPage extends CSAbstractPage implements IModelChan
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
-		
-		Object[] objects = event.getChangedObjects();
-		ISimpleCSObject object = (ISimpleCSObject) objects[0];		
-		if (object == null) {
-			// Ignore
-			return;
-		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-			String newValue = ((ISimpleCS)object).getTitle();
-			// Update page title
-			getManagedForm().getForm().setText(
-					PDETextHelper.translateReadText(newValue));
-		}
+		// Page will be updated on refresh
+		markStale();
 	}
 
 	/**
@@ -180,6 +178,69 @@ public class SimpleCSDefinitionPage extends CSAbstractPage implements IModelChan
 	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#refresh()
+	 */
+	protected void refresh() {
+		super.refresh();
+		ScrolledForm form = getManagedForm().getForm();
+		ISimpleCSModel model = (ISimpleCSModel)getModel();
+		String oldTitle = form.getText();
+		String newTitle = model.getSimpleCS().getTitle();
+		if (newTitle.equals(oldTitle) == false) {
+			// Update form page title
+			form.setText(PDETextHelper.translateReadText(newTitle));
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		super.setActive(active);
+		
+		if (active == false) {
+			// Switching away from this page
+			return;
+		}
+		// Switching into this page
+		// Get source page
+		IFormPage page = getPDEEditor().findPage(SimpleCSInputContext.CONTEXT_ID);
+		// Ensure we got the source page
+		if ((page instanceof PDESourcePage) == false) {
+			return;
+		}
+		PDESourcePage sourcePage = (PDESourcePage)page;
+		// Get the source viewer
+		ISourceViewer viewer = sourcePage.getViewer();
+		// Ensure the viewer is defined
+		if (viewer == null) {
+			return;
+		}
+		// Get the styled text
+		StyledText text = viewer.getTextWidget();
+		// Ensure the styled text is defined
+		if (text == null) {
+			return;
+		}
+		// Get the cursor offset
+		int offset = text.getCaretOffset();
+		// Ensure the offset is defined
+		if (offset < 0) {
+			return;
+		}
+		// Get the range the offset is on
+		IDocumentRange range = sourcePage.getRangeElement(offset, true);
+		// Adapt the range to a node representable in the master tree viewer
+		range = sourcePage.adaptRange(range);
+		// Ensure the range is defined
+		if (range == null) {
+			return;
+		}
+		// Select the node in the master tree viewer if defined
+		fBlock.getMastersSection().setFormInput(range);
 	}
 	
 }

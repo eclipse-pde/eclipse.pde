@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.swt.dnd.Clipboard;
@@ -72,6 +73,24 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCopy(ISelection selection) {
+		// Sub-classes to override
+		return false;
+	}
+
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCut(ISelection selection) {
+		// Sub-classes to override
+		return false;
+	}	
+	
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +27,24 @@ public abstract class PDEDetails extends AbstractFormPart implements IDetailsPag
 	
 	public boolean canPaste(Clipboard clipboard) {
 		return true;
+	}
+	
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCopy(ISelection selection) {
+		// Sub-classes to override
+		return false;
+	}
+
+	/**
+	 * @param selection
+	 * @return
+	 */
+	public boolean canCut(ISelection selection) {
+		// Sub-classes to override
+		return false;
 	}
 	
 	public boolean doGlobalAction(String actionId) {

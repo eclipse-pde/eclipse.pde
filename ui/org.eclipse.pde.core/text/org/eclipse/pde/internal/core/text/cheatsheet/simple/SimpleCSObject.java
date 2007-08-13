@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.pde.internal.core.text.DocumentObject;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 import org.w3c.dom.Element;
 
@@ -29,11 +30,6 @@ import org.w3c.dom.Element;
 public abstract class SimpleCSObject extends DocumentObject implements
 		ISimpleCSObject, IWritableDelimiter {
 
-	
-	// TODO: MP: TEO:  Make ISimpleCSObject extend IDocumentObject
-	
-	// TODO: MP: TEO:  Compare with CompCS model to add in handy utility methods for style
-	
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -86,7 +82,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
 	 */
 	public void parse(Element element) {
-		// TODO: MP: TEO: Candidate for removal and refactor
+		// TODO: MP: TEO: LOW: Remove parse from interface - once old simpleCS model is deleted
 		// NO-OP
 	}
 
@@ -101,9 +97,16 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
 	public void writeDelimeter(PrintWriter writer) {
-		// TODO: MP: TEO: Probably \n for all
+		// TODO: MP: TEO: LOW: Probably \n for all
 		// NO-OP
 		// Child classes to override
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#createDocumentTextNode()
+	 */
+	protected IDocumentTextNode createDocumentTextNode() {
+		return new SimpleCSDocumentTextNode();
 	}
 
 }

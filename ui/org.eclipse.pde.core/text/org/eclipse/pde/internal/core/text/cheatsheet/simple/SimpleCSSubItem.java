@@ -94,7 +94,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		// TODO: MP: TEO: Revisit children returned that only can have one - do not return full list
+		// TODO: MP: TEO: LOW: Revisit children returned that only can have one - do not return full list
 		// Add unsupported perform-when if it is set as the executable
 		return getChildNodesList(ISimpleCSPerformWhen.class, true);
 	}

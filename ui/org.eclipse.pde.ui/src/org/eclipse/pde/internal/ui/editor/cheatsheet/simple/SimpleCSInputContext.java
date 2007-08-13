@@ -11,29 +11,22 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSModel;
-import org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSWorkspaceModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * SimpleCSInputContext
@@ -54,39 +47,58 @@ public class SimpleCSInputContext extends XMLInputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
-		// NO-OP
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		ISimpleCSModel model = null;
-		if (input instanceof IStorageEditorInput) {
-			try {
-				if (input instanceof IFileEditorInput) {
-					IFile file = ((IFileEditorInput) input).getFile();
-					model = new SimpleCSWorkspaceModel(file, true);
-					model.load();
-				} else if (input instanceof IStorageEditorInput) {
-					InputStream is = new BufferedInputStream(
-							((IStorageEditorInput) input).getStorage()
-									.getContents());
-					model = new SimpleCSModel();
-					model.load(is, false);
-				}
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-				return null;
-			}
+		// Ensure valid input
+		if ((input instanceof IStorageEditorInput) == false) {
+			return null;
 		}
-		return model;
-	}
+		// Determine if reconciling
+		boolean isReconciling = false;
+		if (input instanceof IFileEditorInput) {
+			isReconciling = true;
+		}
+		// Get document provider
+		IDocument document = getDocumentProvider().getDocument(input);
+		// Create the model
+		SimpleCSModel model = new SimpleCSModel(document, isReconciling);
+		
+		if (input instanceof IFileEditorInput) {
+			// File from workspace
+			IFile file = ((IFileEditorInput) input).getFile();
+			model.setUnderlyingResource(file);
+			model.setCharset(file.getCharset());
+		} else if (input instanceof SystemFileEditorInput) {
+			// File from file system
+			File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
+			model.setInstallLocation(file.getParent());
+			model.setCharset(getDefaultCharset());
+		} else if (input instanceof JarEntryEditorInput) {
+			// File from JAR
+			File file = (File)((JarEntryEditorInput)input).getAdapter(File.class);
+			model.setInstallLocation(file.toString());
+			model.setCharset(getDefaultCharset());
+		} else {
+			// File from other places like CVS
+			model.setCharset(getDefaultCharset());
+		}
+		// Load the model
+		model.load();
 
+		return model;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#doRevert()
+	 */
+	public void doRevert() {
+		// TODO: MP: TEO: LOW: Generalize revert?
+		fEditOperations.clear();
+		fOperationTable.clear();
+		fMoveOperations.clear();
+		AbstractEditingModel model = (AbstractEditingModel)getModel();
+		model.reconciled(model.getDocument());
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
 	 */
@@ -102,68 +114,10 @@ public class SimpleCSInputContext extends XMLInputContext {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
-	 */
-	protected void flushModel(IDocument doc) {
-		if (!(getModel() instanceof IEditable))
-			return;
-		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isDirty() == false)
-			return;
-		try {
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
-			editableModel.save(writer);
-			writer.flush();
-			swriter.close();
-			doc.set(swriter.toString());
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
 	protected void reorderInsertEdits(ArrayList ops) {
 		// NO-OP
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushEditorInput()
-	 */
-	public void flushEditorInput() {
-		// Override parent, since this editor does not utilize edit operations
-		// Relevant during revert operations
-		IDocumentProvider provider = getDocumentProvider();
-		IEditorInput input = getInput();
-		IDocument doc = provider.getDocument(input);
-		provider.aboutToChange(input);
-		flushModel(doc);
-		provider.changed(input);
-		setValidated(false);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#synchronizeModel(org.eclipse.jface.text.IDocument)
-	 */
-	protected boolean synchronizeModel(IDocument document) {
-		// Method used to synchronize the source page changes with the form
-		// page
-		// Not needed if using text edit operations
-		// Get the model
-		IBaseModel baseModel = getModel();
-		// Ensure the model is a workspace model
-		if (baseModel  == null) {
-			return false;
-		} else if ((baseModel instanceof SimpleCSWorkspaceModel) == false) {
-			return false;
-		}
-		SimpleCSWorkspaceModel model = (SimpleCSWorkspaceModel)baseModel;
-		// Reload the model using the unsaved contents of the source page
-		model.reload(document);
-		
-		return true;
-	}	
 	
 }

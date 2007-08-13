@@ -114,7 +114,7 @@ public class TocSourcePage extends XMLSourcePage {
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange rangeElement = getRangeElement(offset, true);
 		updateHighlightRange(rangeElement);
-		// TODO: MP: TEO-SIMPLECS: Generalize for parent - search children = true and handle attributes
+		// TODO: MP: TEO: LOW: Generalize for parent - search children = true and handle attributes
 		if(rangeElement instanceof IDocumentAttribute)
 		{	rangeElement = ((IDocumentAttribute)rangeElement).getEnclosingElement();
 		}

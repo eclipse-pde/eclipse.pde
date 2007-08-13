@@ -45,7 +45,6 @@ public class TocOperation extends WorkspaceModifyOperation {
 
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		// TODO: MP: TEO-SIMPLECS:  Do the same for cheat sheet editor wizard
         TocModel model = new TocModel(CoreUtility.getTextDocument(fFile.getContents()), false);
         model.setUnderlyingResource(fFile);
         initializeToc(model);

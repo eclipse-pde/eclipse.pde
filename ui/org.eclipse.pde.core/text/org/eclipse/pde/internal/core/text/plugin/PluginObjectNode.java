@@ -283,7 +283,6 @@ public class PluginObjectNode extends PluginDocumentNode implements
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLAttributeValue(java.lang.String)
 	 */
 	public String getXMLAttributeValue(String name) {
-		// TODO: MP: TEO: MANIFEST MOD TEST
 		// Overrided by necessity - dealing with different objects
 		PluginAttribute attr = (PluginAttribute)getNodeAttributesMap().get(name);
 		return attr == null ? null : attr.getValue();

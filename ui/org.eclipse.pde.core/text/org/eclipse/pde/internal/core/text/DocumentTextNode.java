@@ -15,7 +15,7 @@ import java.util.HashMap;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 
-public class DocumentTextNode implements IDocumentTextNode {
+public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNode {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -121,5 +121,12 @@ public class DocumentTextNode implements IDocumentTextNode {
 		return PDETextHelper.translateWriteText(content,
 				SUBSTITUTE_CHARS);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
+	 */
+	public int getXMLType() {
+		return F_TYPE_TEXT;
+	}	
 	
 }

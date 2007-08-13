@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.toc.Toc;
 import org.eclipse.pde.internal.core.text.toc.TocLink;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
@@ -1001,10 +1002,28 @@ public class TocTreeSection extends TreeSection {
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
+		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE) &&
+				(event.getChangedProperty().equals(IDocumentNode.F_PROPERTY_CHANGE_TYPE_SWAP)) ) {
+			handleModelChangeTypeSwap(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
 		}
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelChangeTypeSwap(IModelChangedEvent event) {
+		// Swap event
+		// Get the changed object
+		Object[] objects = event.getChangedObjects();
+		TocObject object = (TocObject) objects[0];
+
+		if (object != null)
+		{	// Update the element in the tree viewer
+			fTocTree.refresh(object);
+		}		
+	}		
 	
 	/**
 	 * The model is stale, refresh the UI

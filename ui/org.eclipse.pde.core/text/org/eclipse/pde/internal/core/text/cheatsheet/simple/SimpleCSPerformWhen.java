@@ -53,7 +53,8 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#getExecutables()
 	 */
 	public ISimpleCSRunObject[] getExecutables() {
-		return (ISimpleCSRunObject[])getChildNodes(ISimpleCSRunObject.class, true);
+		ArrayList filteredChildren = getChildNodesList(ISimpleCSRunObject.class, true);
+		return (ISimpleCSRunObject[])filteredChildren.toArray(new ISimpleCSRunObject[filteredChildren.size()]);	
 	}
 
 	/* (non-Javadoc)

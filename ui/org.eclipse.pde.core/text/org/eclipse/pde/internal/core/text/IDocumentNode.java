@@ -16,8 +16,10 @@ import java.util.TreeMap;
 
 import org.eclipse.pde.core.IModel;
 
-public interface IDocumentNode extends Serializable, IDocumentRange {
+public interface IDocumentNode extends Serializable, IDocumentRange, IDocumentXMLNode {
 		
+	public static final String F_PROPERTY_CHANGE_TYPE_SWAP = "type_swap"; //$NON-NLS-1$
+	
 	IDocumentNode getParentNode();	
 	void setParentNode(IDocumentNode node);
 	
@@ -73,9 +75,13 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	
 	String write(boolean indent);
 	String writeShallow(boolean terminate);
-	
+
+	// Not used by text edit operations
+	public boolean canTerminateStartTag();
 	// Not used by text edit operations
 	public int getChildCount();
+	// Not used by text edit operations
+	public int getNodeAttributesCount();
 	// Not used by text edit operations
 	public TreeMap getNodeAttributesMap();
 	// Not used by text edit operations
@@ -91,8 +97,19 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	public boolean setXMLContent(String text);
 	// Not used by text edit operations
 	public String getXMLContent();
+	// Not used by text edit operations
+	public boolean isContentCollapsed();
+	// Not used by text edit operations
+	public boolean isLeafNode();
+	// Not used by text edit operations
+	public boolean hasXMLChildren();
+	// Not used by text edit operations
+	public boolean hasXMLContent();
+	// Not used by text edit operations
+	public boolean hasXMLAttributes();
+
 	
-	// TODO: MP: TEO:  Rename to IDocumentElementNode
-	// TODO: MP: TEO:  Space out, comment and rename methods
-	// TODO: MP: TEO: Consider making separate interface for plugins only as subinterface
+	// TODO: MP: TEO: LOW: Rename to IDocumentElementNode
+	// TODO: MP: TEO: LOW: Space out, comment and rename methods
+
 }

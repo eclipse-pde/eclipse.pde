@@ -11,17 +11,16 @@
 
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
-import java.io.Serializable;
 import java.util.List;
 
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.internal.core.text.IDocumentObject;
 import org.w3c.dom.Element;
 
 /**
  * ISimpleCSObject
  *
  */
-public interface ISimpleCSObject extends Serializable, IWritable,
+public interface ISimpleCSObject extends IDocumentObject,
 		ISimpleCSConstants {
 
 	/**

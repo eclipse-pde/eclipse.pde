@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.text.cheatsheet.simple;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
@@ -51,7 +52,8 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#getSubItems()
 	 */
 	public ISimpleCSSubItem[] getSubItems() {
-		return (ISimpleCSSubItem[])getChildNodes(ISimpleCSSubItem.class, true);
+		ArrayList filteredChildren = getChildNodesList(ISimpleCSSubItem.class, true);
+		return (ISimpleCSSubItem[])filteredChildren.toArray(new ISimpleCSSubItem[filteredChildren.size()]);	
 	}
 
 	/* (non-Javadoc)
