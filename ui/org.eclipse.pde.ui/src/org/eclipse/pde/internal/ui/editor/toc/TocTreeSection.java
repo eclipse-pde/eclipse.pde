@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -99,6 +100,22 @@ public class TocTreeSection extends TreeSection {
 	private static final int F_UP_FLAG = -1;
 	private static final int F_DOWN_FLAG = 1;
 
+	private class TocOpenLinkAction extends Action
+	{	private String fPath;
+		
+		public TocOpenLinkAction()
+		{	setText(PDEUIMessages.Actions_open_label);
+		}
+
+		public void setPath(String path)
+		{	fPath = path;
+		}
+
+		public void run()
+		{	openDocument(fPath);
+		}
+	}
+
 	// The action that collapses down the TOC tree
 	private CollapseAction fCollapseAction;
 
@@ -109,6 +126,9 @@ public class TocTreeSection extends TreeSection {
 	
 	// The object removal action
 	private TocRemoveObjectAction fRemoveObjectAction;
+	
+	// The action for opening a link from the context menu
+	private TocOpenLinkAction fOpenLinkAction;
 
 	// The adapter that will listen for drag events in the tree
 	private TocDragAdapter fDragAdapter;
@@ -147,6 +167,7 @@ public class TocTreeSection extends TreeSection {
 		fAddLinkAction = new TocAddLinkAction();
 		fAddAnchorAction = new TocAddAnchorAction();
 		fRemoveObjectAction = new TocRemoveObjectAction();
+		fOpenLinkAction = new TocOpenLinkAction();
 	}
 
 	/* (non-Javadoc)
@@ -432,25 +453,38 @@ public class TocTreeSection extends TreeSection {
 		// Has to be null or a TOC object
 		TocObject tocObject = (TocObject)object;
 
-		if(tocObject.canBeParent())
-		{	// Create the "New" sub-menu
-			MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
-			// Populate the "New" sub-menu
-			fillContextMenuAddActions(submenu, tocObject);
-			// Add the "New" sub-menu to the main context menu
-			manager.add(submenu);
+		if(tocObject != null)
+		{	boolean emptyMenu = true;
 
-			// Add a separator to the main context menu
-			manager.add(new Separator());
+			if(tocObject.canBeParent())
+			{	// Create the "New" sub-menu
+				MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
+				// Populate the "New" sub-menu
+				fillContextMenuAddActions(submenu, tocObject);
+				// Add the "New" sub-menu to the main context menu
+				manager.add(submenu);
+				emptyMenu = false;
+			}
+
+			String path = tocObject.getPath();
+			if(path != null)
+			{	fOpenLinkAction.setPath(path);
+				manager.add(fOpenLinkAction);
+				emptyMenu = false;	
+			}
+
+			if(!emptyMenu)
+			{	// Add a separator to the main context menu
+				manager.add(new Separator());
+			}
 		}
 
-		// Add the Show In action and Remove action if an object is selected
-		if (tocObject != null)
-		{	// Add clipboard actions
-			getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-			manager.add(new Separator());
+		// Add clipboard actions
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new Separator());
 
-			// Add the TOC object removal action
+		if(tocObject != null)
+		{	// Add the Remove action and Show In action if an object is selected
 			fillContextMenuRemoveAction(manager, tocObject);
 			manager.add(new Separator());
 
