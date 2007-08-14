@@ -1565,7 +1565,7 @@ public class PDEUIMessages extends NLS {
 	public static String ImportWizard_DetailedPage_existingUnshared;
 	public static String ImportWizard_DetailedPage_addRequired;
 	public static String ImportWizard_DetailedPage_count;
-	public static String ImportWizard_DetailedPage_locate;
+	public static String ImportWizard_DetailedPage_filter;
 	public static String ImportWizard_DetailedPage_search;
 
 	public static String ImportWizard_operation_creating;

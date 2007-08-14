@@ -19,19 +19,29 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -55,6 +65,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
@@ -70,11 +81,59 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Label fCountLabel;
 	private TableViewer fAvailableListViewer;
 	private Text fFilterText;
+	private AvailableFilter fFilter;
+	// fSelected is used to track the selection in a HashMap so we can efficiently
+	// filter selected items out of the available item list
+	private HashMap fSelected;
+	// this job is used to delay the full filter refresh for 200 milliseconds in case the user is still typing
+	private WorkbenchJob fFilterJob;
+	// used to block the selection listeners from updating button enablement when programatically removing items
+	private boolean fBlockSelectionListeners;
+	private Button fAddButton;
+	private Button fAddAllButton;
+	private Button fRemoveButton;
+	private Button fRemoveAllButton;
+	private Button fAddRequiredButton;
+	
+	private class AvailableFilter extends ViewerFilter {
+		private Pattern fPattern;
+		
+		public AvailableFilter() {
+			setPattern("*"); //$NON-NLS-1$
+		}
+		
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			// filter out any items that are currently selected
+			// on a full refresh, these will have been added back to the list
+			if (fSelected.containsKey(element))
+				return false;
+			if (!(element instanceof AbstractPluginModelBase))
+				return false;
+			String itemID = ((AbstractPluginModelBase)element).getPluginBase().getId();
+			if (fPattern.matcher(itemID).matches())
+				return true;
+			return false;
+		}
+		
+		public boolean setPattern(String newPattern) {
+			if (!newPattern.endsWith("*")) //$NON-NLS-1$
+				newPattern += "*"; //$NON-NLS-1$
+			if (fPattern != null) {
+				String oldPattern = fPattern.pattern();
+				if (newPattern.equals(oldPattern))
+					return false;
+			}
+			fPattern = PatternConstructor.createPattern(newPattern, true);
+			return true;
+		}
+	}
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
 		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title); 
-		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc); 
+		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc);
+		fSelected = new HashMap();
 	}
 
 	public void createControl(Composite parent) {
@@ -93,6 +152,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		updateCount();
 		createComputationsOption(container, 3);		
 		addViewerListeners();
+		addFilter();
 		
 		initialize();
 		setControl(container);
@@ -100,7 +160,20 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 	
+	private void addFilter() {
+		fFilter = new AvailableFilter();
+		fAvailableListViewer.addFilter(fFilter);
+		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				handleFilter();
+				return Status.OK_STATUS;
+			}
+		};
+		fFilterJob.setSystem(true);
+	}
+
 	private void initialize(){
+		updateButtonEnablement(true, true);
 		setPageComplete(false);
 	}
 	
@@ -116,10 +189,25 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				handleRemove();
 			}
 		});
+
+		fAvailableListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (!fBlockSelectionListeners)
+					updateSelectionBasedEnablement(event.getSelection(), true);
+			}
+		});
+		
+		fImportListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (!fBlockSelectionListeners)
+					updateSelectionBasedEnablement(event.getSelection(), false);
+			}
+		});
 		
 		fFilterText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
-				handleFilter();
+				fFilterJob.cancel();
+				fFilterJob.schedule(200);
 			}
 		});
 		
@@ -147,7 +235,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAvailableListViewer.setContentProvider(new ContentProvider());
 		fAvailableListViewer.setInput(PDECore.getDefault().getModelManager());
 		fAvailableListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
-
+		
 		return container;
 	}
 	
@@ -185,45 +273,45 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		});
 		SWTUtil.setButtonDimensionHint(button);
 		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_add); 
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		fAddButton = new Button(container, SWT.PUSH);
+		fAddButton.setText(PDEUIMessages.ImportWizard_DetailedPage_add); 
+		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(fAddButton);
 		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll); 
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		fAddAllButton = new Button(container, SWT.PUSH);
+		fAddAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll); 
+		fAddAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAddAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddAll();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(fAddAllButton);
 		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_remove); 
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		fRemoveButton = new Button(container, SWT.PUSH);
+		fRemoveButton.setText(PDEUIMessages.ImportWizard_DetailedPage_remove); 
+		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll); 
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		fRemoveAllButton = new Button(container, SWT.PUSH);
+		fRemoveAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll); 
+		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(fRemoveAllButton);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_swap); 
@@ -235,16 +323,16 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		});
 		SWTUtil.setButtonDimensionHint(button);
 		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired); 
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		fAddRequiredButton = new Button(container, SWT.PUSH);
+		fAddRequiredButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired); 
+		fAddRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAddRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddRequiredPlugins();
 			}
 
 		});
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(fAddRequiredButton);
 		
 		fCountLabel = new Label(container, SWT.NONE);
 		fCountLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
@@ -264,7 +352,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=3;
 		container.setLayoutData(gd);
-		container.setText(PDEUIMessages.ImportWizard_DetailedPage_locate); 
+		container.setText(PDEUIMessages.ImportWizard_DetailedPage_filter); 
 	
 		Label filterLabel = new Label(container, SWT.NONE);
 		filterLabel.setText(PDEUIMessages.ImportWizard_DetailedPage_search); 
@@ -284,13 +372,18 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		
 	}
 	protected void refreshPage() {
+		fImportListViewer.getTable().removeAll();
+		fSelected = new HashMap();
+		fFilter.setPattern("*"); //$NON-NLS-1$
 		fAvailableListViewer.refresh();
-		fImportListViewer.getTable().removeAll();		
 		pageChanged();
 	}
 	protected void pageChanged() {
+		pageChanged(false,false);
+	}
+	protected void pageChanged(boolean doAddEnablement, boolean doRemoveEnablement) {
 		updateCount();
-		handleFilter();
+		updateButtonEnablement(doAddEnablement, doRemoveEnablement);
 		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
@@ -300,16 +393,41 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			new Integer(fModels.length).toString()})));
 		fCountLabel.getParent().layout();
 	}
+	private void updateButtonEnablement(boolean doAddEnablement, boolean doRemoveEnablement) {
+		int availableCount = fAvailableListViewer.getTable().getItemCount();
+		int importCount = fImportListViewer.getTable().getItemCount();
+		
+		if (doAddEnablement)
+			updateSelectionBasedEnablement(fAvailableListViewer.getSelection(), true);
+		if (doRemoveEnablement)
+			updateSelectionBasedEnablement(fImportListViewer.getSelection(), false);
+			
+		fAddAllButton.setEnabled(availableCount > 0);
+		fRemoveAllButton.setEnabled(importCount > 0);
+		fAddRequiredButton.setEnabled(importCount > 0);
+	}
+	private void updateSelectionBasedEnablement(ISelection theSelection, boolean available) {
+		if (available)
+			fAddButton.setEnabled(!theSelection.isEmpty());
+		else
+			fRemoveButton.setEnabled(!theSelection.isEmpty());
+	}
 	
 	private void handleAdd() {
 		IStructuredSelection ssel = (IStructuredSelection)fAvailableListViewer.getSelection();
 		if (ssel.size() > 0) {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			fAvailableListViewer.remove(ssel.toArray());
-			fImportListViewer.add(ssel.toArray());
+			Object[] selection = ssel.toArray();
+			setBlockSelectionListeners(true);
+			setRedraw(false);
+			for (int i = 0; i < selection.length; i++) {
+				doAdd(selection[i]);
+			}
+			setRedraw(true);
+			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
-			pageChanged();
+			pageChanged(true, false);
 		}		
 	}
 
@@ -321,35 +439,29 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			fImportListViewer.add(data.toArray());
-			fAvailableListViewer.remove(data.toArray());
-			pageChanged();
+			Object[] datas = data.toArray();
+			setBlockSelectionListeners(true);
+			setRedraw(false);
+			for (int i = 0; i < datas.length; i++) {
+				doAdd(datas[i]);
+			}
+			setRedraw(true);
+			setBlockSelectionListeners(false);
+			pageChanged(true, false);
 		}
 	}
 	
 	private void handleFilter() {
-		if (fFilterText == null ||fFilterText.getText().trim().length() == 0)
-			return;
-
-		String text = fFilterText.getText().trim();
-		if (!text.endsWith("*")) //$NON-NLS-1$
-			text += "*"; //$NON-NLS-1$
-		Pattern pattern = PatternConstructor.createPattern(text, true);
-		TableItem[] tableItems = fAvailableListViewer.getTable().getItems();
-		ArrayList results = new ArrayList();
-		for (int i = 0; i<tableItems.length; i++){
-			Object data = tableItems[i].getData();
-			if (data instanceof IPluginModelBase){
-				IPluginModelBase model = (IPluginModelBase)data;
-				if (pattern.matcher(model.getPluginBase().getId()).matches())
-					results.add(tableItems[i]);
-			}
-		}
-		if (results.size()>0){
-			TableItem[] selectionList = (TableItem[])results.toArray(new TableItem[results.size()]);
-			fAvailableListViewer.getTable().setSelection(selectionList);
-		} else {
-			fAvailableListViewer.setSelection(null);
+		boolean changed = false;
+		String newFilter;
+		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
+			newFilter = "*"; //$NON-NLS-1$
+		changed = fFilter.setPattern(newFilter);
+		if (changed) {
+			fAvailableListViewer.getTable().setRedraw(false);
+			fAvailableListViewer.refresh();
+			fAvailableListViewer.getTable().setRedraw(true);
+			updateButtonEnablement(false, false);
 		}
 	}
 	
@@ -358,18 +470,37 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		if (ssel.size() > 0) {
 			Table table = fImportListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			fImportListViewer.remove(ssel.toArray());
-			fAvailableListViewer.add(ssel.toArray());
+			Object[] selection = ssel.toArray();
+			setBlockSelectionListeners(true);
+			setRedraw(false);
+			for (int i = 0; i < selection.length; i++) {
+				doRemove(selection[i]);
+			}
+			setRedraw(true);
+			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
-			pageChanged();
-		}		
+			pageChanged(false, true);
+		}
 	}
 	
+	private void doAdd(Object o) {
+		fImportListViewer.add(o);
+		fAvailableListViewer.remove(o);
+		fSelected.put(o, null);
+	}
+	
+	private void doRemove(Object o) {
+		fSelected.remove(o);
+		fImportListViewer.remove(o);
+		if (fFilter.select(fAvailableListViewer, null, o))
+			fAvailableListViewer.add(o);
+	}
+	// used to prevent flicker during operations that move items between lists
+	private void setRedraw(boolean redraw) {
+		fAvailableListViewer.getTable().setRedraw(redraw);
+		fImportListViewer.getTable().setRedraw(redraw);
+	}
 	private void handleRemoveAll() {
-		handleRemoveAll(true);
-	}
-	
-	private void handleRemoveAll(boolean refresh) {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 		
 		ArrayList data = new ArrayList();
@@ -377,23 +508,60 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			fAvailableListViewer.add(data.toArray());
-			fImportListViewer.remove(data.toArray());
-			pageChanged();
+			Object[] datas = data.toArray();
+			setBlockSelectionListeners(true);
+			setRedraw(false);
+			for (int i = 0; i < datas.length; i++) {
+				doRemove(datas[i]);
+			}
+			setRedraw(true);
+			setBlockSelectionListeners(false);
+			pageChanged(false, true);
 		}		
+	}
+	private void handleSetImportSelection(ArrayList newSelectionList) {
+		if (newSelectionList.size() == 0) {
+			handleRemoveAll();
+			pageChanged();
+			return;
+		}
+		TableItem[] items = fImportListViewer.getTable().getItems();
+		Object[] oldSelection = new Object[items.length];
+		for (int i = 0; i < items.length; i++) {
+			oldSelection[i] = items[i].getData();
+		}
+		setRedraw(false);
+		// remove items that were in the old selection, but are not in the new one
+		for (int i = 0; i < oldSelection.length; i++) {
+			if (newSelectionList.contains(oldSelection[i])) {
+				newSelectionList.remove(oldSelection[i]);
+			} else {
+				doRemove(oldSelection[i]);
+			}
+		}
+		// add items that were not in the old selection and are in the new one
+		Object[] newSelection = newSelectionList.toArray();
+		for (int i = 0; i < newSelection.length; i++) {
+			doAdd(newSelection[i]);
+		}
+		setRedraw(true);
+		pageChanged();
 	}
 	
 	private void handleSwap() {
 		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
 		TableItem[] iItems = fImportListViewer.getTable().getItems();
-		
+
+		setRedraw(false);
 		ArrayList data = new ArrayList();
 		for (int i = 0; i < iItems.length; i++) {
 			data.add(iItems[i].getData());
 		}
 		if (data.size() > 0) {
-			fAvailableListViewer.add(data.toArray());
-			fImportListViewer.remove(data.toArray());
+			Object[] datas = data.toArray();
+			for (int i = 0; i < datas.length; i++) {
+				doRemove(datas[i]);
+			}
 		}
 		
 		data.clear();
@@ -401,14 +569,16 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(aItems[i].getData());
 		}
 		if (data.size() > 0) {
-			fImportListViewer.add(data.toArray());
-			fAvailableListViewer.remove(data.toArray());
+			Object[] datas = data.toArray();
+			for (int i = 0; i < datas.length; i++) {
+				doAdd(datas[i]);
+			}
 		}
+		setRedraw(true);
 		pageChanged();		
 	}
 	
 	private void handleExistingProjects() {
-		handleRemoveAll(false);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
@@ -420,15 +590,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				result.add(fModels[i]);
 			}
 		}
-		if (result.size() > 0) {
-			fImportListViewer.add(result.toArray());
-			fAvailableListViewer.remove(result.toArray());
-		}
-		pageChanged();		
+		handleSetImportSelection(result);
 	}
 	
 	private void handleExistingUnshared() {
-		handleRemoveAll(false);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
@@ -440,11 +605,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				result.add(fModels[i]);
 			}
 		}
-		if (result.size() > 0) {
-			fImportListViewer.add(result.toArray());
-			fAvailableListViewer.remove(result.toArray());
-		}
-		pageChanged();		
+		handleSetImportSelection(result);	
 	}
 	
 	private void handleAddRequiredPlugins() {
@@ -462,12 +623,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i < items.length; i++) {
 			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, fAddFragmentsButton.getSelection());
 		}
-
-		handleRemoveAll(false);
-		fImportListViewer.add(result.toArray());
-		fAvailableListViewer.remove(result.toArray());
-		pageChanged();		
+		handleSetImportSelection(result);
 	}
-	
+	public void dispose() {
+		fFilterJob.cancel();
+	}
 
+	private void setBlockSelectionListeners(boolean blockSelectionListeners) {
+		fBlockSelectionListeners = blockSelectionListeners;
+	}
 }
