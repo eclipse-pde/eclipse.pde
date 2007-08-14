@@ -49,9 +49,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
-	private TablePart tablePart;
-	private IStructuredSelection initialSelection;
-	private Label counterLabel;
+	private TablePart fTablePart;
+	private IStructuredSelection fInitialSelection;
+	private Label fCounterLabel;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -75,15 +75,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel, String[] buttonLabels) {
 			super(mainLabel, buttonLabels);
-			setSelectAllIndex(0);
-			setDeselectAllIndex(1);
 		}
 		public void updateCounter(int count) {
 			super.updateCounter(count);
-		}
-		public void buttonSelected(Button button, int index) {
-			if (index == 0 || index == 1)
-				super.buttonSelected(button, index);
 		}
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
@@ -107,7 +101,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	
 	public PluginImportWizardExpressPage(String pageName, PluginImportWizardFirstPage page, IStructuredSelection selection) {
 		super(pageName, page);
-		this.initialSelection = selection;
+		this.fInitialSelection = selection;
 		setTitle(PDEUIMessages.ImportWizard_expressPage_title); 
 		setMessage(PDEUIMessages.ImportWizard_expressPage_desc); 
 	}
@@ -116,14 +110,16 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.horizontalSpacing = 20;
-		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 5;
+		layout.verticalSpacing = 0;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createTablePart(container);
 		createImportPart(container);
 
+		createButtons(container);
+		
 		createComputationsOption(container, 2);
 
 		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
@@ -138,6 +134,36 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		Dialog.applyDialogFont(container);
 	}
 	
+	private void createButtons(Composite container) {
+		Composite buttonComp = new Composite(container, SWT.NONE);
+		GridLayout layout = new GridLayout(2, true);
+		layout.marginHeight = 0;
+		layout.marginBottom = 10;
+		layout.verticalSpacing = 0;
+		layout.marginRight = 4;
+		buttonComp.setLayout(layout);
+		buttonComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button selectAll = new Button(buttonComp, SWT.PUSH);
+		selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectAll.setText(PDEUIMessages.WizardCheckboxTablePart_selectAll);
+		selectAll.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				fTablePart.handleSelectAll(true);
+				pageChanged();
+			}
+		});
+		Button deselectAll = new Button(buttonComp, SWT.PUSH);
+		deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		deselectAll.setText(PDEUIMessages.WizardCheckboxTablePart_deselectAll);
+		deselectAll.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				fTablePart.handleSelectAll(false);
+				pageChanged();
+			}
+		});
+		
+	}
+
 	private Composite createTablePart(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -145,19 +171,17 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		tablePart =
+		fTablePart =
 			new TablePart(
 				PDEUIMessages.ImportWizard_expressPage_nonBinary, 
-				new String[] {
-					PDEUIMessages.WizardCheckboxTablePart_selectAll,
-					PDEUIMessages.WizardCheckboxTablePart_deselectAll});
-		tablePart.createControl(container);
+				new String[] {});
+		fTablePart.createControl(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 225;
 		gd.heightHint = 200;
-		tablePart.getControl().setLayoutData(gd);
+		fTablePart.getControl().setLayoutData(gd);
 		
-		CheckboxTableViewer viewer = tablePart.getTableViewer();
+		CheckboxTableViewer viewer = fTablePart.getTableViewer();
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setContentProvider(new PluginContentProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
@@ -172,12 +196,12 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createImportList(container);
-		counterLabel = new Label(container, SWT.NONE);
-		counterLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		fCounterLabel = new Label(container, SWT.NONE);
+		fCounterLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 	}
 	
 	private void initialize() {
-		Object[] items = initialSelection.toArray();
+		Object[] items = fInitialSelection.toArray();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
@@ -194,7 +218,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 				}
 			}
 		}
-		tablePart.setSelection(list.toArray());
+		fTablePart.setSelection(list.toArray());
 	}
 	
 	
@@ -202,7 +226,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		fImportListViewer.getTable().removeAll();
 		
 		ArrayList result = new ArrayList();
-		Object[] wModels = tablePart.getSelection();
+		Object[] wModels = fTablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)wModels[i];
 			addDependencies(model, result, fAddFragmentsButton.getSelection());
@@ -277,9 +301,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	}
 
 	private void updateCount() {
-		counterLabel.setText(
+		fCounterLabel.setText(
 			NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(fImportListViewer.getTable().getItemCount()).toString()));
-		counterLabel.getParent().layout();
+		fCounterLabel.getParent().layout();
 	}
 
 
