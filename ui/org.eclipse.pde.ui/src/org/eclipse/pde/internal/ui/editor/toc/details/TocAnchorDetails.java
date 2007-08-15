@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.editor.toc.TocInputContext;
 import org.eclipse.pde.internal.ui.editor.toc.TocTreeSection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 
@@ -57,10 +58,10 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	 * @param parent
 	 */
 	private void createAnchorIdWidget(Composite parent) {
-		createLabel(parent, getManagedForm().getToolkit(), PDEUIMessages.TocAnchorDetails_id_desc);
-
 		fAnchorIdEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
 				PDEUIMessages.TocAnchorDetails_id, SWT.NONE);
+		// Ensure that the text field has proper width
+		fAnchorIdEntry.getText().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	}
 
 	protected String getDetailsTitle()

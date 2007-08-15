@@ -92,7 +92,7 @@ public class TocTopicDetails extends TocAbstractDetails {
 	}
 	
 	protected String getDetailsDescription()
-	{	return PDEUIMessages.TocTopicDetails_sectionDescription;
+	{	return null;
 	}
 
 	/* (non-Javadoc)

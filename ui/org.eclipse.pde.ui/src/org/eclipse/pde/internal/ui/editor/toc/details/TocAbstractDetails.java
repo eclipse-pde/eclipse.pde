@@ -200,7 +200,7 @@ public abstract class TocAbstractDetails extends PDEDetails {
 
 	protected void createLabel(Composite client, FormToolkit toolkit, String text) {
 		Label label = toolkit.createLabel(client, text, SWT.WRAP);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = NUM_COLUMNS;
 		label.setLayoutData(gd);
 	}
