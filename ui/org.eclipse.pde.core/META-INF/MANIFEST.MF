@@ -41,7 +41,6 @@ Export-Package:
  org.eclipse.pde.internal.core.text.cheatsheet.simple;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.plugin;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.toc;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.core.toc;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.util;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.variables;x-internal:=true
 Require-Bundle: 

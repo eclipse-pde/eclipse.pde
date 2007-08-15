@@ -151,11 +151,4 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 	public TocAnchor createTocAnchor() {
 		return new TocAnchor(fModel);
 	}
-
-	/**
-	 * @return
-	 */
-	public TocEnablement createTocEnablement() {
-		return new TocEnablement(fModel);
-	}
 }
