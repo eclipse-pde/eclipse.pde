@@ -40,7 +40,6 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class TargetDefinitionSection extends PDESection {
 
@@ -74,10 +73,11 @@ public class TargetDefinitionSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 		section.setText(PDEUIMessages.TargetDefinitionSection_title); 
-		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
-		data.colspan = 2;
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = SWT.FILL;
 		section.setLayoutData(data);
-		
 		// Register to be notified when the model changes
 		getModel().addModelChangedListener(this);
 	}

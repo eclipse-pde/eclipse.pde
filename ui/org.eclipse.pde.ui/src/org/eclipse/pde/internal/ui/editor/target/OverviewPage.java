@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -56,7 +57,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
+		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 		
 		managedForm.addPart(new TargetDefinitionSection(this, body));
 		managedForm.addPart(new LocationsSection(this, body));
@@ -79,7 +80,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(title);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		return section;
 	}
 	
@@ -93,7 +94,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} catch (SWTException e) {
 			text.setText(e.getMessage(), false, false);
 		}
-		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		data.maxWidth = 250;
+		text.setLayoutData(data);
 		text.addHyperlinkListener(this);
 		return text;
 	}

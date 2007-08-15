@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+
 
 public class LocationsSection extends TableSection {
 	
@@ -100,10 +100,9 @@ public class LocationsSection extends TableSection {
 		section.setClient(client);	
 		section.setText(PDEUIMessages.LocationsSection_title);
 		section.setDescription(PDEUIMessages.LocationsSection_description);
-		TableWrapData tdata = new TableWrapData(TableWrapData.FILL_GRAB);
-		tdata.colspan = 2;
-		tdata.grabVertical = true;
-		section.setLayoutData(tdata);
+		GridData sectionData = new GridData(GridData.FILL_BOTH);
+		sectionData.horizontalSpan = 2;
+		section.setLayoutData(sectionData);
 		updateButtons();
 		
 		getModel().addModelChangedListener(this);
