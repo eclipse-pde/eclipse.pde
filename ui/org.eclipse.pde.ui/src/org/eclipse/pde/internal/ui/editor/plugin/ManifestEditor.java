@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
@@ -50,11 +51,14 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.ILauncherFormPageHelper;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.JarEntryFile;
-import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -73,13 +77,15 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
+public class ManifestEditor extends PDELauncherFormEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
 	private static boolean SHOW_SOURCE;
     private boolean fEquinox = true;
     private boolean fShowExtensions = true;
     private IEclipsePreferences fPrefs;
+	private PluginExportAction fExportAction;
+	private ILauncherFormPageHelper fLauncherHelper;
 
     /* (non-Javadoc)
      * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
@@ -700,4 +706,21 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     	}
     	fShowExtensions = show;
     }
+    public void contributeToToolbar(IToolBarManager manager) {
+    	contributeLaunchersToToolbar(manager);
+		manager.add(getExportAction());
+    }
+    private PluginExportAction getExportAction() {
+    	if (fExportAction == null) {
+    		fExportAction = new PluginExportAction(this);
+    		fExportAction.setToolTipText(PDEUIMessages.PluginEditor_exportTooltip);
+    		fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PLUGIN_TOOL);
+    	}
+    	return fExportAction;
+    }
+	protected ILauncherFormPageHelper getLauncherHelper() {
+		if (fLauncherHelper == null)
+			fLauncherHelper = new PluginLauncherFormPageHelper(this);
+		return fLauncherHelper;
+	}
 }

@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.IEditorInput;
@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
  * CompCSEditor
  *
  */
-public class CompCSEditor extends PDEFormEditor {
+public class CompCSEditor extends CSAbstractEditor {
 
 	/**
 	 * 

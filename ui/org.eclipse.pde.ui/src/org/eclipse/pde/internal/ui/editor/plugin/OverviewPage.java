@@ -30,8 +30,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.ILauncherFormPageHelper;
 import org.eclipse.pde.internal.ui.editor.LaunchShortcutOverviewPage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -43,7 +45,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -60,8 +61,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	private PluginExportAction fExportAction;
 	private GeneralInfoSection fInfoSection;
 	private boolean fDisposed = false;
+	private ILauncherFormPageHelper fLauncherHelper;
 
-	public OverviewPage(FormEditor editor) {
+	public OverviewPage(PDELauncherFormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_tabName);  
 	}
 	
@@ -171,7 +173,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		
 		String prefixText = (!((ManifestEditor)getEditor()).showExtensionTabs()) ? PDEUIMessages.OverviewPage_OSGiTesting :
 			isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing;
-		FormText text = createClient(container, getLauncherText(!((ManifestEditor)getEditor()).showExtensionTabs(), prefixText), toolkit);
+		FormText text = createClient(container, getLauncherText(getLauncherHelper().isOSGi(), prefixText), toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.setImage("profile", lp.get(PDEPluginImages.DESC_PROFILE_EXC)); //$NON-NLS-1$
@@ -254,12 +256,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			organizeAction.run(null);
 		} else
 			super.linkActivated(e);
-	}
-	
-	protected Object getLaunchObject() {
-		return getPDEEditor().getCommonProject();
-	}
-	
+	}	
 	private PluginExportAction getExportAction() {
 		if (fExportAction == null)
 			fExportAction = new PluginExportAction((PDEFormEditor) getEditor());
@@ -335,4 +332,10 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
     protected short getIndent() {
     	return 5;
     }
+
+	protected ILauncherFormPageHelper getLauncherHelper() {
+		if (fLauncherHelper == null)
+			fLauncherHelper = new PluginLauncherFormPageHelper(getPDELauncherEditor());
+		return fLauncherHelper;
+	}
 }

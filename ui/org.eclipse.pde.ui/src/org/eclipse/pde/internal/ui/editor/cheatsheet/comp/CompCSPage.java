@@ -25,8 +25,8 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * CompCSPage
  *
  */
-public class CompCSPage extends CSAbstractPage implements IModelChangedListener {
+public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
 
@@ -83,9 +83,7 @@ public class CompCSPage extends CSAbstractPage implements IModelChangedListener 
 					PDEUIMessages.SimpleCSPage_msgCheatSheetParsingFailure, 
 					e);
 			return;
-		}
-		// Create the register cheat sheet link in the form title area
-		createUIFormTitleRegisterCSLink(managedForm, model);		
+		}		
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image

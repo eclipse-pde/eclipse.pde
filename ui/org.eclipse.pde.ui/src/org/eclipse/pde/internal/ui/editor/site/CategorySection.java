@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -42,10 +38,8 @@ import org.eclipse.pde.internal.core.isite.ISiteCategory;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
@@ -66,7 +60,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -382,7 +375,7 @@ public class CategorySection extends TreeSection implements
 			handleBuild();
 			break;
 		case BUTTON_BUILD_ALL:
-			handleBuild(fModel.getSite().getFeatures());
+			((SiteEditor)getPage().getPDEEditor()).handleBuild(fModel.getSite().getFeatures());
 			break;
 		case BUTTON_IMPORT_ENVIRONMENT:
 			handleImportEnvironment();
@@ -537,7 +530,7 @@ public class CategorySection extends TreeSection implements
 
 				Action buildAction = new Action(PDEUIMessages.CategorySection_build) { 
 							public void run() {
-								handleBuild(new ISiteFeature[] { adapter.feature });
+								((SiteEditor)getPage().getPDEEditor()).handleBuild(new ISiteFeature[] { adapter.feature });
 							}
 						};
 				manager.add(buildAction);
@@ -652,28 +645,8 @@ public class CategorySection extends TreeSection implements
 		if (!sel.isEmpty()
 				&& sel.getFirstElement() instanceof SiteFeatureAdapter) {
 			ISiteFeature feature = ((SiteFeatureAdapter) sel.getFirstElement()).feature;
-			handleBuild(new ISiteFeature[] { feature });
+			((SiteEditor)getPage().getPDEEditor()).handleBuild(new ISiteFeature[] { feature });
 		}
-	}
-
-	private void handleBuild(ISiteFeature[] sFeatures) {
-		if (sFeatures.length == 0)
-			return;
-		IFeatureModel[] models = getFeatureModels(sFeatures);
-		if (models.length == 0)
-			return;
-		ensureContentSaved();
-		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) fModel.getUnderlyingResource());
-		try {
-			buildSiteModel.load();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return;
-		}
-
-		BuildSiteJob job = new BuildSiteJob(models, buildSiteModel);
-		job.setUser(true);
-		job.schedule();
 	}
 
 	/**
@@ -691,18 +664,6 @@ public class CategorySection extends TreeSection implements
 		if (model != null)
 			return model.getFeature();
 		return null;
-	}
-
-	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < sFeatures.length; i++) {
-			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-					.findFeatureModelRelaxed(sFeatures[i].getId(),
-							sFeatures[i].getVersion());
-			if (model != null)
-				list.add(model);
-		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private void handleImportEnvironment() {
@@ -847,24 +808,6 @@ public class CategorySection extends TreeSection implements
 			fCategoryViewer.setSelection(new StructuredSelection(
 					new SiteFeatureAdapter(categoryName, added[added.length-1])),
 					true);
-		}
-	}
-
-	private void ensureContentSaved() {
-		if (getPage().getEditor().isDirty()) {
-			try {
-				IRunnableWithProgress op = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) {
-						getPage().getEditor().doSave(monitor);
-					}
-				};
-				PlatformUI.getWorkbench().getProgressService().runInUI(
-						PDEPlugin.getActiveWorkbenchWindow(), op,
-						PDEPlugin.getWorkspace().getRoot());
-			} catch (InvocationTargetException e) {
-				PDEPlugin.logException(e);
-			} catch (InterruptedException e) {
-			}
 		}
 	}
 	void fireSelection() {

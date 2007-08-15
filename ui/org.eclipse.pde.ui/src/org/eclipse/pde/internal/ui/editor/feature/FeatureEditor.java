@@ -16,6 +16,8 @@ import java.util.Locale;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
@@ -27,6 +29,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
@@ -57,6 +60,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput {
 
+	private Action fExportAction;
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
@@ -363,5 +367,23 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
     	} else {
     		setActivePage(getPageCount() - 3);
     	}
+	}
+
+	protected Action getFeatureExportAction() {
+		if (fExportAction == null) {
+			fExportAction = new Action() {
+				public void run() { 
+					doSave(null);
+					FeatureEditorContributor contributor = (FeatureEditorContributor) getContributor();
+					contributor.getBuildAction().run();
+				}
+			};
+			fExportAction.setToolTipText(PDEUIMessages.FeatureEditor_exportTooltip);
+			fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_FEATURE_TOOL);
+		}
+		return fExportAction;
+	}
+	public void contributeToToolbar(IToolBarManager manager) {
+		manager.add(getFeatureExportAction());
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IDocument;
@@ -1010,6 +1011,9 @@ public abstract class PDEFormEditor extends FormEditor
 	 */
 	protected IStatusLineManager getStatusLineManager() {
 		return getEditorSite().getActionBars().getStatusLineManager();
+	}
+
+	public void contributeToToolbar(IToolBarManager manager) {
 	}	
 
 }

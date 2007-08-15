@@ -140,9 +140,13 @@ public abstract class PDEFormPage extends FormPage {
 			//createNewStyleHeader(form, colors);
 			toolkit.decorateFormHeading(form.getForm());
 		}
+
+		IToolBarManager manager = form.getToolBarManager();
+		
+		getPDEEditor().contributeToToolbar(manager);
+		
 		final String href = getHelpResource();
 		if (href != null) {
-			IToolBarManager manager = form.getToolBarManager();
 			Action helpAction = new Action("help") { //$NON-NLS-1$
 				public void run() {
 					BusyIndicator.showWhile(form.getDisplay(), new Runnable() {

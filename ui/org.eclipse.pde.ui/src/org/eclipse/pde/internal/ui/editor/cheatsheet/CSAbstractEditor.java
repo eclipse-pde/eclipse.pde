@@ -8,66 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- * CSAbstractPage
- *
- */
-public abstract class CSAbstractPage extends PDEFormPage {
+public abstract class CSAbstractEditor extends MultiSourceEditor {
 
 	private ImageHyperlink fImageHyperlinkRegisterCS;
-	
-	private FormToolkit fToolkit;
-	
-	private IModel fModel;
-	
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
-	public CSAbstractPage(FormEditor editor, String id, String title) {
-		super(editor, id, title);
-	}
 
-	/**
-	 * @param managedForm
-	 * @param model
-	 */
-	protected void createUIFormTitleRegisterCSLink(IManagedForm managedForm,
-			IModel model) {
-		// Set globals
-		fToolkit = managedForm.getToolkit();
-		fModel = model;
+	public void contributeToToolbar(IToolBarManager manager) {
 		// Add the register cheat sheet link to the form title area
-		ScrolledForm form = managedForm.getForm();
-		if (fModel.isEditable()) {
-			form.getToolBarManager().add(createUIControlConRegisterCS());
-			form.getToolBarManager().update(true);
-		}
+		if (getAggregateModel().isEditable())
+			manager.add(createUIControlConRegisterCS());
 	}
 	
 	/**
@@ -94,7 +62,7 @@ public abstract class CSAbstractPage extends PDEFormPage {
 				PDEUIMessages.CSAbstractPage_msgRegisterThisCheatSheet);
 		fImageHyperlinkRegisterCS.setUnderlined(true);
 		fImageHyperlinkRegisterCS.setForeground(
-				fToolkit.getHyperlinkGroup().getForeground());
+				getToolkit().getHyperlinkGroup().getForeground());
 	}
 
 	/**
@@ -120,9 +88,9 @@ public abstract class CSAbstractPage extends PDEFormPage {
 	private void handleLinkEnteredRegisterCS(String message) {
 		// Update colour
 		fImageHyperlinkRegisterCS.setForeground(
-				fToolkit.getHyperlinkGroup().getActiveForeground());
+				getToolkit().getHyperlinkGroup().getActiveForeground());
 		// Update IDE status line
-		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
+		getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
 	}	
 	
 	/**
@@ -131,16 +99,16 @@ public abstract class CSAbstractPage extends PDEFormPage {
 	private void handleLinkExitedRegisterCS() {
 		// Update colour
 		fImageHyperlinkRegisterCS.setForeground(
-				fToolkit.getHyperlinkGroup().getForeground());
+				getToolkit().getHyperlinkGroup().getForeground());
 		// Update IDE status line
-		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
+		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}		
 	
 	/**
 	 * 
 	 */
 	private void handleLinkActivatedRegisterCS() {
-		RegisterCSWizard wizard = new RegisterCSWizard(fModel);
+		RegisterCSWizard wizard = new RegisterCSWizard((IModel)getAggregateModel());
 		// Initialize the wizard
 		wizard.init(PlatformUI.getWorkbench(), null);
 		// Create the dialog for the wizard
@@ -154,5 +122,5 @@ public abstract class CSAbstractPage extends PDEFormPage {
 			// TODO: MP: COMPCS: HIGH: Automatic save of editor after creating simple cheat sheet?
 		}			
 	}	
-	
+
 }

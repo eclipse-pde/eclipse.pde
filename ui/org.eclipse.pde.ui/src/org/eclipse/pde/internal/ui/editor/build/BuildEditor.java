@@ -11,10 +11,13 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -23,6 +26,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.editor.plugin.PluginExportAction;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -37,6 +41,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class BuildEditor extends MultiSourceEditor {
 	
+	private PluginExportAction fExportAction;
 	public BuildEditor() {
 	}
 	
@@ -174,5 +179,15 @@ public class BuildEditor extends MultiSourceEditor {
 		} 
 		return context;
 	}
-
+    public void contributeToToolbar(IToolBarManager manager) {
+		manager.add(getExportAction());
+    }
+    private PluginExportAction getExportAction() {
+    	if (fExportAction == null) {
+    		fExportAction = new PluginExportAction(this);
+    		fExportAction.setToolTipText(PDEUIMessages.PluginEditor_exportTooltip);
+    		fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PLUGIN_TOOL);
+    	}
+    	return fExportAction;
+    }
 }

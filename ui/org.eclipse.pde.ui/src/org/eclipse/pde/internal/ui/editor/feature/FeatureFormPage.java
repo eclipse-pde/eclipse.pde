@@ -220,14 +220,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 				}
 			});
 		} else if (href.equals("export")) { //$NON-NLS-1$
-			getEditor().doSave(null);
-			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor()
-					.getContributor();
-			BusyIndicator.showWhile(e.display, new Runnable() {
-				public void run() {
-					contributor.getBuildAction().run();
-				}
-			});
+			((FeatureEditor)getPDEEditor()).getFeatureExportAction().run();
 		} else if (href.equals("siteProject")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor()

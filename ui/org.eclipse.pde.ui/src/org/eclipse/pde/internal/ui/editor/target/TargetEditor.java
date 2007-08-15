@@ -11,25 +11,46 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.pde.internal.core.LoadTargetOperation;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.progress.IProgressService;
 
 
 public class TargetEditor extends PDEFormEditor {
@@ -171,6 +192,82 @@ public class TargetEditor extends PDEFormEditor {
 	 */
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
+	}
+	public void contributeToToolbar(IToolBarManager manager) {
+		ControlContribution save = new ControlContribution("Set") { //$NON-NLS-1$
+			protected Control createControl(Composite parent) {
+				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
+				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
+				hyperlink.setUnderlined(true);
+				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkActivated(HyperlinkEvent e) {
+						doLoadTarget();
+					}
+
+					public void linkEntered(HyperlinkEvent e) {
+						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
+					}
+
+					public void linkExited(HyperlinkEvent e) {
+						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+					}
+				});
+				return hyperlink;
+			}
+		};
+		manager.add(save);
+	}
+	
+	private void doLoadTarget() {
+		IRunnableWithProgress run = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					ITargetModel model = getTargetModel();
+					if (!model.isLoaded()) {
+						MessageDialog.openError(getActiveEditor().getSite().getShell(), PDEUIMessages.TargetPlatformPreferencePage_invalidTitle, PDEUIMessages.TargetPlatformPreferencePage_invalidDescription);
+						monitor.done();
+						return;
+					}
+					LoadTargetOperation op = new LoadTargetOperation(getTarget(), getFilePath());
+					PDEPlugin.getWorkspace().run(op, monitor);
+					Object[] features = op.getMissingFeatures();
+					Object[] plugins = op.getMissingPlugins();
+					if (plugins.length + features.length > 0)
+						TargetErrorDialog.showDialog(getActiveEditor().getSite().getShell(), features, plugins);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} catch (OperationCanceledException e) {
+					throw new InterruptedException(e.getMessage());
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		IProgressService service = PlatformUI.getWorkbench().getProgressService();
+		try {
+			service.runInUI(service, run, PDEPlugin.getWorkspace().getRoot());
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	private ITarget getTarget() {
+		return getTargetModel().getTarget();
+	}
+	
+	private ITargetModel getTargetModel() {
+		return ((ITargetModel) getAggregateModel());
+	}
+	
+	private IPath getFilePath() {
+		IEditorInput input = getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput)input).getFile();
+			if (file != null)
+				return file.getFullPath();
+		}
+		return null;
 	}
 
 }

@@ -81,6 +81,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsProcessor_errorMessage;
 
+	public static String FeatureEditor_exportTooltip;
+
 	public static String JavaArgumentsTab_appendLauncherIni;
 
 	public static String JavaSearchOperation_createProjectTaskName;
@@ -285,6 +287,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginExportJob_name;
 
+	public static String PluginEditor_exportTooltip;
+
 	public static String PluginListPage_initializeFromLaunch;
 
 	public static String PluginListPage_initializeFromPlugins;
@@ -308,6 +312,8 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_cannotFindTemplate;
 
 	public static String ProductExportJob_name;
+
+	public static String ProductEditor_exportTooltip;
 
 	public static String RemoveSplashHandlerBindingAction_msgProgressRemoveProductBindings;
 

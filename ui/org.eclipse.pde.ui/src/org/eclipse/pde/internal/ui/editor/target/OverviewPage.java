@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +33,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 
-public class OverviewPage extends AbstractTargetPage implements IHyperlinkListener {
+public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 

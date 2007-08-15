@@ -13,13 +13,29 @@
  */
 package org.eclipse.pde.internal.ui.editor.site;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -31,10 +47,13 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SiteEditor extends MultiSourceEditor {
 	
+	private Action fBuildAllAction;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
@@ -145,6 +164,73 @@ public class SiteEditor extends MultiSourceEditor {
 					.findContext(SiteInputContext.CONTEXT_ID);
 		}
 		return context;
+	}
+	
+	public void contributeToToolbar(IToolBarManager manager) {
+		manager.add(getBuildAllAction());
+	}
+
+	protected Action getBuildAllAction() {
+		if (fBuildAllAction == null) {
+			fBuildAllAction = new Action(){
+				public void run() {
+					handleBuild(((ISiteModel)getAggregateModel()).getSite().getFeatures());
+				}
+			};
+			fBuildAllAction.setToolTipText(PDEUIMessages.CategorySection_buildAll);
+			fBuildAllAction.setImageDescriptor(PDEPluginImages.DESC_BUILD_TOOL);
+		}
+		return fBuildAllAction;
+	}
+
+	protected void handleBuild(ISiteFeature[] sFeatures) {
+		if (sFeatures.length == 0)
+			return;
+		IFeatureModel[] models = getFeatureModels(sFeatures);
+		if (models.length == 0)
+			return;
+		ensureContentSaved();
+		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) ((IModel)getAggregateModel()).getUnderlyingResource());
+		try {
+			buildSiteModel.load();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+			return;
+		}
+
+		BuildSiteJob job = new BuildSiteJob(models, buildSiteModel);
+		job.setUser(true);
+		job.schedule();
+	}
+
+	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < sFeatures.length; i++) {
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
+					.findFeatureModelRelaxed(sFeatures[i].getId(),
+							sFeatures[i].getVersion());
+			if (model != null)
+				list.add(model);
+		}
+		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+	}
+
+	private void ensureContentSaved() {
+		if (isDirty()) {
+			try {
+				IRunnableWithProgress op = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) {
+						doSave(monitor);
+					}
+				};
+				PlatformUI.getWorkbench().getProgressService().runInUI(
+						PDEPlugin.getActiveWorkbenchWindow(), op,
+						PDEPlugin.getWorkspace().getRoot());
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 }

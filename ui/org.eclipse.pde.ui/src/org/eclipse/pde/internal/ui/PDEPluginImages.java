@@ -185,7 +185,11 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEPLOYCS_TOOL = create(PATH_TOOL, "new_cheatsheet_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VALIDATE_TOOL = create(PATH_TOOL, "validate.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_EXPORT_PLUGIN_TOOL = create(PATH_TOOL, "exp_deployplug.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPORT_PRODUCT_TOOL = create(PATH_TOOL, "exp_product.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPORT_FEATURE_TOOL = create(PATH_TOOL, "exp_deployfeat.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_BUILD_TOOL = create(PATH_TOOL, "build_exec.gif"); //$NON-NLS-1$
+	
 	/**
 	 * LCL
 	 */
