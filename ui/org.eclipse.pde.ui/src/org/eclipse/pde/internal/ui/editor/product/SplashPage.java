@@ -59,7 +59,7 @@ public class SplashPage extends PDEFormPage {
 		form.setText(PDEUIMessages.SplashPage_splashName);
 		fillBody(managedForm, toolkit);
 		// TODO: MP: SPLASH: Update help context ID
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BRANDING_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SPLASH_PAGE);
 	}
 	
 	/**

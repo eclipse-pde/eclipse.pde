@@ -188,6 +188,8 @@ public interface IHelpContextIds {
 	
 	// Used by PDEFormPage children
 	public static final String BRANDING_PAGE = PREFIX + "branding_page"; //$NON-NLS-1$
+	public static final String SPLASH_PAGE = PREFIX + "splash_page"; //$NON-NLS-1$
+	public static final String LAUNCHING_PAGE = PREFIX + "launching_page"; //$NON-NLS-1$
 	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 	

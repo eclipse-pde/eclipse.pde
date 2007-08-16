@@ -50,7 +50,7 @@ public class LaunchingPage extends PDEFormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_LAUNCHING));
 		form.setText(PDEUIMessages.LauncherPage_title);  
 		fillBody(managedForm, toolkit);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BRANDING_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.LAUNCHING_PAGE);
 	}
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
