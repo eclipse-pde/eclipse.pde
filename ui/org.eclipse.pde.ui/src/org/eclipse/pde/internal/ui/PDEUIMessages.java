@@ -443,15 +443,12 @@ public class PDEUIMessages extends NLS {
 	public static String TocAnchorDetails_title;
 	public static String TocAnchorDetails_id;
 	public static String TocAnchorDetails_sectionDescription;
-	public static String TocAnchorDetails_id_desc;
 
 	public static String TocLinkDetails_title;
 	public static String TocLinkDetails_tocPath;
-	public static String TocLinkDetails_sectionDescription;
 	public static String TocLinkDetails_tocPath_desc;
 
 	public static String TocTopicDetails_title;
-	public static String TocTopicDetails_sectionDescription;
 	public static String TocTopicDetails_name_desc;
 	public static String TocTopicDetails_page_desc;
 
