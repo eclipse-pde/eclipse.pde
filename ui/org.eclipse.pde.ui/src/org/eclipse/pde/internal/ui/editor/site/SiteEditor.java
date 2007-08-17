@@ -25,6 +25,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -179,8 +181,22 @@ public class SiteEditor extends MultiSourceEditor {
 			};
 			fBuildAllAction.setToolTipText(PDEUIMessages.CategorySection_buildAll);
 			fBuildAllAction.setImageDescriptor(PDEPluginImages.DESC_BUILD_TOOL);
+			updateActionEnablement();
+			
+			((ISiteModel)getAggregateModel()).addModelChangedListener(new IModelChangedListener() {
+				public void modelChanged(IModelChangedEvent event) {
+					updateActionEnablement();
+				}
+			});
 		}
 		return fBuildAllAction;
+	}
+	
+	private void updateActionEnablement() {
+		if (((ISiteModel)getAggregateModel()).getSite().getFeatures().length > 0)
+			fBuildAllAction.setEnabled(true);
+		else
+			fBuildAllAction.setEnabled(false);
 	}
 
 	protected void handleBuild(ISiteFeature[] sFeatures) {
