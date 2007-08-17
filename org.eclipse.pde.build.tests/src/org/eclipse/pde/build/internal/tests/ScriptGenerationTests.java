@@ -23,8 +23,7 @@ import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.FeatureModelFactory;
+import org.eclipse.update.core.model.*;
 
 public class ScriptGenerationTests extends PDETestCase {
 
@@ -256,20 +255,19 @@ public class ScriptGenerationTests extends PDETestCase {
 	public void testBug128901_filteredDependencyCheck() throws Exception {
 		IFolder buildFolder = newTest("128901");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/bundle");
-		
+
 		Utils.generatePluginBuildProperties(bundleFolder, null);
 		Attributes manifestAdditions = new Attributes();
 		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.equinox.registry");
 		Utils.generateBundleManifest(bundleFolder, "bundle", "1.0.0", manifestAdditions);
-		
+
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundle", "org.eclipse.osgi", "org.eclipse.equinox.common", "org.eclipse.equinox.registry", "org.eclipse.core.jobs"});
 
-		
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
 		props.put("filteredDependencyCheck", "true");
-		
+
 		generateScripts(buildFolder, props);
-		
+
 		// org.eclipse.core.runtime.compatibility.registry is an optional bundle, which should have been excluded 
 		//from the state by the filtering, check that is isn't in the classpath 
 		IFile buildScript = bundleFolder.getFile("build.xml");
@@ -278,6 +276,67 @@ public class ScriptGenerationTests extends PDETestCase {
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertTrue(child instanceof Path);
 		String path = child.toString();
-		assertTrue( path.indexOf("org.eclipse.core.runtime.compatibility.registry") == -1);
+		assertTrue(path.indexOf("org.eclipse.core.runtime.compatibility.registry") == -1);
+	}
+
+	public void testBug198536() throws Exception {
+		final IFolder buildFolder = newTest("198536");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"foo\" version=\"1.0.0.qualifier\">       \n");
+		buffer.append("  <plugin version=\"0.0.0\" id=\"foo\" />              \n");
+		buffer.append("  <plugin version=\"1.0.0.id_qualifier\" id=\"bar\" /> \n");
+		buffer.append("  <plugin id=\"foo.version\" version=\"0.0.0\"  />     \n");
+		buffer.append("</feature>                                             \n");
+
+		IFile featureXML = buildFolder.getFile("feature.xml");
+		FileOutputStream stream = null;
+		try {
+			stream = new FileOutputStream(featureXML.getLocation().toFile());
+			stream.write(buffer.toString().getBytes());
+		} finally {
+			if (stream != null)
+				stream.close();
+		}
+
+		buffer = new StringBuffer();
+		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>          \n");
+		buffer.append("<project name=\"project\" default=\"default\">      \n");
+		buffer.append("    <target name=\"default\">                       \n");
+		buffer.append("    	<eclipse.idReplacer                            \n");
+		buffer.append("    			featureFilePath=\"" + featureXML.getLocation().toOSString() + "\"  \n");
+		buffer.append("    			selfVersion=\"1.0.0.ABCDE\"            \n");
+		buffer.append("    			featureIds=\"\"                        \n");
+		buffer.append("    			pluginIds=\"foo:0.0.0,1.0.0.vA,bar:1.0.0,1.0.0.id_v,foo.version:0.0.0,2.1.2\" \n");
+		buffer.append("    		/>                                         \n");
+		buffer.append("    </target>                                       \n");
+		buffer.append("</project>                                          \n");
+
+		final IFile buildXML = buildFolder.getFile("build.xml");
+		try {
+			stream = new FileOutputStream(buildXML.getLocation().toFile());
+			stream.write(buffer.toString().getBytes());
+		} finally {
+			if (stream != null)
+				stream.close();
+		}
+
+		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+
+		FeatureModelFactory factory = new FeatureModelFactory();
+		InputStream inputStream = new BufferedInputStream(featureXML.getLocationURI().toURL().openStream());
+		try {
+			FeatureModel feature = factory.parseFeature(inputStream);
+			PluginEntryModel[] pluginEntryModels = feature.getPluginEntryModels();
+			assertEquals(pluginEntryModels[0].getPluginIdentifier(), "foo");
+			assertEquals(pluginEntryModels[0].getPluginVersion(), "1.0.0.vA");
+			assertEquals(pluginEntryModels[1].getPluginIdentifier(), "bar");
+			assertEquals(pluginEntryModels[1].getPluginVersion(), "1.0.0.id_v");
+			assertEquals(pluginEntryModels[2].getPluginIdentifier(), "foo.version");
+			assertEquals(pluginEntryModels[2].getPluginVersion(), "2.1.2");
+		} finally {
+			inputStream.close();
+		}
+
 	}
 }

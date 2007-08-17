@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -24,7 +24,7 @@ import org.eclipse.update.core.model.URLEntryModel;
 public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	protected Feature feature;
 	protected FeatureBuildScriptGenerator generator;
-	private Map parameters = new HashMap(10);
+	private Map parameters = new LinkedHashMap(10);
 
 	public FeatureWriter(OutputStream out, Feature feature, FeatureBuildScriptGenerator generator) throws IOException {
 		super(out);

@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
@@ -26,7 +26,7 @@ public class SourceFeatureWriter extends FeatureWriter {
 	}
 
 	public void printIncludes() {
-		Map parameters = new HashMap();
+		Map parameters = new LinkedHashMap();
 		// TO CHECK Here we should have the raw list...
 		IIncludedFeatureReference[] features = feature.getFeatureIncluded();
 		for (int i = 0; i < features.length; i++) {
