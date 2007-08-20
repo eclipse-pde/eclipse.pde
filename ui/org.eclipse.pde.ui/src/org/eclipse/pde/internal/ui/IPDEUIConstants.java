@@ -52,6 +52,13 @@ public interface IPDEUIConstants {
 	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key.  The value is a boolean specifies
+	 * whether the launch configuration is being restarted.  This does not need to 
+	 * be promoted to IPDELauncherConstants since clients should not need to know 
+	 * about restarts.  
+	 */
+	String RESTART = "restart"; //$NON-NLS-1$
+	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether the workspace log for an Eclipse application should be cleared
 	 * prior to launching.

@@ -24,12 +24,14 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.runtime.logview.LogView;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
@@ -103,7 +105,9 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
     private void doRestart(ILaunch launch) {
         ILaunchConfiguration config = launch.getLaunchConfiguration();
         try {
-            config.launch(launch.getLaunchMode(), new NullProgressMonitor());
+        	ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
+        	copy.setAttribute(IPDEUIConstants.RESTART, true);
+            copy.launch(launch.getLaunchMode(), new NullProgressMonitor());
         } catch (CoreException e) {
             PDEPlugin.logException(e);
         }

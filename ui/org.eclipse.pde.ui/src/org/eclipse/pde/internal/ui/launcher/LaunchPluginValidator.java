@@ -237,6 +237,9 @@ public class LaunchPluginValidator {
 
 	public static IProject[] getAffectedProjects(ILaunchConfiguration config)
 			throws CoreException {
+		// if restarting, no need to check projects for errors
+		if (config.getAttribute(IPDEUIConstants.RESTART, false)) 
+			return new IProject[0];
 		ArrayList projects = new ArrayList();
 		IPluginModelBase[] models = getSelectedWorkspacePlugins(config);
 		for (int i = 0; i < models.length; i++) {
