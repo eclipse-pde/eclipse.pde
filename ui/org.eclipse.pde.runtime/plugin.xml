@@ -74,6 +74,17 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+Q L">
       </key>
+      <key
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q L">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.pde.runtime.LogView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q L">
+      </key>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
