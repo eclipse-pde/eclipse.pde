@@ -1232,32 +1232,88 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            sequence="M3+M2+D E"
+            sequence="M2+M3+D E"
             commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
+      <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
       <key
-            sequence="M3+M2+X E"
+            platform="carbon"
+            sequence="M2+M3+D E"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            platform="carbon"
+            sequence="M1+M3+M4+D E"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      
+      <key
+            sequence="M2+M3+X E"
             commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+D O"
-            commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.debug"
+            platform="carbon"
+            sequence="M2+M3+X E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+X O"
+            platform="carbon"
+            sequence="M1+M3+X E"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      
+      <key
+            sequence="M2+M3+X O"
             commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+D P"
-            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
+            platform="carbon"
+            sequence="M2+M3+X O"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+X P"
+            platform="carbon"
+            sequence="M1+M3+X O"
+            commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      
+      <key
+            sequence="M2+M3+D P"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
+      <key
+            platform="carbon"
+            sequence="M2+M3+D P"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            platform="carbon"
+            sequence="M1+M3+M4+D P"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      
+      <key
+            sequence="M2+M3+X P"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            platform="carbon"
+            sequence="M2+M3+X P"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            platform="carbon"
+            sequence="M1+M3+X P"
             commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
