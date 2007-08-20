@@ -21,6 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.internal.build.FeatureGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class Utils {
 
@@ -110,10 +111,23 @@ public class Utils {
 	}
 
 	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException {
+		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false);
+	}
+
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify) throws CoreException {
 		FeatureGenerator generator = new FeatureGenerator();
-		generator.setIncludeLaunchers(false);
-		generator.setVerify(false);
+		if (verify) {
+			FeatureGenerator.setConfigInfo("*,*,*");
+			String baseLocation = Platform.getInstallLocation().getURL().getPath();
+			BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
+			File delta = findDeltaPack();
+			if (delta != null && !delta.equals(new File(baseLocation)))
+				generator.setPluginPath(new String[] {delta.getAbsolutePath()});
+		}
+		generator.setIncludeLaunchers(includeLaunchers);
+		generator.setVerify(verify);
 		generator.setFeatureId(id);
+		generator.setProductFile(product);
 		generator.setFeatureList(featureList);
 		generator.setPluginList(pluginList);
 		generator.setWorkingDirectory(workingDirectory.getLocation().toOSString());
@@ -143,5 +157,28 @@ public class Utils {
 		}
 		folder.create(true, true, null);
 		return folder;
+	}
+
+	public static File findDeltaPack() {
+		File baseLocation = new File(Platform.getInstallLocation().getURL().getPath());
+
+		File plugins = new File(baseLocation, "features");
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.startsWith("org.eclipse.equinox.executable");
+			}
+		};
+		String[] files = plugins.list(filter);
+
+		if (files.length > 0)
+			return baseLocation;
+
+		File delta = new File(baseLocation.getParent(), "deltapack/eclipse");
+		if (delta.exists()) {
+			files = new File(delta, "features").list(filter);
+			if (files.length > 0)
+				return delta;
+		}
+		return null;
 	}
 }

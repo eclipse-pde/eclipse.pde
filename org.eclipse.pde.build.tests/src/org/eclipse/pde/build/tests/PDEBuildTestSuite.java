@@ -21,6 +21,7 @@ public class PDEBuildTestSuite {
 		suite.addTestSuite(SourceTests.class);
 		suite.addTestSuite(FetchTests.class);
 		suite.addTestSuite(ScriptGenerationTests.class);
+		suite.addTestSuite(ProductTests.class);
 		return suite;
 	}
 	

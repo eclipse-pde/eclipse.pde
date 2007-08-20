@@ -110,6 +110,13 @@ public abstract class PDETestCase extends TestCase {
 
 		runAntScript(buildXMLPath, new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
 	}
+	
+	protected void runProductBuild(IFolder buildFolder) throws Exception {
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/productBuild.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+
+		runAntScript(buildXMLPath, new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+	}
 
 	protected void generateScripts(IFolder buildFolder, Properties generateProperties) throws Exception {
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
@@ -182,6 +189,9 @@ public abstract class PDETestCase extends TestCase {
 	 * @throws Exception
 	 */
 	public static void assertZipContents(IFolder buildFolder, String archive, Set entries) throws Exception {
+		assertZipContents(buildFolder, archive, entries, true);
+	}
+	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, archive);
 		assertTrue(archiveFile.exists());
@@ -193,14 +203,16 @@ public abstract class PDETestCase extends TestCase {
 				ZipEntry entry = (ZipEntry) e.nextElement();
 				String name = entry.getName();
 				if (entries.contains(name)) {
-					assertTrue(entry.getSize() > 0);
+					if (!entry.isDirectory())
+						assertTrue(entry.getSize() > 0);
 					entries.remove(name);
 				}
 			}
 		} finally {
 			zip.close();
 		}
-		assertTrue(entries.size() == 0);
+		if(assertEmpty)
+			assertTrue(entries.size() == 0);
 	}
 
 	/**

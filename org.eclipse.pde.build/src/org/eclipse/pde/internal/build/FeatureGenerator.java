@@ -191,7 +191,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 * @param feature - Name of the feature to generate
 	 * @param plugins - plug-ins to include
 	 * @param fragments - fragments to include
-	 * @param features: An ordered set of features to include
+	 * @param features - An ordered set of features to include
 	 * @throws CoreException
 	 * @throws FileNotFoundException
 	 */

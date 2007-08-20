@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c)  2005, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -32,7 +30,7 @@ public class BrandingIron implements IXMLConstants {
 	private String name;
 	private String os = "win32"; //$NON-NLS-1$
 	private boolean brandIcons = true;
-	
+
 	public void setName(String value) {
 		name = value;
 	}
@@ -61,13 +59,13 @@ public class BrandingIron implements IXMLConstants {
 
 		if (icons == null || icons[0].startsWith("${")) //$NON-NLS-1$
 			brandIcons = false;
-		
+
 		// if the root does not exists (happens in some packaging cases) or 
 		// there is already a file with target name and we don't need to update its icons, don't do anything
 		String testName = os.equals("win32") ? name + ".exe" : name; //$NON-NLS-1$ //$NON-NLS-2$
 		if (!new File(root).exists() || (!brandIcons && new File(root, testName).exists()))
 			return;
-		
+
 		if ("win32".equals(os)) //$NON-NLS-1$
 			brandWindows();
 		if ("linux".equals(os)) //$NON-NLS-1$
@@ -93,24 +91,24 @@ public class BrandingIron implements IXMLConstants {
 	private void brandLinux() throws Exception {
 		renameLauncher();
 		if (brandIcons)
-			copy(new File(icons[0]), new File(root, "icon.xpm"));
+			copy(new File(icons[0]), new File(root, "icon.xpm")); //$NON-NLS-1$
 	}
 
 	private void brandSolaris() throws Exception {
 		renameLauncher();
 		if (brandIcons == false)
 			return;
-		
+
 		for (int i = 0; i < icons.length; i++) {
 			String icon = icons[i];
 			if (icon.endsWith(".l.pm")) //$NON-NLS-1$
 				copy(new File(icon), new File(root, name + ".l.pm")); //$NON-NLS-1$
 			if (icon.endsWith(".m.pm")) //$NON-NLS-1$
-				copy(new File(icon), new File(root, name + ".m.pm"));
-			if (icon.endsWith(".s.pm"))
-				copy(new File(icon), new File(root, name + ".s.pm"));
-			if (icon.endsWith(".t.pm"))
-				copy(new File(icon), new File(root, name + ".t.pm"));
+				copy(new File(icon), new File(root, name + ".m.pm")); //$NON-NLS-1$
+			if (icon.endsWith(".s.pm")) //$NON-NLS-1$
+				copy(new File(icon), new File(root, name + ".s.pm")); //$NON-NLS-1$
+			if (icon.endsWith(".t.pm")) //$NON-NLS-1$
+				copy(new File(icon), new File(root, name + ".t.pm")); //$NON-NLS-1$
 		}
 	}
 
@@ -122,20 +120,20 @@ public class BrandingIron implements IXMLConstants {
 		//Initialize the target folders
 		String target = root + '/' + name + ".app/Contents"; //$NON-NLS-1$
 		new File(target).mkdirs();
-		new File(target + "/MacOS").mkdirs();
-		new File(target + "/Resources").mkdirs();
+		new File(target + "/MacOS").mkdirs(); //$NON-NLS-1$
+		new File(target + "/Resources").mkdirs(); //$NON-NLS-1$
 
 		String initialRoot = root + "/Launcher.app/Contents"; //$NON-NLS-1$
 		if (!new File(initialRoot).exists())
-			initialRoot = root + "/Eclipse.app/Contents";  //$NON-NLS-1$
+			initialRoot = root + "/Eclipse.app/Contents"; //$NON-NLS-1$
 		copyMacLauncher(initialRoot, target);
-		String iconName = "";
+		String iconName = ""; //$NON-NLS-1$
 		File splashApp = new File(initialRoot, "Resources/Splash.app"); //$NON-NLS-1$
 		if (brandIcons) {
 			File icon = new File(icons[0]);
 			iconName = icon.getName();
 			copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
-			new File(initialRoot + "/Resources/Eclipse.icns").delete();
+			new File(initialRoot + "/Resources/Eclipse.icns").delete(); //$NON-NLS-1$
 			if (!splashApp.exists())
 				new File(initialRoot + "/Resources/").delete(); //$NON-NLS-1$
 		}
@@ -154,7 +152,6 @@ public class BrandingIron implements IXMLConstants {
 		rootFolder.getParentFile().delete();
 	}
 
-	
 	/**
 	 * Brand the splash.app Info.plist and  link or copy the mac launcher.
 	 * It is assumed that the mac launcher has been branded already.
@@ -171,9 +168,9 @@ public class BrandingIron implements IXMLConstants {
 		String osName = System.getProperty("os.name"); //$NON-NLS-1$
 		if (osName != null && !osName.startsWith("Windows")) { //$NON-NLS-1$
 			try {
-				String [] command = new String [] { "ln", "-sf", "../../../MacOS/" + name, "MacOS/" + name};   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+				String[] command = new String[] {"ln", "-sf", "../../../MacOS/" + name, "MacOS/" + name}; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 				File linkDir = new File(target, splashContents);
-				Process proc = Runtime.getRuntime().exec( command, null, linkDir);
+				Process proc = Runtime.getRuntime().exec(command, null, linkDir);
 				result = proc.waitFor();
 			} catch (IOException e) {
 				// ignore
@@ -200,7 +197,7 @@ public class BrandingIron implements IXMLConstants {
 			}
 		}
 	}
-	
+
 	private void moveContents(File source, File target) {
 		if (!source.exists())
 			return;
@@ -231,26 +228,26 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	private void brandWindows() throws Exception {
-		File templateLauncher = new File(root, "launcher.exe");
+		File templateLauncher = new File(root, "launcher.exe"); //$NON-NLS-1$
 		if (!templateLauncher.exists())
-			templateLauncher = new File(root, "eclipse.exe");
+			templateLauncher = new File(root, "eclipse.exe"); //$NON-NLS-1$
 		if (brandIcons) {
 			String[] args = new String[icons.length + 1];
 			args[0] = templateLauncher.getAbsolutePath();
 			System.arraycopy(icons, 0, args, 1, icons.length);
 			IconExe.main(args);
 		}
-		templateLauncher.renameTo(new File(root, name + ".exe"));
+		templateLauncher.renameTo(new File(root, name + ".exe")); //$NON-NLS-1$
 	}
 
 	private void renameLauncher() {
-		if (!new File(root, "launcher").renameTo(new File(root, name)))
-			new File(root, "eclipse").renameTo(new File(root, name));
+		if (!new File(root, "launcher").renameTo(new File(root, name))) //$NON-NLS-1$
+			new File(root, "eclipse").renameTo(new File(root, name)); //$NON-NLS-1$
 	}
 
 	private void copyMacLauncher(String initialRoot, String target) {
-		String targetLauncher = target + "/MacOS/";
-		File launcher = new File(initialRoot + "/MacOS/launcher");
+		String targetLauncher = target + "/MacOS/"; //$NON-NLS-1$
+		File launcher = new File(initialRoot + "/MacOS/launcher"); //$NON-NLS-1$
 		File eclipseLauncher = new File(initialRoot + "/MacOS/eclipse"); //$NON-NLS-1$
 		if (!launcher.exists()) {
 			launcher = eclipseLauncher;
@@ -271,7 +268,7 @@ public class BrandingIron implements IXMLConstants {
 			}
 			copy(launcher, targetFile);
 		} catch (IOException e) {
-			System.out.println("Could not copy macosx launcher");
+			System.out.println("Could not copy macosx launcher"); //$NON-NLS-1$
 			return;
 		}
 		try {
@@ -285,9 +282,17 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	private void copyMacIni(String initialRoot, String target, String iconName) {
+		File brandedIni = new File(initialRoot, "/MacOS/" + name + ".ini"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		File ini = new File(initialRoot, "/MacOS/eclipse.ini"); //$NON-NLS-1$
-		if (!ini.exists())
+		if (!ini.exists() && !brandedIni.exists())
 			return;
+
+		if (brandedIni.exists() && ini.exists()) {
+			//take the one that is already branded
+			ini.delete();
+			ini = brandedIni;
+		}
 
 		StringBuffer buffer;
 		try {
@@ -298,7 +303,7 @@ public class BrandingIron implements IXMLConstants {
 			return;
 		}
 
-		if(iconName.length() > 0){
+		if (iconName.length() > 0) {
 			int xdoc = scan(buffer, 0, XDOC_ICON);
 			if (xdoc != -1) {
 				String icns = XDOC_ICON.replaceFirst("Eclipse.icns", iconName); //$NON-NLS-1$
@@ -371,7 +376,7 @@ public class BrandingIron implements IXMLConstants {
 
 		File target = null;
 		try {
-			target = new File(targetRoot, "Info.plist");
+			target = new File(targetRoot, "Info.plist"); //$NON-NLS-1$
 			target.getParentFile().mkdirs();
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(target));
 		} catch (FileNotFoundException e) {
@@ -399,7 +404,7 @@ public class BrandingIron implements IXMLConstants {
 		OutputStream out = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(source));
-			out = new BufferedOutputStream(new  FileOutputStream(destination));
+			out = new BufferedOutputStream(new FileOutputStream(destination));
 			final byte[] buffer = new byte[8192];
 			while (true) {
 				int bytesRead = -1;
