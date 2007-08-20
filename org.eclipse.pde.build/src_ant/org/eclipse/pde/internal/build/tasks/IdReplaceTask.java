@@ -257,8 +257,8 @@ public class IdReplaceTask extends Task {
 				buffer.replace(startVersionId, endVersionId, replacementVersion);
 				contentChanged = true;
 			}
-
-			startElement = (endElementId > endVersionId) ? endElementId : endVersionId;
+			int change = endVersionId - startVersionId - replacementVersion.length();
+			startElement = (endElementId > endVersionId) ? endElementId - change: endVersionId - change;
 		}
 
 		if (!contentChanged)
