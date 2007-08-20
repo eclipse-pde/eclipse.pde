@@ -210,7 +210,7 @@
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.toc.NewTocFileWizard"
             icon="icons/obj16/toc_obj.gif"
-            id="org.eclipse.pde.ui.wizard1"
+            id="org.eclipse.pde.ui.NewTOCWizard"
             name="%new.toc.name">
          <description>
             %new.toc.description
