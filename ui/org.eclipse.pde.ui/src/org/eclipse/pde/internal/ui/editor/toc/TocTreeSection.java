@@ -108,18 +108,20 @@ public class TocTreeSection extends TreeSection {
 	private static final int F_DOWN_FLAG = 1;
 
 	private class TocOpenLinkAction extends Action
-	{	private String fPath;
-		
+	{	private TocObject fOpenTarget;
+
 		public TocOpenLinkAction()
 		{	setText(PDEUIMessages.Actions_open_label);
 		}
 
-		public void setPath(String path)
-		{	fPath = path;
+		public void setTarget(TocObject target)
+		{	fOpenTarget = target;
 		}
 
 		public void run()
-		{	open(fPath);
+		{	if(fOpenTarget != null)
+			{	open(fOpenTarget);
+			}
 		}
 	}
 
@@ -473,9 +475,8 @@ public class TocTreeSection extends TreeSection {
 				emptyMenu = false;
 			}
 
-			String path = tocObject.getPath();
-			if(path != null)
-			{	fOpenLinkAction.setPath(path);
+			if(tocObject.getPath() != null)
+			{	fOpenLinkAction.setTarget(tocObject);
 				manager.add(fOpenLinkAction);
 				emptyMenu = false;	
 			}
@@ -606,11 +607,7 @@ public class TocTreeSection extends TreeSection {
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if(selected instanceof TocObject)
-		{	String path = ((TocObject)selected).getPath();
-
-			if(path != null)
-			{	open(path);
-			}
+		{	open((TocObject)selected);
 		}
 	}
 
@@ -619,16 +616,16 @@ public class TocTreeSection extends TreeSection {
 	 * 
 	 * @param path a path to a resource, relative to this TOC's root project
 	 */
-	private void open(String path)
-	{	Path resourcePath = new Path(path);
-		if(!isEditable() || resourcePath.isEmpty())
+	private void open(TocObject obj)
+	{	Path resourcePath = new Path(obj.getPath());
+		if(!isEditable() || resourcePath == null || resourcePath.isEmpty())
 		{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath);
 			return;
 		}
 
 		IResource resource = findResource(resourcePath);
 		if (resource != null && resource instanceof IFile)
-		{	openResource(resource);
+		{	openResource(resource, obj.getType() == ITocConstants.TYPE_LINK);
 		}
 		else
 		{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning);
@@ -642,7 +639,7 @@ public class TocTreeSection extends TreeSection {
 			{	IResource page = findResource(resourcePath);
 
 				if (page != null && page instanceof IFile)
-				{	openResource(page);
+				{	openResource(page, isTOCFile);
 					return null;
 				}
 			}
@@ -720,13 +717,42 @@ public class TocTreeSection extends TreeSection {
 		return pluginProject.findMember(resourcePath);
 	}
 
-	private void openResource(IResource resource) {
-		try
-		{	IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+	private void openResource(IResource resource, boolean tocFile) {
+		IPath path = resource.getFullPath();
+
+		if(isFileValidInContext(tocFile, path))
+		{	try
+			{	IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+			}
+			catch (PartInitException e)
+			{	//suppress exception
+			}
 		}
-		catch (PartInitException e)
-		{	//suppress exception
+	}
+
+	private boolean isFileValidInContext(boolean tocFile, IPath path) {
+		String message = null;
+
+		if(tocFile)
+		{	if(TocExtensionUtil.isTOCFile(path))
+			{	return true;
+			}
+
+			message = PDEUIMessages.TocPage_invalidTocFile;
 		}
+		else
+		{	if(TocExtensionUtil.hasValidPageExtension(path))
+			{	return true;
+			}
+		
+			message = PDEUIMessages.TocPage_invalidHTMLFile;
+		}
+
+		MessageDialog.openWarning(
+				PDEPlugin.getActiveWorkbenchShell(), 
+				PDEUIMessages.WindowImagesSection_open, message);
+
+		return false;
 	}
 
 	/**

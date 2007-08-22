@@ -429,6 +429,9 @@ public class PDEUIMessages extends NLS {
 	public static String TocPage_TocLink;
 	public static String TocPage_TocAnchor;
 
+	public static String TocPage_invalidTocFile;
+	public static String TocPage_invalidHTMLFile;
+
 	public static String TocTreeSection_title;
 	public static String TocTreeSection_sectionDescription;
 
