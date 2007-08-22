@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -162,13 +164,24 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 */
 	private void validateFileDrop(DropTargetEvent event) {
 		if (FileTransfer.getInstance().isSupportedType(event.currentDataType))
-		{	String[] fileNames = (String[])FileTransfer.getInstance().nativeToJava(event.currentDataType);
+		{	IBaseModel model = fSection.getPage().getModel();
+			String[] fileNames = (String[])FileTransfer.getInstance().nativeToJava(event.currentDataType);
 			for(int i = 0; i < fileNames.length; i++)
 			{	IPath path = new Path(fileNames[i]);
+
 				if(!TocExtensionUtil.hasValidPageExtension(path)
-					&& !TocExtensionUtil.hasValidTocExtension(path))
+					&& !TocExtensionUtil.isTOCFile(path))
 				{	event.detail = DND.DROP_NONE;
 					return;
+				}
+
+				// Make sure that the user isn't dropping a TOC into itself
+				if(model instanceof IModel)
+				{	IPath fullPath = ((IModel)model).getUnderlyingResource().getLocation();
+					if(fullPath.equals(path))
+					{	event.detail = DND.DROP_NONE;
+						return;
+					}
 				}
 			}
 		}

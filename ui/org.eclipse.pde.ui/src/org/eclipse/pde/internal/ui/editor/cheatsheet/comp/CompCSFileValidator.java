@@ -11,24 +11,14 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.XMLRootElementMatcher;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * CompCSFileValidator
@@ -70,81 +60,9 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 	 * @param file
 	 */
 	private boolean isSimpleCSFile(IFile file) {
+		return XMLRootElementMatcher.fileMatchesElement(file, ISimpleCSConstants.ELEMENT_CHEATSHEET);
+	}
 
-		SimpleCSContentTypeHandler handler = new SimpleCSContentTypeHandler();
-		try {
-			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(new BufferedInputStream(file.getContents()), handler);
-		} catch (ParserConfigurationException e) {
-			return false;
-		} catch (AbortParseException e) {
-			return handler.isSimpleCS();
-		} catch (SAXException e) {
-			return false;
-		} catch (FactoryConfigurationError e) {
-			return false;
-		} catch (IOException e) {
-			return false;
-		} catch (CoreException e) {
-			return false;
-		}
-		return handler.isSimpleCS();
-	}
-	
-	/**
-	 * AbortParseException
-	 *
-	 */
-	private static class AbortParseException extends SAXException {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		/**
-		 * 
-		 */
-		public AbortParseException() {
-			super("Parsing operation forcibly aborted to save on performance time."); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * SimpleCSContentTypeHandler
-	 *
-	 */
-	private static class SimpleCSContentTypeHandler extends DefaultHandler {
-		
-		private boolean fIsSimpleCS;
-		
-		/**
-		 * 
-		 */
-		public SimpleCSContentTypeHandler() {
-			fIsSimpleCS = false;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-		 */
-		public void startElement(String uri, String localName, String qName,
-				Attributes attributes) throws SAXException {
-			if (qName.equals(ISimpleCSConstants.ELEMENT_CHEATSHEET)) {
-				fIsSimpleCS = true;
-			}
-			// Only care about the root node
-			// Abort parsing to save on performance
-			throw new AbortParseException();
-		}
-		
-		/**
-		 * @return
-		 */
-		public boolean isSimpleCS() {
-			return fIsSimpleCS;
-		}
-	}
-	
 	/**
 	 * @param message
 	 * @return

@@ -860,8 +860,8 @@ public class TocTreeSection extends TreeSection {
 			{	// If the array contains Strings, we treat them as file paths
 				Path path = new Path((String)droppings[i]);
 				
-				// If the path is to a file with a TOC's extension, make a link
-				if(TocExtensionUtil.hasValidTocExtension(path))
+				// If the path is to a valid TOC file, make a link
+				if(TocExtensionUtil.isTOCFile(path))
 				{	tocObjects.add(makeNewTocLink(targetParent, path));
 				}
 				// If the path is to a file with an HTML page extension, make a topic
