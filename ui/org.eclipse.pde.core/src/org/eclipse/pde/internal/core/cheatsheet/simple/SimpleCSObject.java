@@ -378,4 +378,87 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 		return false;
 	}
 	
+	public void addChildNode(IDocumentElementNode child, boolean fireEvent) {
+	}
+
+	public void addChildNode(IDocumentElementNode child, int position,
+			boolean fireEvent) {
+	}
+
+	public IDocumentElementNode clone(IDocumentElementNode node) {
+		return null;
+	}
+
+	public boolean getBooleanAttributeValue(String name, boolean defaultValue) {
+		return false;
+	}
+
+	public IDocumentElementNode getChildNode(Class clazz) {
+		return null;
+	}
+	
+	public int getChildNodeCount(Class clazz) {
+		return 0;
+	}
+	
+	public ArrayList getChildNodesList(Class clazz, boolean match) {
+		return null;
+	}
+	
+	public ArrayList getChildNodesList(Class[] classes, boolean match) {
+		return null;
+	}
+	
+	public IDocumentElementNode getNextSibling(IDocumentElementNode node,
+			Class clazz) {
+		return null;
+	}
+	
+	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node,
+			Class clazz) {
+		return null;
+	}
+	
+	public boolean hasChildNodes(Class clazz) {
+		return false;
+	}
+	
+	public boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
+		return false;
+	}
+	
+	public boolean isLastChildNode(IDocumentElementNode node, Class clazz) {
+		return false;
+	}
+	
+	public void moveChildNode(IDocumentElementNode node, int newRelativeIndex,
+			boolean fireEvent) {
+	}
+
+	public IDocumentElementNode removeChildNode(IDocumentElementNode child,
+			boolean fireEvent) {
+		return null;
+	}
+	
+	public IDocumentElementNode removeChildNode(int index, Class clazz) {
+		return null;
+	}
+	
+	public IDocumentElementNode removeChildNode(int index, Class clazz,
+			boolean fireEvent) {
+		return null;
+	}
+	
+	public boolean setBooleanAttributeValue(String name, boolean value) {
+		return false;
+	}
+	
+	public void setChildNode(IDocumentElementNode newNode, Class clazz) {
+	}
+	
+	public void swap(IDocumentElementNode child1, IDocumentElementNode child2,
+			boolean fireEvent) {
+	}
+	
 }
+

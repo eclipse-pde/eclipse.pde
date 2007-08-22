@@ -35,7 +35,6 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		IDocumentObject {
 	
 	// TODO: MP: TEO: LOW: Integrate with plugin model?
-	
 	// TODO: MP: TEO: LOW: Investigate document node to see if any methods to pull down
 	
 	private transient IModel fModel;
@@ -215,6 +214,12 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode, int)
 	 */
 	public void addChildNode(IDocumentElementNode child, int position) {
+		// Ensure the position is valid
+		// 0 <= position <= number of children
+		if ((position < 0) ||
+				(position > getChildCount())) {
+			return;
+		}
 		if (child instanceof IDocumentObject) {
 			((IDocumentObject)child).setInTheModel(true);
 		}
@@ -226,7 +231,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param position
 	 * @param fireEvent
 	 */
-	protected void addChildNode(IDocumentElementNode child, int position, boolean fireEvent) {
+	public void addChildNode(IDocumentElementNode child, int position, boolean fireEvent) {
 		addChildNode(child, position);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
@@ -238,7 +243,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param child
 	 * @param fireEvent
 	 */
-	protected void addChildNode(IDocumentElementNode child, boolean fireEvent) {
+	public void addChildNode(IDocumentElementNode child, boolean fireEvent) {
 		addChildNode(child);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
@@ -275,7 +280,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param fireEvent
 	 * @return
 	 */
-	protected IDocumentElementNode removeChildNode(IDocumentElementNode child, boolean fireEvent) {
+	public IDocumentElementNode removeChildNode(IDocumentElementNode child, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(child);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
@@ -290,7 +295,16 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param fireEvent
 	 * @return
 	 */
-	protected IDocumentElementNode removeChildNode(int index, Class clazz, boolean fireEvent) {
+	public IDocumentElementNode removeChildNode(int index, Class clazz, boolean fireEvent) {
+		IDocumentElementNode node = removeChildNode(index, clazz);
+		// Fire event
+		if (fireEvent && shouldFireEvent()) {
+			fireStructureChanged(node, IModelChangedEvent.REMOVE);
+		}	
+		return node;
+	}
+	
+	public IDocumentElementNode removeChildNode(int index, Class clazz) {
 		// Validate index
 		if ((index < 0) ||
 				(index >= getChildCount()) ||
@@ -301,12 +315,8 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		}
 		// Remove the node
 		IDocumentElementNode node = removeChildNode(index);
-		// Fire event
-		if (fireEvent && shouldFireEvent()) {
-			fireStructureChanged(node, IModelChangedEvent.REMOVE);
-		}	
 		return node;
-	}
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#write(java.lang.String, java.io.PrintWriter)
@@ -320,7 +330,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param newNode
 	 * @param oldNode
 	 */
-	protected void setChildNode(IDocumentElementNode newNode, Class clazz) {
+	public void setChildNode(IDocumentElementNode newNode, Class clazz) {
 		// Get the old node
 		IDocumentElementNode oldNode = getChildNode(clazz);
 		
@@ -354,7 +364,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected IDocumentElementNode getChildNode(Class clazz) {
+	public IDocumentElementNode getChildNode(Class clazz) {
 		// Linear search O(n)
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
@@ -371,7 +381,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected int getChildNodeCount(Class clazz) {
+	public int getChildNodeCount(Class clazz) {
 		// Linear search O(n)
 		int count = 0;
 		ArrayList children = getChildNodesList();
@@ -389,7 +399,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected ArrayList getChildNodesList(Class clazz, boolean match) {
+	public ArrayList getChildNodesList(Class clazz, boolean match) {
 		return getChildNodesList(new Class[]{ clazz }, match);
 	}
 	
@@ -397,7 +407,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param classes
 	 * @return
 	 */
-	protected ArrayList getChildNodesList(Class[] classes, boolean match) {
+	public ArrayList getChildNodesList(Class[] classes, boolean match) {
 		ArrayList filteredChildren = new ArrayList();
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
@@ -419,7 +429,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected IDocumentElementNode getNextSibling(IDocumentElementNode node, Class clazz) {
+	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		if ((position < 0) ||
@@ -443,7 +453,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class clazz) {
+	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		if ((position <= 0) ||
 				(position >= getChildCount())) {
@@ -465,7 +475,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected boolean hasChildNodes(Class clazz) {
+	public boolean hasChildNodes(Class clazz) {
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
@@ -482,7 +492,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
+	public boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		// Check to see if node is found
 		if ((position < 0) ||
@@ -511,7 +521,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param clazz
 	 * @return
 	 */
-	protected boolean isLastChildNode(IDocumentElementNode node, Class clazz) {
+	public boolean isLastChildNode(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		// Check to see if node is found
@@ -551,10 +561,11 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param node
 	 * @param newRelativeIndex
 	 */
-	protected void moveChildNode(IDocumentElementNode node, int newRelativeIndex, boolean fireEvent) {
+	public void moveChildNode(IDocumentElementNode node, int newRelativeIndex, boolean fireEvent) {
 
 		// TODO: MP: TEO: MED: Test Problem, if generic not viewable, may appear that node did not move
-		// TODO: MP: TEO: HIGH: TEST FOR DND:  new relative index > 1 or < -1  - BUG: add item to end, move existing item before it down, teo overwrites new item
+		// TODO: MP: TEO: MED: Test relative index > 1 or < -1
+		// TODO: MP: TEO: MED: BUG: Add item to end, move existing item before it down, teo overwrites new item
 
 		if (newRelativeIndex == 0) {
 			// Nothing to do
@@ -605,7 +616,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param node
 	 * @return
 	 */
-	protected IDocumentElementNode clone(IDocumentElementNode node) {
+	public IDocumentElementNode clone(IDocumentElementNode node) {
 		IDocumentElementNode clone = null;
 		try {
 			// Serialize
@@ -636,7 +647,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param defaultValue
 	 * @return
 	 */
-	protected boolean getBooleanAttributeValue(String name, boolean defaultValue) {
+	public boolean getBooleanAttributeValue(String name, boolean defaultValue) {
 		String value = getXMLAttributeValue(name);
 		if (value == null) {
 			return defaultValue;
@@ -653,7 +664,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param value
 	 * @return
 	 */
-	protected boolean setBooleanAttributeValue(String name, boolean value) {
+	public boolean setBooleanAttributeValue(String name, boolean value) {
 		String newValue = Boolean.valueOf(value).toString();
 		return setXMLAttribute(name, newValue);
 	}
