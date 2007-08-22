@@ -66,7 +66,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		buf.append(indent);
 		buf.append(indent);		
 		buf.append(indent);		
-		buf.append("Title");
+		buf.append("Title"); //$NON-NLS-1$
 		buf.append(delimiter);		
 		
 		buf.append(indent);
@@ -82,7 +82,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		buf.append(indent);
 		buf.append(indent);		
 		buf.append(indent);		
-		buf.append("Body");
+		buf.append("Body"); //$NON-NLS-1$
 		buf.append(delimiter);		
 		
 		buf.append(indent);
