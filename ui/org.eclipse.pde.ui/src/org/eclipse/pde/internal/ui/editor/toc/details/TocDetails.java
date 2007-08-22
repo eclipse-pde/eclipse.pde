@@ -12,10 +12,10 @@
 package org.eclipse.pde.internal.ui.editor.toc.details;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.text.toc.Toc;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -57,6 +57,15 @@ public class TocDetails extends TocAbstractDetails {
 	public void setData(Toc object) {
 		// Set data
 		fDataTOC = object;
+	}
+
+	protected TocObject getDataObject()
+	{	return fDataTOC;
+	}
+
+
+	protected FormEntry getPathEntryField() {
+		return fPageEntry;
 	}		
 	
 	/* (non-Javadoc)
@@ -186,18 +195,8 @@ public class TocDetails extends TocAbstractDetails {
 
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
-			IPath path = file.getFullPath();
-			if(file.getProject().equals(fDataTOC.getModel().getUnderlyingResource().getProject()))
-			{	fPageEntry.setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
-			}
-			else
-			{	fPageEntry.setValue(".." + path.toString()); //$NON-NLS-1$
-			}
+			setPathEntry(file);
 		}
-	}
-	
-	private void handleOpen()
-	{	getMasterSection().openDocument(fPageEntry.getValue());
 	}
 
 	/* (non-Javadoc)

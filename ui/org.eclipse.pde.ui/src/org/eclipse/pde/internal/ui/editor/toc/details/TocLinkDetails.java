@@ -12,10 +12,10 @@
 package org.eclipse.pde.internal.ui.editor.toc.details;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.text.toc.TocLink;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -55,7 +55,20 @@ public class TocLinkDetails extends TocAbstractDetails {
 		// Set data
 		fDataTOCLink = object;
 	}		
-	
+
+	protected TocObject getDataObject()
+	{	return fDataTOCLink;
+	}
+
+
+	protected FormEntry getPathEntryField() {
+		return fTocPathEntry;
+	}
+
+	protected boolean isTocPath()
+	{	return true;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -128,18 +141,8 @@ public class TocLinkDetails extends TocAbstractDetails {
 
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
-			IPath path = file.getFullPath();
-			if(file.getProject().equals(fDataTOCLink.getModel().getUnderlyingResource().getProject()))
-			{	fTocPathEntry.setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
-			}
-			else
-			{	fTocPathEntry.setValue(".." + path.toString()); //$NON-NLS-1$
-			}
+			setPathEntry(file);
 		}
-	}
-	
-	private void handleOpen()
-	{	getMasterSection().openDocument(fTocPathEntry.getValue());
 	}
 
 	/* (non-Javadoc)

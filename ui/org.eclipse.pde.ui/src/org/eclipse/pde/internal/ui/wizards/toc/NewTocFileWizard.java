@@ -18,14 +18,12 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
-public class NewTocFileWizard extends BasicNewFileResourceWizard {
-	
-	TocWizardPage fPage;
-	IPath fInitialPath = null;
-	IPath fFilePath = null;
-	
+public class NewTocFileWizard extends TocHTMLWizard {
+
+	private TocWizardPage fPage;
+	private IPath fInitialPath = null;
+
 	public void addPages() {
 		fPage = new TocWizardPage("tocfile", getSelection()); //$NON-NLS-1$
 		if (fInitialPath != null)
@@ -45,12 +43,14 @@ public class NewTocFileWizard extends BasicNewFileResourceWizard {
 
 	public boolean performFinish() {
 		try {
+			fNewFile = fPage.createNewFile();
 			getContainer().run(false, true, getOperation());
-			fFilePath = fPage.getContainerFullPath().append(fPage.getFileName());
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
+			fNewFile = null;
 			return false;
 		} catch (InterruptedException e) {
+			fNewFile = null;
 			return false;
 		}
 		return true;
@@ -62,10 +62,6 @@ public class NewTocFileWizard extends BasicNewFileResourceWizard {
 	
 	public void setInitialPath(IPath path) {
 		fInitialPath = path;
-	}
-	
-	public IPath getFilePath() {
-		return fFilePath;
 	}
 
 }

@@ -1464,6 +1464,10 @@ public class PDEUIMessages extends NLS {
 	public static String TocWizardPage_desc;
 	public static String TocWizardPage_emptyTocName;
 	
+	public static String TocHTMLWizard_title;
+	public static String TocHTMLWizard_desc;
+	public static String TocHTMLWizardPage_badExtension;
+	
 	public static String NewSchemaFileWizard_wtitle;
 	public static String NewSchemaFileWizard_title;
 	public static String NewSchemaFileWizard_desc;

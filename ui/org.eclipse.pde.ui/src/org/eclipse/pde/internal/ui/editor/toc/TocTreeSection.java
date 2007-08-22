@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,6 +33,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
@@ -54,6 +58,8 @@ import org.eclipse.pde.internal.ui.editor.toc.actions.TocAddTopicAction;
 import org.eclipse.pde.internal.ui.editor.toc.actions.TocRemoveObjectAction;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
+import org.eclipse.pde.internal.ui.wizards.toc.NewTocFileWizard;
+import org.eclipse.pde.internal.ui.wizards.toc.TocHTMLWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -70,6 +76,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.IDE;
@@ -112,7 +119,7 @@ public class TocTreeSection extends TreeSection {
 		}
 
 		public void run()
-		{	openDocument(fPath);
+		{	open(fPath);
 		}
 	}
 
@@ -602,7 +609,7 @@ public class TocTreeSection extends TreeSection {
 		{	String path = ((TocObject)selected).getPath();
 
 			if(path != null)
-			{	openDocument(path);
+			{	open(path);
 			}
 		}
 	}
@@ -612,26 +619,113 @@ public class TocTreeSection extends TreeSection {
 	 * 
 	 * @param path a path to a resource, relative to this TOC's root project
 	 */
-	public void openDocument(String path)
+	private void open(String path)
 	{	Path resourcePath = new Path(path);
-		if(isEditable() && !resourcePath.isEmpty())
-		{	IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-			IPath pluginPath = fModel.getUnderlyingResource().getProject().getFullPath();
-			IResource resource = root.findMember(pluginPath.append(resourcePath));
-			try
-			{	if (resource != null && resource instanceof IFile)
-				{	IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
-				}
-				else
-				{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning);
-				}
-			}
-			catch (PartInitException e)
-			{	//suppress exception
-			}
+		if(!isEditable() || resourcePath.isEmpty())
+		{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath);
+			return;
+		}
+
+		IResource resource = findResource(resourcePath);
+		if (resource != null && resource instanceof IFile)
+		{	openResource(resource);
 		}
 		else
-		{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath);
+		{	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning);
+		}
+	}
+
+	public IFile openFile(String path, boolean isTOCFile)
+	{	Path resourcePath = new Path(path);
+		if(isEditable())
+		{	if(!resourcePath.isEmpty())
+			{	IResource page = findResource(resourcePath);
+
+				if (page != null && page instanceof IFile)
+				{	openResource(page);
+					return null;
+				}
+			}
+		
+			return showNewWizard(path, isTOCFile);
+		}
+
+		return null;
+	}
+
+	private IFile showNewWizard(String path, boolean tocWizard)
+	{	TocHTMLWizard wizard;
+		if(tocWizard)
+		{	wizard = new NewTocFileWizard();
+		} else
+		{	wizard = new TocHTMLWizard();
+		}
+
+		// By default, the file will be created in the same project as the TOC
+		IResource selectedFolder = fModel.getUnderlyingResource().getProject();
+		String filename = null;
+
+		// Find the folder associated with the specified path
+		IPath initialFolder = new Path(path.trim());
+		if (!initialFolder.isEmpty())
+		{	IPath newPath = selectedFolder.getFullPath().append(initialFolder);
+			
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IResource newFolder = root.findMember(newPath);
+
+			if(newFolder == null)
+			{	if(!newPath.hasTrailingSeparator())
+				{	filename = newPath.lastSegment();
+				}
+			}
+
+			while(newFolder == null && !newPath.isEmpty())
+			{	newPath = newPath.removeLastSegments(1);
+				newFolder = root.findMember(newPath);
+			}
+
+			if(newFolder != null)
+			{	selectedFolder = newFolder;
+			}
+		}
+
+		// Select the project in the wizard
+		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(selectedFolder));
+
+		// Create the dialog for the wizard
+		WizardDialog dialog = 
+			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		// Get the wizard page
+		IWizardPage wizardPage;
+		wizardPage = wizard.getStartingPage();
+		if (!(wizardPage instanceof WizardNewFileCreationPage)) {
+			return null;
+		}
+
+		WizardNewFileCreationPage page = (WizardNewFileCreationPage)wizardPage;
+		if(filename != null)
+		{	page.setFileName(filename);
+		}
+
+		if(dialog.open() == Window.OK)
+		{	return wizard.getNewResource();
+		}
+
+		return null;
+	}
+
+	private IResource findResource(Path resourcePath) {
+		IProject pluginProject = fModel.getUnderlyingResource().getProject();
+		return pluginProject.findMember(resourcePath);
+	}
+
+	private void openResource(IResource resource) {
+		try
+		{	IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+		}
+		catch (PartInitException e)
+		{	//suppress exception
 		}
 	}
 

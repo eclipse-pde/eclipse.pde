@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.toc.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.text.toc.TocAnchor;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.toc.TocInputContext;
@@ -45,8 +46,17 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	public void setData(TocAnchor object) {
 		// Set data
 		fDataTOCAnchor = object;
-	}		
-	
+	}
+
+	protected TocObject getDataObject()
+	{	return fDataTOCAnchor;
+	}
+
+
+	protected FormEntry getPathEntryField() {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */

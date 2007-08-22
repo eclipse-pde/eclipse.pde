@@ -11,13 +11,17 @@
 
 package org.eclipse.pde.internal.ui.editor.toc.details;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.toc.TocTreeSection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -148,6 +152,30 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	public PDEFormPage getPage() {
 		return (PDEFormPage)getManagedForm().getContainer();
 	}
+
+	protected void setPathEntry(IFile file) {
+		IPath path = file.getFullPath();
+		if(file.getProject().equals(getDataObject().getModel().getUnderlyingResource().getProject()))
+		{	getPathEntryField().setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
+		}
+		else
+		{	getPathEntryField().setValue(".." + path.toString()); //$NON-NLS-1$
+		}
+	}
+	
+	protected void handleOpen()
+	{	IFile file = getMasterSection().openFile(getPathEntryField().getValue(), isTocPath());
+		if(file != null)
+		{	setPathEntry(file);
+		}
+	}
+
+	protected boolean isTocPath()
+	{	return false;
+	}
+
+	protected abstract TocObject getDataObject();
+	protected abstract FormEntry getPathEntryField();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#isEditable()
