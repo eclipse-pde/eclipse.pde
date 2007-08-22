@@ -17,20 +17,22 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class TocHTMLOperation extends WorkspaceModifyOperation {
 	
 	private IFile fFile;
-	private static byte[] htmlContent = null;
-	private static final String 
-		delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
-	private static final String 
-		indent = "   "; //$NON-NLS-1$
 
-	static
-	{	StringBuffer buf = new StringBuffer();
+	private static byte[] getHTMLContent() throws CoreException
+	{	
+		String indent = "   "; //$NON-NLS-1$
+		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		
+		StringBuffer buf = new StringBuffer();
 		buf.append("<!DOCTYPE HTML PUBLIC"); //$NON-NLS-1$
 		buf.append(" \"-//W3C//DTD HTML 4.01 Transitional//EN\""); //$NON-NLS-1$
 		buf.append(" \"http://www.w3.org/TR/html4/loose.dtd\">"); //$NON-NLS-1$
@@ -98,9 +100,12 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 		buf.append(delimiter);
 
 		try {
-			htmlContent = buf.toString().getBytes("UTF8"); //$NON-NLS-1$
+			return buf.toString().getBytes("UTF8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			PDEPlugin.logException(e);
+			IStatus status = new Status(IStatus.ERROR,
+					IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
 		}
 	}
 
@@ -111,7 +116,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
 		
-		ByteArrayInputStream stream = new ByteArrayInputStream(htmlContent);
+		ByteArrayInputStream stream = new ByteArrayInputStream(getHTMLContent());
 		fFile.setContents(stream, 0, monitor);
 
         monitor.done();
