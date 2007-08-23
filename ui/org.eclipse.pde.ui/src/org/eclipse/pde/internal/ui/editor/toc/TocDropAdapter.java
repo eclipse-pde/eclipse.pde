@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -176,12 +175,9 @@ public class TocDropAdapter extends ViewerDropAdapter {
 				}
 
 				// Make sure that the user isn't dropping a TOC into itself
-				if(model instanceof IModel)
-				{	IPath fullPath = ((IModel)model).getUnderlyingResource().getLocation();
-					if(fullPath.equals(path))
-					{	event.detail = DND.DROP_NONE;
-						return;
-					}
+				if(TocExtensionUtil.isCurrentResource(path, model))
+				{	event.detail = DND.DROP_NONE;
+					return;
 				}
 			}
 		}

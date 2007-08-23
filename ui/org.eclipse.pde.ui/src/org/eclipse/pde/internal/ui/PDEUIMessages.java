@@ -456,6 +456,7 @@ public class PDEUIMessages extends NLS {
 	public static String TocTopicDetails_page_desc;
 
 	public static String TocFileValidator_errorInvalidTOC;
+	public static String TocFileValidator_errorSameTOC;
 
 	public static String TocDetails_browseSelection;
 	public static String TocDetails_browseMessage;

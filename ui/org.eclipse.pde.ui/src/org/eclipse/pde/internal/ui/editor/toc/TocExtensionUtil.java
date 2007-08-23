@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.ui.util.XMLRootElementMatcher;
 
@@ -69,4 +71,21 @@ public class TocExtensionUtil {
 		return XMLRootElementMatcher.fileMatchesElement(path.toFile(), ITocConstants.ELEMENT_TOC);
 	}
 
+	public static boolean isCurrentResource(IPath path, IBaseModel model)
+	{	if(model instanceof IModel)
+		{	IPath workspacePath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+			IPath fullPath;	
+
+			if(workspacePath.isPrefixOf(path))
+			{	fullPath = ((IModel)model).getUnderlyingResource().getLocation();	
+			}
+			else
+			{	fullPath = ((IModel)model).getUnderlyingResource().getFullPath();
+			}
+
+			return fullPath.equals(path);
+		}
+
+		return false;
+	}
 }

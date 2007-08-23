@@ -131,7 +131,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
 
-		dialog.setValidator(new TocFileValidator());
+		dialog.setValidator(new TocFileValidator(fDataTOCLink.getModel()));
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.TocLinkDetails_browseSelection);  
 		dialog.setMessage(PDEUIMessages.TocLinkDetails_browseMessage);
