@@ -35,9 +35,6 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEDragAdapter;
-import org.eclipse.pde.internal.ui.editor.PDEDropAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
@@ -51,9 +48,6 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemo
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -241,30 +235,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		createTreeListeners();		
 		createSubStepInfoDecoration();
-		// Drag & Drop
-		initializeDragAndDrop();
 	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
-	private void initializeDragAndDrop() {
-		// Ensure the model is editable
-		if (isEditable() == false) {
-			return;
-		}
-		// Content dragged from the tree viewer can be treated as model objects 
-		// or XML text
-		Transfer[] transfers = new Transfer[] {
-				ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
-		PDEDragAdapter dragAdapter = new PDEDragAdapter(this);
-		PDEDropAdapter dropAdapter = new PDEDropAdapter(fTreeViewer, this, dragAdapter);
-		int dragOperations = getSupportedDNDOperations();
-		fTreeViewer.addDragSupport(dragOperations, transfers, dragAdapter);
-		int dropOperations = dragOperations | DND.DROP_DEFAULT;
-		fTreeViewer.addDropSupport(dropOperations, transfers, dropAdapter);		
+	protected boolean isDragAndDropEnabled() {
+		return true;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */

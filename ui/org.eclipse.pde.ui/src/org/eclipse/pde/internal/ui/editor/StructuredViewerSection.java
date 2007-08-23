@@ -15,9 +15,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -61,6 +64,10 @@ public abstract class StructuredViewerSection extends PDESection implements
 		Control control = fViewerPart.getControl();
 		Menu menu = popupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
+		// Initialize drag and drop
+		if (isDragAndDropEnabled()) {
+			initializeDragAndDrop();
+		}
 	}
 	
 	protected Composite createClientContainer(Composite parent, int span, FormToolkit toolkit) {
@@ -247,6 +254,55 @@ public abstract class StructuredViewerSection extends PDESection implements
 	 */
 	public int getSupportedDNDOperations() {
 		return DND.DROP_MOVE;
+	}
+	
+	/**
+	 * 
+	 */
+	protected void initializeDragAndDrop() {
+		// Ensure the model is editable and we have a viewer part
+		if (isEditable() == false) {
+			return;
+		} else if (fViewerPart == null) {
+			return;
+		}
+		StructuredViewer viewer = fViewerPart.getViewer();
+		// Ensure we have a viewer
+		if (viewer == null) {
+			return;
+		}
+		// Create drag adapter
+		PDEDragAdapter dragAdapter = new PDEDragAdapter(this);
+		// Create drop adapter
+		PDEDropAdapter dropAdapter = new PDEDropAdapter(viewer, this, dragAdapter);
+		// Add drag support to viewer
+		int dragOperations = getSupportedDNDOperations();
+		viewer.addDragSupport(dragOperations, getDragTransfers(), dragAdapter);
+		// Add drop support to viewer
+		int dropOperations = dragOperations | DND.DROP_DEFAULT;
+		viewer.addDropSupport(dropOperations, getDropTransfers(), dropAdapter);		
+	}
+	
+	/**
+	 * @return
+	 */
+	protected Transfer[] getDragTransfers() {
+		return new Transfer[] {
+				ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
+	}
+	
+	/**
+	 * @return
+	 */
+	protected Transfer[] getDropTransfers() {
+		return getDragTransfers();
+	}
+	
+	/**
+	 * @return
+	 */
+	protected boolean isDragAndDropEnabled() {
+		return false;
 	}
 	
 }
