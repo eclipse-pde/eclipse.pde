@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.toc;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -167,6 +168,12 @@ public class TocDropAdapter extends ViewerDropAdapter {
 			String[] fileNames = (String[])FileTransfer.getInstance().nativeToJava(event.currentDataType);
 			for(int i = 0; i < fileNames.length; i++)
 			{	IPath path = new Path(fileNames[i]);
+
+				// Make sure that the file is in the workspace
+				if(ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) == null)
+				{	event.detail = DND.DROP_NONE;
+					return;
+				}
 
 				if(!TocExtensionUtil.hasValidPageExtension(path)
 					&& !TocExtensionUtil.isTOCFile(path))

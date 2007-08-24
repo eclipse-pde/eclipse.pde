@@ -883,16 +883,25 @@ public class TocTreeSection extends TreeSection {
 
 		for(int i = 0; i < droppings.length; ++i)
 		{	if(droppings[i] instanceof String)
-			{	// If the array contains Strings, we treat them as file paths
+			{	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();	
+
+				// If the array contains Strings, we treat them as file paths
 				Path path = new Path((String)droppings[i]);
-				
-				// If the path is to a valid TOC file, make a link
-				if(TocExtensionUtil.isTOCFile(path))
-				{	tocObjects.add(makeNewTocLink(targetParent, path));
+				IFile file = root.getFileForLocation(path);
+				if(file == null)
+				{	continue;
+				}
+
+				// If the path is to a valid TOC file
+				// and it isn't the file in this model
+				// then make a link
+				if(TocExtensionUtil.isTOCFile(path) 
+						&& !TocExtensionUtil.isCurrentResource(path, fModel))
+				{	tocObjects.add(makeNewTocLink(targetParent, file));
 				}
 				// If the path is to a file with an HTML page extension, make a topic
 				else if(TocExtensionUtil.hasValidPageExtension(path))
-				{	TocTopic topic = makeNewTocTopic(targetParent, path); 
+				{	TocTopic topic = makeNewTocTopic(targetParent, file); 
 					String title = generateTitle(targetParent, path);
 
 					topic.setFieldLabel(title);
@@ -957,9 +966,8 @@ public class TocTreeSection extends TreeSection {
 	 * 
 	 * @return the newly created topic
 	 */
-	private TocTopic makeNewTocTopic(TocObject parent, Path path) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		return fModel.getFactory().createTocTopic(root.getFileForLocation(path));
+	private TocTopic makeNewTocTopic(TocObject parent, IFile file) {
+		return fModel.getFactory().createTocTopic(file);
 	}
 	
 	/**
@@ -970,9 +978,8 @@ public class TocTreeSection extends TreeSection {
 	 * 
 	 * @return the newly created link
 	 */
-	private TocLink makeNewTocLink(TocObject parent, Path path) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		return fModel.getFactory().createTocLink(root.getFileForLocation(path));
+	private TocLink makeNewTocLink(TocObject parent, IFile file) {
+		return fModel.getFactory().createTocLink(file);
 	}
 	
 	/* (non-Javadoc)
