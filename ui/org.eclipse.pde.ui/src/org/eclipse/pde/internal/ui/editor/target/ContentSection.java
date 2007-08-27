@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 187646
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
@@ -589,7 +590,15 @@ public class ContentSection extends TableSection {
 			doPaste();
 			return true;
 		}
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			handleSelectAll();
+			return true;
+		}
 		return false;
+	}
+
+	private void handleSelectAll() {
+		fContentViewer.getTable().selectAll();
 	}
 	
 	/* (non-Javadoc)
