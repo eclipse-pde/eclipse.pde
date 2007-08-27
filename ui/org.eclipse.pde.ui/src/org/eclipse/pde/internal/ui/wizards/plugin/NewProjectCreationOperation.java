@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - bug 201044
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -35,7 +36,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IFragment;
@@ -201,8 +201,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			IFragment fragment = (IFragment) pluginBase;
 			IFragmentFieldData data = (IFragmentFieldData) fData;
 			fragment.setPluginId(data.getPluginId());
-			VersionRange version = new VersionRange(data.getPluginVersion());
-			fragment.setPluginVersion(version.getMinimum().toString());
+			fragment.setPluginVersion(data.getPluginVersion());
 			fragment.setRule(data.getMatch());
 		} else {
 			if (((IPluginFieldData) fData).doGenerateClass())
