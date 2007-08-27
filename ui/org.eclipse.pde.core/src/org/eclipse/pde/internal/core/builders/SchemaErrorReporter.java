@@ -41,7 +41,6 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		"area", //$NON-NLS-1$
 		"base", //$NON-NLS-1$
 		"basefont", //$NON-NLS-1$
-		"br", //$NON-NLS-1$
 		"col", //$NON-NLS-1$
 		"frame", //$NON-NLS-1$
 		"hr", //$NON-NLS-1$
@@ -55,6 +54,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	public static final String[] optionalEndTagKeys =
 		{
 			"body", //$NON-NLS-1$
+			"br", //$NON-NLS-1$
 			"colgroup", //$NON-NLS-1$
 			"dd", //$NON-NLS-1$
 			"dt", //$NON-NLS-1$
