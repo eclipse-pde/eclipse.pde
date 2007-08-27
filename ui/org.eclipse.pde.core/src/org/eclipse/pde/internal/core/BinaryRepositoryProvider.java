@@ -7,16 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201308
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +29,7 @@ import org.eclipse.team.core.RepositoryProvider;
 
 public class BinaryRepositoryProvider extends RepositoryProvider {
 	private IMoveDeleteHook moveDeleteHook;
-	private IFileModificationValidator fileModificationValidator;
+	private FileModificationValidator fileModificationValidator;
 	
 	public static final String EXTERNAL_PROJECT_VALUE = "external"; //$NON-NLS-1$
 	
@@ -119,11 +121,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	class BinaryFileModificationValidator
-		implements IFileModificationValidator {
+		extends FileModificationValidator {
 		/**
 		 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile, java.lang.Object)
 		 */
-		public IStatus validateEdit(IFile[] files, Object context) {
+		public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 			for (int i = 0; i < files.length; i++) {
 				if (isBinaryResource(files[i], false)) {
 					return createProblemStatus();
@@ -163,11 +165,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		IProject project = getProject();
 		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, null);
 	}
-
+	
 	/**
-	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
-	 */
-	public IFileModificationValidator getFileModificationValidator() {
+	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
+	 */	
+	public FileModificationValidator getFileModificationValidator2() {
 		return fileModificationValidator;
 	}
 
