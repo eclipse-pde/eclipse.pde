@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201304
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -68,11 +70,11 @@ public abstract class ErrorReporter {
 			return null;
 		}
 		try {
-			manager.connect(file.getFullPath(), null);
-			ITextFileBuffer textBuf = manager.getTextFileBuffer(file
-					.getFullPath());
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);			
+			ITextFileBuffer textBuf = 
+				manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 			IDocument document = textBuf.getDocument();
-			manager.disconnect(file.getFullPath(), null);
+			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			return document;
 		} catch (CoreException e) {
 			PDECore.log(e);
