@@ -69,7 +69,9 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	}
 
 	public static void setGlobalQualifier(String globalQualifier) {
-		if (globalQualifier.length() > 0 && globalQualifier.charAt(0) != '$')
+		if (globalQualifier == null || globalQualifier.length() == 0)
+			QualifierReplacer.globalQualifier = null;
+		else if (globalQualifier.length() > 0 && globalQualifier.charAt(0) != '$')
 			QualifierReplacer.globalQualifier = globalQualifier;
 	}
 }
