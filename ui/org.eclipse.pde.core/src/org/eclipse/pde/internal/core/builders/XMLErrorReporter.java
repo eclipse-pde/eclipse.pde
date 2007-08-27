@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201306
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -20,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -91,9 +93,9 @@ public class XMLErrorReporter extends DefaultHandler {
 		try {
 			fFile = file;
 			fProject = file.getProject();
-			manager.connect(file.getFullPath(), null);
-			fTextDocument = manager.getTextFileBuffer(file.getFullPath()).getDocument();
-			manager.disconnect(file.getFullPath(), null);			
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);
+			fTextDocument = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE).getDocument();
+			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);			
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
 			fOffsetTable = new HashMap();
 			fElementStack = new Stack();
