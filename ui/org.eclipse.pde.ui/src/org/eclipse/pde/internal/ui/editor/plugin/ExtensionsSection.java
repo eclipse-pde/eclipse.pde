@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -48,6 +49,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -55,10 +57,12 @@ import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
@@ -685,7 +689,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			? ((IPluginModelBase) getPage().getModel()).getPluginBase()
 					: pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				fExtensionTree.add(parent, pobj);
+				fExtensionTree.refresh(parent);
 				fExtensionTree.setSelection(
 						new StructuredSelection(changeObject), true);
 				fExtensionTree.getTree().setFocus();
@@ -900,13 +904,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return true;
 		}
 		// Determine the element name of the target object
-		// getName() does not work for extensions for some reason
-		String tagName = null;
-		if (targetParent instanceof IPluginExtension) {
-			tagName = "extension"; //$NON-NLS-1$
-		} else {
-			tagName = targetParent.getName();
-		}
+		String tagName = ((IDocumentElementNode)targetParent).getXMLTagName();
 		// Retrieve the element schema for the target object
 		ISchemaElement schemaElement = schema.findElement(tagName);
 		// Ensure we found a schema element and it is a schema complex type
@@ -1161,4 +1159,551 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	protected void selectExtensionElement(ISelection selection) {
 		fExtensionTree.setSelection(selection, true);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
+	 */
+	protected boolean isDragAndDropEnabled() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+	 */
+	public boolean canDragMove(Object[] sourceObjects) {
+		if (fFilteredTree.isFiltered()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
+		// Validate target object
+		if ((targetObject instanceof IPluginParent) == false) {
+			return false;
+		} else if ((targetObject instanceof IDocumentElementNode) == false) {
+			return false;
+		}	
+		// Validate source object
+		if (sourceObjects.length == 0) {
+			return false;
+		} else if ((sourceObjects[0] instanceof IPluginParent) == false) {
+			return false;
+		} else if ((sourceObjects[0] instanceof IDocumentElementNode) == false) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param sourcePluginObject
+	 * @param targetPluginObject
+	 * @return
+	 */
+	private boolean validateDropMoveModel(IPluginParent sourcePluginObject, IPluginParent targetPluginObject) {
+		// Objects have to be from the same model
+		ISharedPluginModel sourceModel = sourcePluginObject.getModel();
+		ISharedPluginModel targetModel = targetPluginObject.getModel();		
+		if (sourceModel.equals(targetModel)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public boolean canDropMove(Object targetObject, Object[] sourceObjects,
+			int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			return false;
+		}
+		// Multiple selection not supported
+		IPluginParent sourcePluginObject = (IPluginParent)sourceObjects[0];
+		IPluginParent targetPluginObject = (IPluginParent)targetObject;
+		// Validate model
+		if (validateDropMoveModel(sourcePluginObject, targetPluginObject) == false) {
+			return false;
+		}
+		// Validate move
+		if (sourcePluginObject instanceof IPluginExtension) {
+			IPluginExtension sourceExtensionObject = (IPluginExtension)sourcePluginObject;
+			if (targetPluginObject instanceof IPluginExtension) {
+				// Source:  Extension
+				// Target:  Extension
+				IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+				return canDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
+			} else if (targetPluginObject instanceof IPluginElement) {
+				// Source:  Extension
+				// Target:  Element
+				return false;
+			}
+		} else if (sourcePluginObject instanceof IPluginElement) {
+			IPluginElement sourceElementObject = (IPluginElement)sourcePluginObject;
+			if (targetPluginObject instanceof IPluginExtension) {
+				// Source:  Element
+				// Target:  Extension
+				IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+				return canDropMove(targetExtensionObject, sourceElementObject, targetLocation);
+			} else if (targetPluginObject instanceof IPluginElement) {
+				// Source:  Element
+				// Target:  Element
+				IPluginElement targetElementObject = (IPluginElement)targetPluginObject;
+				return canDropMove(targetElementObject, sourceElementObject, targetLocation);
+			}			
+		}
+		return false;
+	}
+	
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 * @return
+	 */
+	private boolean canDropMove(IPluginElement targetElementObject,
+			IPluginElement sourceElementObject, int targetLocation) {
+		
+		// Verify that the source is not the parent of the target
+		if (validateDropMoveParent(targetElementObject, sourceElementObject) == false) {
+			return false;
+		}
+		
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			IDocumentElementNode previousNode = 
+				((IDocumentElementNode)targetElementObject).getPreviousSibling();
+			if (sourceElementObject.equals(previousNode)) {
+				return false;
+			}
+			IPluginObject targetParentObject = targetElementObject.getParent();
+			if ((targetParentObject instanceof IPluginParent) == false) {
+				return false;
+			}
+			// Paste element as a sibling of the other element (before)
+			return validateDropMoveSchema((IPluginParent)targetParentObject, sourceElementObject);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			IDocumentElementNode nextNode = 
+				((IDocumentElementNode)sourceElementObject).getPreviousSibling();	
+			if (targetElementObject.equals(nextNode)) {
+				return false;
+			}
+			IPluginObject targetParentObject = targetElementObject.getParent();
+			if ((targetParentObject instanceof IPluginParent) == false) {
+				return false;
+			}
+			// Paste element as a sibling of the other element (after)
+			return validateDropMoveSchema((IPluginParent)targetParentObject, sourceElementObject);		
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			IDocumentElementNode targetExtensionNode = 
+				(IDocumentElementNode)targetElementObject;
+			int childCount = targetExtensionNode.getChildCount();
+			if (childCount != 0) {
+				IDocumentElementNode lastNode = 
+					targetExtensionNode.getChildAt(childCount - 1);					
+				if (sourceElementObject.equals(lastNode)) {
+					return false;
+				}
+			}
+			// Paste element as the last child of the element
+			return validateDropMoveSchema(targetElementObject, sourceElementObject);
+		}
+		return false;
+	}
+	
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 * @return
+	 */
+	private boolean validateDropMoveParent(IPluginElement targetElementObject,
+			IPluginElement sourceElementObject) {
+		
+		IPluginObject currentParent = targetElementObject.getParent();
+		while (true) {
+			if (currentParent == null) {
+				return true;
+			} else if ((currentParent instanceof IPluginElement) == false) {
+				return true;
+			} else if (sourceElementObject.equals(currentParent)) {
+				return false;
+			}
+			currentParent = currentParent.getParent();
+		}
+	}
+	
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 * @return
+	 */
+	private boolean canDropMove(IPluginExtension targetExtensionObject,
+			IPluginElement sourceElementObject, int targetLocation) {
+		
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			return false;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			return false;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			IDocumentElementNode targetExtensionNode = 
+				(IDocumentElementNode)targetExtensionObject;
+			int childCount = targetExtensionNode.getChildCount();
+			if (childCount != 0) {
+				IDocumentElementNode lastNode = 
+					targetExtensionNode.getChildAt(childCount - 1);					
+				if (sourceElementObject.equals(lastNode)) {
+					return false;
+				}
+			}
+			// Paste element as the last child of the extension
+			return validateDropMoveSchema(targetExtensionObject, sourceElementObject);
+		}
+		return false;
+	}
+	
+	/**
+	 * @param targetPluginObject
+	 * @param sourcePluginObject
+	 * @return
+	 */
+	private boolean validateDropMoveSchema(IPluginParent targetPluginObject, IPluginParent sourcePluginObject) {
+		IDocumentElementNode targetPluginNode = 
+			(IDocumentElementNode)targetPluginObject;
+		// If the target is the source's parent, then the move is always 
+		// valid.  No need to check the schema.  Order does not matter
+		if (targetPluginObject.equals(sourcePluginObject.getParent())) {
+			return true;
+		}
+		// Retrieve the schema corresponding to the target object		
+		ISchema schema = getSchema(targetPluginObject);
+		// If there is no schema, then a source object can be pasted as a 
+		// child of any target object
+		if (schema == null) {
+			return true;
+		}
+		// Determine the element name of the target object
+		String targetNodeTagName = targetPluginNode.getXMLTagName();
+		// Retrieve the element schema for the target object
+		ISchemaElement schemaElement = schema.findElement(targetNodeTagName);
+		// Ensure we found a schema element and it is a schema complex type
+		if (schemaElement == null) {
+			// Something is seriously wrong, we have a schema
+			return false;
+		} else if ((schemaElement.getType() instanceof ISchemaComplexType) == false) {
+			// Something is seriously wrong, we are a plugin parent
+			return false;
+		}
+		// We have a schema complex type.  Either the target object has 
+		// attributes or the element has children.
+		// Generate the list of element proposals
+		TreeSet elementSet = 
+			XMLElementProposalComputer.computeElementProposal(
+					schemaElement, targetPluginNode);		
+		// Iterate over set of valid element proposals
+		Iterator iterator = elementSet.iterator();
+		while (iterator.hasNext()) {
+			// Get the proposal element tag name
+			String targetTagName = ((ISchemaElement)iterator.next()).getName();
+			// Only a source element that is found ithin the set of element 
+			// proposals can be pasted
+			String sourceNodeTagName = ((IDocumentElementNode)sourcePluginObject).getXMLTagName();
+			if (sourceNodeTagName.equals(targetTagName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceExtensionObject
+	 * @param targetLocation
+	 * @return
+	 */
+	private boolean canDropMove(IPluginExtension targetExtensionObject,
+			IPluginExtension sourceExtensionObject, int targetLocation) {
+		
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			IDocumentElementNode previousNode = 
+				((IDocumentElementNode)targetExtensionObject).getPreviousSibling();
+			if (sourceExtensionObject.equals(previousNode)) {
+				return false;
+			}
+			// Paste extension as sibling of extension (before)
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			IDocumentElementNode nextNode = 
+				((IDocumentElementNode)sourceExtensionObject).getPreviousSibling();	
+			if (targetExtensionObject.equals(nextNode)) {
+				return false;
+			}
+			// Paste extension as sibling of extension (after)
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			return false;
+		}
+		return false;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
+	 */
+	public void doDragRemove(Object[] sourceObjects) {
+		// Ensure we have a plug-in parent
+		if (sourceObjects == null) {
+			return;
+		} else if (sourceObjects.length == 0) {
+			return;
+		} else if ((sourceObjects[0] instanceof IPluginParent) == false) {
+			return;
+		}
+		IPluginParent pluginParentObject = (IPluginParent)sourceObjects[0];
+		// Remove the object from the model
+		try {
+			if (pluginParentObject instanceof IPluginExtension) {
+				IPluginExtension extension = (IPluginExtension)pluginParentObject;
+				IPluginBase pluginBase = pluginParentObject.getPluginBase();
+				if (pluginBase != null) {
+					pluginBase.remove(extension);
+				}
+			} else if (pluginParentObject instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement)pluginParentObject;
+				IPluginObject object = element.getParent();
+				if (object instanceof IPluginParent) {
+					((IPluginParent)object).remove(element);
+				}
+			}
+			// Applicable for move operations
+			// Flush the text edit operations associated with the move operation
+			// to the source page
+			// Move involves add new cloned object x and remove of original object
+			// x 
+			// Without flushing, multiple move operations up and down cause the
+			// text edit operations to get completely screwed up (e.g. mark-up
+			// in wrong position or getting lost)
+			// TODO: MP: Undo: What are the implications of this?
+			((PDEFormEditor)getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public void doDropMove(Object targetObject, Object[] sourceObjects,
+			int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
+			return;
+		}
+		// Multiple selection not supported
+		IPluginParent sourcePluginObject = (IPluginParent)sourceObjects[0];
+		IPluginParent targetPluginObject = (IPluginParent)targetObject;
+		// Validate move
+		try {
+			if (sourcePluginObject instanceof IPluginExtension) {
+				IPluginExtension sourceExtensionObject = (IPluginExtension)sourcePluginObject;
+				if (targetPluginObject instanceof IPluginExtension) {
+					// Source:  Extension
+					// Target:  Extension
+					IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+					doDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
+				} else if (targetPluginObject instanceof IPluginElement) {
+					// Source:  Extension
+					// Target:  Element
+					return;
+				}
+			} else if (sourcePluginObject instanceof IPluginElement) {
+				IPluginElement sourceElementObject = (IPluginElement)sourcePluginObject;
+				if (targetPluginObject instanceof IPluginExtension) {
+					// Source:  Element
+					// Target:  Extension
+					IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+					doDropMove(targetExtensionObject, sourceElementObject, targetLocation);
+				} else if (targetPluginObject instanceof IPluginElement) {
+					// Source:  Element
+					// Target:  Element
+					IPluginElement targetElementObject = (IPluginElement)targetPluginObject;
+					doDropMove(targetElementObject, sourceElementObject, targetLocation);
+				}			
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceExtensionObject
+	 * @param targetLocation
+	 */
+	private void doDropMove(IPluginExtension targetExtensionObject,
+			IPluginExtension sourceExtensionObject, int targetLocation) throws CoreException {
+		// Get the model
+		IPluginModelBase model = getPluginModelBase();
+		// Ensure the model is defined
+		if (model == null) {
+			return;
+		}
+		// Get the plugin base
+		IPluginBase pluginBase = model.getPluginBase();
+		// Ensure the plugin base is a document node
+		if ((pluginBase instanceof IDocumentElementNode) == false) {
+			return;
+		} else if ((pluginBase instanceof PluginBaseNode) == false) {
+			return;
+		}
+		// Plug-in base node
+		IDocumentElementNode pluginBaseNode = 
+			(IDocumentElementNode) pluginBase;
+		// Source extension node
+		IDocumentElementNode sourceExtensionNode = 
+			(IDocumentElementNode) sourceExtensionObject;
+		// Target extension node
+		IDocumentElementNode targetExtensionNode = 
+			(IDocumentElementNode) targetExtensionObject;		
+		// Do drop move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceExtensionNode.reconnect(pluginBaseNode, model);
+			// Get index of target extension
+			int index = (pluginBaseNode.indexOf(targetExtensionNode));
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Paste extension as sibling of extension (before)
+			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject,
+					index);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceExtensionNode.reconnect(pluginBaseNode, model);
+			// Get index of target extension
+			int index = (pluginBaseNode.indexOf(targetExtensionNode));
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Paste extension as sibling of extension (after)
+			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject,
+					index + 1);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// NO-OP
+		}
+	}
+	
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
+	private void doDropMove(IPluginExtension targetExtensionObject,
+			IPluginElement sourceElementObject, int targetLocation) throws CoreException {
+		// Get the model
+		IPluginModelBase model = getPluginModelBase();
+		// Ensure the model is defined
+		if (model == null) {
+			return;
+		}
+		// Target extension node
+		IDocumentElementNode targetExtensionNode = 
+			(IDocumentElementNode)targetExtensionObject;
+		// Source extension node
+		IDocumentElementNode sourceElementNode = 
+			(IDocumentElementNode)sourceElementObject;
+		// Do drop move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// NO-OP
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// NO-OP
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceElementNode.reconnect(targetExtensionNode, model);			
+			// Paste element as the last child of the extension
+			targetExtensionObject.add(sourceElementObject);
+		}
+	}
+	
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
+	private void doDropMove(IPluginElement targetElementObject,
+			IPluginElement sourceElementObject, int targetLocation) throws CoreException {
+		// Get the model
+		IPluginModelBase model = getPluginModelBase();
+		// Ensure the model is defined
+		if (model == null) {
+			return;
+		}
+		// Target extension node
+		IDocumentElementNode targetElementNode = 
+			(IDocumentElementNode)targetElementObject;
+		// Source extension node
+		IDocumentElementNode sourceElementNode = 
+			(IDocumentElementNode)sourceElementObject;
+		// Do drop move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Get the target's parent
+			IPluginObject targetParentObject = targetElementObject.getParent();
+			if ((targetParentObject instanceof IPluginParent) == false) {
+				return;
+			} else if ((targetParentObject instanceof IDocumentElementNode) == false) {
+				return;
+			}
+			IDocumentElementNode targetParentNode = (IDocumentElementNode)targetParentObject;
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceElementNode.reconnect(targetParentNode, model);
+			// Get index of target element
+			int index = (targetParentNode.indexOf(targetElementNode));
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Paste element as a sibling of the other element (before)
+			((IPluginParent)targetParentObject).add(index, sourceElementObject);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Get the target's parent
+			IPluginObject targetParentObject = targetElementObject.getParent();
+			if ((targetParentObject instanceof IPluginParent) == false) {
+				return;
+			} else if ((targetParentObject instanceof IDocumentElementNode) == false) {
+				return;
+			}
+			IDocumentElementNode targetParentNode = (IDocumentElementNode)targetParentObject;
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceElementNode.reconnect(targetParentNode, model);
+			// Get index of target element
+			int index = (targetParentNode.indexOf(targetElementNode));
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Paste element as a sibling of the other element (after)
+			((IPluginParent)targetParentObject).add(index + 1, sourceElementObject);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Adjust all the source object transient field values to
+			// acceptable values
+			sourceElementNode.reconnect(targetElementNode, model);
+			// Paste element as the last child of the element
+			targetElementObject.add(sourceElementObject);
+		}		
+
+	}
+	
 }

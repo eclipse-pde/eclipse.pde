@@ -215,6 +215,26 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			fireStructureChanged(extension, IModelChangedEvent.INSERT);
 		}
 	}
+	
+	/**
+	 * @param extension
+	 * @param position
+	 * @throws CoreException
+	 */
+	public void add(IPluginExtension extension, int position) throws CoreException {
+		// TODO: MP: DND: Make API?
+		if ((extension instanceof PluginExtensionNode) == false) {
+			return;
+		} else if ((position < 0) || 
+				(position > getChildCount())) {
+			return;
+		}
+		PluginExtensionNode node = (PluginExtensionNode)extension;
+		node.setModel(getModel());
+		addChildNode(node, position);
+		fireStructureChanged(extension, IModelChangedEvent.INSERT);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */

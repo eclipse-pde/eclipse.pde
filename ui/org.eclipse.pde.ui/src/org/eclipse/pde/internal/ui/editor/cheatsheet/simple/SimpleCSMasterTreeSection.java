@@ -464,6 +464,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Validate arguments
 		if (validatePaste(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
 			return;
 		}
 		// Multi-select not supported
@@ -547,7 +548,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Get index of target item
 			int index = parent.indexOfItem(targetItem);
 			// Paste item as sibling of item (before) 
-			if (index > 0) {
+			if (index != -1) {
 				parent.addItem(index, sourceItem);
 			}
 		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) ||
@@ -568,7 +569,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// Get index of target item
 				int index = parent.indexOfItem((ISimpleCSItem)nextNode);
 				// Paste item as sibling of item (after)
-				if (index > 0) {
+				if (index != -1) {
 					parent.addItem(index, sourceItem);
 				}
 			}
@@ -601,7 +602,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// Get index of target item
 				int index = parent.indexOfItem((ISimpleCSItem)nextNode);
 				// Paste item as sibling of intro (first item child of cheat sheet after intro)
-				if (index > 0) {
+				if (index != -1) {
 					parent.addItem(index, sourceItem);
 				}
 			}
@@ -634,7 +635,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			} else {
 				int index = targetItem.indexOfSubItem(firstSubItem);
 				// Paste subitem as the first child of item
-				if (index > 0) {
+				if (index != -1) {
 					targetItem.addSubItem(index, sourceSubItem);
 				}
 			}
@@ -672,7 +673,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Get index of target item
 			int index = parent.indexOfSubItem(targetSubItem);
 			// Paste item as sibling of item (before) 
-			if (index > 0) {
+			if (index != -1) {
 				parent.addSubItem(index, sourceSubItem);
 			}
 		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) ||
@@ -693,7 +694,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// Get index of target item
 				int index = parent.indexOfSubItem((ISimpleCSSubItem)nextNode);
 				// Paste item as sibling of item (after)
-				if (index > 0) {
+				if (index != -1) {
 					parent.addSubItem(index, sourceSubItem);
 				}
 			}
@@ -733,7 +734,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Without flushing, multiple move operations up and down cause the
 		// text edit operations to get completely screwed up (e.g. mark-up
 		// in wrong position or getting lost)
-		// TODO: MP: DND: Investigate performance implications
+		// TODO: MP: Undo: What are the implications of this?
 		((PDEFormEditor)getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
 	}
 	

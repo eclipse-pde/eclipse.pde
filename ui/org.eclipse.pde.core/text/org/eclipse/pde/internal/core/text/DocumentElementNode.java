@@ -239,11 +239,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	public void addChildNode(IDocumentElementNode child, int position) {
 		// Used by text edit operations
 		fChildren.add(position, child);
-		if (position > 0 && fChildren.size() > 1)
-			child.setPreviousSibling((IDocumentElementNode)fChildren.get(position - 1));
-		if (fChildren.size() > 1 && position < fChildren.size() - 1)
-			((IDocumentElementNode)fChildren.get(position + 1)).setPreviousSibling(child);
 		child.setParentNode(this);
+		linkNodeWithSiblings(child);
 	}
 	
 	/* (non-Javadoc)
@@ -497,13 +494,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Reconnect XML document characteristics
 		reconnectDocument();
 		// Reconnect parent
-		// This may not be necessary.  When this node is added to the parent,
-		// the parent takes care of this
 		reconnectParent(parent);
 		// Reconnect previous sibling
-		// This may not be necessary.  When this node is added to the parent,
-		// the parent takes care of this
-		reconnectPreviousSibling(parent);
+		reconnectPreviousSibling();
 		// Reconnect text node
 		reconnectText();
 		// Reconnect attribute nodes
@@ -565,16 +558,46 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/**
 	 * @param parent
 	 */
-	private void reconnectPreviousSibling(IDocumentElementNode parent) {
+	private void reconnectPreviousSibling() {
 		// Transient field:  Previous Sibling
-		int childCount = parent.getChildCount();
-		if (childCount < 1) {
-			fPreviousSibling = null;
-		} else {
-			// The last item is the previous sibling; since, we have not added
-			// overselves to the end of the parents children yet
-			fPreviousSibling = (IDocumentElementNode)parent.getChildAt(childCount - 1);
-		}				
+		linkNodeWithSiblings(this);
+	}
+	
+	/**
+	 * PRE: Node must have a set parent
+	 * @param node
+	 */
+	private void linkNodeWithSiblings(IDocumentElementNode targetNode) {
+		// Get the node's parent
+		IDocumentElementNode parentNode = targetNode.getParentNode();
+		// Ensure we have a parent
+		if (parentNode == null) {
+			return;
+		}
+		// Get the position of the node in the parent's children
+		int targetNodePosition = parentNode.indexOf(targetNode);
+		// Get the number of children the parent has (including the node)
+		int parentNodeChildCount = parentNode.getChildCount();
+		// Set this node's previous sibling as the node before it
+		if (targetNodePosition <= 0) {
+			// null <- targetNode <- ?
+			targetNode.setPreviousSibling(null);
+		} else if ((targetNodePosition >= 1) && 
+				(parentNodeChildCount >= 2)) {
+			// ? <- previousNode <- targetNode <- ?
+			IDocumentElementNode previousNode = parentNode.getChildAt(targetNodePosition - 1);
+			targetNode.setPreviousSibling(previousNode);
+		}
+		int secondLastNodeIndex = parentNodeChildCount - 2;
+		// Set the node after this node's previous sibling as this node
+		if ((targetNodePosition >= 0) &&
+				(targetNodePosition <= secondLastNodeIndex) &&
+				(parentNodeChildCount >= 2)) {
+			// ? <- targetNode <- nextNode <- ?
+			IDocumentElementNode nextNode = parentNode.getChildAt(targetNodePosition + 1); 
+			nextNode.setPreviousSibling(targetNode);
+		}
+		// previousNode <- targetNode <- nextNode
 	}
 	
 	/**
