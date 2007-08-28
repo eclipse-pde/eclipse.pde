@@ -77,17 +77,22 @@ public abstract class InputContext {
 		public void elementContentAboutToBeReplaced(Object element) {
 		}
 		public void elementContentReplaced(Object element) {
-			doRevert();
+			if (element != null && element.equals(fEditorInput))
+				doRevert();
 		}
 		public void elementDeleted(Object element) {
-            dispose();
+			if (element != null && element.equals(fEditorInput))
+				dispose();
 		}
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			fMustSynchronize=true;
+			if (element != null && element.equals(fEditorInput))
+				fMustSynchronize=true;
 		}
 		public void elementMoved(Object originalElement, Object movedElement) {
-            dispose();
-			fEditor.close(true);
+			if (originalElement != null && originalElement.equals(fEditorInput)) {
+				dispose();
+				fEditor.close(true);
+			}
 		}
 	}
 	public InputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
