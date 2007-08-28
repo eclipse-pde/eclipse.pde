@@ -2130,6 +2130,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportPackageSection_propertyAction;
 
+	public static String ExportPackageSection_dialogButtonLabel;
+
 	public static String DependenciesPage_properties;
 
 	public static String ImportPackageSection_add;
