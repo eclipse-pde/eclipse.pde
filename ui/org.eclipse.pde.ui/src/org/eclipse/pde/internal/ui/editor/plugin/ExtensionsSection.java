@@ -834,8 +834,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			fullName = element.getResourceString(fullName);
 			if (fullNames)
 				return fullName != null ? fullName : baseName;
+			// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
+			// add RTL zero length character just before the ( and the LTR character just after to ensure:
+			// 1. The leading parenthesis takes proper orientation when running in bidi configuration
+			// Assumption: baseName (taken from the schema definition), is only latin characters and is therefore always displayed LTR
 			return fullName != null
-			? (fullName + " (" + baseName + ")") //$NON-NLS-1$ //$NON-NLS-2$
+			? (fullName + " \u200f(\u200e" + baseName + ")") //$NON-NLS-1$ //$NON-NLS-2$
 					: baseName;
 		}
 		return obj.toString();

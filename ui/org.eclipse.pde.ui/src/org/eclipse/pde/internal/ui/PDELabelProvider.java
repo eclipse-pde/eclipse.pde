@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
+import java.util.Locale;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -78,6 +80,7 @@ import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Version;
 
 public class PDELabelProvider extends SharedLabelProvider {
 	public PDELabelProvider() {
@@ -188,7 +191,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		String text;
 
 		if (version != null && version.length() > 0)
-			text = name + " (" + pluginBase.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			text = name + ' ' + formatVersion(pluginBase.getVersion());
 		else
 			text = name;
 		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
@@ -214,9 +217,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(ImportObject obj) {
         String version = obj.getImport().getVersion();
-        if (version != null && version.length() > 0 && Character.isDigit(version.charAt(0)))
-            version = "(" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-       
+        if (version != null && version.length() > 0) 
+        	version = formatVersion(version);
+
         String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
         return version == null || version.length() == 0 ? text : text + " " + version; //$NON-NLS-1$
     }
@@ -265,22 +268,27 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISchemaObject obj) {
-		String text = obj.getName();
+		StringBuffer text = new StringBuffer(obj.getName());
 		if (obj instanceof ISchemaRepeatable) {
 			ISchemaRepeatable rso = (ISchemaRepeatable) obj;
 			boolean unbounded = rso.getMaxOccurs() == Integer.MAX_VALUE;
 			int maxOccurs = rso.getMaxOccurs();
 			int minOccurs = rso.getMinOccurs();
 			if (maxOccurs != 1 || minOccurs != 1) {
-				text += " (" + minOccurs + " - "; //$NON-NLS-1$ //$NON-NLS-2$
-				if (unbounded)
-					text += "*)"; //$NON-NLS-1$
+				if (isRTL())
+					text.append('\u200f');
+				text.append(" ("); //$NON-NLS-1$
+				text.append(minOccurs);
+				text.append(" - "); //$NON-NLS-1$ //$NON-NLS-2$
+				if (unbounded) 
+					text.append('*');
 				else
-					text += maxOccurs + ")"; //$NON-NLS-1$
+					text.append(maxOccurs);
+				text.append(')');
 			}
 		}
 		
-		return text;
+		return text.toString();
 	}
 	
 	/**
@@ -334,7 +342,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		String text;
 
 		if (version != null && version.length() > 0)
-			text = name + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			text = name + ' ' + formatVersion(version);
 		else
 			text = name;
 		return preventNull(text);
@@ -364,7 +372,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 				: feature.getId();
 		if (!showVersion)
 			return preventNull(name);
-		return preventNull(name) + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return preventNull(name) + ' ' + formatVersion(feature.getVersion());
 
 	}
 
@@ -373,7 +381,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(FeatureChild obj) {
-		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return preventNull(obj.getId()) + ' ' + formatVersion(obj.getVersion());
 	}
 	
 	public String getObjectText(IProductFeature obj) {
@@ -397,7 +405,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return preventNull(obj.getLabel());
 	}
 	public String getObjectText(PackageObject obj) {
-		return preventNull(obj.toString());
+		StringBuffer buffer = new StringBuffer(obj.getName());
+        String version = obj.getVersion();
+        if (version != null && !version.equals(Version.emptyVersion.toString())) {
+        	// Format version range for ImportPackageObject.  ExportPackageObject is handled correctly in this function
+        	version = formatVersion(version);
+        	buffer.append(' ').append(version);
+        }
+		return buffer.toString();
 	}
 	public String getObjectText(ISiteCategory obj) {
 		ISiteCategoryDefinition def = obj.getDefinition();
@@ -914,5 +929,66 @@ public class PDELabelProvider extends SharedLabelProvider {
 	
 	public boolean isFullNameModeEnabled() {
 		return PDEPlugin.isFullNameModeEnabled();
+	}
+	
+	/*
+	 * BIDI support (bug 183417)
+	 * Any time we display a bracketed version, we should preface it with /u200f (zero width arabic character).
+	 * Then inside the bracket, we should include /u200e (zero width latin character).  Since the leading separator
+	 * will be resolved based on its surrounding text, when it is surrounded by a arabic character and a latin character
+	 * the bracket will take the proper shape based on the underlying embedded direction.  The latin character must
+	 * come after the bracket since versions are represented with latin numbers.  This ensure proper number format.
+	 */
+
+	/*
+	 * returns true if instance has either arabic of hebrew locale (text displayed RTL)
+	 */
+	private static boolean isRTL() {
+		Locale locale = Locale.getDefault();
+		String localeString = locale.toString();
+		return (localeString.startsWith("ar") || //$NON-NLS-1$
+			localeString.startsWith("he")); //$NON-NLS-1$
+	}
+	
+	/*
+	 * Returns a String containing the unicode to properly display the version ranging when running bidi. 
+	 */
+	public static String formatVersion(String versionRange) {
+		boolean isBasicVersion = versionRange == null || versionRange.length() == 0 || Character.isDigit(versionRange.charAt(0));
+		if (isBasicVersion)
+			// The versionRange is a single version.  Since parenthesis is neutral, it direction is determined by leading and following character.
+			// Since leading character is arabic and following character is latin, the parenthesis will take default (proper) direction.  
+			// Must have the following character be the latin character to ensure version is formatted as latin (LTR)
+			return "\u200f(\u200e" + versionRange + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		else if (isRTL()) {
+			// when running RTL and formatting a versionRange, we need to break up the String to make sure it is properly formatted.
+			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of latin characaters.  
+			// With specifying this format, if the qualifier has a latin character, it will not be formatted correctly.
+			int index = versionRange.indexOf(',');
+			if (index > 0) {
+				// begin with zero length arabic character so version appears on left (correct) side of id.  
+				// Then add RTL strong encoding so parentheses and comma have RTL formatting. 
+				StringBuffer buffer = new StringBuffer("\u200f\u202e"); //$NON-NLS-1$
+				// begin with leading separator (either parenthesis or bracket)
+				buffer.append(versionRange.charAt(0));
+				// start LTR encoding for min version
+				buffer.append('\u202d');
+				// min version
+				buffer.append(versionRange.substring(1, index));
+				// end LTR encoding, add ',' (which will be RTL due to first RTL strong encoding), and start LTR encoding for max version
+				// We require a space between the two numbers otherwise it is considered 1 number in arabic (comma is digit grouping system).
+				buffer.append("\u202c, \u202d"); //$NON-NLS-1$
+				// max version
+				buffer.append(versionRange.substring(index + 1, versionRange.length() - 1));
+				// end LTR encoding
+				buffer.append('\u202c');
+				// add trailing separator
+				buffer.append(versionRange.charAt(versionRange.length() - 1));
+				return buffer.toString();
+			}	
+//			} else {
+//			    since the version is LTR and we are running LTR, do nothing.  This is the case for version ranges when run in LTR
+		}
+		return versionRange;
 	}
 }

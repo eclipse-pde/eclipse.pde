@@ -78,7 +78,9 @@ public class DependenciesLabelProvider extends LabelProvider {
 	public String getObjectText(BundleDescription obj) {
 		String name = fSharedProvider.getObjectText(obj);
 		Version version = obj.getVersion();
-		return name + " (" + version.toString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
+		// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
+		return name + ' ' + PDELabelProvider.formatVersion(version.toString());
 	}
 
 	public Image getImage(Object obj) {

@@ -227,7 +227,9 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			if (element instanceof BundleDescription) {
 				buffer.append(fSharedProvider.getObjectText((BundleDescription)element));
 				Version version = ((BundleDescription)element).getVersion();
-				return buffer.append(" (").append(version).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
+				// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
+				return buffer.append(' ').append(PDELabelProvider.formatVersion(version.toString())).toString();
 			}
 			return element.toString();
 		}
