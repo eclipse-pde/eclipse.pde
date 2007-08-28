@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201342
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
@@ -57,9 +58,14 @@ public class JavaSearchOperation implements IRunnableWithProgress {
 
 	public IProject createProxyProject(IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IProject project = root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
-		if (project.exists())
+		IProject project = 
+			root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+		if (project.exists()) {
+			if (!project.isOpen()) {
+				project.open(monitor);
+			}
 			return project;
+		}
 		
 		monitor.beginTask(NLS.bind(PDEUIMessages.JavaSearchOperation_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5); 
 		project.create(new SubProgressMonitor(monitor, 1));
