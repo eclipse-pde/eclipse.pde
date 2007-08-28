@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 200756
+ *     Joern Dinkla <devnull@dinkla.com> - bug 200757
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -21,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.FindReferencesAction;
@@ -57,13 +61,16 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
@@ -435,16 +442,40 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 
 	private void handleAdd() {
         IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-        IProject project = model.getUnderlyingResource().getProject();
+        final IProject project = model.getUnderlyingResource().getProject();
         try {
             if (project.hasNature(JavaCore.NATURE_ID)) {
                 ILabelProvider labelProvider = new JavaElementLabelProvider();
-                PackageSelectionDialog dialog = new PackageSelectionDialog(
-                        PDEPlugin.getActiveWorkbenchShell(),
-                        labelProvider, 
-                        JavaCore.create(project), 
-                        fHeader == null ? new Vector() : fHeader.getPackageNames(),
-                        "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE))); //$NON-NLS-1$
+                final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
+        				PDEPlugin.getActiveWorkbenchShell(),
+        				labelProvider,
+        				PDEUIMessages.ExportPackageSection_dialogButtonLabel);
+                final Collection pckgs = fHeader == null ? new Vector() : fHeader.getPackageNames();
+                final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
+                Runnable runnable = new Runnable() {
+        			public void run() {
+        		        ArrayList elements = new ArrayList();
+        		        ArrayList conditional = new ArrayList();
+        				IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
+        				for (int i = 0; i < fragments.length; i++) {
+        					try {
+								if (fragments[i].containsJavaResources()) {
+									elements.add(fragments[i]);
+								} else {
+									conditional.add(fragments[i]);
+								}
+							} catch (JavaModelException e) {}
+						}
+        				dialog.setElements(elements.toArray());
+        				dialog.setConditionalElements(conditional.toArray());
+        				dialog.setMultipleSelection(true);
+        				dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
+        				dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
+        				dialog.create();
+        				SWTUtil.setDialogSize(dialog, 400, 500);
+        			}
+        		};
+        		BusyIndicator.showWhile(Display.getCurrent(), runnable);
                 if (dialog.open() == Window.OK) {
                     Object[] selected = dialog.getResult();
                     if (fHeader != null) {
