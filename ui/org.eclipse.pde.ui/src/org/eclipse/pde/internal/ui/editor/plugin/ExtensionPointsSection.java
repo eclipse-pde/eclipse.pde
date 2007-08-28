@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -241,9 +242,8 @@ public class ExtensionPointsSection extends TableSection {
 					if (schemaFile.exists())
 						if (MessageDialog.openQuestion(getSection().getShell(),
 								PDEUIMessages.ExtensionPointsSection_title,
-								PDEUIMessages.ExtensionPointsSection_message1 + " " //$NON-NLS-1$
-								+ schemaFile.getProjectRelativePath().toString() + "?")) //$NON-NLS-1$
-							schemaFile.delete(true, false,
+								NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
+							schemaFile.delete(true, true,
 									new NullProgressMonitor());
 					plugin.remove(ep);
 					if (newSelection != null)
