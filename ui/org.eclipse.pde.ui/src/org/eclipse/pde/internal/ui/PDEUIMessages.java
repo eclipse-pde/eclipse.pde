@@ -2122,8 +2122,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportPackageVisibilitySection_hideAll;
 
-	public static String ExportPackageSection_0;
-
 	public static String ExportPackageSection_add;
 
 	public static String ExportPackageSection_remove;

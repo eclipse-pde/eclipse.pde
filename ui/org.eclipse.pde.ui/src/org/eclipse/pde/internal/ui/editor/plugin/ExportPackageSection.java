@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 200756
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin;
@@ -20,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.FindReferencesAction;
@@ -31,13 +31,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -64,7 +62,6 @@ import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -74,7 +71,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 
 public class ExportPackageSection extends TableSection implements IModelChangedListener {
 
@@ -92,24 +88,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             return fHeader == null ? new Object[0] : fHeader.getPackages();
 		}
     }
-
-	class ExportPackageDialogLabelProvider extends LabelProvider {
-		public Image getImage(Object element) {
-			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-		}
-
-		public String getText(Object element) {
-			ExportPackageDescription p = (ExportPackageDescription) element;
-            StringBuffer buffer = new StringBuffer(p.getName());
-            String version = p.getVersion().toString();
-            if (!version.equals(Version.emptyVersion.toString())) {
-                buffer.append(PDEUIMessages.ExportPackageSection_0);
-                buffer.append(version);
-                buffer.append(")"); //$NON-NLS-1$
-            }
-			return buffer.toString();
-		}
-	}
 
     private TableViewer fPackageViewer;
 
