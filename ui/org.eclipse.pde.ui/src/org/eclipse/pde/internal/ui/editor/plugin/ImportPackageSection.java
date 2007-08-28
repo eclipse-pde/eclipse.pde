@@ -63,6 +63,7 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -172,9 +173,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			buffer.append(p.getName());
 			Version version = p.getVersion();
 			if (version != null && !Version.emptyVersion.equals(version)) {
-				buffer.append(" ("); //$NON-NLS-1$
-				buffer.append(version.toString());
-				buffer.append(")"); //$NON-NLS-1$
+				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
+				// add RTL zero length character just before the ( and the LTR character just after to ensure:
+				// 1. The leading parenthesis takes proper orientation when running in bidi configuration
+				// 2. The bundle's version is always displayed as LTR.  Otherwise if qualifier contains an alpha,
+				// 		it would be displayed incorrectly when running RTL.
+				buffer.append(' ');
+				buffer.append(PDELabelProvider.formatVersion(version.toString()));
 			}
 			return buffer.toString();
 		}
