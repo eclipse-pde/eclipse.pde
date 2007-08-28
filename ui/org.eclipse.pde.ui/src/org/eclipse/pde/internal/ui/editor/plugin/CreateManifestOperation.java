@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -64,8 +65,8 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 		String filename = fModel.isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		IFile file = fModel.getUnderlyingResource().getProject().getFile(filename);
 		try {
-			manager.connect(file.getFullPath(), null);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 			IDocument doc =  buffer.getDocument();
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
 			MultiTextEdit multiEdit = new MultiTextEdit();
@@ -84,7 +85,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 				buffer.commit(null, true);
 			}
 		} finally {
-			manager.disconnect(file.getFullPath(), null);
+			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 		}
 	}
 	
