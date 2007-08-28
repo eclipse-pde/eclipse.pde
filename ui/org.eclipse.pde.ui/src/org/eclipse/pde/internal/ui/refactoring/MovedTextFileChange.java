@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,12 +52,12 @@ public class MovedTextFileChange extends TextFileChange {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try{
 			IPath path= fCurrentFile.getFullPath();
-			manager.connect(path, pm);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(path);
+			manager.connect(path, LocationKind.NORMALIZE, pm);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 			result= buffer.getDocument();
 		} finally {
 			if (result != null)
-				manager.disconnect(fCurrentFile.getFullPath(), pm);
+				manager.disconnect(fCurrentFile.getFullPath(), LocationKind.NORMALIZE, pm);
 		}
 		pm.done();
 		return result;
