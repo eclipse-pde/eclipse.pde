@@ -126,6 +126,19 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 	
+	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
+		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
+		try {
+			if (!(config.getAttribute(IPDELauncherConstants.USE_DEFAULT, false)) && (config.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false))) {
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				initializePluginsList(wc);
+				return wc.doSave();
+			}
+		} catch(CoreException e) {
+		}
+		return config;
+	}
+
 	private String[] getAvailableApplications() {
 		IPluginBase plugin = fModel.getPluginBase();
 		String id = plugin.getId();
@@ -234,28 +247,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
 			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
-			
-			StringBuffer wsplugins = new StringBuffer();
-			StringBuffer explugins = new StringBuffer();
-			Set plugins = DependencyManager.getSelfAndDependencies(fModel);
-			Iterator iter = plugins.iterator();
-			while (iter.hasNext()) {
-				String id = iter.next().toString();
-				IPluginModelBase model = PluginRegistry.findModel(id);
-				if (model == null || !model.isEnabled())
-					continue;
-				if (model.getUnderlyingResource() == null) {
-					if (explugins.length() > 0)
-						explugins.append(","); //$NON-NLS-1$
-					explugins.append(id);
-				} else {
-					if (wsplugins.length() > 0)
-						wsplugins.append(","); //$NON-NLS-1$
-					wsplugins.append(id);
-				}
-			}
-			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
-			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
 		} else {
 			String defaultProduct = TargetPlatform.getDefaultProduct();
 			if (defaultProduct != null) {
@@ -298,4 +289,28 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		String product = getProduct(fApplicationName);
 		return (product == null) ? fApplicationName : product;
 	}	
+	
+	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
+		StringBuffer wsplugins = new StringBuffer();
+		StringBuffer explugins = new StringBuffer();
+		Set plugins = DependencyManager.getSelfAndDependencies(fModel);
+		Iterator iter = plugins.iterator();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			if (model == null || !model.isEnabled())
+				continue;
+			if (model.getUnderlyingResource() == null) {
+				if (explugins.length() > 0)
+					explugins.append(","); //$NON-NLS-1$
+				explugins.append(id);
+			} else {
+				if (wsplugins.length() > 0)
+					wsplugins.append(","); //$NON-NLS-1$
+				wsplugins.append(id);
+			}
+		}
+		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
+		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
+	}
 }

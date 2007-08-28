@@ -68,5 +68,6 @@ public interface IPDEUIConstants {
 	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$
 	String LAUNCHER_PDE_VERSION = "pde.version"; //$NON-NLS-1$
 	String APPEND_ARGS_EXPLICITLY = "append.args"; //$NON-NLS-1$
+	String GENERATED_CONFIG = "pde.generated.config"; //$NON-NLS-1$
 	
 }

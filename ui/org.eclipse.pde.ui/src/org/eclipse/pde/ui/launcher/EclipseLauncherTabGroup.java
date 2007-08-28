@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 /**
  * Creates and initializes the tabs for the Eclipse Application launch configuration.
@@ -40,6 +44,26 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 				new EnvironmentTab(),
 				new CommonTab()};
 		setTabs(tabs);
+	}
+
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		super.performApply(configuration);	
+		try {
+			// if the configuration has the GENERATED_CONFIG flag, we need to see if we should remove the flag
+			if (!(configuration.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false)))
+				return;
+			ILaunchConfiguration original = configuration.getOriginal();
+			// peformApply is called when opening the launch dialog the first time.  In this case the user has not modified the configuration so we should 
+			// keep the GENERATED_CONFIG flag.  To check to see if this is the case, we need to see if an attribute used to initialize the launch config
+			// is present in the original copy.  We do this by querying the config twice, with different default values.  If the values == eachother, we 
+			// we know the value is present.  Since generated configs don't contain DOCLEARLOG, we know if DOCLEARLOG is present in the original copy the 
+			// perform apply so save the initialization values has already been run and this is a user modification.
+			boolean firstQuery = original.getAttribute(IPDEUIConstants.DOCLEARLOG, false);
+			boolean secondQuery = original.getAttribute(IPDEUIConstants.DOCLEARLOG, true);
+			if (original != null && firstQuery == secondQuery)
+				configuration.setAttribute(IPDEUIConstants.GENERATED_CONFIG, false);
+		} catch (CoreException e) {
+		}
 	}
 
 }
