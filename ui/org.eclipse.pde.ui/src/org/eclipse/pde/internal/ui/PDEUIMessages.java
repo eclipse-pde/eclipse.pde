@@ -85,8 +85,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String JavaArgumentsTab_appendLauncherIni;
 
-	public static String JavaSearchOperation_createProjectTaskName;
-
 	public static String OrganizeManifestsProcessor_invalidParam;
 
 	public static String OrganizeManifestsProcessor_rootMessage;

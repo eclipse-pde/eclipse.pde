@@ -255,17 +255,13 @@ public class PDECoreMessages extends NLS {
 	public static String PluginParser_EclipseConverterMissingAttribute;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
-
 	public static String XMLTextChangeListener_editNames_addContent;
-
 	public static String XMLTextChangeListener_editNames_insertNode;
-
 	public static String XMLTextChangeListener_editNames_modifyAttribute;
-
 	public static String XMLTextChangeListener_editNames_modifyNode;
-
 	public static String XMLTextChangeListener_editNames_removeAttribute;
-
 	public static String XMLTextChangeListener_editNames_removeNode;
+	
+	public static String SearchablePluginsManager_createProjectTaskName;
 	
 }

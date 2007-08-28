@@ -13,23 +13,11 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class JavaSearchOperation implements IRunnableWithProgress {
 	
@@ -43,47 +31,13 @@ public class JavaSearchOperation implements IRunnableWithProgress {
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			createProxyProject(monitor);
 			SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 			if (fAdd)
 				manager.addToJavaSearch(fModels);
 			else
 				manager.removeFromJavaSearch(fModels);
-		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
 		} finally {
 			monitor.done();
-		}
-	}
-
-	public IProject createProxyProject(IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IProject project = 
-			root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
-		if (project.exists()) {
-			if (!project.isOpen()) {
-				project.open(monitor);
-			}
-			return project;
-		}
-		
-		monitor.beginTask(NLS.bind(PDEUIMessages.JavaSearchOperation_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5); 
-		project.create(new SubProgressMonitor(monitor, 1));
-		project.open(new SubProgressMonitor(monitor, 1));
-		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, new SubProgressMonitor(monitor, 1));
-		IJavaProject jProject = JavaCore.create(project);
-		jProject.setOutputLocation(project.getFullPath(), new SubProgressMonitor(monitor, 1));
-		computeClasspath(jProject, new SubProgressMonitor(monitor, 1));
-		return project;
-	}
-
-	private void computeClasspath(IJavaProject project, IProgressMonitor monitor) throws CoreException {
-		IClasspathEntry[] classpath = new IClasspathEntry[2];
-		classpath[0] = JavaCore.newContainerEntry(JavaRuntime.newDefaultJREContainerPath());
-		classpath[1] = JavaCore.newContainerEntry(PDECore.JAVA_SEARCH_CONTAINER_PATH);
-		try {
-			project.setRawClasspath(classpath, monitor);
-		} catch (JavaModelException e) {
 		}
 	}
 

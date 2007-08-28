@@ -32,8 +32,10 @@ import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -44,9 +46,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 /**
  * This class manages the ability of external plug-ins in the model manager to
@@ -108,11 +113,11 @@ public class SearchablePluginsManager
 		fPluginIdSet = new TreeSet();
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
-		if (project.exists() && project.isOpen()) {
-			IFile proxyFile = project.getFile(PROXY_FILE_NAME);
-			if (proxyFile.exists()) {
-				Properties properties = new Properties();
-				try {
+		try {
+			if (project.exists() && project.isOpen()) {
+				IFile proxyFile = project.getFile(PROXY_FILE_NAME);
+				if (proxyFile.exists()) {
+					Properties properties = new Properties();
 					InputStream stream = proxyFile.getContents(true);
 					properties.load(stream);
 					stream.close();
@@ -122,11 +127,10 @@ public class SearchablePluginsManager
 						while(stok.hasMoreTokens())
 							fPluginIdSet.add(stok.nextToken());
 					}
-				} catch (IOException e) {
-				} catch (CoreException e) {
-				}				
+				}
 			}
-		}
+		} catch (IOException e) {} 
+		catch (CoreException e) {}				
 	}
 	
 	public IJavaProject getProxyProject() {
@@ -136,8 +140,8 @@ public class SearchablePluginsManager
 			if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
 				return JavaCore.create(project);
 			}
-		} catch (CoreException e) {
-		}
+			
+		} catch (CoreException e) {}
 		return null;
 	}
 
@@ -248,8 +252,19 @@ public class SearchablePluginsManager
 
 		return null;
 	}
+	
+	private void checkForProxyProject() {
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		try {
+			IProject project = 
+				root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+			if (!project.exists())
+				createProxyProject(new NullProgressMonitor());
+		} catch (CoreException e) {}
+	}
 		
 	public void addToJavaSearch(IPluginModelBase[] models) {
+		checkForProxyProject();
 		PluginModelDelta delta = new PluginModelDelta();
 		int size = fPluginIdSet.size();
 		for (int i = 0; i < models.length; i++) {
@@ -377,6 +392,36 @@ public class SearchablePluginsManager
 				PDECore.log(e);
 			}
 		}
+	}
+	
+	public IProject createProxyProject(IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IProject project = 
+			root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+		if (project.exists()) {
+			if (!project.isOpen()) {
+				project.open(monitor);
+			}
+			return project;
+		}
+		
+		monitor.beginTask(NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5); 
+		project.create(new SubProgressMonitor(monitor, 1));
+		project.open(new SubProgressMonitor(monitor, 1));
+		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, new SubProgressMonitor(monitor, 1));
+		IJavaProject jProject = JavaCore.create(project);
+		jProject.setOutputLocation(project.getFullPath(), new SubProgressMonitor(monitor, 1));
+		computeClasspath(jProject, new SubProgressMonitor(monitor, 1));
+		return project;
+	}
+
+	private void computeClasspath(IJavaProject project, IProgressMonitor monitor) throws CoreException {
+		IClasspathEntry[] classpath = new IClasspathEntry[2];
+		classpath[0] = JavaCore.newContainerEntry(JavaRuntime.newDefaultJREContainerPath());
+		classpath[1] = JavaCore.newContainerEntry(PDECore.JAVA_SEARCH_CONTAINER_PATH);
+		try {
+			project.setRawClasspath(classpath, monitor);
+		} catch (JavaModelException e) {}
 	}
 	
 }
