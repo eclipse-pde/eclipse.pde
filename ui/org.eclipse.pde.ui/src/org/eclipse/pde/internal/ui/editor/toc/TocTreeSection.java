@@ -703,6 +703,8 @@ public class TocTreeSection extends TreeSection {
 		WizardNewFileCreationPage page = (WizardNewFileCreationPage)wizardPage;
 		if(filename != null)
 		{	page.setFileName(filename);
+			// Inhibit the error message when the wizard is first opened
+			page.setErrorMessage(null);
 		}
 
 		if(dialog.open() == Window.OK)

@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.util.XMLRootElementMatcher;
 public class TocExtensionUtil {
 	public static final String[] pageExtensions = {"htm","shtml","html","xhtml"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	public static final String tocExtension = "xml"; //$NON-NLS-1$
-	private static HashSet pageExtensionSet = new HashSet(3);
+	private static HashSet pageExtensionSet = new HashSet(pageExtensions.length);
 
 	private static void populateHashSet()
 	{	for(int i = 0; i < pageExtensions.length; ++i)
@@ -87,5 +87,19 @@ public class TocExtensionUtil {
 		}
 
 		return false;
+	}
+
+	public static String getPageExtensionList() {
+		StringBuffer buf = new StringBuffer();
+
+		for(int i = 0; i < pageExtensions.length; ++i)
+		{	buf.append('.');
+			buf.append(pageExtensions[i]);
+			if(i != pageExtensions.length - 1)
+			{	buf.append(", "); //$NON-NLS-1$
+			}
+		}
+
+		return buf.toString();
 	}
 }
