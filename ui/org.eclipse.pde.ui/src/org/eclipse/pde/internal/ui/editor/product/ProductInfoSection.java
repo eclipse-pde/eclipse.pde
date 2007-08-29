@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.IStateDeltaListener;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -30,6 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -50,15 +59,107 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 
 
-public class ProductInfoSection extends PDESection {
+public class ProductInfoSection extends PDESection implements IRegistryChangeListener, IStateDeltaListener {
 
 	private FormEntry fNameEntry;
-	private ComboPart fAppCombo;
-	private ComboPart fProductCombo;
+	private ExtensionIdComboPart fAppCombo;
+	private ExtensionIdComboPart fProductCombo;
 	private Button fPluginButton;
 	private Button fFeatureButton;
 	
 	private static int NUM_COLUMNS = 3;
+
+	class ExtensionIdComboPart extends ComboPart implements SelectionListener {
+		private String fRemovedId;
+		
+		public void createControl(Composite parent, FormToolkit toolkit,
+				int style) {
+			super.createControl(parent, toolkit, style);
+			addSelectionListener(this);
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			if (getSelectionIndex() != getItemCount() - 1)
+				fRemovedId = null;
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+		
+		public boolean isValidId(String id) {
+			return true;
+		}
+
+		private void addItem(String item, int index) {
+			int selection = getSelectionIndex();
+			super.add(item, index);
+			if (item.equals(fRemovedId)) {
+				select(index);
+				fRemovedId = null;
+			} else if (selection >= index) {
+				select(selection + 1);
+			}
+		}
+
+		private void removeItem(int index) {
+			int selection = getSelectionIndex();
+			if (index == selection) {
+				fRemovedId = getSelection();
+				select(getItemCount() - 2);
+			}
+			super.remove(index);
+			if (selection > index) 
+				select(selection - 1);
+		}
+		
+		public void handleExtensionDelta(IExtensionDelta[] deltas) {
+			for (int i = 0; i < deltas.length; i++) {
+				IExtension extension = deltas[i].getExtension();
+				if (extension == null)
+					return;
+				String id = extension.getUniqueIdentifier();
+				if (id == null || !isValidId(id)) 
+					continue;
+				if (deltas[i].getKind() == IExtensionDelta.ADDED) {
+					int index = computeIndex(id);
+					// index of -1 means id is already in combo
+					if (index >= 0)
+						addItem(id, index);
+				} else {
+					int index = indexOf(id);
+					if (index >= 0)
+						removeItem(index);
+				}
+			}
+		}
+		
+		private int computeIndex(String newId) {
+			// Easy linear search to compute the index to insert.  If this take too much time (ie. long list) suggest binary search
+			int i = 0;
+			String[] entries = getItems();
+			// go to entries.length -1 because last entry in both ComboParts is a ""
+			for (; i < entries.length - 1; i++) {
+				int compareValue = entries[i].compareTo(newId);
+				if (compareValue == 0)
+					return -1;
+				else if (compareValue > 0)
+					break;
+			}
+			return i;
+		}
+		
+		public void reload(String newItems[]) {
+			if (fRemovedId == null)
+				fRemovedId = getSelection();
+			setItems(newItems);
+			int index = indexOf(fRemovedId); 
+			if (index > 0) {
+				select(index);
+				fRemovedId = null;
+			}
+		}
+
+	}
 
 	public ProductInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -90,12 +191,16 @@ public class ProductInfoSection extends PDESection {
 		section.setClient(client);	
 		
 		getModel().addModelChangedListener(this);
+		PDECore.getDefault().getExtensionsRegistry().addListener(this);
+		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 	}
 	
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
+		PDECore.getDefault().getExtensionsRegistry().removeListener(this);
+		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		super.dispose();
 	}
 	
@@ -118,7 +223,7 @@ public class ProductInfoSection extends PDESection {
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); 
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
-		fProductCombo = new ComboPart();
+		fProductCombo = new ExtensionIdComboPart();
 		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProducts());
@@ -158,7 +263,7 @@ public class ProductInfoSection extends PDESection {
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP); 
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
-		fAppCombo = new ComboPart();
+		fAppCombo = new ExtensionIdComboPart();
 		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = NUM_COLUMNS - 1;
@@ -352,4 +457,42 @@ public class ProductInfoSection extends PDESection {
 			return true;
 		return false;
 	}
+	
+	public void registryChanged(IRegistryChangeEvent event) {
+		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas("org.eclipse.core.runtime","applications"); //$NON-NLS-1$ //$NON-NLS-2$
+		final IExtensionDelta[] productDeltas = event.getExtensionDeltas("org.eclipse.core.runtime","products"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (applicationDeltas.length + productDeltas.length == 0)
+			return;
+		
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				fAppCombo.handleExtensionDelta(applicationDeltas);
+				fProductCombo.handleExtensionDelta(productDeltas);
+			}
+		});
+	}
+	
+	public void stateChanged(State newState) {
+		String[] products = TargetPlatform.getProducts();
+		final String[] finalProducts = new String[products.length + 1];
+		System.arraycopy(products, 0, finalProducts, 0, products.length);
+		finalProducts[products.length] = ""; //$NON-NLS-1$od
+		
+		
+		String[] apps = TargetPlatform.getApplications();
+		final String[] finalApps = new String[apps.length + 1];
+		System.arraycopy(apps, 0, finalApps, 0, apps.length);
+		finalApps[apps.length] = ""; //$NON-NLS-1$
+		
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				fAppCombo.reload(finalApps);
+				fProductCombo.reload(finalProducts);
+			}
+		});
+	}
+
+	public void stateResolved(StateDelta delta) {
+	}
+	
 }

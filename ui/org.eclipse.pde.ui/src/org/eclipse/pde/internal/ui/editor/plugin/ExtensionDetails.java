@@ -22,7 +22,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.Schema;
@@ -116,7 +116,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 				} else {
 					if (input == null || input.getPoint() == null)
 						return;
-					IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(input.getPoint());
+					IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(input.getPoint());
 					if (point != null){
 						ShowDescriptionAction showDescAction = new ShowDescriptionAction(point);
 						showDescAction.run();

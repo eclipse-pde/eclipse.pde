@@ -869,5 +869,13 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fStateListeners != null)
 			fStateListeners.clear();
 	}
+	
+	public void addExtensionDeltaListener(IExtensionDeltaListener listener) {
+		fWorkspaceManager.addExtensionDeltaListener(listener);
+	}
+	
+	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
+		fWorkspaceManager.removeExtensionDeltaListener(listener);
+	}
 
 }

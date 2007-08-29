@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -51,12 +53,7 @@ public class SourceLocationManager implements ICoreConstants {
 
 	public SourceLocation[] getExtensionLocations() {
 		if (fExtensionLocations == null) {
-			ArrayList list = new ArrayList();
-			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			for (int i = 0; i < models.length; i++) {
-				processExtensions(models[i], list);
-			}
-			fExtensionLocations = (SourceLocation[]) list.toArray(new SourceLocation[list.size()]);
+			fExtensionLocations = processExtensions();
 		}
 		return fExtensionLocations;
 	}
@@ -161,6 +158,28 @@ public class SourceLocationManager implements ICoreConstants {
 				processExtension(extension, result);
 			}
 		}				
+	}
+	
+	private static SourceLocation[] processExtensions() {
+		ArrayList result = new ArrayList();
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] children = extensions[i].getConfigurationElements();
+			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+			for (int j = 0; j < children.length; j++) {
+				if (children[j].getName().equals("location")) { //$NON-NLS-1$
+					String pathValue = children[j].getAttribute("path"); //$NON-NLS-1$
+					IPath path = new Path(base.getInstallLocation()).append(pathValue);
+					if (path.toFile().exists()) {
+						SourceLocation location = new SourceLocation(path);
+						location.setUserDefined(false);
+						if (!result.contains(location))
+							result.add(location);
+					}
+				}
+			}
+		}
+		return (SourceLocation[]) result.toArray(new SourceLocation[result.size()]);
 	}
 	
 	private static  void processExtension(IPluginExtension extension, ArrayList result) {

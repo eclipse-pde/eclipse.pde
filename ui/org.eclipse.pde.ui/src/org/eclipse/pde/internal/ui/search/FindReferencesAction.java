@@ -14,6 +14,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.search.ExtensionPluginSearchScope;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -43,6 +44,7 @@ public class FindReferencesAction extends BaseSearchAction {
 
 	protected ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
+		PluginSearchScope scope = null;
 		if (fSelectedObject instanceof IPlugin) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
 			input.setSearchString(((IPlugin) fSelectedObject).getId());
@@ -58,12 +60,13 @@ public class FindReferencesAction extends BaseSearchAction {
 						id
 						+ "." //$NON-NLS-1$
 						+ ((IPluginExtensionPoint) fSelectedObject).getId());
+			scope = new ExtensionPluginSearchScope(input);
 		} else if (fSelectedObject instanceof IPluginImport) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
 			input.setSearchString(((IPluginImport) fSelectedObject).getId());
 		}
 		input.setSearchLimit(PluginSearchInput.LIMIT_REFERENCES);
-		input.setSearchScope(new PluginSearchScope());
+		input.setSearchScope((scope == null) ? new PluginSearchScope() : scope);
 		return new PluginSearchQuery(input);
 	}
 

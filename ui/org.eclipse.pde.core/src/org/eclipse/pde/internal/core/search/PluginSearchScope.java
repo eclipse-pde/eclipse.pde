@@ -57,14 +57,14 @@ public class PluginSearchScope {
 		this(SCOPE_WORKSPACE, EXTERNAL_SCOPE_ENABLED, null);
 	}
 	
-	private void addExternalModel(IPluginModelBase candidate, ArrayList result) {
+	protected final void addExternalModel(IPluginModelBase candidate, ArrayList result) {
 		if (externalScope == EXTERNAL_SCOPE_ALL)
 			result.add(candidate);
 		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
 			result.add(candidate);
 	}
 	
-	private void addWorkspaceModel(IPluginModelBase candidate, ArrayList result) {
+	protected final void addWorkspaceModel(IPluginModelBase candidate, ArrayList result) {
 		if (workspaceScope == SCOPE_WORKSPACE) {
 			result.add(candidate);
 		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
@@ -73,8 +73,11 @@ public class PluginSearchScope {
 	}
 		
 	public IPluginModelBase[] getMatchingModels() {
+		return addRelevantModels(PluginRegistry.getAllModels());
+	}
+	
+	protected final IPluginModelBase[] addRelevantModels(IPluginModelBase[] models) {
 		ArrayList result = new ArrayList();
-		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].getUnderlyingResource() != null) {
 				addWorkspaceModel(models[i], result);

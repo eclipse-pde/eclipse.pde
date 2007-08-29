@@ -18,15 +18,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
@@ -70,33 +68,32 @@ public class JavadocLocationManager {
 	private synchronized void initialize() {
 		if (fLocations != null) return;
 		fLocations = new HashMap();
-		IPluginModelBase[] models = PluginRegistry.getExternalModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				if (JAVADOC_ID.equals(extensions[j].getPoint())) 
-					processExtension(extensions[j]);
-			}				
+		
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID);
+		for (int i = 0; i < extensions.length; i++) {
+			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+			// only search external models
+			if (base == null || base.getUnderlyingResource() != null)
+				continue;
+			processExtension(extensions[i], base);
 		}
 	}
-
-	private void processExtension(IPluginExtension extension) {
-		IPluginObject[] children = extension.getChildren();
+	
+	private void processExtension(IExtension extension, IPluginModelBase base) {
+		IConfigurationElement[] children = extension.getConfigurationElements();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getName().equals("javadoc")) { //$NON-NLS-1$
-				IPluginElement javadoc = (IPluginElement) children[i];
-				IPluginAttribute attr = javadoc.getAttribute("path"); //$NON-NLS-1$
-				String path = (attr == null) ? null : attr.getValue();
+				String path = children[i].getAttribute("path"); //$NON-NLS-1$
 				if (path == null)
 					continue;
 				try {
 					new URL(path);
-					processPlugins(path, javadoc.getChildren());
+					processPlugins(path, children[i].getChildren());
 				} catch (MalformedURLException e) {
-					attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
-					boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
+					String attr = children[i].getAttribute("archive"); //$NON-NLS-1$
+					boolean archive = attr == null ? false : "true".equals(attr); //$NON-NLS-1$
 
-					IPath modelPath = new Path(extension.getModel().getInstallLocation());
+					IPath modelPath = new Path(base.getInstallLocation());
 					StringBuffer buffer = new StringBuffer();			
 					File file = modelPath.toFile();
 					if (file.exists()) {
@@ -114,18 +111,16 @@ public class JavadocLocationManager {
 					buffer.append(path);
 					if (archive)
 						buffer.insert(0, "jar:"); //$NON-NLS-1$
-					processPlugins(buffer.toString(), javadoc.getChildren()); //$NON-NLS-1$				
+					processPlugins(buffer.toString(), children[i].getChildren()); //$NON-NLS-1$				
 				}
 			}
 		}
 	}
 	
-	private void processPlugins(String path, IPluginObject[] plugins) {
+	private void processPlugins(String path, IConfigurationElement[] plugins) {
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].getName().equals("plugin")) { //$NON-NLS-1$
-				IPluginElement plugin = (IPluginElement)plugins[i];
-				IPluginAttribute attr = plugin.getAttribute("id"); //$NON-NLS-1$
-				String id = attr == null ? null : attr.getValue();
+				String id = plugins[i].getAttribute("id"); //$NON-NLS-1$
 				if (id == null)
 					continue;
 				Set set = (Set)fLocations.get(path);

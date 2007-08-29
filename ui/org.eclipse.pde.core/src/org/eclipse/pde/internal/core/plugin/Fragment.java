@@ -33,6 +33,10 @@ public class Fragment extends PluginBase implements IFragment {
 	private int fMatchRule = IMatchRules.NONE;
 	
 	private boolean fPatch;
+	
+	public Fragment(boolean readOnly) {
+		super(readOnly);
+	}
 
 	public String getPluginId() {
 		return fPluginId;

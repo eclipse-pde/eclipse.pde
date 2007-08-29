@@ -27,21 +27,20 @@ import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -178,17 +177,11 @@ public class TargetPlatformHelper {
     
     public static Set getApplicationNameSet() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				if ("org.eclipse.core.runtime.applications".equals(extensions[j].getPoint())) { //$NON-NLS-1$
-					if (extensions[j].getId() != null) {
-						String id = IdUtil.getFullId(extensions[j]);
-					    if (!id.startsWith("org.eclipse.pde.junit.runtime"))  //$NON-NLS-1$
-					    	result.add(IdUtil.getFullId(extensions[j]));		
-					}
-				}
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			String id = extensions[i].getUniqueIdentifier();
+			if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
+				result.add(id);
 			}
 		}
 		result.add("org.eclipse.ui.ide.workbench"); //$NON-NLS-1$
@@ -202,22 +195,16 @@ public class TargetPlatformHelper {
 	
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				if ("org.eclipse.core.runtime.products".equals(extensions[j].getPoint())) {//$NON-NLS-1$
-					IPluginObject[] children = extensions[j].getChildren();
-					if (children.length != 1)
-						continue;
-					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
-						continue;
-					String id = extensions[j].getId();
-					if (id != null && id.trim().length() > 0) {
-						result.add(IdUtil.getFullId(extensions[j]));	
-					}
-				}
-			}
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+			if (elements.length != 1)
+				continue;
+			if (!"product".equals(elements[0].getName())) //$NON-NLS-1$
+				continue;
+			String id = extensions[i].getUniqueIdentifier();
+			if (id != null && id.trim().length() > 0) 
+				result.add(id);
 		}
 		return result;
 	}

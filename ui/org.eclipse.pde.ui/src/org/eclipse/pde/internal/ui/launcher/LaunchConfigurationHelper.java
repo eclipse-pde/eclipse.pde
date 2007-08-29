@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -31,11 +33,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -338,25 +336,18 @@ public class LaunchConfigurationHelper {
 		// contributing plug-in
 		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION,
 				TargetPlatform.getDefaultApplication());
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		for (int i = 0; i < plugins.length; i++) {
-			String id = plugins[i].getPluginBase().getId();
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				String extId = extensions[j].getId();
-				if ("org.eclipse.core.runtime.products".equals(point) && extId != null) {//$NON-NLS-1$
-					IPluginObject[] children = extensions[j].getChildren();
-					if (children.length != 1)
-						continue;
-					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
-						continue;
-					if (appID.equals(((IPluginElement) children[0]).getAttribute(
-							"application").getValue())) { //$NON-NLS-1$
-						return id + "." + extId; //$NON-NLS-1$
-					}
-				}
-			}
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			String id = extensions[i].getUniqueIdentifier();
+			if (id == null)
+				continue;
+			IConfigurationElement[] children = extensions[i].getConfigurationElements();
+			if (children.length != 1)
+				continue;
+			if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+				continue;
+			if (appID.equals(children[0].getAttribute("application"))) //$NON-NLS-1$
+				return id;
 		}
 		return null;
 

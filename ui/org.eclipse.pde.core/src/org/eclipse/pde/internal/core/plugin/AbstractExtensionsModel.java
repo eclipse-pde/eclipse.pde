@@ -44,7 +44,7 @@ public abstract class AbstractExtensionsModel
 	}
 	
 	protected Extensions createExtensions() {
-		Extensions extensions = new Extensions();
+		Extensions extensions = new Extensions(!isEditable());
 		extensions.setModel(this);
 		return extensions;
 	}
@@ -77,10 +77,13 @@ public abstract class AbstractExtensionsModel
 		fExtensions.reset();
 		setLoaded(false);
 		try {
+			// TODO: possibly remove this work.
+			// Need a good way to "setLoaded()" value
+			// With the way we do it, we might be able to claim it is always loaded.
 			SAXParser parser = getSaxParser();
 			PluginHandler handler = new PluginHandler(true);
 			parser.parse(stream, handler);
-			fExtensions.load(handler.getDocumentElement(), handler.getSchemaVersion());
+			fExtensions.load(handler.getSchemaVersion());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
@@ -91,10 +94,10 @@ public abstract class AbstractExtensionsModel
 		}
 	}
 	
+	// loaded from workspace when creating workspace model
 	public void load(BundleDescription desc, PDEState state) {
 		fExtensions = createExtensions();
 		fExtensions.setModel(this);
-		fExtensions.load(state, desc.getBundleId());
 		updateTimeStamp();
 		setLoaded(true);
 	}

@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -101,7 +101,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(OSGiFrameworkManager.POINT_ID);
+				IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(OSGiFrameworkManager.POINT_ID);
 				if (point != null) {
 					new ShowDescriptionAction(point, true).run();	
 				} else {

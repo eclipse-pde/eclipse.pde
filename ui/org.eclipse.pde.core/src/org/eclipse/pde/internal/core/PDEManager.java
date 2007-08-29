@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -100,21 +98,6 @@ public class PDEManager {
 			return ((ExternalPluginModelBase)model).getLocalization();
 		
 		return "plugin"; //$NON-NLS-1$
-	}
-	
-	public static IPluginExtensionPoint findExtensionPoint(String fullID) {
-		IPluginModelBase[] bases = PluginRegistry.getActiveModels();
-		for (int i = 0; i < bases.length; i++) {
-			IExtensions extensions = bases[i].getExtensions();
-			if (extensions == null) 
-				continue;
-			IPluginExtensionPoint[] points = extensions.getExtensionPoints();
-			for (int j = 0; j < points.length; j++) {
-				if (fullID.equals(points[j].getFullId()))
-					return points[j];
-			}
-		}
-		return null;
 	}
 
 }

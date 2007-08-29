@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,9 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
@@ -36,45 +38,54 @@ public class ManifestEditorOpener {
 			ManifestEditor editor = (ManifestEditor)editorPart;
 			IDocument doc = editor.getDocument(match);
 			if (doc != null) {
-				Match exact = findExactMatch(doc, match);
+				Match exact = findExactMatch(doc, match, editor);
 				editor.openToSourcePage(match.getElement(), exact.getOffset(), exact.getLength());
 			}
 		}
 		return editorPart;
 	}
 	
-	public static Match findExactMatch(IDocument document, Match match) {
+	public static Match findExactMatch(IDocument document, Match match, IEditorPart editor) {
 		if (match.getOffset() == -1 && match.getBaseUnit() == Match.UNIT_LINE)
 			return new Match(match.getElement(), Match.UNIT_CHARACTER, 0,0);
 		IPluginObject element = (IPluginObject)match.getElement();
 		String name = null;
 		String value = null;
-		if (element instanceof IPluginExtension) {
-			name = "point"; //$NON-NLS-1$
-			value = ((IPluginExtension)element).getPoint();
-		} else if (element instanceof IPluginExtensionPoint) {
-			name = "id"; //$NON-NLS-1$
-			value = ((IPluginExtensionPoint)element).getId();
-		} else if (element instanceof IPluginImport) {
-			name = "plugin"; //$NON-NLS-1$
-			value = ((IPluginImport)element).getId();
-		} else if (element instanceof IPlugin) {
-			name = "id"; //$NON-NLS-1$
-			value = ((IPlugin)element).getId();
-		} else if (element instanceof IFragment) {
-			name = "id"; //$NON-NLS-1$
-			value = ((IFragment)element).getId();
+		IRegion region = null;
+		// since Extenion and Extension point matches don't contain line #'s, we need handle them differently (by trying to find matches in UI model)
+		if (editor instanceof ManifestEditor && (element instanceof IPluginExtension || element instanceof IPluginExtensionPoint)) {
+			region = getAttributeMatch((ManifestEditor)editor, element, document);
+		} else {
+			if (element instanceof IPluginImport) {
+				name = "plugin"; //$NON-NLS-1$
+				value = ((IPluginImport)element).getId();
+			} else if (element instanceof IPlugin) {
+				name = "id"; //$NON-NLS-1$
+				value = ((IPlugin)element).getId();
+			} else if (element instanceof IFragment) {
+				name = "id"; //$NON-NLS-1$
+				value = ((IFragment)element).getId();
+			}
+
+			region  = getAttributeRegionForLine(document, name, value, match.getOffset());
 		}
-		IRegion region = getAttributeRegion(document, name, value, match.getOffset());
 		if (region != null) {
 			return new Match(element, Match.UNIT_CHARACTER, region.getOffset(), region.getLength());
 		}	
 		return match;
 	}
 	
-	private static IRegion getAttributeRegion(IDocument document, String name, String value, int line) {
+	private static IRegion getAttributeRegionForLine(IDocument document, String name, String value, int line) {
 		try {
 			int offset = document.getLineOffset(line) + document.getLineLength(line);
+			return getAttributeRegion(document, name, value, offset);
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
+	
+	private static IRegion getAttributeRegion(IDocument document, String name, String value, int offset) {
+		try {
 			FindReplaceDocumentAdapter findReplaceAdapter = new FindReplaceDocumentAdapter(document);
 			IRegion nameRegion = findReplaceAdapter.find(offset, name+"\\s*=\\s*\""+value, false, false, false, true); //$NON-NLS-1$
 			if (nameRegion != null) {
@@ -85,6 +96,27 @@ public class ManifestEditorOpener {
 		}
 		return null;
 	}
-
+	
+	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
+	private static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
+		IPluginObject[] elements = null;
+		// find equivalent models in UI text model
+		if (object instanceof IPluginExtension)
+			elements =  ((IPluginModelBase)editor.getAggregateModel()).getPluginBase().getExtensions();
+		else
+			elements = ((IPluginModelBase)editor.getAggregateModel()).getPluginBase().getExtensionPoints();
+		
+		// iterate through the UI text models to find a match for a Search object.
+		for (int i = 0; i < elements.length; i++) {
+			if (object.equals(elements[i])) {
+				int offset = ((PluginObjectNode)elements[i]).getOffset();
+				offset += ((PluginObjectNode)elements[i]).getLength();
+				String name = (object instanceof IPluginExtension) ? "point": "id"; //$NON-NLS-1$ //$NON-NLS-2$
+				String value = (object instanceof IPluginExtension) ? ((IPluginExtension)object).getPoint() : ((IPluginExtensionPoint)object).getId();
+				return getAttributeRegion(document, name, value, offset);
+			}
+		}
+		return null;
+	}
 
 }

@@ -20,7 +20,7 @@ public class ExternalPluginModel extends ExternalPluginModelBase implements
 	private static final long serialVersionUID = 1L;
 
 	public IPluginBase createPluginBase() {
-		PluginBase base = new Plugin();
+		PluginBase base = new Plugin(true);
 		base.setModel(this);
 		return base;
 	}

@@ -10,300 +10,221 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.ListIterator;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
-import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEExtensionRegistry {
 	
-	protected static boolean DEBUG = false;
-
-	static {
-		DEBUG = PDECore.getDefault().isDebugging()
-				&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+	private Object fMasterKey = new Object();
+	private Object fUserKey = new Object();
+	private IExtensionRegistry fRegistry = null;
+	private PDERegistryStrategy fStrategy = null;
 	
-	private static String CACHE_EXTENSION = ".extensions"; //$NON-NLS-1$
+	private IPluginModelBase[] fModels = null;
+	private ArrayList fListeners = new ArrayList();
 	
-	private static String ROOT_EXTENSIONS = "extensions"; //$NON-NLS-1$
-	private static String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
-	private static String ATTR_BUNDLE_ID = "bundleID"; //$NON-NLS-1$
-	private static String ELEMENT_EXTENSION = "extension"; //$NON-NLS-1$
-	private static String ELEMENT_EXTENSION_POINT = "extension-point"; //$NON-NLS-1$
-	private static String ATTR_SCHEMA = "schema"; //$NON-NLS-1$
-
-	private static SAXParser parser;
+	private static final String EXTENSION_DIR = ".extensions"; //$NON-NLS-1$
 	
-	private Map fExtensions = new HashMap();
-	
-	protected PDEExtensionRegistry() { 
-	}
-	
-	protected PDEExtensionRegistry(PDEExtensionRegistry registry) {
-		this.fExtensions = new HashMap(registry.fExtensions);
-	}
-
-	protected void saveExtensions(State state, File dir) {
-		try {
-			File file = new File(dir, CACHE_EXTENSION); //$NON-NLS-1$
-			XMLPrintHandler.writeFile(createExtensionDocument(state), file);
-		} catch (IOException e) {
+	public PDEExtensionRegistry() {
+		if (fStrategy == null) {
+			File extensionsDir = new File(PDECore.getDefault().getStateLocation().toFile(), EXTENSION_DIR);
+			// create the strategy without creating registry.  That way we create the registry at the last possible moment.
+			// This way we can listen to events in PDE without creating the registry until we need it.
+			fStrategy = new PDERegistryStrategy(new File[] {extensionsDir}, new boolean[] {false}, fMasterKey, this);
 		}
 	}
 	
-	public Node[] getExtensions(long bundleID) {
-		return getChildren(bundleID, ELEMENT_EXTENSION); //$NON-NLS-1$
-	}
-	
-	public Node[] getExtensionPoints(long bundleID) {
-		return getChildren(bundleID, ELEMENT_EXTENSION_POINT); //$NON-NLS-1$
-	}
-	
-	private Node[] getChildren(long bundleID, String tagName) {
-		ArrayList list = new ArrayList();
-		Element bundle = (Element)fExtensions.get(Long.toString(bundleID));
-		if (bundle != null) {
-			NodeList children = bundle.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++) {
-				if (tagName.equals(children.item(i).getNodeName())) {
-					list.add(children.item(i));
-				}
-			}
+	public PDEExtensionRegistry(IPluginModelBase[] models) {
+		fModels = models;
+		if (fStrategy == null) {
+			File extensionsDir = new File(PDECore.getDefault().getStateLocation().toFile(), EXTENSION_DIR);
+			// Use TargetPDERegistryStrategy so we don't connect listeners to PluginModelManager.  This is used only in target so we don't need change events.
+			fStrategy = new TargetPDERegistryStrategy(new File[] {extensionsDir}, new boolean[] {false}, fMasterKey, this);
 		}
-		return (Node[])list.toArray(new Node[list.size()]);
+	}
+	
+	// Methods used to control information/status of Extension Registry
+	
+	protected IPluginModelBase[] getModels() {
+		return (fModels == null) ? PluginRegistry.getActiveModels() : fModels;
+	}
+	
+	public void stop() {
+		if (fRegistry != null)
+			fRegistry.stop(fMasterKey);
+		dispose();
+	}
+	
+	protected synchronized IExtensionRegistry getRegistry() {
+		if (fRegistry == null) {
+			fRegistry = createRegistry();
+			for (ListIterator li = fListeners.listIterator(); li.hasNext();)
+				fRegistry.addRegistryChangeListener((IRegistryChangeListener)li.next());
+		}
+		return fRegistry;
+	}
+	
+	private IExtensionRegistry createRegistry() {
+		return RegistryFactory.createRegistry(fStrategy, fMasterKey, fUserKey);
 	}
 
-	public Node[] getAllExtensions(long bundleID) {
-		ArrayList list = new ArrayList();
-		Element bundle = (Element)fExtensions.get(Long.toString(bundleID));
-		if (bundle != null) {
-			NodeList children = bundle.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++) {
-				String name = children.item(i).getNodeName();
-				if (ELEMENT_EXTENSION.equals(name) || ELEMENT_EXTENSION_POINT.equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
-					list.add(children.item(i));
-				}
-			}
-		}
-		return (Node[])list.toArray(new Node[list.size()]);
+	public void targetReloaded() {		
+		// stop old registry (which will write contents to FS) and delete the cache it creates
+		// might see if we can dispose of a registry without writing to file system.  NOTE: Don't call stop() because we want to still reuse fStrategy
+		if (fRegistry != null)
+			fRegistry.stop(fMasterKey);
+		CoreUtility.deleteContent(new File(PDECore.getDefault().getStateLocation().toFile(), EXTENSION_DIR));
+		fRegistry = null;
 	}
 	
-	protected Document createExtensionDocument(State state){
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		Document doc = null;
-		try {
-			doc = factory.newDocumentBuilder().newDocument();
-		} catch (ParserConfigurationException e) {
+	// dispose of registry without writing contents.
+	public void dispose() {
+		fStrategy.dispose();
+		fRegistry = null;
+	}
+	
+	// Methods to access data in Extension Registry
+	
+	public IPluginModelBase[] findExtensionPlugins(String pointId) {
+		IExtensionPoint point = getExtensionPoint(pointId);
+		if (point == null) {
+			// if extension point for extension does not exist, search all plug-ins manually
+			return PluginRegistry.getAllModels();
+		}
+		IExtension[] exts = point.getExtensions();
+		HashMap plugins = new HashMap();
+		for (int i = 0; i < exts.length; i++) {
+			String pluginId = exts[i].getContributor().getName();
+			if (plugins.containsKey(pluginId))
+				continue;
+			IPluginModelBase base = PluginRegistry.findModel(pluginId);
+			if (base != null)
+				plugins.put(pluginId, base);
+		}
+		java.util.Collection values = plugins.values();
+		return (IPluginModelBase[])values.toArray(new IPluginModelBase[values.size()]);
+	}
+	
+	public IPluginModelBase findExtensionPointPlugin(String pointId) {
+		IExtensionPoint point = getExtensionPoint(pointId);
+		if (point == null) {
 			return null;
 		}
-		Element root = doc.createElement(ROOT_EXTENSIONS); //$NON-NLS-1$
-
-		BundleDescription[] bundles = state.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			BundleDescription desc = bundles[i];
-			Element element = doc.createElement(ELEMENT_BUNDLE); //$NON-NLS-1$
-			element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId())); //$NON-NLS-1$
-			parseExtensions(desc, element);
-			if (element.hasChildNodes()) {
-				root.appendChild(element);
-				fExtensions.put(Long.toString(desc.getBundleId()), element);
-			}
-		}
-		doc.appendChild(root);
-		return doc;
+		IContributor contributor = point.getContributor();
+		return PluginRegistry.findModel(contributor.getName());
 	}
-
-	protected boolean readExtensionsCache(File dir) {
-		long start = System.currentTimeMillis();
-		File file = new File(dir, CACHE_EXTENSION); //$NON-NLS-1$
-		if (file.exists() && file.isFile()) {
-			try {
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				Document doc = factory.newDocumentBuilder().parse(file);
-				Element root = doc.getDocumentElement();
-				if (root != null) {
-					NodeList bundles = root.getChildNodes();
-					for (int i = 0; i < bundles.getLength(); i++) {
-						if (bundles.item(i).getNodeType() == Node.ELEMENT_NODE) {
-							Element bundle = (Element)bundles.item(i); 
-							String id = bundle.getAttribute(ATTR_BUNDLE_ID); //$NON-NLS-1$
-							fExtensions.put(id, bundle.getChildNodes());
-						}
+	
+	private IExtensionPoint getExtensionPoint(String pointId) {
+		return getRegistry().getExtensionPoint(pointId);
+	}
+	
+	public boolean hasExtensionPoint(String pointId) {
+		return getExtensionPoint(pointId) != null;
+	}
+	
+	public IPluginExtensionPoint findExtensionPoint(String pointId) {
+		IExtensionPoint extPoint = getExtensionPoint(pointId);
+		if (extPoint != null) {
+			IPluginModelBase model = PluginRegistry.findModel(extPoint.getContributor().getName());
+			if (model != null) {
+				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
+				for (int i = 0; i < points.length; i++) {
+					IPluginExtensionPoint point = points[i];
+					if (points[i].getFullId().equals(pointId)) {
+						return point;
 					}
 				}
-				if (DEBUG)
-					System.out.println("Time to read extensions: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				return true;
-			} catch (org.xml.sax.SAXException e) {
-				PDECore.log(e);
-			} catch (IOException e) {
-				PDECore.log(e);
-			} catch (ParserConfigurationException e) {
-				PDECore.log(e);
 			}
 		}
-		return false;
+		return null;
 	}
 	
-	public static void writeExtensions(IPluginModelBase[] models, File destination) {
-		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = builder.newDocument();
-		
-			Element root = doc.createElement(ROOT_EXTENSIONS); //$NON-NLS-1$
-			doc.appendChild(root);
-		
-			for (int i = 0; i < models.length; i++) {
-				IPluginBase plugin = models[i].getPluginBase();
-				IPluginExtension[] extensions = plugin.getExtensions();
-				IPluginExtensionPoint[] extPoints = plugin.getExtensionPoints();
-				if (extensions.length == 0 && extPoints.length == 0)
-					continue;
-				Element element = doc.createElement(ELEMENT_BUNDLE); //$NON-NLS-1$
-				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(models[i].getBundleDescription().getBundleId())); //$NON-NLS-1$
-				String schema = plugin.getSchemaVersion();
-				if (schema != null)
-					element.setAttribute(ATTR_SCHEMA, schema);
-				for (int j = 0; j < extensions.length; j++) {
-					element.appendChild(writeExtension(doc, extensions[j]));
-				}				
-				for (int j = 0; j < extPoints.length; j++) {
-					element.appendChild(writeExtensionPoint(doc, extPoints[j]));
-				}			
-				root.appendChild(element);
-			}
-			XMLPrintHandler.writeFile(doc, new File(destination, CACHE_EXTENSION)); //$NON-NLS-1$
-		} catch (ParserConfigurationException e) {
-		} catch (FactoryConfigurationError e) {
-		} catch (IOException e) {
-		}	
-	}
-
-	public static Element writeExtensionPoint(Document doc, IPluginExtensionPoint extPoint) {
-		Element child = doc.createElement("extension-point"); //$NON-NLS-1$
-		if (extPoint.getId() != null)
-			child.setAttribute("id", PDEXMLHelper.getWritableString(extPoint.getId())); //$NON-NLS-1$
-		if (extPoint.getName() != null)
-			child.setAttribute("name", PDEXMLHelper.getWritableString(extPoint.getName())); //$NON-NLS-1$
-		if (extPoint.getSchema() != null)
-			child.setAttribute("schema", PDEXMLHelper.getWritableString(extPoint.getSchema())); //$NON-NLS-1$
-		if (extPoint instanceof PluginExtensionPoint)
-			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine())); //$NON-NLS-1$
-		return child;	
+	public IPluginExtension[] findExtensionsForPlugin(String pluginId) {
+		IPluginModelBase base = PluginRegistry.findModel(pluginId);
+		IContributor contributor = fStrategy.createContributor(base);
+		if (contributor == null)
+			return new IPluginExtension[0];
+		IExtension[] extensions = getRegistry().getExtensions(fStrategy.createContributor(base));
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < extensions.length; i++) {
+			PluginExtension extension = new PluginExtension(extensions[i]);
+			extension.setModel(getExtensionsModel(base));
+			extension.setParent(base.getExtensions());
+			list.add(extension);
+		}
+		return (IPluginExtension[]) list.toArray(new IPluginExtension[list.size()]);
 	}
 	
-	public static Element writeExtension(Document doc, IPluginExtension extension) {
-		Element child = doc.createElement("extension"); //$NON-NLS-1$
-		if (extension.getPoint() != null)
-			child.setAttribute("point", PDEXMLHelper.getWritableString(extension.getPoint())); //$NON-NLS-1$
-		if (extension.getName() != null)
-			child.setAttribute("name", PDEXMLHelper.getWritableString(extension.getName())); //$NON-NLS-1$
-		if (extension.getId() != null)
-			child.setAttribute("id", PDEXMLHelper.getWritableString(extension.getId())); //$NON-NLS-1$
-		if (extension instanceof PluginExtension)
-			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine())); //$NON-NLS-1$
-		IPluginObject[] children = extension.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			child.appendChild(writeElement(doc, (IPluginElement)children[i]));
+	public IPluginExtensionPoint[] findExtensionPointsForPlugin(String pluginId) {
+		IPluginModelBase base = PluginRegistry.findModel(pluginId);
+		IContributor contributor = fStrategy.createContributor(base);
+		if (contributor == null) 
+			return new IPluginExtensionPoint[0];
+		IExtensionPoint[] extensions = getRegistry().getExtensionPoints(fStrategy.createContributor(base));
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < extensions.length; i++) {
+			PluginExtensionPoint point = new PluginExtensionPoint(extensions[i]);
+			point.setModel(getExtensionsModel(base));
+			point.setParent(base.getExtensions());
+			list.add(point);
 		}
-		return child;	
-	}
-
-	public static Element writeElement(Document doc, IPluginElement element) {
-		Element child = doc.createElement(element.getName());
-		IPluginAttribute[] attrs = element.getAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			child.setAttribute(attrs[i].getName(), PDEXMLHelper.getWritableString(attrs[i].getValue()));
-		}
-		IPluginObject[] elements = element.getChildren();
-		for (int i = 0; i < elements.length; i++) {
-			child.appendChild(writeElement(doc, (IPluginElement)elements[i]));
-		}
-		return child;
+		return (IPluginExtensionPoint[]) list.toArray(new IPluginExtensionPoint[list.size()]);
 	}
 	
-	protected void clear() {
-		fExtensions.clear();
-	}
-
-	public String getSchemaVersion(long bundleID) {
-		Element bundle = (Element)fExtensions.get(Long.toString(bundleID));
-		return bundle == null ? null : bundle.getAttribute(ATTR_SCHEMA);
+	private ISharedPluginModel getExtensionsModel(IPluginModelBase base) {
+		if (base instanceof IBundlePluginModelBase) 
+			return ((IBundlePluginModelBase)base).getExtensionsModel();
+		return base;
 	}
 	
-	public static synchronized void parseExtensions(BundleDescription desc, Element parent) {
-		ZipFile jarFile = null;
-		InputStream stream = null;
-		try {
-			String filename = desc.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-			String path = desc.getLocation();
-
-			File file = new File(path);
-			if (file.isFile()) {
-				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(filename); 
-				if (manifestEntry != null) 
-					stream = new BufferedInputStream(jarFile.getInputStream(manifestEntry));				
-			} else if (file.isDirectory()) {
-				File manifest = new File(file, filename);
-				if (manifest.exists() && manifest.isFile()) {
-					stream = new BufferedInputStream(new FileInputStream(manifest));
-				}
-			}
-			if (stream != null) {
-				if (parser == null)
-					parser = SAXParserFactory.newInstance().newSAXParser();
-				parser.parse(stream, new ExtensionsHandler(parent));
-			}			
-		} catch (IOException e) {
-		} catch (ParserConfigurationException e) {
-		} catch (SAXException e) {
-		} catch (FactoryConfigurationError e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
+	public IExtension[] findExtensions(String extensionPointId) {
+		IExtensionPoint point = getExtensionPoint(extensionPointId);
+		if (point != null) 
+			return point.getExtensions();
+		ArrayList list = new ArrayList();
+		IPluginModelBase[] bases = PluginRegistry.getActiveModels();
+		for (int i = 0; i < bases.length; i++) {
+			IContributor contributor = fStrategy.createContributor(bases[i]);
+			if (contributor == null)
+				continue;
+			IExtension[] extensions = getRegistry().getExtensions(contributor);
+			for (int j = 0; j < extensions.length; j++) {
+				if (extensions[j].getExtensionPointUniqueIdentifier().equals(extensionPointId))
+					list.add(extensions[j]);
 			}
 		}
+		return (IExtension[]) list.toArray(new IExtension[list.size()]);
+	}
+	
+	// Methods to add/remove listeners
+	
+	public void addListener(IRegistryChangeListener listener) {
+		fRegistry.addRegistryChangeListener(listener);
+		if (!fListeners.contains(listener))
+			fListeners.add(listener);
+	}
+	
+	public void removeListener(IRegistryChangeListener listener) {
+		fRegistry.removeRegistryChangeListener(listener);
+		fListeners.remove(listener);
 	}
 
 }

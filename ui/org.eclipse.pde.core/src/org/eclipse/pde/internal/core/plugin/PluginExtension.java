@@ -11,31 +11,40 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	private static final long serialVersionUID = 1L;
 	protected String fPoint;
 	private transient ISchema schema;
+	private IExtension fExtension = null;
 
 	public PluginExtension() {
 	}
+	
+	public PluginExtension(IExtension extension) {
+		fExtension = extension;
+	}
+	
 	public String getPoint() {
+		if (fPoint == null && fExtension != null)
+			fPoint = fExtension.getExtensionPointUniqueIdentifier(); 
 		return fPoint;
 	}
 	
 	public boolean isValid() {
-		return fPoint != null;
+		return getPoint() != null;
 	}
 		
 	public Object getSchema() {
@@ -46,25 +55,6 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			schema = null;
 		}
 		return schema;
-	}
-	
-	void load(Node node) {
-		this.fID = getNodeAttribute(node, "id"); //$NON-NLS-1$
-		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
-		NodeList children = node.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				PluginElement childElement = new PluginElement();
-				childElement.setModel(getModel());
-				childElement.setInTheModel(true);
-				childElement.setParent(this);
-				this.fChildren.add(childElement);
-				childElement.load(child);
-			}
-		}
-		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 
 	public boolean equals(Object obj) {
@@ -80,14 +70,22 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				return false;
 			if (!stringEqualWithNull(target.getId(), getId()))
 				return false;
-			if (!stringEqualWithNull(target.getName(), getName()))
-				return false;
 			if (!stringEqualWithNull(target.getPoint(), getPoint()))
+				return false;
+			if (!nameEqual(target.getName()))
 				return false;
 			// Children
 			return super.equals(obj);
 		}
 		return false;
+	}
+	
+	private boolean nameEqual(String targetName) {
+		// Since extension registry returns "" when an extension's name == null, we have to do the same when comparing the name of the target.
+		// Note, we only do this if the PluginExtension has an fExtension element which means it's name comes from the extension registry.
+		if (fExtension != null && targetName == null)
+			targetName = ""; //$NON-NLS-1$
+		return stringEqualWithNull(targetName, getName());
 	}
 
 	public void setPoint(String point) throws CoreException {
@@ -135,5 +133,45 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			child.write(indent + PluginElement.ELEMENT_SHIFT, writer);
 		}
 		writer.println(indent + "</extension>"); //$NON-NLS-1$
+	}
+	
+	public String getName() {
+		if (fName == null && fExtension != null) {
+			fName = fExtension.getLabel();
+		}
+		return fName;
+	}
+	
+	public String getId() {
+		if (fID == null && fExtension != null) {
+			fID = fExtension.getUniqueIdentifier();
+			if (fID != null) {
+				String pluginId = getPluginBase().getId();
+				if (fID.startsWith(pluginId)) {
+					String sub = fID.substring(pluginId.length());
+					if (sub.lastIndexOf('.') == 0)
+						fID = sub.substring(1);
+				}
+			}
+		}
+		return fID;
+	}
+	
+	protected ArrayList getChildrenList() {
+		if (fChildren == null) {
+			fChildren = new ArrayList();
+			if (fExtension != null) {
+				if (fExtension != null) {
+					IConfigurationElement[] elements = fExtension.getConfigurationElements();
+					for (int i = 0; i < elements.length;i++) {
+						PluginElement element = new PluginElement(elements[i]);
+						element.setModel(getModel());
+						element.setParent(this);
+						fChildren.add(element);
+					}
+				}
+			}
+		}
+		return fChildren;
 	}
 }

@@ -14,10 +14,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,11 +31,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.SourceLocation;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -72,7 +78,7 @@ public class TargetSourceTab {
 	private Button fRemoveButton;
 	private String fLastUserPath = null;
 	
-	private DialogPage fPage = null;
+	private TargetPlatformPreferencePage fPage = null;
 
 	class NamedElement {
 		String text;
@@ -93,7 +99,7 @@ public class TargetSourceTab {
 			if (element.equals(fUserNode))
 				return fUserLocations.toArray();
 			if (element.equals(fSystemNode))
-				return fExtensionLocations;
+				return getSourceLocations();
 			return new Object[0];
 		}
 
@@ -107,7 +113,7 @@ public class TargetSourceTab {
 
 		public boolean hasChildren(Object element) {
 			if (element.equals(fSystemNode))
-				return fExtensionLocations.length > 0;
+				return true;
 			if (element.equals(fUserNode))
 				return fUserLocations.size() > 0;
 			return false;
@@ -130,7 +136,7 @@ public class TargetSourceTab {
 		}	
 	}
 
-	public TargetSourceTab(DialogPage page) {
+	public TargetSourceTab(TargetPlatformPreferencePage page) {
 		initializeImages();
 		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target); 
 		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional); 
@@ -152,8 +158,9 @@ public class TargetSourceTab {
 	}
 	
 	public void resetExtensionLocations(IPluginModelBase[] models) {
-		fExtensionLocations = SourceLocationManager.computeSourceLocations(models);
+		fTreeViewer.getTree().getItem(0).setExpanded(false);
 		fTreeViewer.refresh(fSystemNode);
+		fExtensionLocations = null;
 	}
 
 	private String encodeSourceLocations() {
@@ -177,6 +184,7 @@ public class TargetSourceTab {
 	public boolean performOk() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations());
+		// fExtensionLocations either equal actual locations or null.  If null, by setting ExtensionLocations to null, the locations will be lazy loaded
 		PDECore.getDefault().getSourceLocationManager().setExtensionLocations(fExtensionLocations);
 		PDECore.getDefault().getJavadocLocationManager().reset();
 		return true;
@@ -240,7 +248,7 @@ public class TargetSourceTab {
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-			IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
+			IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
 			if (point != null)
 				new ShowDescriptionAction(point, true).run();	
 			}
@@ -304,6 +312,34 @@ public class TargetSourceTab {
 		Dialog.applyDialogFont(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
+	}
+	
+	private SourceLocation[] getSourceLocations() {
+		if (fExtensionLocations == null) {
+			ArrayList result = new ArrayList();
+			IExtension[] extensions = fPage.getExtensionRegistry().findExtensions(PDECore.PLUGIN_ID + ".source"); //$NON-NLS-1$
+			State resolverState = fPage.getCurrentState().getState();
+			for (int i = 0; i < extensions.length; i++) {
+				long id = Long.parseLong(((RegistryContributor)extensions[i].getContributor()).getId());
+				BundleDescription desc = resolverState.getBundle(id);
+				IPath path = new Path(desc.getLocation());
+				IConfigurationElement[] children = extensions[i].getConfigurationElements();
+				for (int j = 0; j < children.length; j++) {
+					if (children[j].getName().equals("location")) { //$NON-NLS-1$
+						String pathAttr = children[j].getAttribute("path"); //$NON-NLS-1$
+						path.append(pathAttr);
+						if (path.toFile().exists()) {
+							SourceLocation location = new SourceLocation(path);
+							location.setUserDefined(false);
+							if (!result.contains(location))
+								result.add(location);
+						}
+					}	
+				}
+			}
+			fExtensionLocations = (SourceLocation[])result.toArray(new SourceLocation[result.size()]);
+		}
+		return fExtensionLocations;
 	}
 
 }

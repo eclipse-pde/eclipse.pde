@@ -21,25 +21,25 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements
 		IPluginParent {
-	protected ArrayList fChildren = new ArrayList(1);
+	protected ArrayList fChildren = null;
 
 	public PluginParent() {
 	}
 
 	public void add(int index, IPluginObject child) throws CoreException {
 		ensureModelEditable();
-		fChildren.add(index, child);
+		getChildrenList().add(index, child);
 		postAdd(child);
 	}
 
 	public void add(IPluginObject child) throws CoreException {
 		ensureModelEditable();
-		fChildren.add(child);
+		getChildrenList().add(child);
 		postAdd(child);
 	}
 
 	void appendChild(IPluginElement child) {
-		fChildren.add(child);
+		getChildrenList().add(child);
 	}
 
 	protected void postAdd(IPluginObject child) {
@@ -49,7 +49,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 	}
 
 	public int getChildCount() {
-		return fChildren.size();
+		return getChildrenList().size();
 	}
 
 	public boolean equals(Object obj) {
@@ -64,7 +64,8 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 			IPluginObject[] tchildren = target.getChildren();
 			for (int i = 0; i < tchildren.length; i++) {
 				IPluginObject tchild = tchildren[i];
-				if (tchild.equals(fChildren.get(i)) == false)
+				IPluginObject child = (IPluginObject)getChildrenList().get(i);
+				if (child == null || child.equals(tchild) == false)
 					return false;
 			}
 			return true;
@@ -73,30 +74,36 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 	}
 
 	public int getIndexOf(IPluginObject child) {
-		return fChildren.indexOf(child);
+		return getChildrenList().indexOf(child);
 	}
 
 	public void swap(IPluginObject child1, IPluginObject child2)
 			throws CoreException {
 		ensureModelEditable();
-		int index1 = fChildren.indexOf(child1);
-		int index2 = fChildren.indexOf(child2);
+		int index1 = getChildrenList().indexOf(child1);
+		int index2 = getChildrenList().indexOf(child2);
 		if (index1 == -1 || index2 == -1)
 			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException); 
-		fChildren.set(index2, child1);
-		fChildren.set(index1, child2);
+		getChildrenList().set(index2, child1);
+		getChildrenList().set(index1, child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
 	}
 
 	public IPluginObject[] getChildren() {
-		return (IPluginObject[])fChildren.toArray(new IPluginObject[fChildren.size()]);
+		return (IPluginObject[])getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
 	}
 
 	public void remove(IPluginObject child) throws CoreException {
 		ensureModelEditable();
-		fChildren.remove(child);
+		getChildrenList().remove(child);
 		((PluginObject) child).setInTheModel(false);
 		fireStructureChanged(child, IModelChangedEvent.REMOVE);
+	}
+	
+	protected ArrayList getChildrenList() {
+		if (fChildren == null)
+			fChildren = new ArrayList(1);
+		return fChildren;
 	}
 
 }

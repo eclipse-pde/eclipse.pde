@@ -43,12 +43,10 @@ import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.Node;
 
 
 public class PDEState extends MinimalState {
 	
-	private PDEExtensionRegistry fExtensionRegistry;
 	private PDEAuxiliaryState fAuxiliaryState;
 	
 	private ArrayList fTargetModels = new ArrayList();
@@ -65,7 +63,6 @@ public class PDEState extends MinimalState {
 		fAuxiliaryState = new PDEAuxiliaryState(state.fAuxiliaryState);
 		if (fAuxiliaryState.fPluginInfos.isEmpty()) 
 			fAuxiliaryState.readPluginInfoCache(new File(DIR, Long.toString(fTargetTimestamp) + ".target")); //$NON-NLS-1$
-		fExtensionRegistry = new PDEExtensionRegistry(state.fExtensionRegistry);
 	}
 	
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
@@ -74,21 +71,18 @@ public class PDEState extends MinimalState {
 	
 	public PDEState(URL[] workspace, URL[] target, boolean resolve, IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();	
-		fExtensionRegistry = new PDEExtensionRegistry();
 		fAuxiliaryState = new PDEAuxiliaryState();
 		
 		if (resolve) {
 			readTargetState(target, monitor);
 		} else {
 			createNewTargetState(resolve, target, monitor);	
-			fExtensionRegistry.createExtensionDocument(fState);
 		}
 		createTargetModels(fState.getBundles());
 		
 		if (resolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) //$NON-NLS-1$ //$NON-NLS-2$
 			readWorkspaceState(workspace);
 		
-		fExtensionRegistry.clear();
 		fAuxiliaryState.clear();
 		
 		if (DEBUG)
@@ -112,8 +106,6 @@ public class PDEState extends MinimalState {
 				fState.resolve(false);
 			fId = fState.getBundles().length;
 		}
-		if (!fExtensionRegistry.readExtensionsCache(dir))
-			fExtensionRegistry.saveExtensions(fState, dir);
 	}
 	
 	private void createNewTargetState(boolean resolve, URL[] urls, IProgressMonitor monitor) {
@@ -162,8 +154,7 @@ public class PDEState extends MinimalState {
 		File dir = new File(DIR, Long.toString(workspace) + ".workspace"); //$NON-NLS-1$
 		State localState = readStateCache(dir);
 		fCombined = localState != null 
-						&& fAuxiliaryState.readPluginInfoCache(dir) 
-						&& fExtensionRegistry.readExtensionsCache(dir);
+						&& fAuxiliaryState.readPluginInfoCache(dir);
 		if (fCombined) {
 			long targetCount = fId;
 			BundleDescription[] bundles = localState.getBundles();
@@ -257,13 +248,15 @@ public class PDEState extends MinimalState {
  			bundle.load(desc, this);
   			model.setBundleDescription(desc);
  			model.setBundleModel(bundle);
+ 			bundle.setEditable(false);
  			
  			String filename = (desc.getHost() == null) ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
  			IFile file = project.getFile(filename);
  			if (file.exists()) {
  				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
- 				extensions.load(desc, this);
+ 				extensions.setEditable(false);
  				extensions.setBundleModel(model);
+ 				extensions.load(desc, this);
  				model.setExtensionsModel(extensions);
  			}
  			return model;
@@ -310,7 +303,6 @@ public class PDEState extends MinimalState {
 			}
 			saveState(state, dir);
 			PDEAuxiliaryState.writePluginInfo(models, dir);
-			PDEExtensionRegistry.writeExtensions(models, dir);
 		}
 		clearStaleStates(".target", fTargetTimestamp); //$NON-NLS-1$
 		clearStaleStates(".workspace", timestamp); //$NON-NLS-1$
@@ -358,18 +350,6 @@ public class PDEState extends MinimalState {
 				}
 			}
 		}
-	}	
-	
-	public Node[] getExtensions(long bundleID) {
-		return fExtensionRegistry.getExtensions(bundleID);
-	}
-	
-	public Node[] getExtensionPoints(long bundleID) {
-		return fExtensionRegistry.getExtensionPoints(bundleID);
-	}
-
-	public Node[] getAllExtensions(long bundleID) {
-		return fExtensionRegistry.getAllExtensions(bundleID);
 	}
 	
 	public String getClassName(long bundleID) {
@@ -386,10 +366,6 @@ public class PDEState extends MinimalState {
 	
 	public boolean hasBundleStructure(long bundleID) {
 		return fAuxiliaryState.hasBundleStructure(bundleID);
-	}
-	
-	public String getSchemaVersion(long bundleID) {
-		return fExtensionRegistry.getSchemaVersion(bundleID);	
 	}
 
 	public String getPluginName(long bundleID) {
@@ -436,12 +412,15 @@ public class PDEState extends MinimalState {
 			dir.mkdirs();
 		fAuxiliaryState.savePluginInfo(dir);
 		saveState(dir);
-		fExtensionRegistry.saveExtensions(fState, dir);
 		
 		// resolve state - same steps as when populating a new State
 		resolveState(false);
 		
 		return (BundleDescription[]) descriptions.toArray(new BundleDescription[descriptions.size()]);
+	}
+	
+	public File getTargetDirectory() {
+		return new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 	}
 
 }

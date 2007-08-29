@@ -13,16 +13,15 @@ package org.eclipse.pde.internal.ui.wizards.product;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -197,21 +196,14 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private TreeSet getCurrentIntroIds() {
 		String introId;
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.ui.intro")) {//$NON-NLS-1$
-					IPluginObject[] children = extensions[j].getChildren();
-					for (int k = 0; k < children.length; k++) {
-						IPluginElement element = (IPluginElement)children[k];
-						if ("intro".equals(element.getName())) {//$NON-NLS-1$
-							introId = element.getAttribute("id").getValue(); //$NON-NLS-1$
-							if (introId != null)
-								result.add(introId);
-						}
-					}
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] children = extensions[i].getConfigurationElements();
+			for (int j = 0; j < children.length; j++) {
+				if ("intro".equals(children[j].getName())) {//$NON-NLS-1$
+					introId = children[j].getAttribute("id"); //$NON-NLS-1$
+					if (introId != null)
+						result.add(introId);
 				}
 			}
 		}
@@ -241,7 +233,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = "org.eclipse.ui." + e.getHref().toString(); //$NON-NLS-1$
-		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(extPoint);
+		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);
 		if (point != null)
 			new ShowDescriptionAction(point, true).run();
 		

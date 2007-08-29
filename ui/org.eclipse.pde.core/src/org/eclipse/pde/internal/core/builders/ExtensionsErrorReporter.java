@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -127,16 +126,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR)) //$NON-NLS-1$
 			return;
 		String pointID = element.getAttribute("point"); //$NON-NLS-1$
-		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(pointID);
-		if (point == null) {
+		if (!PDECore.getDefault().getExtensionsRegistry().hasExtensionPoint(pointID)) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_ex_point, pointID), 
 					getLine(element, "point"), severity, PDEMarkerFactory.CAT_OTHER); //$NON-NLS-1$
 			}
 		} else {
-			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			ISchema schema = registry.getSchema(pointID);
+			SchemaRegistry reg = PDECore.getDefault().getSchemaRegistry();
+			ISchema schema = reg.getSchema(pointID);
 			if (schema != null) {
 				validateElement(element, schema, true);
 			}

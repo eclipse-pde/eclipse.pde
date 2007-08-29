@@ -36,6 +36,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
@@ -648,6 +649,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			} catch (CoreException e) {
 			}
 		}
+	}
+	
+	protected PDEExtensionRegistry getExtensionRegistry() {
+		return fPluginsTab.getCurrentExtensionRegistry();
 	}
 	
 }

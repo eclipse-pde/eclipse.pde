@@ -25,7 +25,7 @@ public class WorkspacePluginModel extends WorkspacePluginModelBase implements
 	}
 
 	public IPluginBase createPluginBase() {
-		Plugin plugin = new Plugin();
+		Plugin plugin = new Plugin(!isEditable());
 		plugin.setModel(this);
 		return plugin;
 	}

@@ -52,6 +52,7 @@ public class PDECore extends Plugin {
 	private static PDECore inst;
 	
 	private static IPluginModelBase[] registryPlugins;
+	private static PDEExtensionRegistry fExtensionRegistry = null;
 
 	public static PDECore getDefault() {
 		return inst;
@@ -167,8 +168,12 @@ public class PDECore extends Plugin {
 	}
 
 	public PluginModelManager getModelManager() {
-		if (fModelManager == null)
+		if (fModelManager == null) {
 			fModelManager = new PluginModelManager();
+			// when initializing plug-in models, create the extension registry so it can track relevant (ModelChange) events.
+			if (fExtensionRegistry == null)
+				getExtensionsRegistry();
+		}
 		return fModelManager;
 	}
 	
@@ -192,6 +197,13 @@ public class PDECore extends Plugin {
 		if (fSchemaRegistry == null)
 			fSchemaRegistry = new SchemaRegistry();
 		return fSchemaRegistry;
+	}
+	
+	public PDEExtensionRegistry getExtensionsRegistry() {
+		if (fExtensionRegistry == null) {
+			fExtensionRegistry = new PDEExtensionRegistry();
+		}
+		return fExtensionRegistry;
 	}
 
 	public SourceLocationManager getSourceLocationManager() {
@@ -271,6 +283,10 @@ public class PDECore extends Plugin {
 		if (fModelManager != null) {
 			fModelManager.shutdown();
 			fModelManager = null;
+		}
+		if (fExtensionRegistry != null) {
+			fExtensionRegistry.stop();
+			fExtensionRegistry = null;
 		}
 	}
 }

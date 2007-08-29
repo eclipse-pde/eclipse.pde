@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 					for (int j = 0; j < matches.length; j++) {
 						IDocument document = getDocument(editor, matches[j]);
 						if (document != null)
-							list.add(ManifestEditorOpener.findExactMatch(document, matches[j]));
+							list.add(ManifestEditorOpener.findExactMatch(document, matches[j], editor));
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,58 +14,36 @@ import java.io.PrintWriter;
 
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.core.PDEState;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class Extensions extends AbstractExtensions {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private boolean fValid;
+	private Boolean fValid;
 	private boolean fIsFragment;
-
-	public Extensions() {
+	
+	public Extensions(boolean readOnly) {
+		super(readOnly);
 	}
 
 	void load(Extensions srcPluginBase) {
 		super.load(srcPluginBase);
-		fValid = hasRequiredAttributes();
-	}
-
-	void load(Node node, String schemaVersion) {
-		fSchemaVersion = schemaVersion;
-		if (node == null)
-			return;
-		NodeList children = node.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				processChild(child);
-			}
-		}
-		fValid = hasRequiredAttributes();
 	}
 	
-	void load(PDEState state, long bundleID) {
-		Node[] nodes = state.getAllExtensions(bundleID);
-		for (int i = 0; i < nodes.length; i++) {
-			Node child = nodes[i];
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				processChild(child);
-			}
-		}
-		fValid = hasRequiredAttributes();	
-		fSchemaVersion = state.getSchemaVersion(bundleID);
+	void load(String schemaVersion) {
+		fSchemaVersion = schemaVersion;
 	}
 
 	public void reset() {
 		super.reset();
-		fValid=false;
+		fValid=null;
 	}
 	
 	public boolean isValid() {
-		return fValid;
+		if (fValid == null) {
+			fValid = new Boolean(hasRequiredAttributes());
+		}
+		return fValid.booleanValue();
 	}
 
 	public void write(String indent, PrintWriter writer) {

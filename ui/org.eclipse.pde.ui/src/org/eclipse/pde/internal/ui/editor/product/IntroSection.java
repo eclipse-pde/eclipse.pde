@@ -14,6 +14,8 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -21,11 +23,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -140,26 +140,24 @@ public class IntroSection extends PDESection {
 	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
 		TreeSet result = new TreeSet();
 		String introId;
-		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.ui.intro")) {//$NON-NLS-1$
-					IPluginObject[] children = extensions[j].getChildren();
-					for (int k = 0; k < children.length; k++) {
-						IPluginElement element = (IPluginElement)children[k];
-						if ("introProductBinding".equals(element.getName())) {//$NON-NLS-1$
-							if (element.getAttribute("productId").getValue().equals(getProduct().getId())) { //$NON-NLS-1$
-								if (fManifest == null)
-									fManifest = (IFile)element.getPluginModel().getUnderlyingResource();
-								if (onlyLoadManifest)
-									return;
-								introId = element.getAttribute("introId").getValue(); //$NON-NLS-1$
-								if (introId != null)
-									result.add(introId);
-							}
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro"); //$NON-NLS-1$
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] children = extensions[i].getConfigurationElements();
+			for (int j = 0; j < children.length; j++) {
+				if ("introProductBinding".equals(children[j].getName())) {//$NON-NLS-1$
+					String attribute = children[j].getAttribute("productId"); //$NON-NLS-1$
+					if (attribute != null && attribute.equals(getProduct().getId())) {
+						if (fManifest == null) {
+							IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+							if (base == null)
+								continue;
+							fManifest = (IFile)base.getUnderlyingResource();
 						}
+						if (onlyLoadManifest)
+							return;
+						introId = children[j].getAttribute("introId"); //$NON-NLS-1$
+						if (introId != null)
+							result.add(introId);
 					}
 				}
 			}

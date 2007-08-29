@@ -25,6 +25,10 @@ public class Plugin extends PluginBase implements IPlugin {
 	private String fClassname;
 	private boolean fHasExtensibleAPI;
 
+	public Plugin(boolean readOnly) {
+		super(readOnly);
+	}
+	
 	public String getClassName() {
 		return fClassname;
 	}

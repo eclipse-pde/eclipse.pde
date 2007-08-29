@@ -25,7 +25,7 @@ public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements
 	}
 
 	public IPluginBase createPluginBase() {
-		Fragment fragment = new Fragment();
+		Fragment fragment = new Fragment(!isEditable());
 		fragment.setModel(this);
 		return fragment;
 	}

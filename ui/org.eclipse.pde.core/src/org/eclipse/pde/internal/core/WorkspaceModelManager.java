@@ -14,8 +14,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -191,20 +193,24 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		}
 	}
 	
-	private void processModelChanges() {
-		if (fChangedModels == null)
+	protected void processModelChanges() {
+		processModelChanges("org.eclipse.pde.core.IModelProviderEvent", fChangedModels); //$NON-NLS-1$
+		fChangedModels = null;
+	}
+	
+	protected void processModelChanges(String changeId, ArrayList changedModels) {
+		if (changedModels == null)
 			return;
 		
-		if (fChangedModels.size() == 0) {
-			fChangedModels = null;
+		if (changedModels.size() == 0) {
 			return;
 		}
 
 		ArrayList added = new ArrayList();
 		ArrayList removed = new ArrayList();
 		ArrayList changed = new ArrayList();
-		for (int i = 0; i < fChangedModels.size(); i++) {
-			ModelChange change = (ModelChange) fChangedModels.get(i);
+		for (ListIterator li = changedModels.listIterator(); li.hasNext(); ) {
+			ModelChange change = (ModelChange) li.next();
 			switch (change.type) {
 				case IModelProviderEvent.MODELS_ADDED:
 					added.add(change.model);
@@ -225,16 +231,13 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		if (changed.size() > 0)
 			type |= IModelProviderEvent.MODELS_CHANGED;
 
-		fChangedModels = null;
+		
 		if (type != 0) {
-			final ModelProviderEvent event =
-				new ModelProviderEvent(
-					this,
-					type,
-					(IModel[])added.toArray(new IModel[added.size()]),
-					(IModel[])removed.toArray(new IModel[removed.size()]),
-					(IModel[])changed.toArray(new IModel[changed.size()]));
-			fireModelProviderEvent(event);
+			createAndFireEvent(changeId, 
+					type, 
+					added,
+					removed,
+					changed);
 		}
 	}
 	
@@ -256,6 +259,19 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 			} catch (IOException e) {
 				PDECore.log(e);
 			}
+		}
+	}
+	
+	protected void createAndFireEvent(String eventId, int type, Collection added, Collection removed, Collection changed) {
+		if (eventId.equals("org.eclipse.pde.core.IModelProviderEvent")) { //$NON-NLS-1$
+			final ModelProviderEvent event =
+				new ModelProviderEvent(
+					this,
+					type,
+					(IModel[])added.toArray(new IModel[added.size()]),
+					(IModel[])removed.toArray(new IModel[removed.size()]),
+					(IModel[])changed.toArray(new IModel[changed.size()]));
+			fireModelProviderEvent(event);
 		}
 	}
 }

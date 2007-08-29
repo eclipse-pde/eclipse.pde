@@ -125,4 +125,9 @@ public class ComboPart {
 			return ((Combo) combo).getItemCount();
 		return ((CCombo) combo).getItemCount();
 	}
+	public String[] getItems() {
+		if (combo instanceof Combo) 
+			return ((Combo)combo).getItems();
+		return ((CCombo)combo).getItems();
+	}
 }

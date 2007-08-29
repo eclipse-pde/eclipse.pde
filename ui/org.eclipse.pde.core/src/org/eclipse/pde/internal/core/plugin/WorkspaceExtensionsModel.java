@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -100,18 +98,7 @@ public class WorkspaceExtensionsModel
 	public void load() {
 		if (fUnderlyingResource == null)
 			return;
-		if (fUnderlyingResource.exists()) {
-			try {
-				InputStream stream = new BufferedInputStream(fUnderlyingResource.getContents(true));
-				load(stream, false);
-				stream.close();
-			} catch (Exception e) {
-				PDECore.logException(e);
-			}
-		} else {
-			getExtensions(true);		
-			setLoaded(true);
-		}
+		getExtensions(true);		
 	}
 	
 	protected void updateTimeStamp() {

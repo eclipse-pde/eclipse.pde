@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.core.search.ExtensionPluginSearchScope;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -173,22 +174,32 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private PluginSearchInput getInput() {
-		PluginSearchScope scope =
-			new PluginSearchScope(
-				getWorkspaceScope(),
-				getExternalScope(),
-				getSelectedResources());
-
 		PluginSearchInput input = new PluginSearchInput();
 		int searchFor = getSearchFor();
 		input.setSearchElement(searchFor);
 		input.setSearchLimit(getLimitTo());
-		input.setSearchScope(scope);
+		
+		PluginSearchScope scope = null;
 		String searchString = patternCombo.getText().trim();
-		if (searchFor == PluginSearchInput.ELEMENT_EXTENSION_POINT
-			&& searchString.indexOf('.') == -1) {
-			searchString = "*." + searchString; //$NON-NLS-1$
+		if (searchFor == PluginSearchInput.ELEMENT_EXTENSION_POINT) {
+			if (searchString.indexOf('.') == -1) {
+				searchString = "*." + searchString; //$NON-NLS-1$
+			}
+			// if not using wildcards, use optimized search scope
+			if (searchString.indexOf('*') == -1) {
+				scope = new ExtensionPluginSearchScope(
+						getWorkspaceScope(),
+						getExternalScope(),
+						getSelectedResources(),
+						input);
+			}
 		}
+		if (scope == null)
+			scope = new PluginSearchScope(
+					getWorkspaceScope(),
+					getExternalScope(),
+					getSelectedResources());
+		input.setSearchScope(scope);
 		input.setSearchString(searchString);
 		input.setCaseSensitive(caseSensitive.getSelection());
 		return input;

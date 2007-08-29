@@ -20,7 +20,7 @@ public class ExternalFragmentModel extends ExternalPluginModelBase implements
 	private static final long serialVersionUID = 1L;
 
 	public IPluginBase createPluginBase() {
-		PluginBase base = new Fragment();
+		PluginBase base = new Fragment(true);
 		base.setModel(this);
 		return base;
 	}

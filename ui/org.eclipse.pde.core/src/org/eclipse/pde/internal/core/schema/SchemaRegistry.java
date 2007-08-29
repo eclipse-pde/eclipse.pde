@@ -25,7 +25,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -38,7 +37,7 @@ public class SchemaRegistry {
 	private HashMap fRegistry = new HashMap();
 	
 	public ISchema getSchema(String extPointID) {
-		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(extPointID);
+		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPointID);
 		if (point == null) {
 			// if there is an old schema associated with this extension point, release it.
 			if (fRegistry.containsKey(extPointID))

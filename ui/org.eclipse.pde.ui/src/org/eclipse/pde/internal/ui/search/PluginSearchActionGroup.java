@@ -21,7 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
@@ -107,7 +107,7 @@ public class PluginSearchActionGroup extends ActionGroup {
 			menu.add(new ShowDescriptionAction(extPoint, pointID));
 		} else if (object instanceof IPluginExtension) {
 			String point = ((IPluginExtension)object).getPoint();
-			IPluginExtensionPoint extPoint = PDEStateHelper.findExtensionPoint(point);
+			IPluginExtensionPoint extPoint = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(point);
 			if (extPoint != null)
 				menu.add(new ShowDescriptionAction(extPoint));
 		}
