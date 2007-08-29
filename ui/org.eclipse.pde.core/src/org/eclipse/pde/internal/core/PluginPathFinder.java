@@ -193,6 +193,8 @@ public class PluginPathFinder {
 	}
 	
 	public static boolean isDevLaunchMode() {
+		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
+			return true;
 		String[] args = Platform.getApplicationArgs();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-pdelaunch")) //$NON-NLS-1$

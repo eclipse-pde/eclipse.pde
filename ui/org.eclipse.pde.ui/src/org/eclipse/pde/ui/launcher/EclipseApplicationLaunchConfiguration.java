@@ -30,12 +30,14 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.osgi.framework.Version;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -71,6 +73,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		
 		boolean showSplash = true;
+		Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 		if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -84,13 +87,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
             // add the output folder names
             programArgs.add("-dev"); //$NON-NLS-1$
             programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
-
-    		// necessary for PDE to know how to load plugins when target platform = host platform
-    		// see PluginPathFinder.getPluginPaths()
-     		programArgs.add("-pdelaunch"); //$NON-NLS-1$           
 		} else {
-			Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-
 			String productID = LaunchConfigurationHelper.getProductID(configuration);
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
 					productID, pluginMap, getConfigDir(configuration));
@@ -107,12 +104,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
             // add the output folder names
             programArgs.add("-dev"); //$NON-NLS-1$
             programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
- 
-    		// necessary for PDE to know how to load plugins when target platform = host platform
-    		// see PluginPathFinder.getPluginPaths()
-    		if (pluginMap.containsKey(PDECore.PLUGIN_ID))
-    			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
 		}
+		// necessary for PDE to know how to load plugins when target platform = host platform
+		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
+		IPluginModelBase base = (IPluginModelBase)pluginMap.get(PDECore.PLUGIN_ID);
+		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
+				programArgs.add("-pdelaunch"); //$NON-NLS-1$
 		
 		String[] args = super.getProgramArguments(configuration);
 		for (int i = 0; i < args.length; i++) {
@@ -254,6 +251,24 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				// This check was to warn the user a config.ini needs to be generated. - bug 161265, comment #7
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String[] getVMArguments(ILaunchConfiguration configuration)
+			throws CoreException {
+		String[] vmArgs = super.getVMArguments(configuration);
+		IPluginModelBase base = (IPluginModelBase)LaunchPluginValidator.getPluginsToRun(configuration).get(PDECore.PLUGIN_ID);
+		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
+			// necessary for PDE to know how to load plugins when target platform = host platform
+			// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
+			String[] result = new String[vmArgs.length + 1];
+			System.arraycopy(vmArgs, 0, result, 0, vmArgs.length);
+			result[vmArgs.length] = "-Declipse.pde.launch=true"; //$NON-NLS-1$
+			return result;
+		}
+		return vmArgs;
 	}
 	
 }

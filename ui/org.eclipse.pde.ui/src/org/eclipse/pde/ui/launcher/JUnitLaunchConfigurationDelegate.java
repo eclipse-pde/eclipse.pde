@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -186,8 +187,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
-		if (fPluginMap.containsKey(PDECore.PLUGIN_ID))
-			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
+		IPluginModelBase base = findPlugin(PDECore.PLUGIN_ID);
+		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
+			programArgs.add("-pdelaunch"); //$NON-NLS-1$				
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false)
@@ -254,7 +256,17 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 */
 	public String getVMArguments(ILaunchConfiguration configuration)
 		throws CoreException {
-		return LaunchArgumentsHelper.getUserVMArguments(configuration);
+		String vmArgs = LaunchArgumentsHelper.getUserVMArguments(configuration);
+		
+		// necessary for PDE to know how to load plugins when target platform = host platform
+		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
+		IPluginModelBase base = (IPluginModelBase)LaunchPluginValidator.getPluginsToRun(configuration).get(PDECore.PLUGIN_ID);
+		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
+			if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
+				vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
+			vmArgs = vmArgs.concat("-Declipse.pde.launch=true"); //$NON-NLS-1$
+		}
+		return vmArgs;
 	}
 	
 	/*

@@ -103,5 +103,18 @@ public class VersionUtil {
 		}
 		return false;
 	}
+	
+	public static int compareMacroMinorMicro(Version v1, Version v2) {
+		int result = v1.getMajor() - v2.getMajor();
+		if (result != 0)
+			return result;
+
+		result = v1.getMinor() - v2.getMinor();
+		if (result != 0)
+			return result;
+
+		result = v1.getMicro() - v2.getMicro();
+		return result;
+	}
 
 }
