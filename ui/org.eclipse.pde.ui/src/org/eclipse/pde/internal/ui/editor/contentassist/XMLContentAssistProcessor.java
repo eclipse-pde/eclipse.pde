@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201566
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
@@ -242,7 +243,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 //		String attribute = guess[1];
 		String attrValue = guess[2];
 		
-		IPluginObject obj = XMLUtil.getTopLevelParent((IDocumentElementNode)attr);
+		IPluginObject obj = XMLUtil.getTopLevelParent(attr);
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
 					offset >= attr.getValueOffset()) {
@@ -320,7 +321,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// points do not need to be filtered.  Return the list as is
 		if ((currentAttributeValue == null) || 
 				(currentAttributeValue.length() == 0)) {
-			return convertListToProposal(allExtensionPoints, (IDocumentRange)attribute, offset);
+			return convertListToProposal(allExtensionPoints, attribute, offset);
 		}
 		// Create the filtered proposal list
 		ArrayList filteredProposalList = new ArrayList();
@@ -328,7 +329,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// value
 		filterExtPointAttrProposals(filteredProposalList, allExtensionPoints, currentAttributeValue);
 		// Convert into a digestable list of proposals
-		return convertListToProposal(filteredProposalList, (IDocumentRange)attribute, offset);
+		return convertListToProposal(filteredProposalList, attribute, offset);
 	}
 	
 	/**
@@ -418,7 +419,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		for (int i = 0; i < validValues.size(); i++)
 			addToList(list, currValue, (ISchemaObject)validValues.get(i));
 		
-		return convertListToProposal(list, (IDocumentRange)attr, offset);
+		return convertListToProposal(list, attr, offset);
 	}
 
 	private ICompletionProposal[] computeCompletionProposal(IDocumentElementNode node, int offset, IDocument doc) {
