@@ -589,7 +589,15 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         }   
         
         if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
-            refresh();
+        	refresh();
+        	// Bug 171896
+			// Since the model sends a CHANGE event instead of
+			// an INSERT event on the very first addition to the empty table
+            // Selection should fire here to take this first insertion into account
+            Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
+            if(lastElement != null)
+            {	fPackageViewer.setSelection(new StructuredSelection(lastElement));
+            }
             return;
         }
         

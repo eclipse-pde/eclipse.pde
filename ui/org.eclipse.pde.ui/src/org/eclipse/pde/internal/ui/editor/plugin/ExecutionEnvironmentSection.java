@@ -374,6 +374,14 @@ public class ExecutionEnvironmentSection extends TableSection {
 			updateButtons();
 		} else if (Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT.equals(e.getChangedProperty())){
 			refresh();
+			// Bug 171896
+			// Since the model sends a CHANGE event instead of
+			// an INSERT event on the very first addition to the empty table
+            // Selection should fire here to take this first insertion into account
+			Object lastElement = fEETable.getElementAt(fEETable.getTable().getItemCount() - 1);
+			if(lastElement != null)
+            {	fEETable.setSelection(new StructuredSelection(lastElement));
+            }
 		}
 	}
 
