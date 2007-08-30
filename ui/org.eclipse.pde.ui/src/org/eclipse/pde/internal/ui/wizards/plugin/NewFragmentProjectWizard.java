@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewFragmentProjectWizard extends NewWizard implements IExecutableExtension {
@@ -45,7 +46,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new NewProjectCreationPage("main", fFragmentData, true); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fFragmentData, true, getSelection()); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_ftitle); 
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_fdesc); 
 		addPage(fMainPage);
@@ -84,6 +85,11 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));
+			
+			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
+			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(),
+					workingSets);
+
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

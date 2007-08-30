@@ -19,6 +19,7 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -57,8 +58,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
 	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
 	
-	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment){
-		super(pageName);
+	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment, IStructuredSelection selection){
+		super(pageName, selection, new String[] {  "org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
+				"org.eclipse.pde.ui.pluginWorkingSet", "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$ //$NON-NLS-2$
 		fFragment = fragment;
 		fData = data;
 	}
@@ -219,6 +221,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setTargetVersion(fTargetCombo.getText());
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
+		fData.setWorkingSets(getSelectedWorkingSets());
 	}
 	
     protected boolean validatePage() {

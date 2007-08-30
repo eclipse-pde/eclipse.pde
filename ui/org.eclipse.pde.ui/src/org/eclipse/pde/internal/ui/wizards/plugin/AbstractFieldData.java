@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.ui.IWorkingSet;
 
 public abstract class AbstractFieldData implements IFieldData {
 	
@@ -26,6 +27,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private boolean fSimple;
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 	private String fFramework;
+	private IWorkingSet[] fWorkingSets;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -148,6 +150,14 @@ public abstract class AbstractFieldData implements IFieldData {
 	
 	public void setOSGiFramework(String framework) {
 		fFramework = framework;
+	}
+	
+	public IWorkingSet[] getWorkingSets() { 
+		return fWorkingSets;
+	}
+	
+	public void setWorkingSets(IWorkingSet[] workingSets) {
+		fWorkingSets = workingSets;
 	}
 	
 }

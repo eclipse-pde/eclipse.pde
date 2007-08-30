@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
@@ -67,7 +68,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new NewProjectCreationPage("main", fPluginData, fPureOSGi); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fPluginData, fPureOSGi, getSelection()); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); 
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); 
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -124,6 +125,11 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
+			
+			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
+			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(),
+					workingSets);
+
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
