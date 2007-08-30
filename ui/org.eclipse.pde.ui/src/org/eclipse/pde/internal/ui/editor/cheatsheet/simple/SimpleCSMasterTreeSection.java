@@ -100,8 +100,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	
 	private ControlDecoration fSubStepInfoDecoration;
 	
-	private boolean fDoSelection;
-	
 	/**
 	 * @param formPage
 	 * @param parent
@@ -128,21 +126,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fAddSubStepAction = new SimpleCSAddSubStepAction();
 		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
 		fCollapseAction = null;
-		fDoSelection = true;
-	}
-	
-	/**
-	 * @param select
-	 */
-	private void doSelect(boolean select) {
-		fDoSelection = select;
-	}
-	
-	/**
-	 * @return
-	 */
-	private boolean canSelect() {
-		return fDoSelection;
 	}
 	
 	/* (non-Javadoc)

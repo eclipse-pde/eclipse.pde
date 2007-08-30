@@ -35,6 +35,14 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
     public void addExecutionEnvironment(IExecutionEnvironment env) {
     	addManifestElement(new ExecutionEnvironment(this, env.getId()));
     }
+
+    /**
+     * @param environment
+     * @param index
+     */
+    public void addExecutionEnvironment(ExecutionEnvironment environment, int index) {
+    	addManifestElement(environment, index, true);
+    }
     
     public void addExecutionEnvironments(Object[] envs) {
     	ArrayList list = new ArrayList(envs.length);
@@ -60,7 +68,16 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
     public ExecutionEnvironment removeExecutionEnvironment(ExecutionEnvironment env) {
     	return (ExecutionEnvironment)removeManifestElement(env);
     }
-     
+
+    /**
+     * Remove operation performed using the actual object rather than its value
+     * @param environment
+     * @return
+     */
+    public ExecutionEnvironment removeExecutionEnvironmentUnique(ExecutionEnvironment environment) {
+    	return (ExecutionEnvironment)removeManifestElement(environment, true);
+    }    
+    
     public ExecutionEnvironment[] getEnvironments() {
     	PDEManifestElement[] elements = getElements();
     	ExecutionEnvironment[] result = new ExecutionEnvironment[elements.length];

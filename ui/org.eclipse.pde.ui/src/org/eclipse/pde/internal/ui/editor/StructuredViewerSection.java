@@ -31,6 +31,8 @@ public abstract class StructuredViewerSection extends PDESection implements
 
 	protected StructuredViewerPart fViewerPart;
 
+	private boolean fDoSelection;
+	
 	/**
 	 * Constructor for StructuredViewerSection.
 	 * @param formPage
@@ -49,6 +51,7 @@ public abstract class StructuredViewerSection extends PDESection implements
 		fViewerPart.setMinimumSize(50, 50);
 		FormToolkit toolkit = formPage.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
+		fDoSelection = true;
 	}
 
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
@@ -304,5 +307,19 @@ public abstract class StructuredViewerSection extends PDESection implements
 	protected boolean isDragAndDropEnabled() {
 		return false;
 	}
+	
+	/**
+	 * @param select
+	 */
+	protected void doSelect(boolean select) {
+		fDoSelection = select;
+	}
+	
+	/**
+	 * @return
+	 */
+	protected boolean canSelect() {
+		return fDoSelection;
+	}	
 	
 }

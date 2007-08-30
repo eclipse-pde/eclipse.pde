@@ -195,7 +195,156 @@ public class CompositeManifestHeader extends ManifestHeader {
 		   return (PDEManifestElement)fManifestElements.get(index);
 	   return null;
    }
+   
+   /**
+	 * Method not applicable for headers that are sorted
+	 * @param targetElement
+	 * @return
+	 */
+	public PDEManifestElement getPreviousElement(
+			PDEManifestElement targetElement) {
+		// Ensure we have elements
+		if (fSort == true) {
+			return null;
+		} else if (fManifestElements == null) {
+			return null;
+		} else if (fManifestElements.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target element
+		int targetIndex = fManifestElements.indexOf(targetElement);
+		// Validate index
+		if (targetIndex < 0) {
+			// Target element does not exist
+			return null;
+		} else if (targetIndex == 0) {
+			// Target element has no previous element
+			return null;
+		}
+		// 1 <= index < size()
+		// Get the previous element
+		PDEManifestElement previousElement = 
+			(PDEManifestElement)fManifestElements.get(targetIndex - 1);
 
+		return previousElement;
+	}
 
+	/**
+	 * Method not applicable for headers that are sorted
+	 * @param targetElement
+	 * @return
+	 */
+	public PDEManifestElement getNextElement(PDEManifestElement targetElement) {
+		// Ensure we have elements
+		if (fSort == true) {
+			return null;
+		} else if (fManifestElements == null) {
+			return null;
+		} else if (fManifestElements.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target element
+		int targetIndex = fManifestElements.indexOf(targetElement);
+		// Get the index of the last element
+		int lastIndex = fManifestElements.size() - 1;
+		// Validate index
+		if (targetIndex < 0) {
+			// Target element does not exist
+			return null;
+		} else if (targetIndex >= lastIndex) {
+			// Target element has no next element
+			return null;
+		}
+		// 0 <= index < last element < size()
+		// Get the next element
+		PDEManifestElement nextElement = 
+			(PDEManifestElement)fManifestElements.get(targetIndex + 1);
 
+		return nextElement;
+	}   
+   
+	/**
+	 * Method not applicable for headers that are sorted
+	 * @param element
+	 * @param index
+	 * @param update
+	 */
+	protected void addManifestElement(PDEManifestElement element, int index, boolean update) {
+		// Validate index
+		int elementCount = 0;
+		if (fManifestElements != null) {
+			elementCount = fManifestElements.size();
+		}
+		// 0 <= index <= size()				
+		if (fSort == true) {
+			return;
+		} else if (index < 0) {
+			return;
+		} else if (index > elementCount) {
+			return;
+		}
+		// Set element properties
+		element.setModel(getModel());
+		element.setHeader(this);
+		// Add the element to the list
+		if (fManifestElements == null) {
+			// Initialize the element list if not defined 
+			fManifestElements = new ArrayList(1);
+			// Add the element to the end of the list
+			fManifestElements.add(element);
+		} else {
+			// Add the element to the list at the specified index
+			fManifestElements.add(index, element);
+		}
+		// Fire event
+		if (update) {
+			update(false);
+			fireStructureChanged(element, IModelChangedEvent.INSERT);
+		}
+	}	
+	
+	/**
+	 * Method not applicable for headers that are sorted
+	 * @param targetElement
+	 * @return
+	 */
+	public int indexOf(PDEManifestElement targetElement) {
+		if (fSort) {
+			// Elements are sorted. Position is irrelevant
+			return -1;
+		} else if (fManifestElements == null) {
+			// No elements 
+			return -1;
+		}
+		return fManifestElements.indexOf(targetElement);
+	}
+	
+	/**
+	 * Method not applicable for headers that are sorted
+	 * @param element
+	 * @param update
+	 * @return
+	 */
+	protected PDEManifestElement removeManifestElement(PDEManifestElement element, boolean update) {
+		if (fSort) {
+			return null;
+		} else if (fManifestElements == null) {
+			return null;
+		} else if (fManifestElements.size() == 0) {
+			return null;
+		}
+		// Remove the element
+		boolean removed = fManifestElements.remove(element);
+		PDEManifestElement removedElement = null;
+		if (removed) {
+			removedElement = element;
+		}
+		// Fire event
+		if (update) {
+			update(false);
+			fireStructureChanged(removedElement, IModelChangedEvent.REMOVE);
+		}
+		return removedElement;
+	}	
+	
 }

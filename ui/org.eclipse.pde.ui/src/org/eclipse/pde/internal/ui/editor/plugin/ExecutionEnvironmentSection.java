@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -38,6 +39,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -55,6 +57,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -358,19 +361,18 @@ public class ExecutionEnvironmentSection extends TableSection {
 				if (objects[i] instanceof ExecutionEnvironment) {
                     int index = table.getSelectionIndex();
                     fEETable.remove(objects[i]);
-                    table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
+                    if (canSelect()) {
+                    	table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
+                    }
 				}
 			}
 			updateButtons();
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof ExecutionEnvironment) {
-					fEETable.add(objects[i]);
-				}
-			}
-			if (objects.length > 0)
+			if (objects.length > 0) {
+				fEETable.refresh();
 				fEETable.setSelection(new StructuredSelection(objects[objects.length - 1]));
+			}
 			updateButtons();
 		} else if (Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT.equals(e.getChangedProperty())){
 			refresh();
@@ -480,4 +482,183 @@ public class ExecutionEnvironmentSection extends TableSection {
 		buildJob.schedule();
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
+     */
+    protected boolean isDragAndDropEnabled() {
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+     */
+    public boolean canDragMove(Object[] sourceObjects) {
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public boolean canDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			return false;
+		}
+		// Multiple selection not supported
+		ExecutionEnvironment sourceEEObject = (ExecutionEnvironment)sourceObjects[0];
+		ExecutionEnvironment targetEEObject = (ExecutionEnvironment)targetObject;
+		// Validate model
+		if (validateDropMoveModel(sourceEEObject, targetEEObject) == false) {
+			return false;
+		}		
+		// Validate move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Get the previous element of the target 
+			RequiredExecutionEnvironmentHeader header = getHeader();
+			// Ensure we have a header
+			if (header == null) {
+				return false;
+			}
+			// Get the previous element of the target
+			PDEManifestElement previousElement = 
+				header.getPreviousElement(targetEEObject);
+			// Ensure the previous element is not the source
+			if (sourceEEObject.equals(previousElement)) {
+				return false;
+			}
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Get the previous element of the target 
+			RequiredExecutionEnvironmentHeader header = getHeader();
+			// Ensure we have a header
+			if (header == null) {
+				return false;
+			}			
+			// Get the next element of the target
+			PDEManifestElement nextElement = 
+				header.getNextElement(targetEEObject);
+			// Ensure the next element is not the source
+			if (sourceEEObject.equals(nextElement)) {
+				return false;
+			}			
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Not supported
+			return false;
+		}
+    	return false;
+    }
+    
+	/**
+	 * @param sourceEEObject
+	 * @param targetEEObject
+	 * @return
+	 */
+	private boolean validateDropMoveModel(ExecutionEnvironment sourceEEObject, ExecutionEnvironment targetEEObject) {
+		// Objects have to be from the same model
+		IBundleModel sourceModel = sourceEEObject.getModel();
+		IBundleModel targetModel = targetEEObject.getModel();		
+		if (sourceModel.equals(targetModel)) {
+			return true;
+		}
+		return false;
+	}    
+    
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
+		// Validate target object
+		if ((targetObject instanceof ExecutionEnvironment) == false) {
+			return false;
+		}
+		// Validate source object
+		if (sourceObjects.length != 1) {
+			return false;
+		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
+			return false;
+		}
+		return true;
+	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public void doDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
+			return;
+		}
+		// Multiple selection not supported
+		ExecutionEnvironment sourceEEObject = (ExecutionEnvironment)sourceObjects[0];
+		ExecutionEnvironment targetEEObject = (ExecutionEnvironment)targetObject;
+		// Validate move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Get the header
+			RequiredExecutionEnvironmentHeader header = getHeader();
+			// Ensure we have a header
+			if (header == null) {
+				return;
+			}
+			// Get the index of the target
+			int index = header.indexOf(targetEEObject);
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Add source as sibling of target (before)			
+			header.addExecutionEnvironment(sourceEEObject, index);
+			return;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Get the header
+			RequiredExecutionEnvironmentHeader header = getHeader();
+			// Ensure we have a header
+			if (header == null) {
+				return;
+			}
+			// Get the index of the target
+			int index = header.indexOf(targetEEObject);
+			// Ensure the target index was found
+			if (index == -1) {
+				return;
+			}
+			// Add source as sibling of target (before)			
+			header.addExecutionEnvironment(sourceEEObject, index + 1);
+			return;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// NO-OP.  Not supported
+		}
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
+     */
+    public void doDragRemove(Object[] sourceObjects) {
+    	// Validate source
+		if (sourceObjects == null) {
+			return;
+		} else if (sourceObjects.length != 1) {
+			return;
+		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
+			return;
+		}
+		// Get the source
+		ExecutionEnvironment environment = (ExecutionEnvironment)sourceObjects[0];
+		// Get the header
+		RequiredExecutionEnvironmentHeader header = getHeader();
+		// Ensure we have a header
+		if (header == null) {
+			return;
+		}
+		// Remove the source
+		doSelect(false);
+		header.removeExecutionEnvironmentUnique(environment);
+		doSelect(true);
+    }
+    
 }

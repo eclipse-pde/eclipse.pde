@@ -23,8 +23,9 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * PDEDragAdapter
@@ -131,13 +132,18 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		}
 		// Get the control of the source
 		Control control = ((DragSource)source).getControl();
-		// Ensure we have a tree
-		if ((control instanceof Tree) == false) {
+		// Get the items selected in the tree or table
+		Item[] items = null;
+		if (control instanceof Tree) {
+			// Get the tree's selection
+			items = ((Tree)control).getSelection();
+		} else if (control instanceof Table) {
+			// Get the table's selection
+			items = ((Table)control).getSelection();
+		} else {
 			event.doit = false;
 			return;		
 		}
-		// Get the tree's selection
-		TreeItem[] items = ((Tree)control).getSelection();
 		// Ensure there are selected objects
 		if (items.length == 0) {
 			event.doit = false;
