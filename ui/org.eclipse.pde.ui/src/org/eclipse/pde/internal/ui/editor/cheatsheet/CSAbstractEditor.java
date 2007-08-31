@@ -18,7 +18,6 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -116,7 +115,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		// Configure the dialogs size
-		SWTUtil.setDialogSize(dialog, 400, 300);
+		dialog.getShell().setSize(400, 370);
 		// Check the result
 		if (dialog.open() == Window.OK) {
 			// TODO: MP: COMPCS: HIGH: Automatic save of editor after creating simple cheat sheet?
