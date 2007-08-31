@@ -134,10 +134,10 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
-			Object[] folders = (Object[]) fPluginMap.get(bundle.getSymbolicName());
+			Object[] folders = (Object[]) fPluginMap.get(Long.valueOf(bundle.getBundleId()));
 			if (folders == null) {
 				folders = createPluginFolders(bundle);
-				fPluginMap.put(bundle.getSymbolicName(), folders);
+				fPluginMap.put(Long.valueOf(bundle.getBundleId()), folders);
 			} else {
 				ArrayList folderList = new ArrayList();
 				for (int i = 0; i < folders.length; i++) {
