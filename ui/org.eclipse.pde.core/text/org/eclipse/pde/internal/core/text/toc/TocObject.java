@@ -58,6 +58,10 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 		return list;
 	}
 
+	public boolean isLeafNode() {
+		return !canBeParent();
+	}
+
 	/**
 	 * @return true iff this TOC object is capable of containing children.
 	 */
