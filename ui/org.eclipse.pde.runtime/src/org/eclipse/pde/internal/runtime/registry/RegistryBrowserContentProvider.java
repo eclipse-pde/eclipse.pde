@@ -26,10 +26,9 @@ import org.osgi.framework.Constants;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	private Hashtable fPluginMap = new Hashtable();
-	private boolean fShowRunning;
 	public boolean isInExtensionSet;
 	private TreeViewer fViewer;
-	private int fPluginsTotal;
+	
 	
 	class BundleFolder implements IBundleFolder {
 		private int id;
@@ -85,11 +84,9 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	public RegistryBrowserContentProvider(TreeViewer viewer, boolean showRunning){
+	public RegistryBrowserContentProvider(TreeViewer viewer){
 		super();
 		this.fViewer = viewer;
-		this.fShowRunning = showRunning;
-		this.fPluginsTotal = 0;
 	}
 	
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
@@ -158,30 +155,12 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element instanceof IConfigurationElement) {
 			return ((IConfigurationElement) element).getChildren();
 		}
-		if (element instanceof Bundle[]) {
-			PluginObjectAdapter[] bundles = getPlugins((Bundle[])element);
-			fPluginsTotal = bundles.length;
-			
-			if (fShowRunning){
-				ArrayList resultList = new ArrayList();
-				for (int i = 0; i < bundles.length; i++)
-					if (bundles[i].getObject() instanceof Bundle &&
-							((Bundle)bundles[i].getObject()).getState() == Bundle.ACTIVE)
-						resultList.add(bundles[i]);
-				return resultList.toArray(new Object[resultList.size()]);
-			}
-			return bundles;
+		if (element instanceof PluginObjectAdapter[]) {
+			return (PluginObjectAdapter[])element;
 		}
 		return null;
 	}
 
-	public PluginObjectAdapter[] getPlugins(Bundle[] bundles) {
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < bundles.length; i++)
-			if (bundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null)
-				list.add(new PluginObjectAdapter(bundles[i]));
-		return (PluginObjectAdapter[]) list.toArray(new PluginObjectAdapter[list.size()]);
-	}
 	private Object[] getFolderChildren(Bundle bundle, int id) {
 		Object[] array = null;
 		String bundleId = bundle.getSymbolicName();
@@ -217,18 +196,11 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
-	public void setShowRunning(boolean showRunning){
-		this.fShowRunning = showRunning;
-	}
-	public boolean isShowRunning(){
-		return fShowRunning;
-	}
 	
-	public String getTitleSummary(){
+	public String getTitleSummary(int bundleCount){
 		if (fViewer == null || fViewer.getTree() == null)
 			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0"})); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {new Integer(fViewer.getTree().getItemCount()).toString(), new Integer(fPluginsTotal).toString()}));
+		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(fViewer.getTree().getItemCount()), Integer.toString(bundleCount)}));
 	}
 	
 	private Object[] getManifestHeaderArray(Bundle bundle, String headerKey) {
