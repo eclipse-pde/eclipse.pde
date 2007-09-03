@@ -411,8 +411,8 @@ public abstract class GeneralInfoSection extends PDESection {
 		return null;
 	}
 	
-	protected void createSingleton(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
-		fSingleton = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_singleton, SWT.CHECK);
+	protected void createSingleton(Composite parent, FormToolkit toolkit, IActionBars actionBars, String label) {
+		fSingleton = toolkit.createButton(parent, label, SWT.CHECK);
 		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
 		fSingleton.setLayoutData(td);

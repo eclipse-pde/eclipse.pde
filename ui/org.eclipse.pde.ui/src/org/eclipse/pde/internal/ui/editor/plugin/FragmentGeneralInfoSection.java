@@ -75,7 +75,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		createPluginVersionEntry(parent, toolkit, actionBars);
 		if (!isBundle())
 			createMatchCombo(parent, toolkit, actionBars);
-		createSingleton(parent, toolkit, actionBars);
+		createSingleton(parent, toolkit, actionBars, PDEUIMessages.FragmentGeneralInfoSection_singleton);
 	}
 	
 	private void createPluginIdEntry(Composite parent, FormToolkit toolkit, IActionBars actionBars) {

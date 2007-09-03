@@ -970,6 +970,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditor_DetailExtension_title;
 	public static String ManifestEditor_DetailExtension_new;
+	public static String ManifestEditor_DetailExtension_remove;
 	public static String ManifestEditor_DetailExtension_edit;
 	public static String ManifestEditor_DetailExtension_up;
 	public static String ManifestEditor_DetailExtension_down;
@@ -2373,6 +2374,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginGeneralInfoSection_lazyStart;
 
 	public static String PluginGeneralInfoSection_singleton;
+
+	public static String FragmentGeneralInfoSection_singleton;
 
 	public static String ClassSearchParticipant_taskMessage;
 
