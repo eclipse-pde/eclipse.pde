@@ -131,10 +131,11 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
-			Object[] folders = (Object[]) fPluginMap.get(Long.valueOf(bundle.getBundleId()));
+			String bundleID = new Long(bundle.getBundleId()).toString();
+			Object[] folders = (Object[]) fPluginMap.get(bundleID);
 			if (folders == null) {
 				folders = createPluginFolders(bundle);
-				fPluginMap.put(Long.valueOf(bundle.getBundleId()), folders);
+				fPluginMap.put(bundleID, folders);
 			} else {
 				ArrayList folderList = new ArrayList();
 				for (int i = 0; i < folders.length; i++) {
