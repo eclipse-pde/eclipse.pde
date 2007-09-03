@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -437,11 +438,11 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
 				try {
-					manager.connect(file.getFullPath(), monitor);
+					manager.connect(file.getFullPath(), LocationKind.IFILE, monitor);
 					updateSourceViewer(manager, file);
 				} catch (MalformedTreeException e) {
 				} finally {
-					manager.disconnect(file.getFullPath(), monitor);
+					manager.disconnect(file.getFullPath(), LocationKind.IFILE, monitor);
 				}
 			} catch (CoreException e) {
 			}
@@ -464,7 +465,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	}
 	
 	private void updateSourceViewer(ITextFileBufferManager manager, IFile sourceFile) {
-		IDocument document = manager.getTextFileBuffer(sourceFile.getFullPath()).getDocument();
+		IDocument document = manager.getTextFileBuffer(sourceFile.getFullPath(), LocationKind.IFILE).getDocument();
 		TreeItem item = fInputViewer.getTree().getSelection()[0];
 		IPluginModelBase model = ((ModelChange)item.getParentItem().getData()).getParentModel();
 		
