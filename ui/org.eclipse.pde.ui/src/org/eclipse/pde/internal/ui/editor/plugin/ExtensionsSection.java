@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Peter Friese <peter.friese@gentleware.com> - bug 194529
+ *     Peter Friese <peter.friese@gentleware.com> - bug 194529, bug 196867
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
@@ -96,6 +96,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
+	private static final int BUTTON_MOVE_DOWN = 4;
+	private static final int BUTTON_MOVE_UP = 3;
+	private static final int BUTTON_EDIT = 2;
+	private static final int BUTTON_REMOVE = 1;
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
@@ -105,6 +109,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private SortAction fSortAction;
 	private CollapseAction fCollapseAction;
 
+	private static final int BUTTON_ADD = 0;
+	
 	private static final String[] COMMON_LABEL_PROPERTIES = {
 		"label", //$NON-NLS-1$
 		"name", //$NON-NLS-1$
@@ -155,7 +161,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[]{
-				PDEUIMessages.ManifestEditor_DetailExtension_new, 
+				PDEUIMessages.ManifestEditor_DetailExtension_new,
+				PDEUIMessages.ManifestEditor_DetailExtension_remove,
 				PDEUIMessages.ManifestEditor_DetailExtension_edit,
 				PDEUIMessages.ManifestEditor_DetailExtension_up,
 				PDEUIMessages.ManifestEditor_DetailExtension_down});
@@ -294,20 +301,23 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons(selection.getFirstElement());
-		getTreePart().getButton(1).setVisible(isSelectionEditable(selection));
+		getTreePart().getButton(BUTTON_EDIT).setVisible(isSelectionEditable(selection));
 	}
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case 0 :
+		case BUTTON_ADD :
 			handleNew();
 			break;
-		case 1 :
+		case BUTTON_REMOVE :
+			handleDelete();
+			break;
+		case BUTTON_EDIT :
 			handleEdit();
 			break;
-		case 2 :
+		case BUTTON_MOVE_UP :
 			handleMove(true);
 			break;
-		case 3 :
+		case BUTTON_MOVE_DOWN :
 			handleMove(false);
 			break;
 		}
@@ -632,10 +642,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		selectFirstExtension();
 		boolean editable = model.isEditable();
 		TreePart treePart = getTreePart();
-		treePart.setButtonEnabled(0, editable);
-		treePart.setButtonEnabled(1, false);
-		treePart.setButtonEnabled(3, false);
-		treePart.setButtonEnabled(4, false);
+		treePart.setButtonEnabled(BUTTON_ADD, editable);
+		treePart.setButtonEnabled(BUTTON_REMOVE, false);
+		treePart.setButtonEnabled(BUTTON_EDIT, false);
+		treePart.setButtonEnabled(BUTTON_MOVE_UP, false);
+		treePart.setButtonEnabled(BUTTON_MOVE_DOWN, false);
 		model.addModelChangedListener(this);
 	}
 	private void selectFirstExtension() {
@@ -721,7 +732,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			if (customImage != null)
 				elementImage = customImage;
 			String bodyText = element.getText();
-			boolean hasBodyText = bodyText!=null&&bodyText.length()>0;
+			boolean hasBodyText = bodyText != null && bodyText.length() > 0;
 			if (hasBodyText) {
 				elementImage = PDEPlugin.getDefault().getLabelProvider().get(
 						elementImage, SharedLabelProvider.F_EDIT);
@@ -1102,15 +1113,20 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		boolean sorted = fSortAction != null && fSortAction.isChecked();
 		if (sorted) {
-			getTreePart().setButtonEnabled(2, false);
-			getTreePart().setButtonEnabled(3, false);
+			getTreePart().setButtonEnabled(BUTTON_MOVE_UP, false);
+			getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, false);
 			return;
 		}
 		
 		boolean filtered = fFilteredTree.isFiltered();
 		boolean addEnabled = true;
+		boolean removeEnabled = false;
 		boolean upEnabled = false;
 		boolean downEnabled = false;
+		
+		if (item != null) {
+			removeEnabled = true;
+		}
 		if (filtered) {
 			// Fix for bug 194529 and bug 194828
 			addEnabled = false;
@@ -1138,9 +1154,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					downEnabled = true;
 			}
 		}
-		getTreePart().setButtonEnabled(0, addEnabled);
-		getTreePart().setButtonEnabled(2, upEnabled);
-		getTreePart().setButtonEnabled(3, downEnabled);
+		getTreePart().setButtonEnabled(BUTTON_ADD, addEnabled);
+		getTreePart().setButtonEnabled(BUTTON_REMOVE, removeEnabled);
+		getTreePart().setButtonEnabled(BUTTON_MOVE_UP, upEnabled);
+		getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, downEnabled);
 	}
 
 	/* (non-Javadoc)
