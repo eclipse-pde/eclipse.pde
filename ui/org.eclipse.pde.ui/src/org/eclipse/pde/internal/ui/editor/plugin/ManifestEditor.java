@@ -119,7 +119,10 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (model instanceof IPluginModelBase) {
 				String filename = ((IPluginModelBase)model).isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 				if (!(object instanceof IPluginExtension) && !(object instanceof IPluginExtensionPoint)) {
-					File file = new File(model.getInstallLocation());
+					String installLocation = model.getInstallLocation();
+					if (installLocation == null)
+						return null;
+					File file = new File(installLocation);
 					if (file.isFile()) {
 						if (CoreUtility.jarContainsResource(file, "META-INF/MANIFEST.MF", false)) { //$NON-NLS-1$
 							filename = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
