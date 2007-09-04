@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 181878
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -86,6 +89,10 @@ public class CategorySection extends TreeSection implements
 	private TreeViewer fCategoryViewer;
 	
 	private LabelProvider fSiteLabelProvider;
+
+	private ISiteFeature[] cachedFeatures;
+
+	private IStructuredSelection cachedSelection;
 
 	class CategoryContentProvider extends DefaultContentProvider implements
 			ITreeContentProvider {
@@ -171,7 +178,7 @@ public class CategorySection extends TreeSection implements
 		fModel.addModelChangedListener(this);
 
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fCategoryTreePart = getTreePart();
 		fCategoryViewer = fCategoryTreePart.getTreeViewer();
 		fCategoryViewer.setContentProvider(new CategoryContentProvider());
@@ -418,13 +425,27 @@ public class CategorySection extends TreeSection implements
 	private boolean handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer
 				.getSelection();
-		Object object = ssel.getFirstElement();
-		if (object == null)
-			return true;
-		if (object instanceof ISiteCategoryDefinition) {
-			return handleRemoveCategoryDefinition((ISiteCategoryDefinition) object);
+		Iterator iterator = ssel.iterator();
+		boolean success = true;
+		Set removedCategories = new HashSet();
+		while(iterator.hasNext()) {
+			Object object = iterator.next();
+			if (object == null) continue;
+			if (object instanceof ISiteCategoryDefinition) {
+				if(! handleRemoveCategoryDefinition((ISiteCategoryDefinition) object)) {
+					success = false; 
+				} 
+			} else {
+				//check if some of features was not removed during category removal
+				SiteFeatureAdapter fa = (SiteFeatureAdapter) object;
+				if(removedCategories.contains(fa.category)) continue;
+				
+				if(!handleRemoveSiteFeatureAdapter(fa)) {
+					success = false;
+				}
+			}
 		}
-		return handleRemoveSiteFeatureAdapter((SiteFeatureAdapter) object);
+		return success;
 	}
 
 	private boolean handleRemoveCategoryDefinition(
@@ -517,28 +538,21 @@ public class CategorySection extends TreeSection implements
 				manager);
 
 		ISelection selection = fCategoryViewer.getSelection();
-		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			Object o = ((IStructuredSelection) selection)
-					.getFirstElement();
-			if (o instanceof SiteFeatureAdapter) {
-				final SiteFeatureAdapter adapter = (SiteFeatureAdapter)o;
+		if(!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			final ISiteFeature[] features = getFeaturesFromSelection((IStructuredSelection) selection);
+			if(features.length > 0) {
 				manager.add(new Separator());
-				
-				Action synchronizeAction = new SynchronizePropertiesAction(adapter.feature, fModel);
+				Action synchronizeAction = new SynchronizePropertiesAction(features, fModel);
 				manager.add(synchronizeAction);
-				synchronizeAction.setEnabled(isEditable());
-
 				Action buildAction = new Action(PDEUIMessages.CategorySection_build) { 
-							public void run() {
-								((SiteEditor)getPage().getPDEEditor()).handleBuild(new ISiteFeature[] { adapter.feature });
-							}
-						};
+					public void run() {
+						((SiteEditor)getPage().getPDEEditor()).handleBuild(features);
+					}
+				};
+				buildAction.setEnabled(isEditable());
 				manager.add(buildAction);
-				buildAction.setEnabled(isEditable()&& findFeature(adapter.feature) != null );
-
 			}
 		}
-
 	}
 
 	public boolean doGlobalAction(String actionId) {
@@ -552,6 +566,10 @@ public class CategorySection extends TreeSection implements
 		}
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			return handleRemove();
+		}
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			fCategoryViewer.getTree().selectAll();
+			refresh();
 		}
 		return false;
 	}
@@ -568,11 +586,7 @@ public class CategorySection extends TreeSection implements
 		}
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer
 				.getSelection();
-		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE,
-				!sel.isEmpty()
-						&& sel.getFirstElement() instanceof SiteFeatureAdapter
-						&& findFeature(((SiteFeatureAdapter) sel
-								.getFirstElement()).feature) != null);
+		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE, getFeaturesFromSelection(sel).length > 0);
 		int featureCount = fModel.getSite().getFeatures().length;
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_ALL, featureCount > 0);
 		fCategoryTreePart.setButtonEnabled(BUTTON_IMPORT_ENVIRONMENT, featureCount > 0);
@@ -642,11 +656,25 @@ public class CategorySection extends TreeSection implements
 	private void handleBuild() {
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer
 				.getSelection();
-		if (!sel.isEmpty()
-				&& sel.getFirstElement() instanceof SiteFeatureAdapter) {
-			ISiteFeature feature = ((SiteFeatureAdapter) sel.getFirstElement()).feature;
-			((SiteEditor)getPage().getPDEEditor()).handleBuild(new ISiteFeature[] { feature });
+		((SiteEditor)getPage().getPDEEditor()).handleBuild(getFeaturesFromSelection(sel));
+	}
+
+	private ISiteFeature[] getFeaturesFromSelection(IStructuredSelection sel) {
+		if(sel.isEmpty()) return new ISiteFeature[0];
+		if(cachedSelection == sel) return cachedFeatures;
+		cachedSelection = sel;
+		ArrayList features = new ArrayList(sel.size());
+		Iterator iterator = sel.iterator();
+		while(iterator.hasNext()) {
+			Object next = iterator.next();
+			if(next instanceof SiteFeatureAdapter) {
+				if((((SiteFeatureAdapter) next).feature) != null) {
+					features.add(((SiteFeatureAdapter) next).feature);
+				}
+			}
 		}
+		cachedFeatures = (ISiteFeature[]) features.toArray(new ISiteFeature[features.size()]);
+		return cachedFeatures;
 	}
 
 	/**
@@ -669,16 +697,11 @@ public class CategorySection extends TreeSection implements
 	private void handleImportEnvironment() {
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer
 				.getSelection();
-		ISiteFeature feature = null;
-		if (!sel.isEmpty()
-				&& sel.getFirstElement() instanceof SiteFeatureAdapter) {
-			feature = ((SiteFeatureAdapter) sel.getFirstElement()).feature;
-		}
-		final ISiteFeature selectedFeature = feature;
+		final ISiteFeature[] selectedFeatures = getFeaturesFromSelection(sel);
 		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(),
 				new Runnable() {
 					public void run() {
-						new SynchronizePropertiesAction(selectedFeature,
+						new SynchronizePropertiesAction(selectedFeatures,
 								getModel()).run();
 					}
 				});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 181878
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
@@ -22,21 +23,21 @@ public class SynchronizePropertiesWizard extends Wizard {
 
 	private ISiteModel fModel;
 
-	private ISiteFeature fSiteFeature;
+	private ISiteFeature[] fSiteFeatures;
 
-	public SynchronizePropertiesWizard(ISiteFeature siteFeature,
+	public SynchronizePropertiesWizard(ISiteFeature[] siteFeatures,
 			ISiteModel model) {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.SynchronizePropertiesWizard_wtitle);
-		fSiteFeature = siteFeature;
+		fSiteFeatures = siteFeatures;
 		fModel = model;
 	}
 
 	public void addPages() {
-		fMainPage = new SynchronizePropertiesWizardPage(fSiteFeature, fModel);
+		fMainPage = new SynchronizePropertiesWizardPage(fSiteFeatures, fModel);
 		addPage(fMainPage);
 	}
 

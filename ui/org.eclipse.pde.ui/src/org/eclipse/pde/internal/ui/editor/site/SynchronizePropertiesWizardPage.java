@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 181878
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
@@ -40,7 +41,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	public static final int ALL_FEATURES = 2;
 
-	public static final int ONE_FEATURE = 1;
+	public static final int SELECTED_FEATURES = 1;
 
 	private static final String PREFIX = PDEPlugin.getPluginId()
 			+ ".synchronizeFeatueEnvironment."; //$NON-NLS-1$
@@ -51,22 +52,21 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	private ISiteModel fModel;
 
-	private Button fOneFeatureButton;
+	private Button fSelectedFeaturesButton;
 
-	private ISiteFeature fSiteFeature;
+	private ISiteFeature[] fSiteFeatures;
 
 	/**
 	 * 
-	 * @param siteFeature
+	 * @param siteFeatures
 	 *            selected feature or null
 	 */
-	public SynchronizePropertiesWizardPage(ISiteFeature siteFeature,
+	public SynchronizePropertiesWizardPage(ISiteFeature[] siteFeatures,
 			ISiteModel model) {
 		super("featureSelection"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.SynchronizePropertiesWizardPage_title);
 		setDescription(PDEUIMessages.SynchronizePropertiesWizardPage_desc);
-		fSiteFeature = siteFeature != null && getFeature(siteFeature) != null ? siteFeature
-				: null;
+		fSiteFeatures = siteFeatures != null ? siteFeatures : new ISiteFeature[0];
 		fModel = model;
 	}
 
@@ -82,10 +82,10 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		group.setLayoutData(gd);
 		group.setText(PDEUIMessages.SynchronizePropertiesWizardPage_group);
 
-		fOneFeatureButton = new Button(group, SWT.RADIO);
-		fOneFeatureButton.setText(PDEUIMessages.SynchronizePropertiesWizardPage_oneFeature);
+		fSelectedFeaturesButton = new Button(group, SWT.RADIO);
+		fSelectedFeaturesButton.setText(PDEUIMessages.SynchronizePropertiesWizardPage_selectedFeatures);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fOneFeatureButton.setLayoutData(gd);
+		fSelectedFeaturesButton.setLayoutData(gd);
 
 		fAllFeaturesButton = new Button(group, SWT.RADIO);
 		fAllFeaturesButton.setText(PDEUIMessages.SynchronizePropertiesWizardPage_allFeatures);
@@ -185,24 +185,24 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	}
 
 	private void loadSettings() {
-		if (fSiteFeature != null) {
+		if (fSiteFeatures != null) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings.get(PROP_SYNCHRO_MODE) != null) {
 				int mode = settings.getInt(PROP_SYNCHRO_MODE);
 				switch (mode) {
-				case ONE_FEATURE:
-					fOneFeatureButton.setSelection(true);
+				case SELECTED_FEATURES:
+					fSelectedFeaturesButton.setSelection(true);
 					break;
 				case ALL_FEATURES:
 					fAllFeaturesButton.setSelection(true);
 					break;
 				default:
-					fOneFeatureButton.setSelection(true);
+					fSelectedFeaturesButton.setSelection(true);
 				}
 			} else
-				fOneFeatureButton.setSelection(true);
+				fSelectedFeaturesButton.setSelection(true);
 		} else {
-			fOneFeatureButton.setEnabled(false);
+			fSelectedFeaturesButton.setEnabled(false);
 			fAllFeaturesButton.setSelection(true);
 		}
 	}
@@ -210,8 +210,8 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	private void runOperation(int mode, IProgressMonitor monitor)
 			throws CoreException, InvocationTargetException {
 		ISiteFeature[] siteFeatures;
-		if (mode == ONE_FEATURE) {
-			siteFeatures = new ISiteFeature[] { fSiteFeature };
+		if (mode == SELECTED_FEATURES) {
+			siteFeatures = fSiteFeatures;
 		} else {
 			siteFeatures = fModel.getSite().getFeatures();
 		}
@@ -223,7 +223,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	private int saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 
-		int mode = ONE_FEATURE;
+		int mode = SELECTED_FEATURES;
 
 		if (fAllFeaturesButton.getSelection())
 			mode = ALL_FEATURES;

@@ -1933,7 +1933,7 @@ public class PDEUIMessages extends NLS {
 	public static String SynchronizePropertiesWizardPage_desc;
 	public static String SynchronizePropertiesWizardPage_group;
 	public static String SynchronizationOperation_externalPlugin;
-	public static String SynchronizePropertiesWizardPage_oneFeature;
+	public static String SynchronizePropertiesWizardPage_selectedFeatures;
 	public static String SynchronizationOperation_noDefiningPlugin;
 	public static String SynchronizePropertiesWizardPage_allFeatures;
 	public static String SynchronizePropertiesWizardPage_synchronizing;
