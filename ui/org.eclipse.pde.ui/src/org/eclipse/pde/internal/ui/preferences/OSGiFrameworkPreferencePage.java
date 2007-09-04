@@ -49,14 +49,8 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	
 	class FrameworkLabelProvider extends LabelProvider {
-		private Image image;
-		
-		public FrameworkLabelProvider() {
-			image = PDEPluginImages.DESC_BUNDLE_OBJ.createImage();
-		}
-		
 		public Image getImage(Object element) {
-			return image;
+			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
 		
 		public String getText(Object element) {
@@ -66,11 +60,6 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements
 				return fDefaultFramework.equals(id) ? name + " " + PDEUIMessages.OSGiFrameworkPreferencePage_default : name; //$NON-NLS-1$
 			}
 			return super.getText(element);
-		}
-		
-		public void dispose() {
-			image.dispose();
-			super.dispose();
 		}
 	}
 

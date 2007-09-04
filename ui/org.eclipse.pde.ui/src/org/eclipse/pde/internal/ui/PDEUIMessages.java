@@ -1607,6 +1607,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureImportWizard_operation_multiProblem;
 	public static String FeatureImportWizard_operation_creating2;
 
+	public static String ForbiddenAccessProposal_quickfixMessage;
+
 	public static String UpdateBuildpathWizard_wtitle;
 	public static String UpdateBuildpathWizard_title;
 	public static String UpdateBuildpathWizard_desc;

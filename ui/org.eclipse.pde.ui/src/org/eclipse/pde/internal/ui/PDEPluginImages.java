@@ -54,7 +54,8 @@ public class PDEPluginImages {
 	public static final String OBJ_DESC_GENERATE_CLASS  = NAME_PREFIX + "OBJ_DESC_GENERATE_CLASS"; //$NON-NLS-1$
 	public static final String OBJ_DESC_GENERATE_INTERFACE  = NAME_PREFIX + "OBJ_DESC_GENERATE_INTERFACE"; //$NON-NLS-1$
 	public static final String OBJ_DESC_PACKAGE = NAME_PREFIX + "OBJ_DESC_PACKAGE"; //$NON-NLS-1$
-
+	public static final String OBJ_DESC_BUNDLE = NAME_PREFIX + "OBJ_DESC_BUNDLE"; //$NON-NLS-1$
+	
 	/**
 	 * OBJ16
 	 */
@@ -301,6 +302,7 @@ private static final void initialize() {
 	manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
 	manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
 	manage(OBJ_DESC_PACKAGE, DESC_PACKAGE_OBJ);
+	manage(OBJ_DESC_BUNDLE, DESC_BUNDLE_OBJ);
 }
 
 private static URL makeImageURL(String prefix, String name) {

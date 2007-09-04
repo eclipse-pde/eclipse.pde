@@ -1753,4 +1753,11 @@
                 parentId="org.eclipse.ui.textEditorScope">
           </context>
        </extension>
+       <extension
+             point="org.eclipse.jdt.ui.quickFixProcessors">
+          <quickFixProcessor
+                class="org.eclipse.pde.internal.ui.correction.java.QuickFixProcessor"
+                id="org.eclipse.jdt.ui.text.correction.QuickFixProcessor">
+          </quickFixProcessor>
+       </extension>
 </plugin>
