@@ -21,13 +21,19 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -35,12 +41,20 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.wizards.toc.RegisterTocWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
@@ -50,6 +64,8 @@ import org.eclipse.ui.part.ShowInContext;
  *
  */
 public class TocEditor extends MultiSourceEditor {
+
+	private ImageHyperlink fImageHyperlinkRegisterTOC;
 
 	/**
 	 * 
@@ -297,5 +313,95 @@ public class TocEditor extends MultiSourceEditor {
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new TocSourcePage(editor, title, name);
+	}
+	
+	public void contributeToToolbar(IToolBarManager manager) {
+		// Add the register cheat sheet link to the form title area
+		if (getAggregateModel().isEditable())
+			manager.add(createUIControlConRegisterCS());
+	}
+	
+	/**
+	 * @return
+	 */
+	private ControlContribution createUIControlConRegisterCS() {
+		return new ControlContribution("Register") { //$NON-NLS-1$
+			protected Control createControl(Composite parent) {
+				// Create UI
+				createUIImageHyperlinkRegisterToc(parent);
+				// Create Listener
+				createUIListenerImageHyperlinkRegisterToc();
+				return fImageHyperlinkRegisterTOC;
+			}
+		};			
+	}
+
+	/**
+	 * @param parent
+	 */
+	private void createUIImageHyperlinkRegisterToc(Composite parent) {
+		fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
+		fImageHyperlinkRegisterTOC.setText(
+				PDEUIMessages.TocPage_msgRegisterThisTOC);
+		fImageHyperlinkRegisterTOC.setUnderlined(true);
+		fImageHyperlinkRegisterTOC.setForeground(
+				getToolkit().getHyperlinkGroup().getForeground());
+	}
+
+	/**
+	 * 
+	 */
+	private void createUIListenerImageHyperlinkRegisterToc() {
+		fImageHyperlinkRegisterTOC.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkActivated(HyperlinkEvent e) {
+				handleLinkActivatedRegisterTOC();
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				handleLinkEnteredRegisterTOC(e.getLabel());
+			}
+			public void linkExited(HyperlinkEvent e) {
+				handleLinkExitedRegisterTOC();
+			}
+		});	
+	}
+	
+	/**
+	 * @param message
+	 */
+	private void handleLinkEnteredRegisterTOC(String message) {
+		// Update colour
+		fImageHyperlinkRegisterTOC.setForeground(
+				getToolkit().getHyperlinkGroup().getActiveForeground());
+		// Update IDE status line
+		getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
+	}	
+	
+	/**
+	 *
+	 */
+	private void handleLinkExitedRegisterTOC() {
+		// Update colour
+		fImageHyperlinkRegisterTOC.setForeground(
+				getToolkit().getHyperlinkGroup().getForeground());
+		// Update IDE status line
+		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
+	}		
+	
+	/**
+	 * 
+	 */
+	private void handleLinkActivatedRegisterTOC() {
+		RegisterTocWizard wizard = new RegisterTocWizard((IModel)getAggregateModel());
+		// Initialize the wizard
+		wizard.init(PlatformUI.getWorkbench(), null);
+		// Create the dialog for the wizard
+		WizardDialog dialog = 
+			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(400, 250);
+		// Check the result
+		if (dialog.open() == Window.OK) {
+			// NO-OP
+		}			
 	}
 }

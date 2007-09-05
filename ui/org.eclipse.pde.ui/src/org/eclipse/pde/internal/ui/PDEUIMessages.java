@@ -414,6 +414,7 @@ public class PDEUIMessages extends NLS {
 	public static String TargetContentPage_title;
 
 	public static String TocPage_title;
+	public static String TocPage_msgRegisterThisTOC;
 	public static String TocPage_msgTOCLoadFailure;
 	public static String TocPage_msgTOCParsingFailure;
 	public static String TocPage_addTopic;
@@ -464,6 +465,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String TocWizardPage_book;
 
+	public static String RegisterTocWizard_registerTOC;
+	public static String RegisterTocWizardPage_wizardPageDescription;
+	public static String RegisterTocWizardPage_labelPrimary;
+	
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
 	public static String UpdateSiteWizardPage_description;
