@@ -179,6 +179,9 @@ public interface IHelpContextIds {
 	// Composite Cheat Sheet Editor
 	public static final String COMPOSITE_CS_EDITOR = PREFIX + "composite_cs_editor";	 //$NON-NLS-1$
 	
+	// Register Cheat Sheet Wizard
+	public static final String REGISTER_CS = PREFIX + "register_cs"; //$NON-NLS-1$
+	
 	// Table of Contents Editor
 	public static final String TOC_EDITOR = PREFIX + "toc_editor";	 //$NON-NLS-1$
 	public static final String REGISTER_TOC = PREFIX + "register_toc"; //$NON-NLS-1$

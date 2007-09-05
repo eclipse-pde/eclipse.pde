@@ -302,10 +302,10 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		setControl(container);
 		// Apply the dialog font to all controls using the default font
 		Dialog.applyDialogFont(container);
-		// TODO: MP: MED: CompCS: Update help context ID
+		
 		// Provide functionality for the help button
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
-				IHelpContextIds.NEW_SCHEMA);
+				IHelpContextIds.REGISTER_CS);
 	}
 
 	/**
