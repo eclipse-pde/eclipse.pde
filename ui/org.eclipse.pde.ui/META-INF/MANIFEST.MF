@@ -78,7 +78,6 @@ Require-Bundle:
  org.eclipse.jface.text;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ant.core;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.debug.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jdt.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jdt.debug.ui;bundle-version="[3.2.0,4.0.0)",
@@ -104,7 +103,6 @@ Require-Bundle:
  org.eclipse.jdt.core.manipulation;bundle-version="[1.1.0,2.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
-Import-Package: org.apache.lucene.demo.html,
- org.eclipse.jdt.debug.core,
- com.ibm.icu.text
+Import-Package: com.ibm.icu.text,
+ org.eclipse.jdt.debug.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
