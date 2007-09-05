@@ -1197,6 +1197,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return false;
 		} else if (fFilteredTree.isFiltered()) {
 			return false;
+		} else if (isTreeViewerSorted()) {
+			return false;
 		}
 		return true;
 	}
@@ -1742,6 +1744,16 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			targetElementObject.add(sourceElementObject);
 		}		
 
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean isTreeViewerSorted() {
+		if (fSortAction == null) {
+			return false;
+		}
+		return fSortAction.isChecked();
 	}
 	
 }
