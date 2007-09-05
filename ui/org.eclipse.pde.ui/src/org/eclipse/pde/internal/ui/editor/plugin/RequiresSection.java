@@ -711,6 +711,8 @@ public class RequiresSection
     public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
+		} else if (isTreeViewerSorted()) {
+			return false;
 		}
     	return true;
     }
@@ -921,5 +923,15 @@ public class RequiresSection
 			// NO-OP
 		}    	
     }
+    
+	/**
+	 * @return
+	 */
+	private boolean isTreeViewerSorted() {
+		if (fSortAction == null) {
+			return false;
+		}
+		return fSortAction.isChecked();
+	}    
     
 }
