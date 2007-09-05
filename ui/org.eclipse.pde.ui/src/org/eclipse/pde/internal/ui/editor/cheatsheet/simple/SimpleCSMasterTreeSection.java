@@ -231,6 +231,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
 	public boolean canDragMove(Object[] sourceObjects) {
+		// Validate source objects
+		if (validatePaste(sourceObjects) == false) {
+			return false;
+		}
 		ISelection selection = new StructuredSelection(sourceObjects);
 		return canCut(selection);
 	}
@@ -688,7 +692,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
 	 */
 	public void doDragRemove(Object[] sourceObjects) {
-		if ((sourceObjects[0] instanceof ISimpleCSObject) == false) {
+		// Validate source objects
+		if (validatePaste(sourceObjects) == false) {
 			return;
 		}
 		ISimpleCSObject object = (ISimpleCSObject)sourceObjects[0];
@@ -1319,9 +1324,26 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @return
 	 */
 	private boolean validatePaste(Object targetObject, Object[] sourceObjects) {
+		// Validate target object
 		if ((targetObject instanceof ISimpleCSObject) == false) {
 			return false;
-		} else if (sourceObjects.length == 0) {
+		} 
+		// Validate source objects
+		if (validatePaste(sourceObjects) == false) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validatePaste(Object[] sourceObjects) {
+		// Validate source objects
+		if (sourceObjects == null) {
+			return false;
+		} else if (sourceObjects.length != 1) {
 			return false;
 		} else if ((sourceObjects[0] instanceof ISimpleCSObject) == false) {
 			return false;

@@ -493,6 +493,9 @@ public class ExecutionEnvironmentSection extends TableSection {
      * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
      */
     public boolean canDragMove(Object[] sourceObjects) {
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return false;
+		}
     	return true;
     }
     
@@ -529,7 +532,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			}
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the previous element of the target 
+			// Get the next element of the target 
 			RequiredExecutionEnvironmentHeader header = getHeader();
 			// Ensure we have a header
 			if (header == null) {
@@ -575,10 +578,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if ((targetObject instanceof ExecutionEnvironment) == false) {
 			return false;
 		}
-		// Validate source object
-		if (sourceObjects.length != 1) {
-			return false;
-		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
+		// Validate source objects
+		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
 		}
 		return true;
@@ -640,11 +641,7 @@ public class ExecutionEnvironmentSection extends TableSection {
      */
     public void doDragRemove(Object[] sourceObjects) {
     	// Validate source
-		if (sourceObjects == null) {
-			return;
-		} else if (sourceObjects.length != 1) {
-			return;
-		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
+		if (validateDragMoveSanity(sourceObjects) == false) {
 			return;
 		}
 		// Get the source
@@ -659,6 +656,25 @@ public class ExecutionEnvironmentSection extends TableSection {
 		doSelect(false);
 		header.removeExecutionEnvironmentUnique(environment);
 		doSelect(true);
+    }
+    
+    /**
+     * @param sourceObjects
+     * @return
+     */
+    private boolean validateDragMoveSanity(Object[] sourceObjects) {
+    	// Validate source
+		if (sourceObjects == null) {
+			// No objects
+			return false;
+		} else if (sourceObjects.length != 1) {
+			// Multiple selection not supported
+			return false;
+		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
+			// Must be the right type
+			return false;
+		}    	
+		return true;
     }
     
 }

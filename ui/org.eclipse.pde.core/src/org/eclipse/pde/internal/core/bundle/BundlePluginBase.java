@@ -753,4 +753,118 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		fTarget = target;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getIndexOf(org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public int getIndexOf(IPluginImport targetImport) {
+		if (imports == null) {
+			return -1;
+		}
+		return imports.indexOf(targetImport);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getPreviousImport(org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public IPluginImport getPreviousImport(IPluginImport targetImport) {
+		// Ensure we have imports
+		if (imports == null) {
+			return null;
+		} else if (imports.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target import
+		int targetIndex = getIndexOf(targetImport);
+		// Validate index
+		if (targetIndex < 0) {
+			// Target import does not exist
+			return null;
+		} else if (targetIndex == 0) {
+			// Target import has no previous import
+			return null;
+		}
+		// 1 <= index < size()
+		// Get the previous import
+		IPluginImport previousImport = 
+			(IPluginImport)imports.get(targetIndex - 1);
+
+		return previousImport;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getNextImport(org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public IPluginImport getNextImport(IPluginImport targetImport) {
+		// Ensure we have imports
+		if (imports == null) {
+			return null;
+		} else if (imports.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target import
+		int targetIndex = getIndexOf(targetImport);
+		// Get the index of the last import
+		int lastIndex = imports.size() - 1;
+		// Validate index
+		if (targetIndex < 0) {
+			// Target import does not exist
+			return null;
+		} else if (targetIndex >= lastIndex) {
+			// Target import has no next element
+			return null;
+		}
+		// 0 <= index < last element < size()
+		// Get the next element
+		IPluginImport nextImport = 
+			(IPluginImport)imports.get(targetIndex + 1);
+
+		return nextImport;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#add(org.eclipse.pde.core.plugin.IPluginImport, int)
+	 */
+	public void add(IPluginImport iimport, int index) {
+		int importCount = 0;
+		if (imports != null) {
+			importCount = imports.size();
+		}
+		// Validate index
+		if (index < 0) {
+			return;
+		} else if (index > importCount) {
+			return;
+		}
+		// 0 <= index <= importCount
+		// Add the element to the list
+		if (imports == null) {
+			// Intitialize the imports list by calling getImports()
+			getImports();
+			// Add the import to the end of the list
+			addImport(iimport);
+		} else {
+			// Add the import to the list at the specified index
+			addImport(iimport, index);
+		}
+		// Fire event
+		fireStructureChanged(iimport, true);
+	} 	
+	
+	/**
+	 * @param iimport
+	 * @param index
+	 */
+	private void addImport(IPluginImport iimport, int index) {
+		// Get the header
+		IManifestHeader header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+		if ((header instanceof RequireBundleHeader) == false) {
+			addImport(iimport);
+		} else {		
+			// Add the import to the local container
+			imports.add(index, iimport);
+			// Add the import to the header
+			((RequireBundleHeader)header).addBundle(iimport, index);
+		}
+	}
+	
 }

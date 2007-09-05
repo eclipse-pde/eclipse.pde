@@ -29,13 +29,41 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 		addBundle(iimport.getId(), iimport.getVersion(), iimport.isReexported(), iimport.isOptional());
 	}
 	
+	/**
+	 * @param iimport
+	 * @param index
+	 */
+	public void addBundle(IPluginImport iimport, int index) {
+		String id = iimport.getId();
+		String version = iimport.getVersion();
+		boolean exported = iimport.isReexported();
+		boolean optional = iimport.isOptional();
+		// Adapt the plug-in import to a bundle object
+		RequireBundleObject element = new RequireBundleObject(this, id);
+		// Configure the bundle object
+		configureBundle(version, exported, optional, element); 		
+		// Add the bundle object to the header at the specified index
+		addManifestElement(element, index, true);
+	}
+	
 	public void addBundle(String id) {
 		addBundle(id, null, false, false);
 	}
 	
 	public void addBundle(String id, String version, boolean exported, boolean optional) {
 		RequireBundleObject element = new RequireBundleObject(this, id);
+		configureBundle(version, exported, optional, element); 		
+		addManifestElement(element);
+	}
 
+	/**
+	 * @param version
+	 * @param exported
+	 * @param optional
+	 * @param element
+	 */
+	private void configureBundle(String version, boolean exported,
+			boolean optional, RequireBundleObject element) {
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
 		if (optional)
 			if (bundleManifestVersion > 1)
@@ -50,9 +78,7 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 				element.setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, "true"); //$NON-NLS-1$
 
 		if (version != null && version.trim().length() > 0)
-			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version.trim()); 		
-
-		addManifestElement(element);
+			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version.trim());
 	}
 	
 	public void removeBundle(String id) {

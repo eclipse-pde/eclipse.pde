@@ -33,6 +33,10 @@ public abstract class StructuredViewerSection extends PDESection implements
 
 	private boolean fDoSelection;
 	
+	private PDEDragAdapter fDragAdapter;
+
+	private PDEDropAdapter fDropAdapter;
+	
 	/**
 	 * Constructor for StructuredViewerSection.
 	 * @param formPage
@@ -70,6 +74,9 @@ public abstract class StructuredViewerSection extends PDESection implements
 		// Initialize drag and drop
 		if (isDragAndDropEnabled()) {
 			initializeDragAndDrop();
+		} else {
+			fDragAdapter = null;
+			fDropAdapter = null;			
 		}
 	}
 	
@@ -275,15 +282,28 @@ public abstract class StructuredViewerSection extends PDESection implements
 			return;
 		}
 		// Create drag adapter
-		PDEDragAdapter dragAdapter = new PDEDragAdapter(this);
+		fDragAdapter = new PDEDragAdapter(this);
 		// Create drop adapter
-		PDEDropAdapter dropAdapter = new PDEDropAdapter(viewer, this, dragAdapter);
+		fDropAdapter = new PDEDropAdapter(viewer, this, fDragAdapter);
 		// Add drag support to viewer
 		int dragOperations = getSupportedDNDOperations();
-		viewer.addDragSupport(dragOperations, getDragTransfers(), dragAdapter);
+		viewer.addDragSupport(dragOperations, getDragTransfers(), fDragAdapter);
 		// Add drop support to viewer
 		int dropOperations = dragOperations | DND.DROP_DEFAULT;
-		viewer.addDropSupport(dropOperations, getDropTransfers(), dropAdapter);		
+		viewer.addDropSupport(dropOperations, getDropTransfers(), fDropAdapter);		
+	}
+	
+	/**
+	 * @return The original source objects (dragged)
+	 */
+	protected Object[] getDragSourceObjects() {
+		// Verify DND is enabled
+		if (isDragAndDropEnabled() == false) {
+			return null;
+		} else if (fDragAdapter == null) {
+			return null;
+		}
+		return fDragAdapter.getSourceObjects();
 	}
 	
 	/**
