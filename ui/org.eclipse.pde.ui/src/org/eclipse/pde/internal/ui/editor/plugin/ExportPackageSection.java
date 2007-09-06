@@ -225,6 +225,43 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     /**
      * @return
      */
+    private boolean canAddExportedPackages() {
+    	// Ensure model is editable
+    	if (isEditable() == false) {
+    		return false;
+    	}
+    	// Get the model
+    	IPluginModelBase model = getModel();
+        // Ensure model is defined
+        if (model == null) {
+        	return false;
+        }
+        // Get the underlying resource
+        IResource resource = model.getUnderlyingResource();
+        // Ensure resource is defined
+        if (resource == null) {
+        	return false;
+        }
+        // Get the project
+        IProject project = resource.getProject();
+        // Ensure the project is defined
+        if (project == null) {
+        	return false;
+        }
+        // Ensure the project is a Java project
+        try {
+			if (project.hasNature(JavaCore.NATURE_ID) == false) {
+				return false;
+			}
+		} catch (CoreException e) {
+			return false;
+		}
+		return true;
+    }
+    
+    /**
+     * @return
+     */
     private HashMap createCurrentExportPackageMap() {
     	// Dummy hash map created in order to return a defined but empty map
     	HashMap packageFragments = new HashMap(0);
@@ -337,7 +374,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		Object[] selected = ((IStructuredSelection)fPackageViewer.getSelection()).toArray();
 
 		TablePart tablePart = getTablePart();
-        tablePart.setButtonEnabled(ADD_INDEX, isEditable());
+        tablePart.setButtonEnabled(ADD_INDEX, canAddExportedPackages());
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
     	tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected));  
     	tablePart.setButtonEnabled(CALCULATE_USE_INDEX, isEditable() && fPackageViewer.getTable().getItemCount() > 0);
