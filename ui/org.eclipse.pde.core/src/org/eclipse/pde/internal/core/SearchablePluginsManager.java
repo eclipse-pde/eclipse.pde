@@ -176,7 +176,7 @@ public class SearchablePluginsManager
 						addModel = false;
 				}
 				if (!addModel)
-					break;
+					continue;
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (int i = 0; i < models.length; i++) {
 					if (models[i].isEnabled())
