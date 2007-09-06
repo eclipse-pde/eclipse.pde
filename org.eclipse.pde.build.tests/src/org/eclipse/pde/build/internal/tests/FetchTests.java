@@ -9,12 +9,9 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import java.net.URL;
 import java.util.Properties;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.PDETestCase;
 
 public class FetchTests extends PDETestCase {
