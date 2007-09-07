@@ -71,7 +71,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -136,27 +135,23 @@ public class ContentSection extends TableSection {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		// create radio buttons
-		Composite radios = toolkit.createComposite(client);
-		GridLayout layout = FormLayoutFactory.createSectionClientGridLayout(false, 1);
-		layout.horizontalSpacing = 15;
-		layout.verticalSpacing = 5;
-		radios.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		radios.setLayoutData(gd);
-		
 		SelectionAdapter radioListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				getTarget().setUseAllPlugins(fUseAllPlugins.getSelection());
 			}
 		};
 		
-		fUseAllPlugins = toolkit.createButton(radios, PDEUIMessages.ContentSection_allTarget, SWT.RADIO);
+		fUseAllPlugins = toolkit.createButton(client, PDEUIMessages.ContentSection_allTarget, SWT.RADIO);
 		fUseAllPlugins.addSelectionListener(radioListener);
-		fUseAllPlugins.setLayoutData(new GridData());
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		fUseAllPlugins.setLayoutData(gd);
 		
-		fUseSelectedPlugins = toolkit.createButton(radios, PDEUIMessages.ContentSection_selectedOnly, SWT.RADIO);
-		fUseSelectedPlugins.setLayoutData(new GridData());
+		fUseSelectedPlugins = toolkit.createButton(client, PDEUIMessages.ContentSection_selectedOnly, SWT.RADIO);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.verticalIndent = 5;
+		fUseSelectedPlugins.setLayoutData(gd);
 		
 		// create tab folder widget
 		fTabFolder = new CTabFolder(client, SWT.FLAT|SWT.TOP);

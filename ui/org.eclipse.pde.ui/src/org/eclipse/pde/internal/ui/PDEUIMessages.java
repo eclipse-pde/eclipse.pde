@@ -2638,6 +2638,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_allTarget;
 
+	public static String ContentSection_selectedOnly;
+
 	public static String ContentSection_targetContent;
 
 	public static String ContentSection_targetContentDesc;
