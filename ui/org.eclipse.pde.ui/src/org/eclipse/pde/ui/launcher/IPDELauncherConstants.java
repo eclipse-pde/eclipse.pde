@@ -73,11 +73,24 @@ public interface IPDELauncherConstants {
 	String APP_TO_TEST = "testApplication"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * if the launch should use a specific installed VM install or an Execution Environment 
+	 * to launch with. If the value is <code>false</code>, the launch uses an Execution Environment.
+	 */	
+	String USE_VMINSTALL = "useNamedJRE"; //$NON-NLS-1$
+	
+	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * the name of the VM to launch with.  If the value is <code>null</code>,
 	 * the default workspace VM is used.
 	 */	
 	String VMINSTALL = "vminstall"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a string specifying
+	 * the name of the EE to launch with.
+	 */	
+	String EXECUTION_ENVIRONMENT = "execEnvironment"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is a string specifying

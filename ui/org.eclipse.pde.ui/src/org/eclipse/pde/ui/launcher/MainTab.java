@@ -183,7 +183,10 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	public void validateTab() {
-		setErrorMessage(fDataBlock.validate());
+		String error = fDataBlock.validate();
+		if (error == null)
+			error = fJreBlock.validate();
+		setErrorMessage(error);
 	}
 	
 }

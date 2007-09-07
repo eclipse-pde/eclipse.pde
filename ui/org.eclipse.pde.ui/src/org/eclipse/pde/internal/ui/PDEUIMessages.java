@@ -1091,12 +1091,19 @@ public class PDEUIMessages extends NLS {
 	public static String WorkspaceDataBlock_clearLog;
 	public static String WorkspaceDataBlock_clearWorkspace;
 	public static String BasicLauncherTab_javaExec;
+
+	public static String BasicLauncherTab_unbound;
 	public static String ProgramBlock_runProduct;
+
+	public static String BasicLauncherTab_ee;
 	public static String BasicLauncherTab_jre;
+
+	public static String BasicLauncherTab_environments;
 	public static String BasicLauncherTab_installedJREs;
 	public static String ProgramBlock_programToRun;
 	public static String BasicLauncherTab_bootstrap;
 	public static String BasicLauncherTab_javaExecDefault;
+	public static String BasicLauncherTab_noJreForEeMessage;
 	public static String ProgramBlock_runApplication;
 	public static String JUnitProgramBlock_headless;
 
@@ -2970,6 +2977,10 @@ public class PDEUIMessages extends NLS {
 	public static String HyperlinkActionOpenDescription;
 	public static String HyperlinkActionOpenBundle;
 	public static String HyperlinkActionOpenPackage;
+
+	public static String VMHelper_cannotFindExecEnv;
+
+	public static String VMHelper_noJreForExecEnv;
 	public static String HyperlinkActionOpenResource;
 	public static String HyperlinkActionOpenSchema;
 	public static String HyperlinkActionOpenTranslation;

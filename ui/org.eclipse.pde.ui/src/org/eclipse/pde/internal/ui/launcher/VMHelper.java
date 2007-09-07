@@ -80,7 +80,22 @@ public class VMHelper {
 	public static IVMInstall createLauncher(
 			ILaunchConfiguration configuration)
 	throws CoreException {
-		String vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
+		boolean vmSelected = configuration.getAttribute(IPDELauncherConstants.USE_VMINSTALL, true); //$NON-NLS-1$ //$NON-NLS-2$
+		String vm;
+		if (vmSelected)
+			vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
+		else {
+			String id = configuration.getAttribute(IPDELauncherConstants.EXECUTION_ENVIRONMENT, (String)null);
+			if (id != null) {
+				IExecutionEnvironment ee = getExecutionEnvironment(id);
+				if (ee == null)
+					throw new CoreException(
+						LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.VMHelper_cannotFindExecEnv, id)));
+				vm = getVMInstallName(ee);
+			}
+			else
+				vm = getDefaultVMInstallName();
+		}
 		IVMInstall launcher = getVMInstall(vm);
 		if (launcher == null) 
 			throw new CoreException(
@@ -99,4 +114,28 @@ public class VMHelper {
 		return manager.getExecutionEnvironments();
 	}
 
+	public static IExecutionEnvironment getExecutionEnvironment(String id) {
+		IExecutionEnvironmentsManager manager = 
+			JavaRuntime.getExecutionEnvironmentsManager();
+		return manager.getEnvironment(id);
+	}
+
+	public static String getVMInstallName(IExecutionEnvironment ee) throws CoreException {
+		IVMInstall vmi = ee.getDefaultVM();
+		if (vmi == null) {
+			IVMInstall[] vmis = ee.getCompatibleVMs();
+			for (int i = 0; i < vmis.length; i++) {
+				if (ee.isStrictlyCompatible(vmis[i])) {
+					vmi = vmis[i];
+					break;
+				}
+				if (vmi == null)
+					vmi = vmis[i];
+			}
+			if (vmi == null)
+				throw new CoreException(
+					LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.VMHelper_noJreForExecEnv, ee.getId())));
+		}
+		return vmi.getName();
+	}
 }
