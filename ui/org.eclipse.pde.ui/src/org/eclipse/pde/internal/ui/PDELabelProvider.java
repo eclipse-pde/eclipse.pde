@@ -79,6 +79,7 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -275,7 +276,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			int maxOccurs = rso.getMaxOccurs();
 			int minOccurs = rso.getMinOccurs();
 			if (maxOccurs != 1 || minOccurs != 1) {
-				if (isRTL())
+				if (isRTL() && BidiUtil.isBidiPlatform())
 					text.append('\u200f');
 				text.append(" ("); //$NON-NLS-1$
 				text.append(minOccurs);
@@ -955,12 +956,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 	 */
 	public static String formatVersion(String versionRange) {
 		boolean isBasicVersion = versionRange == null || versionRange.length() == 0 || Character.isDigit(versionRange.charAt(0));
-		if (isBasicVersion)
-			// The versionRange is a single version.  Since parenthesis is neutral, it direction is determined by leading and following character.
-			// Since leading character is arabic and following character is latin, the parenthesis will take default (proper) direction.  
-			// Must have the following character be the latin character to ensure version is formatted as latin (LTR)
-			return "\u200f(\u200e" + versionRange + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		else if (isRTL()) {
+		if (isBasicVersion) {
+			if (BidiUtil.isBidiPlatform())
+				// The versionRange is a single version.  Since parenthesis is neutral, it direction is determined by leading and following character.
+				// Since leading character is arabic and following character is latin, the parenthesis will take default (proper) direction.  
+				// Must have the following character be the latin character to ensure version is formatted as latin (LTR)
+				return "\u200f(\u200e" + versionRange + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return "(" + versionRange + ')'; //$NON-NLS-1$
+		} else if (isRTL() && BidiUtil.isBidiPlatform()) {
 			// when running RTL and formatting a versionRange, we need to break up the String to make sure it is properly formatted.
 			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of latin characaters.  
 			// With specifying this format, if the qualifier has a latin character, it will not be formatted correctly.
