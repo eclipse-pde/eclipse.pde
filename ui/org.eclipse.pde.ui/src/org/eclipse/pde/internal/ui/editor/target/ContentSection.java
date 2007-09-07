@@ -71,6 +71,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -91,8 +92,6 @@ public class ContentSection extends TableSection {
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			ITarget target = getTarget();
-			if (target.useAllPlugins())
-				return new Object[0];
 			if (fLastTab == 0)
 				return target.getPlugins();
 			return target.getFeatures();
@@ -118,6 +117,7 @@ public class ContentSection extends TableSection {
 	private CTabFolder fTabFolder;
 	private int fLastTab;
 	private Button fUseAllPlugins;
+	private Button fUseSelectedPlugins;
 	private Image[] fTabImages;
 	private Button fIncludeOptionalButton;
 	public static final QualifiedName OPTIONAL_PROPERTY = new QualifiedName(IPDEUIConstants.PLUGIN_ID, "target.includeOptional"); //$NON-NLS-1$
@@ -135,20 +135,35 @@ public class ContentSection extends TableSection {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fUseAllPlugins = toolkit.createButton(client, PDEUIMessages.ContentSection_allTarget, SWT.CHECK);
-		fUseAllPlugins.addSelectionListener(new SelectionAdapter() {
+		// create radio buttons
+		Composite radios = toolkit.createComposite(client);
+		GridLayout layout = FormLayoutFactory.createSectionClientGridLayout(false, 1);
+		layout.horizontalSpacing = 15;
+		layout.verticalSpacing = 5;
+		radios.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		radios.setLayoutData(gd);
+		
+		SelectionAdapter radioListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				getTarget().setUseAllPlugins(fUseAllPlugins.getSelection());
 			}
-		});
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fUseAllPlugins.setLayoutData(gd);
+		};
 		
+		fUseAllPlugins = toolkit.createButton(radios, PDEUIMessages.ContentSection_allTarget, SWT.RADIO);
+		fUseAllPlugins.addSelectionListener(radioListener);
+		fUseAllPlugins.setLayoutData(new GridData());
+		
+		fUseSelectedPlugins = toolkit.createButton(radios, PDEUIMessages.ContentSection_selectedOnly, SWT.RADIO);
+		fUseSelectedPlugins.setLayoutData(new GridData());
+		
+		// create tab folder widget
 		fTabFolder = new CTabFolder(client, SWT.FLAT|SWT.TOP);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 2;
 		gd.horizontalSpan = 2;
+		gd.horizontalIndent = 15;
 		fTabFolder.setLayoutData(gd);
 		toolkit.adapt(fTabFolder, true, true);
 		toolkit.getColors().initializeSectionToolBarColors();
@@ -164,12 +179,14 @@ public class ContentSection extends TableSection {
 		
 		createTabs();
 		
+		// create table widget
 		createViewerPartControl(client, SWT.MULTI, 2, toolkit);
 		
 		TablePart tablePart = getTablePart();
 		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.grabExcessVerticalSpace = true;
 		data.grabExcessHorizontalSpace = true;
+		data.horizontalIndent = 15;
 		fContentViewer = tablePart.getTableViewer();
 		fContentViewer.setContentProvider(new ContentProvider());
 		fContentViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
@@ -188,7 +205,7 @@ public class ContentSection extends TableSection {
 		fContentViewer.setInput(PDECore.getDefault().getModelManager());
 		fContentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
+				updateEnablement();
 			}
 		});
 		
@@ -199,7 +216,7 @@ public class ContentSection extends TableSection {
 		section.setText(PDEUIMessages.ContentSection_targetContent);
 		section.setDescription(PDEUIMessages.ContentSection_targetContentDesc);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
-		updateButtons();
+		updateEnablement();
 		getModel().addModelChangedListener(this);
 	}
 	
@@ -274,17 +291,18 @@ public class ContentSection extends TableSection {
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
 		fContentViewer.refresh();
-		updateButtons();
+		updateEnablement();
 		super.refresh();
 	}
 	
-	protected void updateButtons(){
+	protected void updateEnablement(){
 		boolean useAllPlugins = getTarget().useAllPlugins();
 		fUseAllPlugins.setSelection(useAllPlugins);
-		fTabFolder.setEnabled(!useAllPlugins);
+		fUseSelectedPlugins.setSelection(!useAllPlugins);
 		TablePart table = getTablePart();
 		boolean itemsSelected = !fContentViewer.getSelection().isEmpty();
 		boolean hasItems = fContentViewer.getTable().getItemCount() > 0;
+		table.setEnabled(!useAllPlugins);
 		table.setButtonEnabled(0, isEditable() && !useAllPlugins);
 		table.setButtonEnabled(1, isEditable() && !useAllPlugins && itemsSelected);
 		table.setButtonEnabled(2, isEditable() && !useAllPlugins && hasItems);
@@ -315,7 +333,7 @@ public class ContentSection extends TableSection {
 			handleAddPlugin();
 		else 
 			handleAddFeature();
-		updateButtons();
+		updateEnablement();
 	}
 	
 	private void handleAddPlugin() {
@@ -417,7 +435,7 @@ public class ContentSection extends TableSection {
 				target.removeFeatures(features);
 			}
 		}
-		updateButtons();
+		updateEnablement();
 	}
 	
 	private void handleRemoveAll() {
@@ -434,7 +452,7 @@ public class ContentSection extends TableSection {
 				features[i] = (ITargetFeature)items[i].getData();
 			target.removeFeatures(features);
 		}
-		updateButtons();
+		updateEnablement();
 	}
 	
 	/* (non-Javadoc)
@@ -480,7 +498,7 @@ public class ContentSection extends TableSection {
 			}
 			target.addPlugins((ITargetPlugin[]) plugins.toArray(new ITargetPlugin[plugins.size()]));
 		}
-		updateButtons();
+		updateEnablement();
 	}
 	
 	private IPluginModelBase findModel(IAdaptable object) {
