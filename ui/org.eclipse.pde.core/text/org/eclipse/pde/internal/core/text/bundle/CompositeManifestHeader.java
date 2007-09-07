@@ -85,6 +85,15 @@ public class CompositeManifestHeader extends ManifestHeader {
 	protected void addManifestElement(String value) {
 		addManifestElement(new PDEManifestElement(this, value));
 	}
+
+	/**
+	 * @param value
+	 * @param index
+	 */
+	protected void addManifestElement(String value, int index) {
+		PDEManifestElement element = new PDEManifestElement(this, value); 
+		addManifestElement(element, index, true);
+	}
 	
 	protected void addManifestElement(PDEManifestElement element) {
 		addManifestElement(element, true);

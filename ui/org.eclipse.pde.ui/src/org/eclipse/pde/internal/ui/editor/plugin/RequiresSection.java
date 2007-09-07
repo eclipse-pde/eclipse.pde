@@ -876,7 +876,7 @@ public class RequiresSection
 		// Store index so that the import can be inserted properly into
 		// the table viewer
 		setImportInsertIndex(targetIndex);
-		// Add source as sibling of target (before)			
+		// Add source as sibling of target	
 		bundlePluginBase.add(sourcePluginImport, targetIndex);	
 		// Reset the index
 		resetImportInsertIndex();
@@ -920,7 +920,7 @@ public class RequiresSection
 		try {
 			bundlePluginBase.remove(sourcePluginImport);
 		} catch (CoreException e) {
-			// NO-OP
+			PDEPlugin.logException(e);
 		}    	
     }
     

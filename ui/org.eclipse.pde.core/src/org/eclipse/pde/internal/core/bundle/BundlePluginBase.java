@@ -143,18 +143,26 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			// if libraries == null, initialize the libraries varible by calling getLibraries()
 			getLibraries();
 		libraries.add(library);
-		Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+		IManifestHeader header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
 		if (header instanceof BundleClasspathHeader) {
 			((BundleClasspathHeader)header).addLibrary(library.getName());
 		} else {
-			String value = header == null ? null : ((IManifestHeader)header).getValue();
-			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
-			if (value != null)
-				buffer.append(",\n "); //$NON-NLS-1$
-			buffer.append(library.getName());
-			getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
+			addLibrary(library, header);
 		}
 		fireStructureChanged(library, true);
+	}
+
+	/**
+	 * @param library
+	 * @param header
+	 */
+	private void addLibrary(IPluginLibrary library, IManifestHeader header) {
+		String value = header == null ? null : header.getValue();
+		StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
+		if (value != null)
+			buffer.append(",\n "); //$NON-NLS-1$
+		buffer.append(library.getName());
+		getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
 	}
 
 	/*
@@ -865,6 +873,110 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			// Add the import to the header
 			((RequireBundleHeader)header).addBundle(iimport, index);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary, int)
+	 */
+	public void add(IPluginLibrary library, int index) {
+		int libraryCount = 0;
+		if (libraries != null) {
+			libraryCount = libraries.size();
+		}
+		// Validate index
+		if (index < 0) {
+			return;
+		} else if (index > libraryCount) {
+			return;
+		}
+		// 0 <= index <= libraryCount
+		if (libraries == null) {
+			// Intitialize the library list by calling getLibraries()
+			getLibraries();
+		}
+		// Get the header
+		IManifestHeader header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+		if ((header instanceof BundleClasspathHeader) == false) {
+			// Add the library to the local container
+			libraries.add(library);
+			// Add the library to a newly created header
+			addLibrary(library, header);
+		} else {		
+			// Add the library to the local container at the specified index
+			libraries.add(index, library);
+			// Add the library to the existing header at the specified index
+			((BundleClasspathHeader)header).addLibrary(library.getName(), index);
+		}
+		// Fire event
+		fireStructureChanged(library, true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getIndexOf(org.eclipse.pde.core.plugin.IPluginLibrary)
+	 */
+	public int getIndexOf(IPluginLibrary targetLibrary) {
+		if (libraries == null) {
+			return -1;
+		}
+		return libraries.indexOf(targetLibrary);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getNextLibrary(org.eclipse.pde.core.plugin.IPluginLibrary)
+	 */
+	public IPluginLibrary getNextLibrary(IPluginLibrary targetLibrary) {
+		// Ensure we have libraries
+		if (libraries == null) {
+			return null;
+		} else if (libraries.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target library
+		int targetIndex = getIndexOf(targetLibrary);
+		// Get the index of the last library
+		int lastIndex = libraries.size() - 1;
+		// Validate index
+		if (targetIndex < 0) {
+			// Target library does not exist
+			return null;
+		} else if (targetIndex >= lastIndex) {
+			// Target library has no next element
+			return null;
+		}
+		// 0 <= index < last element < size()
+		// Get the next library
+		IPluginLibrary nextLibrary = 
+			(IPluginLibrary)libraries.get(targetIndex + 1);
+
+		return nextLibrary;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getPreviousLibrary(org.eclipse.pde.core.plugin.IPluginLibrary)
+	 */
+	public IPluginLibrary getPreviousLibrary(IPluginLibrary targetLibrary) {
+		// Ensure we have libraries
+		if (libraries == null) {
+			return null;
+		} else if (libraries.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target library
+		int targetIndex = getIndexOf(targetLibrary);
+		// Validate index
+		if (targetIndex < 0) {
+			// Target library does not exist
+			return null;
+		} else if (targetIndex == 0) {
+			// Target library has no previous library
+			return null;
+		}
+		// 1 <= index < size()
+		// Get the previous library
+		IPluginLibrary previousLibrary = 
+			(IPluginLibrary)libraries.get(targetIndex - 1);
+
+		return previousLibrary;
 	}
 	
 }

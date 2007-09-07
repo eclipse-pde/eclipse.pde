@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
@@ -44,8 +45,10 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -67,6 +70,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -623,7 +627,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginLibrary) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				fLibraryTable.add(changeObject);
+				fLibraryTable.refresh();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
                 fLibraryTable.remove(changeObject);
 			} else {
@@ -730,4 +734,202 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     private IPluginModelBase getModel() {
     	return (IPluginModelBase)getPage().getModel();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
+     */
+    protected boolean isDragAndDropEnabled() {
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+     */
+    public boolean canDragMove(Object[] sourceObjects) {
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return false;
+		}
+    	return true;
+    }    
+    
+    /**
+     * @param sourceObjects
+     * @return
+     */
+    private boolean validateDragMoveSanity(Object[] sourceObjects) {
+    	// Validate source
+		if (sourceObjects == null) {
+			// No objects
+			return false;
+		} else if (sourceObjects.length != 1) {
+			// Multiple selection not supported
+			return false;
+		} else if ((sourceObjects[0] instanceof IPluginLibrary) == false) {
+			// Must be the right type
+			return false;
+		}    	
+		return true;
+    }    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public boolean canDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			return false;
+		}
+		// Multiple selection not supported
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
+		IPluginLibrary targetPluginLibrary = (IPluginLibrary)targetObject;
+		// Validate model
+		if (validateDropMoveModel(sourcePluginLibrary, targetPluginLibrary) == false) {
+			return false;
+		}		
+		// Get the bundle plug-in base
+		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();		
+		// Validate move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Get the previous element of the target 
+			IPluginLibrary previousLibrary = 
+				bundlePluginBase.getPreviousLibrary(targetPluginLibrary);
+			// Ensure the previous element is not the source
+			if (sourcePluginLibrary.equals(previousLibrary)) {
+				return false;
+			}
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Get the next element of the target 
+			IPluginLibrary nextLibrary = 
+				bundlePluginBase.getNextLibrary(targetPluginLibrary);
+			// Ensure the next element is not the source
+			if (sourcePluginLibrary.equals(nextLibrary)) {
+				return false;
+			}
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Not supported
+			return false;
+		}
+    	return false;
+    }
+    
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
+		// Validate target object
+		if ((targetObject instanceof IPluginLibrary) == false) {
+			return false;
+		}
+		// Validate source objects
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @param sourcePluginLibrary
+	 * @param targetPluginLibrary
+	 * @return
+	 */
+	private boolean validateDropMoveModel(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary) {
+		// Objects have to be from the same model
+		ISharedPluginModel sourceModel = sourcePluginLibrary.getModel();
+		ISharedPluginModel targetModel = targetPluginLibrary.getModel();		
+		if (sourceModel.equals(targetModel) == false) {
+			return false;
+		} else if ((getModel().getPluginBase() instanceof IBundlePluginBase) == false) {
+			return false;
+		}
+		return true;
+	}  
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public void doDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
+			return;
+		}
+		// Multiple selection not supported
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
+		IPluginLibrary targetPluginLibrary = (IPluginLibrary)targetObject;
+		// Validate move
+		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) ||
+				(targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
+			// Do move
+			doDropMove(sourcePluginLibrary, targetPluginLibrary, targetLocation);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Not supported
+		}
+    }	
+
+	/**
+	 * @param sourcePluginLibrary
+	 * @param targetPluginLibrary
+	 * @param targetLocation
+	 */
+	private void doDropMove(IPluginLibrary sourcePluginLibrary,
+			IPluginLibrary targetPluginLibrary,
+			int targetLocation) {
+		// Remove the original source object
+		// Normally we remove the original source object after inserting the
+		// serialized source object; however, the libraries are removed via ID
+		// and having both objects with the same ID co-existing will confound
+		// the remove operation
+		doDragRemove();
+		// Get the bundle plug-in base
+		IPluginModelBase model = getModel();
+		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)model.getPluginBase();
+		// Get the index of the target
+		int index = bundlePluginBase.getIndexOf(targetPluginLibrary);
+		// Ensure the target index was found
+		if (index == -1) {
+			return;
+		}
+		// Determine the location index
+		int targetIndex = index;
+		if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			targetIndex++;
+		}
+		// Ensure the plugin library is concrete  
+		if ((sourcePluginLibrary instanceof PluginLibrary) == false) {
+			return;
+		}
+		// Adjust all the source object transient field values to
+		// acceptable values
+		((PluginLibrary)sourcePluginLibrary).reconnect(model, bundlePluginBase);
+		// Add source as sibling of target		
+		bundlePluginBase.add(sourcePluginLibrary, targetIndex);	
+	}
+	
+    /**
+     * 
+     */
+    private void doDragRemove() {
+		// Get the bundle plug-in base
+		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();
+		// Retrieve the original non-serialized source objects dragged initially
+		Object[] sourceObjects = getDragSourceObjects();
+		// Validate source objects
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return;
+		}
+		// Remove the library
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
+		try {
+			bundlePluginBase.remove(sourcePluginLibrary);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}    	
+    }
+	
 }

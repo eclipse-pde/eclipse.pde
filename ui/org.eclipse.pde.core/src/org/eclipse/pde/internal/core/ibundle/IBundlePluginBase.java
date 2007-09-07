@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.ibundle;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
 
 /**
  * This interface represents an adapter that merges the notion of
@@ -35,5 +36,13 @@ public interface IBundlePluginBase extends IPluginBase, IModelChangedListener {
 	public IPluginImport getNextImport(IPluginImport targetImport);
 	
 	public void add(IPluginImport iimport, int index);
+	
+	public int getIndexOf(IPluginLibrary targetLibrary);
+	
+	public IPluginLibrary getPreviousLibrary(IPluginLibrary targetLibrary);
+	
+	public IPluginLibrary getNextLibrary(IPluginLibrary targetLibrary);
+	
+	public void add(IPluginLibrary library, int index);	
 	
 }
