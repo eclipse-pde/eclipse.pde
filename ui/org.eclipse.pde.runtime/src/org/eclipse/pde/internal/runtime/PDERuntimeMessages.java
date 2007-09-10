@@ -84,6 +84,21 @@ public class PDERuntimeMessages extends NLS {
 	public static String OpenLogDialog_title;
 	public static String OpenLogDialog_message;
 	public static String OpenLogDialog_cannotDisplay;
+	
+	public static String SpyDialog_title;
+	public static String SpyDialog_activeShell_title;
+	public static String SpyDialog_activeShell_desc;
+	public static String SpyDialog_activePart_title;
+	public static String SpyDialog_activePart_desc;
+	public static String SpyDialog_activeWizard_title;
+	public static String SpyDialog_activeWizard_desc;
+	public static String SpyDialog_activeWizardPage_desc;
+	public static String SpyDialog_activeMenuIds;
+	public static String SpyDialog_contributingPluginId_title;
+	public static String SpyDialog_contributingPluginId_desc;
+	public static String SpyDialog_activeSelection_title;
+	public static String SpyDialog_activeSelection_desc;
+	public static String SpyDialog_activeSelectionInterfaces_desc;
 
 	static {
 		// load message values from bundle file

@@ -7,12 +7,20 @@ Bundle-Activator: org.eclipse.pde.internal.runtime.PDERuntimePlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
+ org.eclipse.ui.forms;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
- org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional
+ org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
+ org.eclipse.pde.core;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
+ org.eclipse.jdt.core;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
+ org.eclipse.core.resources;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
+ org.eclipse.jdt.ui;bundle-version="[3.3.0,4.0.0)";resolution:=optional
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
  org.eclipse.pde.internal.runtime.logview;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.runtime.registry;x-internal:=true
+ org.eclipse.pde.internal.runtime.registry;x-internal:=true,
+ org.eclipse.pde.internal.runtime.spy;x-internal:=true,
+ org.eclipse.pde.internal.runtime.spy.dialogs;x-internal:=true,
+ org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

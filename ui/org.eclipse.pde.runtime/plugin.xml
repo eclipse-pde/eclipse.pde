@@ -39,6 +39,15 @@
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.pde.runtime.LogView">
       </command>
+      <category
+            id="org.eclipse.pde.runtime.spy.commands.category"
+            name="%spy-category.name">
+      </category>
+      <command
+            categoryId="org.eclipse.pde.runtime.spy.commands.category"
+            id="org.eclipse.pde.runtime.spy.commands.spyCommand"
+            name="%spy-command.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -85,6 +94,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+Q L">
       </key>
+      <key
+            commandId="org.eclipse.pde.runtime.spy.commands.spyCommand"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+M2+F1">
+      </key>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -95,6 +110,13 @@
             name="%content-type.name.log"
             priority="high">
       </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.pde.internal.runtime.spy.handlers.SpyHandler"
+            commandId="org.eclipse.pde.runtime.spy.commands.spyCommand">
+      </handler>
    </extension>
 
 </plugin>

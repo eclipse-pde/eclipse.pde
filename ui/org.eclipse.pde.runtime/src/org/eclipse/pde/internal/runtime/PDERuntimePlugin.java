@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	private static PDERuntimePlugin inst;
-
 	private BundleContext fContext;
+	private ServiceTracker packageAdminTracker;
+	
+	private static boolean isBundleAvailable(String bundleID) {
+		Bundle bundle = Platform.getBundle(bundleID);
+		return bundle != null
+				&& (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0;
+	}
+
+	public static final boolean HAS_IDE_BUNDLES;
+	static {
+		boolean result = false;
+		try {
+			result = isBundleAvailable("org.eclipse.core.resources") //$NON-NLS-1$
+					&& isBundleAvailable("org.eclipse.pde.core") //$NON-NLS-1$
+					&& isBundleAvailable("org.eclipse.jdt.core") //$NON-NLS-1$
+					&& isBundleAvailable("org.eclipse.jdt.ui"); //$NON-NLS-1$
+		} catch (Throwable exception) {}
+		HAS_IDE_BUNDLES = result;
+	}
 
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
@@ -33,6 +54,13 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	public PackageAdmin getPackageAdmin() {
+		if (packageAdminTracker == null) {
+			return null;
+		}
+		return (PackageAdmin) packageAdminTracker.getService();
 	}
 	
 	public static PDERuntimePlugin getDefault() {
@@ -56,6 +84,9 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fContext = context;
+		
+		packageAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+		packageAdminTracker.open();
 	}
 	
 	public BundleContext getBundleContext() {
@@ -67,6 +98,10 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		if (packageAdminTracker != null) {
+			packageAdminTracker.close();
+			packageAdminTracker = null;
+		}
 		inst = null;
 	}
 
