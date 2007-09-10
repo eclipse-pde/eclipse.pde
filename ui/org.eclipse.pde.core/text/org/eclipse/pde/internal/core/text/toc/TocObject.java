@@ -36,6 +36,10 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	{	super(model, tagName);
 	}
 
+	protected String getAttributeIndent() {
+		return " "; //$NON-NLS-1$
+	}
+
 	/**
 	 * @return the children of the object or an empty List if none exist.
 	 */
