@@ -169,12 +169,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private void createBundlePluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
 
-		String[] items = new String[] {
-				PDEUIMessages.DependencyPropertiesDialog_comboInclusive,
-				PDEUIMessages.DependencyPropertiesDialog_comboExclusive };
-		fPluginMinVersionEntry = new FormEntry(client, toolkit,
-				PDEUIMessages.GeneralInfoSection_hostMinVersionRange, 0, 1); 
-		fPluginMinVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+		FormEntryAdapter textListener = new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
 					((IFragment) getPluginBase()).setPluginVersion(getVersion());
@@ -183,10 +178,16 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 			public void textDirty(FormEntry entry) {
-				setMaxFieldsEnabled();
+				setFieldsEnabled();
 				super.textDirty(entry);
 			}
-		});
+		};
+		String[] items = new String[] {
+				PDEUIMessages.DependencyPropertiesDialog_comboInclusive,
+				PDEUIMessages.DependencyPropertiesDialog_comboExclusive };
+		fPluginMinVersionEntry = new FormEntry(client, toolkit,
+				PDEUIMessages.GeneralInfoSection_hostMinVersionRange, 0, 1); 
+		fPluginMinVersionEntry.setFormEntryListener(textListener);
 		fPluginMinVersionEntry.setEditable(isEditable());
 		// Create validator
 		fPluginMinVersionValidator = new TextValidator(getManagedForm(), 
@@ -196,12 +197,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 		};
 		
-		fPluginMinVersionBound = new ComboPart();
-		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
-		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
-		fPluginMinVersionBound.setItems(items);
-		fPluginMinVersionBound.getControl().setEnabled(isEditable());
-		fPluginMinVersionBound.addSelectionListener(new SelectionAdapter() {
+		SelectionAdapter comboListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				try {
 					((IFragment) getPluginBase()).setPluginVersion(getVersion());
@@ -209,19 +205,17 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 					PDEPlugin.logException(e);
 				}
 			}
-		});
+		};
+		fPluginMinVersionBound = new ComboPart();
+		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
+		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
+		fPluginMinVersionBound.setItems(items);
+		fPluginMinVersionBound.getControl().setEnabled(isEditable());
+		fPluginMinVersionBound.addSelectionListener(comboListener);
 		
 		fPluginMaxVersionEntry = new FormEntry(client, toolkit,
 				PDEUIMessages.GeneralInfoSection_hostMaxVersionRange, 0, 1); 
-		fPluginMaxVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				try {
-					((IFragment) getPluginBase()).setPluginVersion(getVersion());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
-		});
+		fPluginMaxVersionEntry.setFormEntryListener(textListener);
 		fPluginMaxVersionEntry.setEditable(isEditable());
 		// Create validator
 		fPluginMaxVersionValidator = new TextValidator(getManagedForm(), 
@@ -235,15 +229,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginMaxVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
 		fPluginMaxVersionBound.setItems(items);
 		fPluginMaxVersionBound.getControl().setEnabled(isEditable());
-		fPluginMaxVersionBound.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				try {
-					((IFragment) getPluginBase()).setPluginVersion(getVersion());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}			
-		});
+		fPluginMaxVersionBound.addSelectionListener(comboListener);
 	}
 
 	/**
@@ -369,10 +355,12 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		return null;
 	}
 
-	private void setMaxFieldsEnabled() {
+	private void setFieldsEnabled() {
+		boolean singleVersion = fPluginMaxVersionEntry.getText().getText().trim().length() == 0;
 		boolean enabled = fPluginMinVersionEntry.getText().getText().trim().length() != 0;
 		fPluginMaxVersionEntry.getText().setEnabled(enabled);
-		fPluginMaxVersionBound.getControl().setEnabled(enabled && isEditable());
+		fPluginMaxVersionBound.getControl().setEnabled(!singleVersion && enabled && isEditable());
+		fPluginMinVersionBound.getControl().setEnabled(!singleVersion && isEditable());
 	}
 	
 	private String getVersion() {
@@ -401,7 +389,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (version == null) {
 			setVersionFields("", true, "", false); //$NON-NLS-1$ //$NON-NLS-2$
-			setMaxFieldsEnabled();
+			setFieldsEnabled();
 			return;
 		}
 		version = version.trim();
@@ -420,7 +408,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 					version.substring(comInd),
 					last == ']');
 		}
-		setMaxFieldsEnabled();
+		setFieldsEnabled();
 	}
 	
 	private void setVersionFields(String minVersion, boolean minInclusive, String maxVersion, boolean maxInclusive) {
