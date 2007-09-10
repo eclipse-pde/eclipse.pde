@@ -59,29 +59,6 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	 * Cache of source containers by location and id (String & String)
 	 */
 	private Map fSourceContainerMap = new HashMap();
-	
-	/**
-	 * Key for source container - combines two strings
-	 */
-	private class ContainerKey {
-		private String fA;
-		private String fB;
-		ContainerKey(String a, String b) {
-			fA = a;
-			fB = b;
-		}
-		public boolean equals(Object obj) {
-			if (obj instanceof ContainerKey) {
-				ContainerKey key = (ContainerKey) obj;
-				return key.fA.equals(fA) && key.fB.equals(fB);
-			}
-			return false;
-		}
-		public int hashCode() {
-			return fA.hashCode() + fB.hashCode();
-		}
-		
-	}
 
 	private static Set fFilteredTypes;
 	
@@ -132,8 +109,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	
 	ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
 		
-		ContainerKey key = new ContainerKey(location, id);
-		ISourceContainer[] containers = (ISourceContainer[]) fSourceContainerMap.get(key);
+		ISourceContainer[] containers = (ISourceContainer[]) fSourceContainerMap.get(location);
 		if (containers != null) {
 			return containers;
 		}
@@ -166,7 +142,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 				ISourceContainer container = getArchiveSourceContainer(location);
 				if (container != null) {
 					containers = new ISourceContainer[] {container};
-					fSourceContainerMap.put(key, containers);
+					fSourceContainerMap.put(location, containers);
 					return containers;
 				}
 			} 
@@ -189,7 +165,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		IRuntimeClasspathEntry[] entries = (IRuntimeClasspathEntry[])
 			 				result.toArray(new IRuntimeClasspathEntry[result.size()]);
 		containers = JavaRuntime.getSourceContainers(entries);
-		fSourceContainerMap.put(key, containers);
+		fSourceContainerMap.put(location, containers);
 		return containers;
 	}
 	
