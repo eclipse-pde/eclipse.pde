@@ -21,12 +21,11 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
  * SimpleCSCommand
  *
  */
-public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand {
+public class SimpleCSCommand extends SimpleCSRunObject implements ISimpleCSCommand {
 
 	private static final long serialVersionUID = 1L;
 
 	// TODO: MP: TEO: HIGH: Verify translate attribute values okay - no translate before
-	// TODO: MP: SimpleCS:  LOW: Implement 'required' attribute 
 	
 	/**
 	 * @param model
@@ -64,48 +63,6 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getConfirm()
-	 */
-	public boolean getConfirm() {
-		return getBooleanAttributeValue(ATTRIBUTE_CONFIRM, false);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
-	 */
-	public String getTranslate() {
-		return getXMLAttributeValue(ATTRIBUTE_TRANSLATE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen()
-	 */
-	public String getWhen() {
-		return getXMLAttributeValue(ATTRIBUTE_WHEN);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setConfirm(boolean)
-	 */
-	public void setConfirm(boolean confirm) {
-		setBooleanAttributeValue(ATTRIBUTE_CONFIRM, confirm);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
-	 */
-	public void setTranslate(String translate) {
-		setXMLAttribute(ATTRIBUTE_TRANSLATE, translate);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
-	 */
-	public void setWhen(String when) {
-		setXMLAttribute(ATTRIBUTE_WHEN, when);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
@@ -132,6 +89,6 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 */
 	public boolean isLeafNode() {
 		return true;
-	}	
+	}
 	
 }

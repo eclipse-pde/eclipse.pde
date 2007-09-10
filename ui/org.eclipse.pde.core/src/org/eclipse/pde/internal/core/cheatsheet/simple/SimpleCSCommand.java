@@ -272,4 +272,11 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 		return new ArrayList();
 	}
 
+	public boolean getRequired() {
+		return false;
+	}
+
+	public void setRequired(boolean required) {
+	}
+
 }

@@ -160,25 +160,6 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	}	
 	
 	/**
-	 * @param newValue
-	 * @param oldValue
-	 */
-	protected void fireStructureChanged(Object newValue,
-			Object oldValue) {
-
-		int changeType = -1;
-		Object object = null;
-		if (newValue == null) {
-			changeType = IModelChangedEvent.REMOVE;
-			object = oldValue;
-		} else {
-			changeType = IModelChangedEvent.INSERT;
-			object = newValue;
-		}
-		fireStructureChanged(object, changeType);
-	}	
-	
-	/**
 	 * @param child
 	 * @param changeType
 	 */
@@ -331,6 +312,8 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param oldNode
 	 */
 	public void setChildNode(IDocumentElementNode newNode, Class clazz) {
+		// Determine whether to fire the event
+		boolean fireEvent = shouldFireEvent();
 		// Get the old node
 		IDocumentElementNode oldNode = getChildNode(clazz);
 		
@@ -342,22 +325,34 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		} else if (newNode == null) {
 			// NEW = NULL, OLD = DEF
 			// Remove the old node
-			removeChildNode((IDocumentElementNode)oldNode, true);
+			removeChildNode(oldNode, fireEvent);
 		} else if (oldNode == null) {
 			// NEW = DEF, OLD = NULL
-			// Add the new node as the first child
-			addChildNode((IDocumentElementNode)newNode, 0, true);
+			// Add the new node to the end of the list
+			addChildNode(newNode, fireEvent);
 		} else {
 			// NEW = DEF, OLD = DEF
-			// Remove the old node
-			removeChildNode((IDocumentElementNode)oldNode, true);
-			// Add the new node as the first child
-			addChildNode((IDocumentElementNode)newNode, 0, true);
+			replaceChildNode(newNode, oldNode, fireEvent);
 		}
-		
-		if (shouldFireEvent()) {
-			fireStructureChanged(newNode, oldNode);
+	}
+
+	/**
+	 * @param newNode
+	 * @param oldNode
+	 * @param fireEvent
+	 */
+	protected void replaceChildNode(IDocumentElementNode newNode,
+			IDocumentElementNode oldNode, boolean fireEvent) {
+		// Get the index of the old node
+		int position = indexOf((IDocumentElementNode)oldNode);
+		// Validate position
+		if (position < 0) {
+			return;
 		}
+		// Add the new node to the same position occupied by the old node
+		addChildNode((IDocumentElementNode)newNode, position, fireEvent);
+		// Remove the old node
+		removeChildNode((IDocumentElementNode)oldNode, fireEvent);
 	}
 	
 	/**

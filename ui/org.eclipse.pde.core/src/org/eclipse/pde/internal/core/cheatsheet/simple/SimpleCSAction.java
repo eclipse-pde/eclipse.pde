@@ -344,4 +344,11 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 		}
 	}
 
+	public boolean getRequired() {
+		return false;
+	}
+
+	public void setRequired(boolean required) {
+	}
+
 }

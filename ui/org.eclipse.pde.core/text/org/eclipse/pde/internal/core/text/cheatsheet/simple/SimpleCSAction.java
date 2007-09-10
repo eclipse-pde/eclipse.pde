@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
  * SimpleCSAction
  *
  */
-public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
+public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction {
 
 	private static final long serialVersionUID = 1L;
 
@@ -107,48 +107,6 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	 */
 	public void setPluginId(String pluginId) {
 		setXMLAttribute(ATTRIBUTE_PLUGINID, pluginId);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getConfirm()
-	 */
-	public boolean getConfirm() {
-		return getBooleanAttributeValue(ATTRIBUTE_CONFIRM, false);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getTranslate()
-	 */
-	public String getTranslate() {
-		return getXMLAttributeValue(ATTRIBUTE_TRANSLATE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen()
-	 */
-	public String getWhen() {
-		return getXMLAttributeValue(ATTRIBUTE_WHEN);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setConfirm(boolean)
-	 */
-	public void setConfirm(boolean confirm) {
-		setBooleanAttributeValue(ATTRIBUTE_CONFIRM, confirm);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)
-	 */
-	public void setTranslate(String translate) {
-		setXMLAttribute(ATTRIBUTE_TRANSLATE, translate);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
-	 */
-	public void setWhen(String when) {
-		setXMLAttribute(ATTRIBUTE_WHEN, when);
 	}
 
 	/* (non-Javadoc)

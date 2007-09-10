@@ -365,6 +365,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
+	public static String SimpleCSCommandDetails_UICheckBoxOptionalCommand;
+
 	public static String SimpleCSItemDetails_msgFieldDisabledOptional;
 
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledCommand;

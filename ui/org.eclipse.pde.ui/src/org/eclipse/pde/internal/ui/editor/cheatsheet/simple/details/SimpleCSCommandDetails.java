@@ -72,6 +72,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	
 	private Button fCommandBrowse;
 
+	private Button fCommandOptional;	
+	
 	private static final String F_NO_COMMAND = PDEUIMessages.SimpleCSCommandDetails_6;
 	
 	private static final int F_COMMAND_INSERTION_INDEX = 1;
@@ -87,6 +89,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandCombo = null;
 		fCommandInfoDecoration = null;
 		fCommandBrowse = null;
+		fCommandOptional = null;
 	}
 	
 	/* (non-Javadoc)
@@ -169,6 +172,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		TableColumn tableColumn2 = new TableColumn(fCommandTable, SWT.LEFT);
 		tableColumn2.setText(PDEUIMessages.SimpleCSItemDetails_10);
 	
+		// Attribute: required
+		fCommandOptional = 
+			getToolkit().createButton(commandSectionClient,
+				PDEUIMessages.SimpleCSCommandDetails_UICheckBoxOptionalCommand,
+				SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = columnSpan;
+		fCommandOptional.setLayoutData(data);
+		fCommandOptional.setForeground(foreground);
 		
 		// Bind widgets
 		toolkit.paintBordersFor(commandSectionClient);
@@ -228,6 +240,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				}
 				// Update the master section buttons
 				getMasterSection().updateButtons();
+				// Update the optional command checkbox
+				updateUICommandOptional();
 			}
 		});
 		
@@ -251,10 +265,30 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					updateCommandCombo(dialog.getCommand(), true);
 					// Update the master section buttons
 					getMasterSection().updateButtons();
+					// Update the optional command checkbox
+					updateUICommandOptional();
 				}						
 			}
 		});	
 		
+		// Attribute: required
+		fCommandOptional.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				// Ensure data object is defined
+				if (fRun == null) {
+					return;
+				}
+				// Get the command
+				ISimpleCSCommand commandObject = getCommandObject(fRun);
+				// Ensure the command is defined
+				if (commandObject == null) {
+					return;
+				}
+				// Set required value in model
+				boolean isRequired = (fCommandOptional.getSelection() == false);
+				commandObject.setRequired(isRequired);
+			}
+		});			
 	}
 	
 	/* (non-Javadoc)
@@ -274,7 +308,47 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		} else {
 			updateCommandCombo(command, false);
 		}
+		// Update the optional command checkbox
+		updateUICommandOptional();		
+		// Update command UI enablement
 		updateCommandEnablement();
+	}
+
+	/**
+	 * 
+	 */
+	private void updateUICommandOptional() {
+		// Attribute: required
+		ISimpleCSCommand commandObject = getCommandObject(fRun);
+		if (commandObject == null) {
+			fCommandOptional.setSelection(false);
+			fCommandOptional.setEnabled(false);
+		} else {
+			boolean isOptional = (commandObject.getRequired() == false);
+			fCommandOptional.setSelection(isOptional);
+			fCommandOptional.setEnabled(isEditableElement());
+		}
+	}
+
+	/**
+	 * @param runObject
+	 * @return
+	 */
+	private ISimpleCSCommand getCommandObject(ISimpleCSRun runObject) {
+		// Ensure the run object is defined
+		if (runObject == null) {
+			return null;
+		}
+		// Get the executable
+		ISimpleCSRunContainerObject executable = runObject.getExecutable();
+		// Ensure executable is defined
+		if (executable == null) {
+			return null;
+		} else if (executable.getType() != ISimpleCSConstants.TYPE_COMMAND) {
+			// Not a command
+			return null;
+		}		
+		return (ISimpleCSCommand)executable;
 	}
 
 	/**
@@ -313,7 +387,6 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandCombo.setEnabled(editable);
 		fCommandTable.setEnabled(true);
 		fCommandBrowse.setEnabled(editable);
-		
 	}
 	
 	/**
@@ -327,6 +400,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		ISimpleCSCommand command = 
 			fRun.getModel().getFactory().createSimpleCSCommand(fRun);
 		command.setSerialization(serialization);
+		command.setRequired(false);
 		fRun.setExecutable(command);		
 	}
 	

@@ -75,6 +75,8 @@ public interface ISimpleCSConstants extends ICSConstants{
 	
 	public static final String ATTRIBUTE_CONFIRM = "confirm"; //$NON-NLS-1$	
 	
+	public static final String ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$		
+	
 	public static final String ATTRIBUTE_SERIALIZATION = "serialization"; //$NON-NLS-1$	
 
 	public static final String ATTRIBUTE_RETURNS = "returns"; //$NON-NLS-1$	

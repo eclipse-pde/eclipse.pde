@@ -149,9 +149,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			buffer.append(writeXMLContent());
 		}
 		// Print end element
-		buffer.append(getLineDelimiter() + getIndent());
 		// TODO: MP: TEO: LOW: Replace with XMLPrintHandler constants
 		if (terminate == false) {
+			buffer.append(getLineDelimiter() + getIndent());
 			buffer.append("</"); //$NON-NLS-1$
 			buffer.append(getXMLTagName());
 			buffer.append(">"); //$NON-NLS-1$

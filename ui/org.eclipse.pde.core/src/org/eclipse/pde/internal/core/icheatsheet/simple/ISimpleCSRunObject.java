@@ -53,4 +53,16 @@ public interface ISimpleCSRunObject extends ISimpleCSRunContainerObject {
 	 */
 	public void setTranslate(String translate);	
 	
+	/**
+	 * Attribute: required
+	 * @return
+	 */
+	public boolean getRequired();
+	
+	/**
+	 * Attribute: required
+	 * @param required
+	 */
+	public void setRequired(boolean required);
+
 }
