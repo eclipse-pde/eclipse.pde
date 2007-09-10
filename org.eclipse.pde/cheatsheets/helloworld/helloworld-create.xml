@@ -15,11 +15,19 @@
          To configure PDE, perform the following steps
       </description>
       <subitem label="Select &quot;Window-&gt;Open Perspective-&gt;Other...&quot; from the main menu and choose &quot;Plug-in Development&quot; in order to open the plug-in development perspective" skip="false">
-         <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" confirm="false" translate="">
+         <command
+               confirm="false"
+               required="false"
+               translate=""
+               serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)">
          </command>
       </subitem>
       <subitem label="Select &quot;Window-&gt;Preferences&quot; from the main menu, expand the &quot;Plug-in Development&quot; outline tree node within the resulting dialog, and choose &quot;Target Platform&quot;." skip="false">
-         <command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)" confirm="false" translate="">
+         <command
+               confirm="false"
+               required="false"
+               translate=""
+               serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)">
          </command>
       </subitem>
       <subitem label="Verify that the selected value in the &quot;Location:&quot; combo box points to a valid Eclipse install location." skip="true">
@@ -34,7 +42,11 @@
          To create the plug-in perform the following steps
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; from the main menu, expand the &quot;Plug-in Development&quot; category within the resulting &quot;New Project&quot; dialog box, and choose &quot;Plug-in Project&quot;" skip="false">
-         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)" confirm="false" translate="">
+         <command
+               confirm="false"
+               required="false"
+               translate=""
+               serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)">
          </command>
       </subitem>
       <subitem label="Input &quot;com.example.helloworld&quot; into the &quot;Project Name&quot; text box" skip="false">
@@ -79,7 +91,11 @@
          perform the following steps:
       </description>
       <subitem label="Select the &quot;Overview&quot; tab" skip="false">
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)" confirm="false" translate="">
+         <command
+               confirm="false"
+               required="false"
+               translate=""
+               serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)">
          </command>
       </subitem>
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" skip="false">

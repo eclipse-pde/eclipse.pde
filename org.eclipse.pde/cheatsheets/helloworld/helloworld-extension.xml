@@ -19,7 +19,11 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)" confirm="false" translate="">
+      <command
+            confirm="false"
+            required="false"
+            translate=""
+            serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)">
       </command>
    </item>
    <item title="Open the plug-in editor" dialog="true" skip="false" href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/editor.htm">
@@ -32,7 +36,11 @@
          <br/>
          Alternatively, click the following button to perform the task.
       </description>
-      <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)" confirm="false" translate="">
+      <command
+            confirm="false"
+            required="false"
+            translate=""
+            serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)">
       </command>
    </item>
    <item title="Define a view extension" dialog="true" skip="false" href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/extensions.htm">
@@ -130,7 +138,11 @@
          perform the following steps:
       </description>
       <subitem label="Open the plug-in editor" skip="false">
-         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)" confirm="false" translate="">
+         <command
+               confirm="false"
+               required="false"
+	           translate=""
+               serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/plugin.xml)">
          </command>
       </subitem>
       <subitem label="Select the &quot;Overview&quot; tab to display the &quot;Overview&quot; page" skip="false">
