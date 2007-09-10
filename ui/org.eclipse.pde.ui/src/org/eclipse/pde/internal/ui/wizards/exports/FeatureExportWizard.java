@@ -39,7 +39,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 	public void addPages() {
 		super.addPages();
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel model = manager.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		IFeatureModel model = manager.getDeltaPackFeature();
 		if (model != null) {
 			fPage2 = new CrossPlatformExportPage("environment", model); //$NON-NLS-1$
 			addPage(fPage2);

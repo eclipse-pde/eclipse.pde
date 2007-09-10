@@ -33,7 +33,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	
 	protected void addCrossPlatformOption(Composite comp) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel model = manager.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		IFeatureModel model = manager.getDeltaPackFeature();
         if (model != null) {
 			fMultiPlatform = new Button(comp, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
