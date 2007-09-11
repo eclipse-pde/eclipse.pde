@@ -47,7 +47,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -764,7 +763,7 @@ public class RequiresSection
 		IPluginModelBase targetModel = targetImportObject.getImport().getPluginModel();	
 		if (sourceModel.equals(targetModel) == false) {
 			return false;
-		} else if ((getModel().getPluginBase() instanceof IBundlePluginBase) == false) {
+		} else if ((getModel().getPluginBase() instanceof BundlePluginBase) == false) {
 			return false;
 		}
 		return true;
@@ -789,7 +788,7 @@ public class RequiresSection
 			return false;
 		}
 		// Get the bundle plug-in base
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Get the previous import of the target 
@@ -858,7 +857,7 @@ public class RequiresSection
 		// the remove operation
 		doDragRemove();
 		// Get the bundle plug-in base
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
 		// Get the index of the target
 		int index = bundlePluginBase.getIndexOf(targetPluginImport);
 		// Ensure the target index was found
@@ -908,7 +907,7 @@ public class RequiresSection
      */
     private void doDragRemove() {
 		// Get the bundle plug-in base
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();
+    	BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
 		// Retrieve the original non-serialized source objects dragged initially
 		Object[] sourceObjects = getDragSourceObjects();
 		// Validate source objects

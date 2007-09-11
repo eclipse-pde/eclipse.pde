@@ -48,7 +48,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -788,7 +788,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			return false;
 		}		
 		// Get the bundle plug-in base
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();		
+		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();		
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Get the previous element of the target 
@@ -843,7 +843,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		ISharedPluginModel targetModel = targetPluginLibrary.getModel();		
 		if (sourceModel.equals(targetModel) == false) {
 			return false;
-		} else if ((getModel().getPluginBase() instanceof IBundlePluginBase) == false) {
+		} else if ((getModel().getPluginBase() instanceof BundlePluginBase) == false) {
 			return false;
 		}
 		return true;
@@ -888,7 +888,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		doDragRemove();
 		// Get the bundle plug-in base
 		IPluginModelBase model = getModel();
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)model.getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase)model.getPluginBase();
 		// Get the index of the target
 		int index = bundlePluginBase.getIndexOf(targetPluginLibrary);
 		// Ensure the target index was found
@@ -916,7 +916,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
      */
     private void doDragRemove() {
 		// Get the bundle plug-in base
-		IBundlePluginBase bundlePluginBase = (IBundlePluginBase)getModel().getPluginBase();
+    	BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
 		// Retrieve the original non-serialized source objects dragged initially
 		Object[] sourceObjects = getDragSourceObjects();
 		// Validate source objects
