@@ -62,6 +62,7 @@ public class SpyBuilder {
 		return buffer.toString();
 	}
 	
+	// TODO refactor this to take an array of classes
 	public String generateClassString(String title, Class clazz) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<p>"); //$NON-NLS-1$
