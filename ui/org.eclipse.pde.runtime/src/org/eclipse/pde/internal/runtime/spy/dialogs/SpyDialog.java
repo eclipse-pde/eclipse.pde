@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.runtime.spy.SpyBuilder;
 import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveSelectionSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveShellSection;
+import org.eclipse.pde.internal.runtime.spy.sections.ActiveWizardSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ISpySection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -77,6 +78,9 @@ public class SpyDialog extends PopupDialog {
 		section.build(form, builder, event);
 		
 		section = new ActiveSelectionSection();
+		section.build(form, builder, event);
+		
+		section = new ActiveWizardSection();
 		section.build(form, builder, event);
 
 		parent.pack();
