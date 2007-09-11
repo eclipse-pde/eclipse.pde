@@ -184,4 +184,89 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 				new Object[] {obj1, obj2}, new Object[] {obj2, obj1});
 	}
 
+	/**
+	 * @param targetToken
+	 * @return
+	 */
+	public String getPreviousToken(String targetToken) {
+		// Ensure we have tokens
+		if (fTokens.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target token
+		int targetIndex = fTokens.indexOf(targetToken);
+		// Validate index
+		if (targetIndex < 0) {
+			// Target token does not exist
+			return null;
+		} else if (targetIndex == 0) {
+			// Target token has no previous token
+			return null;
+		}
+		// 1 <= index < size()
+		// Get the previous token
+		String previousToken = 
+			(String)fTokens.get(targetIndex - 1);
+
+		return previousToken;		
+	}
+	
+	/**
+	 * @param targetToken
+	 * @return
+	 */
+	public String getNextToken(String targetToken) {
+		// Ensure we have tokens
+		if (fTokens.size() <= 1) {
+			return null;
+		}
+		// Get the index of the target token
+		int targetIndex = fTokens.indexOf(targetToken);
+		// Get the index of the last token
+		int lastIndex = fTokens.size() - 1;
+		// Validate index
+		if (targetIndex < 0) {
+			// Target token does not exist
+			return null;
+		} else if (targetIndex >= lastIndex) {
+			// Target token has no next token
+			return null;
+		}
+		// 0 <= index < last token < size()
+		// Get the next token
+		String nextToken = 
+			(String)fTokens.get(targetIndex + 1);		
+
+		return nextToken;
+	}
+	
+	/**
+	 * @param targetToken
+	 * @return
+	 */
+	public int getIndexOf(String targetToken) {
+		return fTokens.indexOf(targetToken);
+	}	
+
+	/**
+	 * @param token
+	 * @param position
+	 */
+	public void addToken(String token, int position) {
+		// Validate position
+		if (position < 0) {
+			return;
+		} else if (position > fTokens.size()) {
+			return;
+		}
+		// Ensure no duplicates
+		if (fTokens.contains(token)) {
+			return;
+		}
+		// Add the token at the specified position
+		fTokens.add(position, token);
+		// Fire event
+		getModel().fireModelObjectChanged(this, getName(), null, token);
+	}
+	
 }

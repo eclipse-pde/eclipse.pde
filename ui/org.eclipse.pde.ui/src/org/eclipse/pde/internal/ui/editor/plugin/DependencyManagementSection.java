@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -52,6 +53,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -706,4 +708,221 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	}
 	
 	protected boolean createCount() { return true; }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
+	 */
+	protected boolean isDragAndDropEnabled() {
+		return true;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+     */
+    public boolean canDragMove(Object[] sourceObjects) {
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return false;
+		} else if (isTreeViewerSorted()) {
+			return false;
+		}
+    	return true;
+    }
+	
+    /**
+     * @param sourceObjects
+     * @return
+     */
+    private boolean validateDragMoveSanity(Object[] sourceObjects) {
+    	// Validate source
+		if (sourceObjects == null) {
+			// No objects
+			return false;
+		} else if (sourceObjects.length != 1) {
+			// Multiple selection not supported
+			return false;
+		} else if ((sourceObjects[0] instanceof String) == false) {
+			// Must be the right type
+			return false;
+		}    	
+		return true;
+    }     
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public boolean canDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			return false;
+		}    	
+		// Multiple selection not supported
+		String sourcePlugin = (String)sourceObjects[0];
+		String targetPlugin = (String)targetObject;
+		// Get the secondary dependencies build entry
+		BuildEntry entry = getSecondaryDepBuildEntry();
+		// Validate entry
+		if (entry == null) {
+			return false;
+		}
+		// Validate move
+		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
+			// Get the previous plugin of the target 
+			String previousPlugin = 
+				entry.getPreviousToken(targetPlugin);
+			// Ensure the previous token is not the source
+			if (sourcePlugin.equals(previousPlugin)) {
+				return false;
+			}
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			// Get the next plugin of the target 
+			String nextPlugin = 
+				entry.getNextToken(targetPlugin);
+			// Ensure the next plugin is not the source
+			if (sourcePlugin.equals(nextPlugin)) {
+				return false;
+			}
+			return true;
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Not supported
+			return false;
+		}		
+		
+    	return false;
+    }
+    
+    /**
+     * @return
+     */
+    private BuildEntry getSecondaryDepBuildEntry() {
+		// Get the build model
+		IBuildModel buildModel = getBuildModel(true);
+		// Ensure the build model is defined
+		if (buildModel == null) {
+			return null;
+		}
+		// Get the root build object
+	    IBuild build = buildModel.getBuild();
+	    // Ensure we have a root
+	    if (build == null) {
+	    	return null;
+	    }
+	    // Get the secondary dependencies build entry
+		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);		 
+		// Ensure we have the concrete text entry
+		if ((entry instanceof BuildEntry) == false) {
+			return null;
+		}
+		return (BuildEntry)entry;
+    }
+    
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
+		// Validate target object
+		if ((targetObject instanceof String) == false) {
+			return false;
+		}
+		// Validate source objects
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return false;
+		}
+		return true;
+	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+     */
+    public void doDropMove(Object targetObject, Object[] sourceObjects,
+    		int targetLocation) {
+		// Sanity check
+		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
+			Display.getDefault().beep();
+			return;
+		}
+		// Multiple selection not supported
+		String sourcePlugin = (String)sourceObjects[0];
+		String targetPlugin = (String)targetObject;
+		// Validate move
+		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) ||
+				(targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
+			// Do move
+			doDropMove(sourcePlugin, targetPlugin, targetLocation);
+		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			// Not supported
+		}
+    }
+
+	/**
+	 * @param sourcePlugin
+	 * @param targetPlugin
+	 * @param targetLocation
+	 */
+	private void doDropMove(String sourcePlugin, String targetPlugin,
+			int targetLocation) {
+		// Remove the original source object
+		// Normally we remove the original source object after inserting the
+		// serialized source object; however, the plug-ins are removed via ID
+		// and having both objects with the same ID co-existing will confound
+		// the remove operation
+		doDragRemove();		
+		// Get the secondary dependencies build entry
+		BuildEntry entry = getSecondaryDepBuildEntry();
+		// Validate entry
+		if (entry == null) {
+			return;
+		}
+		// Get the index of the target
+		int index = entry.getIndexOf(targetPlugin);
+		// Ensure the target index was found
+		if (index == -1) {
+			return;
+		}
+		// Determine the location index
+		int targetIndex = index;
+		if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
+			targetIndex++;
+		}
+		// Add source as sibling of target		
+		entry.addToken(sourcePlugin, targetIndex);		
+	}
+
+	/**
+	 * 
+	 */
+	private void doDragRemove() {
+		// Get the secondary dependencies build entry
+		BuildEntry entry = getSecondaryDepBuildEntry();
+		// Validate entry
+		if (entry == null) {
+			return;
+		}
+		// Retrieve the original non-serialized source objects dragged initially
+		Object[] sourceObjects = getDragSourceObjects();
+		// Validate source objects
+		if (validateDragMoveSanity(sourceObjects) == false) {
+			return;
+		}
+		// Remove the library
+		String sourcePlugin = (String)sourceObjects[0];
+		try {
+			entry.removeToken(sourcePlugin);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}   
+	}	
+	
+	/**
+	 * @return
+	 */
+	private boolean isTreeViewerSorted() {
+		if (fSortAction == null) {
+			return false;
+		}
+		return fSortAction.isChecked();
+	}  	
 }
