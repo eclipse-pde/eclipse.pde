@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.framework.Bundle;
 
+// TODO create a SpyFormToolkit that extends FormToolkit and replace it with this
 public class SpyBuilder {
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
