@@ -81,6 +81,7 @@ public class BaseTargetDefinitionOperation extends WorkspaceModifyOperation {
 		info.setPath(PDECore.getDefault().getPluginPreferences().getString(ICoreConstants.PLATFORM_PATH));
 		info.setDefault(true);
 		target.setLocationInfo(info);
+		target.setUseAllPlugins(true);
 	}
 
 }
