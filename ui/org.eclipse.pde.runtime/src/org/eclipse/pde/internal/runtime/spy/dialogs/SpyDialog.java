@@ -69,6 +69,7 @@ public class SpyDialog extends PopupDialog {
 		layout.verticalSpacing = 10;
 		form.getBody().setLayout(layout);
 
+		// TODO, make this so we use an extension point.
 		ISpySection section = new ActiveShellSection();
 		section.build(form, builder, event);
 		
