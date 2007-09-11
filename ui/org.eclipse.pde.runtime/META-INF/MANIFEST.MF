@@ -21,6 +21,7 @@ Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
  org.eclipse.pde.internal.runtime.registry;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.dialogs;x-internal:=true,
- org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true
+ org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true,
+ org.eclipse.pde.internal.runtime.spy.sections;x-internal:=true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
