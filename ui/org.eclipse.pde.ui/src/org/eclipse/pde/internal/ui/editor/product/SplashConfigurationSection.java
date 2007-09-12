@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductObject;
@@ -31,6 +32,8 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.ISplashHandlerConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -76,9 +79,12 @@ public class SplashConfigurationSection extends PDESection {
 	
 	private ComboPart fFieldTemplateCombo;
 	
+	private ControlDecoration fControlDecoration;
+	
 	public SplashConfigurationSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		fFieldTemplateCombo = null;
+		fControlDecoration = null;
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -93,18 +99,31 @@ public class SplashConfigurationSection extends PDESection {
 		configureUISection();
 		// Create the UI
 		createUI();
-		// Create listener for the combo box
-		createUIListenerFieldTemplateCombo();
+		// Create listeners for the combo box
+		createUIListenersFieldTemplateCombo();
 		// Note: Rely on refresh method to update the UI
 	}
 	
 	/**
 	 * 
 	 */
-	private void createUIListenerFieldTemplateCombo() {
+	private void createUIListenersFieldTemplateCombo() {
+		// Selection listener
 		fFieldTemplateCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleTemplateComboWidgetSelected();
+			}
+		});
+		// Focus listener
+		fFieldTemplateCombo.getControl().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				double currentTarget = TargetPlatformHelper.getTargetVersion();
+				if (currentTarget <= 3.2) {
+					fControlDecoration.show();
+				}
+			}
+			public void focusLost(FocusEvent e) {
+				fControlDecoration.hide();
 			}
 		});
 	}	
@@ -169,24 +188,25 @@ public class SplashConfigurationSection extends PDESection {
 	private void createUIFieldDecorationTemplate() {
 		// Decorate the combo with the info image
 		int bits = SWT.TOP | SWT.LEFT;
-		ControlDecoration controlDecoration = 
+		fControlDecoration = 
 			new ControlDecoration(fFieldTemplateCombo.getControl(), bits);
 		// Configure decoration
 		// No margin
-		controlDecoration.setMarginWidth(0);
+		fControlDecoration.setMarginWidth(0);
 		// Custom hover tip text
-		controlDecoration.setDescriptionText(
+		fControlDecoration.setDescriptionText(
 				PDEUIMessages.SplashConfigurationSection_msgDecorationTemplateSupport);
 		// Custom hover properties
-		controlDecoration.setShowHover(true);
-		controlDecoration.setShowOnlyOnFocus(true);
+		fControlDecoration.setShowHover(true);
 		// Hover image to use
 		FieldDecoration contentProposalImage = 
 			FieldDecorationRegistry.getDefault().getFieldDecoration(
 				FieldDecorationRegistry.DEC_INFORMATION);			
-		controlDecoration.setImage(contentProposalImage.getImage());		
+		fControlDecoration.setImage(contentProposalImage.getImage());	
+		// Hide the decoration initially
+		fControlDecoration.hide();
 	}
-
+	
 	/**
 	 * @param parent
 	 */
