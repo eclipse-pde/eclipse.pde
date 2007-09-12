@@ -14,7 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
-import org.eclipse.pde.internal.runtime.spy.SpyBuilder;
+import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveSelectionSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveShellSection;
@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
@@ -36,13 +35,13 @@ public class SpyDialog extends PopupDialog {
 	private ExecutionEvent event;
 	private Point fAnchor;
 	private Composite composite;
-	private SpyBuilder builder;
+	private SpyFormToolkit toolkit;
 
 	public SpyDialog(Shell parent, ExecutionEvent event, Point point) {
 		super(parent, SWT.NONE, true, false, false, false, null, null);
 		this.event = event;
 		this.fAnchor = point;
-		this.builder = new SpyBuilder(this);
+		this.toolkit = new SpyFormToolkit(this);
 	}
 
 	protected Control createContents(Composite parent) {
@@ -50,11 +49,10 @@ public class SpyDialog extends PopupDialog {
 		initializeBounds();
 		return createDialogArea(parent);
 	}
-	
+
 	protected Control createDialogArea(Composite parent) {
 		this.composite = (Composite) super.createDialogArea(parent);
-		
-		FormToolkit toolkit = builder.getFormToolkit();
+
 		ScrolledForm form = toolkit.createScrolledForm(composite);
 		toolkit.decorateFormHeading(form.getForm());
 
@@ -62,7 +60,7 @@ public class SpyDialog extends PopupDialog {
 		form.setText(PDERuntimeMessages.SpyDialog_title);
 		Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_SPY_OBJ);
 		form.setImage(image);
-		
+
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
@@ -72,16 +70,16 @@ public class SpyDialog extends PopupDialog {
 
 		// TODO, make this so we use an extension point.
 		ISpySection section = new ActiveShellSection();
-		section.build(form, builder, event);
-		
+		section.build(form, toolkit, event);
+
 		section = new ActivePartSection();
-		section.build(form, builder, event);
-		
+		section.build(form, toolkit, event);
+
 		section = new ActiveSelectionSection();
-		section.build(form, builder, event);
-		
+		section.build(form, toolkit, event);
+
 		section = new ActiveWizardSection();
-		section.build(form, builder, event);
+		section.build(form, toolkit, event);
 
 		parent.pack();
 		return composite;
@@ -101,9 +99,9 @@ public class SpyDialog extends PopupDialog {
 		}
 		return point;
 	}
-	
+
 	public boolean close() {
-		builder.dispose();
+		toolkit.dispose();
 		return super.close();
 	}
 	protected Control getFocusControl() {

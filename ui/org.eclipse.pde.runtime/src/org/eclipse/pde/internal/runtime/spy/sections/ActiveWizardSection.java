@@ -17,13 +17,10 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
-import org.eclipse.pde.internal.runtime.spy.SpyBuilder;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -33,7 +30,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 public class ActiveWizardSection implements ISpySection {
 
-	public void build(ScrolledForm form, SpyBuilder builder,
+	public void build(ScrolledForm form, SpyFormToolkit toolkit,
 			ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
@@ -47,7 +44,6 @@ public class ActiveWizardSection implements ISpySection {
 			IWizard wizard = page.getWizard();
 			clazz = wizard.getClass();
 
-			FormToolkit toolkit = builder.getFormToolkit();
 			Section section = toolkit.createSection(form.getBody(),
 					ExpandableComposite.TITLE_BAR);
 
@@ -63,26 +59,22 @@ public class ActiveWizardSection implements ISpySection {
 			buffer.append("<form>"); //$NON-NLS-1$
 			section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeWizard_title, wizard.getWindowTitle()));			
 
-			buffer.append(builder.generateClassString(
+			buffer.append(toolkit.createClassSection(
+					text,
 					PDERuntimeMessages.SpyDialog_activeWizard_desc,
-					clazz));				
+					new Class[] { clazz }));				
 
 			PackageAdmin admin = 
 				PDERuntimePlugin.getDefault().getPackageAdmin();
 			Bundle bundle = admin.getBundle(clazz);
-			builder.generatePluginDetailsText(bundle, null, "wizard", buffer, text); //$NON-NLS-1$
+			toolkit.generatePluginDetailsText(bundle, null, "wizard", buffer, text); //$NON-NLS-1$
 
-			buffer.append(builder.generateClassString(
+			buffer.append(toolkit.createClassSection(
+					text,
 					PDERuntimeMessages.SpyDialog_activeWizardPage_desc, 
-					page.getClass()));
+					new Class[] { page.getClass() }));
 			buffer.append("</form>"); //$NON-NLS-1$
-			
 
-			Image classImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
-			text.setImage("class", classImage); //$NON-NLS-1$
-			if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
-				text.addHyperlinkListener(builder.createHyperlinkAdapter());
-			}
 			text.setText(buffer.toString(), true, false);
 		}
 	}

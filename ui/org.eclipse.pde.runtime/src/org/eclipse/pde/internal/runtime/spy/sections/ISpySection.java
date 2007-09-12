@@ -11,11 +11,11 @@
 package org.eclipse.pde.internal.runtime.spy.sections;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.pde.internal.runtime.spy.SpyBuilder;
+import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public interface ISpySection {
 
-	public void build(ScrolledForm form, SpyBuilder builder, ExecutionEvent event);
+	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event);
 	
 }

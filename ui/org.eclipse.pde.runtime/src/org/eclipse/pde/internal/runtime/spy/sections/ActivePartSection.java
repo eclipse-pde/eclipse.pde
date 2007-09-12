@@ -20,16 +20,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
-import org.eclipse.pde.internal.runtime.spy.SpyBuilder;
+import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -40,14 +38,12 @@ import org.osgi.framework.Bundle;
 
 public class ActivePartSection implements ISpySection {
 
-	public void build(ScrolledForm form, SpyBuilder builder,
+	public void build(ScrolledForm form, SpyFormToolkit toolkit,
 			ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		if(window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
 			return;
 
-
-		FormToolkit toolkit = builder.getFormToolkit();
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		String partType = part instanceof IEditorPart ? "editor" : "view"; //$NON-NLS-1$ //$NON-NLS-2$
 		Section section = toolkit.createSection(form.getBody(),
@@ -69,13 +65,15 @@ public class ActivePartSection implements ISpySection {
 
 		// time to analyze the active part
 		buffer.append(
-				builder.generateClassString(NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
-						part.getClass()));
+				toolkit.createClassSection(
+						text,
+						NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
+						new Class[] { part.getClass() }));
 
 		// time to analyze the contributing plug-in
 		final Bundle bundle = Platform.getBundle(part.getSite().getPluginId());
 
-		builder.generatePluginDetailsText(bundle, part.getSite().getId(), partType, buffer, text);
+		toolkit.generatePluginDetailsText(bundle, part.getSite().getId(), partType, buffer, text);
 
 		// get menu information using reflection
 		try {
@@ -114,17 +112,8 @@ public class ActivePartSection implements ISpySection {
 
 		buffer.append("</form>"); //$NON-NLS-1$
 
-		Image classImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
-		text.setImage("class", classImage); //$NON-NLS-1$
-
 		Image idImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_ID_OBJ);
 		text.setImage("id", idImage); //$NON-NLS-1$
-
-		// TODO, this should only be added if there's ide bundles
-		// TODO, maybe provide a createFormText in SpyBuilder?
-		if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
-			text.addHyperlinkListener(builder.createHyperlinkAdapter());
-		}
 
 		text.setText(buffer.toString(), true, false);
 	}

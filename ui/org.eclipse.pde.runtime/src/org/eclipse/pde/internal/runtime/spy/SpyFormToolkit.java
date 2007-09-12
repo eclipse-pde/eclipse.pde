@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -26,8 +27,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.framework.Bundle;
 
-// TODO create a SpyFormToolkit that extends FormToolkit and replace it with this
-public class SpyBuilder {
+public class SpyFormToolkit extends FormToolkit {
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 		
@@ -47,40 +47,61 @@ public class SpyBuilder {
 	
 	private Map bundleClassByName = new HashMap();
 	private SpyDialog dialog;
-	private FormToolkit toolkit;
 	
-	public SpyBuilder(SpyDialog dialog) {
+	public SpyFormToolkit(SpyDialog dialog) {
+		super(Display.getDefault());
 		this.dialog = dialog;
-		this.toolkit = new FormToolkit(Display.getDefault());
 	}
 	
-	public String generateInterfaceString(Class clazz) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<li bindent=\"20\" style=\"image\" value=\"interface\">"); //$NON-NLS-1$
-		generateClassHref(buffer, clazz);
-		buffer.append("</li>"); //$NON-NLS-1$
-		return buffer.toString();
-	}
-	
-	// TODO refactor this to take an array of classes
-	public String generateClassString(String title, Class clazz) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<p>"); //$NON-NLS-1$
-		buffer.append(title);
-		buffer.append("</p>"); //$NON-NLS-1$
-		buffer.append(generateClassString(clazz));
-		return buffer.toString();
+	public FormText createFormText(Composite parent, boolean trackFocus) {
+		FormText text = super.createFormText(parent, trackFocus);
+		if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+			text.addHyperlinkListener(new SpyHyperlinkAdapter(dialog));
+		}
+		return text;
 	}
 
-	public String generateClassString(Class clazz) {
+	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<li bindent=\"20\" style=\"image\" value=\"class\">"); //$NON-NLS-1$
-		generateClassHref(buffer, clazz);
-	    buffer.append("</li>"); //$NON-NLS-1$
+		if(clazzes.length > 0) {
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(title);
+			buffer.append("</p>"); //$NON-NLS-1$
+			for(int i = 0; i < clazzes.length; i++) {
+				buffer.append("<li bindent=\"20\" style=\"image\" value=\"interface\">"); //$NON-NLS-1$
+				createClassReference(buffer, clazzes[i]);
+				buffer.append("</li>"); //$NON-NLS-1$
+			}
+			Image interfaceImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_INTERFACE_OBJ);
+			text.setImage("interface", interfaceImage); //$NON-NLS-1$
+		}
 		return buffer.toString();
 	}
 	
-	private void generateClassHref(StringBuffer buffer, Class clazz) {
+	public String createClassSection(FormText text, String title, Class[] clazzes) {
+		StringBuffer buffer = new StringBuffer();
+		if(clazzes.length > 0) {
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(title);
+			buffer.append("</p>"); //$NON-NLS-1$
+			for(int i = 0; i < clazzes.length; i++) {
+				buffer.append("<li bindent=\"20\" style=\"image\" value=\"class\">"); //$NON-NLS-1$
+				createClassReference(buffer, clazzes[i]);
+			    buffer.append("</li>"); //$NON-NLS-1$
+			}
+			Image interfaceImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
+			text.setImage("class", interfaceImage); //$NON-NLS-1$
+		}
+		return buffer.toString();
+	}
+	
+	// TODO create this convenience method
+	public String createIdentifierSection(FormText text, String title, Class[] clazzes) {
+		StringBuffer buffer = new StringBuffer();
+		return buffer.toString();
+	}
+	
+	private void createClassReference(StringBuffer buffer, Class clazz) {
 		Bundle bundle = 
 			PDERuntimePlugin.HAS_IDE_BUNDLES ? PDERuntimePlugin.getDefault().getPackageAdmin().getBundle(clazz) : null;
 			if (bundle != null) {
@@ -95,6 +116,7 @@ public class SpyBuilder {
 			}
 	}
 	
+	// TODO refactor me, I'm ugly
 	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuffer buffer, FormText text) {
 		if (bundle != null) {
 			String version = (String) (bundle.getHeaders()
@@ -120,22 +142,6 @@ public class SpyBuilder {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"id\">"); //$NON-NLS-1$
 				buffer.append(objectId);
 				buffer.append("</li>"); //$NON-NLS-1$
-			}
-		}
-	}
-	
-	public HyperlinkAdapter createHyperlinkAdapter() {
-		return new SpyHyperlinkAdapter(dialog);
-	}
-	
-	public FormToolkit getFormToolkit() {
-		return toolkit;
-	}
-	
-	public void dispose() {
-		if (toolkit != null) {
-			if (toolkit.getColors() != null) {
-				toolkit.dispose();
 			}
 		}
 	}
