@@ -38,6 +38,14 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	// Needs to be static to allow dragging objects from one viewer to another
 	private static Object[] fSourceObjects;
 
+	private static int fTransferType;
+
+	public static final int F_TRANSFER_TYPE_NONE = 0x00;
+	
+	public static final int F_TRANSFER_TYPE_MODEL = 0x01;
+
+	public static final int F_TRANSFER_TYPE_TEXT = 0x02;
+	
 	/**
 	 * @param participant
 	 */
@@ -65,6 +73,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	 */
 	protected void resetSourceObjects() {
 		fSourceObjects = null;
+		fTransferType = F_TRANSFER_TYPE_NONE;
 	}
 	
 	/**
@@ -107,10 +116,16 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		}
 		// TODO: MP: DND: BUG: On text transfer the object is removed, need to force operation into a copy 
 		// TODO: MP: DND: BUG: On text transfer no object selected in tree - related to above
-		// If the move operation was performed, then remove the original source objects
-		if (event.detail == DND.DROP_MOVE) {
-			fParticipant.doDragRemove(getSourceObjects());
+		// Ensure we have a move operation and a model transfer type
+		if (event.detail != DND.DROP_MOVE) {
+			return;
+		} else if ((fTransferType & F_TRANSFER_TYPE_MODEL) != F_TRANSFER_TYPE_MODEL) {
+			return;
 		}
+		// Is a move operation
+		// Is a model transfer type
+		// Remove the original source objects
+		fParticipant.doDragRemove(getSourceObjects());
 	}
 	
 	/**
@@ -173,10 +188,12 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 			// Model transfer target
 			// e.g. Tree viewer, Table viewer
 			event.data = getSourceObjects();
+			fTransferType = F_TRANSFER_TYPE_MODEL;
 		} else if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 			// Text transfer target
 			// e.g. Word, Source page
 			event.data = createTextualRepresentation();
+			fTransferType = F_TRANSFER_TYPE_TEXT;
 		}
 	}
 
