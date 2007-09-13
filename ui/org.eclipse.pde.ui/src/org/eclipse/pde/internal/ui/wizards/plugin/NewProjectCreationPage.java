@@ -54,15 +54,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Combo fTargetCombo;
 	private Combo fOSGiCombo;
 	private Button fOSGIButton;
+	private IStructuredSelection fSelection;
 	
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
 	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment, IStructuredSelection selection){
-		super(pageName, selection, new String[] {  "org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
-				"org.eclipse.pde.ui.pluginWorkingSet", "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$ //$NON-NLS-2$
+		super(pageName);
 		fFragment = fragment;
 		fData = data;
+		fSelection = selection;
 	}
 	
 	public void createControl(Composite parent) {
@@ -73,6 +74,12 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		createProjectTypeGroup(control);
 		createFormatGroup(control);
+		createWorkingSetGroup(
+				control,
+				fSelection,
+				new String[] {
+						"org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
+						"org.eclipse.pde.ui.pluginWorkingSet", "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		updateRuntimeDependency();
 
