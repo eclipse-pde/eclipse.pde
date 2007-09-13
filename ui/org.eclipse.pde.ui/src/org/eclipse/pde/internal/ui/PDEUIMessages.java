@@ -681,6 +681,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSHelpDetails_HelpDocumentLink;
 
+	public static String SimpleCSHelpDetails_selectHelpDocument;
+
+	public static String SimpleCSHelpDetails_helpDocumentSelection;
+
 	public static String SimpleCSHelpDetails_Type;
 
 	public static String SimpleCSHelpDetails_Value;
