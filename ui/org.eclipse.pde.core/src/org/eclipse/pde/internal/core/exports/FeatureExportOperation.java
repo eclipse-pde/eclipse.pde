@@ -338,7 +338,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
 			
-			List defaultProperties= AntCorePlugin.getPlugin().getPreferences().getDefaultProperties();
+			List defaultProperties= AntCorePlugin.getPlugin().getPreferences().getProperties();
 			ListIterator li = defaultProperties.listIterator();
 			while (li.hasNext()) {
 				Property prop = (Property)li.next();
