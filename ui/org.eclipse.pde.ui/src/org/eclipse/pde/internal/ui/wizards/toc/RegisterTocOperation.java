@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +30,8 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -58,6 +61,9 @@ import org.osgi.framework.Constants;
  *
  */
 public class RegisterTocOperation extends WorkspaceModifyOperation {
+	
+	public final static String F_TOC_EXTENSION_POINT_ID = 
+		"org.eclipse.help.toc"; //$NON-NLS-1$
 
 	public static final String F_HELP_EXTENSION_ID = "org.eclipse.help"; //$NON-NLS-1$
 	
@@ -69,14 +75,14 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 
 	public final static String F_TOC_ATTRIBUTE_CATEGORY = "category"; //$NON-NLS-1$
 
-	private RegisterTocWizardPage fPage;
+	private IRegisterTOCData fPage;
 	
 	private Shell fShell;
 	
 	/**
 	 * 
 	 */
-	public RegisterTocOperation(RegisterTocWizardPage page, Shell shell) {
+	public RegisterTocOperation(IRegisterTOCData page, Shell shell) {
 		fPage = page;
 		fShell = shell;
 	}
@@ -95,10 +101,12 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			InvocationTargetException, InterruptedException {
 		
 		try {
-			IFile file = fPage.getPluginFile();
+			boolean fragment = PluginRegistry.findModel(fPage.getPluginProject()).isFragmentModel();
+			IFile file = fPage.getPluginProject().getFile(fragment ? ICoreConstants.FRAGMENT_PATH : 
+				ICoreConstants.PLUGIN_PATH);
 			// If the plug-in exists modify it accordingly; otherwise, create
 			// a new plug-in file
-			if (fPage.pluginExists()) {
+			if (file.exists()) {
 				modifyExistingPluginFile(file, monitor);
 			} else {
 				createNewPluginFile(file, monitor);
@@ -181,7 +189,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 		IPluginModelBase modelBase = (IPluginModelBase)model;
 		// Find an existing cheat sheet extension 
-		FindTocExtensionResult result = findTocExtension(modelBase);
+		FindTocExtensionResult result = findTocExtensionResult(modelBase);
 		// Check search results and act accordingly
 		if (result.foundTocExtension() &&
 				result.foundExactTocElement()) {
@@ -260,12 +268,11 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 * @param elementResult cheat sheet element found or null
 	 * @return
 	 */
-	private FindTocExtensionResult findTocExtension(IPluginModelBase model) {
+	private FindTocExtensionResult findTocExtensionResult(IPluginModelBase model) {
 		// Container for result
 		FindTocExtensionResult result = new FindTocExtensionResult();		
 		// Find all cheat sheet extensions within the host plug-in
-		IPluginExtension[] extensions = fPage.findExtensions(model,
-				RegisterTocWizardPage.F_TOC_EXTENSION_POINT_ID);
+		IPluginExtension[] extensions = findTOCExtensions(model);
 		// Process all TOC extensions
 		// Extension search results
 		// (1) An existing extension containing a TOC element with the 
@@ -308,6 +315,20 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}	
 
 		return result;
+	}
+	
+	public static IPluginExtension[] findTOCExtensions(ISharedExtensionsModel model) {
+		IPluginExtension[] extensions = model.getExtensions().getExtensions();
+		
+		ArrayList tocExtensions = new ArrayList();
+		for (int i = 0; i < extensions.length; i++) {
+			String point = extensions[i].getPoint();
+			if (F_TOC_EXTENSION_POINT_ID.equals(point)) {
+				tocExtensions.add(extensions[i]);
+			}
+		}
+		return (IPluginExtension[]) tocExtensions.toArray(
+				new IPluginExtension[tocExtensions.size()]);
 	}
 	
 	/**
@@ -449,7 +470,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 * @return
 	 */
 	private IPluginModelBase createModel(IFile file) {
-		if (fPage.isFragment()) {
+		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
 			return new WorkspaceFragmentModel(file, false);		
 		}
 		return new WorkspacePluginModel(file, false);
@@ -464,7 +485,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
-		extension.setPoint(RegisterTocWizardPage.F_TOC_EXTENSION_POINT_ID);
+		extension.setPoint(F_TOC_EXTENSION_POINT_ID);
 		
 		createExtensionChildren(extension);
 		

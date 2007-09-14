@@ -13,11 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IModel;
@@ -26,10 +22,9 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.AbbreviatedFragmentModel;
-import org.eclipse.pde.internal.core.plugin.AbbreviatedPluginModel;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -46,14 +41,11 @@ import org.eclipse.ui.PlatformUI;
  * RegisterTocWizardPage
  *
  */
-public class RegisterTocWizardPage extends WizardPage {
+public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCData {
 
 	public static final int NUM_COLUMNS = 2;
 
 	public final static String F_PAGE_NAME = "register-toc"; //$NON-NLS-1$	
-
-	public final static String F_TOC_EXTENSION_POINT_ID = 
-		"org.eclipse.help.toc"; //$NON-NLS-1$
 
 	public final static String F_TOC_ELEMENT_TOC = "toc"; //$NON-NLS-1$
 
@@ -61,17 +53,11 @@ public class RegisterTocWizardPage extends WizardPage {
 	
 	protected IModel fTocModel;
 	
-	private IPluginModelBase fPluginModelBase;
+	private ISharedExtensionsModel fExtensionsModel;
 	
 	private IProject fPluginProject;
 	
-	private boolean fPluginExists;
-	
 	private boolean fDataIsPrimary;
-	
-	private IFile fPluginFile;
-	
-	private boolean fIsFragment;
 	
 	/**
 	 * @param pageName
@@ -105,36 +91,14 @@ public class RegisterTocWizardPage extends WizardPage {
 	 * 
 	 */
 	private void initializePluginModel() {
-		IPath pluginPath = new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		IPath fragmentPath = new Path(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-		// Check to see if a plugin or fragment file exists in the project
-		// storing the table of contents
-		if (fPluginProject.exists(pluginPath)) {
-			fPluginFile = fPluginProject.getFile(pluginPath.toPortableString());
-			fPluginModelBase = 
-				new AbbreviatedPluginModel(fPluginFile, F_TOC_EXTENSION_POINT_ID);	
-			fPluginExists = true;
-			fIsFragment = false;
-		} else if (fPluginProject.exists(fragmentPath)) {
-			fPluginFile = fPluginProject.getFile(fragmentPath.toPortableString());
-			fPluginModelBase = 
-				new AbbreviatedFragmentModel(fPluginFile, F_TOC_EXTENSION_POINT_ID);
-			fPluginExists = true;
-			fIsFragment = true;
-		} else {
-			fPluginFile = fPluginProject.getFile(pluginPath.toPortableString());
-			fPluginModelBase = null;
-			fPluginExists = false;
-			fIsFragment = false;
-		}
-		// Load the plug-in or fragment if it exists in a lightweight model
-		if (fPluginExists) {
-			try {
-				fPluginModelBase.load();
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}		
-		}
+		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
+		
+		if (base == null)
+			return;
+		if (base instanceof IBundlePluginModelBase)
+			fExtensionsModel = ((IBundlePluginModelBase)base).getExtensionsModel();
+		else
+			fExtensionsModel = base;
 	}
 
 	/**
@@ -142,10 +106,9 @@ public class RegisterTocWizardPage extends WizardPage {
 	 */
 	private void updateUI() {
 
-		if (fPluginExists) {
+		if (fExtensionsModel != null) {
 			// Find all TOC extensions within the host plug-in
-			IPluginExtension[] extensions = findExtensions(fPluginModelBase,
-					F_TOC_EXTENSION_POINT_ID);
+			IPluginExtension[] extensions = RegisterTocOperation.findTOCExtensions(fExtensionsModel);
 
 			// Process all TOC elements
 			processTocElements(extensions);
@@ -220,23 +183,8 @@ public class RegisterTocWizardPage extends WizardPage {
 	{	return fDataIsPrimary;
 	}
 
-	public boolean pluginExists() {
-		return fPluginExists;
-	}
-	
 	public String getDataTocFile() {
-		// Retrieve the full path to the TOC
-		IPath path = 
-			fTocModel.getUnderlyingResource().getFullPath();
-		return path.removeFirstSegments(1).toPortableString();
-	}
-	
-	public IFile getPluginFile() {
-		return fPluginFile;
-	}
-
-	public boolean isFragment() {
-		return fIsFragment;
+		return fTocModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
 	}
 	
 	public IProject getPluginProject() {
