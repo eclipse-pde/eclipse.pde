@@ -458,7 +458,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 			for (int i = 0; i < bundles.length; i++) {
 				Version bundleVersion = bundles[i].getVersion();
-				if (bundleVersion.getMajor() == parsedVersion.getMajor() && bundleVersion.getMinor() == parsedVersion.getMinor() && bundleVersion.getMicro() >= parsedVersion.getMicro() && bundleVersion.getQualifier().compareTo(qualifierPrefix) >= 0)
+				if (bundleVersion.getMajor() == parsedVersion.getMajor() && bundleVersion.getMinor() == parsedVersion.getMinor() && bundleVersion.getMicro() == parsedVersion.getMicro() && bundleVersion.getQualifier().compareTo(qualifierPrefix) >= 0)
 					return bundles[i];
 			}
 		}
