@@ -3010,6 +3010,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String XMLContentAssistProcessor_extPointName;
 
+	public static String XMLSyntaxColorTab_externalizedStrings;
+
 	public static String XMLContentAssistProcessor_schemaLocation;
 		
 	public static String SimpleCSPage_0;	

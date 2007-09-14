@@ -27,6 +27,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 					{PDEUIMessages.EditorPreferencePage_proc, IPDEColorConstants.P_PROC_INSTR},
 					{PDEUIMessages.EditorPreferencePage_tag, IPDEColorConstants.P_TAG},
 					{PDEUIMessages.EditorPreferencePage_string, IPDEColorConstants.P_STRING},
+					{PDEUIMessages.XMLSyntaxColorTab_externalizedStrings, IPDEColorConstants.P_EXTERNALIZED_STRING},
 					{PDEUIMessages.EditorPreferencePage_comment, IPDEColorConstants.P_XML_COMMENT}};
 
 	public XMLSyntaxColorTab(IColorManager manager) {
@@ -44,7 +45,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 		buffer.append(delimiter);
 		buffer.append("   <extension point=\"some.id\">"); //$NON-NLS-1$
 		buffer.append(delimiter);
-		buffer.append("      <tag> body text </tag>"); //$NON-NLS-1$
+		buffer.append("      <tag name=\"%externalized\">body text</tag>"); //$NON-NLS-1$
 		buffer.append(delimiter);
 		buffer.append("   </extension>"); //$NON-NLS-1$
 		buffer.append(delimiter);

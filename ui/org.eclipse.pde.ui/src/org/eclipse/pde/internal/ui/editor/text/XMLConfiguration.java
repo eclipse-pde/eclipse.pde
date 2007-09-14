@@ -148,6 +148,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return property.startsWith(IPDEColorConstants.P_DEFAULT) ||
 			property.startsWith(IPDEColorConstants.P_PROC_INSTR) ||
 			property.startsWith(IPDEColorConstants.P_STRING) || 
+			property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING) || 
 			property.startsWith(IPDEColorConstants.P_TAG) || 
 			property.startsWith(IPDEColorConstants.P_XML_COMMENT);
 	}
@@ -157,6 +158,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return property.equals(IPDEColorConstants.P_DEFAULT) ||
 			property.equals(IPDEColorConstants.P_PROC_INSTR) ||
 			property.equals(IPDEColorConstants.P_STRING) || 
+			property.equals(IPDEColorConstants.P_EXTERNALIZED_STRING) || 
 			property.equals(IPDEColorConstants.P_TAG) || 
 			property.equals(IPDEColorConstants.P_XML_COMMENT);
 	}

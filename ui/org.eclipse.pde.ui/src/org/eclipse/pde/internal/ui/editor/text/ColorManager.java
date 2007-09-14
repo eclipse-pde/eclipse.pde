@@ -47,6 +47,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_DEFAULT, DEFAULT);
 		PreferenceConverter.setDefault(store, P_PROC_INSTR, PROC_INSTR);
 		PreferenceConverter.setDefault(store, P_STRING, STRING);
+		PreferenceConverter.setDefault(store, P_EXTERNALIZED_STRING, EXTERNALIZED_STRING);
 		PreferenceConverter.setDefault(store, P_TAG, TAG);
 		PreferenceConverter.setDefault(store, P_XML_COMMENT, XML_COMMENT);
 		PreferenceConverter.setDefault(store, P_HEADER_KEY, HEADER_KEY);
@@ -63,6 +64,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		putColor(pstore, P_DEFAULT);
 		putColor(pstore, P_PROC_INSTR);
 		putColor(pstore, P_STRING);
+		putColor(pstore, P_EXTERNALIZED_STRING);
 		putColor(pstore, P_TAG);
 		putColor(pstore, P_XML_COMMENT);
 		putColor(pstore, P_HEADER_KEY);
