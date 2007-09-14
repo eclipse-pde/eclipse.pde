@@ -11,21 +11,29 @@
 package org.eclipse.pde.internal.runtime.spy.sections;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.eclipse.ui.part.ViewPart;
 
 public class ActiveHelpSection implements ISpySection {
+
+	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit,
 			ExecutionEvent event) {
@@ -33,46 +41,126 @@ public class ActiveHelpSection implements ISpySection {
 		Object object = shell.getData();
 		if(object == null)
 			return;
-		Class clazz = object.getClass();
-
-		if(object instanceof PreferenceDialog) {
-			PreferenceDialog dialog = (PreferenceDialog) object;
-			IPreferencePage page = (IPreferencePage) dialog.getSelectedPage();
-			clazz = page.getClass();
-
+		
+		StringBuffer helpBuffer = new StringBuffer();
+		// process help
+		helpBuffer.append(processControlHelp(event, toolkit));
+		if(object instanceof IDialogPage) {
+			IDialogPage page = (IDialogPage) object;
+			helpBuffer.append(processChildControlHelp(page.getControl().getShell(), toolkit));
+		} else if(object instanceof Dialog) {
+			Dialog dialog = (Dialog) object;
+			helpBuffer.append(processChildControlHelp(dialog.getShell(), toolkit));
+		}
+		
+		// ensure we actually have help
+		// TODO we need to make this cleaner... help processing is complicated atm
+		if(helpBuffer != null && helpBuffer.length() > 0) {
 			Section section = toolkit.createSection(form.getBody(),
 					ExpandableComposite.TITLE_BAR);
-
-			// the active page
+			section.setText("Active Help"); //$NON-NLS-1$
+			
 			FormText text = toolkit.createFormText(section, true);
 			section.setClient(text);
 			TableWrapData td = new TableWrapData();
 			td.align = TableWrapData.FILL;
 			td.grabHorizontal = true;
 			section.setLayoutData(td);
-
+			
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<form>"); //$NON-NLS-1$
-			section.setText("Active Page");			 //$NON-NLS-1$
-
-			buffer.append(toolkit.createClassSection(
-					text,
-					"Active Page Class", //$NON-NLS-1$
-					new Class[] { clazz }));				
-
-			PackageAdmin admin = 
-				PDERuntimePlugin.getDefault().getPackageAdmin();
-			Bundle bundle = admin.getBundle(clazz);
-			toolkit.generatePluginDetailsText(bundle, null, "preference", buffer, text); //$NON-NLS-1$
-
-			buffer.append(toolkit.createClassSection(
-					text,
-					"Active pref page class",  //$NON-NLS-1$
-					new Class[] { page.getClass() }));
+			buffer.append(helpBuffer.toString());
 			buffer.append("</form>"); //$NON-NLS-1$
-
 			text.setText(buffer.toString(), true, false);
 		}
+		
 	}
 
+	private String processChildControlHelp(Control control, SpyFormToolkit toolkit) {
+		StringBuffer buffer = new StringBuffer();
+		if(control.getData(HELP_KEY) != null) {
+			buffer.append("<li bindent=\"20\">" + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(control instanceof Composite) {
+			Composite parent = (Composite) control;
+			for (int i = 0; i < parent.getChildren().length; i++) {
+				buffer.append(processChildControlHelp(parent.getChildren()[i], toolkit));
+			}
+		}
+		else if(control instanceof Shell) {
+			for(int i = 0; i < ((Shell)control).getChildren().length; i++) {
+				buffer.append(processChildControlHelp(((Shell)control).getChildren()[i], toolkit));
+			}
+		}
+		return buffer.toString();
+	}
+
+	private String processControlHelp(ExecutionEvent event, SpyFormToolkit toolkit) {
+		IWorkbenchPart part = HandlerUtil.getActivePart(event);
+		if(part == null)
+			return null;
+		
+		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
+		if(window == null)
+			return null;
+		
+		StringBuffer buffer = new StringBuffer();
+
+		Shell shell = null;
+		Control control = null;
+
+		if(part instanceof IEditorPart) {
+			IEditorPart editorPart = (IEditorPart) part;
+			shell = editorPart.getSite().getShell();
+
+			for(int j = 0; j < window.getActivePage().getEditorReferences().length; j++) {
+				IEditorReference er = window.getActivePage().getEditorReferences()[j];
+				if (er.getId().equals(editorPart.getEditorSite().getId()))
+					if (er instanceof WorkbenchPartReference) {
+						WorkbenchPartReference wpr = (WorkbenchPartReference) er;
+						control = wpr.getPane().getControl();
+						shell = null;
+						break;
+					}
+			}
+		}
+		else if(part instanceof ViewPart) {
+			ViewPart viewPart = (ViewPart) part;
+			shell = viewPart.getSite().getShell();
+			for(int j = 0; j < window.getActivePage().getViewReferences().length; j++) {
+				IViewReference vr = window.getActivePage().getViewReferences()[j];
+				if (vr.getId().equals(viewPart.getViewSite().getId()))
+					if (vr instanceof WorkbenchPartReference) {
+						WorkbenchPartReference wpr = (WorkbenchPartReference) vr;
+						control = wpr.getPane().getControl();
+						shell = null;
+						break;
+					}
+			}
+
+		}
+		if (shell != null) {
+			buffer.append("<p>Help IDs:</p>"); //$NON-NLS-1$
+			if (shell.getData(HELP_KEY) != null) { 
+				buffer.append("<li bindent=\"20\">" + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			for (int i = 0; i < shell.getChildren().length; i++) {
+				buffer.append(processChildControlHelp(shell.getChildren()[i], toolkit));
+			}
+		}
+		else if(control != null) {
+			if(control.getData(HELP_KEY) != null) { 
+				buffer.append("<p>Help Data:</p>"); //$NON-NLS-1$
+				buffer.append("<li bindent=\"20\">" + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if(control instanceof Composite) {
+				Composite parent = (Composite) control;
+				for(int i = 0; i < parent.getChildren().length; i++) {
+					buffer.append(processChildControlHelp(parent.getChildren()[i], toolkit));
+				}
+			}
+		}
+		return buffer.toString();
+	}
+	
 }
