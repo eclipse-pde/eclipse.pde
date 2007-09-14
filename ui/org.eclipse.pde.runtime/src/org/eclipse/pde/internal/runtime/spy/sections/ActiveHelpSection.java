@@ -81,14 +81,10 @@ public class ActiveHelpSection implements ISpySection {
 			buffer.append("<li bindent=\"20\">" + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if(control instanceof Composite) {
-			Composite parent = (Composite) control;
-			for (int i = 0; i < parent.getChildren().length; i++) {
-				processChildControlHelp(parent.getChildren()[i], toolkit, buffer);
-			}
-		}
-		else if(control instanceof Shell) {
-			for(int i = 0; i < ((Shell)control).getChildren().length; i++) {
-				processChildControlHelp(((Shell)control).getChildren()[i], toolkit, buffer);
+			Composite composite = (Composite) control;
+			Control[] controls = composite.getChildren();
+			for (int i = 0; i < controls.length; i++) {
+				processChildControlHelp(controls[i], toolkit, buffer);
 			}
 		}
 	}
