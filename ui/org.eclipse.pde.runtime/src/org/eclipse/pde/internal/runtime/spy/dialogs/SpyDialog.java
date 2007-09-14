@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
+import org.eclipse.pde.internal.runtime.spy.sections.ActivePreferenceDialogSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveSelectionSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveShellSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveWizardSection;
@@ -79,6 +80,9 @@ public class SpyDialog extends PopupDialog {
 		section.build(form, toolkit, event);
 
 		section = new ActiveWizardSection();
+		section.build(form, toolkit, event);
+		
+		section = new ActivePreferenceDialogSection();
 		section.build(form, toolkit, event);
 
 		parent.pack();

@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -97,6 +98,12 @@ public class SpyFormToolkit extends FormToolkit {
 	
 	// TODO create this convenience method
 	public String createIdentifierSection(FormText text, String title, Class[] clazzes) {
+		StringBuffer buffer = new StringBuffer();
+		return buffer.toString();
+	}
+	
+	// TODO create this convenience method
+	public String createHelpIdentifierSection(FormText text, String title, IWorkbenchPart part) {
 		StringBuffer buffer = new StringBuffer();
 		return buffer.toString();
 	}
