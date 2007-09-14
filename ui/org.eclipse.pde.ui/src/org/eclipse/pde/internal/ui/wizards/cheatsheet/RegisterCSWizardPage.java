@@ -13,11 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -27,11 +23,10 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.plugin.AbbreviatedFragmentModel;
-import org.eclipse.pde.internal.core.plugin.AbbreviatedPluginModel;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -61,9 +56,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 
 	public final static String F_PAGE_NAME = "register-cs"; //$NON-NLS-1$	
 	
-	public final static String F_CS_EXTENSION_POINT_ID = 
-		"org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
-	
 	public final static String F_CS_ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 
 	public final static String F_CS_ELEMENT_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
@@ -80,21 +72,15 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	
 	protected IModel fCheatSheetModel;
 	
-	private IPluginModelBase fPluginModelBase;
+	private ISharedExtensionsModel fExtensionsModel;
 	
 	private IProject fPluginProject;
-	
-	private boolean fPluginExists;
 	
 	private String fDataCategoryName;
 	
 	private String fDataDescription;
 	
 	private String fDataCheatSheetID;
-	
-	private IFile fPluginFile;
-	
-	private boolean fIsFragment;
 	
 	private CSCategoryTrackerUtil fCategoryTrackerUtil;
 	
@@ -137,36 +123,14 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 * 
 	 */
 	private void initializePluginModel() {
-		IPath pluginPath = new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		IPath fragmentPath = new Path(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-		// Check to see if a plugin or fragment file exists in the project
-		// storing the cheat sheet
-		if (fPluginProject.exists(pluginPath)) {
-			fPluginFile = fPluginProject.getFile(pluginPath.toPortableString());
-			fPluginModelBase = 
-				new AbbreviatedPluginModel(fPluginFile, F_CS_EXTENSION_POINT_ID);	
-			fPluginExists = true;
-			fIsFragment = false;
-		} else if (fPluginProject.exists(fragmentPath)) {
-			fPluginFile = fPluginProject.getFile(fragmentPath.toPortableString());
-			fPluginModelBase = 
-				new AbbreviatedFragmentModel(fPluginFile, F_CS_EXTENSION_POINT_ID);
-			fPluginExists = true;
-			fIsFragment = true;
-		} else {
-			fPluginFile = fPluginProject.getFile(pluginPath.toPortableString());
-			fPluginModelBase = null;
-			fPluginExists = false;
-			fIsFragment = false;
-		}
-		// Load the plug-in or fragment if it exists in a lightweight model
-		if (fPluginExists) {
-			try {
-				fPluginModelBase.load();
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}		
-		}
+		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
+		// should never happen
+		if (base == null)
+			return;
+		if (base instanceof IBundlePluginModelBase)
+			fExtensionsModel = ((IBundlePluginModelBase)base).getExtensionsModel();
+		else
+			fExtensionsModel = base;
 	}
 	
 	/* (non-Javadoc)
@@ -205,13 +169,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#pluginExists()
-	 */
-	public boolean pluginExists() {
-		return fPluginExists;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataContentFile()
 	 */
 	public String getDataContentFile() {
@@ -237,20 +194,6 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 */
 	public String getDataCheatSheetID() {
 		return fDataCheatSheetID; 
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getPluginFile()
-	 */
-	public IFile getPluginFile() {
-		return fPluginFile;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#isFragment()
-	 */
-	public boolean isFragment() {
-		return fIsFragment;
 	}
 	
 	/* (non-Javadoc)
@@ -504,10 +447,9 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 */
 	private void updateUI() {
 
-		if (fPluginExists) {
+		if (fExtensionsModel != null) {
 			// Find all cheat sheet extensions within the host plug-in
-			IPluginExtension[] extensions = findExtensions(fPluginModelBase,
-					F_CS_EXTENSION_POINT_ID);
+			IPluginExtension[] extensions = RegisterCSOperation.findCheatSheetExtensions(fExtensionsModel);
 			// Process all category elements
 			processCategoryElements(extensions);
 			// Process all cheat sheet elements
@@ -679,9 +621,9 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 * @param extensionPointID
 	 * @return
 	 */
-	public IPluginExtension[] findExtensions(IPluginModelBase model,
+	public IPluginExtension[] findExtensions(ISharedExtensionsModel model,
 			String extensionPointID) {
-		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		IPluginExtension[] extensions = model.getExtensions().getExtensions();
 		
 		ArrayList csExtensions = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {

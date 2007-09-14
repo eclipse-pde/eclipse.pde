@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +30,8 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -59,6 +62,9 @@ import org.osgi.framework.Constants;
  *
  */
 public class RegisterCSOperation extends WorkspaceModifyOperation {
+	
+	public final static String F_CS_EXTENSION_POINT_ID = 
+		"org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
 
 	public static final String F_CS_EXTENSION_ID = "org.eclipse.ui.cheatsheets"; //$NON-NLS-1$
 	
@@ -92,10 +98,11 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			InvocationTargetException, InterruptedException {
 		
 		try {
-			IFile file = fRegisterCSData.getPluginFile();
+			boolean fragment = PluginRegistry.findModel(fRegisterCSData.getPluginProject()).isFragmentModel();
+			IFile file = fRegisterCSData.getPluginProject().getFile(fragment ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
 			// If the plug-in exists modify it accordingly; otherwise, create
 			// a new plug-in file
-			if (fRegisterCSData.pluginExists()) {
+			if (file.exists()) {
 				modifyExistingPluginFile(file, monitor);
 			} else {
 				createNewPluginFile(file, monitor);
@@ -178,7 +185,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		IPluginModelBase modelBase = (IPluginModelBase)model;
 		// Find an existing cheat sheet extension 
-		FindCSExtensionResult result = findCheatSheetExtension(modelBase);
+		FindCSExtensionResult result = findCSExtensionResult(modelBase);
 		// Check search results and act accordingly
 		if (result.foundCSExtension() &&
 				result.foundExactCSElement()) {
@@ -317,12 +324,11 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @param elementResult cheat sheet element found or null
 	 * @return
 	 */
-	private FindCSExtensionResult findCheatSheetExtension(IPluginModelBase model) {
+	private FindCSExtensionResult findCSExtensionResult(IPluginModelBase model) {
 		// Container for result
 		FindCSExtensionResult result = new FindCSExtensionResult();		
 		// Find all cheat sheet extensions within the host plug-in
-		IPluginExtension[] extensions = fRegisterCSData.findExtensions(model,
-				RegisterCSWizardPage.F_CS_EXTENSION_POINT_ID);
+		IPluginExtension[] extensions = findCheatSheetExtensions(model);
 		// Process all cheat sheet extensions
 		// Extension search results
 		// (1) An existing extension containing a cheatsheet element with the 
@@ -366,6 +372,20 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}	
 		return result;
 	}
+	
+	public static IPluginExtension[] findCheatSheetExtensions(ISharedExtensionsModel model) {
+		IPluginExtension[] extensions = model.getExtensions().getExtensions();
+		
+		ArrayList csExtensions = new ArrayList();
+		for (int i = 0; i < extensions.length; i++) {
+			String point = extensions[i].getPoint();
+			if (F_CS_EXTENSION_POINT_ID.equals(point)) {
+				csExtensions.add(extensions[i]);
+			}
+		}
+		return (IPluginExtension[]) csExtensions.toArray(
+				new IPluginExtension[csExtensions.size()]);
+	}	
 	
 	/**
 	 * @param file
@@ -506,7 +526,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @return
 	 */
 	private IPluginModelBase createModel(IFile file) {
-		if (fRegisterCSData.isFragment()) {
+		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
 			return new WorkspaceFragmentModel(file, false);		
 		}
 		return new WorkspacePluginModel(file, false);
@@ -521,7 +541,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
-		extension.setPoint(RegisterCSWizardPage.F_CS_EXTENSION_POINT_ID);
+		extension.setPoint(F_CS_EXTENSION_POINT_ID);
 		// NO id
 		// NO name 
 		

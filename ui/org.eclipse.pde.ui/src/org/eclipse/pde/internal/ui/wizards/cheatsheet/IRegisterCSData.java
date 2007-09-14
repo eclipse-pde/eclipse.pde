@@ -11,10 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
  * IRegisterCSData
@@ -41,11 +38,6 @@ public interface IRegisterCSData {
 	 * @return
 	 */
 	public int getDataCategoryType();
-	
-	/**
-	 * @return
-	 */
-	public boolean pluginExists();
 
 	/**
 	 * @return
@@ -70,24 +62,6 @@ public interface IRegisterCSData {
 	/**
 	 * @return
 	 */
-	public IFile getPluginFile();
-	
-	/**
-	 * @return
-	 */
-	public boolean isFragment(); 
-	
-	/**
-	 * @return
-	 */
 	public IProject getPluginProject();
-	
-	/**
-	 * @param model
-	 * @param extensionPointID
-	 * @return
-	 */
-	public IPluginExtension[] findExtensions(IPluginModelBase model,
-			String extensionPointID);
 
 }
