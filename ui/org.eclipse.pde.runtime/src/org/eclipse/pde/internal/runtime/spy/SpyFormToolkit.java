@@ -73,8 +73,8 @@ public class SpyFormToolkit extends FormToolkit {
 				createClassReference(buffer, clazzes[i]);
 				buffer.append("</li>"); //$NON-NLS-1$
 			}
-			Image interfaceImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_INTERFACE_OBJ);
-			text.setImage("interface", interfaceImage); //$NON-NLS-1$
+			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_INTERFACE_OBJ);
+			text.setImage("interface", image); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
@@ -90,15 +90,26 @@ public class SpyFormToolkit extends FormToolkit {
 				createClassReference(buffer, clazzes[i]);
 			    buffer.append("</li>"); //$NON-NLS-1$
 			}
-			Image interfaceImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
-			text.setImage("class", interfaceImage); //$NON-NLS-1$
+			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
+			text.setImage("class", image); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
 	
-	// TODO create this convenience method
-	public String createIdentifierSection(FormText text, String title, Class[] clazzes) {
+	public String createIdentifierSection(FormText text, String title, String[] ids) {
 		StringBuffer buffer = new StringBuffer();
+		if(ids.length > 0) {
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(title);
+			buffer.append("</p>"); //$NON-NLS-1$
+			for(int i = 0; i < ids.length; i++) {
+				buffer.append("<li bindent=\"20\" style=\"image\" value=\"id\">"); //$NON-NLS-1$
+				buffer.append(ids[i]);
+			    buffer.append("</li>"); //$NON-NLS-1$
+			}
+			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_ID_OBJ);
+			text.setImage("id", image); //$NON-NLS-1$
+		}
 		return buffer.toString();
 	}
 	
