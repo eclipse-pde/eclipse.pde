@@ -62,7 +62,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 
 	public final static String F_CS_ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	
-	public final static String F_LOCALE_VARIABLE = "$nl$"; //$NON-NLS-1$
+	private final static String F_LOCALE_VARIABLE = "$nl$/"; //$NON-NLS-1$
 	
 	private Combo fCategoryCombo;
 	
@@ -172,21 +172,11 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataContentFile()
 	 */
 	public String getDataContentFile() {
-		// Retrieve the full path to the cheat sheet
+		// Retrieve the project relative path to the cheat sheet
 		String portablePath = 
-			fCheatSheetModel.getUnderlyingResource().getFullPath().toPortableString();
-		// Chop off the starting '/'
-		String result = portablePath.substring(1);
-		// Chop off the project name 
-		int index = result.indexOf('/');
-		if (index == -1) {
-			return ""; //$NON-NLS-1$
-		}
-		result = result.substring(index);
+			fCheatSheetModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
 		// Prepend the locale specific variable
-		result = F_LOCALE_VARIABLE + result;
-		
-		return result;
+		return F_LOCALE_VARIABLE + portablePath;
 	}
 	
 	/* (non-Javadoc)
