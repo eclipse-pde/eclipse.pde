@@ -47,10 +47,10 @@ public class ActiveHelpSection implements ISpySection {
 		helpBuffer.append(processControlHelp(event, toolkit));
 		if(object instanceof IDialogPage) {
 			IDialogPage page = (IDialogPage) object;
-			helpBuffer.append(processChildControlHelp(page.getControl().getShell(), toolkit));
+			processChildControlHelp(page.getControl().getShell(), toolkit, helpBuffer);
 		} else if(object instanceof Dialog) {
 			Dialog dialog = (Dialog) object;
-			helpBuffer.append(processChildControlHelp(dialog.getShell(), toolkit));
+			processChildControlHelp(dialog.getShell(), toolkit, helpBuffer);
 		}
 		
 		// ensure we actually have help
@@ -76,23 +76,21 @@ public class ActiveHelpSection implements ISpySection {
 		
 	}
 
-	private String processChildControlHelp(Control control, SpyFormToolkit toolkit) {
-		StringBuffer buffer = new StringBuffer();
+	private void processChildControlHelp(Control control, SpyFormToolkit toolkit, StringBuffer buffer) {
 		if(control.getData(HELP_KEY) != null) {
 			buffer.append("<li bindent=\"20\">" + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if(control instanceof Composite) {
 			Composite parent = (Composite) control;
 			for (int i = 0; i < parent.getChildren().length; i++) {
-				buffer.append(processChildControlHelp(parent.getChildren()[i], toolkit));
+				processChildControlHelp(parent.getChildren()[i], toolkit, buffer);
 			}
 		}
 		else if(control instanceof Shell) {
 			for(int i = 0; i < ((Shell)control).getChildren().length; i++) {
-				buffer.append(processChildControlHelp(((Shell)control).getChildren()[i], toolkit));
+				processChildControlHelp(((Shell)control).getChildren()[i], toolkit, buffer);
 			}
 		}
-		return buffer.toString();
 	}
 
 	private String processControlHelp(ExecutionEvent event, SpyFormToolkit toolkit) {
@@ -145,7 +143,7 @@ public class ActiveHelpSection implements ISpySection {
 				buffer.append("<li bindent=\"20\">" + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			for (int i = 0; i < shell.getChildren().length; i++) {
-				buffer.append(processChildControlHelp(shell.getChildren()[i], toolkit));
+				processChildControlHelp(shell.getChildren()[i], toolkit, buffer);
 			}
 		}
 		else if(control != null) {
@@ -156,7 +154,7 @@ public class ActiveHelpSection implements ISpySection {
 			if(control instanceof Composite) {
 				Composite parent = (Composite) control;
 				for(int i = 0; i < parent.getChildren().length; i++) {
-					buffer.append(processChildControlHelp(parent.getChildren()[i], toolkit));
+					processChildControlHelp(parent.getChildren()[i], toolkit, buffer);
 				}
 			}
 		}
