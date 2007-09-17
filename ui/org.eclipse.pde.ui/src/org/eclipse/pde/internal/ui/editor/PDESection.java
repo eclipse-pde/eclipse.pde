@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.swt.dnd.Clipboard;
@@ -70,7 +71,9 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	}
 
 	public boolean isEditable() {
-		return getPage().getPDEEditor().getAggregateModel().isEditable();
+		// getAggregateModel() can (though never should) return null
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return model == null ? false : model.isEditable();
 	}
 
 	/**
