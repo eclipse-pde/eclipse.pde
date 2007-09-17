@@ -102,8 +102,8 @@ public class SchemaTransformer {
 	}
 
 	private void printStyles() {
-		fWriter.println("<style>@import url(\"" + getCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
-		fWriter.println("<style>@import url(\"" + getSchemaCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		fWriter.println("<style type=\"text/css\">@import url(\"" + getCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		fWriter.println("<style type=\"text/css\">@import url(\"" + getSchemaCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private URL getResourceURL(String bundleID, String resourcePath) {
@@ -121,7 +121,7 @@ public class SchemaTransformer {
 	
 	private void printBody() {
 		fWriter.println("<BODY>"); //$NON-NLS-1$
-		fWriter.println("<H1><CENTER>" + fSchema.getName() + "</CENTER></H1>"); //$NON-NLS-1$ //$NON-NLS-2$
+		fWriter.println("<H1 style=\"text-align:center\">" + fSchema.getName() + "</H1>"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fSchema.isDeperecated()) {
 			fWriter.print("<div style=\"border: 1px solid #990000; padding: 5px; text-align: center; color: red;\">"); //$NON-NLS-1$
 			fWriter.print("This extension point is deprecated"); //$NON-NLS-1$
@@ -131,18 +131,18 @@ public class SchemaTransformer {
 			fWriter.println("</div>"); //$NON-NLS-1$
 		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
-		fWriter.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>"); //$NON-NLS-1$
+		fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">Identifier: </h6>"); //$NON-NLS-1$
 		fWriter.print(fSchema.getQualifiedPointId());
 		fWriter.println("<p></p>"); //$NON-NLS-1$
 		transformSection("Since:", IDocumentSection.SINCE); //$NON-NLS-1$
 		transformDescription();
-		fWriter.println("<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>"); //$NON-NLS-1$
+		fWriter.println("<h6 class=\"CaptionFigColumn SchemaHeader\">Configuration Markup:</h6>"); //$NON-NLS-1$
 		transformMarkup();
 		transformSection("Examples:", IDocumentSection.EXAMPLES); //$NON-NLS-1$
 		transformSection("API Information:", IDocumentSection.API_INFO); //$NON-NLS-1$
 		transformSection("Supplied Implementation:", IDocumentSection.IMPLEMENTATION); //$NON-NLS-1$
-		fWriter.println("<br>"); //$NON-NLS-1$
-		fWriter.println("<p class=note id=copyright>"); //$NON-NLS-1$
+		fWriter.println("<br/>"); //$NON-NLS-1$
+		fWriter.println("<p class=\"note SchemaCopyright\">"); //$NON-NLS-1$
 		transformSection(null, IDocumentSection.COPYRIGHT);
 		fWriter.println("</p>"); //$NON-NLS-1$
 		fWriter.println("</BODY>"); //$NON-NLS-1$		
@@ -156,10 +156,11 @@ public class SchemaTransformer {
 		if (description == null || description.trim().length() == 0)
 			return;
 		if (title != null)
-			fWriter.print("<h6 class=CaptionFigColumn id=header>" + title + " </h6>"); //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">" + title + " </h6>"); //$NON-NLS-1$ //$NON-NLS-2$
 		transformText(description);
 		fWriter.println();
-		fWriter.println("<p></p>"); //$NON-NLS-1$
+		if (!sectionId.equals(IDocumentSection.COPYRIGHT))
+			fWriter.println("<p></p>"); //$NON-NLS-1$
 		fWriter.println();
 	}
 
@@ -183,13 +184,13 @@ public class SchemaTransformer {
 			char c = text.charAt(i);
 			if (c == '<') {
 				if (isPreStart(text, i)) {
-					fWriter.print("<pre>"); //$NON-NLS-1$
+					fWriter.print("<pre class=\"Example\"><span class=\"code SchemaTag\">"); //$NON-NLS-1$
 					i += 4;
 					preformatted = true;
 					continue;
 				}
 				if (isPreEnd(text, i)) {
-					fWriter.print("</pre>"); //$NON-NLS-1$
+					fWriter.print("</span></pre>"); //$NON-NLS-1$
 					i += 5;
 					preformatted = false;
 					inTag = false;
@@ -201,12 +202,10 @@ public class SchemaTransformer {
 				switch (c) {
 					case '<' :
 						inTag = true;
-						fWriter.print("<p class=code id=tag>"); //$NON-NLS-1$
 						fWriter.print("&lt;"); //$NON-NLS-1$
 						break;
 					case '>' :
 						fWriter.print("&gt;"); //$NON-NLS-1$
-						fWriter.print("</p>"); //$NON-NLS-1$
 						inTag = false;
 						inCstring = false;
 						break;
@@ -220,12 +219,11 @@ public class SchemaTransformer {
 						if (inTag) {
 							if (inCstring) {
 								fWriter.print("&quot;"); //$NON-NLS-1$
-								fWriter.print("</p>"); //$NON-NLS-1$
-								fWriter.print("<p class=code id=tag>"); //$NON-NLS-1$
+								fWriter.print("</span><span class=\"code SchemaTag\">"); //$NON-NLS-1$
 								inCstring = false;
 							} else {
 								inCstring = true;
-								fWriter.print("<p class=code id=cstring>"); //$NON-NLS-1$
+								fWriter.print("</span><span class=\"code SchemaCstring\">"); //$NON-NLS-1$
 								fWriter.print("&quot;"); //$NON-NLS-1$
 							}
 						} else {
@@ -241,8 +239,7 @@ public class SchemaTransformer {
 	}
 
 	private void transformDescription() {
-		fWriter.println("<p>"); //$NON-NLS-1$
-		fWriter.print("<h6 class=CaptionFigColumn id=header>Description: </h6>"); //$NON-NLS-1$
+		fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">Description: </h6>"); //$NON-NLS-1$
 		transformText(fSchema.getDescription());
 		ISchemaInclude[] includes = fSchema.getIncludes();
 		for (int i = 0; i < includes.length; i++) {
@@ -252,10 +249,11 @@ public class SchemaTransformer {
 				transformText(ischema.getDescription());
 			}
 		}
-		fWriter.println("</p>"); //$NON-NLS-1$
+		fWriter.println("<p></p>"); //$NON-NLS-1$
 	}
 
 	private void transformMarkup() {
+		fWriter.println("<p></p>"); //$NON-NLS-1$
 		ISchemaElement[] elements = fSchema.getResolvedElements();
 		for (int i = 0; i < elements.length; i++) {
 			transformElement(elements[i]);
@@ -271,7 +269,7 @@ public class SchemaTransformer {
 			fWriter.print("<div style=\"color: red; font-style: italic;\">The <b>" + name + "</b> element is deprecated</div> "); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		fWriter.print(
-			"<p class=code id=dtd>&lt;!ELEMENT " //$NON-NLS-1$
+			"<p class=\"code SchemaDtd\">&lt;!ELEMENT " //$NON-NLS-1$
 				+ nameLink
 				+ " " //$NON-NLS-1$
 				+ dtd);
@@ -281,7 +279,7 @@ public class SchemaTransformer {
 
 		if (attributes.length > 0) { 
 			fWriter.println(
-				"<p class=code id=dtd>&lt;!ATTLIST " //$NON-NLS-1$
+				"<p class=\"code SchemaDtd\">&lt;!ATTLIST " //$NON-NLS-1$
 					+ name
 					+ "</p>"); //$NON-NLS-1$
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
@@ -297,19 +295,19 @@ public class SchemaTransformer {
 		String description = element.getDescription();
 
 		if (description != null && description.trim().length() > 0) {
-			fWriter.println("<p class=ConfigMarkup id=elementDesc>");  //$NON-NLS-1$
+			fWriter.println("<p class=\"ConfigMarkupElementDesc\">");  //$NON-NLS-1$
 			transformText(description);
 			fWriter.println("</p>"); //$NON-NLS-1$
 		} 
 		// end of inserted desc for element
 		if (attributes.length == 0){
-			fWriter.println("<br><br>"); //$NON-NLS-1$
+			fWriter.println("<br/><br/>"); //$NON-NLS-1$
 			return;
 		} else if (description != null && description.trim().length() > 0){
-			fWriter.println("<br>"); //$NON-NLS-1$
+			fWriter.println("<br/>"); //$NON-NLS-1$
 		}
 		
-		fWriter.println("<ul class=ConfigMarkup id=attlistDesc>"); //$NON-NLS-1$
+		fWriter.println("<ul class=\"ConfigMarkupAttlistDesc\">"); //$NON-NLS-1$
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
 			if (name.equals("extension")) { //$NON-NLS-1$
@@ -327,11 +325,11 @@ public class SchemaTransformer {
 		}
 		fWriter.println("</ul>"); //$NON-NLS-1$
 		// adding spaces for new shifted view
-		fWriter.print("<br>"); //$NON-NLS-1$
+		fWriter.print("<br/>"); //$NON-NLS-1$
 	}
 	
 	private void appendAttlist(ISchemaAttribute att, int maxWidth) {
-		fWriter.print("<p class=code id=dtdAttlist>"); //$NON-NLS-1$
+		fWriter.print("<p class=\"code SchemaDtdAttlist\">"); //$NON-NLS-1$
 		// add name
 		fWriter.print(att.getName());
 		// fill spaces to align data type
