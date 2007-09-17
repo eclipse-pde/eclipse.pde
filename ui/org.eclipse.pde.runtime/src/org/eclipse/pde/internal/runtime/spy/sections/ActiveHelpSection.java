@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.runtime.spy.sections;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -44,13 +45,15 @@ public class ActiveHelpSection implements ISpySection {
 		
 		StringBuffer helpBuffer = new StringBuffer();
 		// process help
-		helpBuffer.append(processControlHelp(event, toolkit));
-		if(object instanceof IDialogPage) {
-			IDialogPage page = (IDialogPage) object;
+		if(object instanceof PreferenceDialog) {
+			PreferenceDialog dialog = (PreferenceDialog) object;
+			IPreferencePage page = (IPreferencePage) dialog.getSelectedPage();
 			processChildren(page.getControl().getShell(), toolkit, helpBuffer);
 		} else if(object instanceof Dialog) {
 			Dialog dialog = (Dialog) object;
 			processChildren(dialog.getShell(), toolkit, helpBuffer);
+		} else {
+			helpBuffer.append(processControlHelp(event, toolkit));
 		}
 		
 		// ensure we actually have help
@@ -78,7 +81,7 @@ public class ActiveHelpSection implements ISpySection {
 
 	private void processChildren(Control control, SpyFormToolkit toolkit, StringBuffer buffer) {
 		if(control.getData(HELP_KEY) != null) {
-			buffer.append("<li bindent=\"20\">" + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("<li bindent=\"20\">" + control.toString() + " - " + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		if(control instanceof Composite) {
 			Composite composite = (Composite) control;
@@ -134,9 +137,8 @@ public class ActiveHelpSection implements ISpySection {
 
 		}
 		if (shell != null) {
-			buffer.append("<p>Help IDs:</p>"); //$NON-NLS-1$
 			if (shell.getData(HELP_KEY) != null) { 
-				buffer.append("<li bindent=\"20\">" + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("<li bindent=\"20\">" + shell.toString() + " - " + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			for (int i = 0; i < shell.getChildren().length; i++) {
 				processChildren(shell.getChildren()[i], toolkit, buffer);
@@ -144,8 +146,7 @@ public class ActiveHelpSection implements ISpySection {
 		}
 		else if(control != null) {
 			if(control.getData(HELP_KEY) != null) { 
-				buffer.append("<p>Help Data:</p>"); //$NON-NLS-1$
-				buffer.append("<li bindent=\"20\">" + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("<li bindent=\"20\">" + control.toString() + " - " + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			if(control instanceof Composite) {
 				Composite parent = (Composite) control;
