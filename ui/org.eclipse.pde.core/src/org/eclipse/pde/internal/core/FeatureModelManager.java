@@ -162,10 +162,16 @@ public class FeatureModelManager {
 		if (model != null) {
 			return model;
 		}
-		Version pvi = Version.parseVersion(version);
-		return findFeatureModel(id, pvi.getMajor() + "." //$NON-NLS-1$
-				+ pvi.getMinor() + "." //$NON-NLS-1$
-				+ pvi.getMicro() + ".qualifier"); //$NON-NLS-1$
+		try {
+			Version pvi = Version.parseVersion(version);
+			return findFeatureModel(id, pvi.getMajor() + "." //$NON-NLS-1$
+					+ pvi.getMinor() + "." //$NON-NLS-1$
+					+ pvi.getMicro() + ".qualifier"); //$NON-NLS-1$
+
+		} catch (IllegalArgumentException e) {
+			// handle the case where the version is not in proper format (bug 203795)
+			return null;
+		}
 	}
 
 	/**
