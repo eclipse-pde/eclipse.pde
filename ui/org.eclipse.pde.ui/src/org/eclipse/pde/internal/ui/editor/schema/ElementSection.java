@@ -540,8 +540,12 @@ public class ElementSection extends TreeSection {
 		this.fSchema = (Schema) getPage().getModel();
 		fRearranger = new SchemaRearranger(fSchema);
 		fTreeViewer.setInput(fSchema);
-		getTreePart().setButtonEnabled(0, fSchema.isEditable());
+		boolean isEditable = fSchema.isEditable();
+		getTreePart().setButtonEnabled(0, isEditable);
 		getTreePart().setButtonEnabled(1, false);
+		getTreePart().setButtonEnabled(2, isEditable);
+		getTreePart().setButtonEnabled(3, isEditable);
+		getTreePart().setButtonEnabled(4, isEditable);
 	}
 
 	public void handleModelChanged(IModelChangedEvent e) {
