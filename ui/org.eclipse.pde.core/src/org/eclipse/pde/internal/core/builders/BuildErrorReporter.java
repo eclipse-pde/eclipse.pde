@@ -437,7 +437,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private void validateSourceEntries(ArrayList sourceEntries, IClasspathEntry[] cpes) {
-		String[] unlisted = getUnlistedClasspaths(sourceEntries, fProject, cpes);
+		String[] unlisted = PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, fProject, cpes);
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < unlisted.length; i++) {
 			if (unlisted[i] == null)
@@ -461,32 +461,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					PDEMarkerFactory.B_SOURCE_ADDITION,
 					PDEMarkerFactory.CAT_OTHER);
 
-	}
-
-	public static String[] getUnlistedClasspaths(ArrayList sourceEntries, IProject project, IClasspathEntry[] cpes) {
-		String[] unlisted = new String[cpes.length];
-		int index = 0;
-		for (int i = 0; i < cpes.length; i++) {
-			if (cpes[i].getEntryKind() != IClasspathEntry.CPE_SOURCE)
-				continue;
-			IPath path = cpes[i].getPath();
-			boolean found = false;
-			for (int j = 0; j < sourceEntries.size(); j++) {
-				IBuildEntry be = (IBuildEntry)sourceEntries.get(j);
-				String[] tokens = be.getTokens();
-				for (int k = 0; k < tokens.length; k++) {
-					IResource res = project.findMember(tokens[k]);
-					if (res == null)
-						continue;
-					IPath ipath = res.getFullPath();
-					if (ipath.equals(path))
-						found = true;
-				}
-			}
-			if (!found)
-				unlisted[index++] = path.removeFirstSegments(1).addTrailingSeparator().toString();
-		}
-		return unlisted;
 	}
 
 	private void validateIncludes(IBuildEntry includes, ArrayList sourceIncludes) {
