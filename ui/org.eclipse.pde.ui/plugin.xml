@@ -1213,11 +1213,12 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            description="%Plugin.WorkingSet.desc"
             elementAdapterClass="org.eclipse.pde.internal.ui.util.PluginAdapter"
             icon="$nl$/icons/obj16/plugin_obj.gif"
+            id="org.eclipse.pde.ui.pluginWorkingSet"
             name="%Plugin.WorkingSet"
-            pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"
-            id="org.eclipse.pde.ui.pluginWorkingSet"/>
+            pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"/>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
