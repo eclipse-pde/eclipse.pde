@@ -141,7 +141,7 @@ public class SchemaTransformer {
 		transformSection("Examples:", IDocumentSection.EXAMPLES); //$NON-NLS-1$
 		transformSection("API Information:", IDocumentSection.API_INFO); //$NON-NLS-1$
 		transformSection("Supplied Implementation:", IDocumentSection.IMPLEMENTATION); //$NON-NLS-1$
-		fWriter.println("<br/>"); //$NON-NLS-1$
+		fWriter.println("<br>"); //$NON-NLS-1$
 		fWriter.println("<p class=\"note SchemaCopyright\">"); //$NON-NLS-1$
 		transformSection(null, IDocumentSection.COPYRIGHT);
 		fWriter.println("</p>"); //$NON-NLS-1$
@@ -295,16 +295,17 @@ public class SchemaTransformer {
 		String description = element.getDescription();
 
 		if (description != null && description.trim().length() > 0) {
-			fWriter.println("<p class=\"ConfigMarkupElementDesc\">");  //$NON-NLS-1$
+			String elementType = containsParagraph(description) ? "div" : "p"; //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.println("<" + elementType + " class=\"ConfigMarkupElementDesc\">");  //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(description);
-			fWriter.println("</p>"); //$NON-NLS-1$
+			fWriter.println("</" + elementType + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		} 
 		// end of inserted desc for element
 		if (attributes.length == 0){
-			fWriter.println("<br/><br/>"); //$NON-NLS-1$
+			fWriter.println("<br><br>"); //$NON-NLS-1$
 			return;
 		} else if (description != null && description.trim().length() > 0){
-			fWriter.println("<br/>"); //$NON-NLS-1$
+			fWriter.println("<br>"); //$NON-NLS-1$
 		}
 		
 		fWriter.println("<ul class=\"ConfigMarkupAttlistDesc\">"); //$NON-NLS-1$
@@ -325,7 +326,15 @@ public class SchemaTransformer {
 		}
 		fWriter.println("</ul>"); //$NON-NLS-1$
 		// adding spaces for new shifted view
-		fWriter.print("<br/>"); //$NON-NLS-1$
+		fWriter.print("<br>"); //$NON-NLS-1$
+	}
+	
+	private boolean containsParagraph(String input) {
+		if (input.indexOf("<p>") != -1) //$NON-NLS-1$
+			return true;
+		if (input.indexOf("</p>") != -1) //$NON-NLS-1$
+			return true;
+		return false;
 	}
 	
 	private void appendAttlist(ISchemaAttribute att, int maxWidth) {
