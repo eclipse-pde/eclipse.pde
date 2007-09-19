@@ -288,12 +288,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			} else
 				exists = projectPath.append(tokens[i]).toFile().exists();
 
-			if (!exists)
+			if (!exists && !startsWithAntVariable(tokens[i])) {
 				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i],
 						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]),
 						PDEMarkerFactory.NO_RESOLUTION, 
 						fClasspathSeverity,
 						PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 	}
 
@@ -475,8 +476,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (token.equals(".")) //$NON-NLS-1$
 				// skip . since we know it exists
 				continue;
-			int varStart = token.indexOf("${"); //$NON-NLS-1$
-			if (varStart != -1 && varStart < token.indexOf("}")) //$NON-NLS-1$
+			if (startsWithAntVariable(token))
 				// skip '${x}' variables
 				continue;
 			IResource member = fProject.findMember(token);
@@ -501,6 +501,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (message != null)
 				prepareError(includes.getName(), token, message, fixId, PDEMarkerFactory.CAT_OTHER);
 		}
+	}
+	
+	private boolean startsWithAntVariable(String token) {
+		int varStart = token.indexOf("${"); //$NON-NLS-1$
+		return varStart != -1 && varStart < token.indexOf("}"); //$NON-NLS-1$
 	}
 
 	private void validateDependencyManagement(IBuildEntry bundleList) {
