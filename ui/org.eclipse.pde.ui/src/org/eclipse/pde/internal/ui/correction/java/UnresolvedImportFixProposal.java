@@ -21,11 +21,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * Abstract class defining a classpath fix proposal that will 
@@ -112,13 +109,6 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	 */
 	public String getDisplayString() {
 		return getLabel(true);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
-	 */
-	public Image getImage() {
-		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_MF_OBJ);
 	}
 
 	/* (non-Javadoc)

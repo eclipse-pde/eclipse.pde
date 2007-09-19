@@ -39,7 +39,10 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -129,6 +132,13 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			public String getDescription() {
 				return PDEUIMessages.UnresolvedImportFixProcessor_2;
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
+			 */
+			public Image getImage() {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
+			}
 		});
 	}
 	
@@ -194,6 +204,13 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			 */
 			public String getDescription() {
 				return PDEUIMessages.UnresolvedImportFixProcessor_5;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
+			 */
+			public Image getImage() {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUNDLE_OBJ);
 			}
 
 		});
