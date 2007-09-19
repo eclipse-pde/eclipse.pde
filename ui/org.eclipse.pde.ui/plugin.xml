@@ -1761,4 +1761,19 @@
                 id="org.eclipse.jdt.ui.text.correction.QuickFixProcessor">
           </quickFixProcessor>
        </extension>
+       <extension
+             point="org.eclipse.jdt.ui.classpathFixProcessors">
+          <classpathFixProcessor
+                class="org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProcessor"
+                id="org.eclipse.pde.ui.unresolvedImportQuickFixProcessor"
+                name="%classpathFixProcessor.unresolvedImport.name">
+                <enablement>
+                   <with variable="project">
+		              <test property="org.eclipse.jdt.core.isInJavaProjectWithNature" value="org.eclipse.pde.PluginNature"/>
+                   </with>
+                </enablement>
+                <overrides id="org.eclipse.jdt.ui.text.correction.DefaultClasspathFixProcessor"/>
+                <overrides id="org.eclipse.jdt.junit.JUnitClasspathFixProcessor"/>
+          </classpathFixProcessor>
+       </extension>
 </plugin>

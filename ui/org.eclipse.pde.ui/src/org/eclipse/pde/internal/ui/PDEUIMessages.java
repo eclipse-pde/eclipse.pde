@@ -1647,6 +1647,13 @@ public class PDEUIMessages extends NLS {
 	public static String Actions_Feature_OpenProjectWizardAction;
 	public static String Actions_Site_OpenProjectWizardAction;
 
+	public static String UnresolvedImportFixProcessor_0;
+	public static String UnresolvedImportFixProcessor_1;
+	public static String UnresolvedImportFixProcessor_2;
+	public static String UnresolvedImportFixProcessor_3;
+	public static String UnresolvedImportFixProcessor_4;
+	public static String UnresolvedImportFixProcessor_5;
+
 	public static String UpdateClasspathJob_error_title;
 	public static String UpdateClasspathJob_error_message;
 	public static String UpdateClasspathJob_task;
