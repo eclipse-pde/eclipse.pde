@@ -64,6 +64,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			IJavaProject referencedJavaProject = referencedElement.getJavaElement().getJavaProject();
 			if (referencedJavaProject != null && WorkspaceModelManager.isPluginProject(referencedJavaProject.getProject())) {
 				// get the packages exported by the referenced plug-in project
+				if (referencedJavaProject.equals(context.getCompilationUnit().getJavaProject()))
+					return;
 				IPluginModelBase referencedModel = PDECore.getDefault().getModelManager().findModel(referencedJavaProject.getProject());
 				ExportPackageDescription[] exportPackages = referencedModel.getBundleDescription().getExportPackages();
 				// check if the required package is exported already
