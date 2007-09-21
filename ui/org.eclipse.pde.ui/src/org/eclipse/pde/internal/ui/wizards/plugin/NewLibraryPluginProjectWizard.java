@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewLibraryPluginProjectWizard extends NewWizard implements
@@ -63,7 +64,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	public void addPages() {
 		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData); //$NON-NLS-1$ 
 		addPage(fJarsPage);
-		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData); //$NON-NLS-1$
+		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData, getSelection()); //$NON-NLS-1$
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname != null)
 			fMainPage.setInitialProjectName(pname);
@@ -127,6 +128,9 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 					true,
 					new NewLibraryPluginCreationOperation(fPluginData,
 							fProjectProvider, null));
+			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
+			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(),
+					workingSets);
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

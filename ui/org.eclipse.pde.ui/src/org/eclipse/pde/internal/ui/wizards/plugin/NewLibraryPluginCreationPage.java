@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -73,10 +74,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private Combo fTargetCombo;
 	protected Button fJarredCheck;
 	protected Button fFindDependencies;
+	private IStructuredSelection fSelection;
 
-	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data) {
+	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data, IStructuredSelection selection) {
 		super(pageName);
 		fData = data;
+		fSelection = selection;
 		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); 
 		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); 
 	}
@@ -91,6 +94,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		createPluginPropertiesGroup(control);
 
 		createFormatGroup(control);
+		
+		createWorkingSetGroup(control, fSelection, new String[] {
+						"org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
+						"org.eclipse.pde.ui.pluginWorkingSet", //$NON-NLS-1$
+						"org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
 		
 		updateRuntimeDependency();
 
@@ -215,6 +223,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setUnzipLibraries(fJarredCheck.isEnabled()
 				&& fJarredCheck.getSelection());
 		fData.setFindDependencies(fFindDependencies.getSelection());
+		fData.setWorkingSets(getSelectedWorkingSets());
 		
 		PluginFieldData data = fData;
 		data.setClassname(null);
