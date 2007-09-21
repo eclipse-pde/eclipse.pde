@@ -29,5 +29,15 @@
          </run>
       </application>
    </extension>
-
+   <extension
+         id="coretestapplicationnonmain"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="1"
+            thread="any">
+         <run
+               class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
+         </run>
+      </application>
+   </extension>
 </plugin>
