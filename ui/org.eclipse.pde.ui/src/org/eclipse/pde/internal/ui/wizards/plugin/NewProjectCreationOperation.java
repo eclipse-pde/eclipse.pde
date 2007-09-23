@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 201044
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -233,6 +234,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					if (!framework.equals(ICoreConstants.EQUINOX))
 						return;
 				}
+				// Set required EE
+				String exeEnvironment = ((AbstractFieldData)fData).getExecutionEnvironment();
+				if(exeEnvironment != null) {
+					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, exeEnvironment);
+				}
 			} 
 			if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).doGenerateClass()) {
 				if (targetVersion.equals("3.1")) //$NON-NLS-1$
@@ -405,7 +411,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				project, data);
 		IClasspathEntry[] entries = new IClasspathEntry[internalClassPathEntries.length + 2];
 		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
-		entries[entries.length - 2] = ClasspathComputer.createJREEntry(null);
+
+		// Set EE of new project
+		String executionEnvironment = "";
+		if(data instanceof AbstractFieldData) {
+			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
+		}
+		
+		entries[entries.length - 2] = ClasspathComputer.createJREEntry(executionEnvironment);
 		entries[entries.length - 1] = ClasspathComputer.createContainerEntry();
 		return entries;
 	}

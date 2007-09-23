@@ -2396,6 +2396,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewProjectCreationPage_ptarget;
 
+	public static String NewProjectCreationPage_executionEnvironments_label;
+	
+	public static String NewProjectCreationPage_environmentsButton;
+	
+	public static String NewProjectCreationPage_targetEnvironment;
+	
+
 	public static String RequiredExecutionEnvironmentSection_title;
 
 	public static String PluginGeneralInfoSection_lazyStart;

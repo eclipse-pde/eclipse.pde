@@ -7,14 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
+
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -25,6 +31,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,10 +42,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
@@ -55,6 +65,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Combo fOSGiCombo;
 	private Button fOSGIButton;
 	private IStructuredSelection fSelection;
+	private Button fExeEnvButton;
+	private Combo fEEChoice;
 	
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
 	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
@@ -74,6 +86,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		createProjectTypeGroup(control);
 		createFormatGroup(control);
+		createExecutionEnvironmentGroup(control);
 		createWorkingSetGroup(
 				control,
 				fSelection,
@@ -88,6 +101,55 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
 							: IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
 		setControl(control);
+	}
+	
+	private void createExecutionEnvironmentGroup(Composite container) {
+		Group group = new Group(container, SWT.NONE);
+		group.setText(PDEUIMessages.NewProjectCreationPage_targetEnvironment);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Create label
+		Label envs = new Label(group, SWT.NONE);	
+		envs.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
+
+		// Create combo
+		fEEChoice = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Gather EEs 
+		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
+		TreeSet availableEEs = new TreeSet();		
+		for (int i = 0; i < exeEnvs.length; i++) {
+			availableEEs.add(exeEnvs[i].getId());		
+		}
+		
+		// Set data 
+		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size()-1]));
+		
+		// Set default EE based on strict match to default VM
+		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		String[] EEChoices = fEEChoice.getItems();
+		for (int i = 0; i < EEChoices.length; i++) {			
+			if(VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+					fEEChoice.select(i);
+					break;							
+			}
+		}		
+		
+		// Create button
+		fExeEnvButton = createButton(group, SWT.PUSH, 1, 0);
+		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);		
+		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(
+						getShell(), 
+						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
+			}
+		});
 	}
 	
 	private void createProjectTypeGroup(Composite container) {
@@ -229,6 +291,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
+		fData.setExecutionEnvironment(fEEChoice.getText().trim());
 	}
 	
     protected boolean validatePage() {

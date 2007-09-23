@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -28,6 +29,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 	private String fFramework;
 	private IWorkingSet[] fWorkingSets;
+	private String fExecutionEnvironment;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -160,4 +162,11 @@ public abstract class AbstractFieldData implements IFieldData {
 		fWorkingSets = workingSets;
 	}
 	
+	public void setExecutionEnvironment(String executionEnvironment) {
+		fExecutionEnvironment = executionEnvironment;
+	}
+	
+	public String getExecutionEnvironment() {
+		return fExecutionEnvironment;
+	}	
 }
