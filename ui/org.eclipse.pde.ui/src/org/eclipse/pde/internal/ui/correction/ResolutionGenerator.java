@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
@@ -91,6 +92,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 						new ChooseClassXMLResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE:
 				return new IMarkerResolution[] {new RenameProvidePackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
+			case PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET:
+				return new IMarkerResolution[] { new AddDefaultExecutionEnvironmentResolution(AbstractPDEMarkerResolution.CREATE_TYPE) };
 		}
 		return NO_RESOLUTIONS;
 	}

@@ -589,6 +589,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveUnknownExecEnvironments_label;
 
+	public static String AddDefaultExecutionEnvironment_label;
+
 	public static String RevertUnsupportSingletonResolution_desc;
 
 	public static String AddLibraryDialog_emptyLibraries;

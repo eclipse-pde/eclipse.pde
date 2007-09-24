@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -358,8 +359,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (desc == null)
 			return;
 		String[] bundleEnvs = desc.getExecutionEnvironments();
-		if (bundleEnvs == null || bundleEnvs.length == 0)
+		if (bundleEnvs == null || bundleEnvs.length == 0) {
+
+			// No EE specified
+			report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev,
+					PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
 			return;
+		}
 
 		IHeader header = getHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header == null)

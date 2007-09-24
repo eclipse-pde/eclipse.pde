@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -41,7 +42,8 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_UNECESSARY_DEP = 0x1017; // other problem
 	public static final int M_MISSING_EXPORT_PKGS = 0x1018; // other problem
 	public static final int M_DEPRECATED_PROVIDE_PACKAGE = 0x1019; // deprecation
-	
+	public static final int M_EXECUTION_ENVIRONMENT_NOT_SET = 0x1020; // other problem
+
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
 	public static final int B_REMOVE_SLASH_FILE_ENTRY = 0x2002;	
