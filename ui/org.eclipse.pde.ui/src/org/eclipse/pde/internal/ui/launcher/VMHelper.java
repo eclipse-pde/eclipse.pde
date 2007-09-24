@@ -61,8 +61,27 @@ public class VMHelper {
 	}
 	
 	public static IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		String vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
-		return getVMInstall(vm);
+		boolean vmSelected = configuration.getAttribute(IPDELauncherConstants.USE_VMINSTALL, true);
+		String vm;
+		if (vmSelected)
+			vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
+		else {
+			String id = configuration.getAttribute(IPDELauncherConstants.EXECUTION_ENVIRONMENT, (String)null);
+			if (id != null) {
+				IExecutionEnvironment ee = getExecutionEnvironment(id);
+				if (ee == null)
+					throw new CoreException(
+						LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.VMHelper_cannotFindExecEnv, id)));
+				vm = getVMInstallName(ee);
+			}
+			else
+				vm = getDefaultVMInstallName();
+		}
+		IVMInstall result = getVMInstall(vm);
+		if (result == null)
+			throw new CoreException(
+					LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
+		return result;
 	}
 
 
@@ -80,31 +99,10 @@ public class VMHelper {
 	public static IVMInstall createLauncher(
 			ILaunchConfiguration configuration)
 	throws CoreException {
-		boolean vmSelected = configuration.getAttribute(IPDELauncherConstants.USE_VMINSTALL, true); //$NON-NLS-1$ //$NON-NLS-2$
-		String vm;
-		if (vmSelected)
-			vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
-		else {
-			String id = configuration.getAttribute(IPDELauncherConstants.EXECUTION_ENVIRONMENT, (String)null);
-			if (id != null) {
-				IExecutionEnvironment ee = getExecutionEnvironment(id);
-				if (ee == null)
-					throw new CoreException(
-						LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.VMHelper_cannotFindExecEnv, id)));
-				vm = getVMInstallName(ee);
-			}
-			else
-				vm = getDefaultVMInstallName();
-		}
-		IVMInstall launcher = getVMInstall(vm);
-		if (launcher == null) 
-			throw new CoreException(
-					LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
-
+		IVMInstall launcher = getVMInstall(configuration);
 		if (!launcher.getInstallLocation().exists()) 
 			throw new CoreException(
 					LauncherUtils.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
-
 		return launcher;
 	}
 
