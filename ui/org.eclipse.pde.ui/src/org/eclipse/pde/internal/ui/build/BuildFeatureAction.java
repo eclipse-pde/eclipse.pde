@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IXMLConstants;
@@ -52,7 +53,8 @@ public class BuildFeatureAction extends BaseBuildAction {
 		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
-		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos()); //This needs to be set before we set the format
+		String configInfo = TargetPlatform.getOS() + ", " + TargetPlatform.getWS() + ", " + TargetPlatform.getOSArch(); //$NON-NLS-1$ //$NON-NLS-2$
+		AbstractScriptGenerator.setConfigInfo(configInfo); //This needs to be set before we set the format
 		generator.setArchivesFormat(AbstractScriptGenerator.getDefaultConfigInfos() + '-' + IXMLConstants.FORMAT_ANTZIP);
 		generator.setElements(new String[] { "feature@" + fFeatureModel.getFeature().getId() + (fFeatureModel.getFeature().getVersion() == null ? "" : ":" + fFeatureModel.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(TargetPlatformHelper.getFeaturePaths());
