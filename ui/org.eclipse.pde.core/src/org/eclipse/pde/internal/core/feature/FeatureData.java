@@ -59,30 +59,26 @@ public class FeatureData
 		installSize = getIntegerAttribute(node, "install-size"); //$NON-NLS-1$
 	}
 	protected void writeAttributes(String indent2, PrintWriter writer) {
-		if (getId() != null) {
-			writer.println();
-			writer.print(indent2 + "id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (getOS() != null) {
-			writer.println();
-			writer.print(indent2 + "os=\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (getWS() != null) {
-			writer.println();
-			writer.print(indent2 + "ws=\"" + getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (getNL() != null) {
-			writer.println();
-			writer.print(indent2 + "nl=\"" + getNL() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (getArch() != null) {
-			writer.println();
-			writer.print(indent2 + "arch=\"" + getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		writeAttribute("id", getId(), indent2, writer); //$NON-NLS-1$
+		writeAttribute("os", getOS(), indent2, writer); //$NON-NLS-1$
+		writeAttribute("ws", getWS(), indent2, writer); //$NON-NLS-1$
+		writeAttribute("nl", getNL(), indent2, writer); //$NON-NLS-1$
+		writeAttribute("arch", getArch(), indent2, writer); //$NON-NLS-1$
 		writer.println();
 		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
 		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	private void writeAttribute(String attribute, String value, String indent2, PrintWriter writer) {
+		if (value != null && value.length() > 0) {
+			writer.println();
+			writer.print(indent2);
+			writer.print(attribute);
+			writer.print("=\""); //$NON-NLS-1$
+			writer.print(value);
+			writer.print("\""); //$NON-NLS-1$
+		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
