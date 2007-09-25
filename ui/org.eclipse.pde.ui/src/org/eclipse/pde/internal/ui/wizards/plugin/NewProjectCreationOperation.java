@@ -225,6 +225,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (pluginBase instanceof BundlePluginBase) {
 			IBundle bundle = ((BundlePluginBase)pluginBase).getBundle();
 			if (fData instanceof AbstractFieldData) {
+				
+				// Set required EE
+				String exeEnvironment = ((AbstractFieldData)fData).getExecutionEnvironment();
+				if(exeEnvironment != null) {
+					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, exeEnvironment);
+				}
+
 				String framework = ((AbstractFieldData)fData).getOSGiFramework();
 				if (framework != null) {
 					String value = getCommaValueFromSet(getImportPackagesSet());
@@ -233,11 +240,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					// if framework is not equinox, skip equinox step below to add extra headers
 					if (!framework.equals(ICoreConstants.EQUINOX))
 						return;
-				}
-				// Set required EE
-				String exeEnvironment = ((AbstractFieldData)fData).getExecutionEnvironment();
-				if(exeEnvironment != null) {
-					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, exeEnvironment);
 				}
 			} 
 			if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).doGenerateClass()) {
