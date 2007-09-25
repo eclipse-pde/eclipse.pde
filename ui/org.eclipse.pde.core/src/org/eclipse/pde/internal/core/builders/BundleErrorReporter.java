@@ -284,8 +284,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 
 		BundleDescription desc = fModel.getBundleDescription();	
-		if (desc == null)
+		if (desc == null) {
+			ManifestElement[] elems = header.getElements();
+			if (elems.length > 0) {
+				if (!VersionUtil.validateVersionRange(elems[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)).isOK()) {
+					int line = getLine(header, header.getValue());
+					report(PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+				}
+			}
 			return;
+		}
 
 		HostSpecification host = desc.getHost();
 		if (host == null)
@@ -492,11 +500,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null)
 			return;
 
-		BundleDescription desc = fModel.getBundleDescription();
-		if (desc == null)
-			return;
-		
 		ManifestElement[] required = header.getElements();
+		
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null) {
+			for (int i = 0; i < required.length; i++)
+				validateBundleVersionAttribute(header, required[i]);
+			return;
+		}
+		
 		BundleSpecification[] specs = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			checkCanceled(monitor);
@@ -610,14 +622,20 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateImportPackage(IProgressMonitor monitor) {
-		BundleDescription desc = fModel.getBundleDescription();
-		if (desc == null)
-			return;
-
 		IHeader header = getHeader(Constants.IMPORT_PACKAGE);
 		if (header == null)
 			return;
-
+		
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null) {
+			ManifestElement[] elements = header.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				validateSpecificationVersionAttribute(header, elements[i]);
+				validateVersionAttribute(header, elements[i], true);
+			}
+			return;
+		}
+		
 		boolean hasUnresolved = false;
 		VersionConstraint[] constraints = desc.getContainingState().getStateHelper().getUnsatisfiedConstraints(desc);
 		for (int i = 0; i < constraints.length; i++) {
