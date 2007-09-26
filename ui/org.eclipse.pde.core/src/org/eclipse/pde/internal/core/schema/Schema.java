@@ -399,6 +399,8 @@ public class Schema extends PlatformObject implements ISchema {
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
 			// ignore parse errors - 'loaded' will be false anyway
+		} catch (IOException e) {
+			PDECore.logException(e, "IOException reading following URL: " + fURL); //$NON-NLS-1$
 		} catch (Exception e) {
 			PDECore.logException(e);
 		}
