@@ -90,10 +90,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
-		
-		// verify we have a valid manifest version
-		if (!validateBundleManifestVersion())
-			return;
 
 		validateFragmentHost();	
 		validateRequiredHeader(Constants.BUNDLE_NAME);
@@ -198,6 +194,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return false;
 		}
 
+		if (!validateBundleManifestVersion())
+			return false;
 		validatePluginId(header, id);
 		validateSingleton(header, elements[0]);
 
@@ -213,6 +211,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return true;
 	}
 
+	// validateBundleManifestVersion must be called before this function.  Relies on fOSGiR4 being set correctly
 	private void validateSingleton(IHeader header, ManifestElement element) {
 		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
 		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
@@ -225,7 +224,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
 					if ("true".equals(singletonAttr)) { //$NON-NLS-1$
-						if (isCheckDeprecated()) {
+						if (isCheckDeprecated() && fOsgiR4) {
 							String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
 							report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
 									CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET, PDEMarkerFactory.CAT_DEPRECATION);
@@ -245,7 +244,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
-		if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
+		if (fOsgiR4) {
 			if (singletonAttr != null) {
 				if (isCheckDeprecated()) {
 					String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
