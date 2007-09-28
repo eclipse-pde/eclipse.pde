@@ -38,7 +38,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {
 			IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
-			if (model.isValid()) {
+			if (model != null && model.isValid()) {
 				if (parent instanceof FeatureFormPage) {
 					return new Object[0];
 				}
