@@ -150,6 +150,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
 			}
 		});
+		updateExecEnvSection();
 	}
 	
 	private void createProjectTypeGroup(Composite container) {
@@ -226,6 +227,11 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			else
 				fTargetCombo.setText(ICoreConstants.TARGET33);
 		}
+		fTargetCombo.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				updateExecEnvSection();
+			}
+		});
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   
@@ -243,6 +249,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		if (!comboInitialized)
 			fOSGiCombo.setText(ICoreConstants.EQUINOX);	
 		
+	}
+	
+	private void updateExecEnvSection() {
+		if (fTargetCombo.getText().equals(ICoreConstants.TARGET30)){
+			fEEChoice.setEnabled(false);
+			fExeEnvButton.setEnabled(false);
+		} else {
+			fEEChoice.setEnabled(true);
+			fExeEnvButton.setEnabled(true);
+		}
 	}
 	
 	private void updateRuntimeDependency() {
