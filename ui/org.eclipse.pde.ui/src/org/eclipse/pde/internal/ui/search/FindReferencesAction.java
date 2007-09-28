@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -64,6 +65,10 @@ public class FindReferencesAction extends BaseSearchAction {
 		} else if (fSelectedObject instanceof IPluginImport) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
 			input.setSearchString(((IPluginImport) fSelectedObject).getId());
+		} else if (fSelectedObject instanceof IPluginExtension) {
+			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
+			input.setSearchString(((IPluginExtension) fSelectedObject).getPoint());
+			input.setSearchScope(new ExtensionPluginSearchScope(input));
 		}
 		input.setSearchLimit(PluginSearchInput.LIMIT_REFERENCES);
 		input.setSearchScope((scope == null) ? new PluginSearchScope() : scope);

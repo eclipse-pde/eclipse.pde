@@ -133,7 +133,8 @@ public class PluginSearchActionGroup extends ActionGroup {
 		}
 		if (object instanceof IPluginExtensionPoint
 			|| object instanceof IPluginImport
-			|| (object instanceof IPlugin))
+			|| (object instanceof IPlugin)
+			|| (object instanceof IPluginExtension))
 			menu.add(new FindReferencesAction(object));
 	}
 	
