@@ -22,25 +22,25 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	
 	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
+	private static final SimpleDateFormat F_SDF = new SimpleDateFormat(F_DATE_FORMAT);
 	
 	private ArrayList children;
 	private LogEntry parent;
 	private String pluginId;
 	private int severity;
 	private int code;
+	private String fDateString;
 	private Date fDate;
 	private String message;
 	private String stack;
 	private LogSession session;
 
-	public LogEntry() {
-	}
+	public LogEntry() {}
 
 	public LogSession getSession() {
 		return session;
@@ -71,6 +71,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	}
 	public String getStack() {
 		return stack;
+	}
+	public String getFormattedDate() {
+		if (fDateString == null)
+			fDateString = F_SDF.format(getDate());
+		return fDateString;
 	}
 	public Date getDate() {
 		if (fDate == null)
@@ -179,13 +184,13 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					dateBuffer.append(token);
 			}
 		}
-		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
 		try {
-			Date date = formatter.parse(dateBuffer.toString());
-			if (date != null)
-				fDate = date; 
-		} catch (ParseException e) {
-		}
+			Date date = F_SDF.parse(dateBuffer.toString());
+			if (date != null) {
+				fDate = date;
+				fDateString = F_SDF.format(fDate);
+			}
+		} catch (ParseException e) {}
 	}
 	
 	int processSubEntry(String line) {
@@ -231,13 +236,13 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					dateBuffer.append(token);
 			}
 		}
-		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
 		try {
-			Date date = formatter.parse(dateBuffer.toString());
-			if (date != null)
-				fDate = date; 
-		} catch (ParseException e) {
-		}
+			Date date = F_SDF.parse(dateBuffer.toString());
+			if (date != null) {
+				fDate = date;
+				fDateString = F_SDF.format(fDate);
+			}
+		} catch (ParseException e) {}
 		return depth;	
 	}
 	
@@ -261,6 +266,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		severity = status.getSeverity();
 		code = status.getCode();
 		fDate = new Date();
+		fDateString = F_SDF.format(fDate);
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {

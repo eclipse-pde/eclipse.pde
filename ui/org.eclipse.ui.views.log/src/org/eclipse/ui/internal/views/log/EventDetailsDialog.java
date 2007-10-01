@@ -46,9 +46,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-
 public class EventDetailsDialog extends TrayDialog {
 	private LogEntry entry, parentEntry;
 	private LogViewLabelProvider labelProvider;
@@ -348,13 +345,8 @@ public class EventDetailsDialog extends TrayDialog {
 
 		resetTotalElementCount();
 		
-		Date date = entry.getDate();
-		String strDate = null;
-		if (date != null) {
-			DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
-			strDate = formatter.format(date);
-		}
-		dateLabel.setText(strDate != null ? strDate : ""); //$NON-NLS-1$
+		String strDate = entry.getFormattedDate();
+		dateLabel.setText(strDate);
 		severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
 		severityLabel.setText(entry.getSeverityText());
 		msgText.setText(entry.getMessage() != null ? entry.getMessage() : ""); //$NON-NLS-1$
