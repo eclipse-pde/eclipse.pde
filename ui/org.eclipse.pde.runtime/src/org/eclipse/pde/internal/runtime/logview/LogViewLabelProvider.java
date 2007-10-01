@@ -19,9 +19,6 @@ import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-
 public class LogViewLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
@@ -87,10 +84,7 @@ public class LogViewLabelProvider
 			if (entry.getPluginId() != null)
 				return entry.getPluginId();
 		case 2:
-			if (entry.getDate() != null) {
-				DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
-				return formatter.format(entry.getDate());
-			}
+			return entry.getFormattedDate();
 		}
 		return ""; //$NON-NLS-1$
 	}
