@@ -38,7 +38,9 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -99,6 +101,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.IProgressConstants;
 
+/**
+ * The Target Plug-ins tab shows all the plug-ins found in the specified target 
+ * location. Only plug-ins that are checked on the tab constitute the target 
+ * content. Unchecked plug-ins are ignored by PDE. By default, all plug-ins 
+ * in the target are checked. 
+ */
 public class TargetPluginsTab extends SharedPartWithButtons{
 	private CheckboxTableViewer fPluginListViewer;
 	private TargetPlatformPreferencePage fPage;
@@ -188,6 +196,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
+	/**
+	 * Content provider for the tree that will display plug-ins.
+	 */
 	public class TreePluginContentProvider extends DefaultContentProvider 
 		implements ITreeContentProvider{
 		
@@ -226,13 +237,21 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 
 	}
 	
+	/**
+	 * Constructor
+	 * @param page The page this tab will be added to
+	 */
 	public TargetPluginsTab(TargetPlatformPreferencePage page) {
 		super(new String[]{ PDEUIMessages.ExternalPluginsBlock_reload,
 			  PDEUIMessages.TargetPluginsTab_add,
 			  null,
 			  null,
-			  PDEUIMessages.WizardCheckboxTablePart_selectAll,
-			  PDEUIMessages.WizardCheckboxTablePart_deselectAll,
+			  PDEUIMessages.TargetPluginsTab_enableSelected,
+			  PDEUIMessages.TargetPluginsTab_disableSelected,
+			  PDEUIMessages.TargetPluginsTab_enableAll,
+			  PDEUIMessages.TargetPluginsTab_disableAll,
+			  null,
+			  null,
 			  PDEUIMessages.ExternalPluginsBlock_workingSet, 
 			  PDEUIMessages.ExternalPluginsBlock_addRequired});
 		this.fPage = page;
@@ -267,6 +286,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 
+	/**
+	 * Creates the widget contents of this tab
+	 * @param parent composite parent of the tab's contents
+	 * @return main control for this tab
+	 */
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -309,6 +333,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fCounterLabel.setLayoutData(gd);
 	}
 	
+	/**
+	 * Initializes the tab from the preference store
+	 */
 	protected void initializeView() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		boolean groupPlugins = preferences.getBoolean(ICoreConstants.GROUP_PLUGINS_VIEW);
@@ -321,6 +348,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.parts.SharedPartWithButtons#createMainControl(org.eclipse.swt.widgets.Composite, int, int, org.eclipse.ui.forms.widgets.FormToolkit)
+	 */
 	protected void createMainControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		fBook = new PageBook(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -331,8 +361,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		createTreeViewer(fBook);
 	}
 	
+	/**
+	 * Creates a table viewer to display the plugins as a list.  Must
+	 * be kept in sync with the tree viewer.
+	 * @param container parent composite
+	 */
 	private void createTableViewer(Composite container) {
-		fPluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		fPluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 250;
@@ -373,8 +408,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		});
 	}
 	
+	/**
+	 * Creates a tree viewer to display the plugins.  Must be
+	 * kept in sync with the table viewer.
+	 * @param container parent composite
+	 */
 	private void createTreeViewer(Composite container) {
-		fPluginTreeViewer = new CheckboxTreeViewer(container, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
+		fPluginTreeViewer = new CheckboxTreeViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 250;
@@ -455,10 +495,17 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fPluginTreeViewer.setAutoExpandLevel(2);
 	}
 	
+	/**
+	 * Disposes this tab.  Disconnects the label provider.
+	 */
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
+	/**
+	 * Loads the profile of the given target, getting all plugins/features/models.
+	 * @param target target to load the profile for
+	 */
 	protected void loadTargetProfile(ITarget target) {
 		if (target.useAllPlugins()) {
 			handleSelectAll(true);
@@ -568,6 +615,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					required.values().toArray());
 	}
 	
+	/**
+	 * Handles when the "reload" button is pressed.  Resets the contents of the
+	 * tab.
+	 */
 	protected void handleReload() {
 		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
@@ -589,11 +640,18 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fPage.resetNeedsReload();
 	}	
 
+	/**
+	 * Sets the given locations as additional locations to check, then handles the reload.
+	 * @param additionalLocations list of additional locations.
+	 */
 	protected void handleReload(ArrayList additionalLocations) {
 		fAdditionalLocations = additionalLocations;
 		handleReload();
 	}
 
+	/**
+	 * Initializes the tab.
+	 */
 	public void initialize() {
 		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() == 0)
@@ -661,6 +719,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		return parents;
 	}
 	
+	/**
+	 * Called when the user clicks ok on the dialog.  Updates the models with changes.
+	 */
 	public void performOk() {
 		savePreferences();
 		if (fReloaded) {
@@ -676,6 +737,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}		
 	}
 	
+	/**
+	 * Saves the settings in the tab to the preference store.
+	 */
 	private void savePreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		IPath newPath = new Path(fPage.getPlatformPath());
@@ -721,6 +785,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		PDECore.getDefault().savePluginPreferences();
 	}
 	
+	/**
+	 * Updates the models that have been changed by the user.
+	 */
 	private void updateModels() {
 		Iterator iter = fChangedModels.iterator();
 		while (iter.hasNext()) {
@@ -729,6 +796,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
+	/**
+	 * Enables or disables all of the plugins.
+	 * @param selected whether to enable or disable the plugins
+	 */
 	public void handleSelectAll(boolean selected) {
 		fPluginListViewer.setAllChecked(selected);
 		fPluginTreeViewer.setAllChecked(selected);
@@ -748,6 +819,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			setCounter(0);
 	}
 	
+	/**
+	 * Allows the user to create/select working sets.
+	 */
 	private void handleWorkingSets() {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(fPluginListViewer.getControl().getShell(), true);
@@ -784,16 +858,16 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
-	/*
+	/**
 	 * Sets the parent object to the right state.  This includes the checked state 
 	 * and/or the gray state.
 	 * 
 	 * @param parent The parent object to check the current state of.
 	 * @param handleCheck True if you wish the set the checked value of the object, False otherwise.
 	 */
-	// added the second boolean because many time I know the parent will be checked.  
-	// Therefore I didn't want to waste time calling .setChecked() again.
 	protected void handleGrayChecked(File parent, boolean handleCheck) {
+		// added the second boolean because many time I know the parent will be checked.  
+		// Therefore I didn't want to waste time calling .setChecked() again.
 		boolean gray = false, check = false, allChecked = true;
 		Set models = (Set)fTreeViewerContents.get(parent);
 		Iterator it = models.iterator();
@@ -821,6 +895,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
+	/**
+	 * Gets all of the models in the given working sets.
+	 * @param workingSets working sets to check
+	 * @return hashset of models in the working sets
+	 */
 	private HashSet getPluginIDs(IWorkingSet[] workingSets) {
 		HashSet set = new HashSet();
 		for (int i = 0; i < workingSets.length; i++) {
@@ -843,6 +922,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		return set;
 	}
 	
+	/**
+	 * Checks for dependencies among the enabled plugins and attempts
+	 * to add any plugins that are required.
+	 */
 	private void handleAddRequired() {
 		Object[] checked = fPluginListViewer.getCheckedElements();
 		if (checked.length == 0)
@@ -872,24 +955,42 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		setCounter(fCounter + counter);
 	}
 	
+	/**
+	 * @return array of current models
+	 */
 	protected IPluginModelBase[] getCurrentModels() {
 		if (fCurrentState != null)
 			return fCurrentState.getTargetModels();
 		return PDECore.getDefault().getModelManager().getExternalModels();
 	}
 	
+	/**
+	 * @return the current state
+	 */
 	protected PDEState getCurrentState() {
 		return (fCurrentState != null) ? fCurrentState : TargetPlatformHelper.getPDEState();
 	}
 	
+	/**
+	 * Switches between the list and tree views for plugins
+	 */
 	protected void handleSwitchView() {
-		if (fGroupPlugins.getSelection()) 
+		if (fGroupPlugins.getSelection()) {
+			ISelection selection = fPluginListViewer.getSelection();
 			fBook.showPage(fPluginTreeViewer.getControl());
-		else 
-			fBook.showPage(fPluginListViewer.getControl());			
-	
+			fPluginTreeViewer.setSelection(selection);
+		}
+		else {
+			ISelection selection = fPluginTreeViewer.getSelection();
+			fBook.showPage(fPluginListViewer.getControl());
+			fPluginListViewer.setSelection(selection);
+		}
 	}
 	
+	/**
+	 * Sets the counter for the number of enabled plugins
+	 * @param value new value for the counter
+	 */
 	private void setCounter(int value) {
 		fCounter = value;
 		int total = fPluginListViewer.getTable().getItemCount();
@@ -898,6 +999,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fCounterLabel.setText(message);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.parts.SharedPartWithButtons#buttonSelected(org.eclipse.swt.widgets.Button, int)
+	 */
 	protected void buttonSelected(Button button, int index) {
 		switch (index) {
 		case 0:
@@ -908,21 +1012,89 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		case 1:
 			handleAdd();
 			break;
-		case 4: 
-			handleSelectAll(true);
+		case 4:
+			handleEnableSelection(true);
 			break;
 		case 5:
-			handleSelectAll(false);
+			handleEnableSelection(false);
 			break;
 		case 6:
-			handleWorkingSets();
+			handleSelectAll(true);
 			break;
 		case 7:
+			handleSelectAll(false);
+			break;
+		case 10:
+			handleWorkingSets();
+			break;
+		case 11:
 			handleAddRequired();
 			break;
 		}
 	}
 	
+	/**
+	 * Handle when the "enable selection" and "disable selection" buttons are pressed.
+	 * @param enable whether to enable (vs disable) the selected models.
+	 */
+	private void handleEnableSelection(boolean enable) {
+		ISelection selection = null;
+		if (fGroupPlugins.getSelection()){ 
+			selection = fPluginTreeViewer.getSelection();
+		} else {
+			selection = fPluginListViewer.getSelection();
+		}
+
+		if (selection instanceof IStructuredSelection){
+			Object[] elements = ((IStructuredSelection)selection).toArray();
+			for (int i=0; i<elements.length; i++){
+				if (elements[i] instanceof IPluginModelBase){
+					IPluginModelBase model = (IPluginModelBase)elements[i];
+					fPluginListViewer.setChecked(model, enable);
+					fPluginTreeViewer.setChecked(model, enable);
+					
+					// Handle tree viewer gray selection
+					String path = model.getInstallLocation();
+					if (path != null) {
+						File parent = new File(path).getParentFile();
+						if (enable) {
+							fPluginTreeViewer.setChecked(parent, true);
+							handleGrayChecked(parent, false);
+						} else
+							handleGrayChecked(parent, true);
+					}
+					
+					// Update changed model set
+					if (fChangedModels.contains(model) && model.isEnabled() == enable) {
+						fChangedModels.remove(model);
+					} else if (model.isEnabled() != enable) {
+						fChangedModels.add(model);
+					}
+					// File would represent a parent folder containing plug-is in the fPluginTreeViewer
+				} else if (elements[i] instanceof File) {
+					fPluginTreeViewer.setSubtreeChecked(elements[i], enable);
+					Set pluginSet = (Set)fTreeViewerContents.get(elements[i]);
+					Iterator it = pluginSet.iterator();
+					while (it.hasNext()) {
+						IPluginModelBase model = (IPluginModelBase)it.next();
+						fPluginListViewer.setChecked(model, enable);
+						if (fChangedModels.contains(model) && model.isEnabled() == enable) {
+							fChangedModels.remove(model);
+						} else if (model.isEnabled() != enable) {
+							fChangedModels.add(model);
+						}
+					}
+				}
+			}
+		}
+
+		setCounter(fPluginListViewer.getCheckedElements().length);
+		
+	}
+
+	/**
+	 * Allows plugins to be added to the target.
+	 */
 	private void handleAdd() {
 		AddTargetPluginsWizard wizard = new AddTargetPluginsWizard();
 		WizardDialog dialog = new WizardDialog(fPage.getShell(), wizard);

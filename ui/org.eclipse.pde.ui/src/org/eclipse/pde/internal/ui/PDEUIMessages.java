@@ -2741,6 +2741,14 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetImplicitPluginsTab_removeAll3;
 
+	public static String TargetPluginsTab_enableAll;
+
+	public static String TargetPluginsTab_enableSelected;
+
+	public static String TargetPluginsTab_disableAll;
+
+	public static String TargetPluginsTab_disableSelected;
+
 	public static String TargetPluginsTab_readingPlatform;
 
 	public static String TargetPlatformPreferencePage_implicitTab;
