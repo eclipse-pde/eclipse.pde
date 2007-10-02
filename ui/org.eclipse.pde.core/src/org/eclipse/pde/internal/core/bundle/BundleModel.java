@@ -31,6 +31,8 @@ public abstract class BundleModel
 	extends AbstractModel
 	implements IBundleModel {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Bundle fBundle;
 	
 	public BundleModel() {

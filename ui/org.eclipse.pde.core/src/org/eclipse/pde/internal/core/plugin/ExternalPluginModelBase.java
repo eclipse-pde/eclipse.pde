@@ -25,6 +25,8 @@ import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
+	private static final long serialVersionUID = 1L;
+
 	private String fInstallLocation;
 	
 	private String fLocalization;

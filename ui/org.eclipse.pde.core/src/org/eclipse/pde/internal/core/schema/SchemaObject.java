@@ -19,6 +19,9 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public abstract class SchemaObject extends PlatformObject implements
 		ISchemaObject, Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	protected String fName;
 
 	private String fDescription;

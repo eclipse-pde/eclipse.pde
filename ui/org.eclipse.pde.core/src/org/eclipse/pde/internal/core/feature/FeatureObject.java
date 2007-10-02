@@ -29,6 +29,8 @@ import org.w3c.dom.Node;
 public abstract class FeatureObject
 	extends PlatformObject
 	implements IFeatureObject {
+
+	private static final long serialVersionUID = 1L;
 	transient IFeatureModel model;
 	transient IFeatureObject parent;
 	protected String label;

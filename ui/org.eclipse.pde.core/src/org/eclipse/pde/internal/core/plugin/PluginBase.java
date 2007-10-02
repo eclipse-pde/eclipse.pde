@@ -36,6 +36,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public abstract class PluginBase extends AbstractExtensions implements IPluginBase {
+	private static final long serialVersionUID = 1L;
+
 	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 	private ArrayList fLibraries = new ArrayList();

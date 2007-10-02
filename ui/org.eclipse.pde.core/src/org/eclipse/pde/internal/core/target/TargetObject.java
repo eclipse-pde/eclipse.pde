@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public abstract class TargetObject extends PlatformObject implements ITargetObject {
 
+	private static final long serialVersionUID = 1L;
 	private transient ITargetModel fModel;
 	
 	public TargetObject(ITargetModel model) {

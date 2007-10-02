@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements
 		IPluginParent {
+	private static final long serialVersionUID = 1L;
 	protected ArrayList fChildren = null;
 
 	public PluginParent() {

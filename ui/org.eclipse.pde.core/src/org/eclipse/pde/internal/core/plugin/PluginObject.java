@@ -36,7 +36,8 @@ import org.w3c.dom.Node;
 
 public abstract class PluginObject extends PlatformObject implements
 		IPluginObject, ISourceObject, Serializable, IWritableDelimiter {
-	
+	private static final long serialVersionUID = 1L;
+
 	protected String fName;
 
 	private transient String fTranslatedName;

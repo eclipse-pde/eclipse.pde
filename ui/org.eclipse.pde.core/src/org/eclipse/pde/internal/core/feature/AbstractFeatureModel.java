@@ -31,6 +31,8 @@ import org.xml.sax.SAXException;
 public abstract class AbstractFeatureModel
 	extends AbstractNLModel
 	implements IFeatureModel {
+
+	private static final long serialVersionUID = 1L;
 	protected transient Feature feature;
 	private transient IFeatureModelFactory factory;
 	private boolean enabled = true;

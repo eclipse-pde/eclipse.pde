@@ -36,6 +36,8 @@ import org.w3c.dom.Text;
 public abstract class CompCSTaskObject extends CompCSObject implements
 		ICompCSTaskObject {
 
+	private static final long serialVersionUID = 1L;
+
 	protected String fFieldId;
 	
 	protected String fFieldKind;

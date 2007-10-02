@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,9 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
-		
+	
+	private static final long serialVersionUID = 1L;
+	
 	private String fSchemaVersion;
 	
 	/* (non-Javadoc)

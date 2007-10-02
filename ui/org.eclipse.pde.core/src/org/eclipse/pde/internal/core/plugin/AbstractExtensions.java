@@ -37,6 +37,8 @@ import org.xml.sax.SAXException;
 
 public abstract class AbstractExtensions extends PluginObject implements IExtensions {
 	
+	private static final long serialVersionUID = 1L;
+
 	protected String fSchemaVersion;
 	
 	protected List fExtensions = null;

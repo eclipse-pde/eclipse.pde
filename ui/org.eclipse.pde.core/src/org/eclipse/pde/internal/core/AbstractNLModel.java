@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.core;
 import org.eclipse.core.resources.IResource;
 
 public abstract class AbstractNLModel extends AbstractModel {
+
+	private static final long serialVersionUID = 1L;
 	protected transient NLResourceHelper fNLHelper;
 
 	public NLResourceHelper getNLResourceHelper() {

@@ -37,6 +37,8 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	// TODO: MP: TEO: LOW: Integrate with plugin model?
 	// TODO: MP: TEO: LOW: Investigate document node to see if any methods to pull down
 	
+	private static final long serialVersionUID = 1L;
+
 	private transient IModel fModel;
 	
 	private transient boolean fInTheModel;

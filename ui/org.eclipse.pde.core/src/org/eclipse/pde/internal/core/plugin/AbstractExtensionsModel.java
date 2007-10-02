@@ -37,6 +37,8 @@ import org.xml.sax.SAXException;
 public abstract class AbstractExtensionsModel
 	extends AbstractNLModel
 	implements IExtensionsModel, IExtensionsModelFactory {
+
+	private static final long serialVersionUID = 1L;
 	protected Extensions fExtensions;
 
 	public IExtensionsModelFactory getFactory() {

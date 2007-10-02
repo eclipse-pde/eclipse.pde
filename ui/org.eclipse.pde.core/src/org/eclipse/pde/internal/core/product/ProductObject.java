@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public abstract class ProductObject extends PlatformObject implements IProductObject {
 
+	private static final long serialVersionUID = 1L;
 	private transient IProductModel fModel;
 
 	public ProductObject(IProductModel model) {

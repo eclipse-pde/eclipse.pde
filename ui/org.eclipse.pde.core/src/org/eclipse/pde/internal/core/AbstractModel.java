@@ -34,6 +34,9 @@ import org.xml.sax.SAXException;
 
 public abstract class AbstractModel extends PlatformObject implements IModel,
 		IModelChangeProviderExtension, Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	private transient List fListeners;
 
 	private boolean fLoaded;

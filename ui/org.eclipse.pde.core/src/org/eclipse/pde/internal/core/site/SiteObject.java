@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 public abstract class SiteObject
 	extends PlatformObject
 	implements ISiteObject {
+	private static final long serialVersionUID = 1L;
 	transient ISiteModel model;
 	transient ISiteObject parent;
 	protected String label;

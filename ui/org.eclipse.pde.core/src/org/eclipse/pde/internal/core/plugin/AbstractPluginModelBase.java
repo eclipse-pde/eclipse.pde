@@ -36,6 +36,8 @@ import org.eclipse.pde.internal.core.PDEState;
 public abstract class AbstractPluginModelBase
 	extends AbstractNLModel
 	implements IPluginModelBase, IPluginModelFactory {
+
+	private static final long serialVersionUID = 1L;
 	protected IPluginBase fPluginBase;
 	private boolean enabled;
 	private BundleDescription fBundleDescription;

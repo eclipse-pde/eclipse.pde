@@ -26,6 +26,8 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
  */
 public abstract class TocObject extends DocumentObject implements ITocConstants, Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Constructs the TocObject and initializes its attributes.
 	 * 

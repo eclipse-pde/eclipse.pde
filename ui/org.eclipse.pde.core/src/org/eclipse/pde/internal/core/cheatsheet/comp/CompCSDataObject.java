@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 public abstract class CompCSDataObject extends CompCSObject implements
 		ICompCSDataObject {
 
+	private static final long serialVersionUID = 1L;
 	private String fFieldContent;
 	
 	/**

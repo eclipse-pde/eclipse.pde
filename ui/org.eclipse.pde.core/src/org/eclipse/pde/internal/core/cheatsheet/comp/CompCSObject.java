@@ -37,6 +37,8 @@ import org.w3c.dom.Text;
 public abstract class CompCSObject extends PlatformObject implements
 		ICompCSObject {
 
+	private static final long serialVersionUID = 1L;
+
 	private transient ICompCSModel fModel;
 	
 	private transient ICompCSObject fParent;	

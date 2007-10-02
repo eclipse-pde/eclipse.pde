@@ -46,6 +46,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 public abstract class BundlePluginModelBase extends AbstractNLModel
 		implements IBundlePluginModelBase, IPluginModelFactory {
 	
+	private static final long serialVersionUID = 1L;
 	private IBundleModel fBundleModel;
 	private ISharedExtensionsModel fExtensionsModel;
 	private BundlePluginBase fBundlePluginBase;

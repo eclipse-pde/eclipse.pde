@@ -17,6 +17,8 @@ import org.eclipse.pde.core.plugin.ISharedPluginModel;
 
 public abstract class IdentifiablePluginObject extends PluginObject implements
 		IIdentifiable {
+
+	private static final long serialVersionUID = 1L;
 	protected String fID;
 
 	public IdentifiablePluginObject() {
