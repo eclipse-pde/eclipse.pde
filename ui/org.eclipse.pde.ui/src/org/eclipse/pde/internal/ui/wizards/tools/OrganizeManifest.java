@@ -320,11 +320,11 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		if (model != null) {
 			if (!fileExists(model.getInstallLocation(),
-					fragment ? F_FRAGMENT_FILE : F_PLUGIN_FILE))
+					fragment ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
 				return null;
 			IDocument doc = CoreUtility.getTextDocument(
 					new File(model.getInstallLocation()),
-					fragment ? F_FRAGMENT_FILE : F_PLUGIN_FILE);
+					fragment ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			IPluginModelBase returnModel;
 			if (fragment)
 				returnModel = new FragmentModel(doc, false);
@@ -342,10 +342,10 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	
 	private static IBundle getTextBundle(IPluginModelBase model) {
 		if (model != null) {
-			if (!fileExists(model.getInstallLocation(), F_MANIFEST_FILE))
+			if (!fileExists(model.getInstallLocation(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR))
 				return null;
 			IDocument doc = CoreUtility.getTextDocument(
-					new File(model.getInstallLocation()), F_MANIFEST_FILE);
+					new File(model.getInstallLocation()), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 			IBundleModel bundleModel = new BundleModel(doc, false);
 			try {
 				bundleModel.load();

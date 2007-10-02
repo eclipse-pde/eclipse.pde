@@ -48,7 +48,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 	}
 
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile file = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (file.exists()) {
 			IProject destProject = getDestinationProject();
 			if (destProject != null && !fProject.equals(destProject)) {
@@ -57,7 +57,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 						pm);
 				if (change != null) {
 					result.add(change);
-					IFile dest = destProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+					IFile dest = destProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 					if (dest.exists()) {
 						Change second = BundleManifestChange.createMoveToPackageChange(
 								dest,  

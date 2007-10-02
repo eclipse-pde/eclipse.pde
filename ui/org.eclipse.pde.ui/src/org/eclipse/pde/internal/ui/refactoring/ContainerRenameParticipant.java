@@ -27,6 +27,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -72,7 +73,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 	}
 
 	protected Change createManifestChange(IProgressMonitor monitor) throws CoreException {
-		IFile manifest = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile manifest = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (manifest.exists()) {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 			try {
@@ -97,7 +98,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 					// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 					IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
 
-					MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile("META-INF/MANIFEST.MF"), manifest); //$NON-NLS-1$ //$NON-NLS-2$
+					MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$ //$NON-NLS-2$
 					MultiTextEdit edit = new MultiTextEdit();
 					edit.addChildren(listener.getTextOperations());
 					change.setEdit(edit);

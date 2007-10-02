@@ -204,7 +204,8 @@ public class PDERegistryStrategy extends RegistryStrategy{
 			return null;
 		if (file.isFile())
 			return file;
-		String fileName = (base.isFragmentModel()) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+		String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
+				: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		File inputFile = new File(file, fileName);
 		return (inputFile.exists()) ? inputFile : null;
 	}
@@ -213,7 +214,8 @@ public class PDERegistryStrategy extends RegistryStrategy{
 		if (file.getName().endsWith(".jar")) { //$NON-NLS-1$
 			try {
 				ZipFile jfile = new ZipFile(file, ZipFile.OPEN_READ);
-				String fileName = (base.isFragmentModel()) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
+						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 				ZipEntry entry = jfile.getEntry(fileName);
 				if (entry != null)
 					return jfile.getInputStream(entry);

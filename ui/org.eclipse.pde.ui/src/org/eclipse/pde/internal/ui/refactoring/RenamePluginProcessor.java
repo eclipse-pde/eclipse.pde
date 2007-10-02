@@ -33,6 +33,7 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
@@ -53,7 +54,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		IResource res = fInfo.getBase().getUnderlyingResource();
 		if (res == null)
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
-		else if (!res.getProject().getFile("META-INF/MANIFEST.MF").exists())  //$NON-NLS-1$
+		else if (!res.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())  //$NON-NLS-1$
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
 		if (fInfo.isRenameProject()) {
 			String newName = fInfo.getNewID();

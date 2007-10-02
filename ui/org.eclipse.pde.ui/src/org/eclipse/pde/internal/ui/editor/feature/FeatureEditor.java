@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -207,7 +208,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	private IFile createFeatureFile(IProject project) {
-		IFile featureFile = project.getFile("feature.xml"); //$NON-NLS-1$
+		IFile featureFile = project.getFile(ICoreConstants.FEATURE_PATH);
 		return featureFile;
 	}
 

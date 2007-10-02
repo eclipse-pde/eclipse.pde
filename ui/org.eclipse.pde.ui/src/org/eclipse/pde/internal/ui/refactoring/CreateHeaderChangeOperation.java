@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -59,7 +60,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 			if (res == null) 
 				return;
 			IProject proj = res.getProject();
-			IFile file = proj.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+			IFile file = proj.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 			if (file.exists()) 
 				fChange = updateBundleHeader(file, monitor);
 		} finally {

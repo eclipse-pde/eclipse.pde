@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
+import org.eclipse.pde.internal.core.ICoreConstants;
 
 public abstract class PDERenameParticipant extends RenameParticipant implements ISharableParticipant {
 	
@@ -58,8 +59,8 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 			addBundleManifestChange(result, pm);
 		if (updateBuildProperties())
 			addBuildPropertiesChange(result, pm);
-		addChange(result, "plugin.xml", pm); //$NON-NLS-1$
-		addChange(result, "fragment.xml", pm); //$NON-NLS-1$
+		addChange(result, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, pm);
+		addChange(result, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR, pm);
 		return (result.getChildren().length == 0) ? null : result;
 	}
 	
@@ -84,7 +85,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
 			throws CoreException {
-		addBundleManifestChange(fProject.getFile("META-INF/MANIFEST.MF"), result, pm); //$NON-NLS-1$
+		addBundleManifestChange(fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), result, pm);
 	}
 	
 	protected void addBundleManifestChange(IFile file, CompositeChange result, 

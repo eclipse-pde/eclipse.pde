@@ -36,6 +36,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
@@ -246,9 +247,9 @@ public class ConvertedProjectsPage extends WizardPage  {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
 			IBuildEntry entry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-			if (project.getFile("plugin.xml").exists()) //$NON-NLS-1$
+			if (project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists())
 				entry.addToken("plugin.xml"); //$NON-NLS-1$
-			if (project.getFile("META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
+			if (project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
 				entry.addToken("META-INF/"); //$NON-NLS-1$
 			for (int i = 0; i < fLibEntries.length; i++) {
 				entry.addToken(fLibEntries[i]);

@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -72,11 +73,11 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 						Iterator it = projects.iterator();
 						while (it.hasNext()) {
 							IProject project = (IProject) it.next();
-							IFile file = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+							IFile file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 							if (file == null || !file.exists())
-								file = project.getFile("plugin.xml"); //$NON-NLS-1$
+								file = project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 							if (file == null || !file.exists())
-								file = project.getFile("fragment.xml"); //$NON-NLS-1$
+								file = project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 							if (file == null || !file.exists())
 								MessageDialog.openError(PDEPlugin
 										.getActiveWorkbenchShell(),

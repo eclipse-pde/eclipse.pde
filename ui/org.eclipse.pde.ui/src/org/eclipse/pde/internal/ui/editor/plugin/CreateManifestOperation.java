@@ -28,6 +28,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
 import org.eclipse.text.edits.DeleteEdit;
@@ -62,7 +63,8 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 	
 	private void trimOldManifest() throws BadLocationException, CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		String filename = fModel.isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+		String filename = fModel.isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
+				: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		IFile file = fModel.getUnderlyingResource().getProject().getFile(filename);
 		try {
 			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);

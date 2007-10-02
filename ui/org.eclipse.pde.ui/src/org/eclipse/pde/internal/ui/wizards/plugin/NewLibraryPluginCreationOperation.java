@@ -46,6 +46,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.converter.PluginConverter;
@@ -148,7 +149,7 @@ public class NewLibraryPluginCreationOperation extends
 		}
 
 		// delete manifest.mf imported from libraries
-		IFile importedManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile importedManifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		if (importedManifest.exists()) {
 			importedManifest.delete(true, false, monitor);
 			if (!fData.hasBundleStructure()) {
@@ -165,7 +166,7 @@ public class NewLibraryPluginCreationOperation extends
 		if (fData.hasBundleStructure())
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
 		else
-			binEntry.addToken("plugin.xml"); //$NON-NLS-1$
+			binEntry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 
 		if (fData.isUnzipLibraries()) {
 			IResource[] resources = project.members(false);

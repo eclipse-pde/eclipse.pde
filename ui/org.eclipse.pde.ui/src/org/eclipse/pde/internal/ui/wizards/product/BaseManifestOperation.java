@@ -22,6 +22,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -53,7 +54,8 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 	protected IFile getFile() {
 		IPluginModelBase model = PluginRegistry.findModel(fPluginId);
 		IProject project = model.getUnderlyingResource().getProject();
-		String filename = model instanceof IFragmentModel ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+		String filename = model instanceof IFragmentModel ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
+				: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		return project.getFile(filename);	
 	}
 	

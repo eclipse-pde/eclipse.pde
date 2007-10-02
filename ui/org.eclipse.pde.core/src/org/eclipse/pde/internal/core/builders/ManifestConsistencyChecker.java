@@ -228,14 +228,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateProject(int type, IProgressMonitor monitor) {
 		if ((type & MANIFEST|EXTENSIONS) != 0) {
 			IProject project = getProject();
-			IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
+			IFile file = project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			if (!file.exists())
-				file = project.getFile("fragment.xml"); //$NON-NLS-1$
+				file = project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 			
 			if (file.exists()) {
 				validateFiles(file, type, monitor);
 			} else if ((type & MANIFEST) != 0){	
-				IFile manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+				IFile manifestFile = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 				if (manifestFile.exists())
 					validateManifestFile(manifestFile, monitor);
 			}
@@ -264,7 +264,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
-		IFile bundleManifest = file.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile bundleManifest = file.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		XMLErrorReporter reporter = null;
 		BundleErrorReporter bundleReporter = null;
 		if (bundleManifest.exists()) {
@@ -273,9 +273,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if ((type & MANIFEST) != 0)
 				bundleReporter = new BundleErrorReporter(bundleManifest);
 		} else if ((type & MANIFEST) != 0 || (type & EXTENSIONS) != 0){
-			if (file.getName().equals("plugin.xml")) { //$NON-NLS-1$
+			if (file.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
 				reporter = new PluginErrorReporter(file);
-			} else if (file.getName().equals("fragment.xml")){ //$NON-NLS-1$
+			} else if (file.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)){
 				reporter = new FragmentErrorReporter(file);
 			}
 		}
@@ -299,7 +299,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			project.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 		}
-		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {
 			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
 			if (severity == CompilerFlags.IGNORE)

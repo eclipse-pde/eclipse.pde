@@ -28,6 +28,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
@@ -113,7 +114,7 @@ public class ConvertSchemaToHTML extends Task {
 			new Path(manifest).isAbsolute()
 				? new File(manifest)
 				: new File(getProject().getBaseDir(), manifest);
-		File OSGiFile = new File(file.getParentFile(), "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		File OSGiFile = new File(file.getParentFile(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 
 		if (OSGiFile.exists()) {
 			try {

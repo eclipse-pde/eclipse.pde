@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.PDEState;
@@ -81,9 +82,10 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		if (file.isFile())
 			return file;
 
-		file = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		file = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {
-			String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+			String manifest = isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
+					: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 			file = new File(getInstallLocation(), manifest);
 		}
 		return file;

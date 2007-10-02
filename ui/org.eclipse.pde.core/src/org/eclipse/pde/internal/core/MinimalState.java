@@ -139,8 +139,8 @@ public class MinimalState {
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
 		if (!hasBundleStructure) {
 			if (!bundleLocation.isFile() 
-					&& !new File(bundleLocation, "plugin.xml").exists() //$NON-NLS-1$
-					&& !new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
+					&& !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists()
+					&& !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
 				return null;
 			PluginConverter converter = acquirePluginConverter();
 			manifest = converter.convertManifest(bundleLocation, false, null, false, null);

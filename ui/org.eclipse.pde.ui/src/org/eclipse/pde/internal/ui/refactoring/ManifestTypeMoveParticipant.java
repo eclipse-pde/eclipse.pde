@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -84,7 +85,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 
 	protected void addChange(CompositeChange result, IProgressMonitor pm)
 			throws CoreException {
-		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile file = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(
 										file, 

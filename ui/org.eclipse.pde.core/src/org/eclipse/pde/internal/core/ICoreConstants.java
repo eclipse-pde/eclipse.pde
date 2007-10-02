@@ -64,7 +64,10 @@ public interface ICoreConstants {
 	public final static String FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
 
 	/** Constant for the string <code>META-INF/MANIFEST.MF</code> */
-	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$		
+	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+	
+	/** Constant for the string <code>build.properties</code> */
+	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
 	
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$

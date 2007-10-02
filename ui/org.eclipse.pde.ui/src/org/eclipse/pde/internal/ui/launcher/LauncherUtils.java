@@ -47,6 +47,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -247,7 +248,7 @@ public class LauncherUtils {
 					}
 				}
 			}
-			String[] otherFiles = {"META-INF/MANIFEST.MF", "build.properties"}; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] otherFiles = {ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR, ICoreConstants.BUILD_FILENAME_DESCRIPTOR};
 			for (int i = 0; i < otherFiles.length; i++) {
 				IResource file = project.getFile(otherFiles[i]);
 				if (file != null) {

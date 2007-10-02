@@ -38,7 +38,7 @@ public class PDEPluginConverter {
 	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
-					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
+					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
 			File inputFile = new File(project.getLocation().toOSString());
 			PluginConverter converter = PluginConverter.getDefault();
 			converter.convertManifest(inputFile, outputFile, false, target, true, dictionary);
@@ -56,7 +56,7 @@ public class PDEPluginConverter {
 	public static void createBundleForFramework(IProject project, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
-					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
+					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
 			File inputFile = new File(project.getLocation().toOSString());
 			PluginConverter converter = PluginConverter.getDefault();
 			double version = TargetPlatformHelper.getTargetVersion();

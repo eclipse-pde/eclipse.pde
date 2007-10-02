@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
 import org.eclipse.ltk.core.refactoring.participants.MoveArguments;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+import org.eclipse.pde.internal.core.ICoreConstants;
 
 public abstract class PDEMoveParticipant extends MoveParticipant implements ISharableParticipant {
 
@@ -46,8 +47,8 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 		CompositeChange result = new CompositeChange(getName());
 		addChange(result, pm);
 		if (isInterestingForExtensions()) {
-			addChange(result, "plugin.xml", pm); //$NON-NLS-1$
-			addChange(result, "fragment.xml", pm); //$NON-NLS-1$
+			addChange(result, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, pm);
+			addChange(result, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR, pm);
 		}
 		return (result.getChildren().length == 0) ? null : result;
 	}

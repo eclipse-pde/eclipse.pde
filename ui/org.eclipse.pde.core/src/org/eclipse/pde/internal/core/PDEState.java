@@ -214,13 +214,13 @@ public class PDEState extends MinimalState {
 				if (file.isFile()) {
 					timestamp ^= file.lastModified();
 				} else {
-					File manifest = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+					File manifest = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
-					manifest = new File(file, "plugin.xml"); //$NON-NLS-1$
+					manifest = new File(file, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
-					manifest = new File(file, "fragment.xml"); //$NON-NLS-1$
+					manifest = new File(file, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
 				}
@@ -244,13 +244,14 @@ public class PDEState extends MinimalState {
  			else
  				model = new BundleFragmentModel();
  			model.setEnabled(true);
- 			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
+ 			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
  			bundle.load(desc, this);
   			model.setBundleDescription(desc);
  			model.setBundleModel(bundle);
  			bundle.setEditable(false);
  			
- 			String filename = (desc.getHost() == null) ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+ 			String filename = (desc.getHost() == null) ? ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR 
+ 					: ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR;
  			IFile file = project.getFile(filename);
  			if (file.exists()) {
  				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
@@ -264,9 +265,9 @@ public class PDEState extends MinimalState {
  		
 		WorkspacePluginModelBase model = null;
 		if (desc.getHost() == null)
-			model = new WorkspacePluginModel(project.getFile("plugin.xml"), true); //$NON-NLS-1$
+			model = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), true);
 		else
-			model = new WorkspaceFragmentModel(project.getFile("fragment.xml"), true); //$NON-NLS-1$
+			model = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), true);
 		model.load(desc, this);
 		model.setBundleDescription(desc);
 		return model;
