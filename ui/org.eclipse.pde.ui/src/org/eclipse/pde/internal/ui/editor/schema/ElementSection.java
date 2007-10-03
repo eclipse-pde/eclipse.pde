@@ -389,7 +389,10 @@ public class ElementSection extends TreeSection {
 
 	private IStructuredSelection handleDelete(Object object, boolean generateSelection) {
 		IStructuredSelection newSelection = null;
-		if (object instanceof ISchemaRootElement) {
+		if (!isEditable()) {
+			Display.getCurrent().beep();
+		}
+		else if (object instanceof ISchemaRootElement) {
 			// Semantic rule: The root "extension" element of a schema
 			// cannot be removed
 
