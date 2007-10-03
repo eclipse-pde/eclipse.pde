@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 201965 [Schema][Editors] Inappropriate selection behaviour after delete attempt in non-editable editor
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -144,6 +145,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fType.setEnabled(editable);
 		fUseDefault.setEnabled(editable);
 		fUseOther.setEnabled(editable);
+		fValue.setEditable(editable);
 	}
 	
 	public void hookListeners() {
