@@ -323,6 +323,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action createOpenLogAction() {
 		Action action = null;
 		try {
+			// TODO this isn't the best way to check... we should be smarter and use package admin
 			// check to see if org.eclipse.ui.ide is available
 			Class.forName("org.eclipse.ui.ide.IDE"); //$NON-NLS-1$
 			// check to see if org.eclipse.core.filesystem is available
