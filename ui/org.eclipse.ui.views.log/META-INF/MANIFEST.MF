@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
-Bundle-SymbolicName: org.eclipse.ui.views.log2;singleton:=true
+Bundle-SymbolicName: org.eclipse.ui.views.log;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.views.log.Activator
 Bundle-Vendor: %provider-name
