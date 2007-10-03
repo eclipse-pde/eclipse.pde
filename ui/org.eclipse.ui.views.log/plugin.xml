@@ -29,19 +29,7 @@
          </viewShortcut>
       </perspectiveExtension>
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <viewShortcut
-               id="org.eclipse.pde.runtime.LogView">
-         </viewShortcut>
-      </perspectiveExtension>
-      <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
-         <viewShortcut
-               id="org.eclipse.pde.runtime.LogView">
-         </viewShortcut>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
          <viewShortcut
                id="org.eclipse.pde.runtime.LogView">
          </viewShortcut>
