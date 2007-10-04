@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 201994
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -27,6 +28,8 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -71,6 +74,12 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				if (!change.localizationSet())
 					addBundleLocalization(change, monitor, pluginChange);
 				
+				// Update build.properties file (if exists & not already done)
+				IFile buildProps = changeFile.getFile().getProject().getFile(PDEModelUtility.F_BUILD);
+				if(buildProps != null && buildProps.exists() && !fFileChanges.containsKey(buildProps)) {
+					updateBuildProperties(buildProps, monitor, pluginChange);
+				}
+				
 				ITextFileBufferManager pManager = FileBuffers.getTextFileBufferManager();
 				try {
 					pManager.connect(pFile.getFullPath(), LocationKind.IFILE, monitor);
@@ -87,6 +96,31 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			}
 		}
 	}
+
+	private void updateBuildProperties(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent){		
+		// Create change
+		TextFileChange[] changes = PDEModelUtility.changesForModelModication(new ModelModification(buildPropsFile) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+
+				// Get model & set includes entry...				
+				if(model instanceof IBuildModel) {
+					IBuildModel buildModel = (IBuildModel) model;					
+					IBuildEntry binIncludes = buildModel.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
+					if(binIncludes == null) {
+						binIncludes = buildModel.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
+					}
+					// Add new entry to bin.includes key
+					binIncludes.addToken("plugin.properties"); //$NON-NLS-1$
+				}
+			}
+		}, monitor);
+		// Add to changes tree
+		if (changes.length > 0 && changes[0] != null) {
+			fFileChanges.put(buildPropsFile, changes[0]);
+			parent.add(changes[0]);
+		}		
+	}
+	
 	private CompositeChange getChangeForPlugin(String pluginName) {
 		if (fCompositeChanges.containsKey(pluginName))
 			return (CompositeChange) fCompositeChanges.get(pluginName);
