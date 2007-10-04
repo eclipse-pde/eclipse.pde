@@ -76,7 +76,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			while (validPackagesIter.hasNext()) {
 				// since getting visible packages is not very efficient, only do it once and cache result
 				if (visiblePkgs == null) {
-					visiblePkgs = getVisiblePacakges(project);
+					visiblePkgs = getVisiblePackages(project);
 				}
 				ExportPackageDescription currentPackage = (ExportPackageDescription) validPackagesIter.next();
 				// if package is already visible, skip over
@@ -98,7 +98,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	}
 	
 	/**
-	 * Helper method to create a proposal to add an require bundle dependency to the project
+	 * Helper method to create a proposal to add a require bundle dependency to the project
 	 */
 	private void addRequireBundleProposal(List proposalList, IProject project, ExportPackageDescription dependency){
 		proposalList.add(new UnresolvedImportFixProposal(project, dependency) {
@@ -216,7 +216,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		});
 	}
 	
-	private Set getVisiblePacakges(IJavaProject project) {
+	private Set getVisiblePackages(IJavaProject project) {
 		IPluginModelBase base = PluginRegistry.findModel(project.getProject());
 		BundleDescription desc = base.getBundleDescription();
 		
@@ -232,13 +232,17 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	
 	private boolean isImportedPackage(IJavaProject project, String pkgName) {
 		BundleDescription desc = PluginRegistry.findModel(project.getProject()).getBundleDescription();
-		ImportPackageSpecification[] importPkgs = desc.getImportPackages();
-		for (int i = 0; i < importPkgs.length; i++) {
-			if (importPkgs[i].getName().equals(pkgName)) {
-				return true;
+		if (desc != null){
+			ImportPackageSpecification[] importPkgs = desc.getImportPackages();
+			for (int i = 0; i < importPkgs.length; i++) {
+				if (importPkgs[i].getName().equals(pkgName)) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
+		// if no BundleDescription, we return true so we don't create any proposals.  This is the safe way out if no BundleDescription is available.
+		return true;
 	}
 	
 	private Set getValidPackages(IJavaProject project, String pkgName) {
