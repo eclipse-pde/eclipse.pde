@@ -251,13 +251,14 @@ public class IdReplaceTask extends Task {
 			} else {
 				replacementVersion = (String) featureIds.get(lookupKey);
 			}
+			int change = 0;
 			if (replacementVersion == null) {
 				System.err.println("Could not find " + new String(elementId)); //$NON-NLS-1$
 			} else {
 				buffer.replace(startVersionId, endVersionId, replacementVersion);
 				contentChanged = true;
+				change = endVersionId - startVersionId - replacementVersion.length();
 			}
-			int change = endVersionId - startVersionId - replacementVersion.length();
 			startElement = (endElementId > endVersionId) ? endElementId - change: endVersionId - change;
 		}
 
