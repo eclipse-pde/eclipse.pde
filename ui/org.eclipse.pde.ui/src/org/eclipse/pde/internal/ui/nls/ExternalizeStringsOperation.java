@@ -77,7 +77,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				// Update build.properties file (if exists & not already done)
 				IFile buildProps = changeFile.getFile().getProject().getFile(PDEModelUtility.F_BUILD);
 				if(buildProps != null && buildProps.exists() && !fFileChanges.containsKey(buildProps)) {
-					updateBuildProperties(buildProps, monitor, pluginChange);
+					getChangeForBuild(buildProps, monitor, pluginChange, change.getBundleLocalization());
 				}
 				
 				ITextFileBufferManager pManager = FileBuffers.getTextFileBufferManager();
@@ -97,7 +97,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void updateBuildProperties(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent){		
+	private void getChangeForBuild(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent, final String localization){		
 		// Create change
 		TextFileChange[] changes = PDEModelUtility.changesForModelModication(new ModelModification(buildPropsFile) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
@@ -110,7 +110,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 						binIncludes = buildModel.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
 					}
 					// Add new entry to bin.includes key
-					binIncludes.addToken("plugin.properties"); //$NON-NLS-1$
+					binIncludes.addToken(localization + ".properties"); //$NON-NLS-1$
 				}
 			}
 		}, monitor);
