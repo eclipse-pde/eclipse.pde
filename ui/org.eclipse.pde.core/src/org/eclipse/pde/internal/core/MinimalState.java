@@ -96,8 +96,10 @@ public class MinimalState {
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
-			model.setBundleDescription(
-					addBundle(new File(model.getInstallLocation()), bundleId));
+			BundleDescription newDesc = addBundle(new File(model.getInstallLocation()), bundleId);
+			model.setBundleDescription(newDesc);
+			if (newDesc == null && update)
+				fState.removeBundle(desc);
 		} catch (IOException e) {			
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
