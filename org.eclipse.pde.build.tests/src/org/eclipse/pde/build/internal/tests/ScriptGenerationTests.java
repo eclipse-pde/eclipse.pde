@@ -284,14 +284,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("</feature>                                             \n");
 
 		IFile featureXML = buildFolder.getFile("feature.xml");
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(featureXML.getLocation().toFile());
-			stream.write(buffer.toString().getBytes());
-		} finally {
-			if (stream != null)
-				stream.close();
-		}
+		Utils.writeBuffer(featureXML, buffer);
 
 		buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>          \n");
@@ -307,13 +300,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("</project>                                          \n");
 
 		final IFile buildXML = buildFolder.getFile("build.xml");
-		try {
-			stream = new FileOutputStream(buildXML.getLocation().toFile());
-			stream.write(buffer.toString().getBytes());
-		} finally {
-			if (stream != null)
-				stream.close();
-		}
+		Utils.writeBuffer(buildXML, buffer);
 
 		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
 

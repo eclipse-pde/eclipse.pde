@@ -11,6 +11,7 @@ package org.eclipse.pde.build.internal.tests;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import junit.framework.Test;
@@ -56,9 +57,9 @@ public class SourceTests extends PDETestCase {
 		IFolder features = Utils.createFolder(buildFolder, "features");
 
 		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.rcp", "org.eclipse.rcp.source"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
 		Properties properties = new Properties();
-		properties.put("generate.feature@org.eclipse.rcp.source", "org.eclipse.rcp");
+		properties.put("generate.feature@rcp.source", "rcp");
 		IFolder sdk = features.getFolder("sdk");
 		Utils.storeBuildProperties(sdk, properties);
 
@@ -66,17 +67,32 @@ public class SourceTests extends PDETestCase {
 		String ws = Platform.getWS();
 		String arch = Platform.getOSArch();
 
+		//Create the rcp feature
+		IFolder rcpFeature = Utils.createFolder(features, "rcp");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"rcp\" version=\"1.0.0.qualifier\">    \n");
+		buffer.append("  <plugin version=\"0.0.0\" id=\"fragment\" os=\"" + os + "\" ws=\"" + ws +"\" arch=\"" + arch + "\" />      \n");
+		buffer.append("</feature>                                                         \n");
+		Utils.writeBuffer(rcpFeature.getFile("feature.xml"), buffer);
+		
+		//Create a fragment with a platform filter
+		IFolder fragment = Utils.createFolder(buildFolder, "plugins/fragment");
+		Utils.generatePluginBuildProperties(fragment, null);
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(& (osgi.ws=" + ws + ") (osgi.os=" + os + ") (osgi.arch=" + arch + "))");
+		Utils.generateBundleManifest(fragment, "fragment", "1.0.0", manifestAdditions);
+
 		//getScriptGenerationProperties sets buildDirectory to buildFolder by default
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		properties.put("configs", os + "," + ws + "," + arch);
 		generateScripts(buildFolder, properties);
 
-		String fragmentName = "org.eclipse.rcp.source." + os + "." + ws + "." + arch;
-		IFolder fragment = buildFolder.getFolder("plugins/" + fragmentName);
+		String fragmentName = "rcp.source." + os + "." + ws + "." + arch;
+		IFolder sourceFragment = buildFolder.getFolder("plugins/" + fragmentName);
 
 		// check the manifest for a correct platform filter
-		assertResourceFile(fragment, "META-INF/MANIFEST.MF");
-		InputStream stream = new BufferedInputStream(fragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream());
+		assertResourceFile(sourceFragment, "META-INF/MANIFEST.MF");
+		InputStream stream = new BufferedInputStream(sourceFragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream());
 		Manifest manifest = new Manifest(stream);
 		stream.close();
 
@@ -112,7 +128,7 @@ public class SourceTests extends PDETestCase {
 		IFolder buildFolder = newTest("179616A");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/a.bundle");
 		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
-		
+
 		Utils.generateBundle(bundleFolder, "a.bundle");
 		//add some source to a.bundle
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
@@ -162,41 +178,41 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/plugins/single.source_1.0.0/src/a.bundle_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
-	
+
 	// Test the use of plugin@foo;unpack="false" in the generate.feature property 
 	public void testBug107372() throws Exception {
 		IFolder buildFolder = newTest("107372");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder bundleDoc = Utils.createFolder(buildFolder, "plugins/bundleDoc");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
-		
+
 		Utils.generateBundle(bundleA, "bundleA");
 		File src = new File(bundleA.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
 		FileOutputStream outputStream = new FileOutputStream(src);
 		outputStream.write("//L33T CODEZ\n".getBytes());
 		outputStream.close();
-		
+
 		Utils.generateBundle(bundleDoc, "bundleDoc");
 		src = new File(bundleDoc.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
 		outputStream = new FileOutputStream(src);
 		outputStream.write("//L33T CODEZ\n".getBytes());
 		outputStream.close();
-		
+
 		//generate an SDK feature
 		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp,plugin@bundleDoc;unpack=\"false\"");
 		Utils.storeBuildProperties(sdk, properties);
-		
+
 		//RCP Feature
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
 
 		Utils.generateAllElements(buildFolder, "sdk");
 		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
 		runBuild(buildFolder);
-		
+
 		//bundleDoc only gets in the build by being added to the generated source feature,
 		//check that it is there in the result and is in jar form.
 		Set entries = new HashSet();

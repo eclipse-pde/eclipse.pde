@@ -288,13 +288,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 		compiledJarNames = new ArrayList(0);
 
-		Config configInfo;
-		if (associatedEntry.getOS() == null && associatedEntry.getWS() == null && associatedEntry.getArch() == null)
-			configInfo = Config.genericConfig();
-		else
-			configInfo = new Config(associatedEntry.getOS(), associatedEntry.getWS(), associatedEntry.getArch());
-
-		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(configInfo);
+		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
 		if (pluginsToGatherSourceFrom != null) {
 			for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 				BundleDescription plugin = (BundleDescription) iter.next();

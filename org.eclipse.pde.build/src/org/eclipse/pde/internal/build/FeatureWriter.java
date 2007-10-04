@@ -227,7 +227,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			if (entries[i].isFragment())
 				parameters.put("fragment", new Boolean(entries[i].isFragment())); //$NON-NLS-1$
 			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
-			parameters.put("arch", entries[i].getOS()); //$NON-NLS-1$
+			parameters.put("arch", entries[i].getArch()); //$NON-NLS-1$
 			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
 			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
 			if (!entries[i].isUnpack())

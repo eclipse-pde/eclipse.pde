@@ -89,11 +89,11 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			if (model == null)
 				continue;
 
-			collectSourcePlugins(pluginList[i], model);
+			collectSourcePlugins(feature, pluginList[i], model);
 		}
 	}
 
-	private void collectSourcePlugins(FeatureEntry pluginEntry, BundleDescription model) {
+	private void collectSourcePlugins(BuildTimeFeature feature, FeatureEntry pluginEntry, BundleDescription model) throws CoreException {
 		//Do not collect plug-ins for which we are not generating build.xml
 		try {
 			if (AbstractScriptGenerator.readProperties(model.getLocation(), PROPERTIES_FILE, IStatus.OK) == MissingProperties.getInstance())
@@ -103,14 +103,16 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		// The generic entry may not be part of the configuration we are building however,
 		// the code for a non platform specific plugin still needs to go into a generic source plugin
+		String sourceId = computeSourceFeatureName(feature, false);
 		if (pluginEntry.getOS() == null && pluginEntry.getWS() == null && pluginEntry.getArch() == null) {
-			director.sourceToGather.addElementEntry(Config.genericConfig(), model);
+			director.sourceToGather.addElementEntry(sourceId, model);
 			return;
 		}
 		// Here we fan the plugins into the source fragment where they should go
 		List correctConfigs = director.selectConfigs(pluginEntry);
 		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
-			director.sourceToGather.addElementEntry((Config) iter.next(), model);
+			Config configInfo = (Config) iter.next();
+			director.sourceToGather.addElementEntry(sourceId + "." + configInfo.toString("."), model); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -129,9 +131,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		else
 			sourcePlugin = createSourcePlugin(sourceFeature);
 
-		generateSourceFragment(sourceFeature, sourcePlugin);
-
-		addSourceFragmentsToFeature(sourceFeature);
+		generateSourceFragments(sourceFeature, sourcePlugin);
 		writeSourceFeature(sourceFeature);
 
 		return sourceFeature;
@@ -163,14 +163,16 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 	}
 
-	private void generateSourceFragment(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
+	private void generateSourceFragments(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
 		Map fragments = director.sourceToGather.getElementEntries();
-		for (Iterator iter = fragments.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry fragmentInfo = (Map.Entry) iter.next();
-			Config configInfo = (Config) fragmentInfo.getKey();
+		for (Iterator iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
+			Config configInfo = (Config) iter.next();
 			if (configInfo.equals(Config.genericConfig()))
 				continue;
 			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
+			Set fragmentEntries = (Set) fragments.get(sourceFragmentId);
+			if (fragmentEntries == null || fragmentEntries.size() == 0)
+				continue;
 			FeatureEntry sourceFragment = new FeatureEntry(sourceFragmentId, sourceFeature.getVersion(), true);
 			sourceFragment.setEnvironment(configInfo.getOs(), configInfo.getWs(), configInfo.getArch(), null);
 			sourceFragment.setFragment(true);
@@ -179,6 +181,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				create30SourceFragment(sourceFragment, sourcePlugin);
 			else
 				createSourceFragment(sourceFragment, sourcePlugin);
+
+			sourceFeature.addEntry(sourceFragment);
 		}
 	}
 
@@ -446,26 +450,6 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourceFragmentDir);
-	}
-
-	//Add the relevant source fragments to the source feature
-	private void addSourceFragmentsToFeature(BuildTimeFeature sourceFeature) {
-		Map fragments = director.sourceToGather.getElementEntries();
-		for (Iterator iter = fragments.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry fragmentInfo = (Map.Entry) iter.next();
-			Config configInfo = (Config) fragmentInfo.getKey();
-			if (configInfo.equals(Config.genericConfig()))
-				continue;
-			Set sourceList = (Set) fragmentInfo.getValue();
-			if (sourceList.size() == 0)
-				continue;
-			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
-			FeatureEntry sourceFragment = new FeatureEntry(sourceFragmentId, sourceFeature.getVersion(), true);
-			sourceFragment.setEnvironment(configInfo.getOs(), configInfo.getWs(), configInfo.getArch(), null);
-			sourceFragment.setFragment(true);
-			sourceFeature.addEntry(sourceFragment);
-			//createSourceFragment(sourceFragment, sourcePlugin);
-		}
 	}
 
 	private void writeSourceFeature(BuildTimeFeature sourceFeature) throws CoreException {

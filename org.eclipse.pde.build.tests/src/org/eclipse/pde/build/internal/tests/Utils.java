@@ -181,4 +181,15 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException {
+		FileOutputStream stream = null;
+		try {
+			stream = new FileOutputStream(outputFile.getLocation().toFile());
+			stream.write(buffer.toString().getBytes());
+		} finally {
+			if (stream != null)
+				stream.close();
+		}
+	}
 }
