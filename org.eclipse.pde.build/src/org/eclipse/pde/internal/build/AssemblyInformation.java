@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.build;
 import java.util.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.update.core.IFeature;
 
 public class AssemblyInformation implements IPDEBuildConstants {
 	// List all the features and plugins to assemble sorted on a per config basis 
@@ -28,12 +27,12 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 	}
 
-	public void addFeature(Config config, IFeature feature) {
+	public void addFeature(Config config, BuildTimeFeature feature) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addFeature(feature);
 	}
 
-	public void removeFeature(Config config, IFeature feature) {
+	public void removeFeature(Config config, BuildTimeFeature feature) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.removeFeature(feature);
 	}
@@ -126,7 +125,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getRootFileProvider();
 	}
 
-	public void addRootFileProvider(Config config, IFeature feature) {
+	public void addRootFileProvider(Config config, BuildTimeFeature feature) {
 		((AssemblyLevelConfigInfo) assembleInformation.get(config)).addRootFileProvider(feature);
 	}
 
@@ -139,14 +138,14 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		// indicate whether root files needs to be copied and where they are coming from
 		private LinkedList rootFileProviders = new LinkedList();
 
-		public void addRootFileProvider(IFeature feature) {
+		public void addRootFileProvider(BuildTimeFeature feature) {
 			if (rootFileProviders.contains(feature))
 				return;
 			for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
 				if (feature == featureDescriptor)
 					return;
-				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()))
+				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion()))
 					return;
 			}
 			rootFileProviders.add(feature);
@@ -168,10 +167,10 @@ public class AssemblyInformation implements IPDEBuildConstants {
 			return plugins;
 		}
 
-		public void addFeature(IFeature feature) {
+		public void addFeature(BuildTimeFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
-				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()))
+				if (((BuildTimeFeature) feature).getId().equals(featureDescriptor.getId()) && ((BuildTimeFeature) feature).getVersion().equals(featureDescriptor.getVersion()))
 					return;
 			}
 			features.add(feature);
@@ -181,10 +180,10 @@ public class AssemblyInformation implements IPDEBuildConstants {
 			plugins.add(plugin);
 		}
 
-		public void removeFeature(IFeature feature) {
+		public void removeFeature(BuildTimeFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
-				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion())) {
+				if (((BuildTimeFeature) feature).getId().equals(featureDescriptor.getId()) && ((BuildTimeFeature) feature).getVersion().equals(featureDescriptor.getVersion())) {
 					features.remove(featureDescriptor);
 					return;
 				}

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.update.core.*;
+import org.eclipse.pde.internal.build.site.compatibility.*;
 import org.osgi.framework.Version;
 
 /**
@@ -27,7 +27,12 @@ import org.osgi.framework.Version;
  * against which the code must be compiled. Moreover this site provide access to
  * a pluginRegistry.
  */
-public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
+public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLConstants {
+	private BuildTimeFeatureFactory			factory = new BuildTimeFeatureFactory();
+	private	Map  /*of BuildTimeFeature*/	featureCache = new HashMap();
+	private List /*of FeatureReference*/	featureReferences;
+	private BuildTimeSiteContentProvider 	contentProvider;
+	
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
 	private boolean reportResolutionErrors;
@@ -67,10 +72,10 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		if (state == null) {
 			// create the registry according to the site where the code to
 			// compile is, and a existing installation of eclipse
-			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
+			BuildTimeSiteContentProvider provider = getSiteContentProvider();
 
-			if (contentProvider.getInitialState() != null) {
-				state = new PDEState(contentProvider.getInitialState());
+			if (provider.getInitialState() != null) {
+				state = new PDEState(provider.getInitialState());
 				return state;
 			}
 
@@ -86,7 +91,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			} else {
 				state = new PluginRegistryConverter();
 			}
-			state.addBundles(contentProvider.getPluginPaths());
+			state.addBundles(provider.getPluginPaths());
 
 			//Once all the elements have been added to the state, the filter is removed to allow for the generated plug-ins to be added
 			if (state instanceof FilteringState) {
@@ -111,7 +116,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 						if (isConfigError(all[i], resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
 							continue;
 
-						String errorMessage = "Bundle " + all[i].getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors);
+						String errorMessage = "Bundle " + all[i].getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$ //$NON-NLS-2$
 						for (int j = 0; j < versionErrors.length; j++) {
 							errorMessage += '\t' + getResolutionFailureMessage(versionErrors[j]) + '\n';
 						}
@@ -184,29 +189,29 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		return constraint.getName() + '_' + versionSpec;
 	}
 
-	public IFeature findFeature(String featureId, String versionId, boolean throwsException) throws CoreException {
-		ISiteFeatureReference[] features = getFeatureReferences();
+	public BuildTimeFeature findFeature(String featureId, String versionId, boolean throwsException) throws CoreException {
+		FeatureReference[] features = getFeatureReferences();
 		if (GENERIC_VERSION_NUMBER.equals(versionId))
 			versionId = null;
 		for (int i = 0; i < features.length; i++) {
-			IFeature verifiedFeature;
+			Feature verifiedFeature;
 			try {
-				verifiedFeature = features[i].getFeature(null);
+				verifiedFeature = features[i].getFeature();
 			} catch (CoreException e) {
 				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
-			if (verifiedFeature.getVersionedIdentifier().getIdentifier().equals(featureId))
-				if (versionId == null || features[i].getVersionedIdentifier().getVersion().equals(new PluginVersionIdentifier(versionId)))
-					return features[i].getFeature(null);
+			if (verifiedFeature.getId().equals(featureId))
+				if (versionId == null || new Version(features[i].getFeature().getVersion()).equals(new Version(versionId)))
+					return (BuildTimeFeature) features[i].getFeature();
 		}
 		int qualifierIdx = -1;
 		if (versionId != null && (((qualifierIdx = versionId.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) || ((qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1))) {
 			Version versionToMatch = Version.parseVersion(versionId.substring(0, qualifierIdx));
 			for (int i = 0; i < features.length; i++) {
-				Version featureVersion = Version.parseVersion(features[i].getVersionedIdentifier().getVersion().toString());
-				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) && featureVersion.getMajor() == versionToMatch.getMajor() && featureVersion.getMinor() == versionToMatch.getMinor() && featureVersion.getMicro() >= versionToMatch.getMicro() && featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
-					return features[i].getFeature(null);
+				Version featureVersion = Version.parseVersion(features[i].getFeature().getVersion());
+				if (features[i].getFeature().getId().equals(featureId) && featureVersion.getMajor() == versionToMatch.getMajor() && featureVersion.getMinor() == versionToMatch.getMinor() && featureVersion.getMicro() >= versionToMatch.getMicro() && featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
+					return (BuildTimeFeature) features[i].getFeature();
 			}
 		}
 		if (throwsException) {
@@ -218,7 +223,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 
 	public void addFeatureReferenceModel(File featureXML) {
 		URL featureURL;
-		SiteFeatureReferenceModel featureRef;
+		FeatureReference featureRef;
 		if (featureXML.exists()) {
 			// Here we could not use toURL() on currentFeatureDir, because the
 			// URL has a slash after the colons (file:/c:/foo) whereas the
@@ -227,22 +232,31 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			// to compare URLs... and compute relative paths
 			try {
 				featureURL = new URL("file:" + featureXML.getAbsolutePath() + '/'); //$NON-NLS-1$
-				featureRef = new SiteFeatureReference();
+				featureRef = new FeatureReference();
 				featureRef.setSiteModel(this);
 				featureRef.setURLString(featureURL.toExternalForm());
-				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
+//				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
 				addFeatureReferenceModel(featureRef);
 			} catch (MalformedURLException e) {
 				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 			}
 		}
 	}
+	
+	public void addFeatureReferenceModel(FeatureReference featureReference) {
+		//assertIsWriteable();
+		if (this.featureReferences == null)
+			this.featureReferences = new ArrayList();
+		// PERF: do not check if already present 
+		//if (!this.featureReferences.contains(featureReference))
+		this.featureReferences.add(featureReference);
+	}
 
 	private SortedSet findAllReferencedPlugins() throws CoreException {
 		ArrayList rootFeatures = new ArrayList();
 		SortedSet allPlugins = new TreeSet();
 		for (Iterator iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
-			IFeature correspondingFeature = findFeature((String) iter.next(), null, true);
+			BuildTimeFeature correspondingFeature = findFeature((String) iter.next(), null, true);
 			if (correspondingFeature == null)
 				return null;
 			rootFeatures.add(correspondingFeature);
@@ -252,25 +266,24 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		}
 		int it = 0;
 		while (it < rootFeatures.size()) {
-			IFeature toAnalyse = null;
+			BuildTimeFeature toAnalyse = null;
 			try {
-				toAnalyse = (IFeature) rootFeatures.get(it++);
+				toAnalyse = (BuildTimeFeature) rootFeatures.get(it++);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
-			IIncludedFeatureReference[] includedRefs = toAnalyse.getIncludedFeatureReferences();
+			FeatureEntry[] includedRefs = toAnalyse.getIncludedFeatureReferences();
 			for (int i = 0; i < includedRefs.length; i++) {
-				rootFeatures.add(findFeature(includedRefs[i].getVersionedIdentifier().getIdentifier(), includedRefs[i].getVersionedIdentifier().getVersion().toString(), true));
+				rootFeatures.add(findFeature(includedRefs[i].getId(), includedRefs[i].getVersion(), true));
 			}
-			IPluginEntry[] entries = toAnalyse.getPluginEntries();
+			FeatureEntry[] entries = toAnalyse.getPluginEntries();
 			for (int i = 0; i < entries.length; i++) {
 				allPlugins.add(new ReachablePlugin(entries[i]));
 			}
-			IImport[] imports = toAnalyse.getImports();
+			FeatureEntry[] imports = toAnalyse.getImports();
 			for (int i = 0; i < imports.length; i++) {
-				if (((Import) imports[i]).isFeatureImport()) {
-					VersionedIdentifier requiredFeature = imports[i].getVersionedIdentifier();
-					rootFeatures.add(findFeature(requiredFeature.getIdentifier(), requiredFeature.getVersion().toString(), true));
+				if (!imports[i].isPlugin()) {
+					rootFeatures.add(findFeature(imports[i].getId(), imports[i].getVersion(), true));
 				} else {
 					allPlugins.add(new ReachablePlugin(imports[i]));
 				}
@@ -289,5 +302,79 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 
 	public void setRootPluginsForFiler(List rootPluginsForFiler) {
 		this.rootPluginsForFiler = rootPluginsForFiler;
+	}
+	
+	public FeatureReference[] getFeatureReferences() {
+		// only filter local site
+//		if (getCurrentConfiguredSite()!=null)
+//			return filterFeatures(getRawFeatureReferences());
+//		else 
+			return getRawFeatureReferences();
+		
+	}
+	
+	public FeatureReference[] getRawFeatureReferences() {
+		if (featureReferences == null || featureReferences.size() == 0)
+			return new FeatureReference[0];
+		return (FeatureReference[]) featureReferences.toArray(new FeatureReference[featureReferences.size()]);
+	}
+
+	public void addPluginEntry(FeatureEntry pluginEntry) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Feature createFeature(URL url) throws CoreException {
+		BuildTimeFeature feature = (BuildTimeFeature) featureCache.get(url);
+		if (feature != null)
+			return feature;
+		
+		feature = factory.createFeature(url, this);
+		feature.setFeatureContentProvider(getSiteContentProvider());
+		featureCache.put(url, feature);
+		return feature;
+	}
+
+	public long getDownloadSizeFor(Feature feature) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public FeatureReference getFeatureReference(Feature feature) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public long getInstallSizeFor(Feature feature) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public FeatureEntry[] getPluginEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public FeatureEntry[] getPluginEntriesOnlyReferencedBy(Feature feature) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getPluginEntryCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public BuildTimeSiteContentProvider getSiteContentProvider() {
+		return contentProvider;
+	}
+	
+	public void setSiteContentProvider(BuildTimeSiteContentProvider siteContentProvider) {
+		this.contentProvider = siteContentProvider;
+	}
+
+	public void remove(Feature feature, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		
 	}
 }

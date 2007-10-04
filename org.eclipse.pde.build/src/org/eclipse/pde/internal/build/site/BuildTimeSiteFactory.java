@@ -16,13 +16,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.pde.internal.build.site.compatibility.*;
 
-public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactory, IPDEBuildConstants {
+public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBuildConstants {
 	// The whole site : things to be compiled and the installedBase
-	private Site site = null;
+	private BuildTimeSite site = null;
 
 	// Indicate if the content of the site changed
 	private boolean urlsChanged = false;
@@ -49,12 +47,12 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	 * @return ISite
 	 * @throws CoreException
 	 */
-	public ISite createSite() throws CoreException {
+	public BuildTimeSite createSite() throws CoreException {
 		if (site != null && urlsChanged == false)
 			return site;
 
 		urlsChanged = false;
-		site = (Site) createSiteMapModel();
+		site = createSiteMapModel();
 
 		// Here we find the features in the URLs
 		Collection featureXMLs = findFeatureXMLs();
@@ -83,7 +81,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		}
 
 		URL featureURL;
-		SiteFeatureReferenceModel featureRef;
+		FeatureReference featureRef;
 
 		for (Iterator iter = featureXMLs.iterator(); iter.hasNext();) {
 			File featureXML = (File) iter.next();
@@ -95,14 +93,14 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 					featureRef = createFeatureReferenceModel();
 					featureRef.setSiteModel(site);
 					featureRef.setURLString(featureURL.toExternalForm());
-					featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
+					//featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
 					site.addFeatureReferenceModel(featureRef);
 				} catch (MalformedURLException e) {
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 				}
 			}
 		}
-		ISiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);
+		BuildTimeSiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);
 		site.setSiteContentProvider(contentProvider);
 		contentProvider.setSite(site);
 		return site;
@@ -112,11 +110,11 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	 * This method MUST not be called. The given URL is a pointer to the location
 	 * of a site.xml file which describes our site, and we don't have this file.
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Messages.error_incorrectDirectoryEntry, null));
-	}
+//	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+//		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Messages.error_incorrectDirectoryEntry, null));
+//	}
 
-	public SiteModel createSiteMapModel() {
+	public BuildTimeSite createSiteMapModel() {
 		BuildTimeSite model = new BuildTimeSite();
 		model.setReportResolutionErrors(reportResolutionErrors);
 		model.setFilter(filterState);
@@ -187,4 +185,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		this.rootPluginsForFilter = pluginsForFilterRoots;
 	}
 
+	public FeatureReference createFeatureReferenceModel() {
+		return new FeatureReference();
+	}
 }

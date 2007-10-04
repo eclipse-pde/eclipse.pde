@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
 /**
@@ -240,8 +240,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 	}
 
-	public static IPluginEntry[] getPluginEntry(IFeature feature, String pluginId, boolean raw) {
-		IPluginEntry[] plugins;
+	public static FeatureEntry[] getPluginEntry(BuildTimeFeature feature, String pluginId, boolean raw) {
+		FeatureEntry[] plugins;
 		if (raw)
 			plugins = feature.getRawPluginEntries();
 		else
@@ -249,10 +249,10 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		List foundEntries = new ArrayList(5);
 
 		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i].getVersionedIdentifier().getIdentifier().equals(pluginId))
+			if (plugins[i].getId().equals(pluginId))
 				foundEntries.add(plugins[i]);
 		}
-		return (IPluginEntry[]) foundEntries.toArray(new IPluginEntry[foundEntries.size()]);
+		return (FeatureEntry[]) foundEntries.toArray(new FeatureEntry[foundEntries.size()]);
 
 	}
 
@@ -287,9 +287,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return collectedElements;
 	}
 
-	public static boolean isIn(IPluginEntry[] array, IPluginEntry element) {
+	public static boolean isIn(FeatureEntry[] array, FeatureEntry element) {
 		for (int i = 0; i < array.length; i++) {
-			if (array[i].getVersionedIdentifier().equals(element.getVersionedIdentifier()))
+			if (array[i].getId().equals(element.getId()) && array[i].getVersion().equals(element.getVersion()))
 				return true;
 		}
 		return false;
@@ -373,7 +373,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {
 		String configInfix = aConfig.toString("."); //$NON-NLS-1$
-		String configPath = aConfig.toStringReplacingAny(".", ANY_STRING);
+		String configPath = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
 		String prefixLinks = ROOT_PREFIX + configInfix + '.' + LINK;
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
@@ -476,4 +476,101 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return new Object[] { bundleId, version, unpack };
 	}
 
+	/**
+	 * 
+	 * @param buf
+	 * @param start
+	 * @param target
+	 * @return int
+	 */
+	static public int scan(StringBuffer buf, int start, String target) {
+		return scan(buf, start, new String[] {target});
+	}
+
+	/**
+	 * 
+	 * @param buf
+	 * @param start
+	 * @param targets
+	 * @return int
+	 */
+	static public int scan(StringBuffer buf, int start, String[] targets) {
+		for (int i = start; i < buf.length(); i++) {
+			for (int j = 0; j < targets.length; j++) {
+				if (i < buf.length() - targets[j].length()) {
+					String match = buf.substring(i, i + targets[j].length());
+					if (targets[j].equals(match))
+						return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Return a buffer containing the contents of the file at the specified location.
+	 * 
+	 * @param target the file
+	 * @return StringBuffer
+	 * @throws IOException
+	 */
+	static public StringBuffer readFile(File target) throws IOException {
+		return readFile(new FileInputStream(target));
+	}
+
+	static public StringBuffer readFile(InputStream stream) throws IOException {
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(stream));
+		StringBuffer result = new StringBuffer();
+		char[] buf = new char[4096];
+		int count;
+		try {
+			count = reader.read(buf, 0, buf.length);
+			while (count != -1) {
+				result.append(buf, 0, count);
+				count = reader.read(buf, 0, buf.length);
+			}
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// ignore exceptions here
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Custom build scripts should have their version number matching the
+	 * version number defined by the feature/plugin/fragment descriptor.
+	 * This is a best effort job so do not worry if the expected tags were
+	 * not found and just return without modifying the file.
+	 * 
+	 * @param buildFile
+	 * @param propertyName
+	 * @param version
+	 * @throws IOException
+	 *
+	 */
+	public static void updateVersion(File buildFile, String propertyName, String version) throws IOException {
+		StringBuffer buffer = readFile(buildFile);
+		int pos = scan(buffer, 0, propertyName);
+		if (pos == -1)
+			return;
+		pos = scan(buffer, pos, "value"); //$NON-NLS-1$
+		if (pos == -1)
+			return;
+		int begin = scan(buffer, pos, "\""); //$NON-NLS-1$
+		if (begin == -1)
+			return;
+		begin++;
+		int end = scan(buffer, begin, "\""); //$NON-NLS-1$
+		if (end == -1)
+			return;
+		String currentVersion = buffer.substring(begin, end);
+		String newVersion = version;
+		if (currentVersion.equals(newVersion))
+			return;
+		buffer.replace(begin, end, newVersion);
+		transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
+	}
 }

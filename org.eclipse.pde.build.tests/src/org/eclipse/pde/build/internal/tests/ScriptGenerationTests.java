@@ -21,9 +21,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
-import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.model.*;
+import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class ScriptGenerationTests extends PDETestCase {
 
@@ -168,19 +167,14 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		assertResourceFile(buildFolder, "features/sdk/feature.xml");
 		IFile feature = buildFolder.getFile("features/sdk/feature.xml");
-		FeatureModelFactory factory = new FeatureModelFactory();
-		InputStream stream = new BufferedInputStream(feature.getLocationURI().toURL().openStream());
-		FeatureModel model = null;
-		try {
-			model = factory.parseFeature(stream);
-		} finally {
-			stream.close();
-		}
-		IIncludedFeatureReference[] included = model.getFeatureIncluded();
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
+		
+		FeatureEntry[] included = model.getIncludedFeatureReferences();
 		assertEquals(included.length, 3);
-		assertEquals(included[0].getVersionedIdentifier().getIdentifier(), "foo");
-		assertEquals(included[1].getVersionedIdentifier().getIdentifier(), "bar");
-		assertEquals(included[2].getVersionedIdentifier().getIdentifier(), "disco");
+		assertEquals(included[0].getId(), "foo");
+		assertEquals(included[1].getId(), "bar");
+		assertEquals(included[2].getId(), "disco");
 	}
 
 	// Test that & characters in classpath are escaped properly
@@ -323,20 +317,14 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
 
-		FeatureModelFactory factory = new FeatureModelFactory();
-		InputStream inputStream = new BufferedInputStream(featureXML.getLocationURI().toURL().openStream());
-		try {
-			FeatureModel feature = factory.parseFeature(inputStream);
-			PluginEntryModel[] pluginEntryModels = feature.getPluginEntryModels();
-			assertEquals(pluginEntryModels[0].getPluginIdentifier(), "foo");
-			assertEquals(pluginEntryModels[0].getPluginVersion(), "1.0.0.vA");
-			assertEquals(pluginEntryModels[1].getPluginIdentifier(), "bar");
-			assertEquals(pluginEntryModels[1].getPluginVersion(), "1.0.0.id_v");
-			assertEquals(pluginEntryModels[2].getPluginIdentifier(), "foo.version");
-			assertEquals(pluginEntryModels[2].getPluginVersion(), "2.1.2");
-		} finally {
-			inputStream.close();
-		}
-
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		FeatureEntry[] pluginEntryModels = feature.getPluginEntries();
+		assertEquals(pluginEntryModels[0].getId(), "foo");
+		assertEquals(pluginEntryModels[0].getVersion(), "1.0.0.vA");
+		assertEquals(pluginEntryModels[1].getId(), "bar");
+		assertEquals(pluginEntryModels[1].getVersion(), "1.0.0.id_v");
+		assertEquals(pluginEntryModels[2].getId(), "foo.version");
+		assertEquals(pluginEntryModels[2].getVersion(), "2.1.2");
 	}
 }

@@ -13,11 +13,12 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.PDEState;
-import org.eclipse.update.core.IFeature;
 import org.osgi.framework.Version;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
@@ -156,7 +157,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		} else {
 			// we have OSGi version 3.3 or greater so add the executable feature
 			// and the launcher plug-in and fragments
-			IFeature executableFeature = null;
+			BuildTimeFeature executableFeature = null;
 			try {
 				executableFeature = getSite(false).findFeature(FEATURE_EXECUTABLE, null, false);
 			} catch (CoreException e) {

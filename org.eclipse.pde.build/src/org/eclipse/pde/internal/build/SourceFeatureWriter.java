@@ -14,29 +14,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
+import org.eclipse.pde.internal.build.site.compatibility.Feature;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class SourceFeatureWriter extends FeatureWriter {
 
-	public SourceFeatureWriter(OutputStream out, Feature feature, FeatureBuildScriptGenerator generator) throws IOException {
-		super(out, feature, generator);
+	public SourceFeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
+		super(out, feature, site);
 	}
 
 	public void printIncludes() {
 		Map parameters = new LinkedHashMap();
 		// TO CHECK Here we should have the raw list...
-		IIncludedFeatureReference[] features = feature.getFeatureIncluded();
+		FeatureEntry[] features = feature.getEntries();
 		for (int i = 0; i < features.length; i++) {
+			if (features[i].isRequires() || features[i].isPlugin())
+				continue;
 			parameters.clear();
-			try {
-				parameters.put("id", features[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$
-				parameters.put("version", features[i].getVersionedIdentifier().getVersion()); //$NON-NLS-1$
-			} catch (CoreException e) {
-				e.printStackTrace(); //TO CHECK better handling of exception
-			}
+			parameters.put("id", features[i].getId()); //$NON-NLS-1$
+			parameters.put("version", features[i].getVersion()); //$NON-NLS-1$
 
 			printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}

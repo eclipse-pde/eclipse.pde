@@ -18,7 +18,8 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.*;
-import org.eclipse.update.core.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
+import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
 
 /**
  * Generic super-class for all script generator classes. 
@@ -88,10 +89,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public static boolean getPropertyAsBoolean(String key) {
 		String booleanValue = getImmutableAntProperty(key, null);
-		if ("true".equalsIgnoreCase(booleanValue))
+		if ("true".equalsIgnoreCase(booleanValue)) //$NON-NLS-1$
 			return true;
-		else
-			return false;
+		return false;
 	}
 	
 	public static String getImmutableAntProperty(String key, String defaultValue) {
@@ -127,7 +127,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		SiteManager.setOS(Utils.getStringFromArray(os, ",")); //$NON-NLS-1$
 		SiteManager.setWS(Utils.getStringFromArray(ws, ",")); //$NON-NLS-1$
-		SiteManager.setOSArch(Utils.getStringFromArray(archs, ",")); //$NON-NLS-1$
+		SiteManager.setArch(Utils.getStringFromArray(archs, ",")); //$NON-NLS-1$
 	}
 
 	public void setWorkingDirectory(String location) {
@@ -265,7 +265,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 */
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
 		if (siteFactory != null && refresh == false)
-			return (BuildTimeSite) siteFactory.createSite();
+			return siteFactory.createSite();
 
 		if (siteFactory == null || refresh == true) {
 			siteFactory = new BuildTimeSiteFactory();
@@ -276,7 +276,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		siteFactory.setSitePaths(getPaths());
 		siteFactory.setInitialState(pdeUIState);
-		BuildTimeSite result = (BuildTimeSite) siteFactory.createSite();
+		BuildTimeSite result = siteFactory.createSite();
 		if (platformProperties != null)
 			result.setPlatformPropeties(platformProperties);
 		return result;
@@ -372,7 +372,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			}
 		}
 		// Couldn't find the file in any of the plugins, try in a feature.
-		IFeature feature = null;
+		BuildTimeFeature feature = null;
 		try {
 			feature = getSite(false).findFeature(id, null, false);
 		} catch (CoreException e) {
@@ -380,7 +380,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		if (feature == null)
 			return null;
-		ISiteFeatureReference ref = feature.getSite().getFeatureReference(feature);
+		FeatureReference ref = feature.getSite().getFeatureReference(feature);
 		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
 		return checkFile(featureBase, path, makeRelative);
 	}

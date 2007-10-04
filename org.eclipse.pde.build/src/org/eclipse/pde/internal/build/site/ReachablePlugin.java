@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
+
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.update.core.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
 public class ReachablePlugin implements Comparable {
@@ -29,9 +30,9 @@ public class ReachablePlugin implements Comparable {
 		this.range = range;
 	}
 
-	public ReachablePlugin(IPluginEntry entry) {
-		id = entry.getVersionedIdentifier().getIdentifier();
-		Version version = new Version(entry.getVersionedIdentifier().getVersion().toString());
+	public ReachablePlugin(FeatureEntry entry) {
+		id = entry.getId();
+		Version version = new Version(entry.getVersion());
 		if (version.equals(GENERIC_VERSION)) {
 			range = WIDEST_RANGE;
 		} else if (version.getQualifier().endsWith(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
@@ -45,30 +46,30 @@ public class ReachablePlugin implements Comparable {
 		}
 	}
 
-	public ReachablePlugin(IImport existingImport) {
-		id = existingImport.getVersionedIdentifier().getIdentifier();
-		range = constructRange(new Version(existingImport.getVersionedIdentifier().toString()), existingImport.getRule());
-	}
-
-	private VersionRange constructRange(Version initialValue, int ruleCode) {
-		switch (ruleCode) {
-			case IUpdateConstants.RULE_NONE :
-			case IUpdateConstants.RULE_EQUIVALENT : //[1.0.0, 1.1.0)
-				return new VersionRange(initialValue, true, new Version(initialValue.getMajor(), initialValue.getMinor() + 1, 0), false);
-
-			case IUpdateConstants.RULE_PERFECT : //[1.0.0, 1.0.0]
-				return new VersionRange(initialValue, true, initialValue, true);
-
-			case IUpdateConstants.RULE_COMPATIBLE : //[1.1.0, 2.0.0) 
-				return new VersionRange(initialValue, true, new Version(initialValue.getMajor() + 1, 0, 0), false);
-
-			case IUpdateConstants.RULE_GREATER_OR_EQUAL ://[1.0.0, 999.999.999)
-				return new VersionRange(initialValue, true, new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE), true);
-			default :
-				return null;
-		}
-
-	}
+//	public ReachablePlugin(IImport existingImport) {
+//		id = existingImport.getVersionedIdentifier().getIdentifier();
+//		range = constructRange(new Version(existingImport.getVersionedIdentifier().toString()), existingImport.getRule());
+//	}
+//
+//	private VersionRange constructRange(Version initialValue, int ruleCode) {
+//		switch (ruleCode) {
+//			case IUpdateConstants.RULE_NONE :
+//			case IUpdateConstants.RULE_EQUIVALENT : //[1.0.0, 1.1.0)
+//				return new VersionRange(initialValue, true, new Version(initialValue.getMajor(), initialValue.getMinor() + 1, 0), false);
+//
+//			case IUpdateConstants.RULE_PERFECT : //[1.0.0, 1.0.0]
+//				return new VersionRange(initialValue, true, initialValue, true);
+//
+//			case IUpdateConstants.RULE_COMPATIBLE : //[1.1.0, 2.0.0) 
+//				return new VersionRange(initialValue, true, new Version(initialValue.getMajor() + 1, 0, 0), false);
+//
+//			case IUpdateConstants.RULE_GREATER_OR_EQUAL ://[1.0.0, 999.999.999)
+//				return new VersionRange(initialValue, true, new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE), true);
+//			default :
+//				return null;
+//		}
+//
+//	}
 
 	public String getId() {
 		return id;

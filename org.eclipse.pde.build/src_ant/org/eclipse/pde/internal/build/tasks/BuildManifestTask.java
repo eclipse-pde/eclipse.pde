@@ -17,9 +17,9 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.internal.core.FeatureExecutableFactory;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
  * Used to create a build manifest file describing what plug-ins and versions
@@ -156,7 +156,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 			sb.append(tag);
 			entries.add(sb.toString());
 		} else if (children && type.equals("feature")) { //$NON-NLS-1$
-			Feature feature = readFeature(element);
+			BuildTimeFeature feature = readFeature(element);
 			collectChildrenEntries(entries, feature);
 		}
 	}
@@ -167,10 +167,10 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @param feature
 	 * @throws CoreException
 	 */
-	protected void collectChildrenEntries(List entries, Feature feature) throws CoreException {
-		IPluginEntry[] pluginEntries = feature.getPluginEntries();
+	protected void collectChildrenEntries(List entries, BuildTimeFeature feature) throws CoreException {
+		FeatureEntry[] pluginEntries = feature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
-			String elementId = pluginEntries[i].getVersionedIdentifier().getIdentifier();
+			String elementId = pluginEntries[i].getId();
 			if (pluginEntries[i].isFragment())
 				collectEntries(entries, "fragment@" + elementId); //$NON-NLS-1$
 			else
@@ -184,13 +184,13 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @return Feature
 	 * @throws CoreException
 	 */
-	protected Feature readFeature(String element) throws CoreException {
+	protected BuildTimeFeature readFeature(String element) throws CoreException {
 		IPath root = new Path(installLocation);
 		root = root.append(DEFAULT_FEATURE_LOCATION);
 		root = root.append(element);
 		try {
-			FeatureExecutableFactory factory = new FeatureExecutableFactory();
-			return (Feature) factory.createFeature(root.toFile().toURL(), null, null);
+			BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+			return factory.createFeature(root.toFile().toURL(), null);
 		} catch (Exception e) {
 			String message = NLS.bind(TaskMessages.error_creatingFeature, element);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e));

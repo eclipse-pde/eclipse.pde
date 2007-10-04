@@ -19,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
-import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
  * Generic class for generating scripts for plug-ins and fragments.
@@ -90,13 +90,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * PluginEntry corresponding to the bundle
 	 */
-	private IPluginEntry associatedEntry;
+	private FeatureEntry associatedEntry;
 
 	protected String fullName;
 	protected String pluginZipDestination;
 	protected String pluginUpdateJarDestination;
 
-	private FeatureBuildScriptGenerator featureGenerator;
+	private BuildDirector featureGenerator;
 
 	/** constants */
 	protected final String PLUGIN_DESTINATION = Utils.getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
@@ -129,8 +129,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// If the the plugin we want to generate is a source plugin, and the feature that required the generation of this plugin is not being asked to build the source
 		// we want to leave. This is particularly usefull for the case of the pde.source building (at least for now since the source of pde is not in a feature)
-		if (featureGenerator != null && featureGenerator.isSourceFeatureGeneration() == false && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
-			return;
+//		if (featureGenerator != null && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
+//			return;
 
 		if (!AbstractScriptGenerator.isBuildingOSGi())
 			checkBootAndRuntime();
@@ -289,10 +289,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		compiledJarNames = new ArrayList(0);
 
 		Config configInfo;
-		if (associatedEntry.getOS() == null && associatedEntry.getWS() == null && associatedEntry.getOSArch() == null)
+		if (associatedEntry.getOS() == null && associatedEntry.getWS() == null && associatedEntry.getArch() == null)
 			configInfo = Config.genericConfig();
 		else
-			configInfo = new Config(associatedEntry.getOS(), associatedEntry.getWS(), associatedEntry.getOSArch());
+			configInfo = new Config(associatedEntry.getOS(), associatedEntry.getWS(), associatedEntry.getArch());
 
 		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(configInfo);
 		if (pluginsToGatherSourceFrom != null) {
@@ -828,7 +828,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Sets the featureGenerator.
 	 * @param featureGenerator The featureGenerator to set
 	 */
-	public void setFeatureGenerator(FeatureBuildScriptGenerator featureGenerator) {
+	public void setFeatureGenerator(BuildDirector featureGenerator) {
 		this.featureGenerator = featureGenerator;
 	}
 
@@ -1230,7 +1230,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, null));
 		}
 		try {
-			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion().toString());
+			Utils.updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion().toString());
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writeScript, buildFile);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
@@ -1304,11 +1304,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return getSite(false).getRegistry().getResolvedBundle(modelId, modelVersion);
 	}
 
-	public IPluginEntry getAssociatedEntry() {
+	public FeatureEntry getAssociatedEntry() {
 		return associatedEntry;
 	}
 
-	public void setAssociatedEntry(IPluginEntry associatedEntry) {
+	public void setAssociatedEntry(FeatureEntry associatedEntry) {
 		this.associatedEntry = associatedEntry;
 	}
 }

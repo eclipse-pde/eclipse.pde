@@ -10,38 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
-public class ElementCollector extends FeatureBuildScriptGenerator {
-	public ElementCollector(String featureId, AssemblyInformation assemblageInformation) throws CoreException {
-		super(featureId, null, assemblageInformation);
-	}
+public class ElementCollector extends BuildDirector {
+	public ElementCollector(AssemblyInformation assemblageInformation) {
+		super(assemblageInformation);
+	} 
 
-	protected void generateIncludedFeatureBuildFile() throws CoreException {
-		IIncludedFeatureReference[] referencedFeatures = feature.getIncludedFeatureReferences();
+	protected void generateIncludedFeatureBuildFile(BuildTimeFeature feature) throws CoreException {
+		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
-			String featureId = ((IncludedFeatureReferenceModel) referencedFeatures[i]).getFeatureIdentifier();
-			FeatureBuildScriptGenerator generator = new ElementCollector(featureId, assemblyData);
-			generator.setGenerateIncludedFeatures(true);
-			generator.setAnalyseChildren(true);
-			generator.setSourceFeatureGeneration(false);
-			generator.setBinaryFeatureGeneration(true);
-			generator.setScriptGeneration(false);
-			generator.setPluginPath(pluginPath);
-			generator.setBuildSiteFactory(siteFactory);
-			generator.setDevEntries(devEntries);
-			generator.setCompiledElements(getCompiledElements());
-			generator.setBuildingOSGi(isBuildingOSGi());
-			generator.includePlatformIndependent(isPlatformIndependentIncluded());
-			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+			String featureId = referencedFeatures[i].getId();
+			
+			BuildTimeFeature nestedFeature = getSite(false).findFeature(featureId, null, true);
+
 			try {
-				generator.generate();
+				generate(nestedFeature);
 			} catch (CoreException exception) {
 				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
 				if (exception.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeatures[i].isOptional()))
@@ -50,14 +41,14 @@ public class ElementCollector extends FeatureBuildScriptGenerator {
 		}
 	}
 
-	protected void collectElementToAssemble(IFeature featureToCollect) {
+	protected void collectElementToAssemble(BuildTimeFeature featureToCollect) {
 		if (assemblyData == null)
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by comparing the size of correctConfigs
 		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
-			assemblyData.addFeature(config, feature);
+			assemblyData.addFeature(config, featureToCollect);
 		}
 	}
 

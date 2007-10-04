@@ -19,8 +19,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.PluginEntry;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
  * Generate an assemble script for a given feature and a given config. It
@@ -30,8 +30,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
 	protected String featureId;
 	protected Config configInfo;
-	protected IFeature[] features; // the features that will be assembled
-	protected IFeature[] allFeatures; //the set of all the features that have been considered
+	protected BuildTimeFeature[] features; // the features that will be assembled
+	protected BuildTimeFeature[] allFeatures; //the set of all the features that have been considered
 	protected BundleDescription[] plugins;
 	protected String filename;
 	protected Collection rootFileProviders;
@@ -70,10 +70,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		this.configInfo = configurationInformation;
 		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList(0);
 
-		this.features = new IFeature[featureList.size()];
+		this.features = new BuildTimeFeature[featureList.size()];
 		featureList.toArray(this.features);
 
-		this.allFeatures = new IFeature[allFeaturesList.size()];
+		this.allFeatures = new BuildTimeFeature[allFeaturesList.size()];
 		allFeaturesList.toArray(this.allFeatures);
 
 		this.plugins = new BundleDescription[elementList.size()];
@@ -196,7 +196,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Properties featureProperties = null;
 			try {
-				featureProperties = AbstractScriptGenerator.readProperties(new Path(((IFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
+				featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
 				Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
 			} catch (CoreException e) {
 				//do nothing
@@ -248,7 +248,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties = new HashMap(1);
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (int i = 0; i < features.length; i++) {
-			IFeature feature = features[i];
+			BuildTimeFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
@@ -281,7 +281,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_JARSIGNING, null, null, null, Messages.sign_Jar);
 		if (generateJnlp)
 			script.printProperty(PROPERTY_UNSIGN, "true"); //$NON-NLS-1$
-		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
+		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
@@ -352,8 +352,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		for (int i = 0; i < features.length; i++) {
-			IFeature feature = features[i];
-			generatePostProcessingSteps(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), (String) getFinalShape(feature)[1], FEATURE);
+			BuildTimeFeature feature = features[i];
+			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) getFinalShape(feature)[1], FEATURE);
 		}
 	}
 
@@ -369,7 +369,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties = new HashMap(1);
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (int i = 0; i < features.length; i++) {
-			IFeature feature = features[i];
+			BuildTimeFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
@@ -381,7 +381,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties = new HashMap(1);
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			IFeature feature = (IFeature) iter.next();
+			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
@@ -419,12 +419,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
-		script.println("<eclipse.jnlpGenerator feature=\"" +  AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		script.println("<eclipse.jnlpGenerator feature=\"" +  AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
 		Set entries = (Set) ((Properties)bundle.getUserObject()).get(PLUGIN_ENTRY);
-		return ((PluginEntry) entries.iterator().next()).isUnpack();
+		return ((FeatureEntry) entries.iterator().next()).isUnpack();
 	}
 
 	protected Object[] getFinalShape(BundleDescription bundle) {
@@ -432,8 +432,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		return getFinalShape(bundle.getSymbolicName(), bundle.getVersion().toString(), style, BUNDLE);
 	}
 
-	protected Object[] getFinalShape(IFeature feature) {
-		return getFinalShape(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), FLAT, FEATURE);
+	protected Object[] getFinalShape(BuildTimeFeature feature) {
+		return getFinalShape(feature.getId(), feature.getVersion(), FLAT, FEATURE);
 	}
 
 	protected Object[] getFinalShape(String name, String version, String initialShape, byte type) {
@@ -617,7 +617,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Properties featureProperties = null;
 			try {
-				featureProperties = AbstractScriptGenerator.readProperties(new Path(((IFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
+				featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
 			} catch (CoreException e) {
 				return new FileSet[0];
 			}

@@ -23,7 +23,7 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.PDEState;
-import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Filter;
 
 public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
@@ -141,7 +141,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String rules = (String) packages.get(exporter.getSymbolicName());
 			if (rules != null) {
 				if (rules.indexOf(rule) == -1)
-					rules = (rules != null) ? rules + File.pathSeparator + rule : rule;
+					rules = rules + File.pathSeparator + rule;
 			} else {
 				rules = rule;
 			}
@@ -448,7 +448,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		try {
 			URL extraURL = new URL(url);
 			try {
-				relativePath = Utils.makeRelative(new Path(Platform.resolve(extraURL).getFile()), new Path(location)).toOSString();
+				relativePath = Utils.makeRelative(new Path(FileLocator.resolve(extraURL).getFile()), new Path(location)).toOSString();
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
@@ -510,13 +510,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (filter == null) //Target is platform independent, add it 
 			return true;
 
-		IPluginEntry associatedEntry = generator.getAssociatedEntry();
+		FeatureEntry associatedEntry = generator.getAssociatedEntry();
 		if (associatedEntry == null)
 			return true;
 
 		String os = associatedEntry.getOS();
 		String ws = associatedEntry.getWS();
-		String arch = associatedEntry.getOSArch();
+		String arch = associatedEntry.getArch();
 		String nl = associatedEntry.getNL();
 		if (os == null && ws == null && arch == null && nl == null) //I'm a platform independent plugin
 			return true;

@@ -18,8 +18,9 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
-import org.eclipse.update.core.*;
+import org.eclipse.pde.internal.build.site.compatibility.Feature;
 import org.osgi.framework.Version;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {
@@ -187,33 +188,33 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		AssemblyInformation assemblageInformation = null;
 		assemblageInformation = new AssemblyInformation();
 
-		FeatureBuildScriptGenerator generator = null;
+		BuildDirector generator = new BuildDirector(assemblageInformation);
+		generator.setGenerateIncludedFeatures(this.recursiveGeneration);
+		generator.setAnalyseChildren(this.children);
+		generator.setBinaryFeatureGeneration(true);
+		generator.setScriptGeneration(generateBuildScript);
+		generator.setPluginPath(pluginPath);
+		generator.setBuildSiteFactory(siteFactory);
+		generator.setDevEntries(devEntries);
+		generator.setSourceToGather(new SourceFeatureInformation());//
+		generator.setCompiledElements(generator.getCompiledElements());
+		generator.setBuildingOSGi(isBuildingOSGi());
+		generator.includePlatformIndependent(includePlatformIndependent);
+		generator.setReportResolutionErrors(reportResolutionErrors);
+		generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+		generator.setSignJars(signJars);
+		generator.setGenerateJnlp(generateJnlp);
+		generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
+		generator.setProduct(product);
+
 		try {
 			for (Iterator i = features.iterator(); i.hasNext();) {
 				String[] featureInfo = getNameAndVersion((String) i.next());
-				generator = new FeatureBuildScriptGenerator(featureInfo[0], featureInfo[1], assemblageInformation);
-				generator.setGenerateIncludedFeatures(this.recursiveGeneration);
-				generator.setAnalyseChildren(this.children);
-				generator.setSourceFeatureGeneration(false);
-				generator.setBinaryFeatureGeneration(true);
-				generator.setScriptGeneration(generateBuildScript);
-				generator.setPluginPath(pluginPath);
-				generator.setBuildSiteFactory(siteFactory);
-				generator.setDevEntries(devEntries);
-				generator.setSourceToGather(new SourceFeatureInformation());//
-				generator.setCompiledElements(generator.getCompiledElements());
-				generator.setBuildingOSGi(isBuildingOSGi());
-				generator.includePlatformIndependent(includePlatformIndependent);
-				generator.setReportResolutionErrors(reportResolutionErrors);
-				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
-				generator.setSignJars(signJars);
-				generator.setGenerateJnlp(generateJnlp);
-				generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
-				generator.setProduct(product);
-				generator.generate();
+				BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
+				generator.generate(feature);
 			}
 
-			if (generator != null && generateAssembleScript == true) {
+			if (generateAssembleScript == true) {
 				String[] featureInfo = null;
 				if (features.size() == 1)
 					featureInfo = getNameAndVersion((String) features.get(0));
@@ -232,8 +233,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			if (generateVersionsList)
 				generateVersionsLists(assemblageInformation);
 		} finally {
-			if (generator != null)
-				generator.getSite(false).getRegistry().cleanupOriginalState();
+			getSite(false).getRegistry().cleanupOriginalState();
 		}
 	}
 
@@ -258,9 +258,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, featureFile);
 			for (Iterator i = list.iterator(); i.hasNext();) {
-				IFeature feature = (IFeature) i.next();
-				VersionedIdentifier id = feature.getVersionedIdentifier();
-				recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
+				Feature feature = (Feature) i.next();
+				recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 			}
 			saveVersions(versions, featureFile);
 
@@ -282,9 +281,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, featureFile);
 		for (Iterator i = features.iterator(); i.hasNext();) {
-			IFeature feature = (IFeature) i.next();
-			VersionedIdentifier id = feature.getVersionedIdentifier();
-			recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
+			Feature feature = (Feature) i.next();
+			recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 		}
 		saveVersions(versions, featureFile);
 

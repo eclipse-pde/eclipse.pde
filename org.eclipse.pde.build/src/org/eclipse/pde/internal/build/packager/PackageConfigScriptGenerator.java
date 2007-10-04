@@ -16,10 +16,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
-import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteContentProvider;
-import org.eclipse.update.core.IFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
@@ -39,12 +37,12 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return ModelBuildScriptGenerator.getNormalizedName(bundle);
 	}
 
-	private String getFinalName(IFeature feature) {
+	private String getFinalName(BuildTimeFeature feature) {
 		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			Path featurePath = new Path(feature.getURL().getPath());
 			return featurePath.segment(featurePath.segmentCount() - 2);
 		}
-		return FeatureBuildScriptGenerator.getNormalizedName(feature);
+		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 	}
 
 	protected void generateGatherBinPartsCalls() { //TODO Here we should try to use cp because otherwise we will loose the permissions
@@ -53,7 +51,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
 		IPath baseLocation = null;
 		try {
-			String url = ((BuildTimeSiteContentProvider) getSite(false).getSiteContentProvider()).getInstalledBaseURL();
+			String url = getSite(false).getSiteContentProvider().getInstalledBaseURL();
 			if (url != null)
 				baseLocation = new Path(url);
 		} catch (CoreException e) {
@@ -167,7 +165,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return super.getFinalShape(bundle);
 	}
 
-	protected Object[] getFinalShape(IFeature feature) {
+	protected Object[] getFinalShape(BuildTimeFeature feature) {
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true)
 			return new Object[] {getFinalName(feature), FOLDER};
 		return super.getFinalShape(feature);

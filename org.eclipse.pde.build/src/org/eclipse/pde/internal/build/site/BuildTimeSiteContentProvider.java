@@ -12,16 +12,15 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.update.core.ISiteContentProvider;
-import org.eclipse.update.core.SiteContentProvider;
 
-public class BuildTimeSiteContentProvider extends SiteContentProvider implements ISiteContentProvider, IPDEBuildConstants {
+public class BuildTimeSiteContentProvider /*extends SiteContentProvider*/ implements /*ISiteContentProvider,*/ IPDEBuildConstants {
 	private String installedBaseURL;
 	private String[] urls;
 	private PDEUIStateWrapper pdeUIState;
+	private BuildTimeSite site;
 
 	public BuildTimeSiteContentProvider(String[] urls, String installedBaseURL, PDEUIStateWrapper initialState) {
-		super(null);
+		//super(null);
 		this.installedBaseURL = installedBaseURL;
 		this.urls = urls;
 		this.pdeUIState = initialState;
@@ -63,5 +62,19 @@ public class BuildTimeSiteContentProvider extends SiteContentProvider implements
 
 	public PDEUIStateWrapper getInitialState() {
 		return pdeUIState;
+	}
+
+	public URL getArchiveReference(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BuildTimeSite getSite() {
+		// TODO Auto-generated method stub
+		return site;
+	}
+
+	public void setSite(BuildTimeSite site) {
+		this.site = site;
 	}
 }

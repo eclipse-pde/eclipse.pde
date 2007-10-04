@@ -21,7 +21,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
-import org.eclipse.update.core.model.FeatureModelFactory;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
 import org.osgi.framework.FrameworkUtil;
 
 public class SourceTests extends PDETestCase {
@@ -102,14 +103,8 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(buildFolder, "features/a.feature.source/feature.xml");
 		IFile feature = buildFolder.getFile("features/a.feature.source/feature.xml");
 
-		FeatureModelFactory factory = new FeatureModelFactory();
-		InputStream stream = new BufferedInputStream(feature.getLocationURI().toURL().openStream());
-		try {
-			//this will throw an exception if feature.xml is not valid
-			factory.parseFeature(stream);
-		} finally {
-			stream.close();
-		}
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
 	}
 
 	// test that source can come before the feature it is based on
