@@ -43,6 +43,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_MISSING_EXPORT_PKGS = 0x1018; // other problem
 	public static final int M_DEPRECATED_PROVIDE_PACKAGE = 0x1019; // deprecation
 	public static final int M_EXECUTION_ENVIRONMENT_NOT_SET = 0x1020; // other problem
+	public static final int M_MISSING_BUNDLE_CLASSPATH_ENTRY = 0x1021; // fatal problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

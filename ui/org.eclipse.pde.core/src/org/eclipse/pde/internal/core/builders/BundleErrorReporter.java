@@ -49,6 +49,7 @@ import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -59,6 +60,7 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -484,11 +486,64 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateBundleClasspath() {
 		IHeader header = getHeader(Constants.BUNDLE_CLASSPATH);
-		if (header != null && header.getElements().length == 0) {
-			report(PDECoreMessages.BundleErrorReporter_ClasspathNotEmpty, 
-					header.getLineNumber() + 1, CompilerFlags.ERROR, 
-					PDEMarkerFactory.CAT_FATAL);
+		if (header != null) {
+			if (header.getElements().length == 0) {
+				report(PDECoreMessages.BundleErrorReporter_ClasspathNotEmpty, 
+						header.getLineNumber() + 1, CompilerFlags.ERROR, 
+						PDEMarkerFactory.CAT_FATAL);
+			} 
 		}
+		validateBundleClasspathMappings(header);
+	}
+	
+	private void validateBundleClasspathMappings(IHeader header) {
+		IFile buildProperties = fProject.getFile("build.properties"); //$NON-NLS-1$
+		if(buildProperties != null && buildProperties.exists()) {
+			WorkspaceBuildModel wbm = 
+				new WorkspaceBuildModel(buildProperties);
+			wbm.load();
+			if (!wbm.isLoaded())
+				return;
+
+			IBuild build = wbm.getBuild();
+			if(build != null) {
+				ArrayList sourceEntries = 
+					PDEBuilderHelper.getSourceEntries(build);
+				// verify classpath entry <-> source entry mappings
+				for(int i = 0; i < sourceEntries.size(); i++) {
+					String entry = (String) sourceEntries.get(i);
+					validateMapping(header, entry, sourceEntries.size());
+				}
+
+			}
+		}			
+	}
+
+	private void validateMapping(IHeader header, String entry, int sourceEntrySize) {
+		boolean match = false;
+		ManifestElement[] elements = 
+			header != null ? header.getElements() : new ManifestElement[0];
+		for(int i = 0; i < elements.length; i++) {
+			if(entry.equals(elements[i].getValue()))
+				match = true;
+		}
+		// if we have no match, report an error
+		if(!match) { 
+			// however, catch the case when we have a source.. entry and no Bundle-ClassPath entry
+			if(entry.equals(".") && sourceEntrySize == 1) //$NON-NLS-1$
+				return;
+			int line = header != null ? header.getLineNumber() + 1 : 1;
+			IMarker marker = report(PDECoreMessages.BundleErrorReporter_missingClassPathEntries, 
+					line,
+					CompilerFlags.ERROR,
+					PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY,
+					PDEMarkerFactory.CAT_FATAL);
+			try {
+				if (marker != null) {
+					marker.setAttribute("entry", entry); //$NON-NLS-1$
+				}
+			} catch (CoreException e) {}
+			}
 	}
 
 	private void validateRequireBundle(IProgressMonitor monitor) {

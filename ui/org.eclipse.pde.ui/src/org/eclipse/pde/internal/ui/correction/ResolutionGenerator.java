@@ -94,6 +94,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new RenameProvidePackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET:
 				return new IMarkerResolution[] { new AddDefaultExecutionEnvironmentResolution(AbstractPDEMarkerResolution.CREATE_TYPE) };
+			case PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY:
+				return new IMarkerResolution[] {new  AddBundleClassPathMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("entry", null))}; //$NON-NLS-1$)
 		}
 		return NO_RESOLUTIONS;
 	}

@@ -3047,6 +3047,7 @@ public class PDEUIMessages extends NLS {
 	public static String PDEJavaHelper_msgContentAssistAvailable;
 
 	public static String AddExportPackageResolution_Label;
+	public static String AddBundleClassPathResolution_add;
 	
 	// target provisioning stuff
 	public static String UpdateSiteDownloader_message;

@@ -16,7 +16,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class PDEBuilderHelper {
 	
@@ -45,5 +47,21 @@ public class PDEBuilderHelper {
 		}
 		return unlisted;
 	}
+	
+	public static ArrayList getSourceEntries(IBuild build) {
+		ArrayList sourceEntryKeys = new ArrayList();
+		IBuildEntry[] entries = build.getBuildEntries();
+		for (int i = 0; i < entries.length; i++) {
+			String name = entries[i].getName();
+			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
+				// splice the entry
+				String entry = 
+					name.substring(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX.length(), name.length());
+				sourceEntryKeys.add(entry);
+			}
+		}
+		return sourceEntryKeys;
+	}
+
 
 }
