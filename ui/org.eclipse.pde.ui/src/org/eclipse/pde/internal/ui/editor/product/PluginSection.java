@@ -216,6 +216,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	private void handleNewFragment() {
 		NewFragmentProjectWizard wizard = new NewFragmentProjectWizard();
+		wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), null);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
@@ -226,6 +227,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 
 	private void handleNewPlugin() {
 		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
+		wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), null);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
