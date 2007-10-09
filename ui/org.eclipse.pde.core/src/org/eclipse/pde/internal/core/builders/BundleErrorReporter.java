@@ -535,7 +535,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			int line = header != null ? header.getLineNumber() + 1 : 1;
 			IMarker marker = report(PDECoreMessages.BundleErrorReporter_missingClassPathEntries, 
 					line,
-					CompilerFlags.ERROR,
+					CompilerFlags.WARNING,
 					PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY,
 					PDEMarkerFactory.CAT_FATAL);
 			try {
