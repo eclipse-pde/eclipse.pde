@@ -422,7 +422,6 @@ public class PointSelectionPage
 		descriptionComposite.setLayoutData(gd);
 		createDescriptionIn(descriptionComposite);
 	
-		getContainer().getShell().setSize(500, 500);
 		initialize();
 		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
