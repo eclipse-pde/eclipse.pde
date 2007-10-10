@@ -73,7 +73,7 @@ public class Messages extends NLS {
 	public static String OpenLogDialog_cannotDisplay;
 	
 	private static final String BUNDLE_NAME = 
-		"org.eclipse.ui.internal.views.log.Messages"; //$NON-NLS-1$
+		"org.eclipse.ui.internal.views.log.messages"; //$NON-NLS-1$
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
