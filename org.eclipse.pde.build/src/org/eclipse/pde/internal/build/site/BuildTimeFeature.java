@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.pde.build.Constants;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.site.compatibility.*;
 
 public class BuildTimeFeature extends Feature {
@@ -28,7 +28,6 @@ public class BuildTimeFeature extends Feature {
 	 */
 	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
 
-	
 	public BuildTimeFeature(String id, String version) {
 		super(id, version);
 	}
@@ -37,56 +36,56 @@ public class BuildTimeFeature extends Feature {
 		super("", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private boolean binary = false;
+	private Boolean binary = null;
 	private int contextQualifierLength = -1;
-	private BuildTimeSiteContentProvider 	contentProvider = null;
-	private BuildTimeSite 				site = null;
-	private URL								url = null;
-	private String							rootLocation = null;
+	private BuildTimeSiteContentProvider contentProvider = null;
+	private BuildTimeSite site = null;
+	private URL url = null;
+	private String rootLocation = null;
 
 	public FeatureEntry[] getRawIncludedFeatureReferences() {
 		ArrayList included = new ArrayList();
-		FeatureEntry [] entries = getEntries();
+		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
 				continue;
 			included.add(entries[i]);
 		}
-		
+
 		return (FeatureEntry[]) included.toArray(new FeatureEntry[included.size()]);
 	}
 
 	public FeatureEntry[] getIncludedFeatureReferences() {
 		ArrayList included = new ArrayList();
-		FeatureEntry [] entries = getEntries();
+		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
 				continue;
-			
-			if(SiteManager.isValidEnvironment(entries[i])) {
+
+			if (SiteManager.isValidEnvironment(entries[i])) {
 				included.add(entries[i]);
 			}
 		}
-		
+
 		return (FeatureEntry[]) included.toArray(new FeatureEntry[included.size()]);
 	}
-	
+
 	public FeatureEntry[] getPluginEntries() {
 		ArrayList plugins = new ArrayList();
-		FeatureEntry [] entries = getEntries();
+		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
 				continue;
-			if(SiteManager.isValidEnvironment(entries[i])) {
+			if (SiteManager.isValidEnvironment(entries[i])) {
 				plugins.add(entries[i]);
 			}
 		}
 		return (FeatureEntry[]) plugins.toArray(new FeatureEntry[plugins.size()]);
 	}
-	
+
 	public FeatureEntry[] getRawPluginEntries() {
 		ArrayList plugins = new ArrayList();
-		FeatureEntry [] entries = getEntries();
+		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
 				continue;
@@ -94,10 +93,10 @@ public class BuildTimeFeature extends Feature {
 		}
 		return (FeatureEntry[]) plugins.toArray(new FeatureEntry[plugins.size()]);
 	}
-	
+
 	public FeatureEntry[] getImports() {
 		ArrayList imports = new ArrayList();
-		FeatureEntry [] entries = getEntries();
+		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (!entries[i].isRequires())
 				continue;
@@ -105,46 +104,28 @@ public class BuildTimeFeature extends Feature {
 		}
 		return (FeatureEntry[]) imports.toArray(new FeatureEntry[imports.size()]);
 	}
-	
+
 	public boolean isBinary() {
-		return binary;
+		if (binary == null) {
+			String root = getRootLocation();
+			File properties = new File(root, IPDEBuildConstants.PROPERTIES_FILE);
+			if (!properties.exists())
+				binary = Boolean.TRUE;
+			else
+				binary = Boolean.FALSE;
+		}
+		return binary.booleanValue();
 	}
 
 	public void setBinary(boolean isCompiled) {
-		this.binary = isCompiled;
+		this.binary = isCompiled ? Boolean.TRUE : Boolean.FALSE;
 	}
-
-//	private VersionedIdentifier versionId;
-//	
-//	public VersionedIdentifier getVersionedIdentifier() {
-//		if (versionId != null)
-//			return versionId;
-//
-//		String id = getFeatureIdentifier();
-//		String ver = getFeatureVersion();
-//		if (id != null && ver != null) {
-//			try {
-//				versionId = new VersionedIdentifier(id, ver);
-//				return versionId;
-//			} catch (Exception e) {
-//				//UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver); //$NON-NLS-1$ //$NON-NLS-2$
-//			}
-//		}
-//
-//		versionId = new VersionedIdentifier(getURL().toExternalForm(), null);
-//		return versionId;
-//	}
-	
-//	public void setFeatureVersion(String featureVersion) {
-//		super.setFeatureVersion(featureVersion);
-//		versionId = null;
-//	}
 
 	public void setContextQualifierLength(int l) {
 		contextQualifierLength = l;
 	}
-	
-	public int getContextQualifierLength(){
+
+	public int getContextQualifierLength() {
 		return contextQualifierLength;
 	}
 
@@ -155,7 +136,7 @@ public class BuildTimeFeature extends Feature {
 	public BuildTimeSite getSite() {
 		return site;
 	}
-	
+
 	public void setFeatureContentProvider(BuildTimeSiteContentProvider contentProvider) {
 		this.contentProvider = contentProvider;
 	}
@@ -167,11 +148,11 @@ public class BuildTimeFeature extends Feature {
 	public URL getURL() {
 		return url;
 	}
-	
+
 	public void setURL(URL url) {
 		this.url = url;
 	}
-	
+
 	public String getRootLocation() {
 		if (rootLocation == null) {
 			URL location = getURL();
