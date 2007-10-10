@@ -39,11 +39,6 @@ public class LogViewLabelProvider
 	}
 	public void dispose() {
 		if (consumers.size() == 0){
-			errorImage.dispose();
-			infoImage.dispose();
-			okImage.dispose();
-			warningImage.dispose();
-			errorWithStackImage.dispose();
 			super.dispose();
 		}
 	}

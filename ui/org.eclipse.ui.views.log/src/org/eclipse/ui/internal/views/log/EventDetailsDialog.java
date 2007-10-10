@@ -33,7 +33,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,9 +67,6 @@ public class EventDetailsDialog extends TrayDialog {
 	private Button copyButton;
 	private Button backButton;
 	private Button nextButton;
-	private Image imgNextEnabled;
-	private Image imgPrevEnabled;
-	private Image imgCopyEnabled;
 	private SashForm sashForm;
 	
 	// sorting
@@ -99,7 +95,6 @@ public class EventDetailsDialog extends TrayDialog {
 		setShellStyle(SWT.MODELESS | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
 		clipboard = new Clipboard(parentShell.getDisplay());
 		initialize();
-		createImages();
 		collator = Collator.getInstance();
 		readConfiguration();
 		isLastChild = false;
@@ -145,14 +140,6 @@ public class EventDetailsDialog extends TrayDialog {
 			return d1 == d2;
 		return d1.equals(d2);
 	}
-	
-	private void createImages(){
-		imgCopyEnabled =
-			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY).createImage(
-				true);
-		imgPrevEnabled = SharedImages.getImage(SharedImages.DESC_PREV_EVENT);
-		imgNextEnabled = SharedImages.getImage(SharedImages.DESC_NEXT_EVENT);
-	}
 
 	private boolean isChild(LogEntry entry) {
 		return entry.getParent(entry) != null;
@@ -179,9 +166,6 @@ public class EventDetailsDialog extends TrayDialog {
 	public boolean close() {
 		storeSettings();
 		isOpen = false;
-		imgCopyEnabled.dispose();
-		imgNextEnabled.dispose();
-		imgPrevEnabled.dispose();
 		labelProvider.disconnect(this);
 		return super.close();
 	}
@@ -527,7 +511,7 @@ public class EventDetailsDialog extends TrayDialog {
 		gd.verticalSpan = 1;
 		backButton.setLayoutData(gd);
 		backButton.setToolTipText(Messages.EventDetailsDialog_previous);
-		backButton.setImage(imgPrevEnabled);
+		backButton.setImage(SharedImages.getImage(SharedImages.DESC_PREV_EVENT));
 		
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
@@ -535,14 +519,14 @@ public class EventDetailsDialog extends TrayDialog {
 		gd.verticalSpan = 1;
 		nextButton.setLayoutData(gd);
 		nextButton.setToolTipText(Messages.EventDetailsDialog_next);
-		nextButton.setImage(imgNextEnabled);
+		nextButton.setImage(SharedImages.getImage(SharedImages.DESC_NEXT_EVENT));
 		
 		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		copyButton.setLayoutData(gd);
-		copyButton.setImage(imgCopyEnabled);
+		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
 		copyButton.setToolTipText(Messages.EventDetailsDialog_copy);
 	}
 
