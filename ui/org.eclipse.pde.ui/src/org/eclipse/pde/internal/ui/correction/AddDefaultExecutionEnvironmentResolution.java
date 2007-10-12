@@ -31,7 +31,7 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if(header == null) {
 			// Initialize header with empty value
-			model.getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, "");
+			model.getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ""); //$NON-NLS-1$
 		}
 
 		// Get header

@@ -415,7 +415,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
 
 		// Set EE of new project
-		String executionEnvironment = "";
+		String executionEnvironment = ""; //$NON-NLS-1$
 		if(data instanceof AbstractFieldData) {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}
