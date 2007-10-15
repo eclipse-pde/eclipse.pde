@@ -33,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractExtensions extends PluginObject implements IExtensions {
@@ -233,5 +234,32 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			}
 		}
 		return fExtensionPoints;
+	}
+	
+	/*
+	 * If this function is used to load the model, the extension registry cache will not be used when querying model.
+	 */
+	protected void processChild(Node child) {
+		String name = child.getNodeName();
+		if (fExtensions == null)
+			fExtensions = new ArrayList();
+		if (fExtensionPoints == null)
+			fExtensionPoints = new ArrayList();
+		
+		if (name.equals("extension")) { //$NON-NLS-1$
+			PluginExtension extension = new PluginExtension();
+			extension.setModel(getModel());
+			extension.setParent(this);
+			fExtensions.add(extension);
+			extension.setInTheModel(true);
+			extension.load(child);
+		} else if (name.equals("extension-point")) { //$NON-NLS-1$
+			PluginExtensionPoint point = new PluginExtensionPoint();
+			point.setModel(getModel());
+			point.setParent(this);
+			point.setInTheModel(true);
+			fExtensionPoints.add(point);
+			point.load(child);
+		}
 	}
 }

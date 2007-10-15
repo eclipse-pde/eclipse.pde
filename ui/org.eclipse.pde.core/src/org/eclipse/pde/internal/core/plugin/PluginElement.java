@@ -25,6 +25,9 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private static final long serialVersionUID = 1L;
@@ -133,6 +136,42 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		if (fText == null && fElement != null)
 			fText = fElement.getValue();
 		return fText;
+	}
+
+	void load(Node node) {
+		fName = node.getNodeName();
+		if (fAttributes == null)
+			fAttributes = new Hashtable();
+		NamedNodeMap attributes = node.getAttributes();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node attribute = attributes.item(i);
+			IPluginAttribute att = getModel().getFactory()
+					.createAttribute(this);
+			((PluginAttribute) att).load(attribute);
+			((PluginAttribute) att).setInTheModel(true);
+			this.fAttributes.put(attribute.getNodeName(), att);
+		}
+		
+		if (fChildren == null)
+			fChildren = new ArrayList();
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				PluginElement childElement = new PluginElement();
+				childElement.setModel(getModel());
+				childElement.setInTheModel(true);
+				this.fChildren.add(childElement);
+				childElement.setParent(this);
+				childElement.load(child);
+			} else if (child.getNodeType() == Node.TEXT_NODE
+					&& child.getNodeValue() != null) {
+				String text = child.getNodeValue();
+				text = text.trim();
+				if (isNotEmpty(text))
+					this.fText = text;
+			}
+		}
 	}
 
 	public void removeAttribute(String name) throws CoreException {

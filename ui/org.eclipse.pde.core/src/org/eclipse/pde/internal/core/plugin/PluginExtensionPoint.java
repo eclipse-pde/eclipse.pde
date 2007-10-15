@@ -18,6 +18,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.w3c.dom.Node;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject
 	implements IPluginExtensionPoint {
@@ -59,6 +60,13 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 		if (fSchema == null && fPoint != null)
 			fSchema = fPoint.getSchemaReference();
 		return fSchema;
+	}
+	
+	void load(Node node) {
+		this.fID = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		fSchema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
+		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
 	
 	public boolean equals(Object obj) {

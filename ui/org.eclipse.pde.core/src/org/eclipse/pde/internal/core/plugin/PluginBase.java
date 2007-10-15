@@ -212,6 +212,12 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			loadRuntime(child);
 		} else if (name.equals("requires")) { //$NON-NLS-1$
 			loadImports(child);
+			
+		// check to see if this model is a workspace model.  If so, don't load extensions/extension points through Node.
+		// Instead, the extensions/extension points will be control by the extension registry.
+		// One instance of where we want to load an external model's extensions/extension points from a Node is the convertSchemaToHTML ANT task.
+		} else if (getModel().getUnderlyingResource() == null) {
+			super.processChild(child);
 		}
 	}
 
