@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Danail Nachev (ProSyst) - bug 205777
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -143,7 +144,7 @@ public class PDEState extends MinimalState {
 			fState.setResolver(Platform.getPlatformAdmin().getResolver());
 			if (propertiesChanged)
 				fState.resolve(false);
-			fId = fState.getBundles().length;
+			fId = fState.getHighestBundleId();
 		}
 	}
 	
