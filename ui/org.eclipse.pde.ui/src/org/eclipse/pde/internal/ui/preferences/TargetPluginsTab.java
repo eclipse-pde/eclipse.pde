@@ -699,6 +699,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		HashSet parents = new HashSet();
 		if (fTreeViewerContents == null) 
 			fTreeViewerContents = new HashMap();
+		else
+			fTreeViewerContents.clear();
 		for (int i = 0; i < allModels.length; i++) {
 			IPluginModelBase model = allModels[i];
 			String path = model.getInstallLocation();
@@ -1107,6 +1109,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			// no new URLs found/to add
 			return;
 		}
+		addDirectoriesToState(dirs);
+	}
+	
+	private void addDirectoriesToState(File[] dirs) {
 		for (int i = 0; i < dirs.length; i++) {
 			fAdditionalLocations.add(dirs[i].getPath());
 			File temp = new File(dirs[i], "plugins"); //$NON-NLS-1$
@@ -1115,48 +1121,74 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}		
 		
 		URL[] pluginLocs = PluginPathFinder.scanLocations(dirs);
-		Object[] checkedPlugins = null;
+		ArrayList itemsToCheck = null;
 		if (fCurrentState == null) {
-			checkedPlugins = fPluginListViewer.getCheckedElements();
-			createCopyState();
+			// create copy of current state
+			fCurrentState = new PDEState(TargetPlatformHelper.getPDEState());
+			
+			// create a map between install location and new model.  Install location of old model should match new model
+			IPluginModelBase[] newModels = fCurrentState.getTargetModels();
+			HashMap installLocationsToNewModel = new HashMap((4/3) * newModels.length + 1);
+			for (int i = 0; i < newModels.length; i++)
+				installLocationsToNewModel.put(newModels[i].getInstallLocation(), newModels[i]);
+			
+			updateChangedModels(installLocationsToNewModel);
+			itemsToCheck = getItemsToCheck(installLocationsToNewModel);
 		}
 		BundleDescription[] descriptions = fCurrentState.addAdditionalBundles(pluginLocs);
-		addNewBundles(descriptions, checkedPlugins);
+		addNewBundles(descriptions, itemsToCheck);
 		if (fCurrentRegistry != null)
 			fCurrentRegistry.dispose();
 		fCurrentRegistry = null;
 	}
-	
-	private void createCopyState() {
-		fCurrentState = new PDEState(TargetPlatformHelper.getPDEState());
-		IPluginModelBase[] bases = fCurrentState.getTargetModels();
-		for (int j = 0; j < bases.length; j++) {
-			long bundleId = bases[j].getBundleDescription().getBundleId();
-			BundleDescription newDesc = fCurrentState.getState().getBundle(bundleId);
-			bases[j].setBundleDescription(newDesc);
+		
+	private void updateChangedModels(Map installLocationsToNewModel) {
+		HashSet temp = new HashSet();
+		Iterator iter = fChangedModels.iterator();
+		while (iter.hasNext()) {
+			// for each model currently in the fChangedModels, try to map it to one of the new models.  If able to map, add to 'temp' HashSet
+			String installLoc = ((IPluginModelBase) iter.next()).getInstallLocation();
+			Object obj = installLocationsToNewModel.get(installLoc);
+			if (obj != null)
+				temp.add(obj);
 		}
+		fChangedModels = temp;
 	}
 	
-	private void addNewBundles(BundleDescription[] descriptions, Object[] checkedPlugins) {
+	private ArrayList getItemsToCheck(Map installLocationsToNewModel) {
+		ArrayList itemsToCheck = new ArrayList();
+		Object[] checkeditems = fPluginTreeViewer.getCheckedElements();
+		// if the check item is a File, add it directly to itemsToCheck, otherwise save the install location of the plug-in
+		for (int i = 0; i < checkeditems.length; i++) {
+			if (!(checkeditems[i] instanceof IPluginModelBase))
+				continue;
+			Object obj = installLocationsToNewModel.get(((IPluginModelBase)checkeditems[i]).getInstallLocation());
+			if (obj != null)
+				itemsToCheck.add(obj);
+		}
+		return itemsToCheck;
+	}
+	
+	private void addNewBundles(BundleDescription[] descriptions, ArrayList checkedItems) {
 		if (descriptions.length > 0) {
 			IPluginModelBase[] models = fCurrentState.createTargetModels(descriptions);
 			// add new models to tree viewer
-			Set parents = initializeTreeContents(models);
+			Set parents = initializeTreeContents(fCurrentState.getTargetModels());
 			
 			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			
-			if (checkedPlugins == null) {
+			if (checkedItems == null) {
 				for (int i = 0; i < models.length; i++) {
 					fPluginListViewer.setChecked(models[i], true);
 					fPluginTreeViewer.setChecked(models[i], true);
 				}
 			} else {
-				Object[] newCheckedPlugins = new Object[checkedPlugins.length + models.length];
-				System.arraycopy(checkedPlugins, 0, newCheckedPlugins, 0, checkedPlugins.length);
-				System.arraycopy(models, 0, newCheckedPlugins, checkedPlugins.length, models.length);
-				fPluginListViewer.setCheckedElements(newCheckedPlugins);
-				fPluginTreeViewer.setCheckedElements(newCheckedPlugins);
+				for (int i = 0; i < models.length; i++)
+					checkedItems.add(models[i]);
+				Object[] newCheckedItems = checkedItems.toArray();
+				fPluginListViewer.setCheckedElements(newCheckedItems);
+				fPluginTreeViewer.setCheckedElements(newCheckedItems);
 			}
 			for (int i = 0; i < models.length; i++) {
 				fChangedModels.add(models[i]);

@@ -55,14 +55,53 @@ public class PDEState extends MinimalState {
 	private long fTargetTimestamp;
 	private boolean fNewState;
 	
+	/**
+	 * Creates a deep copy of the PDEState and its external models.  None of the workspace models are included in the copy.
+	 * @param state
+	 */
 	public PDEState(PDEState state) {
 		super(state);
-		fTargetModels = new ArrayList(state.fTargetModels);
 		fCombined = false;
 		fTargetTimestamp = state.fTargetTimestamp;
-		fAuxiliaryState = new PDEAuxiliaryState(state.fAuxiliaryState);
-		if (fAuxiliaryState.fPluginInfos.isEmpty()) 
-			fAuxiliaryState.readPluginInfoCache(new File(DIR, Long.toString(fTargetTimestamp) + ".target")); //$NON-NLS-1$
+		// make sure to copy auxiliary state before trying to copy models, otherwise you will get NPEs.  Need auxiliary data to accurate create new models.
+		copyAuxiliaryState(); 
+		copyModels(state);
+	}
+	
+	private void copyAuxiliaryState() {
+		// always read the state instead of copying over contents of current state.  If current state has not been reloaded, it will
+		// not contain any data from the target plug-ins.
+		fAuxiliaryState = new PDEAuxiliaryState();
+		fAuxiliaryState.readPluginInfoCache(new File(DIR, Long.toString(fTargetTimestamp) + ".target")); //$NON-NLS-1$
+	}
+	
+	private void copyModels(PDEState state) {
+		IPluginModelBase[] bases = state.getTargetModels();
+		fTargetModels = new ArrayList(bases.length);
+		for (int i = 0; i < bases.length; i++) {
+			BundleDescription oldBD = bases[i].getBundleDescription();
+			if (oldBD == null)
+				continue;
+			
+			// do a deep copy of the model and accurately set the copied BundleDescription
+			BundleDescription newBD = getState().getBundle(oldBD.getBundleId());
+			// newDesc will be null if a workspace plug-in has the same Bundle-SymbolicName as the target plug-in.
+			// This is because in PluginModelManager we add the workspace's BundleDescription and remove the corresponding targets.
+			// This is done so that the resolver state will always resolve to the workspace's BundleDescription and not one in the target.
+			if (newBD == null) {
+				// If this happens, copy the target bundle's BundleDescription then add it back into the copied state.
+				newBD = Platform.getPlatformAdmin().getFactory().createBundleDescription(oldBD);
+				getState().addBundle(newBD);
+			}
+			IPluginModelBase model = createExternalModel(newBD);
+			model.setEnabled(bases[i].isEnabled());
+			fTargetModels.add(model);
+		}
+		// remove workspace models to accurately represent only the target platform
+		bases = PluginRegistry.getWorkspaceModels();
+		for (int i = 0; i < bases.length; i++) {
+			removeBundleDescription(bases[i].getBundleDescription());
+		}
 	}
 	
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
