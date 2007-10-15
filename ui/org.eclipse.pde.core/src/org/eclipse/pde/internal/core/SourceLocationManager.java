@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.spi.RegistryContributor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -165,7 +167,9 @@ public class SourceLocationManager implements ICoreConstants {
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source"); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();
-			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
+			RegistryContributor contributor = (RegistryContributor)extensions[i].getContributor();
+			BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
+			IPluginModelBase base = PluginRegistry.findModel(desc);
 			for (int j = 0; j < children.length; j++) {
 				if (children[j].getName().equals("location")) { //$NON-NLS-1$
 					String pathValue = children[j].getAttribute("path"); //$NON-NLS-1$
