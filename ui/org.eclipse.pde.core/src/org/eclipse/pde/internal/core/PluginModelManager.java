@@ -683,7 +683,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 			if none exists
 	 */
 	public IPluginModelBase findModel(BundleDescription desc) {
-		ModelEntry entry = findEntry(desc.getSymbolicName());
+		ModelEntry entry = (desc != null) ? findEntry(desc.getSymbolicName()) : null;
 		return entry == null ? null : entry.getModel(desc);
 	}
 	
