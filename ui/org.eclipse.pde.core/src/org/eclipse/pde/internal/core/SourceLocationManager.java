@@ -26,6 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Version;
 
@@ -168,8 +169,23 @@ public class SourceLocationManager implements ICoreConstants {
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();
 			RegistryContributor contributor = (RegistryContributor)extensions[i].getContributor();
+			long bundleId = Long.parseLong(contributor.getActualId());
 			BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
-			IPluginModelBase base = PluginRegistry.findModel(desc);
+			IPluginModelBase base = null;
+			if (desc != null) 
+				base = PluginRegistry.findModel(desc);
+			// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
+			else {
+				ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
+				IPluginModelBase externalModels[] = entry.getExternalModels();
+				for (int j = 0; j < externalModels.length; j++) {
+					BundleDescription extDesc = externalModels[j].getBundleDescription();
+					if (extDesc != null && extDesc.getBundleId() == bundleId)
+						base = externalModels[j];
+				}
+			}
+			if (base == null)
+				continue;
 			for (int j = 0; j < children.length; j++) {
 				if (children[j].getName().equals("location")) { //$NON-NLS-1$
 					String pathValue = children[j].getAttribute("path"); //$NON-NLS-1$
