@@ -267,6 +267,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String JRESection_jrePreference;
 
+	public static String LauncherUtils_workspaceLocked;
+
+	public static String LauncherUtils_cannotLaunchApplication;
+
 	public static String LauncherUtils_generateConfigIni;
 
 	public static String OrganizeManifestsWizardPage_calculateUses;

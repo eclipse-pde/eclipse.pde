@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -60,6 +63,9 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class LauncherUtils {
 
@@ -89,6 +95,7 @@ public class LauncherUtils {
 
 	public static boolean clearWorkspace(ILaunchConfiguration configuration,
 			String workspace, IProgressMonitor monitor) throws CoreException {
+		
 		// If the workspace is not defined, there is no workspace to clear
 		// What will happen is that the workspace chooser dialog will be 
 		// brought up because no -data parameter will be specified on the 
@@ -97,7 +104,38 @@ public class LauncherUtils {
 			monitor.done();
 			return true;		
 		}
-
+		
+		// Check if the workspace is already in use, if so, open a message and stop the launch before clearing
+		boolean isLocked = false;
+		try{
+			BundleContext context = PDECore.getDefault().getBundleContext();
+			ServiceReference[] references = context.getServiceReferences(Location.class.getName(),"(type=osgi.configuration.area)"); //$NON-NLS-1$
+			if (references.length > 0){
+				Object service = context.getService(references[0]);
+				if (service instanceof Location){
+					URL workspaceURL = new Path(workspace).toFile().toURI().toURL();
+					Location targetLocation = ((Location)service).createLocation(null, workspaceURL, false);
+					targetLocation.setURL(targetLocation.getDefault(), false);
+					isLocked = targetLocation.isLocked();
+				}
+			}
+		} catch (InvalidSyntaxException e) {
+			PDECore.log(e);
+			isLocked = false;
+		} catch (MalformedURLException e) {
+			PDECore.log(e);
+			isLocked = false;
+		} catch (IOException e) {
+			PDECore.log(e);
+			isLocked = false;
+		}
+			
+		if (isLocked){
+			generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked,NLS.bind(PDEUIMessages.LauncherUtils_cannotLaunchApplication,workspace));
+			monitor.done();
+			return false;
+		}
+		
 		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
 		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false)
 				&& workspaceFile.exists()) {
@@ -150,6 +188,15 @@ public class LauncherUtils {
 			}
 		});
 		return result[0];
+	}
+	
+	private static void generateErrorDialog(final String title, final String message) {
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);
+				dialog.open();
+			}
+		});
 	}
 
 	public static void validateProjectDependencies(ILaunchConfiguration launch, final IProgressMonitor monitor) {
