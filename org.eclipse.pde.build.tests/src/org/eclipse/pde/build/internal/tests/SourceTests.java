@@ -31,6 +31,26 @@ public class SourceTests extends PDETestCase {
 	public static Test suite() {
 		return new TestSuite(SourceTests.class);
 	}
+	
+	public void testBug206679() throws Exception {
+		IFolder buildFolder = newTest("206679");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+
+		//generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.jdt", "jdt.source"}, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@jdt.source", "org.eclipse.jdt");
+		Utils.storeBuildProperties(sdk, properties);
+		
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
+		generateScripts(buildFolder, props);
+
+		IFolder jdtSource = buildFolder.getFolder("features").getFolder("jdt.source");
+		IFile featureXML = jdtSource.getFile("feature.xml");
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		assertTrue(feature.getDescription() != null);
+	}
 
 	public void testBug114150() throws Exception {
 		IFolder buildFolder = newTest("114150");

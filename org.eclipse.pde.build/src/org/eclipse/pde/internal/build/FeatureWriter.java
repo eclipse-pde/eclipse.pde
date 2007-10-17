@@ -157,18 +157,17 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	private void printRequires() {
-//		if (feature.getImportModels().length == 0)
-//			return;
-		startTag("requires", null); //$NON-NLS-1$
-		printImports();
-		endTag("requires"); //$NON-NLS-1$
-	}
+		boolean haveRequires = false;
 
-	private void printImports() {
 		FeatureEntry[] entries = feature.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (!entries[i].isRequires())
 				continue;
+
+			if (!haveRequires) {
+				startTag("requires", null); //$NON-NLS-1$
+				haveRequires = true;
+			}
 			parameters.clear();
 			if (entries[i].isPlugin()) {
 				parameters.put("plugin", entries[i].getId()); //$NON-NLS-1$
@@ -181,6 +180,8 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("match", entries[i].getMatch()); //$NON-NLS-1$
 			printTag("import", parameters, true, true, true); //$NON-NLS-1$
 		}
+		if (haveRequires)
+			endTag("requires"); //$NON-NLS-1$
 	}
 
 //	/**
