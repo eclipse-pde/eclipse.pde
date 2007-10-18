@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -93,8 +96,8 @@ public class PluginPathFinder {
 		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 		
-		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
-		if (file.exists()) {
+		File file = getPlatformFile(platformHome);
+		if (file != null) {
 			try {
 				String value = new Path(platformHome).toFile().toURL().toExternalForm();
 				System.setProperty(URL_PROPERTY, value);
@@ -111,9 +114,34 @@ public class PluginPathFinder {
 		return scanLocations(getSites(platformHome, false));
 	}
 	
+	/*
+	 * Returns a File object representing the platform.xml or null if the file cannot be found.
+	 */
+	private static File getPlatformFile(String platformHome) {
+		String location = System.getProperty("org.eclipse.pde.platform_location"); //$NON-NLS-1$
+		File file = null;
+		if (location != null) {
+			try {
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				location = manager.performStringSubstitution(location);
+				Path path = new Path(location);
+				if (path.isAbsolute())
+					file = path.toFile();
+				else 
+					file = new File(platformHome, location);
+				if (file.exists())
+					return file;
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}			
+		}
+		file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		return file.exists() ? file : null;
+	}
+	
 	public static URL[] getFeaturePaths(String platformHome) {
-		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
-		if (file.exists()) {
+		File file = getPlatformFile(platformHome);
+		if (file != null) {
 			try {
 				String value = new Path(platformHome).toFile().toURL().toExternalForm();
 				System.setProperty(URL_PROPERTY, value);
