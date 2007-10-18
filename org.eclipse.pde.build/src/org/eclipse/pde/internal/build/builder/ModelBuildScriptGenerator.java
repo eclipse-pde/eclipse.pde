@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *     Prosyst - create proper OSGi bundles (bug 174157)
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation Prosyst - create proper
+ * OSGi bundles (bug 174157)
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.*;
@@ -266,6 +264,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generateGatherBinPartsTarget();
 		generateBuildZipsTarget();
 		generateGatherSourcesTarget();
+		generateGatherIndividualSourcesTarget();
+		generateCopySourcesTarget();
 		generateGatherLogTarget();
 		generateCleanTarget();
 		generateRefreshTarget();
@@ -295,12 +295,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				if (plugin.getSymbolicName().equals(model.getSymbolicName())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
 					continue;
 
-				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
-				HashMap params = new HashMap(1);
-				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
-				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+				if (!Utils.isSourceBundle(model)) {
+					// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
+					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
+					HashMap params = new HashMap(1);
+					params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
+					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+				}
 			}
 		}
 		script.printTargetEnd();
@@ -376,7 +378,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			Path logPath = new Path(getTempJARFolderLocation(name) + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 			FileSet logSet = new FileSet(logPath.removeLastSegments(1).toString(), null, logPath.lastSegment(), null, null, null, null);
-			script.printCopyTask(null, destination.toString(), new FileSet[] { logSet }, false, false);
+			script.printCopyTask(null, destination.toString(), new FileSet[] {logSet}, false, false);
 		}
 
 		if (customBuildCallbacks != null) {
@@ -427,15 +429,54 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
 		}
+
+		script.printAntCallTask(TARGET_COPY_SOURCES, true, null);
+
+		if (customBuildCallbacks != null) {
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
+		}
+		script.printTargetEnd();
+	}
+
+	private void generateGatherIndividualSourcesTarget() throws CoreException {
+		script.println();
+		script.printTargetDeclaration(TARGET_GATHER_INDIVIDUAL_SOURCES, TARGET_INIT, null, null, null);
+
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(1);
+			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
+		}
+
+		Properties properties = getBuildProperties();
+		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
+		for (int i = 0; i < availableJars.length; i++) {
+			String jar = availableJars[i].getName(true);
+			String srcName = getSRCName(jar);
+			script.printAntCallTask("copy." + srcName, true, null); //$NON-NLS-1$
+		}
+
+		script.printAntCallTask(TARGET_COPY_SOURCES, true, null);
+
+		if (customBuildCallbacks != null) {
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
+		}
+		script.printTargetEnd();
+	}
+
+	private void generateCopySourcesTarget() throws CoreException {
+		script.println();
+		script.printTargetDeclaration(TARGET_COPY_SOURCES, TARGET_INIT, null, null, null);
+
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
 		if (include != null || exclude != null) {
 			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false, false);
-		}
-
-		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
 	}
@@ -501,11 +542,25 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
 			String includeSet = replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true); //$NON-NLS-1$
-			if(includeSet != null && includeSet.length() > 0) {
+			if (includeSet != null && includeSet.length() > 0) {
 				FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, includeSet, null, replaceVariables(exclude, true), null, null);
 				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 			}
 		}
+
+		if (Utils.isSourceBundle(model)) {
+			Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+			if (pluginsToGatherSourceFrom != null) {
+				for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
+					BundleDescription plugin = (BundleDescription) iter.next();
+					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+					HashMap taskParams = new HashMap(1);
+					taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, root);
+					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
+				}
+			}
+		}
+
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
 
@@ -606,7 +661,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars)
-			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + AntScript.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
+			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + AntScript.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
 		script.printTargetEnd();
 	}
 
@@ -1131,11 +1186,21 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		String srcLocation = getSRCLocation(name);
-		script.printMkdirTask(new Path(srcLocation).removeLastSegments(1).toString());
+		String srcParent = new Path(srcLocation).removeLastSegments(1).toString();
+		script.printMkdirTask(srcParent);
+		script.printAntCallTask("zip." + srcName, true, null); //$NON-NLS-1$
+		script.printTargetEnd();
 
+		script.printTargetDeclaration("zip." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0)
 			script.printZipTask(srcLocation, null, false, false, fileSets);
+		script.printTargetEnd();
 
+		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
+		if (count != 0) {
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER), fileSets, true, true);
+			script.printEchoTask(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		}
 		script.printTargetEnd();
 	}
 

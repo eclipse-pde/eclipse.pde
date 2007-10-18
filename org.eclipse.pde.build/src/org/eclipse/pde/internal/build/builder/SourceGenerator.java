@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.jar.Attributes.Name;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -118,6 +119,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	/**
 	 * Method generateSourceFeature.
+	 * @throws Exception 
 	 */
 	public BuildTimeFeature generateSourceFeature(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
 		initialize(feature);
@@ -125,13 +127,24 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		BuildTimeFeature sourceFeature = createSourceFeature(feature);
 
 		associateExtraEntries(sourceFeature);
-		FeatureEntry sourcePlugin;
-		if (AbstractScriptGenerator.isBuildingOSGi())
-			sourcePlugin = create30SourcePlugin(sourceFeature);
-		else
-			sourcePlugin = createSourcePlugin(sourceFeature);
 
-		generateSourceFragments(sourceFeature, sourcePlugin);
+		FeatureEntry sourcePlugin;
+		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) { //$NON-NLS-1$
+			/* individual source bundles */
+			FeatureEntry[] plugins = feature.getPluginEntries();
+			for (int i = 0; i < plugins.length; i++) {
+				createSourceBundle(sourceFeature, plugins[i]);
+			}
+		} else {
+			/* one source bundle + platform fragments */
+			if (AbstractScriptGenerator.isBuildingOSGi())
+				sourcePlugin = create30SourcePlugin(sourceFeature);
+			else
+				sourcePlugin = createSourcePlugin(sourceFeature);
+
+			generateSourceFragments(sourceFeature, sourcePlugin);
+		}
+
 		writeSourceFeature(sourceFeature);
 
 		return sourceFeature;
@@ -560,10 +573,74 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 	}
 
+	private FeatureEntry createSourceBundle(BuildTimeFeature sourceFeature, FeatureEntry pluginEntry) throws CoreException {
+		BundleDescription bundle = getSite().getRegistry().getBundle(pluginEntry.getId(), pluginEntry.getVersion(), true);
+		if (bundle == null) {
+			String message = NLS.bind(Messages.exception_missingPlugin, pluginEntry.getId() + "_" + pluginEntry.getVersion()); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+		}
+
+		FeatureEntry sourceEntry = new FeatureEntry(pluginEntry.getId() + ".source", bundle.getVersion().toString(), true); //$NON-NLS-1$
+		sourceEntry.setEnvironment(pluginEntry.getOS(), pluginEntry.getWS(), pluginEntry.getArch(), pluginEntry.getNL());
+		sourceEntry.setUnpack(false);
+
+		if (Utils.isBinary(bundle)) {
+			//binary, don't generate a source bundle.  But we can add the source entry if we can find an already existing one
+			BundleDescription sourceBundle = getSite().getRegistry().getResolvedBundle(sourceEntry.getId(), sourceEntry.getVersion());
+			if (sourceBundle != null) {
+				sourceFeature.addEntry(sourceEntry);
+				return sourceEntry;
+			}
+			return null;
+		}
+		sourceFeature.addEntry(sourceEntry);
+
+		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, false));
+
+		Manifest manifest = new Manifest();
+		Attributes attributes = manifest.getMainAttributes();
+		attributes.put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION), "2"); //$NON-NLS-1$
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), bundle.getName());
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId() + (bundle.isSingleton() ? "; singleton:=true" : "")); //$NON-NLS-1$ //$NON-NLS-2$ 
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VERSION), sourceEntry.getVersion());
+		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), pluginEntry.getId() + ";version=\"" + bundle.getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (bundle.getPlatformFilter() != null)
+			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), bundle.getPlatformFilter());
+
+		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
+		manifestFile.getParentFile().mkdirs();
+		BufferedOutputStream out = null;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(manifestFile));
+			try {
+				manifest.write(out);
+			} finally {
+				out.close();
+			}
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.exception_writingFile, manifestFile.getAbsolutePath());
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+		}
+
+		generateSourceFiles(sourcePluginDirURL, sourceEntry);
+
+		PDEState state = getSite().getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId());
+		if (oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourcePluginDirURL.toFile());
+
+		director.sourceToGather.addElementEntry(sourceEntry.getId(), bundle);
+
+		return sourceEntry;
+	}
+
 	private FeatureEntry create30SourcePlugin(BuildTimeFeature sourceFeature) throws CoreException {
 		//Create an object representing the plugin
 		FeatureEntry result = new FeatureEntry(sourceFeature.getId(), sourceFeature.getVersion(), true);
 		sourceFeature.addEntry(result);
+
 		// create the directory for the plugin
 		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false));
 		File sourcePluginDir = sourcePluginDirURL.toFile();
@@ -606,10 +683,22 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		//Copy the other files
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
+		generateSourceFiles(sourcePluginDirURL, result);
+
+		PDEState state = getSite().getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
+		if (oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourcePluginDir);
+
+		return result;
+	}
+
+	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry) throws CoreException {
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDirURL.toFile().getAbsolutePath()); //$NON-NLS-1$
 		if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 			//make sure the manifest.mf has the version we want
-			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, result.getVersion());
+			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, sourceEntry.getVersion());
 		}
 
 		//	If a build.properties file already exist then we use it supposing it is correct.
@@ -636,14 +725,6 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 			}
 		}
-
-		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
-		if (oldBundle != null)
-			state.getState().removeBundle(oldBundle);
-		state.addBundle(sourcePluginDir);
-
-		return result;
 	}
 
 	private void replaceManifestValue(String location, String attribute, String newVersion) {

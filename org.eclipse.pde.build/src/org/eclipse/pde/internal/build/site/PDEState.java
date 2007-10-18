@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
@@ -41,7 +39,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private Dictionary platformProperties;
 	private List sortedBundles = null;
 	private long lastSortingDate = 0L;
-	
+
 	private String javaProfile;
 	private String[] javaProfiles;
 
@@ -63,7 +61,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public PDEState() {
 		factory = Platform.getPlatformAdmin().getFactory();
-		state = factory.createState();
+		state = factory.createState(false);
 		state.setResolver(Platform.getPlatformAdmin().getResolver());
 		id = 0;
 		bundleClasspaths = new HashMap();
@@ -89,6 +87,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		try {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
+			checkSourceBundle(descriptor, enhancedManifest);
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
 			String patchValue = fillPatchData(enhancedManifest);
 			if (patchValue != null)
@@ -104,6 +103,18 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return true;
 	}
 
+	private void checkSourceBundle(BundleDescription descriptor, Dictionary manifest) {
+		String sourceBundleHeader = (String) manifest.get(ECLIPSE_SOURCE_BUNDLE);
+		if (sourceBundleHeader == null)
+			return;
+		Properties bundleProperties = (Properties) descriptor.getUserObject();
+		if (bundleProperties == null) {
+			bundleProperties = new Properties();
+			descriptor.setUserObject(bundleProperties);
+		}
+		bundleProperties.setProperty(ECLIPSE_SOURCE_BUNDLE, sourceBundleHeader);
+	}
+
 	private void rememberQualifierTagPresence(BundleDescription descriptor) {
 		Properties bundleProperties = null;
 		bundleProperties = (Properties) descriptor.getUserObject();
@@ -114,7 +125,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
 	}
 
-	private void mapVersionReplacedBundle(BundleDescription oldBundle, BundleDescription newBundle ) {
+	private void mapVersionReplacedBundle(BundleDescription oldBundle, BundleDescription newBundle) {
 		Properties bundleProperties = null;
 		bundleProperties = (Properties) oldBundle.getUserObject();
 		if (bundleProperties == null) {
@@ -123,7 +134,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		bundleProperties.setProperty(PROPERTY_VERSION_REPLACEMENT, String.valueOf(newBundle.getBundleId()));
 	}
-	
+
 	private String[] getClasspath(Dictionary manifest) {
 		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
@@ -437,11 +448,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
 		return getBundle(bundleId, version, true);
 	}
-	
+
 	public BundleDescription getBundle(String bundleId, String version, boolean resolved) {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
 			BundleDescription bundle = getResolvedBundle(bundleId);
-			if(bundle == null && !resolved)
+			if (bundle == null && !resolved)
 				bundle = getState().getBundle(bundleId, null);
 			return bundle;
 		}

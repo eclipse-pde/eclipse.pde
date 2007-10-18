@@ -48,6 +48,8 @@ public class Feature implements IPlatformEntry {
 	}
 
 	public void addEntry(FeatureEntry plugin) {
+		if(plugin == null)
+			return;
 		if (entries == null)
 			entries = new ArrayList();
 		entries.add(plugin);

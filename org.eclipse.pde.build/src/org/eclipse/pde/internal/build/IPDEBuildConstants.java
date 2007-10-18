@@ -105,6 +105,8 @@ public interface IPDEBuildConstants {
 	//Eclipse specific manifest headers
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI";  //$NON-NLS-1$
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
+	public final static String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
+	public final static String ECLIPSE_PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	
 	// fetch task extension point
 	public final static String EXT_FETCH_TASK_FACTORIES = "org.eclipse.pde.build.fetchFactories"; //$NON-NLS-1$

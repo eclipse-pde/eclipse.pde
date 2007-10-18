@@ -453,6 +453,20 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return (Boolean.FALSE == bundleProperties.get(IS_COMPILED));
 	}
 	
+	public static boolean isSourceBundle(BundleDescription bundle) {
+		Properties bundleProperties = (Properties)bundle.getUserObject();
+		return (bundleProperties != null && bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE));
+	}
+	
+	public static String[] getSourceBundleHeader(BundleDescription bundle) {
+		Properties bundleProperties = (Properties) bundle.getUserObject();
+		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE))
+			return new String[0];
+		
+		String header = bundleProperties.getProperty(ECLIPSE_SOURCE_BUNDLE);
+		return getArrayFromString(header);
+	}
+	
 	public static Object[] parseExtraBundlesString(String input, boolean onlyId) {
 		StringTokenizer tokenizer = null;
 		if (onlyId)
