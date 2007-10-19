@@ -436,6 +436,9 @@ public class PluginModelManager implements IModelProviderListener {
 			// resolve the state incrementally if any workspace plug-ins were found
 			if (models.length > 0)
 				fState.resolveState(true);
+			
+			// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
+			PDECore.getDefault().getExtensionsRegistry().targetReloaded();
 		}
 	}
 	
