@@ -280,13 +280,14 @@ public class PDECore extends Plugin {
 			fFeatureModelManager.shutdown();
 			fFeatureModelManager = null;
 		}
-		if (fModelManager != null) {
-			fModelManager.shutdown();
-			fModelManager = null;
-		}
+		// always shut down extension registry before model manager (since it needs data from model manager)
 		if (fExtensionRegistry != null) {
 			fExtensionRegistry.stop();
 			fExtensionRegistry = null;
+		}
+		if (fModelManager != null) {
+			fModelManager.shutdown();
+			fModelManager = null;
 		}
 	}
 }
