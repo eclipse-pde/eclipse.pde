@@ -84,16 +84,19 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel)bundle.getModel()).getDocument());
 					bundle.getModel().addModelChangedListener(listener);
 
-					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 					// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
 					String calcProjectId = IdUtil.getValidId(fProject.getName());
-					String oldText = header.getId();
-					// don't update Bundle-SymbolicName if the id and project name don't match
-					if (!oldText.equals(calcProjectId))
-						return null;
 					// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
 					String newId = IdUtil.getValidId(newText);
-					header.setId(newId);
+					
+					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					if ( header != null ) {
+						String oldText = header.getId();
+						// don't update Bundle-SymbolicName if the id and project name don't match
+						if (!oldText.equals(calcProjectId))
+							return null;
+						header.setId(newId);
+					}
 					// at this point, neither the project or file will exist.  
 					// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 					IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
