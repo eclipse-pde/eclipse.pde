@@ -83,36 +83,37 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 				if (bundle != null) {
 					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel)bundle.getModel()).getDocument());
 					bundle.getModel().addModelChangedListener(listener);
-
-					// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
-					String calcProjectId = IdUtil.getValidId(fProject.getName());
-					// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
-					String newId = IdUtil.getValidId(newText);
 					
 					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 					if ( header != null ) {
+						// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
+						String calcProjectId = IdUtil.getValidId(fProject.getName());
+						
 						String oldText = header.getId();
 						// don't update Bundle-SymbolicName if the id and project name don't match
 						if (!oldText.equals(calcProjectId))
 							return null;
-						header.setId(newId);
-					}
-					// at this point, neither the project or file will exist.  
-					// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
-					IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
+						// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
+						String newId = IdUtil.getValidId(newText);
 
-					MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$ //$NON-NLS-2$
-					MultiTextEdit edit = new MultiTextEdit();
-					edit.addChildren(listener.getTextOperations());
-					change.setEdit(edit);
-					PDEModelUtility.setChangeTextType(change, manifest);
-					result.add(change);
-					
-					// find all the references to the changing Bundle-SymbolicName and update all references to it
-					FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
-					op.run(new SubProgressMonitor(monitor, 2));
-					result.addAll(op.getChanges());
-					return result;
+						header.setId(newId);
+						// at this point, neither the project or file will exist.  
+						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
+						IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
+
+						MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$ //$NON-NLS-2$
+						MultiTextEdit edit = new MultiTextEdit();
+						edit.addChildren(listener.getTextOperations());
+						change.setEdit(edit);
+						PDEModelUtility.setChangeTextType(change, manifest);
+						result.add(change);
+						
+						// find all the references to the changing Bundle-SymbolicName and update all references to it
+						FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
+						op.run(new SubProgressMonitor(monitor, 2));
+						result.addAll(op.getChanges());
+						return result;
+					}
 				}
 			} catch (CoreException e) {
 			} catch (MalformedTreeException e) {
