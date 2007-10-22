@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -45,13 +46,14 @@ public final class SharedImages {
 	public static final String DESC_PROPERTIES = PATH_LCL + "properties.gif"; //$NON-NLS-1$
 	public static final String DESC_PROPERTIES_DISABLED = PATH_LCL_DISABLED + "properties.gif"; //$NON-NLS-1$
 	public static final String DESC_READ_LOG = PATH_LCL + "restore_log.gif"; //$NON-NLS-1$
-	public static final String DESC_READ_LOG_DISABLED = PATH_LCL_DISABLED + "restore_log.gif"; //$NON-NLS-1$	
+	public static final String DESC_READ_LOG_DISABLED = PATH_LCL_DISABLED + "restore_log.gif"; //$NON-NLS-1$
 	
 	public static final String DESC_ERROR_ST_OBJ = PATH_OBJ + "error_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ERROR_STACK_OBJ = PATH_OBJ + "error_stack.gif"; //$NON-NLS-1$
 	public static final String DESC_INFO_ST_OBJ = PATH_OBJ + "info_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_OK_ST_OBJ = PATH_OBJ + "ok_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_WARNING_ST_OBJ = PATH_OBJ + "warning_st_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_HIERARCHICAL_LAYOUT_OBJ = PATH_OBJ + "hierarchical.gif"; //$NON-NLS-1$
 	
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);

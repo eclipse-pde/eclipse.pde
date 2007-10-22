@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -19,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
@@ -35,7 +37,7 @@ class LogReader {
 	
 	private static LogSession currentSession;
 		
-	public static void parseLogFile(File file, ArrayList entries, IMemento memento) {
+	public static void parseLogFile(File file, ArrayList sessions, IMemento memento) {
 		ArrayList parents = new ArrayList();
 		LogEntry current = null;
 		LogSession session = null;
@@ -104,14 +106,19 @@ class LogReader {
 					writerState = SESSION_STATE;
 					updateCurrentSession(session);
 					if (!currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
-						entries.clear();
+						sessions.clear();
+					sessions.add(currentSession);
 				} else if (state == ENTRY_STATE) {
+					if (currentSession == null) { // create fake session if there was no any
+						currentSession = new LogSession();
+						sessions.add(currentSession);
+					}
 					LogEntry entry = new LogEntry();
-					entry.setSession(session);
+					entry.setSession(currentSession);
 					entry.processEntry(line);
 					setNewParent(parents, entry, 0);
 					current = entry;
-					addEntry(current, entries, memento, false);
+					addEntry(current, currentSession.getEntries(), memento, false);
 				} else if (state == SUBENTRY_STATE) {
 					if (parents.size() > 0) {
 						LogEntry entry = new LogEntry();
@@ -162,10 +169,10 @@ class LogReader {
 		else if (currentDate != null && sessionDate == null)
 			currentSession = session;
 		else if (currentDate != null && sessionDate != null && sessionDate.after(currentDate))
-			currentSession = session;	
+			currentSession = session;
 	}
 	
-	public synchronized static void addEntry(LogEntry current, ArrayList entries, IMemento memento, boolean useCurrentSession) {
+	public synchronized static void addEntry(LogEntry current, List entries, IMemento memento, boolean useCurrentSession) {
 		int severity = current.getSeverity();
 		boolean doAdd = true;
 		switch(severity) {

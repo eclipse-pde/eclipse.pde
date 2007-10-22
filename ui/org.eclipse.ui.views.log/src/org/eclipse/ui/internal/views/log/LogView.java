@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -94,6 +95,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
@@ -224,8 +228,13 @@ public class LogView extends ViewPart implements ILogListener {
 				manager.add(fExportAction);
 				manager.add(importLogAction);
 				manager.add(new Separator());
+				
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
-				manager.add(fPropertiesAction);
+				TreeItem[] selection = fTree.getSelection();
+				if ((selection.length > 0) && (selection[0].getData() instanceof LogEntry)) { 
+					manager.add(fPropertiesAction);
+				}
+				
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			}
 		};
@@ -375,6 +384,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fTree = fTreeViewer.getTree();
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
+		fTreeViewer.setAutoExpandLevel(2);
 		fTreeViewer.setContentProvider(new LogViewContentProvider(this));
 		fTreeViewer.setLabelProvider(fLabelProvider = new LogViewLabelProvider());
 		fLabelProvider.connect(this);
@@ -582,8 +592,8 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) {
 	}
 
-	public LogEntry[] getLogs() {
-		return (LogEntry[]) fLogs.toArray(new LogEntry[fLogs.size()]);
+	public LogSession[] getLogs() {
+		return (LogSession[]) fLogs.toArray(new LogSession[fLogs.size()]);
 	}
 
 	protected void handleClear() {
@@ -638,7 +648,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
-		LogReader.addEntry(entry, fLogs, fMemento, true);
+		LogReader.addEntry(entry, ((LogSession)fLogs.get(0)).getEntries(), fMemento, true);
 		asyncRefresh();
 	}
 
@@ -656,6 +666,7 @@ public class LogView extends ViewPart implements ILogListener {
 				public void run() {
 					if (!fTree.isDisposed()) {
 						fTreeViewer.refresh();
+						fTreeViewer.expandToLevel(2);
 						fDeleteLogAction.setEnabled(fInputFile.exists()
 								&& fInputFile.equals(Platform.getLogFileLocation().toFile()));
 						fOpenLogAction.setEnabled(fInputFile.exists());
@@ -687,8 +698,8 @@ public class LogView extends ViewPart implements ILogListener {
 		if (selection.isEmpty())
 			status.setMessage(null);
 		else {
-			LogEntry entry = (LogEntry) ((IStructuredSelection) selection).getFirstElement();
-			status.setMessage(((LogViewLabelProvider) fTreeViewer.getLabelProvider()).getColumnText(entry, 0));
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			status.setMessage(((LogViewLabelProvider) fTreeViewer.getLabelProvider()).getColumnText(element, 0));
 		}
 	}
 
@@ -696,6 +707,8 @@ public class LogView extends ViewPart implements ILogListener {
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
 		if (selection.isEmpty())
+			return;
+		if (! (selection instanceof LogEntry))
 			return;
 		LogEntry entry = (LogEntry) ((IStructuredSelection) selection).getFirstElement();
 		entry.write(pwriter);
@@ -865,7 +878,19 @@ public class LogView extends ViewPart implements ILogListener {
 		TreeItem item = fTree.getItem(point);
 		if (item == null)
 			return;
-		String message = ((LogEntry) item.getData()).getStack();
+		
+		String message = null;
+		if (item.getData() instanceof LogEntry) {
+			message = ((LogEntry) item.getData()).getStack();
+		} else if (item.getData() instanceof LogSession) {
+			LogSession session = ((LogSession) item.getData());
+			message = Messages.LogView_SessionStarted;
+			if (session.getDate() != null) {
+				DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
+				message += formatter.format(session.getDate());
+			}
+		}
+		 
 		if (message == null)
 			return;
 
@@ -895,11 +920,14 @@ public class LogView extends ViewPart implements ILogListener {
 		if (item == null) 
 			return;
 		Image image= item.getImage();
-		LogEntry entry = (LogEntry)item.getData();
-		int parentCount = getNumberOfParents(entry);
-		int startRange = 20 + Math.max(image.getBounds().width + 2, 7 + 2)*parentCount;
-		int endRange = startRange + 16;
-		fCanOpenTextShell = e.x >= startRange && e.x <= endRange;
+		Object data = item.getData();
+		if (data instanceof LogEntry) {
+			LogEntry entry = (LogEntry)data;
+			int parentCount = getNumberOfParents(entry);
+			int startRange = 20 + Math.max(image.getBounds().width + 2, 7 + 2)*parentCount;
+			int endRange = startRange + 16;
+			fCanOpenTextShell = e.x >= startRange && e.x <= endRange;
+		}
 	}
 
 	private int getNumberOfParents(LogEntry entry){
@@ -917,8 +945,15 @@ public class LogView extends ViewPart implements ILogListener {
 		if (sortType == DATE) {
 			fComparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
-					long date1 = ((LogEntry) e1).getDate().getTime();
-					long date2 = ((LogEntry) e2).getDate().getTime();
+					long date1 = 0;
+					long date2 = 0;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						date1 = ((LogEntry) e1).getDate().getTime();
+						date2 = ((LogEntry) e2).getDate().getTime();
+					} else if ((e1 instanceof LogSession) && (e2 instanceof LogSession)) {
+						date1 = ((LogSession) e1).getDate() == null ? 0 : ((LogSession) e1).getDate().getTime();
+						date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
+					}
 					if (date1 == date2) {
 						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
 						if (DATE_ORDER == DESCENDING)
@@ -933,17 +968,23 @@ public class LogView extends ViewPart implements ILogListener {
 		} else if (sortType == PLUGIN) {
 			fComparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry) e1;
-					LogEntry entry2 = (LogEntry) e2;
-					return getDefaultComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						LogEntry entry1 = (LogEntry) e1;
+						LogEntry entry2 = (LogEntry) e2;
+						return getDefaultComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					}
+					return 0;
 				}
 			};
 		} else {
 			fComparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry) e1;
-					LogEntry entry2 = (LogEntry) e2;
-					return getDefaultComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						LogEntry entry1 = (LogEntry) e1;
+						LogEntry entry2 = (LogEntry) e2;
+						return getDefaultComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+					}
+					return 0;
 				}
 			};
 		}
@@ -957,24 +998,38 @@ public class LogView extends ViewPart implements ILogListener {
 		if (sortType == PLUGIN) {
 			return new ViewerComparator() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry) e1;
-					LogEntry entry2 = (LogEntry) e2;
-					return getComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						LogEntry entry1 = (LogEntry) e1;
+						LogEntry entry2 = (LogEntry) e2;
+						return getComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					}
+					return 0;
 				}
 			};
 		} else if (sortType == MESSAGE) {
 			return new ViewerComparator() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry) e1;
-					LogEntry entry2 = (LogEntry) e2;
-					return getComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						LogEntry entry1 = (LogEntry) e1;
+						LogEntry entry2 = (LogEntry) e2;
+						return getComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+					}
+					return 0;
 				}
 			};
 		} else {
 			return new ViewerComparator() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					long date1 = ((LogEntry) e1).getDate().getTime();
-					long date2 = ((LogEntry) e2).getDate().getTime();
+					long date1 = 0;
+					long date2 = 0;
+					if ((e1 instanceof LogEntry) && (e2 instanceof LogEntry)) {
+						date1 = ((LogEntry) e1).getDate().getTime();
+						date2 = ((LogEntry) e2).getDate().getTime();
+					} else if ((e1 instanceof LogSession) && (e2 instanceof LogSession)) {
+						date1 = ((LogSession) e1).getDate() == null ? 0 : ((LogSession) e1).getDate().getTime();
+						date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
+					}
+					
 					if (date1 == date2) {
 						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
 						if (DATE_ORDER == DESCENDING)

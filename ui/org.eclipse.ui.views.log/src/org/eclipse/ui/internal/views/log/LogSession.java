@@ -7,17 +7,25 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.List;
 
-public class LogSession {
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import com.ibm.icu.text.SimpleDateFormat;
+
+public class LogSession extends PlatformObject implements IWorkbenchAdapter {
 	private String sessionData;
 	private Date date;
+	private List entries = new ArrayList();
 
 	/**
 	 * Constructor for LogSession.
@@ -30,7 +38,7 @@ public class LogSession {
 	}
 	
 	public void setDate(String dateString) {
-		SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 		try {
 			date = formatter.parse(dateString);
 		} catch (ParseException e) {
@@ -46,15 +54,33 @@ public class LogSession {
 	}
 	
 	public void processLogLine(String line) {
-		StringTokenizer tokenizer = new StringTokenizer(line);
-		if (tokenizer.countTokens() == 6) {
-			tokenizer.nextToken();
-			StringBuffer dateBuffer = new StringBuffer();
-			for (int i = 0; i < 4; i++) {
-				dateBuffer.append(tokenizer.nextToken());
-				dateBuffer.append(" "); //$NON-NLS-1$
-			}
-			setDate(dateBuffer.toString().trim());
-		}
+		// process "!SESSION <dateUnknownFormat> ----------------------------"
+		line = line.substring(9); // strip "!SESSION "
+		int delim = line.indexOf("----"); //$NON-NLS-1$ // single "-" may be in date, so take few for sure
+		if (delim == -1)
+			return;
+		
+		String dateBuffer = line.substring(0, delim).trim();
+		setDate(dateBuffer);
+	}
+	
+	public List getEntries() {
+		return entries;
+	}
+
+	public Object[] getChildren(Object o) {
+		return getEntries().toArray(new LogEntry[getEntries().size()]);
+	}
+
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+
+	public String getLabel(Object o) {
+		return null;
+	}
+
+	public Object getParent(Object o) {
+		return null;
 	}
 }

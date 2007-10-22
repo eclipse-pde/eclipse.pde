@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -16,6 +17,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogViewLabelProvider
 	extends LabelProvider
@@ -28,6 +32,7 @@ public class LogViewLabelProvider
 	private Image errorImage;
 	private Image warningImage;
 	private Image errorWithStackImage;
+	private Image hierarchicalImage;
 	ArrayList consumers = new ArrayList();
 
 	public LogViewLabelProvider() {
@@ -36,6 +41,7 @@ public class LogViewLabelProvider
 		infoImage = SharedImages.getImage(SharedImages.DESC_INFO_ST_OBJ);
 		okImage = SharedImages.getImage(SharedImages.DESC_OK_ST_OBJ);
 		errorWithStackImage = SharedImages.getImage(SharedImages.DESC_ERROR_STACK_OBJ);
+		hierarchicalImage = SharedImages.getImage(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ);
 	}
 	public void dispose() {
 		if (consumers.size() == 0){
@@ -43,6 +49,10 @@ public class LogViewLabelProvider
 		}
 	}
 	public Image getColumnImage(Object element, int columnIndex) {
+		if (element instanceof LogSession) {
+			return (columnIndex == 0) ? hierarchicalImage : null;
+		}
+		
 		LogEntry entry = (LogEntry) element;
 		if (columnIndex == 0) {
 			switch (entry.getSeverity()) {
@@ -60,6 +70,19 @@ public class LogViewLabelProvider
 	}
 	
 	public String getColumnText(Object element, int columnIndex) {
+		if (element instanceof LogSession) {
+			LogSession entry = (LogSession) element;
+			if (columnIndex == 0) {
+				return Messages.LogViewLabelProvider_Session;
+			} else if (columnIndex == 2) {
+				if (entry.getDate() != null) {
+					DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
+					return formatter.format(entry.getDate()); 
+				}
+			}
+			return null;
+		}
+		
 		LogEntry entry = (LogEntry) element;
 		switch (columnIndex) {
 		case 0:

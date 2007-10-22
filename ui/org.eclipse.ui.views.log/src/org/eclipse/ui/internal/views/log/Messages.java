@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -31,6 +32,8 @@ public class Messages extends NLS {
 	public static String LogView_readLog_reload;
 	public static String LogView_readLog_restore;
 	public static String LogView_readLog_restore_tooltip;
+
+	public static String LogView_SessionStarted;
 	public static String LogView_severity_error;
 	public static String LogView_severity_warning;
 	public static String LogView_severity_info;
@@ -55,6 +58,7 @@ public class Messages extends NLS {
 	public static String LogView_FilterDialog_allSessions;
 	public static String LogView_FilterDialog_recentSession;
 
+	public static String LogViewLabelProvider_Session;
 	public static String LogViewLabelProvider_truncatedMessage;
 	
 	public static String EventDetailsDialog_title;

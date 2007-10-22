@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -15,8 +16,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.Collator;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
@@ -419,28 +422,26 @@ public class EventDetailsDialog extends TrayDialog {
 	}
 	
 	private void resetTotalElementCount(){
-		totalElementCount = provider.getTree().getItemCount();
+		totalElementCount = entry.getSession().getEntries().size();
 	}
 	
-	private void setEntryChildren(LogEntry parent){
-		if (parent == null){
-			setEntryChildren();
+	private void setEntryChildren(LogEntry entry){
+		LogSession session = entry.getSession();
+		if (session == null)
 			return;
-		}
-		Object[] children = parent.getChildren(parent);
-		if (comparator != null)
-			Arrays.sort(children, comparator);
-		entryChildren = new LogEntry[children.length];
 		
-		System.arraycopy(children,0,entryChildren,0,children.length);
+		List children = session.getEntries();
+		if (comparator != null)
+			Collections.sort(children, comparator);
+		entryChildren = (LogEntry[])children.toArray(new LogEntry[children.size()]);
 	}
 
 	private int getParentElementNum(){
 		LogEntry itemEntry = (LogEntry)((IStructuredSelection)provider.getSelection()).getFirstElement();
 		itemEntry = getRootEntry(itemEntry);
 		
-		setEntryChildren();
-		for (int i = 0; i<provider.getTree().getItemCount(); i++){
+		setEntryChildren(itemEntry);
+		for (int i = 0; i<entryChildren.length; i++){
 			try {
 				LogEntry littleEntry = entryChildren[i];
 				if (itemEntry.equals(littleEntry)){

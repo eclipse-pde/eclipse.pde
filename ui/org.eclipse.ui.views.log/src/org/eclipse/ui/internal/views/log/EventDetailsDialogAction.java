@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -80,7 +81,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		
 		//get initial selection
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if (element == null)
+		if ((element == null) || (element instanceof LogSession))
 			return;
 		
 		propertyDialog = new EventDetailsDialog(shell, element, provider, comparator);
