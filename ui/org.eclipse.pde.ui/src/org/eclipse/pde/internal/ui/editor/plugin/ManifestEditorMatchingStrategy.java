@@ -28,7 +28,7 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
     public boolean matches(IEditorReference editorRef, IEditorInput input) {    	
         IFile inputFile = ResourceUtil.getFile(input);
-        if (input instanceof IFileEditorInput) {
+        if (input instanceof IFileEditorInput && inputFile != null) {
             try {
             	// a positive match if there is an editor already open on the same file
 	        	if (input.equals(editorRef.getEditorInput()))
