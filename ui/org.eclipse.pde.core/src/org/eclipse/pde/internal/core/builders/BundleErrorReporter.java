@@ -537,7 +537,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				NLS.bind(PDECoreMessages.BundleErrorReporter_missingBundleClassPathEntry, new Object[] { entry });
 			IMarker marker = report(message, 
 					line,
-					CompilerFlags.WARNING,
+					CompilerFlags.P_MISSING_BUNDLE_CLASSPATH_ENTRIES,
 					PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY,
 					PDEMarkerFactory.CAT_OTHER);
 			try {
