@@ -533,7 +533,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if(entry.equals(".") && sourceEntrySize == 1) //$NON-NLS-1$
 				return;
 			int line = header != null ? header.getLineNumber() + 1 : 1;
-			IMarker marker = report(PDECoreMessages.BundleErrorReporter_missingClassPathEntries, 
+			String message = 
+				NLS.bind(PDECoreMessages.BundleErrorReporter_missingBundleClassPathEntry, new Object[] { entry });
+			IMarker marker = report(message, 
 					line,
 					CompilerFlags.WARNING,
 					PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY,
