@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,8 @@ public class CompilersConfigurationTab {
 					PDEUIMessages.compilers_p_unknown_resource,
 					PDEUIMessages.compilers_p_not_externalized_att,
 					PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors,
-					PDEUIMessages.compilers_p_exported_pkgs},
+					PDEUIMessages.compilers_p_exported_pkgs,
+					PDEUIMessages.CompilersConfigurationTab_missingBundleClasspathEntries},
 			{ PDEUIMessages.compilers_s_create_docs,
 					PDEUIMessages.compilers_s_doc_folder,
 					PDEUIMessages.compilers_s_open_tags },

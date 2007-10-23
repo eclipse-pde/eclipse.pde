@@ -218,6 +218,8 @@ public class PDEUIMessages extends NLS {
 	public static String CompCSTaskGroupDetails_Type;
 
 	public static String CompilersConfigurationTab_incompatEnv;
+	
+	public static String CompilersConfigurationTab_missingBundleClasspathEntries;
 
 	public static String ContainerRenameParticipant_renameFolders;
 	

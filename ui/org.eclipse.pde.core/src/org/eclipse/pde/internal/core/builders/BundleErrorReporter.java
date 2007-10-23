@@ -539,7 +539,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					line,
 					CompilerFlags.WARNING,
 					PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY,
-					PDEMarkerFactory.CAT_FATAL);
+					PDEMarkerFactory.CAT_OTHER);
 			try {
 				if (marker != null) {
 					marker.setAttribute("entry", entry); //$NON-NLS-1$
