@@ -85,6 +85,9 @@ public class Messages extends NLS {
 	public static String unsatisfied_optionalBundle;
 	public static String unsatisfied_host;
 
+	
+	public static String feature_parse_invalidIdOrVersion;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

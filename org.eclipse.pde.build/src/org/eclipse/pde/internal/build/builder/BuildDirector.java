@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation G&H Softwareentwicklung
+ * GmbH - internationalization implementation (bug 150933)
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
 import java.util.*;
@@ -51,7 +49,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	protected String featureIdentifier;
 	protected String searchedVersion;
 
-	
 	protected SourceFeatureInformation sourceToGather = new SourceFeatureInformation();
 	private boolean generateVersionSuffix = false;
 	protected boolean signJars = false;
@@ -97,8 +94,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			//we prefer a newly generated source plugin over a preexisting binary one. 
 			if ((model == null || Utils.isBinary(model)) && getBuildProperties(feature).containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
-				String [] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
-				generateEmbeddedSource(entry.getId(), extraEntries);
+				String[] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
+				generateEmbeddedSource(entry, extraEntries);
 				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			}
 			if (model == null) {
@@ -128,9 +125,21 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		entries.add(entry);
 	}
 
-	private void generateEmbeddedSource(String pluginId, String [] extraEntries) throws CoreException {
+	private void generateEmbeddedSource(FeatureEntry pluginEntry, String[] extraEntries) throws CoreException {
+		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) { //$NON-NLS-1$
+			BundleDescription originalBundle = getSite(false).getRegistry().getResolvedBundle(extraEntries[0]);
+			if (originalBundle != null) {
+				SourceGenerator sourceGenerator = new SourceGenerator();
+				sourceGenerator.setExtraEntries(extraEntries);
+				sourceGenerator.setDirector(this);
+				sourceGenerator.generateSourcePlugin(pluginEntry, originalBundle);
+				return;
+			}
+		}
+		/* else do it the old way */
 		BuildTimeFeature baseFeature = getSite(false).findFeature(extraEntries[0], null, true);
-		generateSourceFeature(baseFeature, pluginId, extraEntries);
+		if (baseFeature != null)
+			generateSourceFeature(baseFeature, pluginEntry.getId(), extraEntries);
 	}
 
 	/**
@@ -148,10 +157,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		if (workingDirectory == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING, Messages.error_missingInstallLocation, null));
 		}
-		
+
 		BuildTimeFeature feature = getSite(false).findFeature(featureIdentifier, searchedVersion, true);
 		generate(feature);
 	}
+
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -172,25 +182,25 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		}
 	}
 
-	protected void generateSourceFeature(BuildTimeFeature baseFeature, String sourceFeatureName, String [] extraEntries) throws CoreException {
+	protected void generateSourceFeature(BuildTimeFeature baseFeature, String sourceFeatureName, String[] extraEntries) throws CoreException {
 		SourceGenerator sourceGenerator = new SourceGenerator();
 		sourceGenerator.setExtraEntries(extraEntries);
 		sourceGenerator.setDirector(this);
 
 		sourceGenerator.generateSourceFeature(baseFeature, sourceFeatureName);
 	}
-	
+
 	protected void generateIncludedFeatureBuildFile(BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
 			String featureId = referencedFeatures[i].getId();
 			String featureVersion = referencedFeatures[i].getVersion();
-			
+
 			BuildTimeFeature nestedFeature = null;
-			
+
 			boolean doSourceFeatureGeneration = getBuildProperties(feature).containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId);
 			if (doSourceFeatureGeneration) {
-				String [] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId));
+				String[] extraEntries = Utils.getArrayFromString(getBuildProperties(feature).getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId));
 				nestedFeature = getSite(false).findFeature(extraEntries[0], featureVersion, true);
 				generateSourceFeature(nestedFeature, featureId, extraEntries);
 			}

@@ -165,4 +165,13 @@ public class BuildTimeFeature extends Feature {
 		}
 		return rootLocation;
 	}
+
+	public FeatureEntry findPluginEntry(String id) {
+		FeatureEntry[] entries = getEntries();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].isPlugin() && entries[i].getId().equals(id))
+				return entries[i];
+		}
+		return null;
+	}
 }

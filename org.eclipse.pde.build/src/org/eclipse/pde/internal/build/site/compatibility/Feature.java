@@ -48,7 +48,7 @@ public class Feature implements IPlatformEntry {
 	}
 
 	public void addEntry(FeatureEntry plugin) {
-		if(plugin == null)
+		if (plugin == null)
 			return;
 		if (entries == null)
 			entries = new ArrayList();
@@ -59,6 +59,12 @@ public class Feature implements IPlatformEntry {
 		if (entries == null)
 			return new FeatureEntry[0];
 		return (FeatureEntry[]) entries.toArray(new FeatureEntry[entries.size()]);
+	}
+
+	public boolean removeEntry(FeatureEntry entry) {
+		if (entry == null || entries == null)
+			return false;
+		return entries.remove(entry);
 	}
 
 	public void setLabel(String label) {

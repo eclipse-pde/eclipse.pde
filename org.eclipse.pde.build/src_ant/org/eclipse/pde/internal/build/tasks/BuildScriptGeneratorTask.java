@@ -89,6 +89,9 @@ public class BuildScriptGeneratorTask extends Task {
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
 		if (Boolean.valueOf(value).booleanValue())
 			antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+		value = getProject().getProperty("individualSourceBundles"); //$NON-NLS-1$
+		if (Boolean.valueOf(value).booleanValue())
+			antProperties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();

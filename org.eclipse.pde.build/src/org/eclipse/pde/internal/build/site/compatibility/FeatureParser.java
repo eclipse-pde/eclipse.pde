@@ -11,7 +11,10 @@ package org.eclipse.pde.internal.build.site.compatibility;
 import java.io.*;
 import java.net.URL;
 import javax.xml.parsers.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Messages;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -21,12 +24,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.0
  */
-public class FeatureParser extends DefaultHandler {
+public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 
 	private SAXParser parser;
 	private Feature result;
 	private URL url;
 	private StringBuffer characters = null;
+	private MultiStatus status = null;
 
 	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
@@ -45,28 +49,24 @@ public class FeatureParser extends DefaultHandler {
 	/**
 	 * Parses the specified url and constructs a feature
 	 */
-	public Feature parse(URL featureURL) {
+	public Feature parse(URL featureURL) throws SAXException, IOException {
 		result = null;
 		InputStream in = null;
 		try {
 			url = featureURL;
 			in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} finally {
 			if (in != null)
-				try {
-					in.close();
-				} catch (IOException e1) {
-					//					Utils.log(e1.getLocalizedMessage());
-				}
+				in.close();
 		}
 		return result;
 	}
 
+	public MultiStatus getStatus() {
+		return status;
+	}
+	
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		//		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if ("plugin".equals(localName)) { //$NON-NLS-1$
@@ -146,7 +146,7 @@ public class FeatureParser extends DefaultHandler {
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 				|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			//			System.out.println(NLS.bind(Messages.FeatureParser_IdOrVersionInvalid, (new String[] { id, ver})));
+			error(NLS.bind(Messages.feature_parse_invalidIdOrVersion, (new String[] { id, ver})));
 		} else {
 			result = createFeature(id, ver);
 
@@ -178,7 +178,7 @@ public class FeatureParser extends DefaultHandler {
 		String version = attributes.getValue("version"); //$NON-NLS-1$
 
 		if (id == null || id.trim().equals("") || version == null || version.trim().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
-			System.out.println(NLS.bind("FeatureParser#processPlugin, ID {0} or version {1} invalid", (new String[] {id, version}))); //$NON-NLS-1$
+			error(NLS.bind(Messages.feature_parse_invalidIdOrVersion, (new String[] {id, version})));
 		} else {
 			FeatureEntry plugin = new FeatureEntry(id, version, true);
 			setEnvironment(attributes, plugin);
@@ -231,4 +231,10 @@ public class FeatureParser extends DefaultHandler {
 		characters = null;
 	}
 
+	private void error(String message) {
+		if (status == null) {
+			status = new MultiStatus(PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, Messages.exception_featureParse, null);	
+		}
+		status.add( new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, null));
+	}
 }

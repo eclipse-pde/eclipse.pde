@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -124,7 +122,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return result;
 	}
-	
+
 	public static File[] asFile(URL[] target) {
 		if (target == null)
 			return new File[0];
@@ -134,7 +132,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.
@@ -304,9 +302,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				for (int i = 0; i < files.length; i++) {
 					if (files[i].isDirectory()) {
 						File subDir = new File(toDir, files[i].getName());
-						if(!subDir.exists())
+						if (!subDir.exists())
 							subDir.mkdirs();
-						Collection subFiles = copyFiles(fromDir + '/' + files[i].getName(), toDir+ '/' + files[i].getName());
+						Collection subFiles = copyFiles(fromDir + '/' + files[i].getName(), toDir + '/' + files[i].getName());
 						for (Iterator iter = subFiles.iterator(); iter.hasNext();) {
 							String sub = (String) iter.next();
 							copiedFiles.add(files[i].getName() + '/' + sub);
@@ -324,7 +322,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
 
-					String fileToCopy = toDir + '/' + files[i].getName(); 
+					String fileToCopy = toDir + '/' + files[i].getName();
 					try {
 						outputStream = new FileOutputStream(fileToCopy);
 					} catch (FileNotFoundException e) {
@@ -345,7 +343,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return copiedFiles;
 	}
 
-	public static List extractPlugins(List initialList, List toExtract) { 
+	public static List extractPlugins(List initialList, List toExtract) {
 		//TODO This algorithm needs to be  improved
 		if (initialList.size() == toExtract.size())
 			return initialList;
@@ -383,7 +381,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			String instruction = (String) permission.getKey();
 			String parameters = removeEndingSlashes((String) permission.getValue());
 			if (instruction.startsWith(prefixPermissions)) {
-				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); 
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters);
 				continue;
 			}
 			if (instruction.startsWith(prefixLinks)) {
@@ -400,7 +398,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 		}
 	}
-	
+
 	public static String removeEndingSlashes(String value) {
 		String[] params = Utils.getArrayFromString(value, ","); //$NON-NLS-1$
 		for (int i = 0; i < params.length; i++) {
@@ -409,7 +407,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return Utils.getStringFromArray(params, ","); //$NON-NLS-1$
 	}
-	
+
 	private static void generateChmodInstruction(AntScript script, String dir, String rights, String files) {
 		if (rights.equals(EXECUTABLE)) {
 			rights = "755"; //$NON-NLS-1$
@@ -443,30 +441,57 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
 		return sb.toString();
 	}
-	
+
 	public static boolean isBinary(BundleDescription bundle) {
 		Properties bundleProperties = ((Properties) bundle.getUserObject());
-		if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null){
+		if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null) {
 			File props = new File(bundle.getLocation(), PROPERTIES_FILE);
 			return !(props.exists() && props.isFile());
 		}
 		return (Boolean.FALSE == bundleProperties.get(IS_COMPILED));
 	}
-	
+
 	public static boolean isSourceBundle(BundleDescription bundle) {
-		Properties bundleProperties = (Properties)bundle.getUserObject();
+		Properties bundleProperties = (Properties) bundle.getUserObject();
 		return (bundleProperties != null && bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE));
 	}
-	
+
 	public static String[] getSourceBundleHeader(BundleDescription bundle) {
 		Properties bundleProperties = (Properties) bundle.getUserObject();
 		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE))
 			return new String[0];
-		
+
 		String header = bundleProperties.getProperty(ECLIPSE_SOURCE_BUNDLE);
 		return getArrayFromString(header);
 	}
-	
+
+	public static Map parseSourceBundleEntry(BundleDescription bundle) {
+		String[] header = getSourceBundleHeader(bundle);
+		if (header.length > 0) {
+			HashMap map = new HashMap();
+			for (int i = 0; i < header.length; i++) {
+				String[] args = getArrayFromString(header[i], ";"); //$NON-NLS-1$
+
+				if (args.length == 1) {
+					map.put(args[0], Collections.EMPTY_MAP);
+				} else {
+					HashMap subMap = new HashMap(2);
+					map.put(args[0], subMap);
+					for (int j = 1; j < args.length; j++) {
+						int idx = args[j].indexOf('=');
+						if (idx != -1) {
+							subMap.put(args[j].substring(0, idx), args[j].substring(idx, args[j].length()));
+						} else {
+							subMap.put(args[j], ""); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+			return map;
+		}
+		return Collections.EMPTY_MAP;
+	}
+
 	public static Object[] parseExtraBundlesString(String input, boolean onlyId) {
 		StringTokenizer tokenizer = null;
 		if (onlyId)
@@ -487,7 +512,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				continue;
 			}
 		}
-		return new Object[] { bundleId, version, unpack };
+		return new Object[] {bundleId, version, unpack};
 	}
 
 	/**
@@ -520,7 +545,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Return a buffer containing the contents of the file at the specified location.
 	 * 
@@ -552,7 +577,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Custom build scripts should have their version number matching the
 	 * version number defined by the feature/plugin/fragment descriptor.

@@ -9,9 +9,11 @@
 
 package org.eclipse.pde.internal.build.site;
 
+import java.io.IOException;
 import java.net.URL;
 import org.eclipse.pde.internal.build.site.compatibility.Feature;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureParser;
+import org.xml.sax.SAXException;
 
 
 public class BuildTimeFeatureParser extends FeatureParser {
@@ -20,7 +22,7 @@ public class BuildTimeFeatureParser extends FeatureParser {
 		return new BuildTimeFeature(id, version);
 	}
 
-	public Feature parse(URL featureURL) {
+	public Feature parse(URL featureURL) throws SAXException, IOException {
 		return super.parse(featureURL);
 	}
 }
