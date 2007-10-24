@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207061
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -38,6 +38,10 @@ class LogReader {
 	private static LogSession currentSession;
 		
 	public static void parseLogFile(File file, ArrayList sessions, IMemento memento) {
+		if (memento.getString(LogView.P_USE_LIMIT).equals("true") //$NON-NLS-1$
+				&& memento.getInteger(LogView.P_LOG_LIMIT).intValue() == 0)
+			return;
+		
 		ArrayList parents = new ArrayList();
 		LogEntry current = null;
 		LogSession session = null;
@@ -157,6 +161,10 @@ class LogReader {
 		}
 	}
 		
+	/**
+	 * Updates the {@link currentSession} to be the one that is not null or has most recent date.
+	 * @param session
+	 */
 	private static void updateCurrentSession(LogSession session) {
 		if (currentSession == null) {
 			currentSession = session;
