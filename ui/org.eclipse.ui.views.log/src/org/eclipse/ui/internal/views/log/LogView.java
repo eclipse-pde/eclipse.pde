@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -52,7 +52,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
@@ -70,6 +69,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -94,6 +94,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.ViewPart;
 
 import com.ibm.icu.text.DateFormat;
@@ -145,7 +147,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private TreeColumn fColumn3;
 
 	private Tree fTree;
-	private TreeViewer fTreeViewer;
+	private FilteredTree fFilteredTree;
 	private LogViewLabelProvider fLabelProvider;
 
 	private Action fPropertiesAction;
@@ -155,19 +157,24 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action fActivateViewAction;
 	private Action fOpenLogAction;
 	private Action fExportAction;
-
+	
 	public LogView() {
 		fLogs = new ArrayList();
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
 	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		FillLayout layout = new FillLayout(SWT.VERTICAL);
+		layout.marginHeight = 8;
+		composite.setLayout(layout);
+
 		readLogFile();
-		createViewer(parent);
+		createViewer(composite);
 		createActions();
 		fClipboard = new Clipboard(fTree.getDisplay());
 		fTree.setToolTipText(""); //$NON-NLS-1$
-		getSite().setSelectionProvider(fTreeViewer);
+		getSite().setSelectionProvider(fFilteredTree.getViewer());
 		initializeViewerSorter();
 
 		makeHoverShell();
@@ -271,7 +278,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action createCopyAction() {
 		Action action = new Action(Messages.LogView_copy) { 
 			public void run() {
-				copyToClipboard(fTreeViewer.getSelection());
+				copyToClipboard(fFilteredTree.getViewer().getSelection());
 			}
 		};
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
@@ -359,7 +366,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void createPropertiesAction() {
-		fPropertiesAction = new EventDetailsDialogAction(fTree.getShell(), fTreeViewer);
+		fPropertiesAction = new EventDetailsDialogAction(fTree.getShell(), fFilteredTree.getViewer());
 		fPropertiesAction.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
 		fPropertiesAction.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
 		fPropertiesAction.setToolTipText(Messages.LogView_properties_tooltip); 
@@ -380,28 +387,41 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void createViewer(Composite parent) {
-		fTreeViewer = new TreeViewer(parent, SWT.FULL_SELECTION);
-		fTree = fTreeViewer.getTree();
+		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, new PatternFilter() {
+
+			protected boolean isLeafMatch(Viewer viewer, Object element) {
+				if (element instanceof LogEntry) {
+					LogEntry logEntry = (LogEntry) element;				
+					String message = logEntry.getMessage();
+					String plugin = logEntry.getPluginId();
+					String date = logEntry.getFormattedDate();
+					return wordMatches(message) || wordMatches(plugin) || wordMatches(date);
+				}
+				return false;
+			}			
+		});
+		
+		fTree = fFilteredTree.getViewer().getTree();
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
-		fTreeViewer.setAutoExpandLevel(2);
-		fTreeViewer.setContentProvider(new LogViewContentProvider(this));
-		fTreeViewer.setLabelProvider(fLabelProvider = new LogViewLabelProvider());
+		fFilteredTree.getViewer().setAutoExpandLevel(2);
+		fFilteredTree.getViewer().setContentProvider(new LogViewContentProvider(this));
+		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider());
 		fLabelProvider.connect(this);
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fFilteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 				if (fPropertiesAction.isEnabled())
 					((EventDetailsDialogAction) fPropertiesAction).resetSelection();
 			}
 		});
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+		fFilteredTree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
 				fPropertiesAction.run();
 			}		
 		});
-		fTreeViewer.setInput(this);
+		fFilteredTree.getViewer().setInput(this);
 		addMouseListeners();
 	}
 
@@ -413,7 +433,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void widgetSelected(SelectionEvent e) {
 				MESSAGE_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(MESSAGE);
-				fTreeViewer.setComparator(comparator);
+				fFilteredTree.getViewer().setComparator(comparator);
 				boolean isComparatorSet = 
 					((EventDetailsDialogAction) fPropertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
 				setComparator(MESSAGE);
@@ -432,7 +452,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void widgetSelected(SelectionEvent e) {
 				PLUGIN_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(PLUGIN);
-				fTreeViewer.setComparator(comparator);
+				fFilteredTree.getViewer().setComparator(comparator);
 				boolean isComparatorSet = 
 					((EventDetailsDialogAction) fPropertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
 				setComparator(PLUGIN);
@@ -451,7 +471,7 @@ public class LogView extends ViewPart implements ILogListener {
 			public void widgetSelected(SelectionEvent e) {
 				DATE_ORDER *= -1;
 				ViewerComparator comparator = getViewerComparator(DATE);
-				fTreeViewer.setComparator(comparator);
+				fFilteredTree.getViewer().setComparator(comparator);
 				setComparator(DATE);
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
 				fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
@@ -466,7 +486,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private void initializeViewerSorter() {
 		byte orderType = fMemento.getInteger(P_ORDER_TYPE).byteValue();
 		ViewerComparator comparator = getViewerComparator(orderType);
-		fTreeViewer.setComparator(comparator);
+		fFilteredTree.getViewer().setComparator(comparator);
 		if (orderType == MESSAGE )
 			setColumnSorting(fColumn1, MESSAGE_ORDER);
 		else if (orderType == PLUGIN)
@@ -665,8 +685,8 @@ public class LogView extends ViewPart implements ILogListener {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					if (!fTree.isDisposed()) {
-						fTreeViewer.refresh();
-						fTreeViewer.expandToLevel(2);
+						fFilteredTree.getViewer().refresh();
+						fFilteredTree.getViewer().expandToLevel(2);
 						fDeleteLogAction.setEnabled(fInputFile.exists()
 								&& fInputFile.equals(Platform.getLogFileLocation().toFile()));
 						fOpenLogAction.setEnabled(fInputFile.exists());
@@ -699,7 +719,7 @@ public class LogView extends ViewPart implements ILogListener {
 			status.setMessage(null);
 		else {
 			Object element = ((IStructuredSelection) selection).getFirstElement();
-			status.setMessage(((LogViewLabelProvider) fTreeViewer.getLabelProvider()).getColumnText(element, 0));
+			status.setMessage(((LogViewLabelProvider) fFilteredTree.getViewer().getLabelProvider()).getColumnText(element, 0));
 		}
 	}
 
