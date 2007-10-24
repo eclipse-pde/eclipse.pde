@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207061
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 207312
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -109,7 +110,8 @@ class LogReader {
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
 					updateCurrentSession(session);
-					if (!currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
+					// if current session is most recent and not showing all sessions
+					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
 						sessions.clear();
 					sessions.add(currentSession);
 				} else if (state == ENTRY_STATE) {
