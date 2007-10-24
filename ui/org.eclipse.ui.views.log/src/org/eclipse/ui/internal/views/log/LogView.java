@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 207323
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -668,6 +669,9 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
+		if (fLogs.isEmpty()) {
+			fLogs.add(new LogSession());
+		}
 		LogReader.addEntry(entry, ((LogSession)fLogs.get(0)).getEntries(), fMemento, true);
 		asyncRefresh();
 	}
