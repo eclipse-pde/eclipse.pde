@@ -1,14 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *     Ben Pryor - Bug 148288
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation Ben Pryor - Bug 148288
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -59,8 +56,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
 
-    private String archivesFormatAsString;
-    
+	private String archivesFormatAsString;
+
 	/**
 	 * flag indicating if the assemble script should be generated
 	 */
@@ -74,7 +71,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	private Properties antProperties = null;
 	private BundleDescription[] bundlesToBuild;
-	
+
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
 	/**
@@ -82,24 +79,23 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	public void generate() throws CoreException {
-        
-        if (archivesFormatAsString != null) {
-            realSetArchivesFormat(archivesFormatAsString);
-            archivesFormatAsString = null;
-        }
-        
+		if (archivesFormatAsString != null) {
+			realSetArchivesFormat(archivesFormatAsString);
+			archivesFormatAsString = null;
+		}
+
 		List plugins = new ArrayList(5);
 		List features = new ArrayList(5);
 		try {
 			AbstractScriptGenerator.setStaticAntProperties(antProperties);
-			
+
 			sortElements(features, plugins);
 			pluginsForFilterRoots = plugins;
 			featuresForFilterRoots = features;
 			getSite(true); //This forces the creation of the siteFactory which contains all the parameters necessary to initialize.
 			//TODO To avoid this. What would be necessary is use the BuildTimeSiteFactory to store the values that are stored in the AbstractScriptGenerator and to pass the parameters to a new BuildTimeSiteFacotry when created.
 			//More over this would allow us to remove some of the setters when creating a new featurebuildscriptgenerator.
-	
+
 			// It is not required to filter in the two first generateModels, since
 			// it is only for the building of a single plugin
 			generateModels(plugins);
@@ -186,52 +182,58 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateFeatures(List features) throws CoreException {
 		AssemblyInformation assemblageInformation = null;
-		assemblageInformation = new AssemblyInformation();
+		BuildDirector generator = null;
 
-		BuildDirector generator = new BuildDirector(assemblageInformation);
-		generator.setGenerateIncludedFeatures(this.recursiveGeneration);
-		generator.setAnalyseChildren(this.children);
-		generator.setBinaryFeatureGeneration(true);
-		generator.setScriptGeneration(generateBuildScript);
-		generator.setPluginPath(pluginPath);
-		generator.setBuildSiteFactory(siteFactory);
-		generator.setDevEntries(devEntries);
-		generator.setSourceToGather(new SourceFeatureInformation());//
-		generator.setCompiledElements(generator.getCompiledElements());
-		generator.setBuildingOSGi(isBuildingOSGi());
-		generator.includePlatformIndependent(includePlatformIndependent);
-		generator.setReportResolutionErrors(reportResolutionErrors);
-		generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
-		generator.setSignJars(signJars);
-		generator.setGenerateJnlp(generateJnlp);
-		generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
-		generator.setProduct(product);
+		if (features.size() > 0) {
+			assemblageInformation = new AssemblyInformation();
+
+			generator = new BuildDirector(assemblageInformation);
+			generator.setGenerateIncludedFeatures(this.recursiveGeneration);
+			generator.setAnalyseChildren(this.children);
+			generator.setBinaryFeatureGeneration(true);
+			generator.setScriptGeneration(generateBuildScript);
+			generator.setPluginPath(pluginPath);
+			generator.setBuildSiteFactory(siteFactory);
+			generator.setDevEntries(devEntries);
+			generator.setSourceToGather(new SourceFeatureInformation());//
+			generator.setCompiledElements(generator.getCompiledElements());
+			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.includePlatformIndependent(includePlatformIndependent);
+			generator.setReportResolutionErrors(reportResolutionErrors);
+			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+			generator.setSignJars(signJars);
+			generator.setGenerateJnlp(generateJnlp);
+			generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
+			generator.setProduct(product);
+		}
 
 		try {
-			for (Iterator i = features.iterator(); i.hasNext();) {
-				String[] featureInfo = getNameAndVersion((String) i.next());
-				BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
-				generator.generate(feature);
+			if (generator != null) {
+				for (Iterator i = features.iterator(); i.hasNext();) {
+					String[] featureInfo = getNameAndVersion((String) i.next());
+					BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
+					generator.generate(feature);
+				}
+	
+				if (generateAssembleScript == true) {
+					String[] featureInfo = null;
+					if (features.size() == 1)
+						featureInfo = getNameAndVersion((String) features.get(0));
+					else
+						featureInfo = new String[] {"all"}; //$NON-NLS-1$
+	
+					generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
+	
+					if (features.size() == 1)
+						featureInfo = getNameAndVersion((String) features.get(0));
+					else
+						featureInfo = new String[] {""}; //$NON-NLS-1$
+	
+					generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
+				}
+				if (generateVersionsList)
+					generateVersionsLists(assemblageInformation);
 			}
-
-			if (generateAssembleScript == true) {
-				String[] featureInfo = null;
-				if (features.size() == 1)
-					featureInfo = getNameAndVersion((String) features.get(0));
-				else
-					featureInfo = new String[] {"all"}; //$NON-NLS-1$
-
-				generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
-
-				if (features.size() == 1)
-					featureInfo = getNameAndVersion((String) features.get(0));
-				else
-					featureInfo = new String[] {""}; //$NON-NLS-1$
-
-				generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
-			}
-			if (generateVersionsList)
-				generateVersionsLists(assemblageInformation);
 		} finally {
 			getSite(false).getRegistry().cleanupOriginalState();
 		}
@@ -466,12 +468,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			return result;
 		}
 	}
-	
-    public void setArchivesFormat(String archivesFormatAsString) {
-        this.archivesFormatAsString = archivesFormatAsString;
-    }
-    
-    public void realSetArchivesFormat(String archivesFormatAsString) throws CoreException {
+
+	public void setArchivesFormat(String archivesFormatAsString) {
+		this.archivesFormatAsString = archivesFormatAsString;
+	}
+
+	public void realSetArchivesFormat(String archivesFormatAsString) throws CoreException {
 		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) {
 			archivesFormat = new ArchiveTable(0);
 			return;
@@ -488,7 +490,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			String[] archAndFormat = Utils.getArrayFromStringWithBlank(configElements[2], "-"); //$NON-NLS-1$
 			if (archAndFormat.length != 2) {
 				String message = NLS.bind(Messages.invalid_archivesFormat, archivesFormatAsString);
-				IStatus status = new Status(IStatus.ERROR,IPDEBuildConstants.PI_PDEBUILD , message);
+				IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, message);
 				throw new CoreException(status);
 			}
 
@@ -522,7 +524,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setImmutableAntProperties(Properties properties) {
 		antProperties = properties;
 	}
-	
+
 	public void setBundles(BundleDescription[] bundles) {
 		bundlesToBuild = bundles;
 	}

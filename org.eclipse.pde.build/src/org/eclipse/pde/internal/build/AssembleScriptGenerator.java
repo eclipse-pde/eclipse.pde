@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
@@ -30,7 +28,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected String getScriptName() {
-		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL;  //$NON-NLS-1$//$NON-NLS-2$
+		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
@@ -44,7 +42,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			generateMainTarget();
 			script.printProjectEnd();
 		} finally {
-			script.close();
+			if (script != null)
+				script.close();
 			script = null;
 		}
 	}
@@ -52,10 +51,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void printProjectDeclaration() {
 		script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
 	}
-	
+
 	protected void generateMainTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
-		
+
 		if (groupConfigs) {
 			Collection allPlugins = new HashSet();
 			Collection allFeatures = new HashSet();
@@ -68,7 +67,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				features.addAll(configInfo[2]);
 				rootFiles.addAll(configInfo[3]);
 			}
-			basicGenerateAssembleConfigFileTargetCall(new Config("group","group","group") , allPlugins, allFeatures, features, rootFiles);
+			basicGenerateAssembleConfigFileTargetCall(new Config("group", "group", "group"), allPlugins, allFeatures, features, rootFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
 				Config current = (Config) allConfigs.next();
@@ -78,9 +77,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		}
 		script.printTargetEnd();
 	}
-	
+
 	protected Collection[] getConfigInfos(Config aConfig) {
-		return new Collection[] { assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig) };
+		return new Collection[] {assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig)};
 	}
 
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
@@ -111,7 +110,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	public void setArchivesFormat(HashMap outputFormat) {
 		archivesFormat = outputFormat;
 	}
-	
+
 	public void setGroupConfigs(boolean group) {
 		groupConfigs = group;
 	}
