@@ -148,25 +148,43 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 	 */
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {
-			IResource resource = delta.getResource();
-			if (resource instanceof IProject) {
-				IProject project = (IProject) resource;
-				if (isInterestingProject(project) 
-						&& (delta.getKind() == IResourceDelta.ADDED || (delta.getFlags() & IResourceDelta.OPEN) != 0)) {
-					createModel(project, true);
-					return false;
-				} else if (delta.getKind() == IResourceDelta.REMOVED) {
-					removeModel(project);
-					return false;
+
+			final IResource resource= delta.getResource();
+			if (!resource.isDerived()) {
+				switch (resource.getType()) {
+
+				case IResource.ROOT: 
+					return true;
+				case IResource.PROJECT: {
+					IProject project = (IProject) resource;
+					if (isInterestingProject(project)
+							&& (delta.getKind() == IResourceDelta.ADDED || (delta
+									.getFlags() & IResourceDelta.OPEN) != 0)) {
+						createModel(project, true);
+						return false;
+					} else if (delta.getKind() == IResourceDelta.REMOVED) {
+						removeModel(project);
+						return false;
+					}
+					return true;
 				}
-				return true;
-			} else if (resource instanceof IFile) {
-				handleFileDelta(delta);
-			} else if (resource instanceof IFolder) {
-				return isInterestingFolder((IFolder)resource);
-			}
+				case IResource.FOLDER:
+					return isInterestingFolder((IFolder) resource);
+				case IResource.FILE:
+					// do not process 
+					if( isContentChange(delta) ) { 
+						handleFileDelta(delta);
+						return false;
+					}
+				}
+			}  
 		}
-		return true;
+		return false;
+	}
+
+	private boolean isContentChange(IResourceDelta delta) {
+		int kind = delta.getKind();
+		return (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED || (kind == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0));
 	}
 	
 	protected boolean isInterestingFolder(IFolder folder) {
