@@ -430,7 +430,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
 		}
 
-		script.printAntCallTask(TARGET_COPY_SOURCES, true, null);
+		Properties copyParams = new Properties();
+		copyParams.put(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER), baseDestination.toString());
+		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, copyParams);
 
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -459,7 +461,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printAntCallTask("copy." + srcName, true, null); //$NON-NLS-1$
 		}
 
-		script.printAntCallTask(TARGET_COPY_SOURCES, true, null);
+		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, null);
 
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -469,7 +471,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generateCopySourcesTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_COPY_SOURCES, TARGET_INIT, null, null, null);
+		script.printTargetDeclaration(TARGET_COPY_SRC_INCLUDES, TARGET_INIT, null, null, null);
 
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);

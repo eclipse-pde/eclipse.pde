@@ -73,6 +73,10 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		return buildProperties;
 	}
 
+	protected Properties getBuildProperties(BundleDescription model) throws CoreException {
+		return AbstractScriptGenerator.readProperties(model.getLocation(), PROPERTIES_FILE, IStatus.OK);
+	}
+
 	private String getSourcePluginName(FeatureEntry plugin, boolean versionSuffix) {
 		return plugin.getId() + (versionSuffix ? "_" + plugin.getVersion() : ""); //$NON-NLS-1$	//$NON-NLS-2$
 	}
@@ -102,6 +106,10 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		} catch (CoreException e) {
 			return;
 		}
+		//don't gather if we are doing individual source bundles
+		if(AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) //$NON-NLS-1$
+			return;
+		
 		// The generic entry may not be part of the configuration we are building however,
 		// the code for a non platform specific plugin still needs to go into a generic source plugin
 		String sourceId = computeSourceFeatureName(feature, false);
@@ -580,6 +588,11 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 		}
 
+		Properties bundleProperties = getBuildProperties(bundle);
+		if (!Boolean.valueOf(bundleProperties.getProperty(PROPERTY_GENERATE_SOURCE_BUNDLE, TRUE)).booleanValue()) {
+			return null;
+		}
+		
 		FeatureEntry sourceEntry = new FeatureEntry(pluginEntry.getId() + ".source", bundle.getVersion().toString(), true); //$NON-NLS-1$
 		sourceEntry.setEnvironment(pluginEntry.getOS(), pluginEntry.getWS(), pluginEntry.getArch(), pluginEntry.getNL());
 		sourceEntry.setUnpack(false);
@@ -592,9 +605,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 					//it is a source bundle, check that it is for bundle
 					Map headerMap = Utils.parseSourceBundleEntry(sourceBundle);
 					Map entryMap = (Map) headerMap.get(bundle.getSymbolicName());
-					if(entryMap != null && bundle.getVersion().toString().equals(entryMap.get("version"))) { //$NON-NLS-1$
+					if (entryMap != null && bundle.getVersion().toString().equals(entryMap.get("version"))) { //$NON-NLS-1$
 						sourceEntry.setUnpack(new File(sourceBundle.getLocation()).isDirectory());
-						
+
 						FeatureEntry existingEntry = sourceFeature.findPluginEntry(sourceEntry.getId());
 						if (existingEntry == null || existingEntry.getVersion() == GENERIC_VERSION_NUMBER) {
 							if (existingEntry != null)
@@ -608,17 +621,17 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 			return null;
 		}
-		
+
 		sourceFeature.addEntry(sourceEntry);
 
 		generateSourcePlugin(sourceEntry, bundle);
 
 		return sourceEntry;
 	}
-	
+
 	public void generateSourcePlugin(FeatureEntry sourceEntry, BundleDescription originalBundle) throws CoreException {
 		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, false));
-		
+
 		Manifest manifest = new Manifest();
 		Attributes attributes = manifest.getMainAttributes();
 		attributes.put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
@@ -629,7 +642,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (originalBundle.getPlatformFilter() != null)
 			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), originalBundle.getPlatformFilter());
-		
+
 		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
 		manifestFile.getParentFile().mkdirs();
 		BufferedOutputStream out = null;
@@ -644,15 +657,15 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			String message = NLS.bind(Messages.exception_writingFile, manifestFile.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		
-		generateSourceFiles(sourcePluginDirURL, sourceEntry);
-		
+
+		generateSourceFiles(sourcePluginDirURL, sourceEntry, "sourceTemplateBundle"); //$NON-NLS-1$
+
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId());
 		if (oldBundle != null)
 			state.getState().removeBundle(oldBundle);
 		state.addBundle(sourcePluginDirURL.toFile());
-		
+
 		director.sourceToGather.addElementEntry(sourceEntry.getId(), originalBundle);
 	}
 
@@ -703,7 +716,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		//Copy the other files
-		generateSourceFiles(sourcePluginDirURL, result);
+		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin"); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
@@ -714,8 +727,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		return result;
 	}
 
-	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry) throws CoreException {
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDirURL.toFile().getAbsolutePath()); //$NON-NLS-1$
+	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir) throws CoreException {
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + templateDir, sourcePluginDirURL.toFile().getAbsolutePath());
 		if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 			//make sure the manifest.mf has the version we want
 			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, sourceEntry.getVersion());

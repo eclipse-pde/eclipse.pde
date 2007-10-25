@@ -42,6 +42,7 @@ public interface IBuildPropertiesConstants {
 	public final static String PROPERTY_SOURCE_FEATURE_NAME = "sourceFeature.name"; //$NON-NLS-1$
 
 	public static final String PROPERTY_CUSTOM = "custom"; //$NON-NLS-1$
+	public static final String PROPERTY_GENERATE_SOURCE_BUNDLE = "generateSourceBundle"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_SUFFIX = ".zip"; //$NON-NLS-1$
 
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes"; //$NON-NLS-1$
