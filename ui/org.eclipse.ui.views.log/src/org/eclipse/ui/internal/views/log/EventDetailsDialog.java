@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207466
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -306,9 +306,11 @@ public class EventDetailsDialog extends TrayDialog {
 			updateProperties();
 			return;
 		}
-		entry = (LogEntry)selectedEntry;
-		initialize();
-		updateProperties();
+		if (selectedEntry instanceof LogEntry) {
+			entry = (LogEntry)selectedEntry;
+			initialize();
+			updateProperties();
+		}
 	}
 	
 	public void resetButtons(){
