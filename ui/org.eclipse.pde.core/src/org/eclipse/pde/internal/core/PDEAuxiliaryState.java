@@ -227,6 +227,8 @@ public class PDEAuxiliaryState {
 			for (int i = 0; i < models.length; i++) {
 				IPluginBase plugin = models[i].getPluginBase();
 				BundleDescription desc = models[i].getBundleDescription();
+				if (desc == null)
+					continue;
 				Element element = doc.createElement(ELEMENT_BUNDLE); 
 				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId())); 
 				element.setAttribute(ATTR_PROJECT, models[i].getUnderlyingResource().getProject().getName()); 

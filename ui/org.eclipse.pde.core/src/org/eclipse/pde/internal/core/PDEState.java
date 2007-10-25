@@ -340,7 +340,9 @@ public class PDEState extends MinimalState {
 			File dir = new File(DIR, Long.toString(timestamp) + ".workspace"); //$NON-NLS-1$
 			State state = stateObjectFactory.createState(false);
 			for (int i = 0; i < models.length; i++) {
-				state.addBundle(models[i].getBundleDescription());
+				BundleDescription desc = models[i].getBundleDescription();
+				if (desc != null)
+					state.addBundle(desc);
 			}
 			saveState(state, dir);
 			PDEAuxiliaryState.writePluginInfo(models, dir);
@@ -363,16 +365,21 @@ public class PDEState extends MinimalState {
 	}
 	
 	private boolean shouldSaveState(IPluginModelBase[] models) {
+		int nonOSGiModels = 0;
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
-			if (id == null
-					|| id.trim().length() == 0
+			if (id == null) {
+				// not an OSGi bundle
+				++nonOSGiModels;
+				continue;
+			}
+			if (id.trim().length() == 0
 					|| !models[i].isLoaded()
 					|| !models[i].isInSync() 
 					|| models[i].getBundleDescription() == null)
 				return false;
 		}
-		return models.length > 0;
+		return models.length - nonOSGiModels > 0;
 	}
 	
 	private void clearStaleStates(String extension, long latest) {

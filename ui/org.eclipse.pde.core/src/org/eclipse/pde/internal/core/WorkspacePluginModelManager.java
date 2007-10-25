@@ -434,6 +434,13 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			IProject project = models[i].getUnderlyingResource().getProject();
 			fModels.put(project, models[i]);
 		}
+		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();	
+		for (int i = 0; i < projects.length; i++) {
+			// if any projects contained Manifest files and were not included in the PDEState,
+			// we should create models for them now
+			if (!fModels.containsKey(projects[i]) && isInterestingProject(projects[i]))
+				createModel(projects[i], false);			
+		}
 		addListeners();
 	}
 	
