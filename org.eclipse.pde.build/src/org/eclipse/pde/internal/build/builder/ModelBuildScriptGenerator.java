@@ -1200,8 +1200,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0) {
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER), fileSets, true, true);
-			script.printEchoTask(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			String parent = new Path(srcName).removeLastSegments(1).toString();
+			String toDir = Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER) + '/' + parent;
+			script.printCopyTask(null, toDir, fileSets, true, true);
 		}
 		script.printTargetEnd();
 	}

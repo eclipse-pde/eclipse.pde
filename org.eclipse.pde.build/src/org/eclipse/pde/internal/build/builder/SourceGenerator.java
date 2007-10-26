@@ -41,6 +41,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private BuildDirector director;
 	private String[] extraEntries;
+	private Map excludedEntries;
 
 	public void setSourceFeatureId(String id) {
 		sourceFeatureId = id;
@@ -107,9 +108,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			return;
 		}
 		//don't gather if we are doing individual source bundles
-		if(AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) //$NON-NLS-1$
+		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) //$NON-NLS-1$
 			return;
-		
+
 		// The generic entry may not be part of the configuration we are building however,
 		// the code for a non platform specific plugin still needs to go into a generic source plugin
 		String sourceId = computeSourceFeatureName(feature, false);
@@ -169,7 +170,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				String id = extraEntries[i].substring(8);
 				entry = new FeatureEntry(id, GENERIC_VERSION_NUMBER, false);
 				sourceFeature.addEntry(entry);
-			} else {
+			} else if (extraEntries[i].startsWith("plugin@")) { //$NON-NLS-1$
 				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
 				model = getSite().getRegistry().getResolvedBundle((String) items[0], ((Version) items[1]).toString());
 				if (model == null) {
@@ -180,6 +181,16 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				entry = new FeatureEntry(model.getSymbolicName(), model.getVersion().toString(), true);
 				entry.setUnpack(((Boolean) items[2]).booleanValue());
 				sourceFeature.addEntry(entry);
+			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
+				if(excludedEntries == null)
+					excludedEntries = new HashMap();
+				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
+				if (excludedEntries.containsKey(items[0])) {
+					((List) excludedEntries.get(items[0])).add(items[1]);
+				}
+				List versionList = new ArrayList();
+				versionList.add(items[1]);
+				excludedEntries.put(items[0], versionList);
 			}
 		}
 	}
@@ -588,11 +599,20 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 		}
 
+		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
+			List excludedVersions = (List) excludedEntries.get(bundle.getSymbolicName());
+			for (Iterator iterator = excludedVersions.iterator(); iterator.hasNext();) {
+				Version version = (Version) iterator.next();
+				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString()))
+					return null;
+			}
+		}
+
 		Properties bundleProperties = getBuildProperties(bundle);
 		if (!Boolean.valueOf(bundleProperties.getProperty(PROPERTY_GENERATE_SOURCE_BUNDLE, TRUE)).booleanValue()) {
 			return null;
 		}
-		
+
 		FeatureEntry sourceEntry = new FeatureEntry(pluginEntry.getId() + ".source", bundle.getVersion().toString(), true); //$NON-NLS-1$
 		sourceEntry.setEnvironment(pluginEntry.getOS(), pluginEntry.getWS(), pluginEntry.getArch(), pluginEntry.getNL());
 		sourceEntry.setUnpack(false);
@@ -608,7 +628,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 					if (entryMap != null && bundle.getVersion().toString().equals(entryMap.get("version"))) { //$NON-NLS-1$
 						sourceEntry.setUnpack(new File(sourceBundle.getLocation()).isDirectory());
 
-						FeatureEntry existingEntry = sourceFeature.findPluginEntry(sourceEntry.getId());
+						FeatureEntry existingEntry = sourceFeature.findPluginEntry(sourceEntry.getId(), sourceEntry.getVersion());
 						if (existingEntry == null || existingEntry.getVersion() == GENERIC_VERSION_NUMBER) {
 							if (existingEntry != null)
 								sourceFeature.removeEntry(existingEntry);

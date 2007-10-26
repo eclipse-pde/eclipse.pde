@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.compatibility.*;
 
 public class BuildTimeFeature extends Feature {
@@ -166,11 +167,12 @@ public class BuildTimeFeature extends Feature {
 		return rootLocation;
 	}
 
-	public FeatureEntry findPluginEntry(String id) {
+	public FeatureEntry findPluginEntry(String id, String version) {
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isPlugin() && entries[i].getId().equals(id))
-				return entries[i];
+				if (Utils.matchVersions(version, entries[i].getVersion()))
+					return entries[i];
 		}
 		return null;
 	}

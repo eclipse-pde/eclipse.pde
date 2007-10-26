@@ -495,7 +495,12 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static Object[] parseExtraBundlesString(String input, boolean onlyId) {
 		StringTokenizer tokenizer = null;
 		if (onlyId)
-			tokenizer = new StringTokenizer(input.startsWith("plugin@") ? input.substring(7) : input.substring(8), ";"); //$NON-NLS-1$//$NON-NLS-2$
+			if (input.startsWith("plugin@")) //$NON-NLS-1$
+				tokenizer = new StringTokenizer(input.substring(7), ";"); //$NON-NLS-1$
+			else if (input.startsWith("exclude@") || input.startsWith("feature@")) //$NON-NLS-1$ //$NON-NLS-2$
+				tokenizer = new StringTokenizer(input.substring(8), ";"); //$NON-NLS-1$
+			else
+				tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
 		else
 			tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
 		String bundleId = tokenizer.nextToken();
@@ -513,6 +518,28 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 		}
 		return new Object[] {bundleId, version, unpack};
+	}
+
+	static public boolean matchVersions(String version1, String version2) {
+		if (version1 == null)
+			version1 = GENERIC_VERSION_NUMBER;
+		if (version2 == null)
+			version2 = GENERIC_VERSION_NUMBER;
+
+		if (version1.equals(version2) || version1.equals(GENERIC_VERSION_NUMBER) || version2.equals(GENERIC_VERSION_NUMBER))
+			return true;
+
+		if (version1.endsWith(PROPERTY_QUALIFIER) || version2.endsWith(PROPERTY_QUALIFIER)) {
+			int idx = version1.indexOf(PROPERTY_QUALIFIER);
+			if (idx > -1)
+				version1 = version1.substring(0, idx);
+			idx = version2.indexOf(PROPERTY_QUALIFIER);
+
+			version1 = version1.substring(0, idx);
+			return (version1.length() > version2.length()) ? version1.startsWith(version2) : version2.startsWith(version1);
+		}
+
+		return false;
 	}
 
 	/**
