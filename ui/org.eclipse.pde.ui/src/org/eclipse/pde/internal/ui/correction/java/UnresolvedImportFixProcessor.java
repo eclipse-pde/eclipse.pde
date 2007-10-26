@@ -29,22 +29,11 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.converter.PluginConverter;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -86,10 +75,10 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 				addRequireBundleProposal(proposals, project.getProject(),currentPackage);
 			}
 				
-			if (!proposals.isEmpty() && PluginRegistry.findModel(project.getProject()) instanceof IBundlePluginModelBase) {
-				ExportPackageDescription pkgDesc = ((UnresolvedImportFixProposal)proposals.get(0)).getDependency();
-				addImportPackageProposal(proposals, project.getProject(), pkgDesc);
-			}
+//			if (!proposals.isEmpty() && PluginRegistry.findModel(project.getProject()) instanceof IBundlePluginModelBase) {
+//				ExportPackageDescription pkgDesc = ((UnresolvedImportFixProposal)proposals.get(0)).getDependency();
+//				addImportPackageProposal(proposals, project.getProject(), pkgDesc);
+//			}
 
 			return (ClasspathFixProposal[])proposals.toArray(new ClasspathFixProposal[proposals.size()]);
 		}
@@ -145,76 +134,76 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	/**
 	 * Helper method to create a proposal to add an import package dependency to the project
 	 */
-	private void addImportPackageProposal(List proposalList, IProject project, ExportPackageDescription dependency){
-
-		proposalList.add(new UnresolvedImportFixProposal(project, dependency) {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#handleDependencyChange(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase, org.eclipse.osgi.service.resolver.ExportPackageDescription, boolean)
-			 */
-			public void handleDependencyChange(IProgressMonitor pm,	IPluginModelBase model, ExportPackageDescription dependency, boolean isAdd) throws CoreException {
-				IBundle bundle = ((IBundlePluginModelBase)model).getBundleModel().getBundle();
-				if (!(bundle instanceof Bundle)){
-					return;
-				}
-				IManifestHeader mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-				if (mheader == null) {
-					bundle.setHeader(Constants.IMPORT_PACKAGE, new String());
-					mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-				}
-				if (mheader instanceof ImportPackageHeader) {
-					ImportPackageHeader header = (ImportPackageHeader) mheader;
-					if (isAdd) {
-						String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;  
-						ImportPackageObject obj = new ImportPackageObject(header, dependency, versionAttr);
-						header.addPackage(obj);
-					} else {
-						header.removePackage(dependency.getName());
-					}
-				} else {
-					StringBuffer buffer = new StringBuffer();
-					String currentValue = (mheader != null) ? mheader.getValue() : null;
-					if (currentValue != null){
-						buffer.append(currentValue).append(PluginConverter.LIST_SEPARATOR);
-					}
-					if (dependency.getVersion().equals(Version.emptyVersion)){
-						buffer.append(dependency.getName());
-					} else {
-						buffer.append(dependency.getName());
-						buffer.append("; version=\""); //$NON-NLS-1$
-						buffer.append(dependency.getVersion());
-						buffer.append("\""); //$NON-NLS-1$
-					}
-					bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
-				}
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#getLabel(boolean)
-			 */
-			public String getLabel(boolean isAdd) {
-				if (isAdd) {
-					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3,new Object[]{getDependency().getName()});
-				}
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_4,new Object[]{getDependency().getName()});
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#getDescription()
-			 */
-			public String getDescription() {
-				return PDEUIMessages.UnresolvedImportFixProcessor_5;
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
-			 */
-			public Image getImage() {
-				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUNDLE_OBJ);
-			}
-
-		});
-	}
+//	private void addImportPackageProposal(List proposalList, IProject project, ExportPackageDescription dependency){
+//
+//		proposalList.add(new UnresolvedImportFixProposal(project, dependency) {
+//
+//			/* (non-Javadoc)
+//			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#handleDependencyChange(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase, org.eclipse.osgi.service.resolver.ExportPackageDescription, boolean)
+//			 */
+//			public void handleDependencyChange(IProgressMonitor pm,	IPluginModelBase model, ExportPackageDescription dependency, boolean isAdd) throws CoreException {
+//				IBundle bundle = ((IBundlePluginModelBase)model).getBundleModel().getBundle();
+//				if (!(bundle instanceof Bundle)){
+//					return;
+//				}
+//				IManifestHeader mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
+//				if (mheader == null) {
+//					bundle.setHeader(Constants.IMPORT_PACKAGE, new String());
+//					mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
+//				}
+//				if (mheader instanceof ImportPackageHeader) {
+//					ImportPackageHeader header = (ImportPackageHeader) mheader;
+//					if (isAdd) {
+//						String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;  
+//						ImportPackageObject obj = new ImportPackageObject(header, dependency, versionAttr);
+//						header.addPackage(obj);
+//					} else {
+//						header.removePackage(dependency.getName());
+//					}
+//				} else {
+//					StringBuffer buffer = new StringBuffer();
+//					String currentValue = (mheader != null) ? mheader.getValue() : null;
+//					if (currentValue != null){
+//						buffer.append(currentValue).append(PluginConverter.LIST_SEPARATOR);
+//					}
+//					if (dependency.getVersion().equals(Version.emptyVersion)){
+//						buffer.append(dependency.getName());
+//					} else {
+//						buffer.append(dependency.getName());
+//						buffer.append("; version=\""); //$NON-NLS-1$
+//						buffer.append(dependency.getVersion());
+//						buffer.append("\""); //$NON-NLS-1$
+//					}
+//					bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
+//				}
+//			}
+//
+//			/* (non-Javadoc)
+//			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#getLabel(boolean)
+//			 */
+//			public String getLabel(boolean isAdd) {
+//				if (isAdd) {
+//					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3,new Object[]{getDependency().getName()});
+//				}
+//				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_4,new Object[]{getDependency().getName()});
+//			}
+//
+//			/* (non-Javadoc)
+//			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#getDescription()
+//			 */
+//			public String getDescription() {
+//				return PDEUIMessages.UnresolvedImportFixProcessor_5;
+//			}
+//			
+//			/* (non-Javadoc)
+//			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
+//			 */
+//			public Image getImage() {
+//				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUNDLE_OBJ);
+//			}
+//
+//		});
+//	}
 	
 	private Set getVisiblePackages(IJavaProject project) {
 		IPluginModelBase base = PluginRegistry.findModel(project.getProject());
