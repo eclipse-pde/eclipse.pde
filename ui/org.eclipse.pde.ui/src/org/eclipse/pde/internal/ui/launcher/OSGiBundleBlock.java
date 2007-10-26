@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -17,7 +20,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -42,6 +47,11 @@ import org.eclipse.swt.widgets.Widget;
 
 public class OSGiBundleBlock extends AbstractPluginBlock {
 	
+	private HashMap levelColumnCache = null;
+	private HashMap autoColumnCache = null;
+	private TreeEditor levelColumnEditor = null;
+	private TreeEditor autoColumnEditor = null;
+	
 	class OSGiLabelProvider extends PDELabelProvider {		
 		public Image getColumnImage(Object obj, int index) {
 			return index == 0 ? super.getColumnImage(obj, index) : null;
@@ -50,6 +60,14 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			switch (index) {
 			case 0:
 				return super.getColumnText(obj, index);
+			case 1:
+				if ( levelColumnCache != null  && levelColumnCache.containsKey(obj)) 
+					return (String) levelColumnCache.get(obj);
+				return ""; //$NON-NLS-1$
+			case 2:
+				if ( autoColumnCache != null  && autoColumnCache.containsKey(obj)) 
+					return (String) autoColumnCache.get(obj);
+				return ""; //$NON-NLS-1$
 			default:
 				return ""; //$NON-NLS-1$
 			}
@@ -65,7 +83,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	protected void createPluginViewer(Composite composite, int span, int indent) {
 		super.createPluginViewer(composite, span, indent);
     	Tree tree = fPluginTreeViewer.getTree();
- 
+
     	TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
     	column1.setText(fTab.getName()); 
     	column1.setWidth(300);
@@ -85,24 +103,24 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void createEditors() {
 		final Tree tree = fPluginTreeViewer.getTree();
 
-		final TreeEditor editor1 = new TreeEditor(tree);
-		editor1.horizontalAlignment = SWT.CENTER;
-		editor1.minimumWidth = 60;
+		levelColumnEditor = new TreeEditor(tree);
+		levelColumnEditor.horizontalAlignment = SWT.CENTER;
+		levelColumnEditor.minimumWidth = 60;
 
-		final TreeEditor editor2 = new TreeEditor(tree);
-		editor2.horizontalAlignment = SWT.CENTER;
-		editor2.grabHorizontal = true;
-		editor2.minimumWidth = 60;
+		autoColumnEditor = new TreeEditor(tree);
+		autoColumnEditor.horizontalAlignment = SWT.CENTER;
+		autoColumnEditor.grabHorizontal = true;
+		autoColumnEditor.minimumWidth = 60;
 
 		tree.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
-				Control oldEditor = editor1.getEditor();
-				if (oldEditor != null)
+				Control oldEditor = levelColumnEditor.getEditor();
+				if (oldEditor != null && !oldEditor.isDisposed())
 					oldEditor.dispose();
 
-				oldEditor = editor2.getEditor();
-				if (oldEditor != null)
+				oldEditor = autoColumnEditor.getEditor();
+				if (oldEditor != null && !oldEditor.isDisposed())
 					oldEditor.dispose();
 
 				// Identify the selected row
@@ -126,7 +144,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 						}
 					}
 				});
-				editor1.setEditor(spinner, item, 1);
+				levelColumnEditor.setEditor(spinner, item, 1);
 
 				final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
 				combo.setItems(new String[] { "default", Boolean.toString(true), Boolean.toString(false) }); //$NON-NLS-1$
@@ -140,7 +158,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 						}
 					}
 				});
-				editor2.setEditor(combo, item, 2);
+				autoColumnEditor.setEditor(combo, item, 2);
 
 			}
 		});			
@@ -211,6 +229,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		initExternalPluginsState(configuration);
 		updateCounter();
 		fLaunchConfiguration = configuration;
+		handleFilterButton(); // Once the page is initialized, apply any filtering.
 	}
 		
 	private void initExternalPluginsState(ILaunchConfiguration configuration)
@@ -351,5 +370,61 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	protected LaunchValidationOperation createValidationOperation() {
 		return new OSGiValidationOperation(fLaunchConfiguration);
 	}
+
+	
+	/**
+	 * Refreshes the tree viewer.  This caches the values of the 
+	 * level and auto column, and it clears any editors on the view.
+	 * Finally, it sets the selection to the root node.
+	 */
+	protected void refreshTreeView(CheckboxTreeViewer treeView) {
+		// Remove any selection
+		if ( treeView.getTree().getItemCount() > 0 ) {
+			treeView.getTree().setSelection(treeView.getTree().getItem(0));
+		}
+		else {
+			treeView.setSelection(new StructuredSelection(StructuredSelection.EMPTY));
+		}
+		
+		// Reset any editors on the tree viewer
+		if (levelColumnEditor!= null && levelColumnEditor.getEditor() != null && !levelColumnEditor.getEditor().isDisposed()) {
+			levelColumnEditor.getEditor().dispose();
+		}
+		
+
+		if (autoColumnEditor!= null && autoColumnEditor.getEditor() != null && !autoColumnEditor.getEditor().isDisposed()) {
+			autoColumnEditor.getEditor().dispose();
+		}
+		
+		// Cache the current text
+		levelColumnCache = new HashMap();
+		autoColumnCache = new HashMap();
+		ArrayList allTreeItems = getAllTreeItems(treeView.getTree().getItems());
+		for (Iterator iterator = allTreeItems.iterator(); iterator.hasNext();) {
+			TreeItem item = (TreeItem) iterator.next();
+			levelColumnCache.put(item.getData(), item.getText(1));
+			autoColumnCache.put(item.getData(), item.getText(2));
+		}
+	}
+	
+	/**
+	 * This gets all the tree items from a tree.  
+	 * 
+	 * This method must exist in some SWT util library, so it can probably be 
+	 * removed when I find it.
+	 * 
+	 * @param roots
+	 * @return
+	 */
+	private ArrayList getAllTreeItems(TreeItem[] roots) {
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < roots.length; i++) {
+			TreeItem item = roots[i];
+			list.add(item);
+			list.addAll(getAllTreeItems(item.getItems()));
+		}
+		return list;
+	}
+	
 	
 }

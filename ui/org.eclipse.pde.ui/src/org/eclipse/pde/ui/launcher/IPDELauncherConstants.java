@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -313,4 +313,12 @@ public interface IPDELauncherConstants {
 	 * the ID of a target defined in an org.eclipse.pde.core.targets extension.
 	 */
 	String DEFINED_TARGET = "defined_target"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a boolean indicating
+	 * whether or not to display only selected plug-ins. 
+	 * 
+	 * @since 3.4
+	 */
+	String SHOW_SELECTED_ONLY = "show_selected_only"; //$NON-NLS-1$
 }

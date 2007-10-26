@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -15,6 +16,8 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -47,6 +50,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
 		fLaunchConfig = config;
+		handleFilterButton(); // Once the page is initialized, apply any filtering
 	}
 	
 	/*
@@ -222,5 +226,9 @@ public class PluginBlock extends AbstractPluginBlock {
 	
 	protected LaunchValidationOperation createValidationOperation() {
 		return new EclipsePluginValidationOperation(fLaunchConfig);
+	}
+
+	protected void refreshTreeView(CheckboxTreeViewer treeView) {
+		treeView.setSelection(StructuredSelection.EMPTY);
 	}
 }

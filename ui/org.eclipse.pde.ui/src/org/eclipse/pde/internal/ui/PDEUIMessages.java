@@ -1132,6 +1132,7 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_addNew;
 	public static String AdvancedLauncherTab_defaults;
 	public static String AdvancedLauncherTab_workingSet;
+	public static String AdvancedLauncherTab_selectedBundles;
 	public static String AdvancedFeatureExportPage_jnlp;
 	public static String AdvancedPluginExportPage_alias;
 	public static String AdvancedLauncherTab_includeOptional;

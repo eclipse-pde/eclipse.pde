@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -32,6 +33,8 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -89,6 +92,7 @@ public abstract class AbstractPluginBlock {
 	private Button fWorkingSetButton;
 	private Button fAddRequiredButton;
 	private Button fDefaultsButton;
+	private Button fFilterButton;
 	
 	private Listener fListener = new Listener();
 
@@ -100,8 +104,20 @@ public abstract class AbstractPluginBlock {
 	private Button fValidateButton;
 
 	class Listener extends SelectionAdapter {
-		public void widgetSelected(SelectionEvent e) {
+		
+		private void filterAffectingControl(SelectionEvent e) {
+			boolean resetFilterButton = false;
 			Object source = e.getSource();
+			
+			// If the filter is on, turn it off, apply the action, and turn it back on.
+			// This has to happen this way because there is no real model behind
+			// the view.  The only model is the actual plug-in model, and the state
+			// does not get set on that model until an apply is performed.
+			if ( fFilterButton.getSelection() ) {
+				fFilterButton.setSelection(false);
+				handleFilterButton();
+				resetFilterButton = true;
+			}
 			if (source == fSelectAllButton) {
 				toggleGroups(true);
 			} else if (source == fDeselectButton) {
@@ -112,9 +128,30 @@ public abstract class AbstractPluginBlock {
 				computeSubset();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
-			} else if (source == fValidateButton) {
-				handleValidate();
 			}
+			
+			if ( resetFilterButton ) {
+				resetFilterButton = false;
+				fFilterButton.setSelection(true);
+				handleFilterButton();
+			}
+		}
+		
+		public void widgetSelected(SelectionEvent e) {
+			Object source = e.getSource();
+			
+			if (source == fFilterButton) {
+				handleFilterButton();
+			} else if ( source == fSelectAllButton ||  source == fDeselectButton ||  
+			 	 source == fWorkingSetButton ||  source == fAddRequiredButton ||  source == fDefaultsButton ) {
+				// These are all the controls that may affect the filtering.  For example, the filter
+				// is enabled only to show selected bundles, and the user invokes "select all", we need
+				// to update the filter.  
+				filterAffectingControl(e);
+			}
+			else if (source == fValidateButton) {
+				handleValidate();
+			} 
 			fTab.updateLaunchConfigurationDialog();
 		}
 	}
@@ -234,7 +271,21 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	protected void createPluginViewer(Composite composite, int span, int indent) {
-		fPluginTreeViewer = new CheckboxTreeViewer(composite, getTreeViewerStyle());
+		fPluginTreeViewer = new CheckboxTreeViewer(composite, getTreeViewerStyle()) ;
+		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
+
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				// Since a check on the root of a CheckBoxTreeViewer selects all its children 
+				// (hidden or not), we need to ensure that all items are shown
+				// if this happens.  Since it not clear what the best behaviour is here
+				// this just "un-selects" the filter button.
+				if ( event.getElement() instanceof NamedElement  && event.getChecked()) {
+					fFilterButton.setSelection(false);
+					handleFilterButton();
+				}
+			}
+			
+		});
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
@@ -274,24 +325,48 @@ public abstract class AbstractPluginBlock {
 			new NamedElement(
 				PDEUIMessages.PluginsTab_target, 
 				siteImage);
+		
+		fPluginTreeViewer.addFilter(new Filter());
+	}
+	
+	
+	/**
+	 * The view filter for the tree view.  Currently this filter only 
+	 * filters unchecked items if the fFilterButton is selected.
+	 * 
+	 * @author Ian Bull
+	 *
+	 */
+	class Filter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (fFilterButton.getSelection()) {
+				return fPluginTreeViewer.getChecked(element);
+			}
+			return 
+				true;
+		}
 	}
 
 	private void createButtonContainer(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
+		layout.marginTop = 6;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 	
-		new Label(composite, SWT.NONE);
-		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll); 		
-		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll); 		
-		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet); 
-		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName())); 
-		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
+		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll, SWT.PUSH); 		
+		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll, SWT.PUSH); 		
+		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet, SWT.PUSH); 
+		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH); 
+		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults, SWT.PUSH);
+		fFilterButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_selectedBundles, fTab.getName().toLowerCase()), SWT.CHECK);
+		GridData filterButtonGridData = new GridData(GridData.FILL_BOTH |  GridData.VERTICAL_ALIGN_END);
+		fFilterButton.setLayoutData(filterButtonGridData);
 		
 		fCounter = new Label(composite, SWT.NONE);
-		fCounter.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_END));
+		fCounter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL| GridData.VERTICAL_ALIGN_END));
 		updateCounter();
 	}
 	
@@ -299,10 +374,10 @@ public abstract class AbstractPluginBlock {
 		return SWT.BORDER;
 	}
 	
-	private Button createButton(Composite composite, String text) {
-		Button button = new Button(composite, SWT.PUSH);
+	private Button createButton(Composite composite, String text, int style) {
+		Button button = new Button(composite, style);
 		button.setText(text);
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		button.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(fListener);
 		return button;
@@ -340,6 +415,12 @@ public abstract class AbstractPluginBlock {
 	protected void toggleGroups(boolean select) {
 		handleGroupStateChanged(fWorkspacePlugins, select);
 		handleGroupStateChanged(fExternalPlugins, select);
+	}
+	
+	protected void handleFilterButton() {
+		refreshTreeView(fPluginTreeViewer);
+		fPluginTreeViewer.refresh();
+		fPluginTreeViewer.expandAll();
 	}
 
 	private void handleWorkingSets() {
@@ -398,6 +479,7 @@ public abstract class AbstractPluginBlock {
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
 			fPluginTreeViewer.reveal(fWorkspacePlugins);
 		}
+		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
 	}
 	
 	protected void computeSubset() {
@@ -477,6 +559,7 @@ public abstract class AbstractPluginBlock {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
+		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, fFilterButton.getSelection());
 		savePluginState(config);
 		updateCounter();
 	}
@@ -487,6 +570,7 @@ public abstract class AbstractPluginBlock {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
 	}
 	
 	public void enableViewer(boolean enable) {
@@ -499,6 +583,7 @@ public abstract class AbstractPluginBlock {
 		fIncludeOptionalButton.setEnabled(enable);
 		fAddWorkspaceButton.setEnabled(enable);
 		fCounter.setEnabled(enable);
+		fFilterButton.setEnabled(enable);
 	}
 	
 	public void dispose() {
@@ -575,5 +660,15 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	protected abstract LaunchValidationOperation createValidationOperation();
+
+	/**
+	 * called before the TreeView is refreshed. This allows any subclasses to cache 
+	 * any information in the view and redisplay after the refresh.  This is used by the 
+	 * OSGiBundleBlock to cache the values of the default launch and auto launch columns
+	 * in the table tree.
+	 * 
+	 * @param treeView The tree view that will be refreshed.
+	 */
+	protected abstract void refreshTreeView(CheckboxTreeViewer treeView );
 	
 }
