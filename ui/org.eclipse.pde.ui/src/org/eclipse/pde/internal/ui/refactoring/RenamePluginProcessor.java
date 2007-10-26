@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.refactoring.descriptors.RenameResourceDescriptor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -30,6 +29,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
+import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -41,10 +41,10 @@ import com.ibm.icu.text.MessageFormat;
 
 public class RenamePluginProcessor extends RefactoringProcessor {
 	
-	RenamePluginInfo fInfo;
+	RefactoringPluginInfo fInfo;
 	
-	public RenamePluginProcessor (RenamePluginInfo info) { 
-		fInfo = info;
+	public RenamePluginProcessor (RefactoringInfo info) { 
+		fInfo = (RefactoringPluginInfo)info;
 	}
 
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
@@ -57,7 +57,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		else if (!res.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())  //$NON-NLS-1$
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
 		if (fInfo.isRenameProject()) {
-			String newName = fInfo.getNewID();
+			String newName = fInfo.getNewValue();
 			IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 			// if destination exists and it is not the same project we are currently trying to rename, show error message
 			if (newProject.exists() && !(res.getProject().equals(newProject)))
@@ -106,7 +106,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 			return ParticipantManager.loadRenameParticipants(status,
 					this,
 					project,
-					new RenameArguments(fInfo.getNewID(), true),
+					new RenameArguments(fInfo.getNewValue(), true),
 					filter,
 					getAffectedNatures(project),
 					sharedParticipants);
@@ -122,10 +122,10 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 	OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_changeTitle, 
-				new String[] {fInfo.getCurrentID(), fInfo.getNewID()}));
+				new String[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		pm.beginTask("", getTotalWork()); //$NON-NLS-1$
 		// update manifest with new Id
-		CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(fInfo.getBase(),Constants.BUNDLE_SYMBOLICNAME, fInfo.getCurrentID(), fInfo.getNewID());
+		CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(fInfo.getBase(),Constants.BUNDLE_SYMBOLICNAME, fInfo.getCurrentValue(), fInfo.getNewValue());
 		op.run(new SubProgressMonitor(pm, 1));
 		change.add(op.getChange());
 		
@@ -147,17 +147,17 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	protected Change createProjectChange(IProgressMonitor monitor) {
 		RenameResourceDescriptor descriptor= new RenameResourceDescriptor();
 		IProject project = fInfo.getBase().getUnderlyingResource().getProject();
-		String newName = fInfo.getNewID();
+		String newName = fInfo.getNewValue();
 		// if project's name is already the same as the destination, then we don't have to do anything to rename project
 		if (project.getName().equals(newName))
 			return null;
 		descriptor.setDescription(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_renameProjectDesc, new String[] { project.getName(), newName }));
 		descriptor.setComment(""); //$NON-NLS-1$
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
-		descriptor.setResource(project);
-		descriptor.setNewName(fInfo.getNewID());
+		descriptor.setResourcePath(project.getFullPath());
+		descriptor.setNewName(fInfo.getNewValue());
 		monitor.done();
-		return new RenameProjectChange(descriptor, project, fInfo.getNewID(), null);
+		return new RenameProjectChange(descriptor, project, fInfo.getNewValue(), null);
 	}
 	
 	protected Change[] createReferenceChanges(IProgressMonitor monitor) throws CoreException {
@@ -168,7 +168,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 			desc = (savedBase != null) ? savedBase.getBundleDescription() : null;
 		}
 		if (desc != null) {
-			FindReferenceOperation op =  new FindReferenceOperation(desc, fInfo.getNewID());
+			FindReferenceOperation op =  new FindReferenceOperation(desc, fInfo.getNewValue());
 			op.run(monitor);
 			return op.getChanges();
 		}

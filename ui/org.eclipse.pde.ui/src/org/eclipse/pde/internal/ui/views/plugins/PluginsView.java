@@ -69,7 +69,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
+import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginReferencesAction;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -122,7 +123,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private Action fSelectDependentAction;
 	private Action fSelectInJavaSearchAction;
 	private Action fSelectAllAction;
-	private RenamePluginAction fRefactorAction;
+	private PDERefactoringAction fRefactorAction;
     private CollapseAllAction fCollapseAllAction;
 	private DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
 	private DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
@@ -279,7 +280,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 					if (selection.size() == 1) {
 						Object element = selection.getFirstElement();
 						if (element instanceof IPluginModelBase) {
-							fRefactorAction.setPlugin((IPluginModelBase)element);
+							fRefactorAction.setSelection(element);
 							fRefactorAction.run();
 							return;
 						}
@@ -396,7 +397,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 
 		fOpenClassFileAction = new OpenAction(getViewSite());
 		
-		fRefactorAction = new RenamePluginAction();
+		fRefactorAction = RefactoringActionFactory.createRefactorPluginIdAction();
 	}
 
 	private FileAdapter getSelectedFile() {
@@ -521,7 +522,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		selectionMenu.add(fSelectAllAction);
 		manager.add(new Separator());
 		if (allowRefactoring) {
-			fRefactorAction.setPlugin((IPluginModelBase)selection.getFirstElement());
+			fRefactorAction.setSelection(selection.getFirstElement());
 			manager.add(fRefactorAction);
 			manager.add(new Separator());
 		}

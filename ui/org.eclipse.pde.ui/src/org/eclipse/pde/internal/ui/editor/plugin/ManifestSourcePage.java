@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -32,10 +33,15 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
+import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionContext;
 
@@ -47,6 +53,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	private Object fExtensions = new Object();
 	private ExtensionAttributePointDectector fDetector;
 	private PluginSearchActionGroup fActionGroup;
+	private PDERefactoringAction fRenameAction;
 	
 	class OutlineLabelProvider extends LabelProvider {		
 		private PDELabelProvider fProvider;
@@ -253,6 +260,21 @@ public class ManifestSourcePage extends XMLSourcePage {
 			fActionGroup.fillContextMenu(menu);
 		}
 		super.editorContextMenuAboutToShow(menu);
+		
+		StyledText text = getViewer().getTextWidget();
+		Point p = text.getSelection();
+		IDocumentRange element = getRangeElement(p.x, false);
+		
+		if (!(element instanceof IPluginExtensionPoint)) 
+			return;
+		
+		if (fRenameAction == null)
+			fRenameAction = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ManifestSourcePage_renameActionText);
+		if (fRenameAction != null) {
+			fRenameAction.setSelection(element);
+			// add rename action after Outline. This is the same order as the hyperlink actions
+			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
+		}
 	}
 	
 	/* (non-Javadoc)

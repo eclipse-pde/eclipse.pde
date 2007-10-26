@@ -46,6 +46,8 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
+import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionPointWizard;
@@ -205,6 +207,12 @@ public class ExtensionPointsSection extends TableSection {
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		manager.add(new Separator());
+		if (selection instanceof IStructuredSelection && ((IStructuredSelection)selection).size() == 1) {
+			PDERefactoringAction action = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ExtensionPointsSection_rename_label);
+			action.setSelection(((IStructuredSelection)selection).getFirstElement());
+			manager.add(action);
+			manager.add(new Separator());
+		}
 		
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 			public void run() {

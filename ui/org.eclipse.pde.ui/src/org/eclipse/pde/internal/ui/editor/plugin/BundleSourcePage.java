@@ -59,7 +59,8 @@ import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
+import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
@@ -88,7 +89,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	
 	private final int F_NOT_SET = -1;
 	
-	private RenamePluginAction fRenameAction;
+	private PDERefactoringAction fRenameAction;
 	
 	/**
 	 * BundleOutlineContentProvider
@@ -770,9 +771,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		if (fRenameAction == null) {
 			IBaseModel base = ((PDEFormEditor)getEditor()).getAggregateModel();
 			if (base instanceof IPluginModelBase) {
-				fRenameAction = new RenamePluginAction();
-				fRenameAction.setText(NLS.bind(PDEUIMessages.BundleSourcePage_renameActionText, Constants.BUNDLE_SYMBOLICNAME));
-				fRenameAction.setPlugin((IPluginModelBase)base);
+				fRenameAction = RefactoringActionFactory.createRefactorPluginIdAction(NLS.bind(PDEUIMessages.BundleSourcePage_renameActionText, Constants.BUNDLE_SYMBOLICNAME));
+				fRenameAction.setSelection(base);
 			}
 		}
 		if (fRenameAction != null)

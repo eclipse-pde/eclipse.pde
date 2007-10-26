@@ -339,6 +339,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String RenamePluginWizardPage_newId;
 
+	public static String RenameExtensionPointProcessor_changeTitle;
+
+	public static String RenameExtensionPointProcessor_processorName;
+
+	public static String RenameExtensionPointWizard_pageTitle;
+
 	public static String RenamePluginWizardPage_renameProject;
 
 	public static String RenamePluginWizardPage_updateReferences;
@@ -1056,6 +1062,8 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_RuntimeForm_title;
 	public static String ManifestSourcePage_extensionPoints;
 
+	public static String ManifestSourcePage_renameActionText;
+
 	public static String ManifestEditor_TestingSection_title;
 
 	// Schema Editor ##################################
@@ -1423,6 +1431,8 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionPointDetails_schema;
 	public static String ExtensionPointDetails_schemaLinks;
 	public static String ExtensionPointsSection_message1;
+
+	public static String ExtensionPointsSection_rename_label;
 	public static String ExtensionPointDetails_browse;
 	public static String ExtensionPointsSection_title;
 	public static String ExtensionPointDetails_noSchemaLinks;

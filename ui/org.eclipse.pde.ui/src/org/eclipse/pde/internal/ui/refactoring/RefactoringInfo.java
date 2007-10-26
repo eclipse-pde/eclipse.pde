@@ -10,34 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class RenamePluginInfo {
-	
-	private IPluginModelBase fBase;
-	
-	private boolean fRenameProject;
+public abstract class RefactoringInfo {
 	
 	private boolean fUpdateReferences = true;
 	
 	private String fNewID;
+	
+	protected Object fSelection;
 
-	public IPluginModelBase getBase() {
-		return fBase;
+	public abstract IPluginModelBase getBase();
+	
+	public Object getSelection() {
+		return fSelection;
 	}
 
-	public void setBase(IPluginModelBase base) {
-		fBase = base;
-	}
-
-	public boolean isRenameProject() {
-		return fRenameProject;
-	}
-
-	public void setRenameProject(boolean renameProject) {
-		fRenameProject = renameProject;
+	public void setSelection(Object selection) {
+		fSelection = selection;
 	}
 
 	public boolean isUpdateReferences() {
@@ -48,20 +38,14 @@ public class RenamePluginInfo {
 		fUpdateReferences = updateReferences;
 	}
 
-	public String getNewID() {
+	public String getNewValue() {
 		return fNewID;
 	}
 
-	public void setNewID(String newName) {
+	public void setNewValue(String newName) {
 		fNewID = newName;
 	}
 	
-	public String getCurrentID() {
-		BundleDescription desc = fBase.getBundleDescription();
-		if (desc != null)
-			return desc.getSymbolicName();
-		IPluginBase pb = fBase.getPluginBase();
-		return pb.getId();
-	}
+	public abstract String getCurrentValue();
 
 }

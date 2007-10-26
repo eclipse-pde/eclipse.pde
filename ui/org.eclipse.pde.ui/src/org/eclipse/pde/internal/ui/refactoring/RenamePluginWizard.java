@@ -15,9 +15,9 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 public class RenamePluginWizard extends RefactoringWizard {
 
-	RenamePluginInfo fInfo;
+	RefactoringInfo fInfo;
 	
-	public RenamePluginWizard(Refactoring refactoring, RenamePluginInfo info) {
+	public RenamePluginWizard(Refactoring refactoring, RefactoringInfo info) {
 		super(refactoring, RefactoringWizard.DIALOG_BASED_USER_INTERFACE);
 		fInfo = info;
 	}

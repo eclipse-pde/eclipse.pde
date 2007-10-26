@@ -46,7 +46,8 @@ import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
+import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
+import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
@@ -77,7 +78,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	private Action fOpenAction;
 	
-	protected RenamePluginAction fRefactorAction;
+	protected PDERefactoringAction fRefactorAction;
 
 	private IPropertyChangeListener fPropertyListener;
 
@@ -345,7 +346,7 @@ public abstract class DependenciesViewPage extends Page {
 		};
 		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); 
 		
-		fRefactorAction = new RenamePluginAction();
+		fRefactorAction = RefactoringActionFactory.createRefactorPluginIdAction();
 		
 		fHideFragmentFilterAction = new Action() {
 			public void run() {
@@ -426,7 +427,7 @@ public abstract class DependenciesViewPage extends Page {
 				base = PluginRegistry.findModel((BundleDescription)selectionElement);
 			}
 			if (base != null && base.getUnderlyingResource() != null) {
-				fRefactorAction.setPlugin(base);
+				fRefactorAction.setSelection(base);
 				return true;
 			}
 		}
