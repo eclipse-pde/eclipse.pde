@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -279,9 +280,18 @@ public abstract class AbstractPluginBlock {
 				// (hidden or not), we need to ensure that all items are shown
 				// if this happens.  Since it not clear what the best behaviour is here
 				// this just "un-selects" the filter button.
-				if ( event.getElement() instanceof NamedElement  && event.getChecked()) {
-					fFilterButton.setSelection(false);
-					handleFilterButton();
+				
+				if ( !event.getChecked() ) return; // just return if the check state goes to false
+				                                   // It is not clear if this is the best approach, but it 
+				                                   // is hard to tell without user feedback.  
+				TreeItem[] items = fPluginTreeViewer.getTree().getItems();
+				for ( int i = 0; i < items.length; i++) {
+					if ( event.getElement() == items[i].getData() ) {
+						// If the even happens on the root of the tree
+						fFilterButton.setSelection(false);
+						handleFilterButton();
+						return;
+					}
 				}
 			}
 			
