@@ -584,7 +584,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				for(Iterator it = bundles.iterator(); it.hasNext();) {
 					Bundle bundle = (Bundle) it.next();
 					BundleDescription desc = state.getBundle(bundle.getBundleId());
-					DisabledInfo info = new DisabledInfo("ui", "Bundle disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
+					DisabledInfo info = new DisabledInfo("ui", "Disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
 					PlatformAdmin platformAdmin = 
 						PDERuntimePlugin.getDefault().getPlatformAdmin();
 					platformAdmin.addDisabledInfo(info);
