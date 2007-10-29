@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -24,10 +26,15 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.DisabledInfo;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.internal.runtime.IHelpContextIds;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
@@ -52,11 +59,14 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
+
 public class RegistryBrowser extends ViewPart implements BundleListener, IRegistryChangeListener {
 	
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
+	public static final String SHOW_ADVANCED_MODE = "RegistryView.showAdvancedMode.label"; //$NON-NLS-1$
 	
 	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
@@ -66,9 +76,15 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	// menus and action items
 	private Action fRefreshAction;
 	private Action fShowPluginsAction;
+	private Action fShowAdvancedOperationsAction;
 	private Action fCollapseAllAction;
-	private Action fRemoveAction;
-	private Action fAddAction;
+	
+	// advanced actions
+	private Action fStartAction;
+	private Action fStopAction;
+	private Action fEnableAction;
+	private Action fDisableAction;
+	
 	private DrillDownAdapter drillDownAdapter;
 	private ViewerFilter fActiveFilter = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -126,6 +142,10 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		// show all plug-ins by default (i.e. not just activated ones)
 		if (fMemento.getString(SHOW_RUNNING_PLUGINS) == null)
 			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
+		
+		// default to not showing advanced options to users
+		if (fMemento.getString(SHOW_ADVANCED_MODE) == null)
+			fMemento.putString(SHOW_ADVANCED_MODE, "false"); //$NON-NLS-1$
 	}
 	
 	public void dispose() {
@@ -223,6 +243,8 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(new Separator());
 		mgr.add(fShowPluginsAction);
+		mgr.add(fShowAdvancedOperationsAction);
+		
 	}
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(fRefreshAction);
@@ -244,15 +266,29 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 					break;
 				}
 			}
-			if (allRemoveable)
-				manager.add(fRemoveAction);
-			if (canAdd && selection.length == 1)
-				manager.add(fAddAction);
 		}
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
+		
+		// check if we should enable advanced actions
+		if(fShowAdvancedOperationsAction.isChecked() && isBundleSelected()) {
+			// control bundle state actions
+			if(selectedBundlesStopped())
+				manager.add(fStartAction);
+			if(selectedBundlesStarted())
+				manager.add(fStopAction);
+			
+			// security related actions
+			if(selectedBundlesDisabled())
+				manager.add(fEnableAction);
+			if(selectedBundlesEnabled())
+				manager.add(fDisableAction);
+		}
+		
+		manager.add(new Separator());
 		manager.add(fShowPluginsAction);
+		manager.add(fShowAdvancedOperationsAction);
 	}
 	public TreeViewer getTreeViewer() {
 		return fTreeViewer;
@@ -261,12 +297,9 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	public void saveState(IMemento memento) {
 		if (memento == null || this.fMemento == null || fTreeViewer == null)
 			return;
-		boolean showRunning = fShowPluginsAction.isChecked();
-		if (showRunning)
-			this.fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(true));
-		else
-			this.fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(false));
-		memento.putMemento(this.fMemento);
+		fMemento.putBoolean(SHOW_RUNNING_PLUGINS, fShowPluginsAction.isChecked());
+		fMemento.putBoolean(SHOW_ADVANCED_MODE, fShowAdvancedOperationsAction.isChecked());
+		memento.putMemento(fMemento);
 	}
 	
 	public void setFocus() {
@@ -490,48 +523,72 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		};
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
-		fRemoveAction = new Action("Remove") { //$NON-NLS-1$
+		fShowAdvancedOperationsAction = new Action(PDERuntimeMessages.RegistryView_showAdvanced_label) {
 			public void run() {
-//				Tree tree = getUndisposedTree();
-//				if (tree == null)
-//					return;
-//				IExtensionRegistry registry = Platform.getExtensionRegistry();
-//				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
-//				TreeItem[] selection = tree.getSelection();
-//				for (int i = 0; i < selection.length; i++) {
-//					Object obj = selection[i].getData();
-//					if (obj instanceof ParentAdapter)
-//						obj = ((ParentAdapter)obj).getObject();
-//					if (obj instanceof IExtensionPoint)
-//						registry.removeExtensionPoint((IExtensionPoint)obj, token);
-//					else if (obj instanceof IExtension)
-//						registry.removeExtension((IExtension)obj, token);
-//				}
-				
+				if (fShowAdvancedOperationsAction.isChecked())
+					createAdvancedActions();
+				else
+					disabledAdvancedActions();
+			}
+		};
+		fShowAdvancedOperationsAction.setChecked(fMemento.getString(SHOW_ADVANCED_MODE).equals("true")); //$NON-NLS-1$
+		
+		fStartAction = new Action(PDERuntimeMessages.RegistryView_startAction_label) {
+			public void run() {
+				try {
+					List bundles = getSelectedBundles();
+					for(Iterator it = bundles.iterator(); it.hasNext();) {
+						Bundle bundle = (Bundle) it.next();
+						bundle.start();
+					}
+				} catch (BundleException e) {
+					PDERuntimePlugin.log(e);
+				}
 			}
 		};
 		
-		fAddAction = new Action("Add...") { //$NON-NLS-1$
+		fStopAction = new Action(PDERuntimeMessages.RegistryView_stopAction_label) {
 			public void run() {
-//				Tree tree = getUndisposedTree();
-//				if (tree == null)
-//					return;
-//				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.OPEN);
-//				String input = dialog.open();
-//				if (input == null)
-//					return;
-//				Object selection = tree.getSelection()[0].getData();
-//				if (selection instanceof PluginObjectAdapter)
-//					selection = ((PluginObjectAdapter)selection).getObject();
-//				if (!(selection instanceof Bundle))
-//					return;
-//				IContributor contributor = ContributorFactoryOSGi.createContributor((Bundle)selection);
-//				IExtensionRegistry registry = Platform.getExtensionRegistry();
-//				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
-//				try {
-//					registry.addContribution(new FileInputStream(input), contributor, false, null, null, token);
-//				} catch (FileNotFoundException e) {
-//				}
+				try {
+					List bundles = getSelectedBundles();
+					for(Iterator it = bundles.iterator(); it.hasNext();) {
+						Bundle bundle = (Bundle) it.next();
+						bundle.stop();
+					}
+				} catch (BundleException e) {
+					PDERuntimePlugin.log(e);
+				}
+			}
+		};
+		
+		fEnableAction = new Action(PDERuntimeMessages.RegistryView_enableAction_label) {
+			public void run() {
+				List bundles = getSelectedBundles();
+				State state = PDERuntimePlugin.getDefault().getState();
+				for(Iterator it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = (Bundle) it.next();
+					BundleDescription desc = state.getBundle(bundle.getBundleId());
+					DisabledInfo[] infos = state.getDisabledInfos(desc);
+					for (int i = 0; i < infos.length; i++) {
+						PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
+						platformAdmin.removeDisabledInfo(infos[i]);
+					}
+				}
+			}
+		};
+		
+		fDisableAction = new Action(PDERuntimeMessages.RegistryView_disableAction_label) {
+			public void run() {
+				List bundles = getSelectedBundles();
+				State state = PDERuntimePlugin.getDefault().getState();
+				for(Iterator it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = (Bundle) it.next();
+					BundleDescription desc = state.getBundle(bundle.getBundleId());
+					DisabledInfo info = new DisabledInfo("ui", "Bundle disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
+					PlatformAdmin platformAdmin = 
+						PDERuntimePlugin.getDefault().getPlatformAdmin();
+					platformAdmin.addDisabledInfo(info);
+				}
 			}
 		};
 		
@@ -545,6 +602,16 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		fCollapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
 	}
 	
+	protected void createAdvancedActions() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected void disabledAdvancedActions() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void updateTitle(){
 		if (fTreeViewer == null || fTreeViewer.getContentProvider() == null)
 			return;
@@ -556,4 +623,91 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			return null;
 		return fTreeViewer.getTree();
 	}
+	
+	// TODO hackish, should rewrite
+	private boolean isBundleSelected() {
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		if(selection != null) {			
+			Object[] elements = selection.toArray();
+			for(int i = 0; i < elements.length; i++) {
+				if(elements[i] instanceof PluginObjectAdapter) {
+					PluginObjectAdapter adapter = (PluginObjectAdapter) elements[i];
+					Object object = adapter.getObject();
+					if(!(object instanceof Bundle))
+						return false;
+				} else {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	private List getSelectedBundles() {
+		List bundles = new ArrayList();
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		if(selection != null) {
+			Object[] elements = selection.toArray();
+			for(int i = 0; i < elements.length; i++) {
+				if(elements[i] instanceof PluginObjectAdapter) {
+					PluginObjectAdapter adapter = (PluginObjectAdapter) elements[i];
+					Object object = adapter.getObject();
+					if(object instanceof Bundle)
+						bundles.add(object);
+				}
+			}
+		}
+		return bundles;
+	}
+	
+	private boolean selectedBundlesStarted() {
+		List bundles = getSelectedBundles();
+		for(Iterator it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = (Bundle) it.next();
+			if(bundle.getState() != Bundle.ACTIVE)
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean selectedBundlesStopped() {
+		List bundles = getSelectedBundles();
+		for(Iterator it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = (Bundle) it.next();
+			if(bundle.getState() == Bundle.ACTIVE)
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean selectedBundlesDisabled() {
+		List bundles = getSelectedBundles();
+		for(Iterator it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = (Bundle) it.next();
+			State state = 
+				PDERuntimePlugin.getDefault().getState();
+			BundleDescription desc = 
+				state.getBundle(bundle.getBundleId());
+			DisabledInfo[] infos = state.getDisabledInfos(desc);
+			if(infos.length == 0)
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean selectedBundlesEnabled() {
+		List bundles = getSelectedBundles();
+		for(Iterator it = bundles.iterator(); it.hasNext();) {
+			Bundle bundle = (Bundle) it.next();
+			State state = 
+				PDERuntimePlugin.getDefault().getState();
+			BundleDescription desc = 
+				state.getBundle(bundle.getBundleId());
+			DisabledInfo[] infos = state.getDisabledInfos(desc);
+			if(infos.length > 0)
+				return false;
+		}
+		return true;
+	}
+	
 }

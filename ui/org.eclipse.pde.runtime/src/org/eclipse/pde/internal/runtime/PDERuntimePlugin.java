@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -22,9 +29,12 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
+	public static final String ID = "org.eclipse.pde.runtime"; //$NON-NLS-1$
+	
 	private static PDERuntimePlugin inst;
 	private BundleContext fContext;
 	private ServiceTracker packageAdminTracker;
+	private ServiceTracker platformAdminTracker;
 	
 	private static boolean isBundleAvailable(String bundleID) {
 		Bundle bundle = Platform.getBundle(bundleID);
@@ -63,6 +73,13 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		return (PackageAdmin) packageAdminTracker.getService();
 	}
 	
+	public PlatformAdmin getPlatformAdmin() {
+		if (platformAdminTracker == null) {
+			return null;
+		}
+		return (PlatformAdmin) platformAdminTracker.getService();
+	}
+	
 	public static PDERuntimePlugin getDefault() {
 		return inst;
 	}
@@ -87,10 +104,35 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		
 		packageAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 		packageAdminTracker.open();
+		
+		platformAdminTracker = new ServiceTracker(context, PlatformAdmin.class.getName(), null);
+		platformAdminTracker.open();
 	}
 	
 	public BundleContext getBundleContext() {
 		return this.fContext;
+	}
+	
+	public State getState() {
+		return getPlatformAdmin().getState(false);
+	}
+	
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException) {
+			status = ((CoreException) e).getStatus();
+		} else if (e.getMessage() != null) {
+			status = new Status(
+					IStatus.ERROR,
+					ID,
+					IStatus.OK,
+					e.getMessage(),
+					e);
+		}
+		if(status != null)
+			getDefault().getLog().log(status);
 	}
 	
 	/**
@@ -101,6 +143,10 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		if (packageAdminTracker != null) {
 			packageAdminTracker.close();
 			packageAdminTracker = null;
+		}
+		if (platformAdminTracker != null) {
+			platformAdminTracker.close();
+			platformAdminTracker = null;
 		}
 		inst = null;
 	}

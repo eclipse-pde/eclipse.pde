@@ -22,9 +22,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.OverlayIcon;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
@@ -111,6 +115,13 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return fActivePluginImage;
 			case Bundle.UNINSTALLED:
 				return fUnresolvedPluginImage;
+			case Bundle.INSTALLED:
+				PlatformAdmin platformAdmin = 
+					PDERuntimePlugin.getDefault().getPlatformAdmin();
+				State state = platformAdmin.getState(false);
+				BundleDescription description = state.getBundle(bundle.getBundleId());
+				if((state.getDisabledInfos(description)).length > 0)
+					return fUnresolvedPluginImage;
 			default:
 				return fPluginImage;
 			}
