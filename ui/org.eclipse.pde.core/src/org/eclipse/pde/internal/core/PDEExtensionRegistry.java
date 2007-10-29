@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ListIterator;
 
 import org.eclipse.core.runtime.IContributor;
@@ -21,10 +21,13 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.spi.RegistryContributor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
@@ -110,17 +113,13 @@ public class PDEExtensionRegistry {
 			return PluginRegistry.getAllModels();
 		}
 		IExtension[] exts = point.getExtensions();
-		HashMap plugins = new HashMap();
+		HashSet plugins = new HashSet();
 		for (int i = 0; i < exts.length; i++) {
-			String pluginId = exts[i].getContributor().getName();
-			if (plugins.containsKey(pluginId))
-				continue;
-			IPluginModelBase base = PluginRegistry.findModel(pluginId);
-			if (base != null)
-				plugins.put(pluginId, base);
+			IPluginModelBase base = getPlugin(exts[i].getContributor());
+			if (base != null && !plugins.contains(base))
+				plugins.add(base);
 		}
-		java.util.Collection values = plugins.values();
-		return (IPluginModelBase[])values.toArray(new IPluginModelBase[values.size()]);
+		return (IPluginModelBase[])plugins.toArray(new IPluginModelBase[plugins.size()]);
 	}
 	
 	public IPluginModelBase findExtensionPointPlugin(String pointId) {
@@ -129,7 +128,7 @@ public class PDEExtensionRegistry {
 			return null;
 		}
 		IContributor contributor = point.getContributor();
-		return PluginRegistry.findModel(contributor.getName());
+		return getPlugin(contributor);
 	}
 	
 	private IExtensionPoint getExtensionPoint(String pointId) {
@@ -143,7 +142,7 @@ public class PDEExtensionRegistry {
 	public IPluginExtensionPoint findExtensionPoint(String pointId) {
 		IExtensionPoint extPoint = getExtensionPoint(pointId);
 		if (extPoint != null) {
-			IPluginModelBase model = PluginRegistry.findModel(extPoint.getContributor().getName());
+			IPluginModelBase model = getPlugin(extPoint.getContributor());
 			if (model != null) {
 				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 				for (int i = 0; i < points.length; i++) {
@@ -156,9 +155,8 @@ public class PDEExtensionRegistry {
 		}
 		return null;
 	}
-	
-	public IPluginExtension[] findExtensionsForPlugin(String pluginId) {
-		IPluginModelBase base = PluginRegistry.findModel(pluginId);
+		
+	public IPluginExtension[] findExtensionsForPlugin(IPluginModelBase base){
 		IContributor contributor = fStrategy.createContributor(base);
 		if (contributor == null)
 			return new IPluginExtension[0];
@@ -173,8 +171,7 @@ public class PDEExtensionRegistry {
 		return (IPluginExtension[]) list.toArray(new IPluginExtension[list.size()]);
 	}
 	
-	public IPluginExtensionPoint[] findExtensionPointsForPlugin(String pluginId) {
-		IPluginModelBase base = PluginRegistry.findModel(pluginId);
+	public IPluginExtensionPoint[] findExtensionPointsForPlugin(IPluginModelBase base) {
 		IContributor contributor = fStrategy.createContributor(base);
 		if (contributor == null) 
 			return new IPluginExtensionPoint[0];
@@ -212,6 +209,26 @@ public class PDEExtensionRegistry {
 			}
 		}
 		return (IExtension[]) list.toArray(new IExtension[list.size()]);
+	}
+	
+	// make sure we return the right IPluginModelBase when we have multiple versions of a plug-in Id
+	private IPluginModelBase getPlugin(IContributor icontributor) {
+		if (!(icontributor instanceof RegistryContributor))
+			return null;
+		RegistryContributor contributor = (RegistryContributor) icontributor;
+		long bundleId = Long.parseLong(contributor.getActualId());
+		BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
+		if (desc != null) 
+			return PluginRegistry.findModel(desc);
+		// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
+		ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
+		IPluginModelBase externalModels[] = entry.getExternalModels();
+		for (int j = 0; j < externalModels.length; j++) {
+			BundleDescription extDesc = externalModels[j].getBundleDescription();
+			if (extDesc != null && extDesc.getBundleId() == bundleId)
+				return externalModels[j];
+		}
+		return null;
 	}
 	
 	// Methods to add/remove listeners

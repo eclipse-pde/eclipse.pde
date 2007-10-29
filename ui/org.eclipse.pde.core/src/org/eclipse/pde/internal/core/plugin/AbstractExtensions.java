@@ -211,9 +211,9 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensions = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getId())));
+					fExtensions = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
 				else
-					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getId()));
+					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel()));
 			} else {
 				return Collections.EMPTY_LIST;
 			}
@@ -226,9 +226,9 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensionPoints = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getId())));
+					fExtensionPoints = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
 				else
-					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getId()));
+					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel()));
 			} else {
 				return Collections.EMPTY_LIST;
 			}
