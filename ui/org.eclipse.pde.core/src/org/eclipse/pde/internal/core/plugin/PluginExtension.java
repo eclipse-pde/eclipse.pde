@@ -93,7 +93,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			IPluginExtension target = (IPluginExtension) obj;
 			// Objects from the same model must be
 			// binary equal
-			if (target.getModel().equals(getModel()))
+			if (!target.getModel().equals(getModel()))
 				return false;
 			if (!stringEqualWithNull(target.getId(), getId()))
 				return false;
