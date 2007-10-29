@@ -672,7 +672,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (fLogs.isEmpty()) {
 			fLogs.add(new LogSession());
 		}
-		LogReader.addEntry(entry, ((LogSession)fLogs.get(0)).getEntries(), fMemento, true);
+		LogReader.addEntry(entry, ((LogSession)fLogs.get(fLogs.size() - 1)).getEntries(), fMemento, true);
 		asyncRefresh();
 	}
 
