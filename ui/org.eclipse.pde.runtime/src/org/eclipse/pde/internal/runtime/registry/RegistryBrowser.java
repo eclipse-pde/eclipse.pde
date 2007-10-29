@@ -524,12 +524,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
 		fShowAdvancedOperationsAction = new Action(PDERuntimeMessages.RegistryView_showAdvanced_label) {
-			public void run() {
-				if (fShowAdvancedOperationsAction.isChecked())
-					createAdvancedActions();
-				else
-					disabledAdvancedActions();
-			}
+			public void run() {}
 		};
 		fShowAdvancedOperationsAction.setChecked(fMemento.getString(SHOW_ADVANCED_MODE).equals("true")); //$NON-NLS-1$
 		
@@ -600,16 +595,6 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		fCollapseAllAction.setText(PDERuntimeMessages.RegistryView_collapseAll_label);
 		fCollapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
 		fCollapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
-	}
-	
-	protected void createAdvancedActions() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	protected void disabledAdvancedActions() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void updateTitle(){
