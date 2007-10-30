@@ -47,8 +47,8 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyDialog_activeSelection_title;
 	public static String SpyDialog_activeSelection_desc;
 	public static String SpyDialog_activeSelectionInterfaces_desc;
-	public static String ActivePreferenceDialogSection_title;
-	public static String ActivePreferenceDialogSection_desc;
+	public static String SpyDialog_activeDialogPageSection_title;
+	public static String SpyDialog_activeDialogPageSection_desc;
 
 	static {
 		// load message values from bundle file
