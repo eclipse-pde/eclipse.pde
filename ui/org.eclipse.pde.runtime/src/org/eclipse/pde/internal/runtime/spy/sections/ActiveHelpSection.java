@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Remy Suen <remy.suen@gmail.com> - bug 203451
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -14,10 +15,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IViewReference;
@@ -34,10 +39,11 @@ import org.eclipse.ui.part.ViewPart;
 
 public class ActiveHelpSection implements ISpySection {
 
-	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
+	private SpyFormToolkit toolkit;
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit,
 			ExecutionEvent event) {
+		this.toolkit = toolkit;
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
 		if(object == null)
@@ -45,23 +51,23 @@ public class ActiveHelpSection implements ISpySection {
 		
 		StringBuffer helpBuffer = new StringBuffer();
 		// process help
+		// TODO we need to make this cleaner... help processing is complicated atm
 		if(object instanceof PreferenceDialog) {
 			PreferenceDialog dialog = (PreferenceDialog) object;
 			IPreferencePage page = (IPreferencePage) dialog.getSelectedPage();
-			processChildren(page.getControl().getShell(), toolkit, helpBuffer);
+			processHelp(page.getControl().getShell(), helpBuffer);
+			processChildren(page.getControl(), helpBuffer);
 		} else if(object instanceof Dialog) {
 			Dialog dialog = (Dialog) object;
-			processChildren(dialog.getShell(), toolkit, helpBuffer);
+			processChildren(dialog.getShell(), helpBuffer);
 		} else {
 			helpBuffer.append(processControlHelp(event, toolkit));
 		}
 		
-		// ensure we actually have help
-		// TODO we need to make this cleaner... help processing is complicated atm
 		if(helpBuffer != null && helpBuffer.length() > 0) {
 			Section section = toolkit.createSection(form.getBody(),
 					ExpandableComposite.TITLE_BAR);
-			section.setText("Active Help"); //$NON-NLS-1$
+			section.setText(PDERuntimeMessages.SpyDialog_activeHelpSection_title);
 			
 			FormText text = toolkit.createFormText(section, true);
 			section.setClient(text);
@@ -70,24 +76,30 @@ public class ActiveHelpSection implements ISpySection {
 			td.grabHorizontal = true;
 			section.setLayoutData(td);
 			
+			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CONTEXTID_OBJ);
+			text.setImage("contextid", image); //$NON-NLS-1$
+			
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<form>"); //$NON-NLS-1$
 			buffer.append(helpBuffer.toString());
 			buffer.append("</form>"); //$NON-NLS-1$
-			text.setText(buffer.toString(), true, false);
+			String content = buffer.toString().replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+			text.setText(content, true, false);
 		}
 		
 	}
+	
+	private void processHelp(Widget widget, StringBuffer buffer) {
+		buffer.append(toolkit.createHelpIdentifierSection(widget));
+	}
 
-	private void processChildren(Control control, SpyFormToolkit toolkit, StringBuffer buffer) {
-		if(control.getData(HELP_KEY) != null) {
-			buffer.append("<li bindent=\"20\">" + control.toString() + " - " + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+	private void processChildren(Control control, StringBuffer buffer) {
+		processHelp(control, buffer);
 		if(control instanceof Composite) {
 			Composite composite = (Composite) control;
 			Control[] controls = composite.getChildren();
 			for (int i = 0; i < controls.length; i++) {
-				processChildren(controls[i], toolkit, buffer);
+				processChildren(controls[i], buffer);
 			}
 		}
 	}
@@ -137,21 +149,17 @@ public class ActiveHelpSection implements ISpySection {
 
 		}
 		if (shell != null) {
-			if (shell.getData(HELP_KEY) != null) { 
-				buffer.append("<li bindent=\"20\">" + shell.toString() + " - " + shell.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
+			buffer.append(toolkit.createHelpIdentifierSection(shell));
 			for (int i = 0; i < shell.getChildren().length; i++) {
-				processChildren(shell.getChildren()[i], toolkit, buffer);
+				processChildren(shell.getChildren()[i], buffer);
 			}
 		}
 		else if(control != null) {
-			if(control.getData(HELP_KEY) != null) { 
-				buffer.append("<li bindent=\"20\">" + control.toString() + " - " + control.getData(HELP_KEY) + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
+			buffer.append(toolkit.createHelpIdentifierSection(control));
 			if(control instanceof Composite) {
 				Composite parent = (Composite) control;
 				for(int i = 0; i < parent.getChildren().length; i++) {
-					processChildren(parent.getChildren()[i], toolkit, buffer);
+					processChildren(parent.getChildren()[i], buffer);
 				}
 			}
 		}

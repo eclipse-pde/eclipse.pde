@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -48,6 +48,7 @@ public class SpyFormToolkit extends FormToolkit {
 	
 	private Map bundleClassByName = new HashMap();
 	private SpyDialog dialog;
+	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 	
 	public SpyFormToolkit(SpyDialog dialog) {
 		super(Display.getDefault());
@@ -113,9 +114,14 @@ public class SpyFormToolkit extends FormToolkit {
 		return buffer.toString();
 	}
 	
-	// TODO create this convenience method
-	public String createHelpIdentifierSection(FormText text, String title, IWorkbenchPart part) {
+	public String createHelpIdentifierSection(Widget widget) {
 		StringBuffer buffer = new StringBuffer();
+		Object help = widget.getData(HELP_KEY);
+		if(help != null) {
+			buffer.append("<li bindent=\"20\" style=\"image\" value=\"contextid\">"); //$NON-NLS-1$
+			buffer.append(help);
+			buffer.append("</li>");  //$NON-NLS-1$
+		}
 		return buffer.toString();
 	}
 	

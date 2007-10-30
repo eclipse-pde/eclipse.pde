@@ -50,6 +50,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyDialog_activeDialogPageSection_title;
 	public static String SpyDialog_activeDialogPageSection_title2;
 	public static String SpyDialog_activeDialogPageSection_desc;
+	public static String SpyDialog_activeHelpSection_title;
 
 	static {
 		// load message values from bundle file

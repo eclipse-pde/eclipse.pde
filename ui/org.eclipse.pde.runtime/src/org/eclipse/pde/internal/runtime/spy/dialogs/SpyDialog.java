@@ -15,8 +15,9 @@ import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
-import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveDialogPageSection;
+import org.eclipse.pde.internal.runtime.spy.sections.ActiveHelpSection;
+import org.eclipse.pde.internal.runtime.spy.sections.ActivePartSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveSelectionSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveShellSection;
 import org.eclipse.pde.internal.runtime.spy.sections.ActiveWizardSection;
@@ -85,24 +86,24 @@ public class SpyDialog extends PopupDialog {
 		section = new ActiveDialogPageSection();
 		section.build(form, toolkit, event);
 		
-//		section = new ActiveHelpSection();
-//		section.build(form, toolkit, event);
+		section = new ActiveHelpSection();
+		section.build(form, toolkit, event);
 
 		parent.pack();
 		return composite;
 	}
 
-	protected Point getInitialLocation(Point initialSize) {
+	protected Point getInitialLocation(Point size) {
 		if (fAnchor == null) {
-			return super.getInitialLocation(initialSize);
+			return super.getInitialLocation(size);
 		}
 		Point point = fAnchor;
 		Rectangle monitor = getShell().getMonitor().getClientArea();
-		if (monitor.width < point.x + initialSize.x) {
-			point.x = Math.max(0, point.x - initialSize.x);
+		if (monitor.width < point.x + size.x) {
+			point.x = Math.max(0, point.x - size.x);
 		}
-		if (monitor.height < point.y + initialSize.y) {
-			point.y = Math.max(0, point.y - initialSize.y);
+		if (monitor.height < point.y + size.y) {
+			point.y = Math.max(0, point.y - size.y);
 		}
 		return point;
 	}
