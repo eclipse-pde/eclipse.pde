@@ -8,11 +8,14 @@
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Marcelo Paternostro <marcelop@ca.ibm.com> - bug 201105
+ *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 208137
  *******************************************************************************/
 
 package org.eclipse.pde.internal.runtime.spy;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -29,14 +32,17 @@ public class SpyIDEUtil {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		IResource resource = model != null ? model.getUnderlyingResource()
 				: null;
-		IJavaProject project;
+		IJavaProject project = null;
 		if (resource != null) { // project is open in workspace
 			project = JavaCore.create(resource.getProject());
 		} else {
 			SearchablePluginsManager manager = PDECore.getDefault()
 					.getSearchablePluginsManager();
-			project = manager.getProxyProject();
-			manager.addToJavaSearch(new IPluginModelBase[] { model });
+			try {
+				manager.createProxyProject(new NullProgressMonitor());
+				manager.addToJavaSearch(new IPluginModelBase[] { model });
+				project = manager.getProxyProject();
+			} catch (CoreException e) {}
 		}
 		if (project != null)
 			openInEditor(project, clazz);
