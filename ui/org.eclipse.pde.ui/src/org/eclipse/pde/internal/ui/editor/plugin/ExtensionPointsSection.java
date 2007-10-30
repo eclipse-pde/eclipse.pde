@@ -207,7 +207,7 @@ public class ExtensionPointsSection extends TableSection {
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		manager.add(new Separator());
-		if (selection instanceof IStructuredSelection && ((IStructuredSelection)selection).size() == 1) {
+		if (isEditable() && selection instanceof IStructuredSelection && ((IStructuredSelection)selection).size() == 1) {
 			PDERefactoringAction action = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ExtensionPointsSection_rename_label);
 			action.setSelection(((IStructuredSelection)selection).getFirstElement());
 			manager.add(action);

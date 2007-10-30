@@ -268,12 +268,14 @@ public class ManifestSourcePage extends XMLSourcePage {
 		if (!(element instanceof IPluginExtensionPoint)) 
 			return;
 		
-		if (fRenameAction == null)
-			fRenameAction = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ManifestSourcePage_renameActionText);
-		if (fRenameAction != null) {
-			fRenameAction.setSelection(element);
-			// add rename action after Outline. This is the same order as the hyperlink actions
-			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
+		if (isEditable()) {
+			if (fRenameAction == null)
+				fRenameAction = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ManifestSourcePage_renameActionText);
+			if (fRenameAction != null) {
+				fRenameAction.setSelection(element);
+				// add rename action after Outline. This is the same order as the hyperlink actions
+				menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
+			}
 		}
 	}
 	
