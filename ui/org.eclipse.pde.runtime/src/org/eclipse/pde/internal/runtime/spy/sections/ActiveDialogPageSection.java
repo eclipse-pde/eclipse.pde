@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
- *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 207868
+ *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 207868, 207904
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -41,16 +41,20 @@ public class ActiveDialogPageSection implements ISpySection {
 		if(object instanceof IPageChangeProvider) {
 			IPageChangeProvider pageChangeProvider = (IPageChangeProvider) object;
 			Object selectedPage = pageChangeProvider.getSelectedPage();
-			if (selectedPage instanceof IDialogPage) {
-				IDialogPage page = (IDialogPage) selectedPage;
-				clazz = page.getClass();
-
+			if (selectedPage != null) {
 				Section section = toolkit.createSection(form.getBody(),
 						ExpandableComposite.TITLE_BAR);
-				section.setText(NLS.bind(
-						PDERuntimeMessages.SpyDialog_activeDialogPageSection_title, 
-						page.getTitle()));
+				if (selectedPage instanceof IDialogPage) {
+					IDialogPage page = (IDialogPage) selectedPage;
+					clazz = page.getClass();
+					section.setText(NLS.bind(
+							PDERuntimeMessages.SpyDialog_activeDialogPageSection_title, 
+							page.getTitle()));
 
+				} else {
+					clazz = selectedPage.getClass();
+					section.setText(PDERuntimeMessages.SpyDialog_activeDialogPageSection_title2);
+				}
 				// the active page
 				FormText text = toolkit.createFormText(section, true);
 				section.setClient(text);
