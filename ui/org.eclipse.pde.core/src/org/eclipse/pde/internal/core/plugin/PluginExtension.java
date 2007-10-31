@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -91,10 +92,22 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			return false;
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension target = (IPluginExtension) obj;
-			// Objects from the same model must be
-			// binary equal
-			if (!target.getModel().equals(getModel()))
-				return false;
+			
+			// comparing the model is a little complicated since we need to allow text and non-text models representing the same file
+			if (target.getModel().getClass() == getModel().getClass()) {
+				if (!target.getModel().equals(getModel()))
+					return false;
+			} else {
+				// need to account for text model representing the same resource.  
+				IResource res = getModel().getUnderlyingResource();
+				if (res == null) {
+					// model is external model
+					if (!(target.getModel().getInstallLocation().equals(getModel().getInstallLocation())))
+						return false;
+				// model is a workspace model.  Need to compare underlyingResource because text and non-text model return differently formatted strings
+				} else if (!(res.equals(target.getModel().getUnderlyingResource())))
+					return false;
+			}
 			if (!stringEqualWithNull(target.getId(), getId()))
 				return false;
 			if (!stringEqualWithNull(target.getPoint(), getPoint()))
