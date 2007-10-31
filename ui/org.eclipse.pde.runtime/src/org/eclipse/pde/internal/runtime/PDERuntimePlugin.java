@@ -49,6 +49,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 			result = isBundleAvailable("org.eclipse.core.resources") //$NON-NLS-1$
 					&& isBundleAvailable("org.eclipse.pde.core") //$NON-NLS-1$
 					&& isBundleAvailable("org.eclipse.jdt.core") //$NON-NLS-1$
+					&& isBundleAvailable("org.eclipse.help") //$NON-NLS-1$
 					&& isBundleAvailable("org.eclipse.jdt.ui"); //$NON-NLS-1$
 		} catch (Throwable exception) {}
 		HAS_IDE_BUNDLES = result;

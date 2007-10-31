@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.runtime.spy;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.help.IContext;
+import org.eclipse.help.internal.context.Context;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
@@ -115,8 +117,17 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 	
 	public String createHelpIdentifierSection(Widget widget) {
+		return createHelpIdentifierSection(widget.getData(HELP_KEY));
+	}
+	
+	public String createHelpIdentifierSection(IContext context) {
+		if (context instanceof Context)
+			return createHelpIdentifierSection(((Context)context).getId());
+		return new String();
+	}
+	
+	private String createHelpIdentifierSection(Object help) {
 		StringBuffer buffer = new StringBuffer();
-		Object help = widget.getData(HELP_KEY);
 		if(help != null) {
 			buffer.append("<li bindent=\"20\" style=\"image\" value=\"contextid\">"); //$NON-NLS-1$
 			buffer.append(help);

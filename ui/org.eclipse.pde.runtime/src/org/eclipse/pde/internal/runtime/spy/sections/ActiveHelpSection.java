@@ -12,10 +12,13 @@
 package org.eclipse.pde.internal.runtime.spy.sections;
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.graphics.Image;
@@ -155,11 +158,22 @@ public class ActiveHelpSection implements ISpySection {
 			}
 		}
 		else if(control != null) {
-			buffer.append(toolkit.createHelpIdentifierSection(control));
-			if(control instanceof Composite) {
-				Composite parent = (Composite) control;
-				for(int i = 0; i < parent.getChildren().length; i++) {
-					processChildren(parent.getChildren()[i], buffer);
+			// if we don't have org.eclipse.help, we will have problems when trying to load IContextProvider
+			if (!PDERuntimePlugin.HAS_IDE_BUNDLES)
+				processChildren(control, buffer);
+			else {
+				IContextProvider provider = (IContextProvider)part.getAdapter(IContextProvider.class);
+				IContext context = (provider != null) ? provider.getContext(control) : null;
+				if (context != null) {
+					buffer.append(toolkit.createHelpIdentifierSection(context));
+				} else {
+					buffer.append(toolkit.createHelpIdentifierSection(control));
+				}
+				if(control instanceof Composite) {
+					Composite parent = (Composite) control;
+					for(int i = 0; i < parent.getChildren().length; i++) {
+						processChildren(parent.getChildren()[i], buffer);
+					}
 				}
 			}
 		}
