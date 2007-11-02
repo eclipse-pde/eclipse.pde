@@ -96,6 +96,47 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	
 	private void generateProposals(String currentContent, IProject project, final Collection c,
 			final int startOffset, final int length, final int typeScope) {
+		
+		
+		class TypePackageCompletionRequestor extends CompletionRequestor {
+			
+			public TypePackageCompletionRequestor() {
+				super(true);
+				setIgnored(CompletionProposal.PACKAGE_REF, false);
+				setIgnored(CompletionProposal.TYPE_REF, false);
+			}
+			
+			public void accept(CompletionProposal proposal) {
+				if (proposal.getKind() == CompletionProposal.PACKAGE_REF) {
+					String pkgName = new String(proposal.getCompletion());
+					addProposalToCollection(c, startOffset, length, pkgName,
+							pkgName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE));
+				} else {
+					boolean isInterface = Flags.isInterface(proposal.getFlags());
+					String completion = new String(proposal.getCompletion());
+					if (isInterface && typeScope == IJavaSearchConstants.CLASS ||
+							(!isInterface && typeScope == IJavaSearchConstants.INTERFACE) ||
+							completion.equals("Dummy2")) //$NON-NLS-1$
+						// don't want Dummy class showing up as option.
+						return;
+					int period = completion.lastIndexOf('.');
+					String cName = null, pName = null;
+					if (period == -1) {
+						cName = completion;
+					} else {
+						cName = completion.substring(period + 1 );
+						pName = completion.substring(0, period);
+					}
+					Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) :
+						PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
+					addProposalToCollection(c, startOffset, length, cName + " - " + pName, //$NON-NLS-1$
+							completion, image);
+				}
+			}
+			
+		}
+		
+		
 		try {
 			ICompilationUnit unit = getWorkingCopy(project);
 			if (unit == null) {
@@ -104,40 +145,8 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 			}
 			IBuffer buff = unit.getBuffer();
 			buff.setContents("class Dummy2 { " + currentContent); //$NON-NLS-1$
-			CompletionRequestor req = new CompletionRequestor() {
-
-				public void accept(CompletionProposal proposal) {
-					if (proposal.getKind() == CompletionProposal.PACKAGE_REF) {
-						String pkgName = new String(proposal.getCompletion());
-		    			addProposalToCollection(c, startOffset, length, pkgName,
-		    					pkgName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE));
-					} else {
-						boolean isInterface = Flags.isInterface(proposal.getFlags());
-						String completion = new String(proposal.getCompletion());
-						if (isInterface && typeScope == IJavaSearchConstants.CLASS ||
-								(!isInterface && typeScope == IJavaSearchConstants.INTERFACE) ||
-								completion.equals("Dummy2")) //$NON-NLS-1$
-							// don't want Dummy class showing up as option.
-							return;
-						int period = completion.lastIndexOf('.');
-						String cName = null, pName = null;
-						if (period == -1) {
-							cName = completion;
-						} else {
-							cName = completion.substring(period + 1 );
-							pName = completion.substring(0, period);
-						}
-						Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) :
-		    				PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-		    			addProposalToCollection(c, startOffset, length, cName + " - " + pName, //$NON-NLS-1$
-		    					completion, image);
-					}
-				}
-
-			};
-			for (int i = 1; i <= 20; i++) 
-				if (i != CompletionProposal.PACKAGE_REF && i != CompletionProposal.TYPE_REF) // ignore everything but class and package references
-					req.setIgnored(i, true);
+			
+			CompletionRequestor req = new TypePackageCompletionRequestor();
 			unit.codeComplete(15 + currentContent.length(), req);
 			unit.discardWorkingCopy();
 		} catch (JavaModelException e) {
