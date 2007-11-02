@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 208534
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
@@ -64,8 +65,26 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	 *            the new value.
 	 */
 	public void setValue(Object value) {
+		setValue(value, true);
+	}
+	
+	/**
+	 * Implements the superclass method by passing the new value to the option's
+	 * widget; updates to the combo can be supressed.
+	 * 
+	 * @param value
+	 *            the new value.
+	 * @param updateControl
+	 *            true to have the Combo's displayed value updated too, false to
+	 *            indicate that this isn't necessary.
+	 *            
+	 * @since 3.4
+	 */
+	protected void setValue(Object value, boolean updateControl) {
 		super.setValue(value);
-		setOptionValue(value);
+		if (updateControl) {
+			setOptionValue(value);
+		}
 	}
 	
 	protected abstract void setOptionValue(Object value);
@@ -104,5 +123,26 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	
 	protected boolean isBlocked() {
 		return fBlockListener;
+	}
+	
+	/**
+	 * Get the index (in the collection) of the choice
+	 * 
+	 * @param choice
+	 *            The key of the item
+	 * @return The position in the list, or -1 if not found
+	 */
+	protected int getIndexOfChoice(String choice) {
+		final int NOT_FOUND = -1;
+		if (choice == null) {
+			return NOT_FOUND;
+		}
+		for (int i = 0; i < fChoices.length; i++) {
+			String testChoice = fChoices[i][0];
+			if (choice.equals(testChoice)) {
+				return i;
+			}
+		}
+		return NOT_FOUND;
 	}
 }

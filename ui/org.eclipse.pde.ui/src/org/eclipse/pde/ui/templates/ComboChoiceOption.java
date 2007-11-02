@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 208534
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
@@ -65,7 +66,9 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 					return;
 				if (fCombo.getSelectionIndex() != -1) {
 					String[] choice = fChoices[fCombo.getSelectionIndex()];
-					setValue(choice[0]);
+					// Since this is being fired by the combo, suppress updates
+					// back to the control
+					setValue(choice[0], false);
 					getSection().validateOptions(ComboChoiceOption.this);
 				}
 			}
@@ -89,8 +92,18 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 	}
 	
 	protected void selectOptionChoice(String choice) {
-		fCombo.setText(choice);
-		if (fCombo.getSelectionIndex() == -1)
+		// choice is the value not the description
+		int index = getIndexOfChoice(choice);
+	
+		if( index == -1 ) {
+			// Set to the first item
+			// Using set Value to keep everything consistent
 			fCombo.select(0);
+			setValue(fChoices[0][0], false);
+		} else {
+			fCombo.select(index);
+		}
 	}
+
+
 }
