@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 208531
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 import java.util.Hashtable;
@@ -180,16 +181,17 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	public String getStringOption(String name) {
 		TemplateOption option = (TemplateOption) options.get(name);
 		if (option != null) {
-			if (option instanceof StringOption)
+			if (option instanceof StringOption) {
 				return ((StringOption) option).getText();
-			else if (option instanceof ComboChoiceOption) {
-				// Added by DG: selection of the choice option
-				// should also be considered if the selected
-				// value is a String.
-				ComboChoiceOption ccoption = (ComboChoiceOption)option;
-				Object value = ccoption.getValue();
-				if (value!=null && value instanceof String)
-					return (String)value;
+				
+			} else if (option instanceof AbstractChoiceOption) {
+				// This situation covers both Combos and Radio buttons
+				Object value = option.getValue();
+				if (value instanceof String) {
+					return (String) value;
+				} else if (value != null) {
+					return value.toString();
+				}
 			}
 		}
 		return null;
