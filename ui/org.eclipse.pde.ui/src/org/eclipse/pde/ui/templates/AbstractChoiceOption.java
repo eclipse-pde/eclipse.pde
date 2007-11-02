@@ -124,25 +124,4 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	protected boolean isBlocked() {
 		return fBlockListener;
 	}
-	
-	/**
-	 * Get the index (in the collection) of the choice
-	 * 
-	 * @param choice
-	 *            The key of the item
-	 * @return The position in the list, or -1 if not found
-	 */
-	protected int getIndexOfChoice(String choice) {
-		final int NOT_FOUND = -1;
-		if (choice == null) {
-			return NOT_FOUND;
-		}
-		for (int i = 0; i < fChoices.length; i++) {
-			String testChoice = fChoices[i][0];
-			if (choice.equals(testChoice)) {
-				return i;
-			}
-		}
-		return NOT_FOUND;
-	}
 }
