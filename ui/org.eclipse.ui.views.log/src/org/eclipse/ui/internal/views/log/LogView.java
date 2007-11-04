@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 207323
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -707,8 +707,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	public void setFocus() {
-		if (fTree != null && !fTree.isDisposed())
-			fTree.setFocus();
+		if (fFilteredTree != null && !fFilteredTree.isDisposed())
+			fFilteredTree.setFocus();
 	}
 
 	private void handleSelectionChanged(ISelection selection) {
