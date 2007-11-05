@@ -106,14 +106,6 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		return site;
 	}
 
-	/** 
-	 * This method MUST not be called. The given URL is a pointer to the location
-	 * of a site.xml file which describes our site, and we don't have this file.
-	 */
-//	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
-//		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Messages.error_incorrectDirectoryEntry, null));
-//	}
-
 	public BuildTimeSite createSiteMapModel() {
 		BuildTimeSite model = new BuildTimeSite();
 		model.setReportResolutionErrors(reportResolutionErrors);
@@ -160,8 +152,20 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	 */
 	private Collection findFeatureXMLs() {
 		Collection features = new ArrayList();
+		Collection foundFeatures = null;
 		for (int i = 0; i < sitePaths.length; i++) {
-			Collection foundFeatures = Utils.findFiles(new File(sitePaths[i]), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+			File file = new File(sitePaths[i], Constants.FEATURE_FILENAME_DESCRIPTOR);
+			if (file.exists()) {
+				//path is a feature itself
+				features.add(file);
+				continue;
+			} else if (new File(sitePaths[i], DEFAULT_FEATURE_LOCATION).exists()) {
+				//path is a eclipse root and contains a features subdirectory
+				foundFeatures = Utils.findFiles(new File(sitePaths[i]), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+			} else {
+				// treat as a flat directory containing features
+				foundFeatures = Utils.findFiles(new File(sitePaths[i]), ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+			}
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);
 		}

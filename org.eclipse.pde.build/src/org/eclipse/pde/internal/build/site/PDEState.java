@@ -278,13 +278,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
-	private void enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
+	private boolean enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
 		if (initialManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null)
-			return;
+			return true;
 
 		Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
 		if (generatedManifest == null)
-			return;
+			return false;
 
 		//merge manifests. The values from the generated manifest are added to the initial one. Values from the initial one are not deleted 
 		Enumeration enumeration = generatedManifest.keys();
@@ -293,6 +293,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (initialManifest.get(key) == null)
 				initialManifest.put(key, generatedManifest.get(key));
 		}
+		return true;
 	}
 
 	private void enforceClasspath(Dictionary manifest) {
@@ -305,8 +306,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		Dictionary manifest = basicLoadManifest(bundleLocation);
 		if (manifest == null)
 			return null;
-
-		enforceSymbolicName(bundleLocation, manifest);
+		
+		// require a Bundle-SymbolicName
+		if(!enforceSymbolicName(bundleLocation, manifest))
+			return null;
 		enforceClasspath(manifest);
 		return manifest;
 	}

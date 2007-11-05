@@ -11,9 +11,11 @@ package org.eclipse.pde.internal.build.site;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.JarFile;
+import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 
-public class BuildTimeSiteContentProvider /*extends SiteContentProvider*/ implements /*ISiteContentProvider,*/ IPDEBuildConstants {
+public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	private String installedBaseURL;
 	private String[] urls;
 	private PDEUIStateWrapper pdeUIState;
@@ -52,9 +54,12 @@ public class BuildTimeSiteContentProvider /*extends SiteContentProvider*/ implem
 		for (int i = 0; i < location.length; i++) {
 			File f = new File(location[i], DEFAULT_PLUGIN_LOCATION);
 			if (f.exists()) {
+				//location was the root of an eclipse install, list everything from the plugins directory
 				collectedElements.addAll(Arrays.asList(f.listFiles()));
-			} else {
+			} else if (new File(location[i], JarFile.MANIFEST_NAME).exists() || new File(location[i], Constants.PLUGIN_FILENAME_DESCRIPTOR).exists()) {
 				collectedElements.add(location[i]);
+			} else if (location[i].isDirectory()) {
+				collectedElements.addAll(Arrays.asList(location[i].listFiles()));
 			}
 		}
 		return collectedElements;
