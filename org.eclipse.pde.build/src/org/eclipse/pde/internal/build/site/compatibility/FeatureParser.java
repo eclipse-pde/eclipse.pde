@@ -24,13 +24,14 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.0
  */
-public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
+public class FeatureParser extends DefaultHandler implements IPDEBuildConstants {
 
 	private SAXParser parser;
 	private Feature result;
 	private URL url;
 	private StringBuffer characters = null;
 	private MultiStatus status = null;
+	private boolean hasImports = false;
 
 	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
@@ -66,7 +67,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 	public MultiStatus getStatus() {
 		return status;
 	}
-	
+
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		//		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if ("plugin".equals(localName)) { //$NON-NLS-1$
@@ -101,6 +102,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 			id = attributes.getValue("plugin"); //$NON-NLS-1$
 			entry = FeatureEntry.createRequires(id, attributes.getValue("version"), attributes.getValue("match"), attributes.getValue("filter"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+		hasImports = true;
 		result.addEntry(entry);
 	}
 
@@ -146,7 +148,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 				|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			error(NLS.bind(Messages.feature_parse_invalidIdOrVersion, (new String[] { id, ver})));
+			error(NLS.bind(Messages.feature_parse_invalidIdOrVersion, (new String[] {id, ver})));
 		} else {
 			result = createFeature(id, ver);
 
@@ -219,6 +221,9 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 	}
 
 	public void endElement(String uri, String localName, String qName) {
+		if ("requires".equals(localName) && !hasImports) { //$NON-NLS-1$
+			error(Messages.feature_parse_emptyRequires);
+		}
 		if (characters == null)
 			return;
 		if ("description".equals(localName)) { //$NON-NLS-1$
@@ -233,8 +238,9 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants{
 
 	private void error(String message) {
 		if (status == null) {
-			status = new MultiStatus(PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, Messages.exception_featureParse, null);	
+			String msg = NLS.bind(Messages.exception_featureParse, url.toExternalForm());
+			status = new MultiStatus(PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, msg, null);
 		}
-		status.add( new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, null));
+		status.add(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, null));
 	}
 }
