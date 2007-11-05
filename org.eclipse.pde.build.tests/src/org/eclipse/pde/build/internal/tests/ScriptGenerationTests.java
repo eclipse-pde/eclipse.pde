@@ -17,7 +17,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
@@ -169,7 +169,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile feature = buildFolder.getFile("features/sdk/feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
-		
+
 		FeatureEntry[] included = model.getIncludedFeatureReferences();
 		assertEquals(included.length, 3);
 		assertEquals(included[0].getId(), "foo");
@@ -228,6 +228,30 @@ public class ScriptGenerationTests extends PDETestCase {
 		for (int i = 0; i < idx.length - 1; i++) {
 			assertTrue(idx[i] < idx[i + 1]);
 		}
+	}
+
+	public void testBug207500() throws Exception {
+		IFolder buildFolder = newTest("207500");
+
+		Utils.generatePluginBuildProperties(buildFolder, null);
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.swt");
+		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0", manifestAdditions);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
+
+		IFile buildScript = buildFolder.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		assertNotNull(dot);
+		Object child = AntUtils.getFirstChildByName(dot, "path");
+		assertNotNull(child);
+		assertTrue(child instanceof Path);
+		String path = child.toString();
+
+		//Assert classpath has the swt fragment
+		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
+		assertTrue(path.indexOf(swtFragment) > 0);
 	}
 
 	public void testPluginPath() throws Exception {
@@ -313,5 +337,72 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(pluginEntryModels[1].getVersion(), "1.0.0.id_v");
 		assertEquals(pluginEntryModels[2].getId(), "foo.version");
 		assertEquals(pluginEntryModels[2].getVersion(), "2.1.2");
+	}
+
+	public void testBug207335() throws Exception {
+		IFolder buildFolder = newTest("207335");
+
+		Utils.generatePluginBuildProperties(buildFolder, null);
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.swt");
+		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0", manifestAdditions);
+
+		// give a non-existant directory for the buildDirectory, we are only building a plugin and
+		// no features so we shouldn't need it to exist.
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
+		properties.put("buildDirectory", buildFolder.getLocation().toOSString() + "/nothing");
+		properties.put("pluginPath", buildFolder.getLocation().toOSString());
+		generateScripts(buildFolder, properties);
+	}
+
+	public void testBug206679() throws Exception {
+		IFolder buildFolder = newTest("206679");
+
+		// test that our feature parser throws an exception on an empty requires
+		// which would imply that other source generation tests would catch the 
+		// bad features
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"foo\" version=\"1.0.0.qualifier\">   \n");
+		buffer.append("  <requires>                                                     \n");
+		buffer.append("  </requires>                                                    \n");
+		buffer.append("</feature>                                                        \n");
+
+		IFile featureXML = buildFolder.getFile("feature.xml");
+		Utils.writeBuffer(featureXML, buffer);
+
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		try {
+			factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		} catch (CoreException e) {
+			assertTrue(e.getStatus().toString().indexOf(Messages.feature_parse_emptyRequires) > 0);
+			return;
+		}
+		assertTrue(false);
+	}
+
+	public void testBug193393() throws Exception {
+		IFolder buildFolder = newTest("193393");
+		IFolder bundleA = Utils.createFolder(buildFolder, "bundleA");
+
+		Utils.generateBundle(bundleA, "bundleA");
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"bundleA"});
+
+		// move generated feature out into root and get rid of features directory
+		File featureA = buildFolder.getFolder("features/featureA").getLocation().toFile();
+		featureA.renameTo(new File(buildFolder.getLocation().toFile(), "featureA"));
+		buildFolder.getFolder("features").getLocation().toFile().delete();
+
+		// also stick a generic manifest under the feature just to be confusing
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Created-By: 1.4.2 (IBM Corporation)\n");
+		buffer.append("Ant-Version: Apache Ant 1.7.0\n");
+		IFolder meta = Utils.createFolder(buildFolder, "featureA/META-INF");
+		Utils.writeBuffer(meta.getFile("MANIFEST.MF"), buffer);
+
+		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA");
+
+		generateScripts(buildFolder, props);
 	}
 }
