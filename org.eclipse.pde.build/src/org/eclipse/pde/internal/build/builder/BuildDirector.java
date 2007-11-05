@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.build.builder;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.compatibility.Feature;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -99,8 +99,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			}
 			if (model == null) {
-				String message = NLS.bind(Messages.exception_missingPlugin, entry.getId() + "_" + entry.getVersion()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+				getSite(false).missingPlugin(entry.getId(), versionRequested, true);
 			}
 
 			associateModelAndEntry(model, entry);

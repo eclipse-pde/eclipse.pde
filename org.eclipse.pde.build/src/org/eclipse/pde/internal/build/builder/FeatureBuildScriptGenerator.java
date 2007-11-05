@@ -584,9 +584,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected List computeElements() throws CoreException {
-//		if (computedElements != null)
-//			return computedElements;
-
 		List computedElements = new ArrayList(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
@@ -597,21 +594,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
-			//we prefer a newly generated source plugin over a preexisting binary one. 
-//			if ((model == null || Utils.isBinary(model)) && getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
-//				generateEmbeddedSource(entry.getId());
-//				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
-//			}
 			if (model == null) {
 				String message = NLS.bind(Messages.exception_missingPlugin, entry.getId() + "_" + entry.getVersion()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 
-//			associateModelAndEntry(model, entry);
-
 			computedElements.add(model);
-//			collectElementToAssemble(pluginList[i]);
-//			collectSourcePlugins(pluginList[i], model);
 		}
 		return computedElements;
 	}

@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	public static String exception_missingFeature;
 	public static String exception_missingFile;
 	public static String exception_missingPlugin;
+	public static String exception_unresolvedPlugin;
 	public static String exception_writeScript;
 	public static String exception_pluginParse;
 	public static String exception_featureParse;
@@ -87,6 +88,7 @@ public class Messages extends NLS {
 
 	
 	public static String feature_parse_invalidIdOrVersion;
+	public static String feature_parse_emptyRequires;
 	
 	static {
 		// load message values from bundle file

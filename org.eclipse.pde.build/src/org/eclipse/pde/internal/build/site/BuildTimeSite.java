@@ -68,6 +68,15 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return repositoryVersions;
 	}
 
+	/**
+	 * Create a PluginRegistryConverter, use this to avoid @deprecated warnings
+	 * @deprecated
+	 * @return PDEState
+	 */
+	private PDEState createConverter() {
+		return new PluginRegistryConverter();
+	}
+	
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
 			// create the registry according to the site where the code to
@@ -89,7 +98,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				if (platformProperties != null)
 					state.setPlatformProperties(platformProperties);
 			} else {
-				state = new PluginRegistryConverter();
+				state = createConverter();
 			}
 			state.addBundles(provider.getPluginPaths());
 
@@ -132,6 +141,36 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return state;
 	}
 
+	public IStatus missingPlugin(String id, String version, boolean throwException ) throws CoreException {
+		BundleDescription bundle = state.getBundle(id, version, false);
+		if(bundle == null){
+			String message = NLS.bind(Messages.exception_missingPlugin, id + "_" + version); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
+			if(throwException)
+				throw new CoreException(status);
+			return status;
+		}
+		
+		//we expect this bundle to not be resolved, but just in case...
+		if(bundle.isResolved())
+			return null;
+		
+		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		ResolverError[] resolutionErrors = state.getState().getResolverErrors(bundle);
+		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
+
+		String message = NLS.bind(Messages.exception_unresolvedPlugin, id + '_' + version);
+		message += ":\n" + BuildTimeSite.getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$
+		for (int j = 0; j < versionErrors.length; j++) {
+			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionErrors[j]) + '\n';
+		}
+		
+		IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
+		if (throwException)
+			throw new CoreException(status);
+		return status;
+	}
+	
 	//Return whether the resolution error is caused because we are not building for the proper configurations.
 	private boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
 		Dictionary environment = new Hashtable(3);
@@ -160,7 +199,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return null;
 	}
 
-	private String getResolutionErrorMessage(ResolverError[] errors) {
+	static public String getResolutionErrorMessage(ResolverError[] errors) {
 		String errorMessage = ""; //$NON-NLS-1$
 		for (int i = 0; i < errors.length; i++) {
 			if ((errors[i].getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
@@ -169,7 +208,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return errorMessage;
 	}
 
-	public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
+	static public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
@@ -182,7 +221,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		return NLS.bind(Messages.unsatisfied_host, displayVersionConstraint(unsatisfied));
 	}
 
-	private String displayVersionConstraint(VersionConstraint constraint) {
+	static private String displayVersionConstraint(VersionConstraint constraint) {
 		VersionRange versionSpec = constraint.getVersionRange();
 		if (versionSpec == null)
 			return constraint.getName();

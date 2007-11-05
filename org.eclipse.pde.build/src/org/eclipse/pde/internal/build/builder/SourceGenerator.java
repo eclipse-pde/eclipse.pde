@@ -174,8 +174,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
 				model = getSite().getRegistry().getResolvedBundle((String) items[0], ((Version) items[1]).toString());
 				if (model == null) {
-					String message = NLS.bind(Messages.exception_missingPlugin, extraEntries[i]);
-					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, extraEntries[i], EXCEPTION_PLUGIN_MISSING, message, null));
+					IStatus status = getSite().missingPlugin((String)items[0], ((Version) items[1]).toString(), false);
+					BundleHelper.getDefault().getLog().log(status);
 					continue;
 				}
 				entry = new FeatureEntry(model.getSymbolicName(), model.getVersion().toString(), true);
