@@ -201,7 +201,8 @@ public class SourceTests extends PDETestCase {
 	}
 
 	// Test the use of plugin@foo;unpack="false" in the generate.feature property 
-	public void testBug107372() throws Exception {
+	// Test Source generation when source feature is name different from originating feature
+	public void testBug107372_208617() throws Exception {
 		IFolder buildFolder = newTest("107372");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder bundleDoc = Utils.createFolder(buildFolder, "plugins/bundleDoc");
@@ -222,9 +223,10 @@ public class SourceTests extends PDETestCase {
 		outputStream.close();
 
 		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		//test bug 208617 by naming the source feature something other than just originating feature + .source
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "source"}, null);
 		Properties properties = new Properties();
-		properties.put("generate.feature@rcp.source", "rcp,plugin@bundleDoc;unpack=\"false\"");
+		properties.put("generate.feature@source", "rcp,plugin@bundleDoc;unpack=\"false\"");
 		Utils.storeBuildProperties(sdk, properties);
 
 		//RCP Feature
@@ -238,6 +240,7 @@ public class SourceTests extends PDETestCase {
 		//check that it is there in the result and is in jar form.
 		Set entries = new HashSet();
 		entries.add("eclipse/plugins/bundleDoc_1.0.0.jar");
+		entries.add("eclipse/plugins/source_1.0.0/src/bundleA_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
 

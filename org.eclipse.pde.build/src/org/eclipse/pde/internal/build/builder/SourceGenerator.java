@@ -55,8 +55,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		this.director = director;
 	}
 
-	private void initialize(BuildTimeFeature feature) throws CoreException {
+	private void initialize(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
 		featureRootLocation = feature.getRootLocation();
+		setSourceFeatureId(sourceFeatureName);
 		collectSourceEntries(feature);
 	}
 
@@ -131,8 +132,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	 * @throws Exception 
 	 */
 	public BuildTimeFeature generateSourceFeature(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
-		initialize(feature);
-		setSourceFeatureId(sourceFeatureName);
+		initialize(feature, sourceFeatureName);
 		BuildTimeFeature sourceFeature = createSourceFeature(feature);
 
 		associateExtraEntries(sourceFeature);
