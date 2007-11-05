@@ -45,6 +45,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -407,7 +408,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	private IClasspathEntry[] getClassPathEntries(IProject project,
+	private IClasspathEntry[] getClassPathEntries(IJavaProject project,
 			IFieldData data) {
 		IClasspathEntry[] internalClassPathEntries = getInternalClassPathEntries(
 				project, data);
@@ -419,9 +420,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if(data instanceof AbstractFieldData) {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}
-		
+		ClasspathComputer.setComplianceOptions(project, ExecutionEnvironmentAnalyzer.getCompliance(executionEnvironment));
 		entries[entries.length - 2] = ClasspathComputer.createJREEntry(executionEnvironment);
 		entries[entries.length - 1] = ClasspathComputer.createContainerEntry();
+		
 		return entries;
 	}
 
@@ -446,13 +448,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				.size()]);
 	}
 
-	protected IClasspathEntry[] getInternalClassPathEntries(IProject project,
+	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project,
 			IFieldData data) {
 		if (data.getSourceFolderName() == null) {
 			return new IClasspathEntry[0];
 		}
 		IClasspathEntry[] entries = new IClasspathEntry[1];
-		IPath path = project.getFullPath().append(data.getSourceFolderName());
+		IPath path = 
+			project.getProject().getFullPath().append(data.getSourceFolderName());
 		entries[0] = JavaCore.newSourceEntry(path);
 		return entries;
 	}
@@ -504,7 +507,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					data.getOutputFolderName());
 			javaProject.setOutputLocation(path, null);
 		}
-		IClasspathEntry[] entries = getClassPathEntries(project, data);
+		IClasspathEntry[] entries = getClassPathEntries(javaProject, data);
 		javaProject.setRawClasspath(entries, null);
 	}
 
