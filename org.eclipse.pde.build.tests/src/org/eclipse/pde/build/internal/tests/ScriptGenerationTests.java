@@ -250,7 +250,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		String path = child.toString();
 
 		//Assert classpath has the swt fragment
-		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
+		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS();
+		if(!Platform.getWS().equals("carbon"))
+			swtFragment += '.' + Platform.getOSArch();
 		assertTrue(path.indexOf(swtFragment) > 0);
 	}
 
