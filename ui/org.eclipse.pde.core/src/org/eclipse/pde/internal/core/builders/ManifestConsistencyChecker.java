@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -39,6 +43,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private int MANIFEST = 0x1;
 	private int EXTENSIONS = 0x2;
 	private int BUILD = 0x4;
+	private int STRUCTURE = 0x8;
 	
 	private static boolean DEBUG = false;
 	private static IProject[] EMPTY_LIST = new IProject[0];
@@ -91,10 +96,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	class SelfVisitor implements IResourceDeltaVisitor {		
 		int type = 0;
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta != null && type != (MANIFEST|EXTENSIONS|BUILD)) {
+			if (delta != null && type != (MANIFEST|EXTENSIONS|BUILD|STRUCTURE)) {
 				int kind = delta.getKind();
 				if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED) {
-					type = MANIFEST | EXTENSIONS | BUILD;
+					type = MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
 					if (DEBUG) {
 						System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 						System.out.print(delta.getResource().getProjectRelativePath().toString());
@@ -104,7 +109,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					return false;
 				}
 				IResource resource = delta.getResource();
-				if (resource instanceof IFile) {
+				// by ignoring derived resources we should scale a bit better.
+				if (resource.isDerived())
+					return false;
+				if (resource.getType() == IResource.FILE) {
 					String name = resource.getName();
 					IPath path = resource.getProjectRelativePath();
 					if (isLocalizationFile(resource)) { 
@@ -138,7 +146,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					}
 				}
 			}
-			return type != (MANIFEST|EXTENSIONS|BUILD);
+			return type != (MANIFEST|EXTENSIONS|BUILD|STRUCTURE);
 		}		
 		public int getType() {
 			return type;
@@ -185,7 +193,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (DEBUG) {
 				System.out.println("Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			return MANIFEST|EXTENSIONS|BUILD;
+			return MANIFEST|EXTENSIONS|BUILD|STRUCTURE;
 		}	
 		
 		// the project has been "touched" by PluginRebuilder to indicate
@@ -226,6 +234,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private void validateProject(int type, IProgressMonitor monitor) {
+		monitor.beginTask(PDECoreMessages.ManifestConsistencyChecker_builderTaskName, getWorkAmount(type));
+		if ((type & STRUCTURE) != 0)
+			validateProjectStructure(type, new SubProgressMonitor(monitor, 1));
+		
 		if ((type & MANIFEST|EXTENSIONS) != 0) {
 			IProject project = getProject();
 			IFile file = project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
@@ -237,11 +249,36 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			} else if ((type & MANIFEST) != 0){	
 				IFile manifestFile = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 				if (manifestFile.exists())
-					validateManifestFile(manifestFile, monitor);
+					validateManifestFile(manifestFile, new SubProgressMonitor(monitor, 1));
 			}
 		}
-		if ((type & BUILD) != 0)
-			validateBuildProperties(monitor);
+		if ((type & BUILD) != 0) {
+			validateBuildProperties(new SubProgressMonitor(monitor, 1));
+		}
+	}
+	
+	private int getWorkAmount(int type) {
+		int work = 1;
+		if ((type & MANIFEST|EXTENSIONS) != 0) 		++work;
+		if ((type & BUILD) != 0) 					++work;
+		return work;
+	}
+
+	private void validateProjectStructure(int type, IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+		// clear markers from project
+		IProject project = getProject();
+		try {
+			project.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+		}
+		
+		// make sure build.properties exists
+		validateBuildPropertiesExists(project);
+		
+		// if META-INF exists, make sure MANIFEST.MF exists in correct casing
+		validateManifestCasing(project);
 	}
 
 	private void validateManifestFile(IFile file, IProgressMonitor monitor) {
@@ -295,10 +332,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (monitor.isCanceled())
 			return;
 		IProject project = getProject();
-		try {
-			project.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
+		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		if (file.exists()) {
+			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
+			BuildErrorReporter ber = new BuildErrorReporter(file);
+			ber.validateContent(monitor);
 		}
+	}
+	
+	// Will place a marker on the project if the build.properties does not exist
+	private void validateBuildPropertiesExists(IProject project) {
 		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {
 			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
@@ -311,10 +354,55 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
 			} catch (CoreException e) {
 			}
-		} else {
-			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
-			BuildErrorReporter ber = new BuildErrorReporter(file);
-			ber.validateContent(monitor);
+		}
+	}
+	
+	// Will place a marker on either the project (if META-INF exist but not a MANIFEST.MF) or on the MANIFEST.MF file with incorrect casing.
+	private void validateManifestCasing(IProject project) {
+		IFolder manifestFolder = project.getFolder("META-INF"); //$NON-NLS-1$
+		if (manifestFolder.exists()) {
+			try {
+				manifestFolder.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ONE);
+			} catch (CoreException e1) {
+			}
+			// exit if the proper casing exists (should be majority of the time)
+			if (manifestFolder.getFile("MANIFEST.MF").exists()) //$NON-NLS-1$
+				return;
+			
+			IPath location = manifestFolder.getLocation();
+			if (location != null) {
+				File metaFolder = location.toFile();
+				String[] fileList = metaFolder.list(new ManifestFilter());
+
+				// check for misspelled MANIFEST.MF files
+				for (int i = 0; i < fileList.length; i++) {
+					String fileName = fileList[i];
+					IFile currentFile = manifestFolder.getFile(fileName);
+					try {
+						IMarker marker = currentFile.createMarker(PDEMarkerFactory.MARKER_ID);
+						marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+						marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestMisspelled);
+					} catch (CoreException e) {
+					}
+				}
+
+				// no MANIFEST.MF at all -> flag the project
+				if (fileList.length == 0) {
+					try {
+						IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
+						marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+						marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestDoesNotExist);
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+	}
+	
+	class ManifestFilter implements FilenameFilter {
+
+		public boolean accept(File dir, String name) {
+			return (name.equalsIgnoreCase("MANIFEST.MF")); //$NON-NLS-1$
 		}
 	}
 	
