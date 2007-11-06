@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 190717
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.swt.SWT;
@@ -44,6 +45,19 @@ public abstract class SharedPartWithButtons extends SharedPart {
 			fButtons[index].setEnabled(enabled);
 		}
 	}
+	
+	/**
+	 * Set the specified button's visibility.
+	 * Fix for defect 190717.
+	 * @param index The index of the button to be changed
+	 * @param visible true if the button is to be shown, false if hidden
+	 */
+	public void setButtonVisible(int index, boolean visible) {
+		if (fButtons != null && index >= 0 && fButtons.length > index) {
+			fButtons[index].setVisible(visible);
+		}
+	}
+	
 	protected abstract void createMainControl(Composite parent, int style,
 			int span, FormToolkit toolkit);
 	protected abstract void buttonSelected(Button button, int index);

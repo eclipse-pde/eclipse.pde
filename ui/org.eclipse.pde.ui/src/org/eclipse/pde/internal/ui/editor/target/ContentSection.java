@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 187646
+ *     Les Jones <lesojones@gmail.com> - bug 190717
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
@@ -304,6 +305,15 @@ public class ContentSection extends TableSection {
 		boolean pluginTab = (fLastTab == 0);
 		table.setButtonEnabled(3, isEditable() && pluginTab && !useAllPlugins);
 		table.setButtonEnabled(4, isEditable() && pluginTab && !useAllPlugins && hasItems);
+		
+		// Fix for defect 190717
+		// Only show the working set and required buttons on the plugin tab
+		// (retaining the existing enablement logic in the rare case the 
+		// platform doesn't support control.visible=false; I can't imagine
+		// how this would happen, but better to be safe?)
+		table.setButtonVisible(3, pluginTab);
+		table.setButtonVisible(4, pluginTab);
+
 	}
 	
 	protected boolean canPaste(Object target, Object[] objects) {
