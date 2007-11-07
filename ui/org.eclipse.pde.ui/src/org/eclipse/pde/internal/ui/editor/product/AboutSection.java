@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.friese@gentleware.com> - bug 201956
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -25,7 +26,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
+import org.eclipse.pde.internal.ui.util.FileExtensionsFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -147,7 +148,10 @@ public class AboutSection extends PDESection {
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.AboutSection_imgTitle);  
 		dialog.setMessage(PDEUIMessages.AboutSection_imgMessage);  
-		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
+		FileExtensionsFilter filter = new FileExtensionsFilter();
+		filter.addFileExtension("gif"); //$NON-NLS-1$
+		filter.addFileExtension("png"); //$NON-NLS-1$
+		dialog.addFilter(filter);
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {
