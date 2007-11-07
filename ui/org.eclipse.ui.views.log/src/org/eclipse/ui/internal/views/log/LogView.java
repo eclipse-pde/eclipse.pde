@@ -172,10 +172,10 @@ public class LogView extends ViewPart implements ILogListener {
 
 		readLogFile();
 		createViewer(composite);
+		getSite().setSelectionProvider(fFilteredTree.getViewer());
 		createActions();
 		fClipboard = new Clipboard(fTree.getDisplay());
 		fTree.setToolTipText(""); //$NON-NLS-1$
-		getSite().setSelectionProvider(fFilteredTree.getViewer());
 		initializeViewerSorter();
 
 		makeHoverShell();
