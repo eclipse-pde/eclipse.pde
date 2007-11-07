@@ -73,6 +73,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BUILD_RESULT_FOLDER = "build.result.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_TYPE = "build.type"; //$NON-NLS-1$
 	public static final String PROPERTY_DESTINATION_TEMP_FOLDER = "destination.temp.folder"; //$NON-NLS-1$
+	public static final String PROPERTY_SOURCE_DESTINATION_FOLDER = "source.destination.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 	public static final String PROPERTY_FEATURE = "feature"; //$NON-NLS-1$
 	public static final String PROPERTY_ECLIPSE_BASE = "eclipse.base"; //$NON-NLS-1$

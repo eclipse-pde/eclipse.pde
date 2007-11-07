@@ -758,7 +758,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
 		if (!buildProperty.exists()) {
 			copiedFiles.add(Constants.PLUGIN_FILENAME_DESCRIPTOR); //Because the plugin.xml is not copied, we need to add it to the file
-			copiedFiles.add("src/**/*.zip"); //$NON-NLS-1$
+			copiedFiles.add("src/**"); //$NON-NLS-1$
 			copiedFiles.add(Constants.BUNDLE_FILENAME_DESCRIPTOR);//Because the manifest.mf is not copied, we need to add it to the file
 			Properties sourceBuildProperties = new Properties();
 			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$

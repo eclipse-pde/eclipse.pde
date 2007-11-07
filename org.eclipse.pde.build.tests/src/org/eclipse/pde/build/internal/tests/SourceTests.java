@@ -13,6 +13,8 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -65,6 +67,7 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/features/a.feature.sdk_1.0.0/feature.xml");
 		entries.add("eclipse/features/a.feature.source_1.0.0/feature.xml");
 		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/src.zip");
+		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/about.html");			//tests bug 209092
 		assertZipContents(buildFolder, "I.TestBuild/a.feature.sdk.zip", entries);
 
 		entries.add("eclipse/features/a.feature_1.0.0/feature.xml");
@@ -251,12 +254,20 @@ public class SourceTests extends PDETestCase {
 		IFolder bundleB = Utils.createFolder(buildFolder, "plugins/bundleB");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateBundle(bundleA, "bundleA");
+		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
+		Properties buildProperties = new Properties();
+		buildProperties.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleA, buildProperties);
 		File src = new File(bundleA.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
 		FileOutputStream outputStream = new FileOutputStream(src);
 		outputStream.write("//L33T CODEZ\n".getBytes());
 		outputStream.close();
+		File about = new File(bundleA.getLocation().toFile(), "about.html");
+		outputStream = new FileOutputStream(about);
+		outputStream.write("about\n".getBytes());
+		outputStream.close();
+		
 
 		Utils.generateBundle(bundleB, "bundleB");
 		src = new File(bundleB.getLocation().toFile(), "src/b.java");
@@ -275,7 +286,7 @@ public class SourceTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA", "bundleB"});
 
 		Utils.generateAllElements(buildFolder, "sdk");
-		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
@@ -285,6 +296,17 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/plugins/bundleB.source_1.0.0.jar");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 
+		ZipFile zip = new ZipFile(buildFolder.getFile("I.TestBuild/eclipse.zip").getLocation().toFile());
+		ZipEntry entry = zip.getEntry("eclipse/plugins/bundleA.source_1.0.0.jar");
+		InputStream in = new BufferedInputStream(zip.getInputStream(entry));
+		IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
+		org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
+		
+		entries.clear();
+		entries.add("about.html");
+		assertZipContents(buildFolder, "bundleA.source_1.0.0.jar", entries);
+		
 		IFile feature = buildFolder.getFile("features/rcp.source/feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());

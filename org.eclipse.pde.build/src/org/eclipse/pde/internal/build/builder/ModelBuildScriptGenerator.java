@@ -431,7 +431,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		Properties copyParams = new Properties();
-		copyParams.put(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER), baseDestination.toString());
+		copyParams.put(PROPERTY_SOURCE_DESTINATION_FOLDER, baseDestination.toString());
 		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, copyParams);
 
 		if (customBuildCallbacks != null) {
@@ -453,15 +453,19 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 
+		Properties copyParams = new Properties();
+		copyParams.put(PROPERTY_SOURCE_DESTINATION_FOLDER, baseDestination.toString());
+
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
 		for (int i = 0; i < availableJars.length; i++) {
 			String jar = availableJars[i].getName(true);
 			String srcName = getSRCName(jar);
-			script.printAntCallTask("copy." + srcName, true, null); //$NON-NLS-1$
+			
+			script.printAntCallTask("copy." + srcName, true, copyParams); //$NON-NLS-1$
 		}
 
-		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, null);
+		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, copyParams);
 
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -473,7 +477,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_COPY_SRC_INCLUDES, TARGET_INIT, null, null, null);
 
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER));
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
 		if (include != null || exclude != null) {
@@ -1201,7 +1205,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0) {
 			String parent = new Path(srcName).removeLastSegments(1).toString();
-			String toDir = Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER) + '/' + parent;
+			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + parent;
 			script.printCopyTask(null, toDir, fileSets, true, true);
 		}
 		script.printTargetEnd();
