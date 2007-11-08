@@ -432,7 +432,7 @@ public class LogView extends ViewPart implements ILogListener {
 		ctrl.setVisible(visible);
 		gd.verticalIndent = 8;
 		if(!visible) // reset control if we aren't visible
-			fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
+			fFilteredTree.getFilterControl().setText(Messages.LogView_show_filter_initialText);
 		fFilteredTree.layout(false);
 	}
 	
@@ -450,6 +450,7 @@ public class LogView extends ViewPart implements ILogListener {
 				return false;
 			}			
 		});
+		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);
 		fTree = fFilteredTree.getViewer().getTree();
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
