@@ -57,7 +57,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.internal.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandImageService;
 
 public class CommandList {
 
