@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931
+ *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -70,7 +71,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -113,6 +113,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
 	private static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
 	public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
+	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
 
@@ -159,15 +160,24 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action fOpenLogAction;
 	private Action fExportAction;
 	
+	/**
+	 * Constructor
+	 */
 	public LogView() {
 		fLogs = new ArrayList();
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		FillLayout layout = new FillLayout(SWT.VERTICAL);
-		layout.marginHeight = 8;
+		GridLayout layout = new GridLayout();
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 
 		readLogFile();
@@ -184,6 +194,9 @@ public class LogView extends ViewPart implements ILogListener {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTree, IHelpContextIds.LOG_VIEW);
 	}
 
+	/**
+	 * Creates the actions for the viewsite action bars
+	 */
 	private void createActions() {
 		IActionBars bars = getViewSite().getActionBars();
 
@@ -220,6 +233,8 @@ public class LogView extends ViewPart implements ILogListener {
 
 		fActivateViewAction = createActivateViewAction();
 		mgr.add(fActivateViewAction);
+		
+		mgr.add(createShowTextFilter());
 
 		createPropertiesAction();
 
@@ -252,7 +267,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Menu menu = popupMenuManager.createContextMenu(fTree);
 		fTree.setMenu(menu);
 	}
-
+	
 	private Action createActivateViewAction() {
 		Action action = new Action(Messages.LogView_activate) { //       	
 			public void run() {
@@ -387,9 +402,43 @@ public class LogView extends ViewPart implements ILogListener {
 		return action;
 	}
 
+	/**
+	 * Creates the Show Text Filter view menu action 
+	 * @return the new action for the Show Text Filter 
+	 */
+	private Action createShowTextFilter() {
+		Action action = new Action(Messages.LogView_show_filter_text) { 
+			public void run() {
+				showFilterText(isChecked());
+			}
+		};
+		boolean visible = fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue();
+		action.setChecked(visible);
+		showFilterText(visible);
+		return action;
+	}
+	
+	/**
+	 * Shows/hides the filter text control from the filtered tree. This method also sets the 
+	 * P_SHOW_FILTER_TEXT preference to the visible state
+	 * 
+	 * @param visible if the filter text control should be shown or not
+	 */
+	private void showFilterText(boolean visible) {
+		fMemento.putBoolean(P_SHOW_FILTER_TEXT, visible);
+		Composite ctrl = fFilteredTree.getFilterControl().getParent();
+		GridData gd = (GridData) ctrl.getLayoutData();
+		gd.exclude = !visible;
+		ctrl.setVisible(visible);
+		gd.verticalIndent = 8;
+		if(!visible) // reset control if we aren't visible
+			fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
+		fFilteredTree.layout(false);
+	}
+	
 	private void createViewer(Composite parent) {
-		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, new PatternFilter() {
 
+		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, new PatternFilter() {
 			protected boolean isLeafMatch(Viewer viewer, Object element) {
 				if (element instanceof LogEntry) {
 					LogEntry logEntry = (LogEntry) element;				
@@ -401,7 +450,6 @@ public class LogView extends ViewPart implements ILogListener {
 				return false;
 			}			
 		});
-		
 		fTree = fFilteredTree.getViewer().getTree();
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
@@ -509,6 +557,7 @@ public class LogView extends ViewPart implements ILogListener {
 			fTextShell.dispose();	
 		LogReader.reset();
 		fLabelProvider.disconnect(this);
+		fFilteredTree.dispose();
 		super.dispose();
 	}
 
@@ -786,30 +835,42 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void initializeMemento() {
-		if (fMemento.getString(P_USE_LIMIT) == null)
+		if (fMemento.getString(P_USE_LIMIT) == null) {
 			fMemento.putString(P_USE_LIMIT, "true"); //$NON-NLS-1$
-		if (fMemento.getInteger(P_LOG_LIMIT) == null)
+		}
+		if (fMemento.getInteger(P_LOG_LIMIT) == null) {
 			fMemento.putInteger(P_LOG_LIMIT, 50);
-		if (fMemento.getString(P_LOG_INFO) == null)
+		}
+		if (fMemento.getString(P_LOG_INFO) == null) {
 			fMemento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
-		if (fMemento.getString(P_LOG_WARNING) == null)
+		}
+		if (fMemento.getString(P_LOG_WARNING) == null) {
 			fMemento.putString(P_LOG_WARNING, "true"); //$NON-NLS-1$
-		if (fMemento.getString(P_LOG_ERROR) == null)
+		}
+		if (fMemento.getString(P_LOG_ERROR) == null) {
 			fMemento.putString(P_LOG_ERROR, "true"); //$NON-NLS-1$
-		if (fMemento.getString(P_SHOW_ALL_SESSIONS) == null)
+		}
+		if (fMemento.getString(P_SHOW_ALL_SESSIONS) == null) {
 			fMemento.putString(P_SHOW_ALL_SESSIONS, "true"); //$NON-NLS-1$
+		}
 		Integer width = fMemento.getInteger(P_COLUMN_1);
-		if (width == null || width.intValue() == 0)
+		if (width == null || width.intValue() == 0) {
 			fMemento.putInteger(P_COLUMN_1, 300);
+		}
 		width = fMemento.getInteger(P_COLUMN_2);
-		if (width == null || width.intValue() == 0)
+		if (width == null || width.intValue() == 0) {
 			fMemento.putInteger(P_COLUMN_2, 150);
+		}
 		width = fMemento.getInteger(P_COLUMN_3);
-		if (width == null || width.intValue() == 0)
+		if (width == null || width.intValue() == 0) {
 			fMemento.putInteger(P_COLUMN_3, 150);
-		if (fMemento.getString(P_ACTIVATE) == null)
+		}
+		if (fMemento.getString(P_ACTIVATE) == null) {
 			fMemento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
-
+		}
+		if(fMemento.getBoolean(P_SHOW_FILTER_TEXT) == null) {
+			fMemento.putBoolean(P_SHOW_FILTER_TEXT, true);
+		}
 		fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
 		fMemento.putInteger(P_ORDER_TYPE, DATE);
 	}
@@ -1112,6 +1173,7 @@ public class LogView extends ViewPart implements ILogListener {
 			int order = p.getInt(P_ORDER_VALUE);
 			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
 			fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
+			fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT));
 		} catch (NumberFormatException e) {
 			fMemento.putInteger(P_LOG_LIMIT, 50);
 			fMemento.putInteger(P_COLUMN_1, 300);
@@ -1126,7 +1188,7 @@ public class LogView extends ViewPart implements ILogListener {
 		writeViewSettings();
 		writeFilterSettings();
 	}
-
+	
 	private void writeFilterSettings(){
 		IDialogSettings settings = getLogSettings();
 		if (settings == null)
@@ -1148,6 +1210,7 @@ public class LogView extends ViewPart implements ILogListener {
 		int order = fMemento.getInteger(P_ORDER_VALUE).intValue();
 		preferences.setValue(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
 		preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
+		preferences.setValue(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
 	}
 
 	public void sortByDateDescending() {

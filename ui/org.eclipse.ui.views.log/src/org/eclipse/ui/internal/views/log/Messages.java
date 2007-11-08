@@ -15,6 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 
+	public static String LogView_show_filter_text;
 	public static String LogView_column_message;
 	public static String LogView_column_plugin;
 	public static String LogView_column_date;
