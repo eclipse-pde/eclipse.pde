@@ -483,9 +483,10 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	}
 	
 	protected void processModelChanges() {
+		// process model changes first so model manager is accurate when we process extension events - bug 209155
+		super.processModelChanges();
 		processModelChanges("org.eclipse.pde.internal.core.IExtensionDeltaEvent", fChangedExtensions); //$NON-NLS-1$
 		fChangedExtensions = null;
-		super.processModelChanges();
 	}
 	
 	protected void createAndFireEvent(String eventId, int type, Collection added,
