@@ -431,6 +431,7 @@ public class LogView extends ViewPart implements ILogListener {
 		gd.exclude = !visible;
 		ctrl.setVisible(visible);
 		gd.verticalIndent = 8;
+		gd.horizontalIndent = 4;
 		if(!visible) // reset control if we aren't visible
 			fFilteredTree.getFilterControl().setText(Messages.LogView_show_filter_initialText);
 		fFilteredTree.layout(false);
