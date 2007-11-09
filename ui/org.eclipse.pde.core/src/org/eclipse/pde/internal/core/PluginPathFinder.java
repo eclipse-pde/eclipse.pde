@@ -93,6 +93,10 @@ public class PluginPathFinder {
 	}
 	
 	public static URL[] getPluginPaths(String platformHome) {
+		URL[] urls = P2Utils.readBundlesTxt(platformHome);
+		if (urls != null) {
+			return urls;
+		}
 		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 		
@@ -230,6 +234,5 @@ public class PluginPathFinder {
 		}
 		return false;
 	}
-
 	
 }
