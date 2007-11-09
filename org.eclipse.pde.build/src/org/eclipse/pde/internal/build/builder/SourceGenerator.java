@@ -142,6 +142,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			/* individual source bundles */
 			FeatureEntry[] plugins = feature.getPluginEntries();
 			for (int i = 0; i < plugins.length; i++) {
+				if (director.selectConfigs(plugins[i]).size() == 0)
+					continue;
 				createSourceBundle(sourceFeature, plugins[i]);
 			}
 		} else {
@@ -174,7 +176,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
 				model = getSite().getRegistry().getResolvedBundle((String) items[0], ((Version) items[1]).toString());
 				if (model == null) {
-					IStatus status = getSite().missingPlugin((String)items[0], ((Version) items[1]).toString(), false);
+					IStatus status = getSite().missingPlugin((String) items[0], ((Version) items[1]).toString(), false);
 					BundleHelper.getDefault().getLog().log(status);
 					continue;
 				}
@@ -182,7 +184,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				entry.setUnpack(((Boolean) items[2]).booleanValue());
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
-				if(excludedEntries == null)
+				if (excludedEntries == null)
 					excludedEntries = new HashMap();
 				Object[] items = Utils.parseExtraBundlesString(extraEntries[i], true);
 				if (excludedEntries.containsKey(items[0])) {
@@ -595,8 +597,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private FeatureEntry createSourceBundle(BuildTimeFeature sourceFeature, FeatureEntry pluginEntry) throws CoreException {
 		BundleDescription bundle = getSite().getRegistry().getBundle(pluginEntry.getId(), pluginEntry.getVersion(), true);
 		if (bundle == null) {
-			String message = NLS.bind(Messages.exception_missingPlugin, pluginEntry.getId() + "_" + pluginEntry.getVersion()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+			getSite().missingPlugin(pluginEntry.getId(), pluginEntry.getVersion(), true);
 		}
 
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
@@ -657,7 +658,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		attributes.put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION), "2"); //$NON-NLS-1$
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), originalBundle.getName());
-		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId() + (originalBundle.isSingleton() ? "; singleton:=true" : "")); //$NON-NLS-1$ //$NON-NLS-2$ 
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId());
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VERSION), originalBundle.getVersion().toString());
 		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (originalBundle.getPlatformFilter() != null)
