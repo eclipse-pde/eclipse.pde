@@ -7,25 +7,30 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 208967
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.Constants;
 
 public class ExportPackageObject extends PackageObject {
     
-    private static final String INTERNAL = "x-internal"; //$NON-NLS-1$
-    private static final String FRIENDS = "x-friends"; //$NON-NLS-1$
+	private static final int NEWLINE_LIMIT = 3;
+	private static final int NEWLINE_LIMIT_BOTH = 1;
+
     
     private static final long serialVersionUID = 1L;
     
@@ -45,7 +50,7 @@ public class ExportPackageObject extends PackageObject {
     }
     
     protected void processFriends() {
-    	String[] friends = getDirectives(FRIENDS);
+    	String[] friends = getDirectives(ICoreConstants.FRIENDS_DIRECTIVE);
     	if (friends != null) {
 	        for (int i = 0; i < friends.length; i++) {
 	            fFriends.put(friends[i], new PackageFriend(this, friends[i]));
@@ -54,30 +59,30 @@ public class ExportPackageObject extends PackageObject {
     }
 
     public boolean isInternal() {
-        return "true".equals(getDirective(INTERNAL)) || getDirective(FRIENDS) != null; //$NON-NLS-1$
+        return "true".equals(getDirective(ICoreConstants.INTERNAL_DIRECTIVE)) || getDirective(ICoreConstants.FRIENDS_DIRECTIVE) != null; //$NON-NLS-1$
     }
     
     public void removeInternalDirective() {
-    	setDirective(INTERNAL, null);
+    	setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
     	((CompositeManifestHeader)fHeader).update(true);
     }
 
     public void setInternal(boolean internal) {
     	boolean old = isInternal();
     	if (!internal) {
-    		setDirective(INTERNAL, null);
-    		setDirective(FRIENDS, null);
+    		setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
+    		setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
     	} else {
     		if (fFriends.size() == 0)
-    			setDirective(INTERNAL, "true"); //$NON-NLS-1$
+    			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
     		else {
     			Iterator iter = fFriends.keySet().iterator();
     			while (iter.hasNext())
-    				addDirective(FRIENDS, iter.next().toString());
+    				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
     		}
     	}
     	fHeader.update();
-    	firePropertyChanged(this, INTERNAL, Boolean.toString(old), Boolean.toString(internal));
+    	firePropertyChanged(this, ICoreConstants.INTERNAL_DIRECTIVE, Boolean.toString(old), Boolean.toString(internal));
     }
     
     public PackageFriend[] getFriends() {
@@ -86,21 +91,21 @@ public class ExportPackageObject extends PackageObject {
     
     public void addFriend(PackageFriend friend) {
         fFriends.put(friend.getName(), friend);
-        addDirective(FRIENDS, friend.getName());
-        setDirective(INTERNAL, null);
+        addDirective(ICoreConstants.FRIENDS_DIRECTIVE, friend.getName());
+        setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
         fHeader.update();
         fireStructureChanged(friend, IModelChangedEvent.INSERT);        
     }
     
     public void removeFriend(PackageFriend friend) {
         fFriends.remove(friend.getName());
-        setDirective(FRIENDS, null);
+        setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
         if (fFriends.size() == 0)
-        	setDirective(INTERNAL, "true"); //$NON-NLS-1$
+        	setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
         else {
 	        Iterator iter = fFriends.keySet().iterator();
 	        while (iter.hasNext())
-	        	addDirective(FRIENDS, iter.next().toString());
+	        	addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
         }
         fHeader.update();
         fireStructureChanged(friend, IModelChangedEvent.REMOVE);       
@@ -137,56 +142,154 @@ public class ExportPackageObject extends PackageObject {
     }
     
     protected void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
-    	if (table == null)
+
+    	if (table == null) {
     		return;
+    	}
+    	
     	Object usesValue = null;
     	// remove the Uses directive, we will make sure to put it at the end
-    	if (table.containsKey(Constants.USES_DIRECTIVE))
+    	if (table.containsKey(Constants.USES_DIRECTIVE)) {
     		usesValue = table.remove(Constants.USES_DIRECTIVE);
+    	}
+    	
+    	Object friendsValue = null;
+    	// remove the friends directive, ensure it's appropriately formatted
+    	if (table.containsKey(ICoreConstants.FRIENDS_DIRECTIVE)) {
+    		friendsValue = table.remove(ICoreConstants.FRIENDS_DIRECTIVE);
+    	}
+    	
     	super.appendValuesToBuffer(sb, table);
+    	
+    	// If only one of uses and x-friends is specified, then the directives
+		// have new lines at commas if there are more than 3 of them; if they're
+		// both specified then they insert new lines for more than 1.
+		int newLineLimit = NEWLINE_LIMIT;
+		if (friendsValue != null && usesValue != null) {
+			newLineLimit = NEWLINE_LIMIT_BOTH;
+		}
+    	
+    	if( friendsValue != null ) {
+    		table.put(ICoreConstants.FRIENDS_DIRECTIVE, friendsValue);
+    		formatDirective(ICoreConstants.FRIENDS_DIRECTIVE, sb, friendsValue, newLineLimit);
+    	}
+    	
+    	// uses goes last
     	if (usesValue != null) {
     		table.put(Constants.USES_DIRECTIVE, usesValue);
-    		formatUsesDirective(sb, usesValue);
+    		formatDirective(Constants.USES_DIRECTIVE, sb, usesValue, newLineLimit);
     	}
     }
     
-    private void formatUsesDirective(StringBuffer sb, Object usesValue) {
-    	StringTokenizer tokenizer = null;
-		if (usesValue instanceof String) 
-			tokenizer = new StringTokenizer((String)usesValue, ","); //$NON-NLS-1$
-		boolean newLine = (tokenizer != null) ? tokenizer.countTokens() > 3 :
-			((ArrayList)usesValue).size() > 3;
-		String eol = getHeader().getLineLimiter();
+    /**
+	 * Format the specified directive of the Export-Package manifest header.
+	 * 
+	 * @param directiveName
+	 *            The name of the directive, e.g. x-friends or uses
+	 * @param sb
+	 *            buffer to append the directives
+	 * @param usesValue
+	 *            The value of the uses directive, expected to be a String or a
+	 *            List.
+	 * @param newLineLimit
+	 *            The number of items, above which, a new line would be needed
+	 *            between all values.
+	 */
+	private void formatDirective(String directiveName, StringBuffer sb,
+			Object usesValue, final int newLineLimit) {
+
+		final String INDENT2 = "  "; //$NON-NLS-1$
+		final String INDENT3 = "   "; //$NON-NLS-1$
+
+		StringTokenizer tokenizer = null;
+
+		boolean newLine = false;
+
+		if (usesValue instanceof String) {
+
+			// break the string down at commas
+
+			tokenizer = new StringTokenizer((String) usesValue, ","); //$NON-NLS-1$
+
+			if (tokenizer.countTokens() > newLineLimit) {
+				newLine = true;
+			}
+
+		} else if (usesValue instanceof List) {
+
+			List usesList = (List) usesValue;
+
+			if (usesList.size() > newLineLimit) {
+				newLine = true;
+			}
+
+		} else {
+			// wrong type for usesValue! - in this situation the old
+			// formatUsesDirective() would throw a ClassCastException.
+			// So for consistency! :-(
+			Object foo = (ArrayList) usesValue;
+			// To remove 'non-usage' error :-(
+			foo.getClass();
+
+			// return should be unreachable
+			return;
+		}
+
+		final String EOL = getHeader().getLineLimiter();
+
 		sb.append(';');
-		if (newLine)
-			sb.append(eol).append("  "); //$NON-NLS-1$
-		sb.append(Constants.USES_DIRECTIVE);
+
+		if (newLine) {
+			sb.append(EOL).append(INDENT2);
+		}
+
+		sb.append(directiveName);
 		sb.append(":=\""); //$NON-NLS-1$
-		if (tokenizer != null) 
+
+		if (tokenizer != null) {
+
+			// For a String based value, output each value (comma separated),
+			// potentially adding a new line between them
+
 			while (tokenizer.hasMoreTokens()) {
 				sb.append(tokenizer.nextToken());
 				if (tokenizer.hasMoreTokens()) {
 					sb.append(',');
-					if (newLine) 
-						sb.append(eol).append("   "); //$NON-NLS-1$
+					if (newLine) {
+						sb.append(EOL).append(INDENT3);
+					}
 				}
 			}
-		else {
-			ArrayList list = ((ArrayList)usesValue);
-			for (int i = 0; i < list.size(); i++) {
-				if (i != 0) {
+		} else {
+			List usesList = (List) usesValue;
+
+			// For each item in the collection, output each value (comma
+			// separated), potentially adding a new line between them
+
+			for (ListIterator iterator = usesList.listIterator(); true;) {
+				
+				sb.append(iterator.next());
+				
+				if (iterator.hasNext()) {
+					
 					sb.append(',');
-					if (newLine) 
-						sb.append(eol).append("   "); //$NON-NLS-1$
+					if (newLine) {
+						sb.append(EOL).append(INDENT3);
+					}
+					
+				} else {
+					break;
 				}
-				sb.append(list.get(i));
 			}
 		}
 		sb.append("\""); //$NON-NLS-1$
-    }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String, java.io.PrintWriter)
+	}
+    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#write(java.lang.String,
+	 *      java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
