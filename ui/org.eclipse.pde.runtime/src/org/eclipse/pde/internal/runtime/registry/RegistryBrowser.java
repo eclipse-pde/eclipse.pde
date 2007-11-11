@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla <b.muskalla@gmx.net> - bug 207831
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
@@ -19,13 +20,18 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -34,8 +40,11 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.DisabledInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.pde.internal.runtime.IHelpContextIds;
+import org.eclipse.pde.internal.runtime.MessageHelper;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
@@ -84,6 +93,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	private Action fStopAction;
 	private Action fEnableAction;
 	private Action fDisableAction;
+	private Action fDiagnoseAction;
 	
 	private DrillDownAdapter drillDownAdapter;
 	private ViewerFilter fActiveFilter = new ViewerFilter() {
@@ -279,6 +289,9 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			if(selectedBundlesStarted())
 				manager.add(fStopAction);
 			
+			if(getSelectedBundles().size() == 1)
+				manager.add(fDiagnoseAction);
+			
 			// security related actions
 			if(selectedBundlesDisabled())
 				manager.add(fEnableAction);
@@ -365,6 +378,8 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				}
 			}
 			private Object findTreeBundleData(Bundle bundle) {
+				if(tree.isDisposed())
+					return null;
 				Object data = null;
 				boolean found = false;
 				TreeItem[] items = tree.getItems();
@@ -583,6 +598,59 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 					PlatformAdmin platformAdmin = 
 						PDERuntimePlugin.getDefault().getPlatformAdmin();
 					platformAdmin.addDisabledInfo(info);
+				}
+			}
+		};
+		
+		fDiagnoseAction = new Action(PDERuntimeMessages.RegistryView_diagnoseAction_label) {
+			public void run() {
+				List bundles = getSelectedBundles();
+				State state = PDERuntimePlugin.getDefault().getState();
+				for (Iterator it = bundles.iterator(); it.hasNext();) {
+					Bundle bundle = (Bundle) it.next();
+					BundleDescription desc = state.getBundle(bundle.getBundleId());
+					PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
+					VersionConstraint[] unsatisfied = platformAdmin
+							.getStateHelper().getUnsatisfiedConstraints(desc);
+					ResolverError[] resolverErrors = platformAdmin.getState(false).getResolverErrors(desc);
+					MultiStatus problems = new MultiStatus(PDERuntimePlugin.ID,
+							IStatus.INFO,
+							PDERuntimeMessages.RegistryView_found_problems,
+							null);
+					for (int i = 0; i < resolverErrors.length; i++) {
+						if ((resolverErrors[i].getType() & (ResolverError.MISSING_FRAGMENT_HOST
+								| ResolverError.MISSING_GENERIC_CAPABILITY
+								| ResolverError.MISSING_IMPORT_PACKAGE | ResolverError.MISSING_REQUIRE_BUNDLE)) != 0)
+							continue;
+						IStatus status = new Status(IStatus.WARNING,
+								PDERuntimePlugin.ID, resolverErrors[i]
+										.toString());
+						problems.add(status);
+					}
+
+					for (int i = 0; i < unsatisfied.length; i++) {
+						IStatus status = new Status(
+								IStatus.WARNING,
+								PDERuntimePlugin.ID,
+								MessageHelper
+										.getResolutionFailureMessage(unsatisfied[i]));
+						problems.add(status);
+					}
+					Dialog dialog;
+					if (unsatisfied.length != 0 || resolverErrors.length != 0) {
+						dialog = new DiagnosticsDialog(
+								getSite().getShell(),
+								PDERuntimeMessages.RegistryView_diag_dialog_title,
+								null, problems, IStatus.WARNING);
+						dialog.open();
+					} else {
+						MessageDialog
+								.openInformation(
+										getSite().getShell(),
+										PDERuntimeMessages.RegistryView_diag_dialog_title,
+										PDERuntimeMessages.RegistryView_no_unresolved_constraints);
+					}
+
 				}
 			}
 		};
