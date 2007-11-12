@@ -12,23 +12,37 @@
 package org.eclipse.pde.ui.templates;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginReference;
 
 /**
  * Implementation of the IPluginReference
- * 
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * </p>
+ * @see IPluginReference
  * @since 3.4
  */
 public class PluginReference implements IPluginReference {
 	private int match = NONE;
 	private String version;
 	private String id;
-
+	
 	/**
-	 * Constructor for PluginReference.
+	 * 
+	 * Constructs a plug-in reference to be used in the PDE template framework
+	 * 
+	 * @param id
+	 * 			the id of the plug-in
+	 * @param version
+	 * 			the version of the plug-in
+	 * @param match
+	 * 			the match rule for the plug-in {@link IMatchRules}
 	 */
-	public PluginReference() {
-		super();
+	public PluginReference(String id, String version, int match) {
+		this.id = id;
+		this.version = version;
+		this.match = match;
 	}
 	
 	/*
@@ -43,12 +57,6 @@ public class PluginReference implements IPluginReference {
 			return version.equals(source.getVersion());
 		}
 		return false;
-	}
-	
-	public PluginReference(String id, String version, int match) {
-		this.id = id;
-		this.version = version;
-		this.match = match;
 	}
 
 	/*
