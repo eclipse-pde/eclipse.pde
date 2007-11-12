@@ -60,23 +60,28 @@ public class DependenciesPage extends PDEFormPage {
 		right.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		right.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		managedForm.addPart(new RequiresSection(this, left, getRequiredSectionLabels()));		
+		RequiresSection requiresSection = new RequiresSection(this, left, getRequiredSectionLabels());
+		managedForm.addPart(requiresSection);		
 		
 		DependencyAnalysisSection section;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.widthHint = 150;
 		if (isBundle) {
-			managedForm.addPart(new ImportPackageSection(this, right));
+			ImportPackageSection importPackageSection = new ImportPackageSection(this, right);
+			importPackageSection.getSection().descriptionVerticalSpacing = 
+				requiresSection.getSection().getTextClientHeightDifference();
+			managedForm.addPart(importPackageSection);
 			if (getModel().isEditable()) 
 				managedForm.addPart(new DependencyManagementSection(this, left));
 			else 
 				gd.horizontalSpan = 2;
 			section = new DependencyAnalysisSection(this, right, ExpandableComposite.COMPACT);
 		} else {
-        	// No MANIFEST.MF (not a Bundle)
-        	// Create a new plug-in project targeted for 3.0 using the hello 
-			// world template to see this section (no MANIFEST.MF is created)			
-			managedForm.addPart(new MatchSection(this, right, true));
+        	// No MANIFEST.MF (not a Bundle), 3.0 timeframe
+			MatchSection matchSection = new MatchSection(this, right, true);
+			matchSection.getSection().descriptionVerticalSpacing =
+				requiresSection.getSection().getTextClientHeightDifference();
+			managedForm.addPart(matchSection);
 			section = new DependencyAnalysisSection(this, right, ExpandableComposite.EXPANDED);
 		}
 		section.getSection().setLayoutData(gd);
