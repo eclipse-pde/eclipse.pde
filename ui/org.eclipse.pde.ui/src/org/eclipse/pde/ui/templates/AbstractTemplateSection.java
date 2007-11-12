@@ -51,7 +51,6 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
-import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 
 /**
  * Common function for template sections. It is recommended to subclass this

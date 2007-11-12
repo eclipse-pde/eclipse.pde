@@ -27,8 +27,9 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
-import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.templates.AbstractTemplateSection;
+import org.eclipse.pde.ui.templates.PluginReference;
 
 public class IntroTemplate extends PDETemplateSection {
     

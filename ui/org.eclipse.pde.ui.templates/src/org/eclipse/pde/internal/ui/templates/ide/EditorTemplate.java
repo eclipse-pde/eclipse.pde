@@ -23,8 +23,8 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class EditorTemplate extends BaseEditorTemplate {

@@ -23,11 +23,11 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
-import org.eclipse.pde.internal.ui.templates.PluginReference;
 import org.eclipse.pde.internal.ui.wizards.product.ISplashHandlerConstants;
 import org.eclipse.pde.internal.ui.wizards.product.UpdateSplashHandlerAction;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ComboChoiceOption;
+import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.StringOption;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
