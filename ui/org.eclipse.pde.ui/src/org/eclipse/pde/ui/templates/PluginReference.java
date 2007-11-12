@@ -24,9 +24,10 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * @since 3.4
  */
 public class PluginReference implements IPluginReference {
-	private int match = IMatchRules.NONE;
-	private String version;
+	
 	private String id;
+	private String version;
+	private int match = IMatchRules.NONE;
 	
 	/**
 	 * 
