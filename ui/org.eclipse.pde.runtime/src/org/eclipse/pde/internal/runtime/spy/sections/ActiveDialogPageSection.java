@@ -44,6 +44,7 @@ public class ActiveDialogPageSection implements ISpySection {
 			if (selectedPage != null) {
 				Section section = toolkit.createSection(form.getBody(),
 						ExpandableComposite.TITLE_BAR);
+				section.clientVerticalSpacing = 9;
 				if (selectedPage instanceof IDialogPage) {
 					IDialogPage page = (IDialogPage) selectedPage;
 					clazz = page.getClass();

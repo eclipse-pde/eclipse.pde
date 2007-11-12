@@ -40,7 +40,7 @@ public class ActiveSelectionSection implements ISpySection {
 
 				Section section = toolkit.createSection(form.getBody(),
 						ExpandableComposite.TITLE_BAR);
-				section.setExpanded(true);
+				section.clientVerticalSpacing = 9;
 				section.setText(PDERuntimeMessages.SpyDialog_activeSelection_title);
 				FormText text = toolkit.createFormText(section, true);
 				section.setClient(text);

@@ -33,6 +33,7 @@ public class ActiveShellSection implements ISpySection {
 
 		Section section = toolkit.createSection(form.getBody(),
 				ExpandableComposite.TITLE_BAR);
+		section.clientVerticalSpacing = 9;
 
 		section.setText(PDERuntimeMessages.SpyDialog_activeShell_title);
 

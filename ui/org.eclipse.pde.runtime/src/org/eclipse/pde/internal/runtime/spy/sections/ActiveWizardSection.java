@@ -46,6 +46,7 @@ public class ActiveWizardSection implements ISpySection {
 
 			Section section = toolkit.createSection(form.getBody(),
 					ExpandableComposite.TITLE_BAR);
+			section.clientVerticalSpacing = 9;
 
 			// the active wizard
 			FormText text = toolkit.createFormText(section, true);

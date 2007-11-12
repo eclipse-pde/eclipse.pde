@@ -52,13 +52,15 @@ public class ActivePartSection implements ISpySection {
 		section.setText(NLS.bind(
 				PDERuntimeMessages.SpyDialog_activePart_title, 
 				part.getSite().getRegisteredName()));
-
+		
 		FormText text = toolkit.createFormText(section, true);
 		section.setClient(text);
 		TableWrapData td = new TableWrapData();
 		td.align = TableWrapData.FILL;
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
+		
+		toolkit.createImageAction(section, part.getTitleImage());
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>"); //$NON-NLS-1$
@@ -116,6 +118,7 @@ public class ActivePartSection implements ISpySection {
 		text.setImage("id", idImage); //$NON-NLS-1$
 
 		text.setText(buffer.toString(), true, false);
+		text.layout();
 	}
 
 }

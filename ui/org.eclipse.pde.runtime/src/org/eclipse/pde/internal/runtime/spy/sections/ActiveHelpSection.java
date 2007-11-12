@@ -71,6 +71,7 @@ public class ActiveHelpSection implements ISpySection {
 			Section section = toolkit.createSection(form.getBody(),
 					ExpandableComposite.TITLE_BAR);
 			section.setText(PDERuntimeMessages.SpyDialog_activeHelpSection_title);
+			section.clientVerticalSpacing = 9;
 			
 			FormText text = toolkit.createFormText(section, true);
 			section.setClient(text);

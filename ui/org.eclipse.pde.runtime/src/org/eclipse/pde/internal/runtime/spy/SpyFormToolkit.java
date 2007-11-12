@@ -15,19 +15,30 @@ import java.util.Map;
 
 import org.eclipse.help.IContext;
 import org.eclipse.help.internal.context.Context;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Bundle;
 
 public class SpyFormToolkit extends FormToolkit {
@@ -48,6 +59,46 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 	}
 	
+	private class SaveImageAction extends Action {
+
+		private Image image;
+
+		public SaveImageAction(Image image) {
+			this.image = image;
+		}
+
+		public void run() {
+			FileDialog fileChooser = new FileDialog(PDERuntimePlugin.getActiveWorkbenchShell(), SWT.SAVE);
+			fileChooser.setFileName("image"); //$NON-NLS-1$
+			fileChooser.setFilterExtensions(new String[] { "*.png" }); //$NON-NLS-1$
+			fileChooser.setFilterNames(new String[] { "PNG (*.png)" }); //$NON-NLS-1$
+			String filename = fileChooser.open();
+			if (filename == null)
+				return;
+
+			int filetype = determineFileType(filename);
+			if (filetype == SWT.IMAGE_UNDEFINED) {
+				return;
+			}
+			ImageLoader loader = new ImageLoader();
+			loader.data = new ImageData[] { image.getImageData() };
+			loader.save(filename, filetype);
+		}
+
+		private int determineFileType(String filename) {
+			String ext = filename.substring(filename.lastIndexOf('.') + 1);
+			if (ext.equalsIgnoreCase("gif")) //$NON-NLS-1$
+				return SWT.IMAGE_GIF;
+			if (ext.equalsIgnoreCase("ico")) //$NON-NLS-1$
+				return SWT.IMAGE_ICO;
+			if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg"))  //$NON-NLS-1$//$NON-NLS-2$
+				return SWT.IMAGE_JPEG;
+			if (ext.equalsIgnoreCase("png")) //$NON-NLS-1$
+				return SWT.IMAGE_PNG;
+			return SWT.IMAGE_UNDEFINED;
+		}
+	}
+	
 	private Map bundleClassByName = new HashMap();
 	private SpyDialog dialog;
 	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
@@ -64,7 +115,7 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 		return text;
 	}
-
+	
 	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {
 		StringBuffer buffer = new StringBuffer();
 		if(clazzes.length > 0) {
@@ -188,6 +239,40 @@ public class SpyFormToolkit extends FormToolkit {
 		if(name != null)
 			return name;
 		return fullName;
+	}
+	
+	private ToolBarManager createSectionToolbar(Section section) {
+		Object object = section.getData("toolbarmanager"); //$NON-NLS-1$
+		if(object instanceof ToolBarManager) {
+			return (ToolBarManager) object;
+		}
+		ToolBarManager manager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = manager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) &&
+						(handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});
+		section.setTextClient(toolbar);
+		section.setData("toolbarmanager", manager); //$NON-NLS-1$
+		return manager;
+	}
+
+	public void createImageAction(Section section, Image image) {
+		if(image == null)
+			return;
+		ToolBarManager manager = createSectionToolbar(section);
+		SaveImageAction action = new SaveImageAction(image);
+		action.setText(PDERuntimeMessages.SpyFormToolkit_saveImageAs_title);
+		action.setImageDescriptor(PDERuntimePluginImages.SAVE_IMAGE_AS_OBJ);
+		manager.add(action);
+		manager.update(true);
 	}
 	
 }
