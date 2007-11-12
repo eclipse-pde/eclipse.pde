@@ -263,7 +263,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				((IBundlePluginModelBase)model).setExtensionsModel(extensions);
 				extensions.setBundleModel((IBundlePluginModelBase)model);
 				loadModel(extensions, false);				
-				addExtensionChange(model, IModelProviderEvent.MODELS_REMOVED);
+				addExtensionChange(model, IModelProviderEvent.MODELS_ADDED);
 			} else {
 				createModel(file.getProject(), true);
 			}
