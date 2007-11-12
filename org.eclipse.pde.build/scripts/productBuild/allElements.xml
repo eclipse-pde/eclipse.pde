@@ -81,13 +81,13 @@
 	
  	<target name="assemble.org.eclipse.pde.build.container.feature.macosx.carbon.ppc">
  		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.ppc.tar.gz"/>
+ 			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.ppc.zip"/>
 		</ant>
  	</target>
 	
  	<target name="assemble.org.eclipse.pde.build.container.feature.macosx.carbon.x86">
  		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			
- 			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.x86.tar.gz"/>
+ 			<property name="archiveName" value="${archiveNamePrefix}-macosx.carbon.x86.zip"/>
 		</ant>
  	</target>
 	
