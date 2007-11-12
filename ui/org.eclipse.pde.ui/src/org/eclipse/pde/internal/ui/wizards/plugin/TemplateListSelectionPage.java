@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jakub Jurkiewicz <jakub.jurkiewicz@pl.ibm.com> - bug 185995
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -178,6 +179,14 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fContentPage.updateData();
+			if (((PluginFieldData) fContentPage.getData()).isRCPApplicationPlugin()) {
+				fUseTemplate.setSelection(true);
+				fUseTemplate.setEnabled(false);
+				wizardSelectionViewer.getControl().setEnabled(true);
+				
+			} else {
+				fUseTemplate.setEnabled(true);
+			}
 			wizardSelectionViewer.refresh();
 		}
 		super.setVisible(visible);
