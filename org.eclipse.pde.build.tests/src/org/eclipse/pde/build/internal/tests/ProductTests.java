@@ -53,7 +53,8 @@ public class ProductTests extends PDETestCase {
 
 		entries.add("eclipse/Eclipse.app/");
 
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.carbon.x86.tar.gz", entries, false);
+		//bug 206788 names the archive .zip
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.carbon.x86.zip", entries, false);
 		assertTrue(entries.contains("eclipse/Eclipse.app/"));
 		assertTrue(entries.size() == 1);
 	}
