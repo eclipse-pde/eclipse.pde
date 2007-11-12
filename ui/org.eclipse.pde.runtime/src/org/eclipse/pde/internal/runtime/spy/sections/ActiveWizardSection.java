@@ -68,11 +68,6 @@ public class ActiveWizardSection implements ISpySection {
 				PDERuntimePlugin.getDefault().getPackageAdmin();
 			Bundle bundle = admin.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "wizard", buffer, text); //$NON-NLS-1$
-
-			buffer.append(toolkit.createClassSection(
-					text,
-					PDERuntimeMessages.SpyDialog_activeWizardPage_desc, 
-					new Class[] { page.getClass() }));
 			buffer.append("</form>"); //$NON-NLS-1$
 
 			text.setText(buffer.toString(), true, false);
