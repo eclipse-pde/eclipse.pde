@@ -31,6 +31,9 @@ public class PluginReference implements IPluginReference {
 		super();
 	}
 	
+	/*
+	 * @see IPluginReference#equals(Object) 
+	 */
 	public boolean equals(Object object) {
 		if (object instanceof IPluginReference) {
 			IPluginReference source = (IPluginReference)object;
