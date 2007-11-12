@@ -111,6 +111,7 @@ public class SpyDialog extends PopupDialog {
 	public boolean close() {
 		if(toolkit != null)
 			toolkit.dispose();
+		toolkit = null;
 		return super.close();
 	}
 	protected Control getFocusControl() {
