@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +49,10 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
@@ -96,7 +100,7 @@ public abstract class AbstractTemplateSection
 	 */
 	public static final String KEY_PLUGIN_NAME = "pluginName"; //$NON-NLS-1$
 	/**
-	 * The key for the package name that will be created by this teamplate
+	 * The key for the package name that will be created by this template
 	 * (value="packageName").
 	 */
 	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
@@ -743,4 +747,96 @@ public abstract class AbstractTemplateSection
        return TargetPlatformHelper.getTargetVersion();
 	}
 
+	/**
+	 * Sets a header within the plug-in's underlying manifest header, if it has
+	 * one. It the plug-in doesn't have a manifest, this method does nothing.
+	 * It's expected that this method will only be called by sub-classes during
+	 * execution of the template (i.e. during the sub-class's
+	 * <samp>updateModel(...)</samp> method). <p/> For example:
+	 * <dl>
+	 * <dd><samp>setManifestHeader(Constants.BUNDLE_LOCALIZATION,
+	 * &quot;plugin&quot;)</samp></dd>
+	 * </dl>
+	 * 
+	 * @see org.osgi.framework.Constants
+	 * 
+	 * @param name
+	 *            The name of the header to set
+	 * @param value
+	 *            The value of the header
+	 */
+	protected void setManifestHeader(String name, String value) {
+
+		IBundle bundle = getBundleFromModel();
+
+		if (bundle != null) {
+			bundle.setHeader(name, value);
+		}
+	}
+
+	/**
+	 * Gets a header from within the plug-in's underlying manifest header, if it
+	 * has one. If the plug-in doesn't have a manifest, this method returns
+	 * <samp>null</samp>. It's expected that this method will only be called by
+	 * sub-classes during execution of the template (i.e. during the sub-class's
+	 * <samp>updateModel(...)</samp> method).
+	 * 
+	 * @param name
+	 *            The name of the header to fetch
+	 * @return The value of the manifest header, if available, otherwise
+	 *         <samp>null</samp>
+	 */
+	protected String getManifestHeader(String name) {
+
+		IBundle bundle = getBundleFromModel();
+
+		if (bundle != null) {
+			return bundle.getHeader(name);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Determines whether this plug-in has a manifest on which to set/get
+	 * headers. This method will return <samp>false</samp> if the plug-in
+	 * doesn't have a manifest (e.g. it's a v3.0 plug-in) or if the method is
+	 * called before the model has been set on the template.
+	 * 
+	 * It's expected that this method will only be called by sub-classes during
+	 * execution of the template (i.e. during the sub-class's
+	 * <samp>updateModel(...)</samp> method).
+	 * 
+	 * @return <sampl>true</samp> if the plug-in has a manifest, <samp>false</samp>
+	 *         otherwise
+	 */
+	protected boolean hasBundleManifest() {
+
+		IBundle bundle = getBundleFromModel();
+
+		// essentially, do we have a bundle?
+		return (bundle != null);
+	}
+	
+	/**
+	 * Try to get hold of the underlying bundle for the model, if applicable.
+	 * 
+	 * @return The bundle instance, or null if not a bundle or if the model
+	 *         isn't available.
+	 */
+	private IBundle getBundleFromModel() {
+
+		// Do early exit checks
+		if (model != null && (model instanceof IBundlePluginModelBase)) { 
+			
+			IBundlePluginModelBase bundlePModel = (IBundlePluginModelBase) model;
+			IBundleModel bundleModel = bundlePModel.getBundleModel();
+
+			if (bundleModel != null) {
+				return bundleModel.getBundle();
+			}
+		}
+
+		return null;
+	}
 }
