@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 209474
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -43,6 +44,9 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public LogEntry() {}
 
 	public LogSession getSession() {
+		if ((session == null) && (parent != null))
+			return parent.getSession();
+		
 		return session;
 	}
 
