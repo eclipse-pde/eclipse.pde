@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -22,6 +20,41 @@ import org.eclipse.pde.internal.build.site.PDEState;
 import org.osgi.framework.Version;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
+
+	private static class Entry {
+		private String id;
+		private Map attributes;
+
+		public Entry(String id) {
+			this.id = id;
+		}
+
+		public boolean equals(Object obj) {
+			if (obj instanceof Entry)
+				return id.equals(((Entry) obj).id);
+			return id.equals(obj);
+		}
+
+		public int hashCode() {
+			return id.hashCode();
+		}
+
+		public Map getAttributes() {
+			if (attributes != null)
+				return attributes;
+			return Collections.EMPTY_MAP;
+		}
+
+		public void addAttribute(String key, String value) {
+			if (attributes == null)
+				attributes = new LinkedHashMap();
+			attributes.put(key, value);
+		}
+
+		public String getId() {
+			return id;
+		}
+	}
 
 	private static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 	private static final String FEATURE_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
@@ -41,18 +74,37 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private boolean verify = false;
 
 	private Properties antProperties;
+	private Properties buildProperties;
 
 	/*
-	 * Create and return a new Set with the given contents. If the arg
+	 * Create and return a new Set of Entry objects with the given contents. If the arg
 	 * is null then return an empty set.
 	 */
+	private static Set createSet(List list) {
+		String[] array = new String[list.size()];
+		return createSet((String[]) list.toArray(array));
+	}
+
 	private static Set createSet(String[] contents) {
 		if (contents == null)
 			return new LinkedHashSet(0);
 		Set result = new LinkedHashSet(contents.length);
 		for (int i = 0; i < contents.length; i++)
-			if (contents[i] != null)
-				result.add(contents[i]);
+			if (contents[i] != null) {
+				StringTokenizer tokenizer = new StringTokenizer(contents[i], ";"); //$NON-NLS-1$
+				Entry entry = new Entry(tokenizer.nextToken());
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken();
+					int idx = token.indexOf('=');
+					if (idx != -1) {
+						String value = token.substring(idx + 1, token.length()).trim();
+						if (value.startsWith("\"") && value.endsWith("\"")) //$NON-NLS-1$ //$NON-NLS-2$
+							value = value.substring(1, value.length() - 1); //trim off " because FeatureWriter adds them
+						entry.addAttribute(token.substring(0, idx), value);
+					}
+				}
+				result.add(entry);
+			}
 		return result;
 	}
 
@@ -68,10 +120,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Set fragments = createSet(fragmentList);
 			if (product != null) {
 				if (product.useFeatures()) {
-					features.addAll(product.getFeatures());
+					features.addAll(createSet(product.getFeatures()));
 				} else {
-					plugins.addAll(product.getPlugins(false));
-					fragments.addAll(product.getFragments());
+					plugins.addAll(createSet(product.getPlugins(false)));
+					fragments.addAll(createSet(product.getFragments()));
 				}
 			}
 			try {
@@ -153,7 +205,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		Version version = bundle.getVersion();
 		if (version.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
 			// we have an OSGi version that is less than 3.3 so add the old launcher
-			features.add(FEATURE_PLATFORM_LAUNCHERS);
+			if (!features.contains(FEATURE_PLATFORM_LAUNCHERS))
+				features.add(new Entry(FEATURE_PLATFORM_LAUNCHERS));
 		} else {
 			// we have OSGi version 3.3 or greater so add the executable feature
 			// and the launcher plug-in and fragments
@@ -165,10 +218,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			}
 			if (executableFeature != null) {
 				/* the executable feature includes the launcher and fragments already */
-				features.add(FEATURE_EXECUTABLE);
+				if (!features.contains(FEATURE_EXECUTABLE))
+					features.add(new Entry(FEATURE_EXECUTABLE));
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
-				plugins.add(BUNDLE_LAUNCHER);
+				plugins.add(new Entry(BUNDLE_LAUNCHER));
 				List configs = getConfigInfos();
 				// only include the fragments for the platforms we are attempting to build, since the others
 				// probably aren't around
@@ -179,7 +233,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
 						fragment += '.' + config.getArch();
 
-					fragments.add(fragment);
+					if (!fragments.contains(fragment)) {
+						Entry entry = new Entry(fragment);
+						entry.addAttribute("unpack", "true"); //$NON-NLS-1$//$NON-NLS-2$
+						fragments.add(entry);
+					}
 				}
 			}
 		}
@@ -219,7 +277,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		try {
-			Map parameters = new HashMap();
+			Map parameters = new LinkedHashMap();
 			Dictionary environment = new Hashtable(3);
 
 			parameters.put("id", feature); //$NON-NLS-1$
@@ -242,8 +300,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$
 				for (; listIter.hasNext();) {
-					String name = (String) listIter.next();
-					boolean unpack = true;
+					Entry entry = (Entry) listIter.next();
+					String name = entry.getId();
+					boolean guessedUnpack = true;
 					boolean writeBundle = !verify;
 					if (verify) {
 						BundleDescription bundle = state.getResolvedBundle(name);
@@ -252,7 +311,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							String filterSpec = bundle.getPlatformFilter();
 							if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
 								writeBundle = true;
-								unpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
+								guessedUnpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
 								if (currentConfig.equals(Config.genericConfig())) {
 									listIter.remove();
 								}
@@ -281,9 +340,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 					if (writeBundle) {
 						parameters.clear();
+
 						parameters.put("id", name); //$NON-NLS-1$
 						parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
-						parameters.put("unpack", unpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						parameters.put("unpack", guessedUnpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						if (!currentConfig.equals(Config.genericConfig())) {
 							parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
 							parameters.put("ws", currentConfig.getWs()); //$NON-NLS-1$
@@ -291,6 +351,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 						}
 						if (fragment)
 							parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+
+						//add the attributes from the entry, these override values we set above
+						parameters.putAll(entry.getAttributes());
+
 						writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
 					}
 
@@ -311,7 +375,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			}
 
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
-				String name = (String) iter.next();
+				Entry entry = (Entry) iter.next();
+				String name = entry.getId();
 				if (verify) {
 					//this will throw an exception if the feature is not found.
 					getSite(false).findFeature(name, null, true);
@@ -319,6 +384,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				parameters.clear();
 				parameters.put("id", name); //$NON-NLS-1$
 				parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
+				parameters.putAll(entry.getAttributes());
 				writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 			}
 			writer.endTag("feature"); //$NON-NLS-1$
@@ -326,14 +392,21 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			writer.close();
 		}
 
+		createBuildProperties(directory);
+	}
+
+	protected void createBuildProperties(File directory) {
+		File file;
 		//create build.properties
 		file = new File(directory, IPDEBuildConstants.PROPERTIES_FILE);
-		Properties prop = new Properties();
-		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (buildProperties == null) {
+			buildProperties = new Properties();
+			buildProperties.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		OutputStream stream = null;
 		try {
 			stream = new BufferedOutputStream(new FileOutputStream(file));
-			prop.store(stream, "Marker File so that the file gets written"); //$NON-NLS-1$
+			buildProperties.store(stream, ""); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			// nothing for now
@@ -346,6 +419,23 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				}
 			}
 		}
+	}
+
+	public void setBuildProperties(String file) {
+		buildProperties = new Properties();
+
+		File propertiesFile = new File(file);
+		if (propertiesFile.exists()) {
+			try {
+				buildProperties.load(new BufferedInputStream(new FileInputStream(file)));
+			} catch (IOException e) {
+				// nothing
+			}
+		}
+	}
+
+	public void setBuildProperties(Properties properties) {
+		this.buildProperties = properties;
 	}
 
 	public void setVerify(boolean verify) {

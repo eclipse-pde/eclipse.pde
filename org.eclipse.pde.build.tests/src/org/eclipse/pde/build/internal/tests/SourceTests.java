@@ -92,12 +92,7 @@ public class SourceTests extends PDETestCase {
 		String arch = Platform.getOSArch();
 
 		//Create the rcp feature
-		IFolder rcpFeature = Utils.createFolder(features, "rcp");
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<feature id=\"rcp\" version=\"1.0.0.qualifier\">    \n");
-		buffer.append("  <plugin version=\"0.0.0\" id=\"fragment\" os=\"" + os + "\" ws=\"" + ws + "\" arch=\"" + arch + "\" />      \n");
-		buffer.append("</feature>                                                         \n");
-		Utils.writeBuffer(rcpFeature.getFile("feature.xml"), buffer);
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "fragment;os=\"" + os + "\";ws=\"" + ws + "\";arch=\"" + arch + "\""} );
 
 		//Create a fragment with a platform filter
 		IFolder fragment = Utils.createFolder(buildFolder, "plugins/fragment");
