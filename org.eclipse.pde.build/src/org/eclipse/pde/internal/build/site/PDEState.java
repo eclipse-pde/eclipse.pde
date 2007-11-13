@@ -38,6 +38,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private List unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
 	private Dictionary platformProperties;
 	private List sortedBundles = null;
+	private Set convertedManifests;
 	private long lastSortingDate = 0L;
 
 	private String javaProfile;
@@ -66,6 +67,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		id = 0;
 		bundleClasspaths = new HashMap();
 		patchBundles = new HashMap();
+		convertedManifests = new HashSet(2);
 		loadPluginTagFile();
 	}
 
@@ -93,6 +95,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (patchValue != null)
 				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
+			rememberManifestConversion(descriptor, enhancedManifest);
 			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
@@ -123,6 +126,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor.setUserObject(bundleProperties);
 		}
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
+	}
+
+	private void rememberManifestConversion(BundleDescription descriptor, Dictionary manifest) {
+		if (convertedManifests == null || !convertedManifests.contains(manifest))
+			return;
+
+		convertedManifests.remove(manifest);
+		Properties bundleProperties = (Properties) descriptor.getUserObject();
+		if (bundleProperties == null) {
+			bundleProperties = new Properties();
+			descriptor.setUserObject(bundleProperties);
+		}
+		bundleProperties.setProperty(PROPERTY_CONVERTED_MANIFEST, "marker"); //$NON-NLS-1$
 	}
 
 	private void mapVersionReplacedBundle(BundleDescription oldBundle, BundleDescription newBundle) {
@@ -306,9 +322,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		Dictionary manifest = basicLoadManifest(bundleLocation);
 		if (manifest == null)
 			return null;
-		
+
 		// require a Bundle-SymbolicName
-		if(!enforceSymbolicName(bundleLocation, manifest))
+		if (!enforceSymbolicName(bundleLocation, manifest))
 			return null;
 		enforceClasspath(manifest);
 		return manifest;
@@ -318,7 +334,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		PluginConverter converter;
 		try {
 			converter = acquirePluginConverter();
-			return converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false, null); //$NON-NLS-1$
+			Dictionary manifest = converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false, null); //$NON-NLS-1$
+			if (convertedManifests != null)
+				convertedManifests.add(manifest);
+			return manifest;
 		} catch (PluginConversionException convertException) {
 			if (bundleLocation.getName().equals(org.eclipse.pde.build.Constants.FEATURE_FILENAME_DESCRIPTOR))
 				return null;

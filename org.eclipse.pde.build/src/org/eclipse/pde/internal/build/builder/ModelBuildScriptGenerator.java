@@ -461,7 +461,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (int i = 0; i < availableJars.length; i++) {
 			String jar = availableJars[i].getName(true);
 			String srcName = getSRCName(jar);
-			
+
 			script.printAntCallTask("copy." + srcName, true, copyParams); //$NON-NLS-1$
 		}
 
@@ -1022,20 +1022,23 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					}
 				}
 				//handle access rules if we are using ClasspathComputer3_0
-				if (classpath.size() > 0 && classpath.get(0) instanceof ClasspathElement) {
-					for (Iterator iterator = classpath.iterator(); iterator.hasNext();) {
-						ClasspathElement element = (ClasspathElement) iterator.next();
-						if (element.getPath() != null && element.getPath().length() > 0 && element.getAccessRules().length() > 0) {
-							String path = element.getPath();
-							if (path.startsWith(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) {
-								//remove leading ${build.result.folder}/
-								path = path.substring(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER).length() + 1);
+				Properties data = (Properties) model.getUserObject();
+				if (data == null || !data.containsKey(PROPERTY_CONVERTED_MANIFEST)) {
+					if (classpath.size() > 0 && classpath.get(0) instanceof ClasspathElement) {
+						for (Iterator iterator = classpath.iterator(); iterator.hasNext();) {
+							ClasspathElement element = (ClasspathElement) iterator.next();
+							if (element.getPath() != null && element.getPath().length() > 0 && element.getAccessRules().length() > 0) {
+								String path = element.getPath();
+								if (path.startsWith(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) {
+									//remove leading ${build.result.folder}/
+									path = path.substring(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER).length() + 1);
+								}
+								//remove leading ../../..
+								path = path.replaceFirst("^(\\.\\.[\\\\/])*", ""); //$NON-NLS-1$//$NON-NLS-2$
+								if (writer == null)
+									writer = new BufferedWriter(new FileWriter(file));
+								writer.write(ADAPTER_ACCESS + path + element.getAccessRules() + "\n"); //$NON-NLS-1$
 							}
-							//remove leading ../../..
-							path = path.replaceFirst("^(\\.\\.[\\\\/])*", ""); //$NON-NLS-1$//$NON-NLS-2$
-							if (writer == null)
-								writer = new BufferedWriter(new FileWriter(file));
-							writer.write(ADAPTER_ACCESS + path + element.getAccessRules() + "\n"); //$NON-NLS-1$
 						}
 					}
 				}

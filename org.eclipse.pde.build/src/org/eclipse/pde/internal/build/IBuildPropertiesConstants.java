@@ -31,6 +31,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$
 	public static final String PROPERTY_MANIFEST_PREFIX = "manifest."; //$NON-NLS-1$
 
+	public static final String PROPERTY_CONVERTED_MANIFEST = "convertedManifest"; //$NON-NLS-1$
 	public static final String PROPERTY_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	public static final String PROPERTY_VERSION_REPLACEMENT = "versionReplacement"; //$NON-NLS-1$
 	public static final String PROPERTY_NONE = "none"; //$NON-NLS-1$
