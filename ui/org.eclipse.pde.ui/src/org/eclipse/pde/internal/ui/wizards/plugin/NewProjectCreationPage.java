@@ -171,6 +171,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fSourceText.setEnabled(enabled);
 				fOutputlabel.setEnabled(enabled);
 				fOutputText.setEnabled(enabled);
+				updateExecEnvSection();
 				setPageComplete(validatePage());
 			}
 		});
@@ -252,7 +253,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 	
 	private void updateExecEnvSection() {
-		if (fTargetCombo.getText().equals(ICoreConstants.TARGET30)){
+		if (fTargetCombo.getText().equals(ICoreConstants.TARGET30) || !fJavaButton.getSelection()){
 			fEEChoice.setEnabled(false);
 			fExeEnvButton.setEnabled(false);
 		} else {
@@ -307,7 +308,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
-		fData.setExecutionEnvironment(fEEChoice.getText().trim());
+		if(fJavaButton.getSelection())
+			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 	}
 	
     protected boolean validatePage() {

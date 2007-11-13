@@ -367,9 +367,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null)
 			return;
+		
+		// if we aren't a java project, let's not check for a BREE
+		try {
+			if(!fProject.hasNature(JavaCore.NATURE_ID))
+				return;
+		} catch (CoreException e) {}
+		
 		String[] bundleEnvs = desc.getExecutionEnvironments();
 		if (bundleEnvs == null || bundleEnvs.length == 0) {
-
 			// No EE specified
 			report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev,
 					PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
