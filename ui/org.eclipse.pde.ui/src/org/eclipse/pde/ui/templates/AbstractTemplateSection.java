@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 185477
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
