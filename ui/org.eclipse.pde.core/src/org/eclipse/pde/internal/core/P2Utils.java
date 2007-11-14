@@ -128,4 +128,23 @@ public class P2Utils {
 		}
 		return (URL[]) bundles.toArray(new URL[bundles.size()]);
 	}
+	
+	/**
+	 * Returns default osgi.bundles config.ini property for launching without
+	 * the simple configurator.
+	 * 
+	 * @return default osgi.bundles config.ini property
+	 */
+	public static String getDefaultOSGiBundles() {
+		StringBuffer buffer = new StringBuffer();
+		if (TargetPlatformHelper.getTargetVersion() > 3.1) {
+			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
+		} else {
+			buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
+		}
+		return buffer.toString();
+	}
 }

@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -144,6 +145,10 @@ public class LaunchConfigurationHelper {
 	}
 	
 	private static String computeOSGiBundles(String bundleList, Map map) {
+		// if using p2's simple configurator, revert to default osgi.bundles
+		if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
+			bundleList = P2Utils.getDefaultOSGiBundles();
+		}
 		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
@@ -269,7 +274,13 @@ public class LaunchConfigurationHelper {
 		String framework = properties.getProperty("osgi.framework"); //$NON-NLS-1$
 		if (framework != null) {
 			if (framework.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
-				framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				framework = framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (framework.startsWith("file:plugins/")) { //$NON-NLS-1$
+				framework = framework.replaceFirst("file:plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			int index = framework.indexOf('_');
+			if (index != -1) {
+				framework = framework.substring(0, index);
 			}
 			String url = getBundleURL(framework, map);
 			if (url != null)
