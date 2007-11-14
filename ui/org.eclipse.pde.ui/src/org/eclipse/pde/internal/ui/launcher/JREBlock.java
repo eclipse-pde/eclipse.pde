@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 195433
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -192,7 +193,7 @@ public class JREBlock {
 		
 		setJRECombo();
 		String vmInstallName =
-			config.getAttribute(IPDELauncherConstants.VMINSTALL, VMHelper.getDefaultVMInstallName());
+			config.getAttribute(IPDELauncherConstants.VMINSTALL, VMHelper.getDefaultVMInstallName(config));
 		fJreCombo.setText(vmInstallName);
 		if (fJreCombo.getSelectionIndex() == -1)
 			fJreCombo.setText(VMHelper.getDefaultVMInstallName());
@@ -251,7 +252,7 @@ public class JREBlock {
 				} else {
 					config.setAttribute(
 							IPDELauncherConstants.VMINSTALL,
-						jre.equals(VMHelper.getDefaultVMInstallName()) ? null : jre);
+						jre.equals(VMHelper.getDefaultVMInstallName(config)) ? null : jre);
 				}
 			} else {
 				if (fEeCombo.getSelectionIndex() == -1)

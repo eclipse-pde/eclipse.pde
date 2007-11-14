@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 195433
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -46,6 +48,31 @@ public class VMHelper {
 		return names;
 	}
 
+	/**
+	 * Get the default VMInstall name using the available info in the config,
+	 * using the JavaProject if available.
+	 * 
+	 * @param configuration
+	 *            Launch configuration to check
+	 * @return name of the VMInstall
+	 * @throws CoreException
+	 *             thrown if there's a problem getting the VM name
+	 */
+	public static String getDefaultVMInstallName(
+			ILaunchConfiguration configuration) throws CoreException {
+		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+		IVMInstall vmInstall = null;
+		if (javaProject != null) {
+			vmInstall = JavaRuntime.getVMInstall(javaProject);
+		}
+		
+		if (vmInstall != null) {
+			return vmInstall.getName();
+		} 
+		
+		return getDefaultVMInstallName();
+	}
+	
 	public static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
@@ -62,7 +89,7 @@ public class VMHelper {
 	
 	public static IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		boolean vmSelected = configuration.getAttribute(IPDELauncherConstants.USE_VMINSTALL, true);
-		String vm;
+		String vm = null;
 		if (vmSelected)
 			vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
 		else {
@@ -74,9 +101,12 @@ public class VMHelper {
 						LauncherUtils.createErrorStatus(NLS.bind(PDEUIMessages.VMHelper_cannotFindExecEnv, id)));
 				vm = getVMInstallName(ee);
 			}
-			else
-				vm = getDefaultVMInstallName();
 		}
+		
+		if( vm == null ) {
+			vm = getDefaultVMInstallName(configuration);
+		}
+		
 		IVMInstall result = getVMInstall(vm);
 		if (result == null)
 			throw new CoreException(
