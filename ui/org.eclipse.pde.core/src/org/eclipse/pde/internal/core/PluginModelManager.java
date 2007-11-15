@@ -610,9 +610,22 @@ public class PluginModelManager implements IModelProviderListener {
 			// if the workspace bundle's MANIFEST.MF was touched or
 			// if the a target plug-in has now become enabled/checked, update the model
 			// in the state
-			if (model.isEnabled())
-				fState.addBundle(model, true);
-			else
+			if (model.isEnabled()) {
+				// if the state of an inactive bundle changes (external model un/checked that has an 
+				// equivalent workspace bundle), then take no action.  We don't want to add the external
+				// model to the state when it is enabled if we have a workspace bundle already in the state.
+				ModelEntry entry = (ModelEntry) getEntryTable().get(oldID);
+				IPluginModelBase[] activeModels = entry.getActiveModels();
+				boolean isActive = false;
+				for (int i = 0; i < activeModels.length; i++) {
+					if (activeModels[i] == model) {
+						isActive = true;
+						break;
+					}
+				}
+				if (isActive)
+					fState.addBundle(model, true);
+			} else
 				// if the target plug-in has become disabled/unchecked, remove its bundle
 				// description from the state
 				fState.removeBundleDescription(model.getBundleDescription());
