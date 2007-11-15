@@ -96,6 +96,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
 			rememberManifestConversion(descriptor, enhancedManifest);
+			rememberLocalization(descriptor, enhancedManifest);
 			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
@@ -126,6 +127,26 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor.setUserObject(bundleProperties);
 		}
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
+	}
+
+	private void rememberLocalization(BundleDescription descriptor, Dictionary manifest) {
+		String localization = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
+		String name = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_NAME);
+		String vendor = (String) manifest.get(org.osgi.framework.Constants.BUNDLE_VENDOR);
+
+		if (localization != null || name != null || vendor != null) {
+			Properties bundleProperties = (Properties) descriptor.getUserObject();
+			if (bundleProperties == null) {
+				bundleProperties = new Properties();
+				descriptor.setUserObject(bundleProperties);
+			}
+			if (localization != null)
+				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_LOCALIZATION, localization);
+			if (name != null)
+				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_NAME, name);
+			if (vendor != null)
+				bundleProperties.put(org.osgi.framework.Constants.BUNDLE_VENDOR, vendor);
+		}
 	}
 
 	private void rememberManifestConversion(BundleDescription descriptor, Dictionary manifest) {

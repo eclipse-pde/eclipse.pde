@@ -657,12 +657,69 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		Attributes attributes = manifest.getMainAttributes();
 		attributes.put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION), "2"); //$NON-NLS-1$
-		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), originalBundle.getName());
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId());
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VERSION), originalBundle.getVersion().toString());
 		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (originalBundle.getPlatformFilter() != null)
 			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), originalBundle.getPlatformFilter());
+
+		//bundle Localization
+		String localizationEntry = null;
+		String localization = null;
+		String vendor = null;
+		String name = null;
+
+		Properties bundleProperties = (Properties) originalBundle.getUserObject();
+		if (bundleProperties != null) {
+			localization = (String) bundleProperties.get(org.osgi.framework.Constants.BUNDLE_LOCALIZATION);
+			vendor = (String) bundleProperties.get(org.osgi.framework.Constants.BUNDLE_VENDOR);
+			name = (String) bundleProperties.get(org.osgi.framework.Constants.BUNDLE_NAME);
+		}
+
+		String vendorKey = (vendor != null && vendor.startsWith("%")) ? vendor.substring(1) : null; //$NON-NLS-1$
+		String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
+
+		if (localization == null)
+			localization = "plugin"; //$NON-NLS-1$
+		else {
+			//read the localization properties from original bundle
+			Properties local = AbstractScriptGenerator.readProperties(originalBundle.getLocation(), localization + ".properties", IStatus.OK); //$NON-NLS-1$
+			if (local != null) {
+				if (vendorKey != null)
+					vendor = local.getProperty(vendorKey);
+				if (nameKey != null)
+					name = local.getProperty(nameKey);
+			}
+		}
+
+		// name not specified, use the source bundle id and externalize it anyway
+		if (name == null)
+			name = sourceEntry.getId();
+		else
+			name += " Source"; //$NON-NLS-1$
+		if (nameKey == null)
+			nameKey = "pluginName"; //$NON-NLS-1$
+		// if vendor is not specified, we don't know what to put there
+		if (vendor != null && vendorKey == null)
+			vendorKey = "providerName"; //$NON-NLS-1$
+
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_LOCALIZATION), localization);
+		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), "%" + nameKey); //$NON-NLS-1$
+		Properties localizationProperties = new Properties();
+		localizationProperties.put(nameKey, name);
+		if (vendorKey != null) {
+			attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VENDOR), "%" + vendorKey); //$NON-NLS-1$
+			localizationProperties.put(vendorKey, vendor);
+		}
+
+		localizationEntry = localization + ".properties"; //$NON-NLS-1$
+		File localizationFile = new File(sourcePluginDirURL.toFile(), localizationEntry);
+		try {
+			localizationFile.getParentFile().mkdirs();
+			localizationProperties.store(new BufferedOutputStream(new FileOutputStream(localizationFile)), "#Source Bundle Localization"); //$NON-NLS-1$
+		} catch (IOException e) {
+			//	what?
+		}
 
 		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
 		manifestFile.getParentFile().mkdirs();
@@ -679,7 +736,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 
-		generateSourceFiles(sourcePluginDirURL, sourceEntry, "sourceTemplateBundle"); //$NON-NLS-1$
+		generateSourceFiles(sourcePluginDirURL, sourceEntry, "sourceTemplateBundle", localizationEntry); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId());
@@ -737,7 +794,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		//Copy the other files
-		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin"); //$NON-NLS-1$
+		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin", null); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
@@ -748,7 +805,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		return result;
 	}
 
-	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir) throws CoreException {
+	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir, String extraFiles) throws CoreException {
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + templateDir, sourcePluginDirURL.toFile().getAbsolutePath());
 		if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 			//make sure the manifest.mf has the version we want
@@ -762,7 +819,10 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			copiedFiles.add("src/**"); //$NON-NLS-1$
 			copiedFiles.add(Constants.BUNDLE_FILENAME_DESCRIPTOR);//Because the manifest.mf is not copied, we need to add it to the file
 			Properties sourceBuildProperties = new Properties();
-			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
+			String binIncludes = Utils.getStringFromCollection(copiedFiles, ","); //$NON-NLS-1$
+			if (extraFiles != null)
+				binIncludes += "," + extraFiles; //$NON-NLS-1$
+			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, binIncludes);
 			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, "true"); //$NON-NLS-1$
 			try {
 				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
