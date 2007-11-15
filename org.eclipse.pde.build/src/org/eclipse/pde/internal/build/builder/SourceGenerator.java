@@ -37,6 +37,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private String featureRootLocation;
 	private String sourceFeatureId;
+	private String brandingPlugin;
 	private Properties buildProperties;
 
 	private BuildDirector director;
@@ -140,6 +141,17 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry sourcePlugin;
 		if (AbstractScriptGenerator.getPropertyAsBoolean("individualSourceBundles")) { //$NON-NLS-1$
 			/* individual source bundles */
+
+			// branding plugin for source feature will be the source bundle generated
+			//from the original branding plugin.
+			brandingPlugin = feature.getBrandingPlugin();
+			if (brandingPlugin != null) {
+				brandingPlugin += ".source"; //$NON-NLS-1$
+				sourceFeature.setBrandingPlugin(brandingPlugin);
+			} else {
+				brandingPlugin = sourceFeature.getId();
+			}
+
 			FeatureEntry[] plugins = feature.getPluginEntries();
 			for (int i = 0; i < plugins.length; i++) {
 				if (director.selectConfigs(plugins[i]).size() == 0)
@@ -736,7 +748,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 
-		generateSourceFiles(sourcePluginDirURL, sourceEntry, "sourceTemplateBundle", localizationEntry); //$NON-NLS-1$
+		// if this source bundle  will be the branding plug-in for the source feature, use the old plug-in template directory
+		String template = sourceEntry.getId().equals(brandingPlugin) ? "sourceTemplatePlugin" : "sourceTemplateBundle"; //$NON-NLS-1$ //$NON-NLS-2$
+		generateSourceFiles(sourcePluginDirURL, sourceEntry, template, localizationEntry);
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId());

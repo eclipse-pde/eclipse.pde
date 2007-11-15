@@ -170,7 +170,7 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 			result.setProviderName(attributes.getValue("provider-name")); //$NON-NLS-1$
 			result.setLabel(attributes.getValue("label")); //$NON-NLS-1$
 			result.setImage(attributes.getValue("image")); //$NON-NLS-1$
-
+			result.setBrandingPlugin(attributes.getValue("plugin")); //$NON-NLS-1$
 			//			Utils.debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}

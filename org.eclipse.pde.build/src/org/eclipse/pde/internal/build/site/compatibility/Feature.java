@@ -20,6 +20,7 @@ public class Feature implements IPlatformEntry {
 	private String version;
 	private String label;
 	private String image;
+	private String brandingPlugin;
 
 	private URLEntry description;
 	private URLEntry license;
@@ -270,6 +271,14 @@ public class Feature implements IPlatformEntry {
 	public void setURL(String value) {
 	}
 
+	public void setBrandingPlugin(String brandingPlugin) {
+		this.brandingPlugin = brandingPlugin;
+	}
+	
+	public String getBrandingPlugin() {
+		return brandingPlugin;
+	}
+	
 	/**
 	 * For debugging purposes only.
 	 */
