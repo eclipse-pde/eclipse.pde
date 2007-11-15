@@ -85,6 +85,9 @@ public class ActiveHelpSection implements ISpySection {
 			
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<form>"); //$NON-NLS-1$
+			buffer.append("<p>"); //$NON-NLS-1$
+			buffer.append(PDERuntimeMessages.SpyDialog_activeHelpSection_desc);
+			buffer.append("</p>"); //$NON-NLS-1$
 			buffer.append(helpBuffer.toString());
 			buffer.append("</form>"); //$NON-NLS-1$
 			String content = buffer.toString().replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
