@@ -59,13 +59,13 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	public ShowDescriptionAction(IPluginExtensionPoint point, boolean forceExternal) {
-		setExtensionPoint(point, point.getFullId());
+		setExtensionPoint(point.getFullId());
 		fForceExternal = forceExternal;
 		initialize();
 	}
 	
 	public ShowDescriptionAction(IPluginExtensionPoint point, String pointID) {
-		setExtensionPoint(point, pointID);
+		setExtensionPoint(pointID);
 		fForceExternal = false;
 		initialize();
 	}
@@ -84,7 +84,7 @@ public class ShowDescriptionAction extends Action {
 		fPointID = schema.getQualifiedPointId();
 	}
 	
-	public void setExtensionPoint(IPluginExtensionPoint point, String pointID) {
+	public void setExtensionPoint(String pointID) {
 		fPointID = pointID;
 		setText(PDEUIMessages.ShowDescriptionAction_label); 
 		fSchema = null;
