@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.graphics.Image;
@@ -103,13 +104,13 @@ public class ActivePartSection implements ISpySection {
 				text.setImage("menu", menuImage); //$NON-NLS-1$
 			}
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			PDERuntimePlugin.log(e);
 		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+			PDERuntimePlugin.log(e);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			PDERuntimePlugin.log(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			PDERuntimePlugin.log(e);
 		}
 
 		buffer.append("</form>"); //$NON-NLS-1$

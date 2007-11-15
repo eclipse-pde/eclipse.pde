@@ -26,6 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.ui.PartInitException;
 
@@ -54,10 +55,10 @@ public class SpyIDEUtil {
 		try {
 			IType type = project.findType(clazz);
 			JavaUI.openInEditor(type, false, true);
-		} catch (JavaModelException e1) {
-			e1.printStackTrace();
-		} catch (PartInitException e1) {
-			e1.printStackTrace();
+		} catch (JavaModelException e) {
+			PDERuntimePlugin.log(e);
+		} catch (PartInitException e) {
+			PDERuntimePlugin.log(e);
 		}
 	}
 	
