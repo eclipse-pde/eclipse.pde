@@ -209,7 +209,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 
 			String contributor = ((IExtension) element).getNamespaceIdentifier();
-			return NLS.bind("contributed by: {0}", contributor); //$NON-NLS-1$
+			return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor);
 			
 		}
 		if (element instanceof IExtensionPoint) {

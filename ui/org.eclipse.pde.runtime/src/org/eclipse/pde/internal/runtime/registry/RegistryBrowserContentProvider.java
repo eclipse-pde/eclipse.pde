@@ -13,13 +13,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -27,7 +25,6 @@ import org.osgi.framework.Constants;
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	private Hashtable fPluginMap = new Hashtable();
 	public boolean isInExtensionSet;
-	private TreeViewer fViewer;
 	
 	
 	class BundleFolder implements IBundleFolder {
@@ -84,10 +81,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	public RegistryBrowserContentProvider(TreeViewer viewer){
-		super();
-		this.fViewer = viewer;
-	}
 	
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IBundleFolder.F_EXTENSIONS)
@@ -156,8 +149,19 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		if (element instanceof IConfigurationElement) {
 			return ((IConfigurationElement) element).getChildren();
 		}
-		if (element instanceof PluginObjectAdapter[]) {
-			return (PluginObjectAdapter[])element;
+		if (element instanceof Object[]) {
+			return (Object[])element;
+		}
+		if (element instanceof IExtensionPoint) {
+			Object[] array = ((IExtensionPoint)element).getExtensions();
+			Object[] result = null;
+			if (array != null && array.length > 0) {
+				result = new Object[array.length];
+				for (int i = 0; i < array.length; i++) {
+					result[i] = createAdapter(array[i], IBundleFolder.F_EXTENSIONS);
+				}
+			}
+			return result;
 		}
 		return null;
 	}
@@ -196,12 +200,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		return children != null && children.length > 0;
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
-	
-	public String getTitleSummary(int bundleCount){
-		if (fViewer == null || fViewer.getTree() == null)
-			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0"})); //$NON-NLS-1$ //$NON-NLS-2$
-		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(fViewer.getTree().getItemCount()), Integer.toString(bundleCount)}));
 	}
 	
 	private Object[] getManifestHeaderArray(Bundle bundle, String headerKey) {

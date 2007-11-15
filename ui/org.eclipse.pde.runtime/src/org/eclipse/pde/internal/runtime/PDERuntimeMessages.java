@@ -64,6 +64,11 @@ public class PDERuntimeMessages extends NLS {
 	
 	public static String SpyFormToolkit_saveImageAs_title;
 
+	public static String RegistryBrowser_showExtOnlyLabel;
+	public static String RegistryBrowser_plugins;
+	public static String RegistryBrowserLabelProvider_contributedBy;
+
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDERuntimeMessages.class);
