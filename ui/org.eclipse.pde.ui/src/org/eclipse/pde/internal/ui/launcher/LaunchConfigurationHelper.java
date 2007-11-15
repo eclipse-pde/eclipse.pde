@@ -277,10 +277,10 @@ public class LaunchConfigurationHelper {
 				framework = framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (framework.startsWith("file:plugins/")) { //$NON-NLS-1$
 				framework = framework.replaceFirst("file:plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			int index = framework.indexOf('_');
-			if (index != -1) {
-				framework = framework.substring(0, index);
+				int index = framework.lastIndexOf('_');
+				if (index != -1) {
+					framework = framework.substring(0, index);
+				}
 			}
 			String url = getBundleURL(framework, map);
 			if (url != null)
