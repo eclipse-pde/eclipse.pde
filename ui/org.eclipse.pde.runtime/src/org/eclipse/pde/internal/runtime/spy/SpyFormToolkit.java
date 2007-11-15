@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Willian Mitsuda <wmitsuda@gmail.com> - bug 209841
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
@@ -42,6 +43,10 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Bundle;
 
 public class SpyFormToolkit extends FormToolkit {
+	
+	private static final String CLASS_PROTOCOL_PREFIX = "class://"; //$NON-NLS-1$
+	
+	private static final String BUNDLE_PROTOCOL_PREFIX = "bundle://"; //$NON-NLS-1$
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 		
@@ -52,10 +57,18 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 
 		public void linkActivated(HyperlinkEvent e) {
-			String clazz = (String) e.getHref();
-			Bundle bundle = (Bundle) bundleClassByName.get(clazz);
-			SpyIDEUtil.openClass(bundle.getSymbolicName(), clazz);
-			dialog.close();
+			String href = (String) e.getHref();
+			
+			if (href.startsWith(CLASS_PROTOCOL_PREFIX)) {
+				String clazz = href.substring(CLASS_PROTOCOL_PREFIX.length());
+				Bundle bundle = (Bundle) bundleClassByName.get(clazz);
+				SpyIDEUtil.openClass(bundle.getSymbolicName(), clazz);
+				dialog.close();
+			} else if (href.startsWith(BUNDLE_PROTOCOL_PREFIX)) {
+				String bundle = href.substring(BUNDLE_PROTOCOL_PREFIX.length());
+				SpyIDEUtil.openBundleManifest(bundle);
+				dialog.close();
+			}
 		}
 	}
 	
@@ -193,7 +206,7 @@ public class SpyFormToolkit extends FormToolkit {
 			if (bundle != null) {
 				bundleClassByName.put(clazz.getName(),
 						bundle);
-				buffer.append("<a href=\"").append( //$NON-NLS-1$
+				buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
 						clazz.getName()).append("\">") //$NON-NLS-1$
 						.append(getSimpleName(clazz)).append(
 						"</a>"); //$NON-NLS-1$
@@ -212,10 +225,19 @@ public class SpyFormToolkit extends FormToolkit {
 			buffer.append(PDERuntimeMessages.SpyDialog_contributingPluginId_title);
 			buffer.append("</p>"); //$NON-NLS-1$
 			buffer.append("<li bindent=\"20\" style=\"image\" value=\"plugin\">"); //$NON-NLS-1$
+			if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+				buffer.append("<a href=\""); //$NON-NLS-1$
+				buffer.append(BUNDLE_PROTOCOL_PREFIX);
+				buffer.append(bundle.getSymbolicName());
+				buffer.append("\">"); //$NON-NLS-1$
+			}
 			buffer.append(bundle.getSymbolicName());
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(version);
 			buffer.append(")"); //$NON-NLS-1$
+			if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+				buffer.append("</a>"); //$NON-NLS-1$
+			}
 			buffer.append("</li>"); //$NON-NLS-1$
 	
 			Image pluginImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_PLUGIN_OBJ);

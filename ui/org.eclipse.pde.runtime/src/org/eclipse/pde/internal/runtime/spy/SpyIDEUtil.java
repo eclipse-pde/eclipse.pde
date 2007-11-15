@@ -9,6 +9,7 @@
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Marcelo Paternostro <marcelop@ca.ibm.com> - bug 201105
  *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 208137
+ *     Willian Mitsuda <wmitsuda@gmail.com> - bug 209841
  *******************************************************************************/
 
 package org.eclipse.pde.internal.runtime.spy;
@@ -25,6 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.ui.PartInitException;
 
 public class SpyIDEUtil {
@@ -57,6 +59,10 @@ public class SpyIDEUtil {
 		} catch (PartInitException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public static void openBundleManifest(String bundleID) {
+		ManifestEditor.openPluginEditor(bundleID);
 	}
 	
 }
