@@ -15,9 +15,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -187,20 +191,39 @@ public class JREBlock {
 		fJavawButton.setSelection(javaCommand.equals("javaw")); //$NON-NLS-1$
 		fJavaButton.setSelection(!fJavawButton.getSelection());
 		
-		boolean useVMInstall = config.getAttribute(IPDELauncherConstants.USE_VMINSTALL, true); //$NON-NLS-1$
-		fJreButton.setSelection(useVMInstall); //$NON-NLS-1$
-		fEeButton.setSelection(!useVMInstall);
+		String jre = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+		IPath jrePath = null;
+		if (jre != null) {
+			jrePath = Path.fromPortableString(jre);
+		}
+		String vmInstallName = null;
+		String eeId = null;
+		if (jrePath == null) {
+			vmInstallName = config.getAttribute(IPDELauncherConstants.VMINSTALL, (String)null);
+			if (vmInstallName == null) {
+				vmInstallName = VMHelper.getDefaultVMInstallName(config);
+			}
+		} else {
+			eeId = JavaRuntime.getExecutionEnvironmentId(jrePath);
+			if (eeId == null) {
+				vmInstallName = JavaRuntime.getVMInstallName(jrePath);
+			}
+		}
+		fJreButton.setSelection(vmInstallName != null);
+		fEeButton.setSelection(eeId != null);
 		
 		setJRECombo();
-		String vmInstallName =
-			config.getAttribute(IPDELauncherConstants.VMINSTALL, VMHelper.getDefaultVMInstallName(config));
+		if (vmInstallName == null) {
+			vmInstallName = JavaRuntime.getVMInstallName(jrePath);
+			if (vmInstallName == null) {
+				vmInstallName = VMHelper.getDefaultVMInstallName(config);
+			}
+		}
 		fJreCombo.setText(vmInstallName);
 		if (fJreCombo.getSelectionIndex() == -1)
 			fJreCombo.setText(VMHelper.getDefaultVMInstallName());
 		
 		setEECombo();
-		String eeId =
-			config.getAttribute(IPDELauncherConstants.EXECUTION_ENVIRONMENT, (String) null);
 		setEEComboSelection(eeId);
 		
 		updateJREEnablement();
@@ -237,31 +260,31 @@ public class JREBlock {
 	}
 	
 	protected void saveJRESection(ILaunchConfigurationWorkingCopy config) {	
-		try {
-			String javaCommand = fJavawButton.getSelection() ? null : "java"; //$NON-NLS-1$
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
-			
-			config.setAttribute(IPDELauncherConstants.USE_VMINSTALL, fJreButton.getSelection());
-			if (fJreButton.getSelection()) {
-				if (fJreCombo.getSelectionIndex() == -1)
-					return;
-	
-				String jre = fJreCombo.getText();
-				if (config.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null) != null) {
-					config.setAttribute(IPDELauncherConstants.VMINSTALL, jre);
-				} else {
-					config.setAttribute(
-							IPDELauncherConstants.VMINSTALL,
-						jre.equals(VMHelper.getDefaultVMInstallName(config)) ? null : jre);
-				}
-			} else {
-				if (fEeCombo.getSelectionIndex() == -1)
-					return;
-				
-				config.setAttribute(IPDELauncherConstants.EXECUTION_ENVIRONMENT, parseEESelection(fEeCombo.getText()));
+		String javaCommand = fJavawButton.getSelection() ? null : "java"; //$NON-NLS-1$
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
+		
+		IPath jrePath = null;
+		if (fJreButton.getSelection()) {
+			if (fJreCombo.getSelectionIndex() != -1) {
+				String jreName = fJreCombo.getText();
+				IVMInstall install = VMHelper.getVMInstall(jreName);
+				jrePath = JavaRuntime.newJREContainerPath(install);
 			}
-		} catch (CoreException e) {
+		} else {
+			if (fEeCombo.getSelectionIndex() != -1) {
+				IExecutionEnvironment environment = VMHelper.getExecutionEnvironment(parseEESelection(fEeCombo.getText()));
+				if (environment != null) {
+					jrePath = JavaRuntime.newJREContainerPath(environment);
+				}
+			}
 		}
+		String attr = null;
+		if (jrePath != null) {
+			attr = jrePath.toPortableString();
+		}
+		// remove old attribute first
+		config.removeAttribute(IPDELauncherConstants.VMINSTALL);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, attr);
 	}
 
 	protected void saveBootstrapEntriesSection(ILaunchConfigurationWorkingCopy config) {
