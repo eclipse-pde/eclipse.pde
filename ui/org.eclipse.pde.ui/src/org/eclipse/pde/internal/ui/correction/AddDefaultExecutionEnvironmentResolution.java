@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
@@ -22,8 +22,11 @@ import org.osgi.framework.Constants;
 
 public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMarkerResolution {
 
-	public AddDefaultExecutionEnvironmentResolution(int type) {
+	private String id;
+	
+	public AddDefaultExecutionEnvironmentResolution(int type, String id) {
 		super(type);
+		this.id = id;
 	}
 
 	protected void createChange(BundleModel model) {
@@ -38,22 +41,12 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 
 		if(header != null && header instanceof RequiredExecutionEnvironmentHeader) {
-			// TODO consider moving to VMHelper class
-			// Get available EEs & default install VM
-			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
-
-			for(int i = 0; i < systemEnvs.length; i++) {
-				// Get strictly compatible EE for the default VM
-				if(systemEnvs[i].isStrictlyCompatible(defaultVM)) {
-					((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(systemEnvs[i]);
-					break;
-				}
-			}
+			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
+			((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(ee);
 		}
 	}
 
 	public String getLabel() {
-		return PDEUIMessages.AddDefaultExecutionEnvironment_label;
+		return NLS.bind(PDEUIMessages.AddDefaultExecutionEnvironment_label, id);
 	}
 }

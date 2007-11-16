@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -377,8 +378,22 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String[] bundleEnvs = desc.getExecutionEnvironments();
 		if (bundleEnvs == null || bundleEnvs.length == 0) {
 			// No EE specified
-			report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev,
-					PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
+			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+			IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+			
+			for(int i = 0; i < systemEnvs.length; i++) {
+				// Get strictly compatible EE for the default VM
+				if(systemEnvs[i].isStrictlyCompatible(defaultVM)) {
+					IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev,
+							PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
+					try {
+						if (marker != null) {
+							marker.setAttribute("ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
+						}
+					} catch (CoreException e) {}
+					break;
+				}
+			}
 			return;
 		}
 
