@@ -315,7 +315,7 @@ public class TargetSourceTab {
 	private SourceLocation[] getSourceLocations() {
 		if (fExtensionLocations == null) {
 			ArrayList result = new ArrayList();
-			IExtension[] extensions = fPage.getExtensionRegistry().findExtensions(PDECore.PLUGIN_ID + ".source"); //$NON-NLS-1$
+			IExtension[] extensions = fPage.getExtensionRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
 			State resolverState = fPage.getCurrentState().getState();
 			for (int i = 0; i < extensions.length; i++) {
 				long id = Long.parseLong(((RegistryContributor)extensions[i].getContributor()).getId());

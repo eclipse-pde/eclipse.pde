@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
 import java.util.HashSet;
@@ -28,7 +38,7 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IPluginModelBase[] models = null;
 		if (fInput.getSearchLimit() == PluginSearchInput.LIMIT_REFERENCES) {
-			models =registry.findExtensionPlugins(pointId); 
+			models =registry.findExtensionPlugins(pointId, false); 
 		} else {
 			IPluginModelBase base = registry.findExtensionPointPlugin(pointId);
 			models = (base == null) ? new IPluginModelBase[0] : new IPluginModelBase[] { base };

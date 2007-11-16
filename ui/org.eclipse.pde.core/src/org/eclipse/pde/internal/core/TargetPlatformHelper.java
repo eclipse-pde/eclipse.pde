@@ -177,7 +177,7 @@ public class TargetPlatformHelper {
     
     public static Set getApplicationNameSet() {
 		TreeSet result = new TreeSet();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications"); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();
 			if (id != null && !id.startsWith("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
@@ -195,7 +195,7 @@ public class TargetPlatformHelper {
 	
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			if (elements.length != 1)

@@ -68,7 +68,7 @@ public class PluginSearchScope {
 		if (workspaceScope == SCOPE_WORKSPACE) {
 			result.add(candidate);
 		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
-				result.add(candidate);
+			result.add(candidate);
 		}
 	}
 		

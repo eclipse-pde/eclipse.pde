@@ -67,7 +67,16 @@ public class PDEExtensionRegistry {
 	// Methods used to control information/status of Extension Registry
 	
 	protected IPluginModelBase[] getModels() {
-		return (fModels == null) ? PluginRegistry.getActiveModels() : fModels;
+		if (fModels == null) {
+			// get all workspace and external models.  Make sure workspace models come first
+			IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
+			IPluginModelBase[] externalModels = PluginRegistry.getExternalModels();
+			IPluginModelBase[] allModels = new IPluginModelBase[workspaceModels.length + externalModels.length];
+			System.arraycopy(workspaceModels, 0, allModels, 0, workspaceModels.length);
+			System.arraycopy(externalModels, 0, allModels, workspaceModels.length, externalModels.length);
+			return allModels;
+		}
+		return fModels;
 	}
 	
 	public void stop() {
@@ -106,43 +115,55 @@ public class PDEExtensionRegistry {
 	
 	// Methods to access data in Extension Registry
 	
-	public IPluginModelBase[] findExtensionPlugins(String pointId) {
+	public IPluginModelBase[] findExtensionPlugins(String pointId, boolean activeOnly) {
 		IExtensionPoint point = getExtensionPoint(pointId);
 		if (point == null) {
 			// if extension point for extension does not exist, search all plug-ins manually
-			return PluginRegistry.getAllModels();
+			return activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
 		}
 		IExtension[] exts = point.getExtensions();
 		HashSet plugins = new HashSet();
 		for (int i = 0; i < exts.length; i++) {
-			IPluginModelBase base = getPlugin(exts[i].getContributor());
-			if (base != null && !plugins.contains(base))
+			IPluginModelBase base = getPlugin(exts[i].getContributor(), false);
+			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled()))
 				plugins.add(base);
 		}
 		return (IPluginModelBase[])plugins.toArray(new IPluginModelBase[plugins.size()]);
 	}
 	
+	/*
+	 * Returns IPluginModelBase even if the model is not enabled
+	 */
 	public IPluginModelBase findExtensionPointPlugin(String pointId) {
 		IExtensionPoint point = getExtensionPoint(pointId);
 		if (point == null) {
 			return null;
 		}
 		IContributor contributor = point.getContributor();
-		return getPlugin(contributor);
+		return getPlugin(contributor, true);
 	}
 	
 	private IExtensionPoint getExtensionPoint(String pointId) {
 		return getRegistry().getExtensionPoint(pointId);
 	}
 	
+	/*
+	 * Return true if the extension registry has any bundle (enabled/disabled) with the Extension Point specified
+	 */
 	public boolean hasExtensionPoint(String pointId) {
+//		IExtensionPoint point = getExtensionPoint(pointId);
+//		IPluginModelBase base = (point != null) ? getPlugin(point.getContributor(), false) : null;
+//		return (base != null) ? base.isEnabled() : false;
 		return getExtensionPoint(pointId) != null;
 	}
 	
+	/*
+	 * Returns IPluginExtenionPoint for extension point id for any model (both enabled/disabled)
+	 */
 	public IPluginExtensionPoint findExtensionPoint(String pointId) {
 		IExtensionPoint extPoint = getExtensionPoint(pointId);
 		if (extPoint != null) {
-			IPluginModelBase model = getPlugin(extPoint.getContributor());
+			IPluginModelBase model = getPlugin(extPoint.getContributor(), true);
 			if (model != null) {
 				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 				for (int i = 0; i < points.length; i++) {
@@ -192,27 +213,36 @@ public class PDEExtensionRegistry {
 		return base;
 	}
 	
-	public IExtension[] findExtensions(String extensionPointId) {
-		IExtensionPoint point = getExtensionPoint(extensionPointId);
-		if (point != null) 
-			return point.getExtensions();
+	public IExtension[] findExtensions(String extensionPointId, boolean activeOnly) {
 		ArrayList list = new ArrayList();
-		IPluginModelBase[] bases = PluginRegistry.getActiveModels();
-		for (int i = 0; i < bases.length; i++) {
-			IContributor contributor = fStrategy.createContributor(bases[i]);
-			if (contributor == null)
-				continue;
-			IExtension[] extensions = getRegistry().getExtensions(contributor);
-			for (int j = 0; j < extensions.length; j++) {
-				if (extensions[j].getExtensionPointUniqueIdentifier().equals(extensionPointId))
-					list.add(extensions[j]);
+		IExtensionPoint point = getExtensionPoint(extensionPointId);
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			if (!activeOnly)
+				return extensions;
+			for (int i = 0; i < extensions.length; i++) {
+				IPluginModelBase base = getPlugin(extensions[i].getContributor(), true);
+				if (base.isEnabled())
+					list.add(extensions[i]);
+			}
+		} else {
+			IPluginModelBase[] bases = activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
+			for (int i = 0; i < bases.length; i++) {
+				IContributor contributor = fStrategy.createContributor(bases[i]);
+				if (contributor == null)
+					continue;
+				IExtension[] extensions = getRegistry().getExtensions(contributor);
+				for (int j = 0; j < extensions.length; j++) {
+					if (extensions[j].getExtensionPointUniqueIdentifier().equals(extensionPointId))
+						list.add(extensions[j]);
+				}
 			}
 		}
 		return (IExtension[]) list.toArray(new IExtension[list.size()]);
 	}
 	
 	// make sure we return the right IPluginModelBase when we have multiple versions of a plug-in Id
-	private IPluginModelBase getPlugin(IContributor icontributor) {
+	private IPluginModelBase getPlugin(IContributor icontributor, boolean searchAll) {
 		if (!(icontributor instanceof RegistryContributor))
 			return null;
 		RegistryContributor contributor = (RegistryContributor) icontributor;
@@ -222,6 +252,8 @@ public class PDEExtensionRegistry {
 			return PluginRegistry.findModel(desc);
 		// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
 		ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
+		if (!searchAll && entry.getWorkspaceModels().length > 0)
+			return null;
 		IPluginModelBase externalModels[] = entry.getExternalModels();
 		for (int j = 0; j < externalModels.length; j++) {
 			BundleDescription extDesc = externalModels[j].getBundleDescription();

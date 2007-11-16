@@ -71,10 +71,16 @@ public class PDERegistryStrategy extends RegistryStrategy{
 			// can ignore removed models since the ModelEntries is empty
 			ModelEntry[] entries = delta.getChangedEntries();
 			for (int i = 0; i < entries.length; i++) {
-				// remove all external models if there are any workspace models since they are considered 'activeModels'.  See ModelEntry.getActiveModels().
-				removeModels(entries[i].getExternalModels(), !entries[i].hasWorkspaceModels());
-				removeModels(entries[i].getWorkspaceModels(), true);
-				addBundles(fRegistry, entries[i].getActiveModels());
+				// If we have workspace models, we need to make sure they are registered before external models so when we search for extension points,
+				// we find the workspace version
+				IPluginModelBase [] workspaceModels = entries[i].getWorkspaceModels();
+				if (workspaceModels.length > 0) {
+					removeModels(entries[i].getExternalModels(), !entries[i].hasWorkspaceModels());
+					removeModels(workspaceModels, true);
+					addBundles(fRegistry, entries[i].getWorkspaceModels());
+				}
+				// make sure the external models are registered at all times
+				addBundles(fRegistry, entries[i].getExternalModels());
 			}
 			entries = delta.getAddedEntries();
 			for (int i = 0; i < entries.length; i++) 
@@ -267,13 +273,29 @@ public class PDERegistryStrategy extends RegistryStrategy{
 		fPDERegistry.getRegistry();
 	}
 
+	// Same timestamp calculations as PDEState.computeTimestamp(URL[] urls, long timestamp)
 	public long getContributionsTimestamp() {
 		IPluginModelBase[] bases = fPDERegistry.getModels();
 		long timeStamp = 0;
 		for (int i = 0; i < bases.length; i++) {
-			File location = getFile(bases[i]);
-			if (location != null)
-			timeStamp ^= location.lastModified();
+			String loc = bases[i].getInstallLocation();
+			File location = new File(loc);
+			if (location.exists()) {
+				if (location.isFile()) {
+					timeStamp ^= location.lastModified();
+				} else {
+					File manifest = new File(location, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+					if (manifest.exists())
+						timeStamp ^= manifest.lastModified();
+					manifest = new File(location, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+					if (manifest.exists())
+						timeStamp ^= manifest.lastModified();
+					manifest = new File(location, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+					if (manifest.exists())
+						timeStamp ^= manifest.lastModified();
+				}
+				timeStamp ^= location.getAbsolutePath().hashCode();
+			}
 		}
 		return timeStamp;
 	}

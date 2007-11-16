@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
 import org.eclipse.core.resources.IFile;
@@ -91,7 +101,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	
 	private void findReferences(CompositeChange compositeChange, IProgressMonitor monitor) {
 		String pointId = getId();
-		IPluginModelBase[] bases = PDECore.getDefault().getExtensionsRegistry().findExtensionPlugins(pointId);
+		IPluginModelBase[] bases = PDECore.getDefault().getExtensionsRegistry().findExtensionPlugins(pointId, true);
 		monitor.beginTask("", bases.length); //$NON-NLS-1$
 		for (int i = 0; i < bases.length; i++) {
 			IFile file = getModificationFile(bases[i]);

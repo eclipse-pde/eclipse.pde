@@ -165,7 +165,7 @@ public class SourceLocationManager implements ICoreConstants {
 	
 	private static SourceLocation[] processExtensions() {
 		ArrayList result = new ArrayList();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source"); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();
 			RegistryContributor contributor = (RegistryContributor)extensions[i].getContributor();

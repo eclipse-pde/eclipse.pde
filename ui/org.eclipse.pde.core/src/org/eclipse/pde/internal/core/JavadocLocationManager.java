@@ -69,7 +69,7 @@ public class JavadocLocationManager {
 		if (fLocations != null) return;
 		fLocations = new HashMap();
 		
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID);
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
 			// only search external models

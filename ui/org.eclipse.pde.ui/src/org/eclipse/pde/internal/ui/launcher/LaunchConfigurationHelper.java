@@ -347,7 +347,7 @@ public class LaunchConfigurationHelper {
 		// contributing plug-in
 		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION,
 				TargetPlatform.getDefaultApplication());
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();
 			if (id == null)
