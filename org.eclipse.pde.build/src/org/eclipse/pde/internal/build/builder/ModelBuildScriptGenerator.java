@@ -1207,8 +1207,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0) {
-			String parent = new Path(srcName).removeLastSegments(1).toString();
-			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + parent;
+			String dest = null;
+			if(srcName.equals(SRC_ZIP) )
+				dest = new Path(srcName).removeLastSegments(1).toString();  //src.zip can go in the root
+			else
+				dest = srcName.substring(0, srcName.length() - 4 ); //remove .zip, the rest go in folders
+			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + dest;
 			script.printCopyTask(null, toDir, fileSets, true, true);
 		}
 		script.printTargetEnd();
