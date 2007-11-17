@@ -73,6 +73,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
@@ -547,6 +548,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISiteCategory) {
 			return getObjectImage((ISiteCategory) obj);
 		}
+		if (obj instanceof ExportPackageObject) {
+			return getObjectImage((ExportPackageObject) obj);
+		}
 		if (obj instanceof PackageObject) {
 			return getObjectImage((PackageObject) obj);
 		}
@@ -907,6 +911,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int flags = obj.getDefinition() == null ? F_ERROR : 0;
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
 	}
+	
+	public Image getObjectImage(ExportPackageObject obj) {
+		int flags = 0;
+		if(obj.isInternal())
+			flags |= F_INTERNAL;
+		ImageDescriptor desc = 
+			JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
+		return get(desc, flags);
+	}
+	
 	public Image getObjectImage(PackageObject obj) {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 	}
