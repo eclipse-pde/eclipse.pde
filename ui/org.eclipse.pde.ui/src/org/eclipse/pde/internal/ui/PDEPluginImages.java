@@ -171,6 +171,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_JAVA_CO   = create(PATH_OVR, "java_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAR_CO   = create(PATH_OVR, "jar_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROJECT_CO   = create(PATH_OVR, "project_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OPTIONAL_CO   = create(PATH_OVR, "optional_co.gif"); //$NON-NLS-1$
 
 	/**
 	 * TOOL16

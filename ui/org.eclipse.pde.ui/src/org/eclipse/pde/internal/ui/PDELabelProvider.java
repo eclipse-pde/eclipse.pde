@@ -468,7 +468,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof BundleDescription) {
 			return getObjectImage((BundleDescription)obj);
 		}
-		
 		if (obj instanceof IPluginLibrary) {
 			return getObjectImage((IPluginLibrary) obj);
 		}
@@ -672,6 +671,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags = iimport.isOptional() ? F_WARNING : F_ERROR;
 		else if (iimport.isReexported())
 			flags = F_EXPORT;
+		if (iimport.isOptional())
+			flags |= F_OPTIONAL;
 		IPlugin plugin = iobj.getPlugin();
 		if (plugin != null) {
 			IPluginModelBase model = plugin.getPluginModel();
@@ -687,7 +688,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IPluginImport obj) {
 		int flags = 0;
 		if (obj.isReexported())
-			flags = F_EXPORT;
+			flags |= F_EXPORT;
 		return get(getRequiredPluginImageDescriptor(obj), flags);
 	}
 	

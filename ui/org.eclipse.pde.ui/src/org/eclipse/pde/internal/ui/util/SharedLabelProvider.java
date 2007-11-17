@@ -43,6 +43,7 @@ public class SharedLabelProvider
 	public static final int F_JAVA = 64;
 	public static final int F_JAR = 128;
 	public static final int F_PROJECT = 256;
+	public static final int F_OPTIONAL = 512;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
 	private Image fBlankImage;
@@ -159,6 +160,8 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { PDEPluginImages.DESC_JAR_CO };
 		if ((flags & F_PROJECT) != 0)
 			return new ImageDescriptor[] { PDEPluginImages.DESC_PROJECT_CO };
+		if ((flags & F_OPTIONAL) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_OPTIONAL_CO };
 		return null;
 	}
 	
