@@ -1554,6 +1554,9 @@
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
           <actionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+          <showInPart
+                id="org.eclipse.team.ui.GenericHistoryView">
+          </showInPart>
        </perspectiveExtension>
     </extension>
     <extension
