@@ -245,7 +245,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
@@ -262,7 +262,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			public void modifyText(ModifyEvent e) {
 				StructuredViewer viewer = getStructuredViewerPart().getViewer();
 				IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
-				updateButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
+				updateButtons(ssel.size() != 1 ? null : ssel);
 			}
 		});
 	}
@@ -301,9 +301,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		updateButtons(selection.getFirstElement());
+		updateButtons(selection);
 		getTreePart().getButton(BUTTON_EDIT).setVisible(isSelectionEditable(selection));
 	}
+	
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case BUTTON_ADD :
@@ -352,13 +353,19 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
-			// delete here and let the editor transfer
-			// the selection to the clipboard
-			handleDelete();
-			return false;
+			if(isSingleSelection()) {
+				handleDelete();				
+			}
+			return true;
 		}
 		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			doPaste();
+			if(isSingleSelection()) {
+				doPaste();
+			}
+			return true;
+		}
+		if(actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			handleSelectAll();
 			return true;
 		}
 		
@@ -385,6 +392,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					manager.add(new Separator());
 				}
 			}
+			manager.add(new Separator());
+			if (object instanceof IPluginExtension) {
+				PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+				actionGroup.setContext(new ActionContext(selection));
+				actionGroup.fillContextMenu(manager);
+				manager.add(new Separator());
+			}
 		} else if (ssel.size() > 1) {
 			// multiple
 			Action delAction = new Action() {
@@ -397,20 +411,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			manager.add(new Separator());
 			delAction.setEnabled(isEditable());
 		}
-		if (ssel.size() == 1) {
-			manager.add(new Separator());
-			Object object = ssel.getFirstElement();
-			if (object instanceof IPluginExtension) {
-				PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-				actionGroup.setContext(new ActionContext(selection));
-				actionGroup.fillContextMenu(manager);
-				manager.add(new Separator());
-			}
-			//manager.add(new PropertiesAction(getFormPage().getEditor()));
+		manager.add(new Separator());
+		if(ssel.size() < 2) { // only cut things when the selection is one
+			getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		}
-		manager.add(new Separator());
-		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 				manager, false);
 
@@ -592,6 +596,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			});
 		}
 	}
+	
+	private void handleSelectAll() {
+		fExtensionTree.getTree().selectAll();
+		fExtensionTree.setSelection(fExtensionTree.getSelection());
+	}
+	
 	private ArrayList getEditorWizards(IStructuredSelection selection) {
 		if (selection.size()!=1) return null;
 		Object obj = selection.getFirstElement();
@@ -879,8 +889,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		// Note:  Multi-select in tree viewer is disabled; but, this function
-		// can support multiple source objects
+		// Note: Multi-select in is enabled and this function can support 
+		// multiple source object but it needs to be investigated
 		// Rule:  Element source objects are always pasted as children of the
 		// target object (if allowable)
 		// Rule:  Extension source objects are always pasted and are independent
@@ -1137,24 +1147,29 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			downEnabled = false;
 		}
 		else {
-			if (item instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) item;
-				IPluginParent parent = (IPluginParent) element.getParent();
-				// check up
-				int index = parent.getIndexOf(element);
-				if (index > 0)
-					upEnabled = true;
-				if (index < parent.getChildCount() - 1)
-					downEnabled = true;
-			} else if (item instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) item;
-				IExtensions extensions = (IExtensions) extension.getParent();
-				int index = extensions.getIndexOf(extension);
-				int size = extensions.getExtensions().length;
-				if (index > 0)
-					upEnabled = true;
-				if (index < size - 1)
-					downEnabled = true;
+			if(item instanceof IStructuredSelection) {
+				if(((IStructuredSelection)item).size() == 1) {
+					Object selected = ((IStructuredSelection)item).getFirstElement();
+					if (selected instanceof IPluginElement) {
+						IPluginElement element = (IPluginElement) selected;
+						IPluginParent parent = (IPluginParent) element.getParent();
+						// check up
+						int index = parent.getIndexOf(element);
+						if (index > 0)
+							upEnabled = true;
+						if (index < parent.getChildCount() - 1)
+							downEnabled = true;
+					} else if (selected instanceof IPluginExtension) {
+						IPluginExtension extension = (IPluginExtension) selected;
+						IExtensions extensions = (IExtensions) extension.getParent();
+						int index = extensions.getIndexOf(extension);
+						int size = extensions.getExtensions().length;
+						if (index > 0)
+							upEnabled = true;
+						if (index < size - 1)
+							downEnabled = true;
+					}
+				}
 			}
 		}
 		getTreePart().setButtonEnabled(BUTTON_ADD, addEnabled);
@@ -1176,7 +1191,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			StructuredViewer viewer = getStructuredViewerPart().getViewer();
 			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
-			updateButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
+			updateButtons(ssel);
 		}
 	}
 
@@ -1757,6 +1772,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return false;
 		}
 		return fSortAction.isChecked();
+	}
+	
+	private boolean isSingleSelection() {
+		IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
+		return selection.size() == 1;
 	}
 	
 }
