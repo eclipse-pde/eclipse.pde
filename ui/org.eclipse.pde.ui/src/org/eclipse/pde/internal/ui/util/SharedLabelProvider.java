@@ -45,6 +45,7 @@ public class SharedLabelProvider
 	public static final int F_PROJECT = 256;
 	public static final int F_OPTIONAL = 512;
 	public static final int F_INTERNAL = 1024;
+	public static final int F_FRIEND = 2048;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
 	private Image fBlankImage;
@@ -165,6 +166,8 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { PDEPluginImages.DESC_OPTIONAL_CO };
 		if ((flags & F_INTERNAL) != 0)
 			return new ImageDescriptor[] { PDEPluginImages.DESC_INTERNAL_CO };
+		if ((flags & F_FRIEND) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_FRIEND_CO };
 		return null;
 	}
 	

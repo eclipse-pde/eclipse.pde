@@ -915,7 +915,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ExportPackageObject obj) {
 		int flags = 0;
 		if(obj.isInternal())
-			flags |= F_INTERNAL;
+			flags = F_INTERNAL;
+		if(obj.getFriends().length > 0)
+			flags = F_FRIEND;
 		ImageDescriptor desc = 
 			JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
 		return get(desc, flags);
