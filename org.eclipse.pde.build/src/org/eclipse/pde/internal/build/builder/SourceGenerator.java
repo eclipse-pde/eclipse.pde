@@ -719,7 +719,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), "%" + nameKey); //$NON-NLS-1$
 		Properties localizationProperties = new Properties();
 		localizationProperties.put(nameKey, name);
-		if (vendorKey != null) {
+		if (vendorKey != null && vendor != null) {
 			attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VENDOR), "%" + vendorKey); //$NON-NLS-1$
 			localizationProperties.put(vendorKey, vendor);
 		}
