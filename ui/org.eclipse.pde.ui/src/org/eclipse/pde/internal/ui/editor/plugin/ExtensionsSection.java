@@ -599,7 +599,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	
 	private void handleSelectAll() {
 		fExtensionTree.getTree().selectAll();
-		fExtensionTree.setSelection(fExtensionTree.getSelection());
 	}
 	
 	private ArrayList getEditorWizards(IStructuredSelection selection) {
