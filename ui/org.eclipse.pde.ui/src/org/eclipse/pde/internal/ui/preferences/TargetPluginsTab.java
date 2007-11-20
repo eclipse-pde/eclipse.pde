@@ -630,6 +630,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
+			fPluginTreeViewer.setSubtreeChecked(fPluginTreeViewer.getInput(),true);
+			fPluginTreeViewer.setGrayedElements(new Object[0]);
 			fChangedModels.clear();
 			handleSelectAll(true);
 			if (fTreeViewerContents.size() > 1)
