@@ -13,7 +13,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.compatibility.URLEncoder;
 import org.xml.sax.SAXException;
 
 /**
@@ -45,10 +44,8 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /
 		}
 
 		try {
-			URL nonResolvedURL = new URL(url, BuildTimeFeature.FEATURE_XML);
-			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
-
-			feature = parseBuildFeature(resolvedURL);
+			URL featureURL = new URL(url, BuildTimeFeature.FEATURE_XML);
+			feature = parseBuildFeature(featureURL);
 
 			String qualifier = AbstractScriptGenerator.readProperties(new Path(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER);
 			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getVersion(), feature.getId(), qualifier, site != null ? site.getFeatureVersions() : null);
@@ -62,8 +59,7 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /
 			}
 
 			feature.setSite(site);
-			//feature.setFeatureContentProvider(contentProvider);
-			feature.setURL(resolvedURL);
+			feature.setURL(featureURL);
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.error_creatingFeature, url);
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, e));
@@ -82,10 +78,10 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /
 		BuildTimeFeature feature = null;
 		try {
 			feature = (BuildTimeFeature) parser.parse(featureURL);
-			if (parser.getStatus()!=null) {
-                // some internalError were detected
-                throw new CoreException(parser.getStatus());
-            }
+			if (parser.getStatus() != null) {
+				// some internalError were detected
+				throw new CoreException(parser.getStatus());
+			}
 		} catch (SAXException e) {
 			String message = NLS.bind(Messages.error_creatingFeature, featureURL.toString());
 			Status status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, e);

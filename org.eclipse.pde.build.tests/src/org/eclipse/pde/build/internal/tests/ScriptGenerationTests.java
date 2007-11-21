@@ -416,4 +416,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile javaCompilerArgs = buildFolder.getFile("javaCompiler.Plugin21.jar.args");
 		assertFalse(javaCompilerArgs.exists());
 	}
+
+	public void testBug210464() throws Exception {
+		IFolder buildFolder = newTest("210464 space");
+
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"org.eclipse.osgi"});
+		
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA"));
+		
+		assertResourceFile(buildFolder, "features/featureA/build.xml");
+	}
 }
