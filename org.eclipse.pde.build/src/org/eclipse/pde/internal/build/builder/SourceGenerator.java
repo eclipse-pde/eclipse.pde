@@ -695,12 +695,21 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			localization = "plugin"; //$NON-NLS-1$
 		else {
 			//read the localization properties from original bundle
-			Properties local = AbstractScriptGenerator.readProperties(originalBundle.getLocation(), localization + ".properties", IStatus.OK); //$NON-NLS-1$
-			if (local != null) {
+			Properties localizationProperties = null;
+			File localizationFile = new File(originalBundle.getLocation(), localization + ".properties"); //$NON-NLS-1$
+			if (!localizationFile.exists() && originalBundle.getHost() != null) {
+				// properties file does not exist,  we are a fragment, check the host
+				BundleDescription host = (BundleDescription) originalBundle.getHost().getSupplier();
+				localizationProperties = AbstractScriptGenerator.readProperties(host.getLocation(), localization + ".properties", IStatus.OK); //$NON-NLS-1$
+			} else if (localizationFile.exists()) {
+				localizationProperties = AbstractScriptGenerator.readProperties(originalBundle.getLocation(), localization + ".properties", IStatus.OK); //$NON-NLS-1$
+			}
+
+			if (localizationProperties != null) {
 				if (vendorKey != null)
-					vendor = local.getProperty(vendorKey);
+					vendor = localizationProperties.getProperty(vendorKey);
 				if (nameKey != null)
-					name = local.getProperty(nameKey);
+					name = localizationProperties.getProperty(nameKey);
 			}
 		}
 
