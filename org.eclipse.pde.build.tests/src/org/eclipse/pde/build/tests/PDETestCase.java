@@ -249,6 +249,7 @@ public abstract class PDETestCase extends TestCase {
 	 * @throws Exception
 	 */
 	public static void assertLogContainsLines(IFile log, String[] lines) throws Exception {
+		log.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 		assertNotNull(log);
 		assertTrue(log.exists());
 

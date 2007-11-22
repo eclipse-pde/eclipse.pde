@@ -161,6 +161,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingSteps() {
+		Map properties = new HashMap();
+		properties.put(PROPERTY_ROOT_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$
+		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
+		
 		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
 			generateMoveRootFiles();
 			return;
@@ -277,6 +281,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		script.printComment("Beginning of the jar signing  target"); //$NON-NLS-1$
 		script.printTargetDeclaration(TARGET_JARSIGNING, null, null, null, Messages.sign_Jar);
+		printCustomAssemblyAntCall(PROPERTY_PRE + TARGET_JARSIGNING, null);
 		if (generateJnlp)
 			script.printProperty(PROPERTY_UNSIGN, "true"); //$NON-NLS-1$
 		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
@@ -307,6 +312,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_ECLIPSE_PLUGINS, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION);
 		script.printProperty(PROPERTY_ECLIPSE_FEATURES, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);
 		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + Utils.getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_NAME));
+
+		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		if (productFile != null && productFile.getLauncherName() != null)
 			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName());
 		script.printProperty(PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
@@ -343,6 +351,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generatePostProcessingSteps() {
+		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_GATHER_BIN_PARTS, null);
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) getFinalShape(plugin)[1], BUNDLE);
@@ -352,6 +361,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			BuildTimeFeature feature = features[i];
 			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) getFinalShape(feature)[1], FEATURE);
 		}
+		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
 	}
 
 	protected void generateGatherBinPartsCalls() {
@@ -474,6 +484,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat))
 			generateGZipTarget(true);
+
+		generateCustomAssemblyTarget();
+
 		script.printProjectEnd();
 		script.close();
 		script = null;
@@ -481,6 +494,18 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public String getTargetName() {
 		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+	}
+
+	private void printCustomAssemblyAntCall(String customTarget, Map properties) {
+		Map params = (properties != null) ? new HashMap(properties) : new HashMap(1);
+		params.put(PROPERTY_CUSTOM_TARGET, customTarget);
+		script.printAntCallTask(TARGET_CUSTOM_ASSEMBLY, true, params);
+	}
+
+	private void generateCustomAssemblyTarget() {
+		script.printTargetDeclaration(TARGET_CUSTOM_ASSEMBLY, null, PROPERTY_CUSTOM_ASSEMBLY, null, null);
+		script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_ASSEMBLY), null, Utils.getPropertyFormat(PROPERTY_CUSTOM_TARGET), null, TRUE, null);
+		script.printTargetEnd();
 	}
 
 	private void generateZipTarget() {

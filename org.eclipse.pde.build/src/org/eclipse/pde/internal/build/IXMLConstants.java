@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 /**
@@ -61,6 +59,7 @@ public interface IXMLConstants {
 	public static final String TARGET_JARING = "jarIng"; //$NON-NLS-1$
 	public static final String TARGET_JARSIGNING = "jarSigning"; //$NON-NLS-1$
 	public static final String TARGET_ROOTFILES_PREFIX = "rootFiles"; //$NON-NLS-1$
+	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_ARCH = "basearch"; //$NON-NLS-1$
@@ -137,22 +136,25 @@ public interface IXMLConstants {
 	public static final String PROPERTY_CLASSPATH = ".classpath"; //$NON-NLS-1$
 	public static final String PROPERTY_RUN_PACKAGER = "runPackager"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
-	
+	public static final String PROPERTY_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
+	public static final String PROPERTY_CUSTOM_TARGET = "customTarget"; //$NON-NLS-1$
+	public static final String PROPERTY_ROOT_FOLDER = "rootFolder"; //$NON-NLS-1$
+
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$
-	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore";  //$NON-NLS-1$
-	public static final String PROPERTY_SIGN_STOREPASS ="sign.storepass"; //$NON-NLS-1$
+	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore"; //$NON-NLS-1$
+	public static final String PROPERTY_SIGN_STOREPASS = "sign.storepass"; //$NON-NLS-1$
 	public static final String PROPERTY_PACK = "jarProcessor.pack200"; //$NON-NLS-1$
 	public static final String PROPERTY_UNSIGN = "jarProcessor.unsign"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN = "jarProcessor.sign"; //$NON-NLS-1$
-	
+
 	//JNLP generation properties
 	public static final String PROPERTY_JNLP_CODEBASE = "jnlp.codebase"; //$NON-NLS-1$
-	public static final String PROPERTY_JNLP_J2SE = "jnlp.j2se";  //$NON-NLS-1$
+	public static final String PROPERTY_JNLP_J2SE = "jnlp.j2se"; //$NON-NLS-1$
 	public static final String PROPERTY_JNLP_LOCALE = "jnlp.locale"; //$NON-NLS-1$
-	public static final String PROPERTY_JNLP_GENOFFLINE = "jnlp.generateOfflineAllowed";  //$NON-NLS-1$
-	public static final String PROPERTY_JNLP_CONFIGS = "jnlp.configs";  //$NON-NLS-1$
-	
+	public static final String PROPERTY_JNLP_GENOFFLINE = "jnlp.generateOfflineAllowed"; //$NON-NLS-1$
+	public static final String PROPERTY_JNLP_CONFIGS = "jnlp.configs"; //$NON-NLS-1$
+
 	//Output format supported
 	public static final String FORMAT_TAR = "tar"; //$NON-NLS-1$
 	public static final String FORMAT_ANTTAR = "antTar"; //$NON-NLS-1$
