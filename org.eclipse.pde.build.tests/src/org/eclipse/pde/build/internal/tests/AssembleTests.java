@@ -10,9 +10,10 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
-import java.util.*;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 
@@ -48,5 +49,31 @@ public class AssembleTests extends PDETestCase {
 			"archiveFullPath: " + buildLocation + "/I.TestBuild/eclipse-win32.win32.x86.zip"
 		};
 		assertLogContainsLines(buildFolder.getFile("log.log"), log);
+	}
+
+	public void testBug196754() throws Exception {
+		IFolder buildFolder = newTest("196754");
+
+		// pde.build and equinox.launcher.win32.win32.x86 exist as signed folders in the base location,
+		// jar them up in the build and assert they still verify
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.pde.build;unpack=\"false\"", "org.eclipse.equinox.launcher.win32.win32.x86;unpack=\"false\""});
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("archivesFormat", "*, *, * - folder");
+		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		Utils.generateAllElements(buildFolder, "sdk");
+		
+		runBuild(buildFolder);
+		
+		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+		File [] plugins = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile().listFiles();
+		for (int i = 0; i < plugins.length; i++) {
+			assertJarVerifies(plugins[i]);
+		}		
 	}
 }

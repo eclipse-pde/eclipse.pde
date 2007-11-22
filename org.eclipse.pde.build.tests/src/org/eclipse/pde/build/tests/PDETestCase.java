@@ -24,6 +24,8 @@ import org.apache.tools.zip.ZipFile;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
+import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.pde.build.internal.tests.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
@@ -31,6 +33,8 @@ import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public abstract class PDETestCase extends TestCase {
 	public static final String PROJECT_NAME = "org.eclipse.pde.build.tests.builder";
@@ -110,7 +114,7 @@ public abstract class PDETestCase extends TestCase {
 
 		runAntScript(buildXMLPath, new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
 	}
-	
+
 	protected void runProductBuild(IFolder buildFolder) throws Exception {
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
@@ -191,6 +195,7 @@ public abstract class PDETestCase extends TestCase {
 	public static void assertZipContents(IFolder buildFolder, String archive, Set entries) throws Exception {
 		assertZipContents(buildFolder, archive, entries, true);
 	}
+
 	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, archive);
@@ -211,7 +216,7 @@ public abstract class PDETestCase extends TestCase {
 		} finally {
 			zip.close();
 		}
-		if(assertEmpty)
+		if (assertEmpty)
 			assertTrue(entries.size() == 0);
 	}
 
@@ -291,9 +296,26 @@ public abstract class PDETestCase extends TestCase {
 
 		AntUtils.setupProject(project);
 		project.init();
-		
+
 		// this will throw an exception if it is not a valid ant script
 		helper.parse(project, buildXML.getLocation().toFile(), new ProjectHelper2.RootHandler(context, new ProjectHelper2.MainHandler()));
 		return project;
+	}
+
+	public static void assertJarVerifies(File jarFile) throws Exception {
+		BundleContext context = Activator.getDefault().getContext();
+
+		ServiceReference certRef = context.getServiceReference(CertificateVerifierFactory.class.getName());
+		if (certRef == null)
+			throw new IllegalStateException();
+		CertificateVerifierFactory certFactory = (CertificateVerifierFactory) context.getService(certRef);
+		try {
+			CertificateVerifier verifier = certFactory.getVerifier(jarFile);
+			if (verifier.isSigned())
+				verifier.checkContent();
+		} finally {
+			context.ungetService(certRef);
+		}
+
 	}
 }
