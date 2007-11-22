@@ -1,15 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM - Initial API and implementation
- *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
- *     Prosyst - create proper OSGi bundles (bug 174157)
- *******************************************************************************/
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM - Initial API and implementation G&H Softwareentwicklung
+ * GmbH - internationalization implementation (bug 150933) Prosyst - create
+ * proper OSGi bundles (bug 174157)
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.File;
@@ -37,8 +35,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected Collection rootFileProviders;
 	protected Properties pluginsPostProcessingSteps;
 	protected Properties featuresPostProcessingSteps;
-	protected ArrayList addedByPermissions = new ArrayList();	//contains the list of files and folders that have been added to an archive by permission management
-	
+	protected ArrayList addedByPermissions = new ArrayList(); //contains the list of files and folders that have been added to an archive by permission management
+
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
 
@@ -123,10 +121,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (int i = 0; i < icons.length; i++) {
 			String location = findFile(icons[i], true);
 			if (location != null)
-				result +=  ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
+				result += ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
 			else {
-				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + icons[i];  //$NON-NLS-1$
-				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_FEATURE_LOCATION + '/' + icons[i];  //$NON-NLS-1$
+				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + icons[i]; //$NON-NLS-1$
+				result += ", " + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_FEATURE_LOCATION + '/' + icons[i]; //$NON-NLS-1$
 			}
 		}
 		return result;
@@ -192,7 +190,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateMoveRootFiles() {
 		if (rootFileProviders.size() == 0)
 			return;
-		
+
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Properties featureProperties = null;
 			try {
@@ -202,7 +200,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				//do nothing
 			}
 		}
-		
+
 		if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
 			FileSet[] rootFiles = new FileSet[1];
 			rootFiles[0] = new FileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), null, "**/**", null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$	
@@ -214,7 +212,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			params.add("."); //$NON-NLS-1$
 			params.add('\'' + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '\'');
 			String rootFileFolder = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
-			script.printExecTask("cp", rootFileFolder + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER),  params, null); //$NON-NLS-1$
+			script.printExecTask("cp", rootFileFolder + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), params, null); //$NON-NLS-1$
 			script.printDeleteTask(rootFileFolder, null, null);
 		}
 	}
@@ -222,27 +220,27 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generateGatherSourceCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
-		
+
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			String placeToGather = getLocation(plugin);
-			
+
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
-			
+
 			Properties bundleProperties = (Properties) plugin.getUserObject();
 			//Source code for plugins with . on the classpath must be put in a folder in the final jar.
-			if (bundleProperties.get(WITH_DOT) == Boolean.TRUE) {		
-				String targetLocation = Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' +ModelBuildScriptGenerator.getNormalizedName(plugin);
-				String targetLocationSrc = targetLocation +  "/src"; //$NON-NLS-1$
-				
+			if (bundleProperties.get(WITH_DOT) == Boolean.TRUE) {
+				String targetLocation = Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugin);
+				String targetLocationSrc = targetLocation + "/src"; //$NON-NLS-1$
+
 				//Find the source zip where it has been gathered and extract it in a folder  
-				script.println("<unzip dest=\"" +   AntScript.getEscaped(targetLocationSrc) + "\">");  //$NON-NLS-1$//$NON-NLS-2$
-				script.println("\t<fileset dir=\"" +  AntScript.getEscaped(targetLocation)  + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>");  //$NON-NLS-1$//$NON-NLS-2$
+				script.println("<unzip dest=\"" + AntScript.getEscaped(targetLocationSrc) + "\">"); //$NON-NLS-1$//$NON-NLS-2$
+				script.println("\t<fileset dir=\"" + AntScript.getEscaped(targetLocation) + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 				script.println("</unzip>"); //$NON-NLS-1$
-				
+
 				//	Delete the source zip where it has been gathered since we extracted it
-				script.printDeleteTask(null, null, new FileSet[] {new FileSet(targetLocation, null, "**/*src.zip", null, null, null, "false")});  //$NON-NLS-1$ //$NON-NLS-2$//$NON-bNLS-3$
-			} 
+				script.printDeleteTask(null, null, new FileSet[] {new FileSet(targetLocation, null, "**/*src.zip", null, null, null, "false")}); //$NON-NLS-1$ //$NON-NLS-2$//$NON-bNLS-3$
+			}
 		}
 
 		properties = new HashMap(1);
@@ -281,7 +279,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_JARSIGNING, null, null, null, Messages.sign_Jar);
 		if (generateJnlp)
 			script.printProperty(PROPERTY_UNSIGN, "true"); //$NON-NLS-1$
-		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK)+ "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) +  "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
+		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" pack=\"" + Utils.getPropertyFormat(PROPERTY_PACK) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
@@ -291,8 +289,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_GZIP_RESULTS, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
 		script.println("<move file=\"" //$NON-NLS-1$
 				+ Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "\" tofile=\"" //$NON-NLS-1$
-				+ Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' 
-				+ Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar\"/>"); //$NON-NLS-1$
+				+ Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar\"/>"); //$NON-NLS-1$
 		script.printGZip(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar", //$NON-NLS-1$ 
 				Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
 		script.printTargetEnd();
@@ -306,12 +303,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_ARCH, configInfo.getArch());
 		script.printProperty(PROPERTY_SIGN, (signJars ? Boolean.TRUE : Boolean.FALSE).toString());
 		script.printProperty(PROPERTY_ASSEMBLY_TMP, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/tmp"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_ECLIPSE_BASE, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); 
+		script.printProperty(PROPERTY_ECLIPSE_BASE, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER));
 		script.printProperty(PROPERTY_ECLIPSE_PLUGINS, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION);
 		script.printProperty(PROPERTY_ECLIPSE_FEATURES, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);
-		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + Utils.getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_NAME)); 
+		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + Utils.getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_NAME));
 		if (productFile != null && productFile.getLauncherName() != null)
-			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName()); 
+			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName());
 		script.printProperty(PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
 		generatePackagingTargets();
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
@@ -419,11 +416,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
-		script.println("<eclipse.jnlpGenerator feature=\"" +  AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
-		Set entries = (Set) ((Properties)bundle.getUserObject()).get(PLUGIN_ENTRY);
+		Set entries = (Set) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY);
 		return ((FeatureEntry) entries.iterator().next()).isUnpack();
 	}
 
@@ -475,7 +472,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
-		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat)) 
+		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat))
 			generateGZipTarget(true);
 		script.printProjectEnd();
 		script.close();
@@ -556,12 +553,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printExecTask("rm", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 		}
 		parameters.clear();
-		String tarArgs = assembling ? "-cvf '" : "-rvf '";  //$NON-NLS-1$//$NON-NLS-2$
+		String tarArgs = assembling ? "-cvf '" : "-rvf '"; //$NON-NLS-1$//$NON-NLS-2$
 		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
 		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
-		
-		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null );
-		
+
+		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null);
+
 		List args = new ArrayList(2);
 		args.add("-rf"); //$NON-NLS-1$
 		args.add('\'' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\'');
@@ -628,12 +625,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				String parameters = (String) permission.getValue();
 				String[] values = Utils.getArrayFromString(parameters);
 				for (int i = 0; i < values.length; i++) {
-					boolean isFile = ! values[i].endsWith("/"); //$NON-NLS-1$
+					boolean isFile = !values[i].endsWith("/"); //$NON-NLS-1$
 					String prefix = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 					if (instruction.startsWith(prefixPermissions)) {
 						addedByPermissions.add(values[i]);
 						if (zip)
-							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) +  (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						else
 							fileSets.add(new TarFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						continue;
@@ -695,7 +692,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	public void setArchiveFormat(String archiveFormat) {
 		this.archiveFormat = archiveFormat;
 	}
-	
+
 	public void setGroupConfigs(boolean group) {
 		groupConfigs = group;
 	}
