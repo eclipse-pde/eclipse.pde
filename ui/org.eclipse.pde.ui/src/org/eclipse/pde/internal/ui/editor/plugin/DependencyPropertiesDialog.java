@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 
+// TODO this needs a rewrite along with PluginVersionPart
 public class DependencyPropertiesDialog extends StatusDialog {
 
     private Button fReexportButton;
@@ -41,26 +42,28 @@ public class DependencyPropertiesDialog extends StatusDialog {
     
     private boolean fShowOptional;
 	private String fVersion;
+	private String fPluginId;
 
     public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
-        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true);
+        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true, plugin.getId());
     }
     
     public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
-        this (editable, false, false, object.isOptional(), object.getVersion(), true, true);
+        this (editable, false, false, object.isOptional(), object.getVersion(), true, true, null);
     }
 
     public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
-        this (editable, false, false, false, object.getVersion(), false, false);
+        this (editable, false, false, false, object.getVersion(), false, false, null);
     }
 
-    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport) {
+    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport, String pluginId) {
         super(PDEPlugin.getActiveWorkbenchShell());
         fEditable = editable;
         fShowReexport = showReexport;
         fExported = export;
         fOptional = optional;
         fShowOptional = showOptional;
+        fPluginId = pluginId;
         if (isImport)
         	fVersionPart = new PluginVersionPart(true);
         else 
@@ -114,6 +117,9 @@ public class DependencyPropertiesDialog extends StatusDialog {
 			}
         };
         fVersionPart.addListeners(ml, ml);
+        
+        if(fPluginId != null) // we need a better way to do this
+        	fVersionPart.createVersionSelectionField(comp, fPluginId);
         
         return comp;
     }

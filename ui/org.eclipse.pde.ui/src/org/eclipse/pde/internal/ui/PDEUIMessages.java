@@ -3066,6 +3066,9 @@ public class PDEUIMessages extends NLS {
 	public static String AddExportPackageResolution_Label;
 	public static String AddBundleClassPathResolution_add;
 	
+	public static String PluginVersionPart_groupTitle;
+	public static String PluginVersionPart_buttonTitle;
+	
 	// target provisioning stuff
 	public static String UpdateSiteDownloader_message;
 	public static String UpdateSiteProvisionerDialog_addTitle;

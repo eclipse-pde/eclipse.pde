@@ -12,15 +12,24 @@ package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -30,6 +39,69 @@ import org.osgi.framework.Version;
 
 public class PluginVersionPart {
 
+	private class PluginVersionTablePart extends TablePart {
+		
+		public PluginVersionTablePart(String[] buttonLabels) {
+			super(buttonLabels);
+		}
+
+		protected void selectionChanged(IStructuredSelection selection) {
+			if(selection.size() < 1) {
+				setButtonEnabled(0, false);
+			} else {
+				setButtonEnabled(0, true);
+			}
+		}
+		
+		protected void handleDoubleClick(IStructuredSelection selection) {
+			if(selection.size() == 1) {
+				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
+				String version = VersionUtil.computeInitialPluginVersion(
+						entry.getBundleDescription().getVersion().toString());
+				setVersion(version, ""); // $NON-NLS-1$
+			}
+		}
+
+
+		protected void buttonSelected(Button button, int index) {
+			IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
+			if(selection.size() == 1) {
+				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
+				String version = VersionUtil.computeInitialPluginVersion(
+						entry.getBundleDescription().getVersion().toString());
+				setVersion(version, ""); // $NON-NLS-1$
+			} else {
+				// plug-ins come back in a sorted order so we assume min/max
+				Object[] objects = selection.toArray();
+				IPluginModelBase min = (IPluginModelBase) objects[0];
+				IPluginModelBase max = (IPluginModelBase) objects[objects.length - 1];
+				
+				String minVersion = VersionUtil.computeInitialPluginVersion(
+						min.getBundleDescription().getVersion().toString());
+				String maxVersion = VersionUtil.computeInitialPluginVersion(
+						max.getBundleDescription().getVersion().toString());
+				setVersion(minVersion, maxVersion);
+			}
+		}
+		
+	}
+	
+	private class PluginVersionContentProvider implements IStructuredContentProvider {
+
+		public Object[] getElements(Object element) {
+			if(element instanceof ModelEntry) {
+				ModelEntry entry = (ModelEntry) element;
+				return entry.getActiveModels();
+			}
+			return new Object[0];
+		}
+
+		public void dispose() {}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		
+	}
+	
     private Text fMinVersionText;
     private Text fMaxVersionText;
     private Combo fMinVersionBound;
@@ -58,12 +130,36 @@ public class PluginVersionPart {
         }
 	}
     
+    private void setVersion(String min, String max) {
+    	fMinVersionBound.select(0);
+    	fMinVersionText.setText(min);
+    	fMaxVersionBound.select(1);
+    	fMaxVersionText.setText(max);
+    }
+    
     public void createVersionFields(Composite comp, boolean createGroup, boolean editable) {
     	if (fRangeAllowed)
     	    createRangeField(comp, createGroup, editable);
         else
         	createSingleField(comp, createGroup, editable);
     	preloadFields();
+    }
+    
+    public void createVersionSelectionField(Composite comp, String id) {
+    	Group group = new Group(comp, SWT.NONE);
+		group.setText(PDEUIMessages.PluginVersionPart_groupTitle);
+		group.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
+		group.setLayout(new GridLayout(2, false));
+		
+		PluginVersionTablePart part = new PluginVersionTablePart(
+				new String[] { PDEUIMessages.PluginVersionPart_buttonTitle });
+		part.createControl(group, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL, 1, null);
+		part.setMinimumSize(0, 75);
+		part.getViewer().setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		part.getViewer().setContentProvider(new PluginVersionContentProvider());
+		part.getViewer().setComparator(new ViewerComparator());
+		part.getViewer().setInput(PluginRegistry.findEntry(id));
+		part.setButtonEnabled(0, false);
     }
     
     private void createRangeField(Composite parent, boolean createGroup, boolean editable) {

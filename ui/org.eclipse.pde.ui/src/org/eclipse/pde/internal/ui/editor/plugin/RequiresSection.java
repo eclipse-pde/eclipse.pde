@@ -53,6 +53,7 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -438,6 +439,9 @@ public class RequiresSection
 					IPluginModel candidate = (IPluginModel) models[i];
 					String pluginId = candidate.getPlugin().getId();
 					IPluginImport importNode = createImport(model.getPluginFactory(), pluginId);
+					String version = VersionUtil.computeInitialPluginVersion(
+							candidate.getBundleDescription().getVersion().toString());
+					importNode.setVersion(version);
 					imports[i] = importNode;
 				}
 				addImports(model.getPluginBase(), imports);

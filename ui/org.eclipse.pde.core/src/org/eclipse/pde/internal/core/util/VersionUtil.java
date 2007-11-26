@@ -116,5 +116,17 @@ public class VersionUtil {
 		result = v1.getMicro() - v2.getMicro();
 		return result;
 	}
+	
+	public static String computeInitialPluginVersion(String version) {
+		if (version != null
+				&& VersionUtil.validateVersion(version).isOK()) {
+			Version pvi = Version.parseVersion(version);
+			return pvi.getMajor() + "." + pvi.getMinor() //$NON-NLS-1$
+						+ "." + pvi.getMicro(); //$NON-NLS-1$
+		}
+		
+		return version;
+	}
+    
 
 }
