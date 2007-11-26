@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator.MissingProperties;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.*;
 import org.osgi.framework.Version;
@@ -662,6 +663,14 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		return sourceEntry;
 	}
 
+	private String getSourceRoot(CompiledEntry entry) {
+		String jarName = entry.getName(false);
+		if (jarName.equals(ModelBuildScriptGenerator.DOT))
+			return jarName;
+		String srcName = ModelBuildScriptGenerator.getSRCName(entry.getName(false));
+		return srcName.substring(0, srcName.length() - 4); //remove .zip
+	}
+
 	public void generateSourcePlugin(FeatureEntry sourceEntry, BundleDescription originalBundle) throws CoreException {
 		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(sourceEntry, false));
 
@@ -671,9 +680,22 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_MANIFESTVERSION), "2"); //$NON-NLS-1$
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId());
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VERSION), originalBundle.getVersion().toString());
-		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+
 		if (originalBundle.getPlatformFilter() != null)
 			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), originalBundle.getPlatformFilter());
+
+		String sourceHeader = originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		CompiledEntry[] entries = ModelBuildScriptGenerator.extractEntriesToCompile(getBuildProperties(originalBundle), originalBundle);
+		if (entries.length > 0) {
+			sourceHeader += ";roots:=\""; //$NON-NLS-1$
+			for (int i = 0; i < entries.length; i++) {
+				if (i > 0)
+					sourceHeader += ',';
+				sourceHeader += getSourceRoot(entries[i]);
+			}
+			sourceHeader += '\"';
+		}
+		attributes.put(new Name(ECLIPSE_SOURCE_BUNDLE), sourceHeader);
 
 		//bundle Localization
 		String localizationEntry = null;

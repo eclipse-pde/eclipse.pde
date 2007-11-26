@@ -23,14 +23,14 @@ import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
  * Generic class for generating scripts for plug-ins and fragments.
  */
 public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
-	private static final String SRC_ZIP = "src.zip"; //$NON-NLS-1$
+	public static final String SRC_ZIP = "src.zip"; //$NON-NLS-1$
 	public static final String EXPANDED_DOT = "@dot"; //$NON-NLS-1$
 	public static final String DOT = "."; //$NON-NLS-1$
 
 	/**
 	 * Represents a entry that must be compiled and which is listed in the build.properties file.
 	 */
-	protected class CompiledEntry {
+	static protected class CompiledEntry {
 		static final byte JAR = 0;
 		static final byte FOLDER = 1;
 		private String name;
@@ -1153,6 +1153,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return JAR[]
 	 */
 	protected CompiledEntry[] extractEntriesToCompile(Properties properties) throws CoreException {
+		return extractEntriesToCompile(properties, model);
+	}
+
+	public static CompiledEntry [] extractEntriesToCompile(Properties properties, BundleDescription model) throws CoreException {
 		List result = new ArrayList(5);
 		int prefixLength = PROPERTY_SOURCE_PREFIX.length();
 		for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
@@ -1282,11 +1286,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @param jarName the name of the jar file
 	 * @return String
 	 */
-	protected String getSRCName(String jarName) {
+	public static String getSRCName(String jarName) {
 		if (jarName.endsWith(".jar")) { //$NON-NLS-1$
 			return jarName.substring(0, jarName.length() - 4) + SRC_ZIP;
 		}
-		if (jarName.equals(EXPANDED_DOT))
+		if (jarName.equals(EXPANDED_DOT) || jarName.equals(DOT))
 			return SRC_ZIP;
 		return jarName.replace('/', '.') + SRC_ZIP;
 	}
@@ -1318,7 +1322,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @param sourceString
 	 * @return String
 	 */
-	protected String replaceVariables(String sourceString, boolean compiledElement) {
+	static protected String replaceVariables(String sourceString, boolean compiledElement) {
 		if (sourceString == null)
 			return null;
 
