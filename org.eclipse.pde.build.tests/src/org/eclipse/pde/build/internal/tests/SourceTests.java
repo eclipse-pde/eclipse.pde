@@ -67,7 +67,7 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/features/a.feature.sdk_1.0.0/feature.xml");
 		entries.add("eclipse/features/a.feature.source_1.0.0/feature.xml");
 		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/src.zip");
-		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/about.html");			//tests bug 209092
+		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/about.html"); //tests bug 209092
 		assertZipContents(buildFolder, "I.TestBuild/a.feature.sdk.zip", entries);
 
 		entries.add("eclipse/features/a.feature_1.0.0/feature.xml");
@@ -92,7 +92,7 @@ public class SourceTests extends PDETestCase {
 		String arch = Platform.getOSArch();
 
 		//Create the rcp feature
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "fragment;os=\"" + os + "\";ws=\"" + ws + "\";arch=\"" + arch + "\""} );
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"fragment;os=\"" + os + "\";ws=\"" + ws + "\";arch=\"" + arch + "\""});
 
 		//Create a fragment with a platform filter
 		IFolder fragment = Utils.createFolder(buildFolder, "plugins/fragment");
@@ -262,7 +262,6 @@ public class SourceTests extends PDETestCase {
 		outputStream = new FileOutputStream(about);
 		outputStream.write("about\n".getBytes());
 		outputStream.close();
-		
 
 		Utils.generateBundle(bundleB, "bundleB");
 		src = new File(bundleB.getLocation().toFile(), "src/b.java");
@@ -297,11 +296,11 @@ public class SourceTests extends PDETestCase {
 		IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
 		org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
-		
+
 		entries.clear();
 		entries.add("about.html");
 		assertZipContents(buildFolder, "bundleA.source_1.0.0.jar", entries);
-		
+
 		IFile feature = buildFolder.getFile("features/rcp.source/feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
@@ -339,19 +338,19 @@ public class SourceTests extends PDETestCase {
 		buildProperties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
-		
+
 		IFolder plugins = buildFolder.getFolder("tmp/eclipse/plugins");
 		IFolder binaryA = plugins.getFolder("bundleA_1.0.0");
 		IFolder binaryASource = plugins.getFolder("bundleA.source_1.0.0");
 		assertResourceFile(binaryA, "A.class");
 		assertResourceFile(binaryASource, "A.java");
-		
+
 		IFile manifestFile = plugins.getFile("bundleA.source_1.0.0/META-INF/MANIFEST.MF");
 		Manifest manifest = new Manifest(manifestFile.getContents());
 		Attributes attr = manifest.getMainAttributes();
 		assertEquals(attr.getValue("Bundle-Version"), "1.0.0");
 		assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source");
-		assertEquals(attr.getValue("Eclipse-SourceBundle"), "bundleA;version=\"1.0.0\"");
+		assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\""));
 	}
 
 }
