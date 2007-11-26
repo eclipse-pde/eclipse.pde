@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class RegistryBrowser extends ViewPart {
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String SHOW_ADVANCED_MODE = "RegistryView.showAdvancedMode.label"; //$NON-NLS-1$
 	public static final String SHOW_EXTENSIONS_ONLY = "RegistryView.showExtensions.label"; //$NON-NLS-1$ 
+	public static final String SHOW_DISABLED_MODE = "RegistryView.showDisabledMode.label"; //$NON-NLS-1$
 	
 	private RegistryBrowserListener fListener;
 	private FilteredTree fFilteredTree;
@@ -84,7 +85,8 @@ public class RegistryBrowser extends ViewPart {
 	private Action fCollapseAllAction;
 	private Action fShowAdvancedOperationsAction;
 	private Action fShowExtensionsOnlyAction;
-
+	private Action fShowDisabledAction;
+	
 	// advanced actions
 	private Action fStartAction;
 	private Action fStopAction;
@@ -107,6 +109,23 @@ public class RegistryBrowser extends ViewPart {
 		}
 	};
 	
+	private ViewerFilter fDisabledFilter = new ViewerFilter() {
+		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
+		State state = plaformAdmin.getState(false);
+		
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof PluginObjectAdapter)
+				element = ((PluginObjectAdapter) element).getObject();
+			
+			if (element instanceof Bundle) {
+				Bundle bundle = (Bundle) element;
+				BundleDescription description = state.getBundle(bundle.getBundleId());
+				return ((state.getDisabledInfos(description)).length > 0);
+			} 
+			return false;
+		}
+	};
+	
 	
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
@@ -120,21 +139,25 @@ public class RegistryBrowser extends ViewPart {
 		public void goInto() {
 			super.goInto();
 			fShowPluginsAction.setEnabled(!canGoHome());
+			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		public void goBack() {
 			super.goBack();
 			fShowPluginsAction.setEnabled(!canGoHome());
+			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		public void goHome() {
 			super.goHome();
 			fShowPluginsAction.setEnabled(!canGoHome());
+			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		public void goInto(Object newInput) {
 			super.goInto(newInput);
 			fShowPluginsAction.setEnabled(!canGoHome());
+			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 	}
 	
@@ -155,6 +178,8 @@ public class RegistryBrowser extends ViewPart {
 			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
 		if (fMemento.getString(SHOW_EXTENSIONS_ONLY) == null)
 			fMemento.putString(SHOW_EXTENSIONS_ONLY, "false"); //$NON-NLS-1$
+		if (fMemento.getString(SHOW_DISABLED_MODE) == null)
+			fMemento.putString(SHOW_DISABLED_MODE, "false"); //$NON-NLS-1$
 		
 		// default to not showing advanced options to users
 		if (fMemento.getString(SHOW_ADVANCED_MODE) == null)
@@ -217,6 +242,9 @@ public class RegistryBrowser extends ViewPart {
 		if (fShowPluginsAction.isChecked())
 			fTreeViewer.addFilter(fActiveFilter);
 		
+		if (fShowDisabledAction.isChecked())
+			fTreeViewer.addFilter(fDisabledFilter);
+		
 		updateItems(true);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTreeViewer.getControl(), IHelpContextIds.REGISTRY_VIEW);
@@ -255,7 +283,10 @@ public class RegistryBrowser extends ViewPart {
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(new Separator());
 		mgr.add(fShowPluginsAction);
+		mgr.add(fShowDisabledAction);
+		mgr.add(new Separator());
 		mgr.add(fShowExtensionsOnlyAction);
+		mgr.add(new Separator());
 		mgr.add(fShowAdvancedOperationsAction);
 		
 	}
@@ -284,7 +315,10 @@ public class RegistryBrowser extends ViewPart {
 		
 		manager.add(new Separator());
 		manager.add(fShowPluginsAction);
+		manager.add(fShowDisabledAction);
+		manager.add(new Separator());
 		manager.add(fShowExtensionsOnlyAction);
+		manager.add(new Separator());
 		manager.add(fShowAdvancedOperationsAction);
 	}
 	
@@ -292,6 +326,7 @@ public class RegistryBrowser extends ViewPart {
 		if (memento == null || fMemento == null || fTreeViewer == null)
 			return;
 		fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(fShowPluginsAction.isChecked()));
+		fMemento.putString(SHOW_DISABLED_MODE, Boolean.toString(fShowDisabledAction.isChecked()));
 		fMemento.putString(SHOW_EXTENSIONS_ONLY, Boolean.toString(fShowExtensionsOnlyAction.isChecked()));
 		fMemento.putBoolean(SHOW_ADVANCED_MODE, fShowAdvancedOperationsAction.isChecked());
 		memento.putMemento(fMemento);
@@ -321,14 +356,27 @@ public class RegistryBrowser extends ViewPart {
 		
 		fShowPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label){
 			public void run() {
-				if (fShowPluginsAction.isChecked())
+				if (fShowPluginsAction.isChecked()) {
 					fTreeViewer.addFilter(fActiveFilter);
-				else
+				} else {
 					fTreeViewer.removeFilter(fActiveFilter);
+				}
 				updateTitle();
 			}
 		};
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
+		
+		fShowDisabledAction = new Action(PDERuntimeMessages.RegistryView_showDisabled_label){
+			public void run() {
+				if(fShowDisabledAction.isChecked()) {
+					fTreeViewer.addFilter(fDisabledFilter);
+				} else { 
+					fTreeViewer.removeFilter(fDisabledFilter);
+				}
+				updateTitle();
+			}
+		};
+		fShowDisabledAction.setChecked(fMemento.getString(SHOW_DISABLED_MODE).equals("true")); //$NON-NLS-1$
 		
 		fShowExtensionsOnlyAction = new Action(PDERuntimeMessages.RegistryBrowser_showExtOnlyLabel) {
 			public void run() {

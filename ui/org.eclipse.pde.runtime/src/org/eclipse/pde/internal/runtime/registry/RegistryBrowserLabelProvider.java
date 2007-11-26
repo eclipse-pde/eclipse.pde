@@ -50,6 +50,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fExpReqPluginImage;
 	private Image fReqPluginImage;
 	private Image fLocationImage;
+	private Image fDisabledImage;
 	private TreeViewer fViewer;
 	
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
@@ -72,6 +73,12 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
 				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_RUN_CO }});
 		fActivePluginImage = activePluginDesc.createImage();
+		
+		ImageDescriptor disabledPluginDesc =
+			new OverlayIcon(
+				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
+				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_ERROR_CO }});
+		fDisabledImage = disabledPluginDesc.createImage();
 		
 		ImageDescriptor unresolvedPluginDesc =
 			new OverlayIcon(
@@ -103,6 +110,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fGenericAttrImage.dispose();
 		fRuntimeImage.dispose();
 		fLocationImage.dispose();
+		fDisabledImage.dispose();
 	}
 	public Image getImage(Object element) {
 		if (element instanceof PluginObjectAdapter)
@@ -110,16 +118,22 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
+			
+			// check if bundle is disabled
+			PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
+			State state = plaformAdmin.getState(false);
+			
+			BundleDescription description = state.getBundle(bundle.getBundleId());
+			if((state.getDisabledInfos(description)).length > 0)
+				return fDisabledImage;
+
+
 			switch (bundle.getState()) {
 			case Bundle.ACTIVE:
 				return fActivePluginImage;
 			case Bundle.UNINSTALLED:
 				return fUnresolvedPluginImage;
 			case Bundle.INSTALLED:
-				PlatformAdmin platformAdmin = 
-					PDERuntimePlugin.getDefault().getPlatformAdmin();
-				State state = platformAdmin.getState(false);
-				BundleDescription description = state.getBundle(bundle.getBundleId());
 				if((state.getDisabledInfos(description)).length > 0)
 					return fUnresolvedPluginImage;
 			default:
