@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.build;
 
 import java.io.File;
 import java.util.*;
-import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.build.Constants;
@@ -274,7 +273,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
-		script.printJarTask(fileName + ".jar", fileName, fileName + '/' +  JarFile.MANIFEST_NAME, "skip"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printJarTask(fileName + ".jar", fileName, null, "merge"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(fileName, null, null);
 
 		script.printTargetEnd();
