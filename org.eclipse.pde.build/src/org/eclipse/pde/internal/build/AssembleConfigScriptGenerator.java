@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.File;
 import java.util.*;
+import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.build.Constants;
@@ -164,7 +165,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map properties = new HashMap();
 		properties.put(PROPERTY_ROOT_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$
 		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
-		
+
 		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
 			generateMoveRootFiles();
 			return;
@@ -269,13 +270,19 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map params = new HashMap(2);
 		params.put(PROPERTY_SOURCE, Utils.getPropertyFormat(PROPERTY_SOURCE));
 		params.put(PROPERTY_ELEMENT_NAME, Utils.getPropertyFormat(PROPERTY_ELEMENT_NAME));
-		script.printAntCallTask(TARGET_JARING, true, params);
+		script.printAvailableTask(PROPERTY_JARING_MANIFEST, fileName + '/' + JarFile.MANIFEST_NAME);
+		script.printConditionIsSet(PROPERTY_JARING_TASK, TARGET_JARING, PROPERTY_JARING_MANIFEST, TARGET_JARING + "_NoManifest"); //$NON-NLS-1$
+		script.printAntCallTask(Utils.getPropertyFormat(PROPERTY_JARING_TASK), true, params);
 		script.printTargetEnd();
 
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
+		script.printJarTask(fileName + ".jar", fileName, fileName + '/' + JarFile.MANIFEST_NAME, "skip"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printDeleteTask(fileName, null, null);
+		script.printTargetEnd();
+		
+		script.printTargetDeclaration(TARGET_JARING + "_NoManifest" , null, fileExists, null, null); //$NON-NLS-1$
 		script.printJarTask(fileName + ".jar", fileName, null, "merge"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(fileName, null, null);
-
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 

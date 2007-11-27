@@ -139,6 +139,8 @@ public interface IXMLConstants {
 	public static final String PROPERTY_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	public static final String PROPERTY_CUSTOM_TARGET = "customTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_ROOT_FOLDER = "rootFolder"; //$NON-NLS-1$
+	public static final String PROPERTY_JARING_MANIFEST = "jaringManifest"; //$NON-NLS-1$
+	public static final String PROPERTY_JARING_TASK = "jaringTask"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$

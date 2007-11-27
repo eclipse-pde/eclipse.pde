@@ -408,12 +408,18 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, props);
 	}
 
-	public void testBug196159() throws Exception {
+	// also tests that 196754 works without a manifest
+	public void testBug196159_196754() throws Exception {
 		IFolder buildFolder = newTest("196159");
 
-		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin21"));
-
-		IFile javaCompilerArgs = buildFolder.getFile("javaCompiler.Plugin21.jar.args");
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"Plugin21;unpack=\"false\""});
+		
+		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+		Utils.generateAllElements(buildFolder, "featureA");
+		
+		runBuild(buildFolder);
+		
+		IFile javaCompilerArgs = buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
 		assertFalse(javaCompilerArgs.exists());
 	}
 

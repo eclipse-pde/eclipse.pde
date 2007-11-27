@@ -797,7 +797,14 @@ public class AntScript implements IAntScript {
 	 * @param testProperty	name of the property for the isset test
 	 */
 	public void printConditionIsSet(String property, String value, String testProperty) {
-		println("<condition property=\"" + property + "\" value=\"" + value + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		printConditionIsSet(property, value, testProperty, null);
+	}
+	public void printConditionIsSet(String property, String value, String testProperty, String elseValue) {
+		print("<condition");  //$NON-NLS-1$
+		printAttribute("property", property, true); //$NON-NLS-1$
+		printAttribute("value", value, true); //$NON-NLS-1$
+		printAttribute("else", elseValue, false); //$NON-NLS-1$
+		println(">"); //$NON-NLS-1$
 		indent++;
 		println("<isset property=\"" + testProperty + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent--;
