@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Kevin Doyle <kjdoyle@ca.ibm.com> - bug 200727
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.handlers;
 
@@ -19,16 +20,22 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class SpyHandler extends AbstractHandler {
 
+	private SpyDialog INSTANCE = null;
+	
 	public SpyHandler() {}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {		
 		if(event != null) {
+			if (INSTANCE != null && INSTANCE.getShell() != null && !INSTANCE.getShell().isDisposed()) {
+				INSTANCE.close();
+			}
 		    Shell shell = HandlerUtil.getActiveShell(event);
 			SpyDialog dialog = new SpyDialog(shell, event, shell.getDisplay().getCursorLocation());
+			INSTANCE = dialog;
 			dialog.create();
 			dialog.open();
 		}
-		
 		return null;
 	}
+	
 }
