@@ -30,6 +30,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERegistryStrategy extends RegistryStrategy{
@@ -94,10 +95,20 @@ public class PDERegistryStrategy extends RegistryStrategy{
 		public void extensionsChanged(IExtensionDeltaEvent event) {
 			if (fRegistry == null)
 				createRegistry();
-			removeModels(event.getRemovedModels(), false);
+			IPluginModelBase[] bases = event.getRemovedModels();
+			removeModels(bases, false);
 			removeModels(event.getChangedModels(), false);
 			addBundles(fRegistry, event.getChangedModels());
 			addBundles(fRegistry, event.getAddedModels());
+			// if we remove the last workspace model for a Bundle-SymbolicName, then refresh the external models by removing then adding them
+			for (int i = 0; i < bases.length; i++) {
+				ModelEntry entry = PluginRegistry.findEntry(bases[i].getPluginBase().getId());
+				if (entry != null && entry.getWorkspaceModels().length == 0) {
+					IPluginModelBase[] externalModels = entry.getExternalModels();
+					removeModels(externalModels, false);
+					addBundles(fRegistry, externalModels);
+				}
+			}
 		}
 		
 	}
