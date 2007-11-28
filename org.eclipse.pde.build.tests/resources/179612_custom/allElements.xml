@@ -44,8 +44,9 @@
 	<!--	Example:  name="assemble.org.eclipse.sdk"							-->
 	<!--	Example:  name="assemble.org.eclipse.sdk.win32.win32.x86"			-->
  	<!-- ====================================================================== -->
-	<property name="assemble.element.id[.config.spec]" value="true" />
- 	<target name="assemble.element.id[.config.spec]">
+	<property name="assemble.sdk.win32.win32.x86" value="true" />
+ 	<target name="assemble.sdk.win32.win32.x86">
+ 		<property name="archiveName" value="MyCustomName.zip" />
  		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
  	</target>
 	

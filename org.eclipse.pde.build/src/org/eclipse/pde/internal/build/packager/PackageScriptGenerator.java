@@ -52,10 +52,14 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		setForceUpdateJar(forceUpdateJarFormat);
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();
-
-		Map params = new HashMap(1);
-		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml");
-		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, computeBackwardCompatibleName(aConfig), null, null, params);
+		
+		script.print("<assemble "); //$NON-NLS-1$
+		String config = configScriptGenerator.getTargetConfig();
+		script.printAttribute("config", config, true); //$NON-NLS-1$
+		script.printAttribute("element", configScriptGenerator.getTargetElement(), true); //$NON-NLS-1$
+		script.printAttribute("dot", config.length() > 0 ? "." : "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.printAttribute("scriptPrefix", "package", true);  //$NON-NLS-1$//$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
 	}
 	
 	public void setBackwardCompatibleName(boolean value) {

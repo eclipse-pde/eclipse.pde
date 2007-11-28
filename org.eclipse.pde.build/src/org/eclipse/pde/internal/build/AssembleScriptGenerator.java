@@ -39,6 +39,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		try {
 			openScript(directory, getScriptName());
 			printProjectDeclaration();
+			printAssembleMacroDef();
 			generateMainTarget();
 			script.printProjectEnd();
 		} finally {
@@ -50,6 +51,21 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	protected void printProjectDeclaration() {
 		script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
+	}
+
+	protected void printAssembleMacroDef() {
+		List attributes = new ArrayList(2);
+		attributes.add("config"); //$NON-NLS-1$
+		attributes.add("element"); //$NON-NLS-1$
+		attributes.add("dot"); //$NON-NLS-1$
+		attributes.add("scriptPrefix"); //$NON-NLS-1$
+		script.printMacroDef("assemble", attributes); //$NON-NLS-1$
+		script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		Properties properties = new Properties();
+		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, "${customOrDefault.@{config}}", null, null, properties); //$NON-NLS-1$
+		script.printEndMacroDef();
 	}
 
 	protected void generateMainTarget() throws CoreException {
@@ -90,9 +106,13 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.setGroupConfigs(groupConfigs);
 		configScriptGenerator.generate();
 
-		Map params = new HashMap(1);
-		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, configScriptGenerator.getTargetName(), null, null, params);
+		script.print("<assemble "); //$NON-NLS-1$
+		String config = configScriptGenerator.getTargetConfig();
+		script.printAttribute("config", config, true); //$NON-NLS-1$
+		script.printAttribute("element", configScriptGenerator.getTargetElement(), true); //$NON-NLS-1$
+		script.printAttribute("dot", config.length() > 0 ? "." : "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.printAttribute("scriptPrefix", "assemble", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
 	}
 
 	public void setSignJars(boolean value) {

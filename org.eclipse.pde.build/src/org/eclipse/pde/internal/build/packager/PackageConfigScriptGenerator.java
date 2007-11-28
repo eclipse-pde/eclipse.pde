@@ -26,7 +26,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	private String getFinalName(BundleDescription bundle, String shape) {
 		final String JAR = "jar"; //$NON-NLS-1$
 		final String DOT_JAR = '.' + JAR;
-		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
+		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			Path path = new Path(bundle.getLocation());
 			if (shape.equals(FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
 				return path.lastSegment().concat(DOT_JAR);
@@ -38,7 +38,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	}
 
 	private String getFinalName(BuildTimeFeature feature) {
-		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
+		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			Path featurePath = new Path(feature.getURL().getPath());
 			return featurePath.segment(featurePath.segmentCount() - 2);
 		}
@@ -111,7 +111,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	}
 
 	public String getTargetName() {
-		return "package" + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+		String config = getTargetConfig();
+		return "package" + '.' + getTargetElement() + (config.length() > 0 ? "." : "") + config; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private boolean isFolder(Path pluginLocation) {

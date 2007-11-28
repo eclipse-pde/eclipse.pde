@@ -279,8 +279,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printJarTask(fileName + ".jar", fileName, fileName + '/' + JarFile.MANIFEST_NAME, "skip"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(fileName, null, null);
 		script.printTargetEnd();
-		
-		script.printTargetDeclaration(TARGET_JARING + "_NoManifest" , null, fileExists, null, null); //$NON-NLS-1$
+
+		script.printTargetDeclaration(TARGET_JARING + "_NoManifest", null, fileExists, null, null); //$NON-NLS-1$
 		script.printJarTask(fileName + ".jar", fileName, null, "merge"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(fileName, null, null);
 		script.printTargetEnd();
@@ -500,7 +500,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public String getTargetName() {
-		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		String config = getTargetConfig();
+		return DEFAULT_ASSEMBLE_NAME + '.' + getTargetElement() + (config.length() > 0 ? "." : "") + config; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public String getTargetConfig() {
+		return (configInfo.equals(Config.genericConfig()) ? "" : configInfo.toStringReplacingAny(".", ANY_STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public String getTargetElement() {
+		return (featureId.equals("") ? "" : featureId); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void printCustomAssemblyAntCall(String customTarget, Map properties) {

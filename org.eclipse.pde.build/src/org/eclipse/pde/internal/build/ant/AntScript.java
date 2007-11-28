@@ -810,6 +810,24 @@ public class AntScript implements IAntScript {
 		printEndTag("condition"); //$NON-NLS-1$
 	}
 
+	public void printMacroDef(String macroName, List attributes) {
+		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		indent++;
+		for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
+			String attribute = (String) iterator.next();
+			println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		println("<sequential>"); //$NON-NLS-1$
+		indent++;
+	}
+
+	public void printEndMacroDef() {
+		indent--;
+		println("</sequential>"); //$NON-NLS-1$
+		indent--;
+		println("</macrodef>"); //$NON-NLS-1$
+	}
+
 	public void printTabs() {
 		printTab();
 	}
