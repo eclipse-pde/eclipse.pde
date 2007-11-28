@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
@@ -105,6 +106,51 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
+
+	protected void extractResourcesFromFolder(File file, IPath folderPath, IResource dest, IProgressMonitor monitor) throws CoreException {
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(file);
+			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
+			ArrayList collected = new ArrayList();
+			collectResourcesFromFolder(provider, provider.getRoot(), folderPath, collected);
+			importContent(provider.getRoot(), dest.getFullPath(), provider, collected, monitor);
+		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+					IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
+		} finally {
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+	
+	protected void extractJavaSource(File file, Set excludeFolders, IResource dest, IProgressMonitor monitor) throws CoreException {
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(file);
+			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
+			ArrayList collected = new ArrayList();
+			collectJavaSource(provider, provider.getRoot(), excludeFolders, collected);
+			importContent(provider.getRoot(), dest.getFullPath(), provider, collected, monitor);
+		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+					IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
+		} finally {
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+	
 	protected void extractJavaResources(File file, IResource dest, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
@@ -162,6 +208,44 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 			}
 		}
 	}
+	
+	protected void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList collected) {
+		List children = provider.getChildren(element);
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				if (provider.isFolder(curr)) {
+					if (provider.getLabel(curr).equals(folderPath.segment(0))) {
+						if (folderPath.segmentCount() > 1){
+							collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
+						} else {
+							ArrayList list = new ArrayList();
+							collectResources(provider, curr, false, list);
+							collected.addAll(list);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	protected void collectJavaSource(ZipFileStructureProvider provider, Object element, Set ignoreFolders, ArrayList collected) {
+		List children = provider.getChildren(element);
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				if (provider.isFolder(curr)) {
+					if (!ignoreFolders.contains(provider.getLabel(curr))) {
+						if (folderContainsFileExtension(provider, element, ".java")){ //$NON-NLS-1$
+							ArrayList list = new ArrayList();
+							collectResources(provider, curr, false, list);
+							collected.addAll(list);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	protected void collectNonJavaResources(ZipFileStructureProvider provider, Object element, ArrayList collected) {
 		List children = provider.getChildren(element);
@@ -175,6 +259,23 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 						collected.addAll(list);
 					}
 				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
+					collected.add(curr);
+				}
+			}
+		}
+	}
+	
+	protected void collectAdditionalResources(ZipFileStructureProvider provider, Object element, ArrayList collected) {
+		List children = provider.getChildren(element);
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				if (provider.isFolder(curr)) {
+					// ignore source folders
+					if (folderContainsFileExtension(provider, curr, ".java"))  //$NON-NLS-1$
+						continue;
+					collected.add(curr);
+				} else if (!provider.getLabel(curr).endsWith(".java")) { //$NON-NLS-1$
 					collected.add(curr);
 				}
 			}
@@ -213,21 +314,25 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private boolean isClassFolder(ZipFileStructureProvider provider, Object element) {
+	private boolean folderContainsFileExtension(ZipFileStructureProvider provider, Object element, String fileExtension) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (isClassFolder(provider, curr)) {
+					if (folderContainsFileExtension(provider, curr, fileExtension)) {
 						return true;
 					}
-				} else if (provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
+				} else if (provider.getLabel(curr).endsWith(fileExtension)) { //$NON-NLS-1$
 					return true;
 				} 
 			}
 		}
 		return false;
+	}
+	
+	private boolean isClassFolder(ZipFileStructureProvider provider, Object element) {
+		return folderContainsFileExtension(provider, element, ".class"); //$NON-NLS-1$
 	}
 	
 	protected boolean hasEmbeddedSource(ZipFileStructureProvider provider) {

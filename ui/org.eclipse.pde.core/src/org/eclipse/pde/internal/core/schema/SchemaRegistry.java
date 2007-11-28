@@ -113,13 +113,7 @@ public class SchemaRegistry {
 	
 	public static URL getSchemaFromSourceExtension(IPluginBase plugin, IPath path) {
 		SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
-		File file = mgr.findSourceFile(plugin, path);
-		try {
-			if (file != null && file.exists() && file.isFile())
-				return file.toURL();
-		} catch (MalformedURLException e) {
-		}
-		return null;
+		return mgr.findSourceFile(plugin, path);
 	}
 	
 	public static URL getSchemaURL(String pluginID, String schema) {

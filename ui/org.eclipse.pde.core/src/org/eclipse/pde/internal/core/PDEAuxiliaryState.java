@@ -29,6 +29,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -37,6 +38,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Stores additional information from the manifest files of plugins and stores
+ * this information in separate xml file.  Accessed through PDEState.
+ */
 public class PDEAuxiliaryState {
 	
 	private static String CACHE_EXTENSION = ".pluginInfo"; //$NON-NLS-1$
@@ -51,20 +56,33 @@ public class PDEAuxiliaryState {
 	private static String ATTR_PATCH = "patch"; //$NON-NLS-1$
 	private static String ATTR_PROJECT = "project"; //$NON-NLS-1$
 	private static String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
+	private static String ATTR_BUNDLE_SOURCE = "bundleSource"; //$NON-NLS-1$
 	
 	private static String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
 	private static String ELEMENT_LIB = "library"; //$NON-NLS-1$
 	private static String ELEMENT_ROOT = "map"; //$NON-NLS-1$
 	
-	protected Map fPluginInfos = new HashMap();
+	protected Map fPluginInfos; 
 	
+	/**
+	 * Constructor
+	 */
 	protected PDEAuxiliaryState() {
+		fPluginInfos = new HashMap();
 	}
 	
+	/**
+	 * Constructor, gets the plugin info objects stored in the passed state
+	 * and adds them to this state.
+	 * @param state state containing plugin infos to initialize this state with 
+	 */
 	protected PDEAuxiliaryState(PDEAuxiliaryState state) {
-		this.fPluginInfos = new HashMap(state.fPluginInfos);
+		fPluginInfos = new HashMap(state.fPluginInfos);
 	}
 
+	/**
+	 * Provides a simple way of storing auxiliary data for a plugin 
+	 */
 	class PluginInfo {
 		String name;
 		String providerName;
@@ -75,8 +93,14 @@ public class PDEAuxiliaryState {
 		String[] libraries;
 		String project;
 		String localization;
+		String bundleSourceEntry;
 	}
 	
+	/**
+	 * Helper method to create a plugin info object for the given
+	 * element.  The plugin info object is added to the map.
+	 * @param element
+	 */
 	private void createPluginInfo(Element element) {
 		PluginInfo info = new PluginInfo();
 		if (element.hasAttribute(ATTR_NAME))
@@ -92,6 +116,8 @@ public class PDEAuxiliaryState {
 			info.project = element.getAttribute(ATTR_PROJECT);
 		if (element.hasAttribute(ATTR_LOCALIZATION))
 			info.localization = element.getAttribute(ATTR_LOCALIZATION); 
+		if (element.hasAttribute(ATTR_BUNDLE_SOURCE))
+			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE); 
 		
 		NodeList libs = element.getChildNodes(); 
 		ArrayList list = new ArrayList(libs.getLength());
@@ -149,6 +175,15 @@ public class PDEAuxiliaryState {
 		return info == null ? null : info.project;		
 	}
 	
+	public String getBundleSourceEntry(long bundleID) {
+		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? null : info.bundleSourceEntry;		
+	}
+	
+	/**
+	 * Builds an xml document storing the auxiliary plugin info.
+	 * @param dir directory location to create the file
+	 */
 	protected void savePluginInfo(File dir) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -175,6 +210,8 @@ public class PDEAuxiliaryState {
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
 				if (info.localization != null)
 					element.setAttribute(ATTR_LOCALIZATION, info.localization); 
+				if (info.bundleSourceEntry != null)
+					element.setAttribute(ATTR_BUNDLE_SOURCE, info.bundleSourceEntry); 
 				if (info.libraries != null) {
 					for (int i = 0; i < info.libraries.length; i++) {
 						Element lib = doc.createElement(ELEMENT_LIB); 
@@ -191,6 +228,12 @@ public class PDEAuxiliaryState {
 		} 
 	}
 	
+	/**
+	 * Loads plugin info objects from the pluginInfo xml file stored in the
+	 * given directory.
+	 * @param dir location to look for the pluginInfo file
+	 * @return true if the file was read successfully, false otherwise
+	 */
 	protected boolean readPluginInfoCache(File dir) {
 		File file = new File(dir, CACHE_EXTENSION); 
 		if (file.exists() && file.isFile()) {
@@ -217,6 +260,12 @@ public class PDEAuxiliaryState {
 		return false;
 	}
 
+	/**
+	 * Writes out auxiliary information from the given models to an xml file
+	 * in the given destination directory.
+	 * @param models models to collect information from
+	 * @param destination directory to create the xml file in
+	 */
 	public static void writePluginInfo(IPluginModelBase[] models, File destination) {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -249,6 +298,15 @@ public class PDEAuxiliaryState {
 					if (localization != null)
 						element.setAttribute(ATTR_LOCALIZATION, localization); 
 				}
+				if (models[i] instanceof IBundlePluginModelBase) {
+					IBundleModel bundleModel = ((IBundlePluginModelBase)models[i]).getBundleModel();
+					if (bundleModel != null){
+						String bundleSourceEntry = bundleModel.getBundle().getHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
+						if (bundleSourceEntry != null){
+							element.setAttribute(ATTR_BUNDLE_SOURCE, bundleSourceEntry);
+						}
+					}
+				}
 				IPluginLibrary[] libraries = plugin.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
 						Element lib = doc.createElement(ELEMENT_LIB); 
@@ -266,6 +324,12 @@ public class PDEAuxiliaryState {
 		}
 	}
 	
+	/**
+	 * Collects auxiliary information from the manifest and stores it in this state.
+	 * @param desc bundle description for the given manifest
+	 * @param manifest dictionary of headers in the bundle's manifest file
+	 * @param hasBundleStructure whether the plugin has bundle structure
+	 */
 	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
 		PluginInfo info = new PluginInfo();
 		info.name = (String)manifest.get(Constants.BUNDLE_NAME);
@@ -278,9 +342,15 @@ public class PDEAuxiliaryState {
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
 		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
+		info.bundleSourceEntry = (String)manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
 	
+	/**
+	 * Retrieves the classpath entries from the manifest dictionary
+	 * @param manifest dictionary containing manifest headers
+	 * @return string array of classpath entries
+	 */
 	protected String[] getClasspath(Dictionary manifest) {
 		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
@@ -297,6 +367,9 @@ public class PDEAuxiliaryState {
 		return result;
 	}
 	
+	/**
+	 * Clears the plugin info object map.
+	 */
 	protected void clear() {
 		fPluginInfos.clear();
 	}

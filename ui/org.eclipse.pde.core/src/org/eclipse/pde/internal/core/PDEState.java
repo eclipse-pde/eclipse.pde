@@ -436,6 +436,10 @@ public class PDEState extends MinimalState {
 		return fAuxiliaryState.getProject(bundleID);	
 	}
 	
+	public String getBundleSourceEntry(long bundleID) {
+		return fAuxiliaryState.getBundleSourceEntry(bundleID);
+	}
+	
 	public BundleDescription[] addAdditionalBundles(URL[] newBundleURLs) {
 		// add new Bundles to the State
 		ArrayList descriptions = new ArrayList(newBundleURLs.length);

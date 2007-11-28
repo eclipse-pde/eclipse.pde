@@ -203,6 +203,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_lazyStart_unsupported;
 
+	public static String BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing;
+
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
 
 	public static String BuildErrorReporter_missingEntry;
@@ -271,5 +273,7 @@ public class PDECoreMessages extends NLS {
 	public static String XMLTextChangeListener_editNames_removeNode;
 	
 	public static String SearchablePluginsManager_createProjectTaskName;
+
+	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 	
 }

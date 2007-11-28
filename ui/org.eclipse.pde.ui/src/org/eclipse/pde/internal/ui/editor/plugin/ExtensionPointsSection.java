@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -35,14 +32,11 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -56,7 +50,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
@@ -284,17 +277,6 @@ public class ExtensionPointsSection extends TableSection {
 				});
 	}
 
-	public static IEditorInput getSchemaFromSourceExtension(IPluginBase plugin, IPath path) {
-		SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
-		File file = mgr.findSourceFile(plugin, path);
-		return (file != null && file.exists() && file.isFile())
-				 ? new SystemFileEditorInput(file)
-				 : null;
-	}
-
-	/**
-	 * @return
-	 */
 	private IPluginModelBase getPluginModelBase() {
 		// Note:  This method will work with fragments as long as a fragment.xml
 		// is defined first.  Otherwise, paste will not work out of the box.

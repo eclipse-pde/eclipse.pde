@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.Stack;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -244,7 +247,6 @@ public class PluginImportOperation extends JarImportOperation {
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
 				fProjectClasspaths .put(project, ClasspathComputer.getClasspath(project, model, true));
-		} catch (CoreException e) {
 		} finally {
 			monitor.done();
 		}
@@ -294,12 +296,12 @@ public class PluginImportOperation extends JarImportOperation {
 	}
 
 	private void importAsBinary(IProject project, IPluginModelBase model, boolean markAsBinary, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 3); //$NON-NLS-1$
+		monitor.beginTask("", 4); //$NON-NLS-1$
 		if (isJARd(model)) {
 			extractJARdPlugin(
 					project,
 					model,
-					new SubProgressMonitor(monitor, 2));
+					new SubProgressMonitor(monitor, 3));
 		} else {
 			importContent(
 					new File(model.getInstallLocation()),
@@ -317,14 +319,18 @@ public class PluginImportOperation extends JarImportOperation {
 			IFragment[] fragments = getFragmentsFor(model);
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			
+			IProgressMonitor fragmentMonitor = new SubProgressMonitor(monitor, 1);
+			fragmentMonitor.beginTask("", libraries.length); //$NON-NLS-1$
 			for (int i = 0; i < libraries.length; i++) {
 				String libraryName = libraries[i].getName();
 				if (ClasspathUtilCore.containsVariables(libraryName) &&
 						!project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
 					for (int j = 0; j < fragments.length; j++) {
 						importJarFromFragment(project, fragments[j], libraryName);
-						importSourceFromFragment(project, fragments[j], libraryName);
+						importSourceFromFragment(project, fragments[j], libraryName, new SubProgressMonitor(monitor, 1));
 					}
+				} else {
+					monitor.worked(1);
 				}
 			}
 		}
@@ -358,6 +364,12 @@ public class PluginImportOperation extends JarImportOperation {
 				if (jarFile != null) {
 					String srcName = ClasspathUtilCore.getSourceZipName(libraryPath.lastSegment());
 					IResource srcZip = jarFile.getProject().findMember(srcName);
+					if (srcZip == null){
+						int extIndex = srcName.lastIndexOf('.');
+						if (extIndex != -1){
+							srcZip = jarFile.getProject().findMember(srcName.substring(0, extIndex));
+						}
+					}
 					// srcZip == null if plug-in has embedded source
 					// if it jarred, all necessary files already in src folder
 					if (srcZip == null && libraries[i].equals(".")  && !isJARd(model)) //$NON-NLS-1$
@@ -366,11 +378,17 @@ public class PluginImportOperation extends JarImportOperation {
 					if (srcZip != null) {
 						String jarName = libraries[i].equals(".") ? "" : libraryPath.removeFileExtension().lastSegment(); //$NON-NLS-1$ //$NON-NLS-2$
 						String folder = addBuildEntry(buildModel, "source." + libraries[i], "src" + (jarName.length() == 0 ? "/" : "-" + jarName + "/")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						IFolder dest = jarFile.getProject().getFolder(folder); 
-						if (!dest.exists()) {
-							dest.create(true, true, null);
-						}
-						if (srcZip instanceof IFile) {
+						IFolder dest = jarFile.getProject().getFolder(folder);
+						
+						if (srcZip instanceof IFolder){
+							if (dest.exists()){
+								dest.delete(true, null);
+							}
+							((IFolder)srcZip).move(dest.getFullPath(), true, new SubProgressMonitor(monitor, 1));
+						} else if (srcZip instanceof IFile) {
+							if (!dest.exists()) {
+								dest.create(true, true, null);
+							}
 							extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), new SubProgressMonitor(monitor, 1));
 							srcZip.delete(true, null);
 						} else 
@@ -453,26 +471,71 @@ public class PluginImportOperation extends JarImportOperation {
 			SubProgressMonitor monitor) throws CoreException {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		File location = manager.findSourcePlugin(model.getPluginBase());
-		File[] children = location == null ? null : location.listFiles();
-		ArrayList list = new ArrayList();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				String name = children[i].getName();
-				if (!project.exists(new Path(name)) && !"src.zip".equals(name)) { //$NON-NLS-1$
-					list.add(children[i]);
+		if (location != null){
+			ArrayList list = new ArrayList();
+			if (location.isDirectory()){
+				Object root = location;
+				File[] children = location.listFiles();
+				if (children != null) {
+					for (int i = 0; i < children.length; i++) {
+						String name = children[i].getName();
+						if (!project.exists(new Path(name)) && !"src.zip".equals(name)) { //$NON-NLS-1$
+							list.add(children[i]);
+						}
+					}
+					importContent(
+							root,
+							project.getFullPath(),
+							FileSystemStructureProvider.INSTANCE,
+							list,
+							monitor);
+					ArrayList srcEntryList = new ArrayList(list.size());
+					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+						File current = (File)iterator.next();
+						String entry = current.getName();
+						if (current.isDirectory()){
+							entry += "/"; //$NON-NLS-1$
+						}
+						srcEntryList.add(entry);
+					}
+					return srcEntryList;
+				}
+			} else if (location.isFile()){
+				ZipFile zipFile = null;
+				try{
+					zipFile = new ZipFile(location);
+					ZipFileStructureProvider zipProvider = new ZipFileStructureProvider(zipFile);
+					Object root = zipProvider.getRoot();
+					collectAdditionalResources(zipProvider, root, list, project);
+					importContent(
+							root,
+							project.getFullPath(),
+							zipProvider,
+							list,
+							monitor);
+					ArrayList srcEntryList = new ArrayList(list.size());
+					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+						ZipEntry current = (ZipEntry)iterator.next();
+						String entry = current.getName();
+						srcEntryList.add(entry);
+					}
+					return srcEntryList;
+				} catch (IOException e) {
+					IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+					throw new CoreException(status);
+				} finally {
+					if (zipFile != null) {
+						try {
+							zipFile.close();
+						} catch (IOException e) {
+						}
+					}
 				}
 			}
- 			
-			importContent(
-					location,
-					project.getFullPath(),
-					FileSystemStructureProvider.INSTANCE,
-					list,
-					monitor);
 		}
-		return list;
+		return new ArrayList(0);
 	}
-
+	
 	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model, IProject project) throws CoreException {
 		IBuild build = buildModel.getBuild(true);
 		IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
@@ -529,11 +592,7 @@ public class PluginImportOperation extends JarImportOperation {
 		if (entry == null) {
 			entry = buildModel.getFactory().createEntry("src.includes"); //$NON-NLS-1$
 			for (int i = 0; i < list.size(); i++) {
-				File location = (File)list.get(i);
-				String token = location.getName();
-				if (location.isDirectory())
-					token += "/"; //$NON-NLS-1$
-				entry.addToken(token);
+				entry.addToken(list.get(i).toString());
 			}
 			buildModel.getBuild().add(entry);
 		}
@@ -596,10 +655,37 @@ public class PluginImportOperation extends JarImportOperation {
 			if (project.findMember(path) == null) {
 				IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
 				if (srcPath != null) {
-					if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
-						path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
+					if (srcPath.lastSegment().equals(path.lastSegment())){
+						if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
+						}
+						importArchive(project, new File(srcPath.toOSString()), path);
+					} else {
+						if ("src.zip".equals(zipName)){ //$NON-NLS-1$
+							// Save to a special folder name based on the install location
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
+							path = path.removeFileExtension();
+							IFolder dest = project.getFolder(path);
+							if (!dest.exists()) {
+								dest.create(true, true, null);
+							}
+							
+							// We must ignore source files in for other libraries
+							Set libFolders = new HashSet(libraries.length);
+							for (int j = 0; j < libraries.length; j++) {
+								String currentZipName = ClasspathUtilCore.getSourceZipName(libraries[j]);
+								IPath currentPath = new Path(currentZipName);
+								libFolders.add(currentPath.removeFileExtension().lastSegment());
+							}
+							
+							// Extract folders containing java source that aren't 
+							extractJavaSource(new File(srcPath.toOSString()), libFolders, dest, monitor);
+							
+						} else {
+							// Extract the specific library from it's folder
+							extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
+						}
 					}
-					importArchive(project, new File(srcPath.toOSString()), path);						
 				}
 			}
 			monitor.worked(1);
@@ -848,19 +934,67 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 	}
 	
-	private void importSourceFromFragment(IProject project, IFragment fragment, String name)
+	private void importSourceFromFragment(IProject project, IFragment fragment, String name, IProgressMonitor monitor)
 		throws CoreException {
-		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
-		IPath srcPath = new Path(ClasspathUtilCore.getSourceZipName(jarPath.toString()));
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		File srcFile = manager.findSourceFile(fragment, srcPath);
-		if (srcFile != null) {
-			importArchive(project, srcFile, srcPath);
+		try {
+			IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
+			String zipName = ClasspathUtilCore.getSourceZipName(jarPath.toString());
+			IPath path = new Path(zipName);
+			if (project.findMember(path) == null) {
+				SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+				IPath srcPath = manager.findSourcePath(fragment, path);
+				if (srcPath != null) {
+					if (srcPath.lastSegment().equals(path.lastSegment())){
+						if ("src.zip".equals(zipName) && isJARd(fragment.getPluginModel())) { //$NON-NLS-1$
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(fragment.getPluginModel().getInstallLocation()).getName()));
+						}
+						importArchive(project, new File(srcPath.toOSString()), path);
+					} else {
+						if ("src.zip".equals(zipName)){ //$NON-NLS-1$
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(fragment.getPluginModel().getInstallLocation()).getName()));
+							path = path.removeFileExtension();
+							IFolder dest = project.getFolder(path);
+							if (!dest.exists()) {
+								dest.create(true, true, null);
+							}
+							String[] libraries = getLibraryNames(fragment.getPluginModel(), true);
+							// We must ignore source files in for other libraries
+							Set libFolders = new HashSet(libraries.length);
+							for (int j = 0; j < libraries.length; j++) {
+								String currentZipName = ClasspathUtilCore.getSourceZipName(libraries[j]);
+								IPath currentPath = new Path(currentZipName);
+								libFolders.add(currentPath.removeFileExtension().lastSegment());
+							}
+
+							// Extract folders containing java source that aren't 
+							extractJavaSource(new File(srcPath.toOSString()), libFolders, dest, monitor);
+
+						} else {
+							// Extract the specific library from it's folder
+							extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
+						}
+					}
+				}
+			}
+		} finally {
+			monitor.done();
 		}
 	}
-
-	protected void collectNonJavaResources(ZipFileStructureProvider provider,
-			Object element, ArrayList collected) {
+	
+	protected void collectAdditionalResources(ZipFileStructureProvider provider, Object element, ArrayList collected, IProject project) {
+		collectAdditionalResources(provider, element, collected);
+		ListIterator li = collected.listIterator();
+		while (li.hasNext()) {
+			ZipEntry ze = (ZipEntry)li.next();
+			String name = ze.getName();
+			// only import the entries that don't already exist
+			if (project.findMember(name) != null) {
+				li.remove(); 
+			}
+		}
+	}
+	
+	protected void collectNonJavaResources(ZipFileStructureProvider provider, Object element, ArrayList collected) {
 		super.collectNonJavaResources(provider, element, collected);
 		if (fImportType != IMPORT_WITH_SOURCE)
 			return;

@@ -105,6 +105,7 @@ public interface ICoreConstants {
 	public static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapabilty"; //$NON-NLS-1$
 	public static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
+	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	
 	// Equinox-specifid directives
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$

@@ -46,6 +46,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	private String fId;
 	private String fVersion;
 	private boolean fHasBundleStructure;
+	private String fBundleSourceEntry;
 	
 	public PluginBase(boolean readOnly) {
 		super(readOnly);
@@ -99,6 +100,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fName = state.getPluginName(bundleDesc.getBundleId());
 		fProviderName = state.getProviderName(bundleDesc.getBundleId());
 		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
+		fBundleSourceEntry = state.getBundleSourceEntry(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 	}
@@ -363,6 +365,13 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	
 	public boolean hasBundleStructure() {
 		return fHasBundleStructure;
+	}
+	
+	/**
+	 * @return The bundle source entry from the manifest for this plugin or <code>null</code> if no entry exists.
+	 */
+	public String getBundleSourceEntry() {
+		return fBundleSourceEntry;
 	}
 	
 }
