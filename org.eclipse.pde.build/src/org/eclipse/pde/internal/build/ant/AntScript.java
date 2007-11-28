@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *     Prosyst - create proper OSGi bundles (bug 174157)
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation Prosyst - create proper
+ * OSGi bundles (bug 174157)
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
 import java.io.*;
@@ -143,7 +141,7 @@ public class AntScript implements IAntScript {
 	 * @param property the property to set
 	 * @param file the file to look for
 	 */
-	public void printAvailableTask(String property, String file, String value){
+	public void printAvailableTask(String property, String file, String value) {
 		printTab();
 		output.print("<available"); //$NON-NLS-1$
 		printAttribute("property", property, true); //$NON-NLS-1$
@@ -151,7 +149,7 @@ public class AntScript implements IAntScript {
 		printAttribute("value", value, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Print an <code>ant</code> task to this script. This calls Ant on the specified 
 	 * target contained in the specified Ant file with the given parameters.
@@ -164,10 +162,10 @@ public class AntScript implements IAntScript {
 	 * 	to the ant target
 	 * @param properties the table of properties
 	 */
-	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties ) {
-		printAntTask(antfile, dir, target, outputParam, inheritAll, properties, null );
+	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
+		printAntTask(antfile, dir, target, outputParam, inheritAll, properties, null);
 	}
-	
+
 	/**
 	 * Print an <code>ant</code> task to this script. This calls Ant on the specified 
 	 * target contained in the specified Ant file with the given parameters.
@@ -194,20 +192,20 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			if( properties != null ) {
+			if (properties != null) {
 				Set entries = properties.entrySet();
 				for (Iterator iter = entries.iterator(); iter.hasNext();) {
 					Map.Entry entry = (Map.Entry) iter.next();
 					printProperty((String) entry.getKey(), (String) entry.getValue());
 				}
 			}
-			if( references != null ){
+			if (references != null) {
 				Set entries = references.entrySet();
 				for (Iterator iter = entries.iterator(); iter.hasNext();) {
 					Map.Entry entry = (Map.Entry) iter.next();
 					printTab();
-					print("<reference refid=\"" + (String)entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-					if( entry.getValue() != null ){
+					print("<reference refid=\"" + (String) entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					if (entry.getValue() != null) {
 						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					print("/>"); //$NON-NLS-1$
@@ -225,28 +223,28 @@ public class AntScript implements IAntScript {
 		output.print("<subant"); //$NON-NLS-1$
 		printAttribute("antfile", antfile, false); //$NON-NLS-1$
 		printAttribute("target", target, false); //$NON-NLS-1$
-		printAttribute("failonerror", failOnError, false);   //$NON-NLS-1$
-		printAttribute("buildpath", buildpath, false);  //$NON-NLS-1$
+		printAttribute("failonerror", failOnError, false); //$NON-NLS-1$
+		printAttribute("buildpath", buildpath, false); //$NON-NLS-1$
 		printAttribute("inheritall", inheritAll, false); //$NON-NLS-1$
 		if (properties == null && references == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			if( properties != null ) {
+			if (properties != null) {
 				Set entries = properties.entrySet();
 				for (Iterator iter = entries.iterator(); iter.hasNext();) {
 					Map.Entry entry = (Map.Entry) iter.next();
 					printProperty((String) entry.getKey(), (String) entry.getValue());
 				}
 			}
-			if( references != null ){
+			if (references != null) {
 				Set entries = references.entrySet();
 				for (Iterator iter = entries.iterator(); iter.hasNext();) {
 					Map.Entry entry = (Map.Entry) iter.next();
 					printTab();
-					print("<reference refid=\"" + (String)entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-					if( entry.getValue() != null ){
+					print("<reference refid=\"" + (String) entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					if (entry.getValue() != null) {
 						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					print("/>"); //$NON-NLS-1$
@@ -258,6 +256,7 @@ public class AntScript implements IAntScript {
 			output.println("</subant>"); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Print a <code>zip</code> task to this script.
 	 * 
@@ -548,14 +547,14 @@ public class AntScript implements IAntScript {
 		}
 		printEndTag(tag);
 	}
-	
+
 	/**
 	 * Print a <code>param</code> tag to the Ant script.
 	 * 
 	 * @param name the parameter name
 	 * @param value the parameter value
 	 */
-	
+
 	protected void printParam(String name, String value) {
 		printTab();
 		output.print("<param"); //$NON-NLS-1$
@@ -789,7 +788,7 @@ public class AntScript implements IAntScript {
 		printAttribute("file", file, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Print a <code>Condition</code> task with isset test to the script
 	 * @param property		name of the property to set	
@@ -810,16 +809,16 @@ public class AntScript implements IAntScript {
 		indent--;
 		printEndTag("condition"); //$NON-NLS-1$
 	}
-	
+
 	public void printTabs() {
 		printTab();
 	}
-	
+
 	public void printTaskDef(String name, String classname) {
 		printTabs();
-		output.println("<taskdef name=\"" + name+ "\" classname=\"" + classname + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		output.println("<taskdef name=\"" + name + "\" classname=\"" + classname + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public static String getEscaped(String s) {
 		StringBuffer result = new StringBuffer(s.length() + 10);
 		for (int i = 0; i < s.length(); ++i)
@@ -830,7 +829,7 @@ public class AntScript implements IAntScript {
 	private static void appendEscapedChar(StringBuffer buffer, char c) {
 		buffer.append(getReplacement(c));
 	}
-	
+
 	private static String getReplacement(char c) {
 		// Encode special XML characters into the equivalent character references.
 		// These five are defined by default for all XML documents.
