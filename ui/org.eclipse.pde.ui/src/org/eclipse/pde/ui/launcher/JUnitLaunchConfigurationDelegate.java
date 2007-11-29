@@ -260,13 +260,32 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		IPluginModelBase base = (IPluginModelBase)LaunchPluginValidator.getPluginsToRun(configuration).get(PDECore.PLUGIN_ID);
+		Map pluginsToRun = LaunchPluginValidator.getPluginsToRun(configuration);
+		IPluginModelBase base = (IPluginModelBase)pluginsToRun.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
-			if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
-				vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
-			vmArgs = vmArgs.concat("-Declipse.pde.launch=true"); //$NON-NLS-1$
+			vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
 		}
+		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
+		if (pluginsToRun.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
+			if (vmArgs.indexOf("-Declipse.p2.data.area=") < 0) { //$NON-NLS-1$
+				vmArgs = concatArg(vmArgs, "-Declipse.p2.data.area=@config.dir" + File.separator + "p2"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}		
 		return vmArgs;
+	}
+	
+	/**
+	 * Returns the result of concatenating the given argument to the
+	 * specified vmArgs.
+	 * 
+	 * @param vmArgs existing VM arguments
+	 * @param arg argument to concatenate
+	 * @return result of concatenation
+	 */
+	private String concatArg(String vmArgs, String arg) {
+		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
+			vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
+		return vmArgs.concat(arg); //$NON-NLS-1$
 	}
 	
 	/*
