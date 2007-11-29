@@ -188,10 +188,8 @@ public class ClasspathComputer {
 				return;
 			}
 		}
-			
-		IResource resource = project.findMember(getSourceZipName(name));
-		IPath srcAttachment = resource != null ? resource.getFullPath() : null;
-		IClasspathEntry entry = JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, library.isExported());
+
+		IClasspathEntry entry = createClasspathEntry(project, jarFile, name, attrs, library.isExported());
 		if (!result.contains(entry))
 			result.add(entry);
 	}
@@ -200,13 +198,20 @@ public class ClasspathComputer {
 		String name = ClasspathUtilCore.expandLibraryName(filename);
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
-			IResource resource = project.findMember(getSourceZipName(name));
-			IPath srcAttachment = resource != null ? resource.getFullPath() : jarFile.getFullPath();
-			IClasspathEntry entry =
-				JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, true);
+			IClasspathEntry entry = createClasspathEntry(project, jarFile, filename, attrs, true);
 			if (!result.contains(entry))
 				result.add(entry);
 		}
+	}
+	
+	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IClasspathAttribute[] attrs, boolean isExported) {
+		String sourceZipName = getSourceZipName(fileName);
+		IResource resource = project.findMember(sourceZipName);
+		// if zip file does not exist, see if a directory with the source does.  This in necessary how we import source for individual source bundles.
+		if (resource == null && sourceZipName.endsWith(".zip")) //$NON-NLS-1$
+			resource = project.findMember(sourceZipName.substring(0, sourceZipName.length() - 4));
+		IPath srcAttachment = resource != null ? resource.getFullPath() : library.getFullPath();
+		return JavaCore.newLibraryEntry(library.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, isExported);
 	}
 
 	public static String getSourceZipName(String libraryName) {
