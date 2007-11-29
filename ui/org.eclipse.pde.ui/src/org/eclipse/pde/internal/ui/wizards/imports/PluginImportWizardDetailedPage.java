@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Joern Dinkla <devnull@dinkla.com> - Bug 210264
  *******************************************************************************/
 /*
  * Created on May 31, 2003
@@ -119,6 +120,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		public boolean setPattern(String newPattern) {
 			if (!newPattern.endsWith("*")) //$NON-NLS-1$
 				newPattern += "*"; //$NON-NLS-1$
+			if (!newPattern.startsWith("*")) //$NON-NLS-1$
+				newPattern = "*" + newPattern; //$NON-NLS-1$
 			if (fPattern != null) {
 				String oldPattern = fPattern.pattern();
 				if (newPattern.equals(oldPattern))
