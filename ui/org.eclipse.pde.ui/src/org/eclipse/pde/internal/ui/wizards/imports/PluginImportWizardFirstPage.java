@@ -301,16 +301,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-		if (PDEPreferencesUtil.showPreferencePage(targetNode))
+		if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell()))
 			dropLocation.setText(TargetPlatform.getLocation());
 	}
 	
 	private void handleSourceLocations() {
-		PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode());
+		PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode(), getShell());
 	}
 	
 	private void handleEnvChange() {
-		PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode());
+		PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode(), getShell());
 	}
 
 	private String getTargetHome() {

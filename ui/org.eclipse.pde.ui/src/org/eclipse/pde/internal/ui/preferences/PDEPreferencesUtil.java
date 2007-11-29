@@ -14,7 +14,6 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -26,10 +25,9 @@ public class PDEPreferencesUtil {
 		return dialog.open() == Window.OK;
 	}
 	
-	public static boolean showPreferencePage(final IPreferenceNode targetNode) {
+	public static boolean showPreferencePage(final IPreferenceNode targetNode, Shell shell) {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final Shell shell = PDEPlugin.getActiveWorkbenchShell();
 		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
 		final boolean[] result = new boolean[] { false };
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
