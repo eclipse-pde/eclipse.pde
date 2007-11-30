@@ -10,21 +10,31 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IImportQuery;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -77,22 +87,75 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	public boolean performFinish() {
 		page1.storeSettings();
-		((BaseImportWizardSecondPage)page1.getNextPage()).storeSettings();
-
+		((BaseImportWizardSecondPage) page1.getNextPage()).storeSettings();
 		final IPluginModelBase[] models = getModelsToImport();
-		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild());
+		boolean launchedConfiguration = areConflictingConfigurations(models);
+		if (launchedConfiguration) {
+			if (!MessageDialog
+					.openConfirm(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle,
+							PDEUIMessages.PluginImportWizard_runningConfigsDesc)) {
+				return false;
+			}
+		}
+		doImportOperation(getShell(), page1.getImportType(), models, page2
+				.forceAutoBuild(), launchedConfiguration);
 		return true;
 	}
 
-	public static void doImportOperation(
-			final Shell shell,
-			final int importType,
-			final IPluginModelBase[] models,
+	/**
+	 * @return <code>true</code> if there is a possible import conflict with a running launch configuration
+	 */
+	private boolean areConflictingConfigurations(IPluginModelBase[] modelsToImport) {
+		ILaunchManager launchManager = DebugPlugin.getDefault()
+				.getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		HashSet imported = new HashSet((4/3) * modelsToImport.length + 1);
+		for (int j = 0; j < modelsToImport.length; ++j) {
+			BundleDescription bd = modelsToImport[j].getBundleDescription();
+			if (bd != null) {
+				imported.add(bd.getSymbolicName());
+			}
+		}
+		for (int i = 0; i < launches.length; ++i) {
+			if (!launches[i].isTerminated()) {
+				ILaunchConfiguration configuration = launches[i]
+						.getLaunchConfiguration();
+				try {
+					Map workspaceBundleMap = BundleLauncherHelper
+							.getWorkspaceBundleMap(configuration, null);
+					for (Iterator iter = workspaceBundleMap.keySet().iterator(); iter
+							.hasNext();) {
+						IPluginModelBase bm = (IPluginModelBase) iter.next();
+						BundleDescription description = bm
+								.getBundleDescription();
+						if (description != null) {
+							if (imported.contains(description.getSymbolicName()))
+								return true;
+						}
+					}
+				} catch (CoreException e) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static void doImportOperation(final Shell shell,
+			final int importType, final IPluginModelBase[] models,
 			final boolean forceAutobuild) {
+		doImportOperation(shell, importType, models, forceAutobuild, false);
+	}
+	
+
+	private static void doImportOperation(final Shell shell,
+			final int importType, final IPluginModelBase[] models,
+			final boolean forceAutobuild, final boolean launchedConfiguration) {
 		PluginImportOperation.IImportQuery query = new ImportQuery(shell);
 		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(shell);
-		final PluginImportOperation op =
-			new PluginImportOperation(models, importType, query, executionQuery, forceAutobuild);
+		final PluginImportOperation op = new PluginImportOperation(models,
+				importType, query, executionQuery, forceAutobuild);
+		op.setLaunchedConfiguration(launchedConfiguration);
 		Job job = new Job(PDEUIMessages.ImportWizard_title) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -108,36 +171,25 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		job.schedule();
 	}
 
-
 	private static class ReplaceDialog extends MessageDialog {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
-			super(
-					parentShell,
-					PDEUIMessages.ImportWizard_messages_title, 
-					null,
-					dialogMessage,
-					MessageDialog.QUESTION,
-					new String[] {
+			super(parentShell, PDEUIMessages.ImportWizard_messages_title, null,
+					dialogMessage, MessageDialog.QUESTION, new String[] {
 							IDialogConstants.YES_LABEL,
 							IDialogConstants.YES_TO_ALL_LABEL,
 							IDialogConstants.NO_LABEL,
-							PDEUIMessages.ImportWizard_noToAll, 
-							IDialogConstants.CANCEL_LABEL },
-							0);
+							PDEUIMessages.ImportWizard_noToAll,
+							IDialogConstants.CANCEL_LABEL }, 0);
 		}
 	}
 
 	public static class ImportQuery implements IImportQuery {
-		public ImportQuery(Shell shell) {}
+		public ImportQuery(Shell shell) {
+		}
 
 		private int yesToAll = 0;
-		private int[] RETURNCODES =
-		{
-				IImportQuery.YES,
-				IImportQuery.YES,
-				IImportQuery.NO,
-				IImportQuery.NO,
-				IImportQuery.CANCEL };
+		private int[] RETURNCODES = { IImportQuery.YES, IImportQuery.YES,
+				IImportQuery.NO, IImportQuery.NO, IImportQuery.CANCEL };
 
 		public int doQuery(final String message) {
 			if (yesToAll != 0) {
@@ -147,7 +199,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			final int[] result = { IImportQuery.CANCEL };
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
+					ReplaceDialog dialog = new ReplaceDialog(Display
+							.getDefault().getActiveShell(), message);
 					int retVal = dialog.open();
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];

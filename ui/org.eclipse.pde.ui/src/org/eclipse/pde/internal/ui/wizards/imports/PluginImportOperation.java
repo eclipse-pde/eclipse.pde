@@ -99,6 +99,8 @@ public class PluginImportOperation extends JarImportOperation {
 	private boolean fForceAutobuild;
 
 	private IImportQuery fExecutionQuery;
+	
+	private boolean fLaunchedConfigurations = false;
 
 	public interface IImportQuery {
 		public static final int CANCEL = 0;
@@ -216,6 +218,9 @@ public class PluginImportOperation extends JarImportOperation {
 					RepositoryProvider.unmap(project);
 				if (!project.exists())
 					project.create(new SubProgressMonitor(monitor, 1));
+				if(!safeDeleteCheck(project, monitor)) {
+					return;
+				} 
 				project.delete(true, true, monitor);
 			}
 
@@ -247,11 +252,36 @@ public class PluginImportOperation extends JarImportOperation {
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
 				fProjectClasspaths .put(project, ClasspathComputer.getClasspath(project, model, true));
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		} finally {
 			monitor.done();
 		}
 	}
 	
+	// returns true if it is safe to delete the project.  It is not safe to delete if
+	// one of its libraries is locked by a running launch configuration.
+	private boolean safeDeleteCheck(IProject project, IProgressMonitor monitor) {
+		if (!fLaunchedConfigurations) 
+			return true;
+		IPluginModelBase base = PluginRegistry.findModel(project);
+		if (base != null) {
+			IPluginLibrary [] libraries = base.getPluginBase().getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				IResource res = project.findMember(libraries[i].getName());
+				if (res != null)
+					try {
+						if (!(ResourcesPlugin.getWorkspace().delete(
+								new IResource[] { res }, true, monitor).isOK()))
+							return false;
+					} catch (CoreException e) {
+						return false;
+					}
+			}
+		}
+		return true;
+	}
+
 	private void importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
 			extractJARdPlugin(
@@ -490,7 +520,7 @@ public class PluginImportOperation extends JarImportOperation {
 							list,
 							monitor);
 					ArrayList srcEntryList = new ArrayList(list.size());
-					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					for (ListIterator iterator = list.listIterator(); iterator.hasNext();) {
 						File current = (File)iterator.next();
 						String entry = current.getName();
 						if (current.isDirectory()){
@@ -1007,6 +1037,10 @@ public class PluginImportOperation extends JarImportOperation {
 			if (name.startsWith("META-INF/") && (name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".SF"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				li.remove(); 
 		}
+	}
+
+	public void setLaunchedConfiguration(boolean launchedConfiguration) {
+		fLaunchedConfigurations = launchedConfiguration;
 	}
 	
 }

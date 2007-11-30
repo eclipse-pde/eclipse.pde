@@ -2488,6 +2488,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportOperation_executionEnvironment;
 
+	public static String PluginImportWizard_runningConfigsDesc;
+
+	public static String PluginImportWizard_runningConfigsTitle;
+
 	public static String LauncherUtils_title;
 
 	public static String EditorPreferencePage_link;
