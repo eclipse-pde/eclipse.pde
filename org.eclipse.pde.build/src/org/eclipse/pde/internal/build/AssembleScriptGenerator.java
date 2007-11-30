@@ -53,6 +53,11 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
 	}
 
+	protected void printDefaultAssembleCondition() {
+		// packaging may need to print something different if running in a backward compatible mode.
+		script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+
 	protected void printAssembleMacroDef() {
 		List attributes = new ArrayList(2);
 		attributes.add("config"); //$NON-NLS-1$
@@ -60,7 +65,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		attributes.add("dot"); //$NON-NLS-1$
 		attributes.add("scriptPrefix"); //$NON-NLS-1$
 		script.printMacroDef("assemble", attributes); //$NON-NLS-1$
-		script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		printDefaultAssembleCondition();
 		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		Properties properties = new Properties();
 		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
