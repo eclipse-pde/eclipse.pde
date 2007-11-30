@@ -684,14 +684,21 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		if (originalBundle.getPlatformFilter() != null)
 			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), originalBundle.getPlatformFilter());
 
+		Properties origBuildProperties = getBuildProperties(originalBundle);
+		String extraRoots = (String) origBuildProperties.get(PROPERTY_SRC_ROOTS);
 		String sourceHeader = originalBundle.getSymbolicName() + ";version=\"" + originalBundle.getVersion().toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-		CompiledEntry[] entries = ModelBuildScriptGenerator.extractEntriesToCompile(getBuildProperties(originalBundle), originalBundle);
-		if (entries.length > 0) {
+		CompiledEntry[] entries = ModelBuildScriptGenerator.extractEntriesToCompile(origBuildProperties, originalBundle);
+		if (entries.length > 0 || extraRoots != null) {
 			sourceHeader += ";roots:=\""; //$NON-NLS-1$
 			for (int i = 0; i < entries.length; i++) {
 				if (i > 0)
 					sourceHeader += ',';
 				sourceHeader += getSourceRoot(entries[i]);
+			}
+			if (extraRoots != null) {
+				if (entries.length > 0)
+					sourceHeader += ',';
+				sourceHeader += extraRoots;
 			}
 			sourceHeader += '\"';
 		}
