@@ -8,6 +8,7 @@
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Willian Mitsuda <wmitsuda@gmail.com> - bug 209841
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 209487
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
@@ -24,8 +25,16 @@ import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -33,6 +42,8 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -58,7 +69,6 @@ public class SpyFormToolkit extends FormToolkit {
 
 		public void linkActivated(HyperlinkEvent e) {
 			String href = (String) e.getHref();
-			
 			if (href.startsWith(CLASS_PROTOCOL_PREFIX)) {
 				String clazz = href.substring(CLASS_PROTOCOL_PREFIX.length());
 				Bundle bundle = (Bundle) bundleClassByName.get(clazz);
@@ -125,8 +135,39 @@ public class SpyFormToolkit extends FormToolkit {
 		FormText text = super.createFormText(parent, trackFocus);
 		if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
 			text.addHyperlinkListener(new SpyHyperlinkAdapter(dialog));
+			addCopyQNameMenuItem(text);
 		}
 		return text;
+	}
+
+	private void addCopyQNameMenuItem(final FormText formText) {
+		Menu menu = formText.getMenu();
+		final MenuItem copyQNameItem = new MenuItem(menu, SWT.PUSH);
+		copyQNameItem.setImage(
+				PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_COPY_QNAME));
+		copyQNameItem.setText(
+				PDERuntimeMessages.SpyFormToolkit_copyQualifiedName);
+
+		SelectionListener listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (e.widget == copyQNameItem) {
+					Clipboard clipboard = new Clipboard(formText.getDisplay());
+					clipboard.setContents(
+							new Object[] { ((String) formText
+							.getSelectedLinkHref())
+							.substring(CLASS_PROTOCOL_PREFIX.length()) },
+							new Transfer[] { TextTransfer.getInstance() });
+				}
+			}
+		};
+		copyQNameItem.addSelectionListener(listener);
+		menu.addMenuListener(new MenuAdapter() {
+			public void menuShown(MenuEvent e) {
+				String href = (String) formText.getSelectedLinkHref();
+				copyQNameItem.setEnabled(href != null
+						&& href.startsWith(CLASS_PROTOCOL_PREFIX));
+			}
+		});
 	}
 	
 	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {

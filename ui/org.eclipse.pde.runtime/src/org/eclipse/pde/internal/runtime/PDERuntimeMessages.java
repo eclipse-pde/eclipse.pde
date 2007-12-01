@@ -65,6 +65,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyDialog_activeHelpSection_desc;
 	
 	public static String SpyFormToolkit_saveImageAs_title;
+	public static String SpyFormToolkit_copyQualifiedName;
 
 	public static String RegistryBrowser_showExtOnlyLabel;
 	public static String RegistryBrowser_plugins;
