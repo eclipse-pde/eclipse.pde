@@ -43,6 +43,21 @@ public class SpyDialog extends PopupDialog {
 	private Point fAnchor;
 	private Composite composite;
 	private SpyFormToolkit toolkit;
+	
+	private class CloseAction extends Action {
+		public ImageDescriptor getImageDescriptor() {
+			return PlatformUI.getWorkbench().getSharedImages()
+					.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
+		}
+		
+		public String getToolTipText() {
+			return PDERuntimeMessages.SpyDialog_close;
+		}
+
+		public void run() {
+			close();
+		}
+	}
 
 	public SpyDialog(Shell parent, ExecutionEvent event, Point point) {
 		super(parent, SWT.NONE, true, false, false, false, null, null);
@@ -68,21 +83,8 @@ public class SpyDialog extends PopupDialog {
 		Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_SPY_OBJ);
 		form.setImage(image);
 		
-		// add a Close button in the formheading toolbar
-		form.getToolBarManager().add(new Action() {
-			public ImageDescriptor getImageDescriptor() {
-				return PlatformUI.getWorkbench().getSharedImages()
-						.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
-			}
-			
-			public String getToolTipText() {
-				return PDERuntimeMessages.SpyDialog_close;
-			}
-
-			public void run() {
-				close();
-			}
-		}); 
+		// add a Close button to the toolbar
+		form.getToolBarManager().add(new CloseAction());
 		form.getToolBarManager().update(true);
 	
 		TableWrapLayout layout = new TableWrapLayout();
