@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207061
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 207312
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207312, 100715
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -61,9 +61,7 @@ class LogReader {
 				if (line == null)
 					break;
 				line = line.trim();
-				if (line.length() == 0)
-					continue;
-
+				
 				if (line.startsWith("!SESSION")) { //$NON-NLS-1$
 					state = SESSION_STATE;
 				} else if (line.startsWith("!ENTRY")) { //$NON-NLS-1$
@@ -84,15 +82,7 @@ class LogReader {
 				}
 			
 				if (writer != null) {
-					if (writerState == STACK_STATE && current != null) {
-						current.setStack(swriter.toString());
-					} else if (writerState == SESSION_STATE && session != null) {
-						session.setSessionData(swriter.toString());
-					} else if (writerState == MESSAGE_STATE && current != null){
-						StringBuffer sb = new StringBuffer(current.getMessage());
-						sb.append(swriter.toString());
-						current.setMessage(sb.toString().trim());
-					}
+					setData(current, session, writerState, swriter);
 					writerState = UNKNOWN_STATE;
 					swriter = null;
 					writer.close();
@@ -148,8 +138,10 @@ class LogReader {
 				}
 			} 
 			
-			if (swriter != null && current != null && writerState == STACK_STATE)
+			if (swriter != null && current != null && writerState == STACK_STATE) {
+				writerState = UNKNOWN_STATE;
 				current.setStack(swriter.toString());
+			}
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
@@ -158,8 +150,27 @@ class LogReader {
 					reader.close();
 			} catch (IOException e1) {
 			}
-			if (writer != null)
+			if (writer != null) {
+				setData(current, session, writerState, swriter);
 				writer.close();
+			}
+		}
+	}
+
+	/**
+	 * Assigns data from writer to appropriate field of current Log Entry or Session,
+	 * depending on writer state.
+	 */
+	private static void setData(LogEntry current, LogSession session,
+			int writerState, StringWriter swriter) {
+		if (writerState == STACK_STATE && current != null) {
+			current.setStack(swriter.toString());
+		} else if (writerState == SESSION_STATE && session != null) {
+			session.setSessionData(swriter.toString());
+		} else if (writerState == MESSAGE_STATE && current != null){
+			StringBuffer sb = new StringBuffer(current.getMessage());
+			sb.append(swriter.toString());
+			current.setMessage(sb.toString().trim());
 		}
 	}
 		
