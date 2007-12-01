@@ -1,7 +1,8 @@
-#Tue Sep 11 11:17:33 CDT 2007
+#Sat Dec 01 16:36:57 ICT 2007
 compilers.incompatible-environment=1
 compilers.p.build=1
 compilers.p.deprecated=1
+compilers.p.missing-bundle-classpath-entries=1
 compilers.p.missing-packages=0
 compilers.p.no-required-att=0
 compilers.p.not-externalized-att=1

@@ -46,6 +46,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String RegistryBrowserLabelProvider_nameIdBind;
 	
 	public static String SpyDialog_title;
+	public static String SpyDialog_close;
 	public static String SpyDialog_activeShell_title;
 	public static String SpyDialog_activeShell_desc;
 	public static String SpyDialog_activePart_title;

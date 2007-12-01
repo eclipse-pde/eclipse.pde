@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 211580
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.dialogs;
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
@@ -29,6 +32,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
@@ -62,7 +67,24 @@ public class SpyDialog extends PopupDialog {
 		form.setText(PDERuntimeMessages.SpyDialog_title);
 		Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_SPY_OBJ);
 		form.setImage(image);
+		
+		// add a Close button in the formheading toolbar
+		form.getToolBarManager().add(new Action() {
+			public ImageDescriptor getImageDescriptor() {
+				return PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
+			}
+			
+			public String getToolTipText() {
+				return PDERuntimeMessages.SpyDialog_close;
+			}
 
+			public void run() {
+				close();
+			}
+		}); 
+		form.getToolBarManager().update(true);
+	
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
