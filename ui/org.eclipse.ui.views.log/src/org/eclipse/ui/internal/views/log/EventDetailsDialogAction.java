@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -56,7 +56,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	}
 	public void resetSelection(){
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if (element == null)
+		if ((element == null) || (! (element instanceof LogEntry)))
 			return;
 		if (propertyDialog != null && propertyDialog.isOpen())
 			propertyDialog.resetSelection(element);
@@ -81,7 +81,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		
 		//get initial selection
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if ((element == null) || (element instanceof LogSession))
+		if ((element == null) || (! (element instanceof LogEntry)))
 			return;
 		
 		propertyDialog = new EventDetailsDialog(shell, element, provider, comparator);

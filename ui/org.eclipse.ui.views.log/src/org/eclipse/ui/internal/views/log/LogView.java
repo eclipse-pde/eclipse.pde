@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
@@ -26,7 +26,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +44,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -116,6 +124,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
+	public static final String P_GROUP_BY = "groupBy"; //$NON-NLS-1$
 
 	private int MESSAGE_ORDER;
 	private int PLUGIN_ORDER;
@@ -127,7 +136,13 @@ public class LogView extends ViewPart implements ILogListener {
 	public static int ASCENDING = 1;
 	public static int DESCENDING = -1;
 
-	private ArrayList fLogs;
+	public static final int GROUP_BY_NONE = 0;
+	public static final int GROUP_BY_SESSION = 1;
+	public static final int GROUP_BY_PLUGIN = 2;
+
+	private List elements;
+	private Map groups;
+	private LogSession currentSession;
 
 	private Clipboard fClipboard;
 
@@ -159,12 +174,37 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action fActivateViewAction;
 	private Action fOpenLogAction;
 	private Action fExportAction;
-	
+
+	/**
+	 * Action called when user selects "Group by -> ..." from menu.
+	 */
+	class GroupByAction extends Action {
+		private int groupBy;
+
+		public GroupByAction(String text, int groupBy) {
+			super(text, Action.AS_RADIO_BUTTON);
+
+			this.groupBy = groupBy;
+
+			if (fMemento.getInteger(LogView.P_GROUP_BY).intValue() == groupBy) {
+				setChecked(true);
+			}
+		}
+
+		public void run() {
+			if (fMemento.getInteger(LogView.P_GROUP_BY).intValue() != groupBy) {
+				fMemento.putInteger(LogView.P_GROUP_BY, groupBy);
+				reloadLog();
+			}
+		}		
+	}
+
 	/**
 	 * Constructor
 	 */
 	public LogView() {
-		fLogs = new ArrayList();
+		elements = new ArrayList();
+		groups = new HashMap();
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
@@ -228,12 +268,18 @@ public class LogView extends ViewPart implements ILogListener {
 		toolBarManager.add(new Separator());
 
 		IMenuManager mgr = bars.getMenuManager();
+
+		mgr.add(createGroupByAction());
+
+		mgr.add(new Separator());
+
 		mgr.add(createFilterAction());
+
 		mgr.add(new Separator());
 
 		fActivateViewAction = createActivateViewAction();
 		mgr.add(fActivateViewAction);
-		
+
 		mgr.add(createShowTextFilter());
 
 		createPropertiesAction();
@@ -251,13 +297,13 @@ public class LogView extends ViewPart implements ILogListener {
 				manager.add(fExportAction);
 				manager.add(importLogAction);
 				manager.add(new Separator());
-				
+
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
 				TreeItem[] selection = fTree.getSelection();
 				if ((selection.length > 0) && (selection[0].getData() instanceof LogEntry)) { 
 					manager.add(fPropertiesAction);
 				}
-				
+
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			}
 		};
@@ -267,7 +313,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Menu menu = popupMenuManager.createContextMenu(fTree);
 		fTree.setMenu(menu);
 	}
-	
+
 	private Action createActivateViewAction() {
 		Action action = new Action(Messages.LogView_activate) { //       	
 			public void run() {
@@ -417,7 +463,7 @@ public class LogView extends ViewPart implements ILogListener {
 		showFilterText(visible);
 		return action;
 	}
-	
+
 	/**
 	 * Shows/hides the filter text control from the filtered tree. This method also sets the 
 	 * P_SHOW_FILTER_TEXT preference to the visible state
@@ -436,7 +482,15 @@ public class LogView extends ViewPart implements ILogListener {
 			fFilteredTree.getFilterControl().setText(Messages.LogView_show_filter_initialText);
 		fFilteredTree.layout(false);
 	}
-	
+
+	private IContributionItem createGroupByAction() {
+		IMenuManager manager = new MenuManager(Messages.LogView_GroupBy);
+		manager.add(new GroupByAction(Messages.LogView_GroupBySession, LogView.GROUP_BY_SESSION));
+		manager.add(new GroupByAction(Messages.LogView_GroupByPlugin, LogView.GROUP_BY_PLUGIN));
+		manager.add(new GroupByAction(Messages.LogView_GroupByNone, LogView.GROUP_BY_NONE));
+		return manager;
+	}
+
 	private void createViewer(Composite parent) {
 
 		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, new PatternFilter() {
@@ -556,8 +610,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Platform.removeLogListener(this);
 		fClipboard.dispose();
 		if (fTextShell != null)
-			fTextShell.dispose();	
-		LogReader.reset();
+			fTextShell.dispose();
 		fLabelProvider.disconnect(this);
 		fFilteredTree.dispose();
 		super.dispose();
@@ -654,8 +707,10 @@ public class LogView extends ViewPart implements ILogListener {
 		String message = Messages.LogView_confirmDelete_message; 
 		if (!MessageDialog.openConfirm(fTree.getShell(), title, message))
 			return;
-		if (fInputFile.delete() || fLogs.size() > 0) {
-			fLogs.clear();
+		if (fInputFile.delete() || elements.size() > 0) {
+			elements.clear();
+			groups.clear();
+			currentSession.removeAllChildren();
 			asyncRefresh(false);
 			resetDialogButtons();
 		}
@@ -664,15 +719,17 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) {
 	}
 
-	public LogSession[] getLogs() {
-		return (LogSession[]) fLogs.toArray(new LogSession[fLogs.size()]);
+	public AbstractEntry[] getElements() {
+		return (AbstractEntry[]) elements.toArray(new AbstractEntry[elements.size()]);
 	}
 
 	protected void handleClear() {
 		BusyIndicator.showWhile(fTree.getDisplay(),
 				new Runnable() {
 			public void run() {
-				fLogs.clear();
+				elements.clear();
+				groups.clear();
+				currentSession.removeAllChildren();
 				asyncRefresh(false);
 				resetDialogButtons();
 			}
@@ -700,10 +757,138 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void readLogFile() {
-		fLogs.clear();
 		if (!fInputFile.exists())
 			return;
-		LogReader.parseLogFile(fInputFile, fLogs, fMemento);
+
+		elements.clear();
+		groups.clear();
+
+		List result = new ArrayList();
+		currentSession = LogReader.parseLogFile(fInputFile, result, fMemento);
+		group(result);
+		limitEntriesCount();
+	}
+
+	/**
+	 * Add new entries to correct groups in the view.
+	 * @param entries new entries to show up in groups in the view.
+	 */
+	private void group(List entries) {
+		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
+			elements.addAll(entries);
+		} else {
+			for (Iterator i = entries.iterator(); i.hasNext(); ) {
+				LogEntry entry = (LogEntry) i.next();
+				Group group = getGroup(entry);
+				group.addChild(entry);
+			}
+		}
+	}
+
+	/**
+	 * Limits the number of entries according to the max entries limit set in
+	 * memento.
+	 */
+	private void limitEntriesCount() {
+		int limit = Integer.MAX_VALUE;
+		if (fMemento.getString(LogView.P_USE_LIMIT).equals("true")) {//$NON-NLS-1$
+			limit = fMemento.getInteger(LogView.P_LOG_LIMIT).intValue();
+		}
+
+		int entriesCount = getEntriesCount();
+
+		if (entriesCount <= limit) {
+			return;
+		} else { // remove oldest
+			Comparator dateComparator = new Comparator() {
+				public int compare(Object o1, Object o2) {
+					Date l1 = ((LogEntry) o1).getDate();
+					Date l2 = ((LogEntry) o2).getDate();
+					if ((l1 != null) && (l2 != null)) {
+						return l1.before(l2) ? -1 : 1;
+					} else if ((l1 == null) && (l2 == null)) {
+						return 0;
+					} else return (l1 == null) ? -1 : 1; 
+				}
+			};
+
+			if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
+				elements.subList(0, elements.size() - limit).clear();
+			} else {
+				List copy = new ArrayList(entriesCount);
+				for (Iterator i = elements.iterator(); i.hasNext(); ) {
+					AbstractEntry group = (AbstractEntry) i.next();
+					copy.addAll(Arrays.asList(group.getChildren(group)));
+				}
+
+				Collections.sort(copy, dateComparator);
+				List toRemove = copy.subList(0, copy.size() - limit);
+
+				for (Iterator i = elements.iterator(); i.hasNext(); ) {
+					AbstractEntry group = (AbstractEntry) i.next();
+					group.removeChildren(toRemove);
+				}
+			}
+		}
+
+	}
+
+	private int getEntriesCount() {
+		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
+			return elements.size();
+		} else {
+			int size = 0;
+			for (Iterator i = elements.iterator(); i.hasNext(); ) {
+				AbstractEntry group = (AbstractEntry)i.next();
+				size += group.size();
+			}
+			return size;
+		}
+	}
+
+	/**
+	 * Returns group appropriate for the entry. Group depends on P_GROUP_BY
+	 * preference, or is null if grouping is disabled (GROUP_BY_NONE), or group
+	 * could not be determined. May create group if it haven't existed before.
+	 * 
+	 * @param entry entry to be grouped
+	 * @return group or null if grouping is disabled
+	 */
+	protected Group getGroup(LogEntry entry) {
+		int groupBy = fMemento.getInteger(P_GROUP_BY).intValue();
+		Object elementGroupId = null;
+		String groupName = null;
+
+		switch (groupBy) {
+		case GROUP_BY_PLUGIN:
+			groupName = entry.getPluginId();
+			elementGroupId = groupName;
+			break;
+
+		case GROUP_BY_SESSION:
+			elementGroupId = entry.getSession();
+			break;
+
+		default: // grouping is disabled
+			return null;
+		}
+
+		if (elementGroupId == null) { // could not determine group
+			return null;
+		}
+
+		Group group = (Group) groups.get(elementGroupId);
+		if (group == null) {
+			if (groupBy == GROUP_BY_SESSION) {
+				group = entry.getSession();
+			} else {
+				group = new Group(groupName);
+			}
+			groups.put(elementGroupId, group);
+			elements.add(group);
+		}
+
+		return group;
 	}
 
 	public void logging(IStatus status, String plugin) {
@@ -711,23 +896,21 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 		if (fFirstEvent) {
 			readLogFile();
-			asyncRefresh();
+			asyncRefresh(true);
 			fFirstEvent = false;
 		} else {
 			pushStatus(status);
 		}
 	}
 
-	private void pushStatus(IStatus status) {
+	private synchronized void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
-		if (fLogs.isEmpty()) {
-			fLogs.add(new LogSession());
-		}
-		LogReader.addEntry(entry, ((LogSession)fLogs.get(fLogs.size() - 1)).getEntries(), fMemento, true);
-		asyncRefresh();
-	}
+		entry.setSession(currentSession);
 
-	private void asyncRefresh() {
+		if (LogReader.isLogged(entry, fMemento)) {
+			group(Collections.singletonList(entry));
+			limitEntriesCount();
+		}
 		asyncRefresh(true);
 	}
 
@@ -875,6 +1058,9 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 		fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
 		fMemento.putInteger(P_ORDER_TYPE, DATE);
+		if (fMemento.getInteger(P_GROUP_BY) == null) {
+			fMemento.putInteger(P_GROUP_BY, GROUP_BY_NONE);
+		}
 	}
 
 	public void saveState(IMemento memento) {
@@ -965,7 +1151,7 @@ public class LogView extends ViewPart implements ILogListener {
 		TreeItem item = fTree.getItem(point);
 		if (item == null)
 			return;
-		
+
 		String message = null;
 		if (item.getData() instanceof LogEntry) {
 			message = ((LogEntry) item.getData()).getStack();
@@ -977,7 +1163,7 @@ public class LogView extends ViewPart implements ILogListener {
 				message += formatter.format(session.getDate());
 			}
 		}
-		 
+
 		if (message == null)
 			return;
 
@@ -1017,8 +1203,8 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private int getNumberOfParents(LogEntry entry){
-		LogEntry parent = (LogEntry)entry.getParent(entry);
+	private int getNumberOfParents(AbstractEntry entry){
+		AbstractEntry parent = (AbstractEntry)entry.getParent(entry);
 		if (parent ==null)
 			return 0;
 		return 1 + getNumberOfParents(parent);
@@ -1042,7 +1228,7 @@ public class LogView extends ViewPart implements ILogListener {
 						date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
 					}
 					if (date1 == date2) {
-						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+						int result = elements.indexOf(e2) - elements.indexOf(e1); 
 						if (DATE_ORDER == DESCENDING)
 							result *= DESCENDING;
 						return result;
@@ -1116,9 +1302,9 @@ public class LogView extends ViewPart implements ILogListener {
 						date1 = ((LogSession) e1).getDate() == null ? 0 : ((LogSession) e1).getDate().getTime();
 						date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
 					}
-					
+
 					if (date1 == date2) {
-						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+						int result = elements.indexOf(e2) - elements.indexOf(e1);
 						if (DATE_ORDER == DESCENDING)
 							result *= DESCENDING;
 						return result;
@@ -1176,6 +1362,7 @@ public class LogView extends ViewPart implements ILogListener {
 			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
 			fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
 			fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT));
+			fMemento.putInteger(P_GROUP_BY, p.getInt(P_GROUP_BY));
 		} catch (NumberFormatException e) {
 			fMemento.putInteger(P_LOG_LIMIT, 50);
 			fMemento.putInteger(P_COLUMN_1, 300);
@@ -1183,6 +1370,7 @@ public class LogView extends ViewPart implements ILogListener {
 			fMemento.putInteger(P_COLUMN_3, 150);
 			fMemento.putInteger(P_ORDER_TYPE, DATE);
 			fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
+			fMemento.putInteger(P_GROUP_BY, GROUP_BY_NONE);
 		}
 	}
 
@@ -1190,7 +1378,7 @@ public class LogView extends ViewPart implements ILogListener {
 		writeViewSettings();
 		writeFilterSettings();
 	}
-	
+
 	private void writeFilterSettings(){
 		IDialogSettings settings = getLogSettings();
 		if (settings == null)
@@ -1213,12 +1401,13 @@ public class LogView extends ViewPart implements ILogListener {
 		preferences.setValue(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
 		preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
 		preferences.setValue(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
+		preferences.setValue(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
 	}
 
 	public void sortByDateDescending() {
 		setColumnSorting(fColumn3, DESCENDING);
 	}
-	
+
 	protected Job getOpenLogFileJob() {
 		final Shell shell = getViewSite().getShell();
 		return new Job(Messages.OpenLogDialog_message) {
@@ -1247,7 +1436,7 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 	}
-	
+
 	protected File getLogFile() {
 		return fInputFile;
 	}

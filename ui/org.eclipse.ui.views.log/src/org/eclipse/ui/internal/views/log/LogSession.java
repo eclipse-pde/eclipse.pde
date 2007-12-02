@@ -7,32 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class LogSession extends PlatformObject implements IWorkbenchAdapter {
+/**
+ * Group of entries with additional Session data.
+ */
+public class LogSession extends Group {
 	private String sessionData;
 	private Date date;
-	private List entries = new ArrayList();
-
-	/**
-	 * Constructor for LogSession.
-	 */
+	
 	public LogSession() {
+		super(Messages.LogViewLabelProvider_Session);
 	}
-
+	
 	public Date getDate() {
 		return date;
 	}
@@ -63,24 +58,8 @@ public class LogSession extends PlatformObject implements IWorkbenchAdapter {
 		String dateBuffer = line.substring(0, delim).trim();
 		setDate(dateBuffer);
 	}
-	
-	public List getEntries() {
-		return entries;
-	}
 
-	public Object[] getChildren(Object o) {
-		return getEntries().toArray(new LogEntry[getEntries().size()]);
-	}
-
-	public ImageDescriptor getImageDescriptor(Object object) {
-		return null;
-	}
-
-	public String getLabel(Object o) {
-		return null;
-	}
-
-	public Object getParent(Object o) {
-		return null;
+	public void write(PrintWriter writer) {
+		writer.write(sessionData);
 	}
 }

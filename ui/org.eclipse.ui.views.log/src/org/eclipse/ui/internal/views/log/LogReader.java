@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207061
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207312, 100715
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -35,13 +36,11 @@ class LogReader {
 	private static final int STACK_STATE = 50;
 	private static final int TEXT_STATE = 60;
 	private static final int UNKNOWN_STATE = 70;
-	
-	private static LogSession currentSession;
 		
-	public static void parseLogFile(File file, ArrayList sessions, IMemento memento) {
+	public static LogSession parseLogFile(File file, List entries, IMemento memento) {
 		if (memento.getString(LogView.P_USE_LIMIT).equals("true") //$NON-NLS-1$
 				&& memento.getInteger(LogView.P_LOG_LIMIT).intValue() == 0)
-			return;
+			return null;
 		
 		ArrayList parents = new ArrayList();
 		LogEntry current = null;
@@ -50,7 +49,7 @@ class LogReader {
 		StringWriter swriter = null;
 		PrintWriter writer = null;
 		int state = UNKNOWN_STATE;
-		currentSession = null;
+		LogSession currentSession = null;
 		BufferedReader reader = null;
 		try {
 					
@@ -99,22 +98,20 @@ class LogReader {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
-					updateCurrentSession(session);
+					currentSession = updateCurrentSession(currentSession, session);
 					// if current session is most recent and not showing all sessions
 					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
-						sessions.clear();
-					sessions.add(currentSession);
+						entries.clear();
 				} else if (state == ENTRY_STATE) {
 					if (currentSession == null) { // create fake session if there was no any
 						currentSession = new LogSession();
-						sessions.add(currentSession);
 					}
 					LogEntry entry = new LogEntry();
 					entry.setSession(currentSession);
 					entry.processEntry(line);
 					setNewParent(parents, entry, 0);
 					current = entry;
-					addEntry(current, currentSession.getEntries(), memento, false);
+					addEntry(current, entries, memento);
 				} else if (state == SUBENTRY_STATE) {
 					if (parents.size() > 0) {
 						LogEntry entry = new LogEntry();
@@ -155,6 +152,8 @@ class LogReader {
 				writer.close();
 			}
 		}
+		
+		return currentSession;
 	}
 
 	/**
@@ -178,57 +177,69 @@ class LogReader {
 	 * Updates the {@link currentSession} to be the one that is not null or has most recent date.
 	 * @param session
 	 */
-	private static void updateCurrentSession(LogSession session) {
+	private static LogSession updateCurrentSession(LogSession currentSession, LogSession session) {
 		if (currentSession == null) {
-			currentSession = session;
-			return;
+			return session;
 		}		
 		Date currentDate = currentSession.getDate();
 		Date sessionDate = session.getDate();		
 		if (currentDate == null && sessionDate != null)
-			currentSession = session;
+			return session;
 		else if (currentDate != null && sessionDate == null)
-			currentSession = session;
+			return session;
 		else if (currentDate != null && sessionDate != null && sessionDate.after(currentDate))
-			currentSession = session;
+			return session;
+		
+		return currentSession;
 	}
 	
-	public synchronized static void addEntry(LogEntry current, List entries, IMemento memento, boolean useCurrentSession) {
-		int severity = current.getSeverity();
-		boolean doAdd = true;
-		switch(severity) {
-			case IStatus.INFO:
-				doAdd = memento.getString(LogView.P_LOG_INFO).equals("true"); //$NON-NLS-1$
-				break;
-			case IStatus.WARNING:
-				doAdd = memento.getString(LogView.P_LOG_WARNING).equals("true"); //$NON-NLS-1$
-				break;
-			case IStatus.ERROR:
-				doAdd = memento.getString(LogView.P_LOG_ERROR).equals("true"); //$NON-NLS-1$
-				break;
-		}
-		if (doAdd) {
-			if (useCurrentSession)
-				current.setSession(currentSession);
-			entries.add(0, current);
+	/**
+	 * Adds entry to the list if it's not filtered. Removes entries exceeding the count limit.
+	 * 
+	 * @param entry
+	 * @param entries
+	 * @param memento
+	 */
+	private static void addEntry(LogEntry entry, List entries, IMemento memento) {
+		
+		if (isLogged(entry, memento)) {
+			entries.add(entry);
 			
-			if (memento.getString(LogView.P_USE_LIMIT).equals("true") //$NON-NLS-1$
-				&& entries.size() > memento.getInteger(LogView.P_LOG_LIMIT).intValue())
-				entries.remove(entries.size() - 1);
+			if (memento.getString(LogView.P_USE_LIMIT).equals("true")) {//$NON-NLS-1$
+				int limit = memento.getInteger(LogView.P_LOG_LIMIT).intValue();
+				if (entries.size() > limit) {
+					entries.remove(0);
+				}
+			}
 		}
 	}
+	
+	/**
+	 * Returns whether given entry is logged (true) or filtered (false).
+	 * 
+	 * @param entry
+	 * @param memento
+	 * @return
+	 */
+	public static boolean isLogged(LogEntry entry, IMemento memento) {
+		int severity = entry.getSeverity();
+		switch(severity) {
+			case IStatus.INFO:
+				return memento.getString(LogView.P_LOG_INFO).equals("true"); //$NON-NLS-1$
+			case IStatus.WARNING:
+				return memento.getString(LogView.P_LOG_WARNING).equals("true"); //$NON-NLS-1$
+			case IStatus.ERROR:
+				return memento.getString(LogView.P_LOG_ERROR).equals("true"); //$NON-NLS-1$
+		}
+		
+		return false;
+	}
 
-	private static void setNewParent(
-		ArrayList parents,
-		LogEntry entry,
-		int depth) {
+	private static void setNewParent(ArrayList parents, LogEntry entry,
+			int depth) {
 		if (depth + 1 > parents.size())
 			parents.add(entry);
 		else
 			parents.set(depth, entry);
-	}
-	
-	public static void reset() {
-		currentSession = null;
 	}
 }

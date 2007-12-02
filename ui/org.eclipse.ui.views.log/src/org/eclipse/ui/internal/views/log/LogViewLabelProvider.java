@@ -7,19 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogViewLabelProvider
 	extends LabelProvider
@@ -49,7 +48,7 @@ public class LogViewLabelProvider
 		}
 	}
 	public Image getColumnImage(Object element, int columnIndex) {
-		if (element instanceof LogSession) {
+		if (element instanceof Group) {
 			return (columnIndex == 0) ? hierarchicalImage : null;
 		}
 		
@@ -70,38 +69,41 @@ public class LogViewLabelProvider
 	}
 	
 	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof LogSession) {
-			LogSession entry = (LogSession) element;
-			if (columnIndex == 0) {
-				return Messages.LogViewLabelProvider_Session;
-			} else if (columnIndex == 2) {
-				if (entry.getDate() != null) {
-					DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
-					return formatter.format(entry.getDate()); 
-				}
-			}
-			return null;
+		if ((element instanceof LogSession) && (columnIndex == 2)) {
+			LogSession session = (LogSession) element;
+			if (session.getDate() == null)
+				return ""; //$NON-NLS-1$
+			
+			DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
+			return formatter.format(session.getDate());
 		}
 		
-		LogEntry entry = (LogEntry) element;
-		switch (columnIndex) {
-		case 0:
-			if (entry.getMessage() != null) {
-				String message = entry.getMessage();
-				if (message.length() > MAX_LABEL_LENGTH) {
-					String warning = Messages.LogViewLabelProvider_truncatedMessage;
-					StringBuffer sb = new StringBuffer(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
-					sb.append(warning);
-					return sb.toString();
-				}
-				return entry.getMessage();
-			}
-		case 1:
-			if (entry.getPluginId() != null)
-				return entry.getPluginId();
-		case 2:
-			return entry.getFormattedDate();
+		if ((element instanceof Group) && (columnIndex == 0)) {
+			return element.toString();
 		}
+		
+		if (element instanceof LogEntry) {
+			LogEntry entry = (LogEntry) element;
+			switch (columnIndex) {
+			case 0:
+				if (entry.getMessage() != null) {
+					String message = entry.getMessage();
+					if (message.length() > MAX_LABEL_LENGTH) {
+						String warning = Messages.LogViewLabelProvider_truncatedMessage;
+						StringBuffer sb = new StringBuffer(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
+						sb.append(warning);
+						return sb.toString();
+					}
+					return entry.getMessage();
+				}
+			case 1:
+				if (entry.getPluginId() != null)
+					return entry.getPluginId();
+			case 2:
+				return entry.getFormattedDate();
+			}
+		}
+		
 		return ""; //$NON-NLS-1$
 	}
 

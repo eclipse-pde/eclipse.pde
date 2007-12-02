@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -59,6 +59,10 @@ public class Messages extends NLS {
 	public static String LogView_FilterDialog_eventsLogged;
 	public static String LogView_FilterDialog_allSessions;
 	public static String LogView_FilterDialog_recentSession;
+	public static String LogView_GroupBy;
+	public static String LogView_GroupByNone;
+	public static String LogView_GroupByPlugin;
+	public static String LogView_GroupBySession;
 
 	public static String LogViewLabelProvider_Session;
 	public static String LogViewLabelProvider_truncatedMessage;

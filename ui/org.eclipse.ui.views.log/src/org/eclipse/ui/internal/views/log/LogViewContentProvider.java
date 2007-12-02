@@ -7,11 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 202583
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583,207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
-
-import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,26 +23,19 @@ public class LogViewContentProvider implements ITreeContentProvider {
 	public void dispose() {
 	}
 	public Object[] getChildren(Object element) {
-		if (element instanceof LogSession) {
-			List entries = ((LogSession) element).getEntries();
-			return entries.toArray(new LogEntry[entries.size()]);
-		}
-		return ((LogEntry) element).getChildren(element);
+		return ((AbstractEntry) element).getChildren(element);
 	}
 	public Object[] getElements(Object element) {
-		return logView.getLogs();
+		return logView.getElements();
 	}
 	public Object getParent(Object element) {
 		if (element instanceof LogSession) {
 			return null;
 		}
-		return ((LogEntry) element).getParent(element);
+		return ((AbstractEntry) element).getParent(element);
 	}
 	public boolean hasChildren(Object element) {
-		if (element instanceof LogSession) {
-			return ((LogSession) element).getEntries().size() > 0;
-		}
-		return ((LogEntry) element).hasChildren();
+		return ((AbstractEntry) element).getChildren(element).length > 0;
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}

@@ -7,31 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 209474
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 209474, 207344
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
+public class LogEntry extends AbstractEntry {
 	
 	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
 	private static final SimpleDateFormat F_SDF = new SimpleDateFormat(F_DATE_FORMAT);
 	
-	private ArrayList children;
-	private LogEntry parent;
 	private String pluginId;
 	private int severity;
 	private int code;
@@ -44,8 +40,8 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public LogEntry() {}
 
 	public LogSession getSession() {
-		if ((session == null) && (parent != null))
-			return parent.getSession();
+		if ((session == null) && (parent != null) && (parent instanceof LogEntry))
+			return ((LogEntry)parent).getSession();
 		
 		return session;
 	}
@@ -89,21 +85,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public String getSeverityText() {
 		return getSeverityText(severity);
 	}
-	public boolean hasChildren() {
-		return children != null && children.size() > 0;
-	}
+	
 	public String toString() {
 		return getSeverityText();
 	}
-	/**
-	 * @see IWorkbenchAdapter#getChildren(Object)
-	 */
-	public Object[] getChildren(Object parent) {
-		if (children == null)
-			return new Object[0];
-		return children.toArray();
-	}
-
+	
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
@@ -116,17 +102,6 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	 */
 	public String getLabel(Object obj) {
 		return getSeverityText();
-	}
-
-	/**
-	 * @see IWorkbenchAdapter#getParent(Object)
-	 */
-	public Object getParent(Object obj) {
-		return parent;
-	}
-
-	void setParent(LogEntry parent) {
-		this.parent = parent;
 	}
 
 	private String getSeverityText(int severity) {
@@ -283,19 +258,13 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		}
 		IStatus[] schildren = status.getChildren();
 		if (schildren.length > 0) {
-			children = new ArrayList();
 			for (int i = 0; i < schildren.length; i++) {
 				LogEntry child = new LogEntry(schildren[i]);
 				addChild(child);
 			}
 		}
 	}
-	void addChild(LogEntry child) {
-		if (children == null)
-			children = new ArrayList();
-		children.add(child);
-		child.setParent(this);
-	}
+	
 	public void write(PrintWriter writer) {
 		if (session != null)
 			writer.println(session.getSessionData());
