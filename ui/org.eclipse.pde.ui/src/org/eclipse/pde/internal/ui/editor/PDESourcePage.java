@@ -18,6 +18,26 @@ package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension4;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
@@ -37,40 +57,14 @@ import org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator;
 import org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler;
 import org.eclipse.pde.internal.ui.editor.plugin.ExtensionHyperLink;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IMarker;
-
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.ISourceViewer;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextEditor;
-
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -82,6 +76,7 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.KeyBindingSupportForAssistant;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
@@ -169,6 +164,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 	private ISortableContentOutlinePage fOutlinePage;
 	private ISelectionChangedListener fOutlineSelectionChangedListener;
 	protected Object fSelection;
+	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
+
 
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
 		fId = id;
@@ -200,6 +197,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 		}
 		if (isSelectionListener())
 			getEditor().getSite().getSelectionProvider().removeSelectionChangedListener(this);
+		
+		if (fKeyBindingSupportForAssistant != null) {
+			fKeyBindingSupportForAssistant.dispose();
+			fKeyBindingSupportForAssistant= null;
+		}
+
 		super.dispose();
 	}
 
@@ -468,7 +471,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 				getBundleForConstructedKeys(), "ContentAssistProposal.", this); //$NON-NLS-1$
 		contentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssist", contentAssist); //$NON-NLS-1$
-		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$		
+		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$	
+		ISourceViewer sourceViewer= getSourceViewer();
+		if (sourceViewer instanceof ISourceViewerExtension4)
+			fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(((ISourceViewerExtension4) sourceViewer).getContentAssistantFacade());
 	}
 	
 	public final void selectionChanged(SelectionChangedEvent event) {
