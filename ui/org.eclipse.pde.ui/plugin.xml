@@ -103,13 +103,14 @@
          </description>
       </wizard>
       <wizard
-            name="%new.pluginWithJarsProject.name"
-            icon="$nl$/icons/etool16/jarToPlugin.gif"
+            canFinishEarly="true"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            id="org.eclipse.pde.ui.NewLibraryPluginProjectWizard">
+            icon="$nl$/icons/etool16/jarToPlugin.gif"
+            id="org.eclipse.pde.ui.NewLibraryPluginProjectWizard"
+            name="%new.pluginWithJarsProject.name"
+            project="true">
          <description>
             %new.pluginWithJarsProject.description
          </description>
@@ -567,7 +568,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.OrganizeManifest"> 
          </action>
-
          <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
@@ -576,6 +576,7 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildPluginAction">
          </action>
+         
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
@@ -723,6 +724,7 @@
                id="org.eclipse.pde.ui.BuildPluginAction3">
          </action>
       </objectContribution>
+      <!--
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -760,6 +762,26 @@
             enablesFor="+"
             id="org.eclipse.pde.ui.ConvertedProjectWizard">
       	</action>
+      </objectContribution>
+      -->
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.pde.ui.pluginJarfileToolSet"
+            nameFilter="*.jar"
+            objectClass="org.eclipse.jdt.core.IPackageFragmentRoot">
+         <menu
+               id="org.eclipse.pde.ui.jarfile.tools"
+               label="%org.eclipse.pde.ui.tools">
+            <separator
+                  name="group0">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.pde.internal.ui.wizards.tools.ConvertJarsAction"
+               id="org.eclipse.pde.ui.ConvertJars"
+               label="%popupMenus.convertJars.label"
+               menubarPath="org.eclipse.pde.ui.jarfile.tools/group0">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
