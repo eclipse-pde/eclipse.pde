@@ -34,6 +34,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected BundleDescription[] plugins;
 	protected String filename;
 	protected Collection rootFileProviders;
+	protected String rootFolder = null;
 	protected Properties pluginsPostProcessingSteps;
 	protected Properties featuresPostProcessingSteps;
 	protected ArrayList addedByPermissions = new ArrayList(); //contains the list of files and folders that have been added to an archive by permission management
@@ -58,6 +59,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private boolean groupConfigs = false;
 	private String product;
 	private ProductFile productFile = null;
+	private Boolean p2Bundles = null;
 
 	public AssembleConfigScriptGenerator() {
 		super();
@@ -68,7 +70,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
 		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList(0);
-
+		this.rootFolder = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 		this.features = new BuildTimeFeature[featureList.size()];
 		featureList.toArray(this.features);
 
@@ -157,13 +159,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 * 
 	 */
 	private void generateBrandingCalls() {
-		String install = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
-		script.printBrandTask(install, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
+		script.printBrandTask(rootFolder, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
 	}
 
 	private void generateArchivingSteps() {
 		Map properties = new HashMap();
-		properties.put(PROPERTY_ROOT_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$
+		properties.put(PROPERTY_ROOT_FOLDER, rootFolder);
 		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
 
 		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
@@ -208,7 +209,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
 			FileSet[] rootFiles = new FileSet[1];
-			rootFiles[0] = new FileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), null, "**/**", null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$	
+			rootFiles[0] = new FileSet(rootFolder, null, "**/**", null, null, null, null); //$NON-NLS-1$
 			script.printMoveTask(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles, false);
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$
 		} else {
@@ -369,6 +370,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) getFinalShape(feature)[1], FEATURE);
 		}
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
+		if (haveP2Bundles())
+			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
 	protected void generateGatherBinPartsCalls() {
@@ -493,6 +496,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generateGZipTarget(true);
 
 		generateCustomAssemblyTarget();
+		generateMetadataTarget();
 
 		script.printProjectEnd();
 		script.close();
@@ -522,6 +526,58 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_CUSTOM_ASSEMBLY, null, PROPERTY_CUSTOM_ASSEMBLY, null, null);
 		script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_ASSEMBLY), null, Utils.getPropertyFormat(PROPERTY_CUSTOM_TARGET), null, TRUE, null);
 		script.printTargetEnd();
+	}
+
+	private void generateMetadataTarget() {
+		if (haveP2Bundles()) {
+			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
+			script.print("<p2.generator "); //$NON-NLS-1$
+			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
+			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
+			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+
+			if (rootFileProviders.size() > 0) {
+				BuildTimeFeature feature = null;
+				try {
+					feature = getSite(false).findFeature(featureId, GENERIC_VERSION_NUMBER, false);
+				} catch (CoreException e) {
+					//ignore
+				}
+				script.print("<p2.generator "); //$NON-NLS-1$
+				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
+				script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
+				script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("launcherConfig", configInfo.toString(), true); //$NON-NLS-1$
+				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
+				script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				if (productFile != null) {
+					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
+				}
+				script.println("/>"); //$NON-NLS-1$
+			}
+
+			script.printTargetEnd();
+		}
+	}
+
+	private boolean haveP2Bundles() {
+		if (p2Bundles != null)
+			return p2Bundles.booleanValue();
+		
+		try {
+			this.getClass().getClassLoader().loadClass("org.eclipse.equinox.p2.metadata.generator.Generator"); //$NON-NLS-1$
+			p2Bundles = Boolean.TRUE;
+		} catch (Exception e) {
+			p2Bundles = Boolean.FALSE;
+		}
+		return p2Bundles.booleanValue();
 	}
 
 	private void generateZipTarget() {
@@ -641,7 +697,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
 			String toExcludeFromArchive = Utils.getStringFromCollection(this.addedByPermissions, ","); //$NON-NLS-1$
 			System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
-			rootFiles[0] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, toExcludeFromArchive, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
+			rootFiles[0] = new ZipFileSet(rootFolder, false, null, "**/**", null, toExcludeFromArchive, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$
 			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 		}
 	}
@@ -667,21 +723,20 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				String[] values = Utils.getArrayFromString(parameters);
 				for (int i = 0; i < values.length; i++) {
 					boolean isFile = !values[i].endsWith("/"); //$NON-NLS-1$
-					String prefix = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 					if (instruction.startsWith(prefixPermissions)) {
 						addedByPermissions.add(values[i]);
 						if (zip)
-							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new ZipFileSet(rootFolder + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						else
-							fileSets.add(new TarFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new TarFileSet(rootFolder + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
 					if (instruction.startsWith(commonPermissions)) {
 						addedByPermissions.add(values[i]);
 						if (zip)
-							fileSets.add(new ZipFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new ZipFileSet(rootFolder + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						else
-							fileSets.add(new TarFileSet(prefix + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new TarFileSet(rootFolder + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
 				}
@@ -714,7 +769,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] permissionSets = generatePermissions(false);
 		FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
 		System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
-		rootFiles[0] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
+		rootFiles[0] = new TarFileSet(rootFolder, false, null, "**/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$
 		script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 	}
 

@@ -60,6 +60,7 @@ public interface IXMLConstants {
 	public static final String TARGET_JARSIGNING = "jarSigning"; //$NON-NLS-1$
 	public static final String TARGET_ROOTFILES_PREFIX = "rootFiles"; //$NON-NLS-1$
 	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
+	public static final String TARGET_P2_METADATA = "generate.p2.metadata"; //$NON-NLS-1$
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_ARCH = "basearch"; //$NON-NLS-1$
