@@ -301,7 +301,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			else
 				path = basePath.append(libraryPath).toOSString();
 		}
-		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
+		path = ModelBuildScriptGenerator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		String secondaryPath = null;
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)

@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.IOException;
@@ -26,7 +24,7 @@ import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
 	private ModelBuildScriptGenerator generator;
-		
+
 	public ClasspathComputer2_1(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
 	}
@@ -43,17 +41,17 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
 		List classpath = new ArrayList(20);
 		List pluginChain = new ArrayList(10);
-		Set addedPlugins=new HashSet(20);
+		Set addedPlugins = new HashSet(20);
 		String location = generator.getLocation(model);
 
 		//PARENT
 		addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
-		addSelf(model, jar, classpath, location, pluginChain,addedPlugins);
+		addSelf(model, jar, classpath, location, pluginChain, addedPlugins);
 
 		//PREREQUISITE
-		addPrerequisites(model, classpath, location, pluginChain,addedPlugins);
+		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
 
 		return classpath;
 
@@ -164,7 +162,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
 		String path = basePath.append(libraryName).toString();
-		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
+		path = ModelBuildScriptGenerator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
 			if (modelProperties == null || modelProperties.getProperty("source." + libraryName) != null) //$NON-NLS-1$
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
@@ -178,7 +176,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 		HostSpecification host = model.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
-			for(int i=0; i<hosts.length; i++)
+			for (int i = 0; i < hosts.length; i++)
 				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain, addedPlugins);
 		}
 
@@ -277,7 +275,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 					if (i == 3)
 						modelLocation += urlfragments[i];
 					else
-						modelLocation += '/' + urlfragments[i]; 
+						modelLocation += '/' + urlfragments[i];
 				}
 				return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
 			}
@@ -309,17 +307,17 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
-			String message = NLS.bind(Messages.error_pluginCycle, cycleString);	
+			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
 
-		if (addedPlugins.contains(target)){
+		if (addedPlugins.contains(target)) {
 			return;
 		}
-		
+
 		//	The first prerequisite is ALWAYS runtime	
 		if (target != getPlugin(PI_RUNTIME, null))
-			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain,addedPlugins);
+			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain, addedPlugins);
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
 		// as all required plugins may be required for compilation.
@@ -329,12 +327,12 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < requires.length; i++) {
 				BundleDescription plugin = getPlugin(requires[i].getSymbolicName(), requires[i].getVersion().toString());
 				if (plugin != null)
-					addPluginAndPrerequisites(plugin, classpath, baseLocation, pluginChain,addedPlugins);
+					addPluginAndPrerequisites(plugin, classpath, baseLocation, pluginChain, addedPlugins);
 			}
 			pluginChain.remove(target);
 			addedPlugins.add(target);
 		}
-		
+
 	}
 
 	/**
@@ -350,7 +348,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 		addPlugin(target, classpath, baseLocation);
-		addPrerequisites(target, classpath, baseLocation, pluginChain,addedPlugins);
+		addPrerequisites(target, classpath, baseLocation, pluginChain, addedPlugins);
 	}
 
 	/**
