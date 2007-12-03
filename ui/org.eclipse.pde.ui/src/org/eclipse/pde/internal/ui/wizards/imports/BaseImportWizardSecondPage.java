@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -94,7 +95,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	
 	protected Composite createComputationsOption(Composite parent, int span) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		composite.setLayout(GridLayoutFactory.swtDefaults().margins(5, 0).create());
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		composite.setLayoutData(gd);
