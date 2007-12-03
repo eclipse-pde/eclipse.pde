@@ -32,6 +32,7 @@
       </category>
       <command
             categoryId="org.eclipse.pde.runtime.spy.commands.category"
+            description="%spy-command.description"
             id="org.eclipse.pde.runtime.spy.commands.spyCommand"
             name="%spy-command.name">
       </command>
