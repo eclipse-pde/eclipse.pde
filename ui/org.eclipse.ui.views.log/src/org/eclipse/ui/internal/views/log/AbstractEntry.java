@@ -24,21 +24,22 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public abstract class AbstractEntry extends PlatformObject implements IWorkbenchAdapter {
 
-	private List children;
+	/**
+	 * The collection of direct children of this entry
+	 */
+	private List children = new ArrayList();
 	protected Object parent;
 	
+	/**
+	 * Adds the specified child entry to the listing of children.
+	 * If the specified child is <code>null</code>, no work is done
+	 * 
+	 * @param child
+	 */
 	public void addChild(AbstractEntry child) {
-		if (children == null) {
-			children = new ArrayList();
-		}
-		children.add(0, child);
-		child.setParent(this);
-	}
-	
-	public void addChild(AbstractEntry child, int limit) {
-		addChild(child);
-		if (children.size() > limit) {
-			children.remove(children.size() - 1);
+		if(child != null) {
+			children.add(0, child);
+			child.setParent(this);
 		}
 	}
 	
@@ -46,17 +47,23 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
 	public Object[] getChildren(Object parent) {
-		if (children == null)
-			return new Object[0];
 		return children.toArray();
 	}
 	
+	/**
+	 * @return true if this entry has children, false otherwise
+	 */
 	public boolean hasChildren() {
-		return children != null && children.size() > 0;
+		return children.size() > 0;
 	}
 	
+	/**
+	 * @return the size of the child array
+	 * 
+	 * TODO rename to getChildCount(), or something more meaningful
+	 */
 	public int size() {
-		return children != null ? children.size() : 0;
+		return children.size();
 	}
 
 	/**
@@ -80,19 +87,34 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 		return parent;
 	}
 	
+	/**
+	 * Sets the parent of this entry
+	 * @param parent
+	 */
 	public void setParent(AbstractEntry parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * removes all of the children specified in the given listing
+	 * 
+	 * @param list the list of children to remove
+	 */
 	public void removeChildren(List list) {
-		if (children != null) {
-			children.removeAll(list);
-		}
+		children.removeAll(list);
 	}
 	
+	/**
+	 * Removes all of the children from this entry
+	 */
 	public void removeAllChildren() {
 		children.clear();
 	}
 	
+	/**
+	 * Writes this entry information into the given {@link PrintWriter}
+	 * 
+	 * @param writer
+	 */
 	public abstract void write(PrintWriter writer);
 }
