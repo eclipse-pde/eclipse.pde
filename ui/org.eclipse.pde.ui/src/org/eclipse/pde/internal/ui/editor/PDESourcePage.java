@@ -27,7 +27,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.ISourceViewerExtension4;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -471,10 +470,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 				getBundleForConstructedKeys(), "ContentAssistProposal.", this); //$NON-NLS-1$
 		contentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssist", contentAssist); //$NON-NLS-1$
-		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$	
-		ISourceViewer sourceViewer= getSourceViewer();
-		if (sourceViewer instanceof ISourceViewerExtension4)
-			fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(((ISourceViewerExtension4) sourceViewer).getContentAssistantFacade());
+		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$
+//		
+//		ISourceViewer sourceViewer= getSourceViewer();
+//		
+//		if (sourceViewer != null && sourceViewer instanceof ISourceViewerExtension4)
+//			fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(((ISourceViewerExtension4) sourceViewer).getContentAssistantFacade());
 	}
 	
 	public final void selectionChanged(SelectionChangedEvent event) {
