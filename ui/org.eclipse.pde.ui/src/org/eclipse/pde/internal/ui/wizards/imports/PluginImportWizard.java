@@ -109,7 +109,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		ILaunchManager launchManager = DebugPlugin.getDefault()
 				.getLaunchManager();
 		ILaunch[] launches = launchManager.getLaunches();
-		HashSet imported = new HashSet((4/3) * modelsToImport.length + 1);
+		HashSet imported = new HashSet((4 * modelsToImport.length) / 3 + 1);
 		for (int j = 0; j < modelsToImport.length; ++j) {
 			BundleDescription bd = modelsToImport[j].getBundleDescription();
 			if (bd != null) {
