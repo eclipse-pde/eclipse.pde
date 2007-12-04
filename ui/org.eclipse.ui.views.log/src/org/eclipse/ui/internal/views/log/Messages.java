@@ -46,6 +46,7 @@ public class Messages extends NLS {
 	public static String LogView_operation_importing;
 	public static String LogView_operation_reloading;
 	public static String LogView_activate;
+	public static String LogView_AddingBatchedEvents;
 	public static String LogView_view_currentLog;
 	public static String LogView_view_currentLog_tooltip;
 	public static String LogView_properties_tooltip;

@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931, 207101
+ *     													bugs 207323, 207931, 207101
+ *     													bugs 172658
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
 
@@ -95,10 +96,15 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
@@ -143,6 +149,9 @@ public class LogView extends ViewPart implements ILogListener {
 	private List elements;
 	private Map groups;
 	private LogSession currentSession;
+	
+	private List batchedEntries;
+	private boolean batchEntries;
 
 	private Clipboard fClipboard;
 
@@ -205,6 +214,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public LogView() {
 		elements = new ArrayList();
 		groups = new HashMap();
+		batchedEntries = new ArrayList();
 		fInputFile = Platform.getLogFileLocation().toFile();
 	}
 
@@ -232,6 +242,43 @@ public class LogView extends ViewPart implements ILogListener {
 
 		Platform.addLogListener(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTree, IHelpContextIds.LOG_VIEW);
+		getSite().getWorkbenchWindow().addPerspectiveListener(new IPerspectiveListener2() {
+
+			public void perspectiveChanged(IWorkbenchPage page,
+					IPerspectiveDescriptor perspective,
+					IWorkbenchPartReference partRef, String changeId) {
+				if (! (partRef instanceof IViewReference))
+					return;
+				
+				IWorkbenchPart part = partRef.getPart(false);
+				if (part == null) {
+					return;
+				}
+				
+				if (part.equals(LogView.this)) {
+					if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW)) {
+						if (! batchedEntries.isEmpty()) {
+							pushBatchedEntries();
+						}
+						
+						batchEntries = false;
+					} else if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
+						batchEntries = true;
+					}
+				}
+			}
+
+			public void perspectiveActivated(IWorkbenchPage page,
+					IPerspectiveDescriptor perspective) {
+				// empty
+			}
+
+			public void perspectiveChanged(IWorkbenchPage page,
+					IPerspectiveDescriptor perspective, String changeId) {
+				// empty
+			}
+			
+		});
 	}
 
 	/**
@@ -894,19 +941,59 @@ public class LogView extends ViewPart implements ILogListener {
 	public void logging(IStatus status, String plugin) {
 		if (!fInputFile.equals(Platform.getLogFileLocation().toFile()))
 			return;
+		
+		if (batchEntries) { 
+			// create LogEntry immediately to don't loose IStatus creation date.
+			LogEntry entry = createLogEntry(status);
+			batchedEntries.add(entry);
+			return;
+		}
+		
 		if (fFirstEvent) {
 			readLogFile();
 			asyncRefresh(true);
 			fFirstEvent = false;
 		} else {
-			pushStatus(status);
+			LogEntry entry = createLogEntry(status); 
+			
+			if (! batchedEntries.isEmpty()) {
+				// batch new entry as well, to have only one asyncRefresh()
+				batchedEntries.add(entry);
+				pushBatchedEntries();
+			} else {
+				pushEntry(entry);
+				asyncRefresh(true);
+			}
 		}
 	}
 
-	private synchronized void pushStatus(IStatus status) {
+	/**
+	 * Push batched entries to log view.
+	 */
+	private void pushBatchedEntries() {
+		Job job = new Job(Messages.LogView_AddingBatchedEvents) {
+			protected IStatus run(IProgressMonitor monitor) {
+				for (int i = 0; i < batchedEntries.size(); i++) {
+					if(!monitor.isCanceled()) {
+						LogEntry entry = (LogEntry) batchedEntries.get(i);
+						pushEntry(entry);
+						batchedEntries.remove(i);
+					}
+				}
+				asyncRefresh(true);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
+	
+	private LogEntry createLogEntry(IStatus status) {
 		LogEntry entry = new LogEntry(status);
 		entry.setSession(currentSession);
-
+		return entry;
+	}
+	
+	private synchronized void pushEntry(LogEntry entry) {
 		if (LogReader.isLogged(entry, fMemento)) {
 			group(Collections.singletonList(entry));
 			limitEntriesCount();
