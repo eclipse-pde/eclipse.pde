@@ -55,7 +55,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
 
-public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants{
+public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
 	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
 
@@ -209,7 +209,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		// make sure we have a manifest entry
 		if(fProject.exists(ICoreConstants.MANIFEST_PATH)) {
 			String key = "META-INF/"; //$NON-NLS-1$
-			validateBinIncludes(binIncludes, key);
+			validateBinIncludes(binIncludes, key);	
 		}
 
 		// make sure if we're a fragment, we have a fragment.xml entry
@@ -223,6 +223,35 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String key = "plugin.xml"; //$NON-NLS-1$
 			validateBinIncludes(binIncludes, key);
 		}
+		
+		// validate for bundle localization
+		IPluginModelBase model = PluginRegistry.findModel(fProject);
+		if (model == null)
+			return;
+		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
+			IBundleModel bm = ((IBundlePluginModelBase)model).getBundleModel();
+			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_LOCALIZATION);
+			if ((mh == null || mh.getValue() == null)) { // check for default location
+				Path path = new Path(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+				if(fProject.exists(path))
+					validateBinIncludes(binIncludes, Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+			} else { // check for the real location
+				String localization = mh.getValue();
+				int index = localization.lastIndexOf('/');
+				if(index != -1) { // if we're a folder
+					String folder = localization.substring(0, index + 1);
+					Path path = new Path(folder);
+					if(fProject.exists(path))
+						validateBinIncludes(binIncludes, folder);
+				} else { // if we're just a file location
+					String location = mh.getValue().concat(".properties"); //$NON-NLS-1$
+					Path path = new Path(location);
+					if(fProject.exists(path))
+						validateBinIncludes(binIncludes, location);	
+				}
+			}
+		}
+		
 	}
 
 	private void validateBinIncludes(IBuildEntry binIncludes, String key) {
@@ -241,8 +270,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if(project != null && tokens[i] != null) {
 				File file = project.toFile();
 				File[] files = file.listFiles(new WildcardFilenameFilter(tokens[i]));
-				if(files.length > 0)
-					exists = true;
+				for(int j = 0; j < files.length; j++) {
+					if(files[j].toString().endsWith(key)) {
+						exists = true;
+						break;
+					}
+				}
 			}
 		}
 
