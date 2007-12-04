@@ -542,12 +542,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 
 			if (rootFileProviders.size() > 0) {
-				BuildTimeFeature feature = null;
-				try {
-					feature = getSite(false).findFeature(featureId, GENERIC_VERSION_NUMBER, false);
-				} catch (CoreException e) {
-					//ignore
-				}
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
 				script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
