@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207344, 207101
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -16,13 +16,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 public class LogViewLabelProvider
 	extends LabelProvider
-	implements ITableLabelProvider {
+	implements ITableLabelProvider, ITableFontProvider {
 	
 	private static int MAX_LABEL_LENGTH = 200;
 	
@@ -34,13 +37,17 @@ public class LogViewLabelProvider
 	private Image hierarchicalImage;
 	ArrayList consumers = new ArrayList();
 
-	public LogViewLabelProvider() {
+	private LogView logView;
+	
+	public LogViewLabelProvider(LogView logView) {
 		errorImage = SharedImages.getImage(SharedImages.DESC_ERROR_ST_OBJ);
 		warningImage = SharedImages.getImage(SharedImages.DESC_WARNING_ST_OBJ);
 		infoImage = SharedImages.getImage(SharedImages.DESC_INFO_ST_OBJ);
 		okImage = SharedImages.getImage(SharedImages.DESC_OK_ST_OBJ);
 		errorWithStackImage = SharedImages.getImage(SharedImages.DESC_ERROR_STACK_OBJ);
 		hierarchicalImage = SharedImages.getImage(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ);
+		
+		this.logView = logView;
 	}
 	public void dispose() {
 		if (consumers.size() == 0){
@@ -117,5 +124,13 @@ public class LogViewLabelProvider
 		if (consumers.size() == 0) {
 			dispose();
 		}
+	}
+	
+	public Font getFont(Object element, int columnIndex) {
+		if ((element instanceof LogSession) && (logView.isCurrentLogSession((LogSession) element))) {
+			return JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
+		}
+		
+		return null;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
- *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 207323, 207931, 207101
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
 
@@ -511,7 +511,7 @@ public class LogView extends ViewPart implements ILogListener {
 		createColumns(fTree);
 		fFilteredTree.getViewer().setAutoExpandLevel(2);
 		fFilteredTree.getViewer().setContentProvider(new LogViewContentProvider(this));
-		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider());
+		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider(this));
 		fLabelProvider.connect(this);
 		fFilteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
@@ -1439,5 +1439,9 @@ public class LogView extends ViewPart implements ILogListener {
 
 	protected File getLogFile() {
 		return fInputFile;
+	}
+	
+	public boolean isCurrentLogSession(LogSession session) {
+		return (fInputFile.equals(Platform.getLogFileLocation().toFile())) && (currentSession != null) && (currentSession.equals(session));
 	}
 }
