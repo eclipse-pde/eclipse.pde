@@ -30,6 +30,9 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 
+/**
+ * This class only represents 3.0 style plug-ins
+ */
 public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		implements IEditableModel {
 	
