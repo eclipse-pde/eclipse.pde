@@ -343,7 +343,7 @@ public class EventDetailsDialog extends TrayDialog {
 			}
 			
 			String session = logEntry.getSession().getSessionData();
-			if (stack != null) {
+			if (session != null) {
 				sessionDataText.setText(session);
 			}
 			
