@@ -127,4 +127,27 @@ public class AssembleTests extends PDETestCase {
 		}		
 	}
 	
+	public void testBug211605() throws Exception {
+		IFolder buildFolder = newTest("211605");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"org.eclipse.swt;unpack=\"false\"", "org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"", "org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\""});
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("topLevelElementId", "sdk");
+		if (!delta.equals(new File((String) buildProperties.get("baseLocation"))))
+			buildProperties.put("pluginPath", delta.getAbsolutePath());
+		buildProperties.put("configs", "win32, win32, x86 & linux, gtk, x86");
+		buildProperties.put("archivesFormat", "group,group,group-folder");
+		buildProperties.put("groupConfigurations", "true");
+		
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		
+		runBuild(buildFolder);
+		
+		File resultFolder = new File(buildFolder.getLocation().toFile(), "tmp/eclipse/plugins");
+		assertEquals(resultFolder.list().length, 3);
+	}
 }

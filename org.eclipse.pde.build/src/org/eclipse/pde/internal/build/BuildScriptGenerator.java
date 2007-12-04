@@ -473,14 +473,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.archivesFormatAsString = archivesFormatAsString;
 	}
 
-	public void realSetArchivesFormat(String archivesFormatAsString) throws CoreException {
-		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) {
+	public void realSetArchivesFormat(String formatString) throws CoreException {
+		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(formatString)) {
 			archivesFormat = new ArchiveTable(0);
 			return;
 		}
 
-		archivesFormat = new ArchiveTable(getConfigInfos().size());
-		String[] configs = Utils.getArrayFromStringWithBlank(archivesFormatAsString, "&"); //$NON-NLS-1$
+		archivesFormat = new ArchiveTable(getConfigInfos().size() + 1);
+		String[] configs = Utils.getArrayFromStringWithBlank(formatString, "&"); //$NON-NLS-1$
 		for (int i = 0; i < configs.length; i++) {
 			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
 			if (configElements.length != 3) {
@@ -489,13 +489,13 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			}
 			String[] archAndFormat = Utils.getArrayFromStringWithBlank(configElements[2], "-"); //$NON-NLS-1$
 			if (archAndFormat.length != 2) {
-				String message = NLS.bind(Messages.invalid_archivesFormat, archivesFormatAsString);
+				String message = NLS.bind(Messages.invalid_archivesFormat, formatString);
 				IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, message);
 				throw new CoreException(status);
 			}
 
 			Config aConfig = new Config(configElements[0], configElements[1], archAndFormat[0]);
-			if (getConfigInfos().contains(aConfig)) {
+			if (getConfigInfos().contains(aConfig) || (groupConfigs== true && configElements[0].equals("group"))) { //$NON-NLS-1$
 				archivesFormat.put(aConfig, archAndFormat[1]);
 			}
 		}
