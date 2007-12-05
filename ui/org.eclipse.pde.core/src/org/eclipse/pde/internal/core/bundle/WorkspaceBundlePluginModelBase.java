@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -67,6 +69,13 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 	public String getBundleLocalization() {
 		IBundle bundle = fBundleModel != null ? fBundleModel.getBundle() : null;
 		return bundle != null ? bundle.getLocalization() : null;
+	}
+	
+	protected NLResourceHelper createNLResourceHelper() {
+		String localization = getBundleLocalization();
+		return localization == null
+				? null
+				: new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this)); 
 	}
 
 	public IBundleModel getBundleModel() {
