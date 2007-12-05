@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -22,7 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
 
 public class SchemaErrorReporter extends XMLErrorReporter {
 	
@@ -70,29 +71,61 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			"thead", //$NON-NLS-1$
 			"tr" }; //$NON-NLS-1$
 	
+
+	private static final String ELEMENT = "element"; //$NON-NLS-1$
+	private static final String DOCUMENTATION = "documentation"; //$NON-NLS-1$
+	private static final String ANNOTATION = "annotation"; //$NON-NLS-1$
+	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
+	
+	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+	private static final String ATTR_USE = "use"; //$NON-NLS-1$
 	
 	public SchemaErrorReporter(IFile file) {
 		super(file);
 	}
 	
 	public void validateContent(IProgressMonitor monitor) {
+		List elements = new ArrayList();
 		Element element = getDocumentRoot();
-		if (element != null)
-			validateElement(element);
+		if (element != null) {
+			NodeList children = element.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child instanceof Element) {
+					Element childElement = (Element) child;
+					String name = childElement.getNodeName();
+					if (name != null && name.equals(ELEMENT)) {
+						String value = childElement.getAttribute(ATTR_NAME);
+						if (value != null && value.length() > 0) {
+							if (elements.contains(value)) { // report error
+								report(NLS.bind(PDECoreMessages.Builders_Schema_duplicateElement, value),  
+										getLine((Element) child),
+										CompilerFlags.ERROR,
+										PDEMarkerFactory.CAT_FATAL);
+							} else { // add to list
+								elements.add(value);
+							}
+						}
+					}
+					validate((Element)child);
+				}
+			}
+		}
 	}
 	
-	private void validateElement(Element element) {
-		if (element.getNodeName().equals("attribute")) //$NON-NLS-1$
+	private void validate(Element element) {
+		if (element.getNodeName().equals(ATTRIBUTE))
 			validateAttribute(element);
 	
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child instanceof Element) {
-				if (child.getNodeName().equals("annotation")) { //$NON-NLS-1$
+				if (child.getNodeName().equals(ANNOTATION)) {
 					validateAnnotation((Element)child);
 				} else {
-					validateElement((Element)child);
+					validate((Element)child);
 				}
 			}
 		}
@@ -102,7 +135,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child instanceof Element && child.getNodeName().equals("documentation")) { //$NON-NLS-1$
+			if (child instanceof Element && child.getNodeName().equals(DOCUMENTATION)) {
 				validateDocumentation((Element)child);
 			}
 		}
@@ -225,8 +258,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 	
 	private void validateUse(Element element) {
-		Attr use = element.getAttributeNode("use"); //$NON-NLS-1$
-		Attr value = element.getAttributeNode("value"); //$NON-NLS-1$
+		Attr use = element.getAttributeNode(ATTR_USE);
+		Attr value = element.getAttributeNode(ATTR_VALUE);
 		if (use != null && "default".equals(use.getValue()) && value == null) { //$NON-NLS-1$
 			report(NLS.bind(PDECoreMessages.Builders_Schema_valueRequired, element.getNodeName()),  
 					getLine(element),

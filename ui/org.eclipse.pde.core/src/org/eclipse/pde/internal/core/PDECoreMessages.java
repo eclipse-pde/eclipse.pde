@@ -117,6 +117,7 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Schema_forbiddenEndTag;
 	public static String Builders_Schema_valueRequired;
 	public static String Builders_Schema_valueNotRequired;
+	public static String Builders_Schema_duplicateElement;
 
 	public static String Builders_Manifest_missingRequired;
 	public static String Builders_Manifest_dependency;
