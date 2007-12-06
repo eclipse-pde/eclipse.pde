@@ -28,7 +28,6 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 
-
 public class ManifestEditorOpener {
 
 	public static IEditorPart open(Match match, boolean activate) throws PartInitException {
@@ -98,7 +97,7 @@ public class ManifestEditorOpener {
 	}
 	
 	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
-	private static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
+	public static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
 		IPluginObject[] elements = null;
 		// find equivalent models in UI text model
 		if (object instanceof IPluginExtension)

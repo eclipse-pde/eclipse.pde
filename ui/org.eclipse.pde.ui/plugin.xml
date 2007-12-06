@@ -510,6 +510,12 @@
             description="%quick.outline.description"
             id="org.eclipse.pde.ui.quickOutline"
             name="%quick.outline.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%pluginsearch.action.desc"
+            id="org.eclipse.pde.ui.OpenPluginArtifact"
+            name="%pluginsearch.action.name">
       </command>   
    </extension>
    <extension
@@ -1351,6 +1357,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+O">
       </key>
+      <key
+            commandId="org.eclipse.pde.ui.OpenPluginArtifact"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+P">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
@@ -1800,5 +1812,62 @@
                 <overrides id="org.eclipse.jdt.ui.text.correction.DefaultClasspathFixProcessor"/>
                 <overrides id="org.eclipse.jdt.junit.JUnitClasspathFixProcessor"/>
           </classpathFixProcessor>
+       </extension>
+       <extension
+             point="org.eclipse.ui.handlers">
+          <handler
+                class="org.eclipse.pde.internal.ui.search.dialogs.PluginSearchHandler"
+                commandId="org.eclipse.pde.ui.OpenPluginArtifact">
+          </handler>
+       </extension>
+       <extension
+             point="org.eclipse.ui.menus">
+          <menuContribution
+                locationURI="menu:navigate?after=open.ext2">
+             <separator
+                   name="org.eclipse.pde.ui.OpenPluginArtifactSeparator"
+                   visible="true">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.OpenPluginArtifact"
+                   icon="$nl$/icons/obj16/open_artifact_obj.gif"
+                   label="%pluginsearch.action.name">
+                <visibleWhen>
+                   <with
+                         variable="activeContexts">
+                      <iterate
+                            operator="or">
+                         <equals
+                               value="org.eclipse.pde.ui.SearchActionSet">
+                         </equals>
+                      </iterate>
+                   </with>
+                </visibleWhen>
+             </command>
+          </menuContribution>
+          <!--
+          <menuContribution
+                locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+                <toolbar
+                      id="org.eclipse.search.searchActionSet">
+                   <command
+                         commandId="org.eclipse.pde.ui.OpenPluginArtifact"
+                         icon="$nl$/icons/obj16/open_artifact_obj.gif"
+                         label="Open Plug-in Artifact">
+                      <visibleWhen>
+                         <with
+                               variable="activeContexts">
+                            <iterate
+                                  operator="or">
+                               <equals
+                                     value="org.eclipse.pde.ui.SearchActionSet">
+                               </equals>
+                            </iterate>
+                         </with>
+                      </visibleWhen>
+                   </command>
+                </toolbar>
+          </menuContribution>
+          -->
        </extension>
 </plugin>

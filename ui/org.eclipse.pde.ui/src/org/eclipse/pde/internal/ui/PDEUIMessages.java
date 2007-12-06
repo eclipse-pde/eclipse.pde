@@ -3085,5 +3085,10 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateSiteProvisionerDialog_siteLocation;
 	public static String UpdateSiteProvisionerDialog_missBothErrorMessage;
 	
+	public static String PluginSearchDialog_title;
+	public static String PluginSearchDialog_message;
+	public static String PluginSearchDialog_searching;
+	public static String PluginSearchDialog_showExtensions;
+	public static String PluginSearchDialog_showExtensionPoints;
 	
 }
