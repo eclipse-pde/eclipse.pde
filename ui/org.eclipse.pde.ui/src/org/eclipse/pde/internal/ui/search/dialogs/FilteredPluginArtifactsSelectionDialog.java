@@ -48,7 +48,7 @@ import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 import com.ibm.icu.text.Collator;
 
-public class PluginSearchDialog extends FilteredItemsSelectionDialog {
+public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = 
 		"org.eclipse.pde.ui.dialogs.PluginSearchDialog"; //$NON-NLS-1$
@@ -206,7 +206,7 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 		
 	}
 	
-	public PluginSearchDialog(Shell shell) {
+	public FilteredPluginArtifactsSelectionDialog(Shell shell) {
 		super(shell, false);
 		
 		setTitle(PDEUIMessages.PluginSearchDialog_title);

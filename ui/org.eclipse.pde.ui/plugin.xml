@@ -1816,7 +1816,7 @@
        <extension
              point="org.eclipse.ui.handlers">
           <handler
-                class="org.eclipse.pde.internal.ui.search.dialogs.PluginSearchHandler"
+                class="org.eclipse.pde.internal.ui.search.dialogs.PluginArtifactSearchHandler"
                 commandId="org.eclipse.pde.ui.OpenPluginArtifact">
           </handler>
        </extension>

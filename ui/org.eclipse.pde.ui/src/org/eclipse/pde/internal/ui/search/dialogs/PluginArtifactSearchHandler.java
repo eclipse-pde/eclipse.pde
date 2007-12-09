@@ -26,12 +26,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-public class PluginSearchHandler extends AbstractHandler {
+public class PluginArtifactSearchHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
-		PluginSearchDialog dialog = new PluginSearchDialog(window.getShell());
+		FilteredPluginArtifactsSelectionDialog dialog = new FilteredPluginArtifactsSelectionDialog(window.getShell());
 		int status = dialog.open();
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
