@@ -420,6 +420,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	
 	private class PluginSearchItemsFilter extends ItemsFilter {
 
+		// TODO probably have to make this realistic
 		public boolean isConsistentItem(Object item) {
 			return true;
 		}
