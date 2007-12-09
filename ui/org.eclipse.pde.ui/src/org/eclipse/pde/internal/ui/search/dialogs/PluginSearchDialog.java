@@ -31,6 +31,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -55,15 +57,16 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 	private static final String S_EXTENSION_POINTS =
 		"showExtensionPoints"; //$NON-NLS-1$
 	
+	private static final int TYPE_PLUGIN = 0;
+	private static final int TYPE_EXTENSION = 1;
+	private static final int TYPE_EXTENSION_POINT = 2;
+	
 	private Action extensionsAction = new ExtensionsAction();
 	private Action extensionPointsAction = new ExtensionPointsAction();
 	private ExtensionsFilter extensionsFilter = new ExtensionsFilter();
 	private ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
 	
 	private class SearchLabelProvider extends LabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
@@ -205,9 +208,10 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 	public PluginSearchDialog(Shell shell) {
 		super(shell, false);
 		
-		setSelectionHistory(new PluginSearchSelectionHistory());
 		setTitle(PDEUIMessages.PluginSearchDialog_title);
 		setMessage(PDEUIMessages.PluginSearchDialog_message);
+		setSelectionHistory(new PluginSearchSelectionHistory());
+
 		
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		setListLabelProvider(new SearchLabelProvider());
@@ -344,14 +348,71 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 
 	private class PluginSearchSelectionHistory extends SelectionHistory {
 
+		private static final String M_ID = "id"; //$NON-NLS-1$
+		private static final String M_PLUGIN_VERSION = "p_version"; //$NON-NLS-1$
+		private static final String M_PLUGIN_ID = "p_id"; //$NON-NLS-1$
+		private static final String M_TYPE = "type"; //$NON-NLS-1$
+
 		protected Object restoreItemFromMemento(IMemento memento) {
-			// TODO Auto-generated method stub
+			int type = memento.getInteger(M_TYPE).intValue();
+			IPluginModelBase model = getModel(memento);
+			switch(type) {
+			case TYPE_PLUGIN:
+				return model;
+			case TYPE_EXTENSION_POINT:
+				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
+				String epid = memento.getString(M_ID);
+				for (int i = 0; i < points.length; i++) {
+					IPluginExtensionPoint point = points[i];
+					if(epid.equals(point.getFullId()))
+						return point;
+				}
+				break;
+			case TYPE_EXTENSION:
+				IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+				String eid = memento.getString(M_ID);
+				for (int i = 0; i < extensions.length; i++) {
+					IPluginExtension extension = extensions[i];
+					if(eid.equals(extension.getPoint()))
+						return extension;
+				}
+				break;
+			}
+			return null;
+		}
+		
+		protected IPluginModelBase getModel(IMemento memento) {
+			String id = memento.getString(M_PLUGIN_ID);
+			String version = memento.getString(M_PLUGIN_VERSION);
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			IPluginModelBase[] models = entry.getActiveModels();
+			for (int i = 0; i < models.length; i++) {
+				IPluginModelBase model = models[i];
+				if(version.equals(model.getPluginBase().getVersion()))
+					return model;
+			}
 			return null;
 		}
 
 		protected void storeItemToMemento(Object item, IMemento memento) {
-			// TODO Auto-generated method stub
-			
+			if (item instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) item;
+				memento.putInteger(M_TYPE, TYPE_PLUGIN);
+				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
+				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
+			} else if (item instanceof IPluginExtensionPoint) {
+				IPluginExtensionPoint model = (IPluginExtensionPoint) item;
+				memento.putInteger(M_TYPE, TYPE_EXTENSION_POINT);
+				memento.putString(M_ID, model.getFullId());
+				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
+				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
+			} else if (item instanceof IPluginExtension) {
+				IPluginExtension model = (IPluginExtension) item;
+				memento.putInteger(M_TYPE, TYPE_EXTENSION);
+				memento.putString(M_ID, model.getPoint());
+				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
+				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
+			}
 		}
 		
 	}
@@ -359,7 +420,7 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 	private class PluginSearchItemsFilter extends ItemsFilter {
 
 		public boolean isConsistentItem(Object item) {
-			return false;
+			return true;
 		}
 
 		public boolean matchItem(Object item) {
