@@ -51,7 +51,7 @@ import com.ibm.icu.text.Collator;
 public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = 
-		"org.eclipse.pde.ui.dialogs.PluginSearchDialog"; //$NON-NLS-1$
+		"org.eclipse.pde.ui.dialogs.FilteredPluginArtifactsSelectionDialog"; //$NON-NLS-1$
 	private static final String S_EXTENSIONS = 
 		"showExtensions"; //$NON-NLS-1$
 	private static final String S_EXTENSION_POINTS =
