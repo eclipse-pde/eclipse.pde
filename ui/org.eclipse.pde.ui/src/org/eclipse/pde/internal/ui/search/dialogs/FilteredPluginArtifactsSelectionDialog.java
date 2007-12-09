@@ -180,7 +180,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		public ExtensionsAction() {
 			super(
-					PDEUIMessages.PluginSearchDialog_showExtensions,
+					PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensions,
 					IAction.AS_CHECK_BOX);
 			setChecked(true);
 		}
@@ -195,7 +195,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		public ExtensionPointsAction() {
 			super(
-					PDEUIMessages.PluginSearchDialog_showExtensionPoints,
+					PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensionPoints,
 					IAction.AS_CHECK_BOX);
 			setChecked(true);
 		}
@@ -209,8 +209,8 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	public FilteredPluginArtifactsSelectionDialog(Shell shell) {
 		super(shell, false);
 		
-		setTitle(PDEUIMessages.PluginSearchDialog_title);
-		setMessage(PDEUIMessages.PluginSearchDialog_message);
+		setTitle(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_title);
+		setMessage(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_message);
 		setSelectionHistory(new PluginSearchSelectionHistory());
 
 		
@@ -243,7 +243,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase[] models = manager.getActiveModels(true);
 		
-		progressMonitor.beginTask(PDEUIMessages.PluginSearchDialog_searching, models.length);
+		progressMonitor.beginTask(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_searching, models.length);
 		
 		// cycle through all the containers and grab entries 
 		for (int i = 0; i < models.length; i++) {
