@@ -66,6 +66,7 @@ public class PluginSearchDialog extends FilteredItemsSelectionDialog {
 	private ExtensionsFilter extensionsFilter = new ExtensionsFilter();
 	private ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
 	
+	// TODO implement ILabelDecorator?
 	private class SearchLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
