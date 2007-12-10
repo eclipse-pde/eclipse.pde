@@ -1361,7 +1361,7 @@
             commandId="org.eclipse.pde.ui.OpenPluginArtifact"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+P">
+            sequence="M1+M2+Z">
       </key>
    </extension>
    <extension
