@@ -15,8 +15,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
@@ -107,6 +107,15 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 	}
 	
 
+	/**
+	 * Extracts all of the files and subfolders from a single folder within an archive file.
+	 * @param file archive file to search for files
+	 * @param folderPath path to the folder to extract from
+	 * @param dest destination to import content to
+	 * @param monitor progress monitor
+	 * @throws CoreException if a problem occurs while extracting
+	 * @since 3.4
+	 */
 	protected void extractResourcesFromFolder(File file, IPath folderPath, IResource dest, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
@@ -129,13 +138,24 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	protected void extractJavaSource(File file, Set excludeFolders, IResource dest, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Searches the given archive file for java source folders.  Imports the files in the
+	 * source folders to the specified destination unless the folder is in the list of 
+	 * folders to exclude. 
+	 * @param file archive file to search for source in
+	 * @param excludeFolders list of IPaths describing folders to ignore while searching
+	 * @param dest destination to put the extracted source
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem extracting source from the zip
+	 * @since 3.4
+	 */
+	protected void extractJavaSource(File file, List excludeFolders, IResource dest, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList collected = new ArrayList();
-			collectJavaSource(provider, provider.getRoot(), excludeFolders, collected);
+			collectJavaSourceFromRoot(provider, excludeFolders, collected);
 			importContent(provider.getRoot(), dest.getFullPath(), provider, collected, monitor);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
@@ -209,6 +229,15 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
+	/**
+	 * Recursively searches through the zip files searching for files inside of
+	 * the specified folder.  The files found will be added to the given list.
+	 * @param provider zip provider
+	 * @param element element of the zip currently being looked at
+	 * @param folderPath location of the folder to get resources from
+	 * @param collected list of files found
+	 * @since 3.4
+	 */
 	protected void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
@@ -219,9 +248,7 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 						if (folderPath.segmentCount() > 1){
 							collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
 						} else {
-							ArrayList list = new ArrayList();
-							collectResources(provider, curr, false, list);
-							collected.addAll(list);
+							collectResources(provider, curr, false, collected);
 						}
 					}
 				}
@@ -229,19 +256,85 @@ public abstract class JarImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	protected void collectJavaSource(ZipFileStructureProvider provider, Object element, Set ignoreFolders, ArrayList collected) {
+	/**
+	 * Searches through the zip file for java source folders.  Collects the files
+	 * within the source folders.  If a folder is in the list of folder paths to
+	 * ignore, the folder will be skipped.
+	 * @param provider zip provider
+	 * @param ignoreFolders list of IPaths describing folders to ignore
+	 * @param collected list that source files will be added to
+	 * @since 3.4
+	 */
+	protected void collectJavaSourceFromRoot(ZipFileStructureProvider provider, List ignoreFolders, ArrayList collected) {
+		List children = provider.getChildren(provider.getRoot());
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				if (provider.isFolder(curr) && folderContainsFileExtension(provider, curr, ".java")) { //$NON-NLS-1$
+					// Check if we are in an ignored folder
+					List ignoreSubFolders = new ArrayList();
+					boolean ignoreThisChild = false;
+					for (Iterator iterator = ignoreFolders.iterator(); iterator.hasNext();){
+						IPath currentPath = (IPath)iterator.next();
+						if (provider.getLabel(curr).equals(currentPath.segment(0))){
+							if (currentPath.segmentCount() > 1){
+								// There is a subfolder that should be ignored
+								ignoreSubFolders.add(currentPath.removeFirstSegments(1));
+							} else {
+								// This folder should be ignored
+								ignoreThisChild = true;
+								break;
+							}
+						}
+					}
+					if (!ignoreThisChild){
+						collectJavaSource(provider, curr, ignoreSubFolders, collected);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Recursively searches the children of the given element inside of a zip file. 
+	 * If the folder path is in the set of folders to ignore, the folder will be skipped.
+	 * All files found, except for .class files, will be added. The given list will be
+	 * updated with the source files.
+	 * 
+	 * @param provider zip provider
+	 * @param element current element inside the zip
+	 * @param ignoreFolders list of IPath folder paths to skip while searching
+	 * @param collected list to update with new files found to import
+	 * @since 3.4
+	 */
+	protected void collectJavaSource(ZipFileStructureProvider provider, Object element, List ignoreFolders, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (!ignoreFolders.contains(provider.getLabel(curr))) {
-						if (folderContainsFileExtension(provider, element, ".java")){ //$NON-NLS-1$
-							ArrayList list = new ArrayList();
-							collectResources(provider, curr, false, list);
-							collected.addAll(list);
+					// Check if we are in an ignored folder
+					List ignoreSubFolders = new ArrayList();
+					boolean ignoreThisChild = false;
+					for (Iterator iterator = ignoreFolders.iterator(); iterator.hasNext();){
+						IPath currentPath = (IPath)iterator.next();
+						if (provider.getLabel(curr).equals(currentPath.segment(0))){
+							if (currentPath.segmentCount() > 1){
+								// There is a subfolder that should be ignored.  Remove segment referencing current folder.
+								ignoreSubFolders.add(currentPath.removeFirstSegments(1));
+							} else {
+								// This folder should be ignored
+								ignoreThisChild = true;
+								break;
+							}
 						}
 					}
+					if (!ignoreThisChild){
+						collectJavaSource(provider, curr, ignoreSubFolders, collected);
+					}
+					// Add the file to the list
+				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
+					collected.add(curr);
 				}
 			}
 		}

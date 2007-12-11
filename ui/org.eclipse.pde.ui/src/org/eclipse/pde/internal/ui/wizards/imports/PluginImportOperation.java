@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -80,38 +79,41 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 import org.osgi.framework.BundleException;
 
+/**
+ * Imports one or more plugins into the workspace.  There are three different
+ * ways to import a plugin: as binary, as binary with linked source,
+ * and as source. 
+ */
 public class PluginImportOperation extends JarImportOperation {
 
 	public static final int IMPORT_BINARY = 1;
-
 	public static final int IMPORT_BINARY_WITH_LINKS = 2;
-
 	public static final int IMPORT_WITH_SOURCE = 3;
 
 	private IPluginModelBase[] fModels;
-
 	private int fImportType;
-
 	private IImportQuery fReplaceQuery;
-	
 	private Hashtable fProjectClasspaths = new Hashtable();
-
 	private boolean fForceAutobuild;
-
 	private IImportQuery fExecutionQuery;
 	
 	private boolean fLaunchedConfigurations = false;
 
 	public interface IImportQuery {
 		public static final int CANCEL = 0;
-
 		public static final int NO = 1;
-
 		public static final int YES = 2;
 
 		int doQuery(String message);
 	}
 
+	/**
+	 * Constructor
+	 * @param models models of plugins to import
+	 * @param importType one of three types specified by constants, binary, binary with links, source
+	 * @param replaceQuery defines what to do if the project already exists in the workspace
+	 * @param executionQuery defines what to do if the project requires an unsupported execution environment
+	 */
 	public PluginImportOperation(IPluginModelBase[] models, int importType, IImportQuery replaceQuery, IImportQuery executionQuery) {
 		fModels = models;
 		fImportType = importType;
@@ -119,13 +121,23 @@ public class PluginImportOperation extends JarImportOperation {
 		fExecutionQuery = executionQuery;
 	}
 
+	/**
+	 * Constructor
+	 * @param models models of plugins to import
+	 * @param importType one of three types specified by constants, binary, binary with links, source
+	 * @param replaceQuery defines what to do if the project already exists in the workspace
+	 * @param executionQuery defines what to do if the project requires an unsupported execution environment
+	 * @param forceAutobuild whether to force a build after the import
+	 */
 	public PluginImportOperation(IPluginModelBase[] models, int importType, IImportQuery replaceQuery, IImportQuery executionQuery, boolean forceAutobuild) {
 		this(models, importType, replaceQuery, executionQuery);
 		fForceAutobuild = forceAutobuild;
 	}
 
-	public void run(IProgressMonitor monitor) throws CoreException,
-			OperationCanceledException{
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IProgressMonitor monitor) throws CoreException,	OperationCanceledException{
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -157,6 +169,9 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 	}
 	
+	/**
+	 * Starts a job that will build the workspace
+	 */
 	private void runBuildJob() {
 		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { 
 			public boolean belongsTo(Object family) {
@@ -175,6 +190,11 @@ public class PluginImportOperation extends JarImportOperation {
 		buildJob.schedule();
 	}
 	
+	/**
+	 * Sets the raw classpath of projects that need to be updated
+	 * @param monitor
+	 * @throws JavaModelException if a classpath could not be set
+	 */
 	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
 		monitor.beginTask("", fProjectClasspaths.size()); //$NON-NLS-1$
 		Enumeration keys = fProjectClasspaths.keys();
@@ -186,8 +206,15 @@ public class PluginImportOperation extends JarImportOperation {
 		}		
 	}
 
-	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor)
-			throws CoreException {
+	/**
+	 * This method starts the import of a specific plugin.  Checks if the execution
+	 * environment is supported and also checks if the project already exists and 
+	 * needs to be replaced.
+	 * @param model model representing the plugin to import
+	 * @param monitor progress monitor
+	 * @throws CoreException if a problem occurs while importing a plugin
+	 */
+	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor)	throws CoreException {
 		String id = model.getPluginBase().getId();
 		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
@@ -281,7 +308,14 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 		return true;
 	}
-
+	
+	/**
+	 * Imports the contents of the plugin and adds links to the source location(s).
+	 * @param project destination project of the import
+	 * @param model model representing the plugin to import
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem completing the import
+	 */
 	private void importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
 			extractJARdPlugin(
@@ -325,6 +359,14 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 	}
 
+	/**
+	 * Imports the contents of the plugin and imports source files as binary files that will not be compiled.
+	 * @param project destination project of the import
+	 * @param model model representing the plugin to import
+	 * @param markAsBinary whether to mark the project as a binary project
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem completing the import
+	 */
 	private void importAsBinary(IProject project, IPluginModelBase model, boolean markAsBinary, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 4); //$NON-NLS-1$
 		if (isJARd(model)) {
@@ -373,7 +415,13 @@ public class PluginImportOperation extends JarImportOperation {
 			monitor.done();
 		}
 	}
-
+	/**
+	 * Imports the contents of the plugin and imports source files to source folders that will be compiled.
+	 * @param project destination project of the import
+	 * @param model model representing the plugin to import
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem completing the import
+	 */
 	private void importAsSource(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 4); //$NON-NLS-1$
 		importAsBinary(project, model, false, new SubProgressMonitor(monitor, 2));
@@ -432,7 +480,7 @@ public class PluginImportOperation extends JarImportOperation {
 							}
 							jarFile.delete(true, null);
 						} else {
-							copyAndDeleteBinaryContents((IContainer)jarFile, dest, new SubProgressMonitor(monitor, 1));
+							moveBinaryContents((IContainer)jarFile, dest, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				} else if (name.equals(".") && project.getFolder("src").exists()) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -446,7 +494,14 @@ public class PluginImportOperation extends JarImportOperation {
 		buildModel.save();
 	}
 	
-	private void copyAndDeleteBinaryContents(IContainer srcFolder, IFolder dest, IProgressMonitor monitor) {
+	/**
+	 * Moves the binary files from the source container to the folder destination.
+	 * Moves any file that isn't a .class file
+	 * @param srcFolder container to move from
+	 * @param dest folder to move to
+	 * @param monitor progress monitor
+	 */
+	private void moveBinaryContents(IContainer srcFolder, IFolder dest, IProgressMonitor monitor) {
 		try {
 			// get all the folders for which we want to search
 			IResource[] children = dest.members();
@@ -497,6 +552,15 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 	}
 
+	/**
+	 * Searches source locations for files to import to the new project, will ignore
+	 * src.zip.
+	 * @param project destination project of the import
+	 * @param model model representing the plugin to import
+	 * @param monitor progress monitor
+	 * @return list of imported files
+	 * @throws CoreException if there is a problem completing the import
+	 */
 	private List importAdditionalResources(IProject project, IPluginModelBase model,
 			SubProgressMonitor monitor) throws CoreException {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
@@ -640,30 +704,112 @@ public class PluginImportOperation extends JarImportOperation {
 		return (tokens.length > 0) ? tokens[0] : "src/"; //$NON-NLS-1$
 	}
 
-	private void linkSourceArchives(IProject project, IPluginModelBase model,
-			IProgressMonitor monitor) throws CoreException {
-
+	/**
+	 * Creates links in the project to the source locations for the various libraries.
+	 * If the source for all libraries is in a single bundle, one link is created
+	 * @param project destination project of the import
+	 * @param model model representing the plugin to import
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem completing the import
+	 */
+	private void linkSourceArchives(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		String[] libraries = getLibraryNames(model, true);
 		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource,
 				libraries.length);
 
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		if (manager.hasBundleManifestLocation(model.getPluginBase())){
+			IPath srcPath = manager.findSourcePath(model.getPluginBase(), null);
+			if (srcPath != null) {
+				// Source for all libraries is in the same bundle, just create one link to the source bundle
+				IPath path = new Path(project.getName() + "src.zip"); //$NON-NLS-1$
+				IFile srcFile = project.getFile(path.lastSegment());
+				if (!srcFile.exists()) {
+					srcFile.createLink(
+							srcPath,
+							IResource.NONE,
+							new SubProgressMonitor(monitor, 1));
+				}
+			}
+			monitor.worked(libraries.length);
+		} else {
+			for (int i = 0; i < libraries.length; i++) {
+				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+				IPath path = new Path(zipName);
+				if (project.findMember(path) == null) {
+					IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
+					if (srcPath != null) {
+						if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model
+									.getInstallLocation()).getName()));
+						}
+						IFile zipFile = project.getFile(path.lastSegment());
+						if (!zipFile.exists()) {
+							zipFile.createLink(
+									srcPath,
+									IResource.NONE,
+									new SubProgressMonitor(monitor, 1));
+						}
+					}
+				}
+				monitor.worked(1);
+			}
+		}
+		monitor.done();
+	}
+
+	private void importSourceArchives(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		String[] libraries = getLibraryNames(model, true);
+		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource, libraries.length);
+
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		
+		Set roots = null;
+		if (manager.hasBundleManifestLocation(model.getPluginBase()))
+			roots = manager.findSourceRoots(model.getPluginBase());
+
 		for (int i = 0; i < libraries.length; i++) {
 			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
 			IPath path = new Path(zipName);
 			if (project.findMember(path) == null) {
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
-				if (srcPath != null) {
-					if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
-						path = new Path(ClasspathUtilCore.getSourceZipName(new File(model
-								.getInstallLocation()).getName()));
+				// if we are importing the source through a sourceBundle header...
+				if (roots != null) {
+					IPath sourceLocation = manager.findSourcePath(model.getPluginBase(), null);
+					String currentRoot = ".".equals(libraries[i]) ? "." : path.removeFileExtension().toString(); //$NON-NLS-1$ //$NON-NLS-2$
+					if (roots.contains(currentRoot)) {
+						if (".".equals(currentRoot)){ //$NON-NLS-1$
+							// Save to a special folder name based on the install location
+							IPath sourceName = getDefaultSourceNameForProject(model);
+							sourceName = sourceName.removeFileExtension();
+							IFolder dest = project.getFolder(sourceName);
+							if (!dest.exists()) {
+								dest.create(true, true, null);
+							}
+
+							// List all of the other source roots so they are not included when importing source from the root, ".", of the jar
+							Set allBundleRoots = manager.findAllSourceRootsInSourceLocation(model.getPluginBase());
+							List rootsToExclude = new ArrayList(allBundleRoots.size()-1);
+							for (Iterator iterator2 = allBundleRoots.iterator(); iterator2.hasNext();) {
+								String rootString = (String) iterator2.next();
+								if (!".".equals(rootString)){ //$NON-NLS-1$
+									rootsToExclude.add(new Path(rootString));
+								}
+							}
+
+							// Extract folders containing java source
+							extractJavaSource(new File(sourceLocation.toOSString()), rootsToExclude, dest, monitor);
+						} else {
+							// Extract the specific library from it's folder
+							extractResourcesFromFolder(new File(sourceLocation.toOSString()), new Path(currentRoot), project, monitor);
+						}
 					}
-					IFile zipFile = project.getFile(path.lastSegment());
-					if (!zipFile.exists()) {
-						zipFile.createLink(
-								srcPath,
-								IResource.NONE,
-								new SubProgressMonitor(monitor, 1));
+				} else {
+					IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
+					if (srcPath != null) {
+						if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
+							path = getDefaultSourceNameForProject(model);
+						}
+						importArchive(project, new File(srcPath.toOSString()), path);
 					}
 				}
 			}
@@ -672,55 +818,14 @@ public class PluginImportOperation extends JarImportOperation {
 		monitor.done();
 	}
 
-	private void importSourceArchives(IProject project, IPluginModelBase model, IProgressMonitor monitor)
-			throws CoreException {
-		
-		String[] libraries = getLibraryNames(model, true);
-		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource, libraries.length);
-
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		for (int i = 0; i < libraries.length; i++) {
-			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-			IPath path = new Path(zipName);
-			if (project.findMember(path) == null) {
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
-				if (srcPath != null) {
-					if (srcPath.lastSegment().equals(path.lastSegment())){
-						if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
-							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
-						}
-						importArchive(project, new File(srcPath.toOSString()), path);
-					} else {
-						if ("src.zip".equals(zipName)){ //$NON-NLS-1$
-							// Save to a special folder name based on the install location
-							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
-							path = path.removeFileExtension();
-							IFolder dest = project.getFolder(path);
-							if (!dest.exists()) {
-								dest.create(true, true, null);
-							}
-							
-							// We must ignore source files in for other libraries
-							Set libFolders = new HashSet(libraries.length);
-							for (int j = 0; j < libraries.length; j++) {
-								String currentZipName = ClasspathUtilCore.getSourceZipName(libraries[j]);
-								IPath currentPath = new Path(currentZipName);
-								libFolders.add(currentPath.removeFileExtension().lastSegment());
-							}
-							
-							// Extract folders containing java source that aren't 
-							extractJavaSource(new File(srcPath.toOSString()), libFolders, dest, monitor);
-							
-						} else {
-							// Extract the specific library from it's folder
-							extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
-						}
-					}
-				}
-			}
-			monitor.worked(1);
-		}
-		monitor.done();
+	/**
+	 * Creates a path representing a zip file that is named based on the plugin install location.
+	 * Used to replace src.zip with a more unique and meaningful name.
+	 * @param model model that the src.zip containg source for
+	 * @return a new path describing the zip file
+	 */
+	private IPath getDefaultSourceNameForProject(IPluginModelBase model) {
+		return new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
 	}
 	
 	private String[] getLibraryNames(IPluginModelBase model, boolean expand) {
@@ -964,45 +1069,29 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 	}
 	
-	private void importSourceFromFragment(IProject project, IFragment fragment, String name, IProgressMonitor monitor)
+	/**
+	 * Imports the source for a library from a fragment.
+	 * @param project destination project of the import
+	 * @param fragment fragment to import the library from
+	 * @param libraryName name of the library to import, 
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem completing the import
+	 */
+	private void importSourceFromFragment(IProject project, IFragment fragment, String libraryName, IProgressMonitor monitor)
 		throws CoreException {
 		try {
-			IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
+			IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(libraryName));
 			String zipName = ClasspathUtilCore.getSourceZipName(jarPath.toString());
 			IPath path = new Path(zipName);
 			if (project.findMember(path) == null) {
 				SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 				IPath srcPath = manager.findSourcePath(fragment, path);
 				if (srcPath != null) {
-					if (srcPath.lastSegment().equals(path.lastSegment())){
-						if ("src.zip".equals(zipName) && isJARd(fragment.getPluginModel())) { //$NON-NLS-1$
-							path = new Path(ClasspathUtilCore.getSourceZipName(new File(fragment.getPluginModel().getInstallLocation()).getName()));
-						}
-						importArchive(project, new File(srcPath.toOSString()), path);
+					if (manager.hasBundleManifestLocation(fragment)){
+						// Extract the specific library from it's folder
+						extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
 					} else {
-						if ("src.zip".equals(zipName)){ //$NON-NLS-1$
-							path = new Path(ClasspathUtilCore.getSourceZipName(new File(fragment.getPluginModel().getInstallLocation()).getName()));
-							path = path.removeFileExtension();
-							IFolder dest = project.getFolder(path);
-							if (!dest.exists()) {
-								dest.create(true, true, null);
-							}
-							String[] libraries = getLibraryNames(fragment.getPluginModel(), true);
-							// We must ignore source files in for other libraries
-							Set libFolders = new HashSet(libraries.length);
-							for (int j = 0; j < libraries.length; j++) {
-								String currentZipName = ClasspathUtilCore.getSourceZipName(libraries[j]);
-								IPath currentPath = new Path(currentZipName);
-								libFolders.add(currentPath.removeFileExtension().lastSegment());
-							}
-
-							// Extract folders containing java source that aren't 
-							extractJavaSource(new File(srcPath.toOSString()), libFolders, dest, monitor);
-
-						} else {
-							// Extract the specific library from it's folder
-							extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
-						}
+						importArchive(project, new File(srcPath.toOSString()), path);
 					}
 				}
 			}

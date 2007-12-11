@@ -47,5 +47,9 @@ public class SourceLocation {
 		}
 		return false;
 	}
+	
+	public int hashCode() {
+		return path.hashCode();
+	}
 
 }

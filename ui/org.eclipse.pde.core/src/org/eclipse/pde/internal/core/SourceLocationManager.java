@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -88,7 +89,7 @@ public class SourceLocationManager implements ICoreConstants {
 			result = searchBundleManifestLocations(pluginBase);
 			if (result != null){
 				try {
-					return new URL("jar:"+result.toFile().toURL()+"!/"+filePath.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					return new URL("jar:"+result.toFile().toURI().toURL()+"!/"+filePath.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (MalformedURLException e) {
 					PDECore.log(e);
 				}
@@ -97,7 +98,7 @@ public class SourceLocationManager implements ICoreConstants {
 		}
 		if (result != null){
 			try{
-				return result.toFile().toURL();
+				return result.toFile().toURI().toURL();
 			} catch (MalformedURLException e){
 				PDECore.log(e);
 			}
@@ -117,6 +118,44 @@ public class SourceLocationManager implements ICoreConstants {
 	public File findSourcePlugin(IPluginBase pluginBase) {
 		IPath path = findSourcePath(pluginBase, null);
 		return path == null ? null : path.toFile();
+	}
+	
+	/**
+	 * Returns whether the given path describes a source location with a source bundle manifest entry.
+	 * @param location the path to test
+	 * @return whether the given path is a bundle manifest location
+	 */
+	public boolean hasBundleManifestLocation(IPluginBase plugin){
+		return getBundleManifestLocator().hasValidSourceLocation(plugin.getId(), new Version(plugin.getVersion()));
+	}
+	
+	/**
+	 * Searches bundle manifest source locations for the one that provides source 
+	 * for the given plugin.  Gets all source roots for the source bundle by parsing
+	 * the manifest file.  If the source bundle provides source for multiple plugins,
+	 * the roots specified for all of them (duplicates removed).  If the source bundle
+	 * only provides source for a single plugin/version, this method will return the
+	 * same result as #findSourceRoots(IPluginModelBase).  If the given plugin does not have 
+	 * a known source location with a bundle manifest entry an empty Set will be returned.
+	 * 
+	 * @param plugin plugin to lookup source for
+	 * @return set of String paths that are source roots for the bundle, possibly empty
+	 */
+	public Set findAllSourceRootsInSourceLocation(IPluginBase plugin){
+		return getBundleManifestLocator().getAllSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
+	}
+	
+	/**
+	 * Searches bundle manifest source locations for the one that provides source
+	 * for the given plugin.  Gets the source roots (String paths) for the plugin 
+	 * by parsing the source bundle's manifest.  If the given plugin does not have 
+	 * a known source location with a bundle manifest entry an empty Set will be returned.
+	 * 
+	 * @param plugin plugin to lookup source for
+	 * @return set of String paths that are source roots for the plugin, possibly empty
+	 */
+	public Set findSourceRoots(IPluginBase plugin){
+		return getBundleManifestLocator().getSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
 	}
 	
 	/**
@@ -159,7 +198,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return source location that was specified by a bundle manifest entry to provide source for the given plugin.
 	 */
-	public SourceLocation getBundleManifestLocation(String pluginID, Version version){
+	private SourceLocation getBundleManifestLocation(String pluginID, Version version){
 		return getBundleManifestLocator().getSourceLocation(pluginID, version);
 	}
 	
