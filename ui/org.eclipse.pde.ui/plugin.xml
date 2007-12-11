@@ -514,7 +514,7 @@
       <command
             categoryId="org.eclipse.ui.category.navigate"
             description="%pluginsearch.action.desc"
-            id="org.eclipse.pde.ui.OpenPluginArtifact"
+            id="org.eclipse.pde.ui.openPluginArtifact"
             name="%pluginsearch.action.name">
       </command>   
    </extension>
@@ -1358,10 +1358,10 @@
             sequence="M1+O">
       </key>
       <key
-            commandId="org.eclipse.pde.ui.OpenPluginArtifact"
+            commandId="org.eclipse.pde.ui.openPluginArtifact"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+Z">
+            sequence="M1+M2+A">
       </key>
    </extension>
    <extension
@@ -1817,7 +1817,7 @@
              point="org.eclipse.ui.handlers">
           <handler
                 class="org.eclipse.pde.internal.ui.search.dialogs.PluginArtifactSearchHandler"
-                commandId="org.eclipse.pde.ui.OpenPluginArtifact">
+                commandId="org.eclipse.pde.ui.openPluginArtifact">
           </handler>
        </extension>
        <extension
@@ -1825,11 +1825,11 @@
           <menuContribution
                 locationURI="menu:navigate?after=open.ext2">
              <separator
-                   name="org.eclipse.pde.ui.OpenPluginArtifactSeparator"
+                   name="org.eclipse.pde.ui.openPluginArtifactSeparator"
                    visible="true">
              </separator>
              <command
-                   commandId="org.eclipse.pde.ui.OpenPluginArtifact"
+                   commandId="org.eclipse.pde.ui.openPluginArtifact"
                    icon="$nl$/icons/obj16/open_artifact_obj.gif"
                    label="%pluginsearch.action.name">
                 <visibleWhen>
