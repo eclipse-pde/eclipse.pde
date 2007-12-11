@@ -30,6 +30,7 @@ import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -75,6 +76,7 @@ import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -223,7 +225,20 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer.setContentProvider(new ImportPackageContentProvider());
-		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPackageViewer.setLabelProvider(new PDELabelProvider() {
+
+			public Image getObjectImage(PackageObject obj) {
+				if (!(obj instanceof ImportPackageObject))
+					return super.getObjectImage(obj);
+				int flags = 0;
+				if (((ImportPackageObject)obj).isOptional())
+					flags = SharedLabelProvider.F_OPTIONAL;
+				ImageDescriptor desc = 
+					JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
+				return get(desc, flags);
+			}
+			
+		});
 		fPackageViewer.setComparator(new ViewerComparator() {
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
