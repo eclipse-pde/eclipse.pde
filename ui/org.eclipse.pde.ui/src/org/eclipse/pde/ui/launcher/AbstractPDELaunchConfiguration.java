@@ -221,7 +221,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                if unable to retrieve the attribute
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray();
+		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
 		Map bundleMap = LaunchPluginValidator.getPluginsToRun(configuration);
 		if (bundleMap.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$

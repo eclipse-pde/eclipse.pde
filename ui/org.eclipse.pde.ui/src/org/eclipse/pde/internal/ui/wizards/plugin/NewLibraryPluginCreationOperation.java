@@ -193,7 +193,7 @@ public class NewLibraryPluginCreationOperation extends
 		}
 		if (requiredProjects.size() <= 0)
 			return;
-		IFile file = javaProject.getProject().getFile("META-INF/MANIFEST.MF");
+		IFile file = javaProject.getProject().getFile(ICoreConstants.MANIFEST_PATH);
 		try {
 			// TODO format manifest
 			Manifest manifest = new Manifest(file.getContents());
@@ -202,15 +202,15 @@ public class NewLibraryPluginCreationOperation extends
 			StringBuffer sb = value != null ? new StringBuffer(value)
 					: new StringBuffer();
 			if (sb.length() > 0)
-				sb.append(",");
+				sb.append(","); //$NON-NLS-1$
 			for (int i = 0; i < requiredProjects.size(); i++) {
 				IClasspathEntry entry = (IClasspathEntry) requiredProjects
 						.get(i);
 				if (i > 0)
-					sb.append(",");
+					sb.append(","); //$NON-NLS-1$
 				sb.append(entry.getPath().segment(0));
 				if (entry.isExported())
-					sb.append(";visibility:=reexport"); // TODO is there a
+					sb.append(";visibility:=reexport"); // TODO is there a //$NON-NLS-1$
 														// constant?
 			}
 			manifest.getMainAttributes().putValue(Constants.REQUIRE_BUNDLE,
@@ -235,10 +235,10 @@ public class NewLibraryPluginCreationOperation extends
 		IProject other = workspaceRoot.getProject(entry.getPath().segment(0));
 		if (!PDE.hasPluginNature(other))
 			return false;
-		if (other.findMember("fragment.xml") != null)
+		if (other.findMember(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) != null)
 			return false;
 		try {
-			InputStream is = other.getFile("META-INF/MANIFEST.MF")
+			InputStream is = other.getFile(ICoreConstants.MANIFEST_PATH)
 					.getContents();
 			try {
 				Manifest mf = new Manifest(is);
