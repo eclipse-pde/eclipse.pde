@@ -205,18 +205,18 @@ public class ClasspathComputer {
 	}
 	
 	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IClasspathAttribute[] attrs, boolean isExported) {
-		String sourceZipName = getSourceZipName(fileName);
+		String sourceZipName = ClasspathUtilCore.getSourceZipName(fileName);
 		IResource resource = project.findMember(sourceZipName);
 		// if zip file does not exist, see if a directory with the source does.  This in necessary how we import source for individual source bundles.
-		if (resource == null && sourceZipName.endsWith(".zip")) //$NON-NLS-1$
+		if (resource == null && sourceZipName.endsWith(".zip")) { //$NON-NLS-1$
 			resource = project.findMember(sourceZipName.substring(0, sourceZipName.length() - 4));
+			if (resource == null)
+				// if we can't find the the source for a library, then try to find the common source location set up to share source from one jar to all libraries.
+				// see PluginImportOperation.linkSourceArchives
+				resource = project.getFile(project.getName() + "src.zip"); //$NON-NLS-1$
+		}
 		IPath srcAttachment = resource != null ? resource.getFullPath() : library.getFullPath();
 		return JavaCore.newLibraryEntry(library.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, isExported);
-	}
-
-	public static String getSourceZipName(String libraryName) {
-		int dot = libraryName.lastIndexOf('.');
-		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
 	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
