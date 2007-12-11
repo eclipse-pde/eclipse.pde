@@ -1831,7 +1831,7 @@
              <command
                    commandId="org.eclipse.pde.ui.openPluginArtifact"
                    icon="$nl$/icons/obj16/open_artifact_obj.gif"
-                   label="%pluginsearch.action.name">
+                   label="%pluginsearch.action.menu.name">
                 <visibleWhen>
                    <with
                          variable="activeContexts">
