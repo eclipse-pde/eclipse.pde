@@ -151,6 +151,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
 		generateBrandingCalls();
+		generateP2Steps();
 		generateArchivingSteps();
 		generateEpilogue();
 	}
@@ -160,6 +161,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateBrandingCalls() {
 		script.printBrandTask(rootFolder, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
+	}
+	
+	private void generateP2Steps() {
+		if (haveP2Bundles())
+			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
 	private void generateArchivingSteps() {
@@ -370,8 +376,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) getFinalShape(feature)[1], FEATURE);
 		}
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
-		if (haveP2Bundles())
-			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
 	protected void generateGatherBinPartsCalls() {
