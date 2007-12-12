@@ -92,11 +92,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		final IPluginModelBase[] models = getModelsToImport();
 		boolean launchedConfiguration = areConflictingConfigurations(models);
 		if (launchedConfiguration) {
-			if (!MessageDialog
-					.openConfirm(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle,
-							PDEUIMessages.PluginImportWizard_runningConfigsDesc)) {
-				return false;
-			}
+			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle, null, 
+					PDEUIMessages.PluginImportWizard_runningConfigsDesc, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL,
+                IDialogConstants.CANCEL_LABEL}, 0);
+	        if(dialog.open() != IDialogConstants.OK_ID) return false;
+			
 		}
 		doImportOperation(getShell(), page1.getImportType(), models, page2
 				.forceAutoBuild(), launchedConfiguration);
