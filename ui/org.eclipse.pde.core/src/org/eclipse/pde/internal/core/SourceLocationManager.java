@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return path to a source archive or <code>null</code> if a location could not be found
 	 */
 	public IPath findSourcePath(IPluginBase pluginBase, IPath sourceLibraryPath) {
+		if (pluginBase.getId() == null || pluginBase.getVersion() == null){
+			return null;
+		}
 		IPath relativePath = getRelativePath(pluginBase, sourceLibraryPath);
 		IPath result = searchUserSpecifiedLocations(relativePath);
 		if (result == null){
@@ -83,6 +87,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return URL to the file, possibly inside of a jar file or <code>null</code>
 	 */
 	public URL findSourceFile(IPluginBase pluginBase, IPath filePath) {
+		if (pluginBase.getId() == null || pluginBase.getVersion() == null){
+			return null;
+		}
 		IPath relativePath = getRelativePath(pluginBase, filePath);
 		IPath result = searchUserSpecifiedLocations(relativePath);
 		if (result == null){
@@ -116,6 +123,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return file representing the source jar or directory, or <code>null</code> if a location could not be found
 	 */
 	public File findSourcePlugin(IPluginBase pluginBase) {
+		if (pluginBase.getId() == null || pluginBase.getVersion() == null){
+			return null;
+		}
 		IPath path = findSourcePath(pluginBase, null);
 		return path == null ? null : path.toFile();
 	}
@@ -126,6 +136,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return whether the given path is a bundle manifest location
 	 */
 	public boolean hasBundleManifestLocation(IPluginBase plugin){
+		if (plugin.getId() == null || plugin.getVersion() == null){
+			return false;
+		}
 		return getBundleManifestLocator().hasValidSourceLocation(plugin.getId(), new Version(plugin.getVersion()));
 	}
 	
@@ -142,6 +155,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return set of String paths that are source roots for the bundle, possibly empty
 	 */
 	public Set findAllSourceRootsInSourceLocation(IPluginBase plugin){
+		if (plugin.getId() == null || plugin.getVersion() == null){
+			return Collections.EMPTY_SET;
+		}
 		return getBundleManifestLocator().getAllSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
 	}
 	
@@ -155,6 +171,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return set of String paths that are source roots for the plugin, possibly empty
 	 */
 	public Set findSourceRoots(IPluginBase plugin){
+		if (plugin.getId() == null || plugin.getVersion() == null){
+			return Collections.EMPTY_SET;
+		}
 		return getBundleManifestLocator().getSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
 	}
 	
