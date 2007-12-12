@@ -36,7 +36,6 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IImportQuery;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
@@ -121,10 +120,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			if (!launches[i].isTerminated()) {
 				ILaunchConfiguration configuration = launches[i]
 						.getLaunchConfiguration();
-				
-				if (!isPDELaunchConfig(configuration))
-					continue;
-				
+				if (configuration == null)	continue;
 				try {
 					Map workspaceBundleMap = BundleLauncherHelper
 							.getWorkspaceBundleMap(configuration, null);
@@ -142,19 +138,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					return true;
 				}
 			}
-		}
-		return false;
-	}
-	
-	private static boolean isPDELaunchConfig(ILaunchConfiguration config) {
-		try {
-			if (config != null) {
-				String typeId = config.getType().getIdentifier();
-				return typeId.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE)
-					|| typeId.equals("org.eclipse.pde.ui.EquinoxLauncher")  //$NON-NLS-1$
-					|| typeId.equals("org.eclipse.pde.ui.JunitLaunchConfig"); //$NON-NLS-1$
-			}
-		} catch (CoreException e) {
 		}
 		return false;
 	}
