@@ -440,7 +440,7 @@ public class RequiresSection
 					String pluginId = candidate.getPlugin().getId();
 					IPluginImport importNode = createImport(model.getPluginFactory(), pluginId);
 					String version = VersionUtil.computeInitialPluginVersion(
-							candidate.getBundleDescription().getVersion().toString());
+							candidate.getPlugin().getVersion());
 					importNode.setVersion(version);
 					imports[i] = importNode;
 				}

@@ -118,7 +118,8 @@ public class DependencyPropertiesDialog extends StatusDialog {
         };
         fVersionPart.addListeners(ml, ml);
         
-        if(fPluginId != null) // we need a better way to do this
+        // we need a better way to do this
+        if(fPluginId != null && !fPluginId.equals("system.bundle"))  //$NON-NLS-1$
         	fVersionPart.createVersionSelectionField(comp, fPluginId);
         
         return comp;
