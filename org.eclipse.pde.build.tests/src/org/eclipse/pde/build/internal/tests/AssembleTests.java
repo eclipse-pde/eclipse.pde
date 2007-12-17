@@ -12,6 +12,9 @@ package org.eclipse.pde.build.internal.tests;
 import java.io.File;
 import java.util.Properties;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;
@@ -19,6 +22,19 @@ import org.eclipse.pde.build.tests.PDETestCase;
 
 public class AssembleTests extends PDETestCase {
 
+	public static Test suite() {
+		TestSuite suite = new TestSuite(AssembleTests.class.getName());
+
+		//add all the normal tests
+		suite.addTestSuite(AssembleTests.class);
+
+		//If running the intermittent tests:
+		if (System.getProperties().get("pde.build.intermittent") != null) {
+			suite.addTest(TestSuite.createTest(AssembleTests.class, "_testBug196754"));
+		}
+		return suite;
+	}
+	
 	public void testCustomAssembly() throws Exception {
 		IFolder buildFolder = newTest("customAssembly");
 
@@ -101,7 +117,7 @@ public class AssembleTests extends PDETestCase {
 		assertResourceFile(buildFolder, "I.TestBuild/MyCustomName.zip");
 	}
 
-	public void testBug196754() throws Exception {
+	public void _testBug196754() throws Exception {
 		IFolder buildFolder = newTest("196754");
 
 		// pde.build and equinox.launcher.win32.win32.x86 exist as signed folders in the base location,
