@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
@@ -229,17 +230,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @since 3.2
 	 */
 	public synchronized IDocumentProvider getTextFileDocumentProvider() {
-		if (fTextFileDocumentProvider == null) {
-			fTextFileDocumentProvider = new TextFileDocumentProvider() {
-				protected FileInfo createFileInfo(Object element) throws CoreException {
-					FileInfo info = super.createFileInfo(element);
-					if (info != null && info.fTextFileBuffer != null)
-						info.fModel = info.fTextFileBuffer.getAnnotationModel();
-					setUpSynchronization(info);
-					return info;
-				}
-			};
-		}
+		if (fTextFileDocumentProvider == null)
+			fTextFileDocumentProvider = new TextFileDocumentProvider();
 		return fTextFileDocumentProvider;
 	}
 }
