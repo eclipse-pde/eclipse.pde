@@ -38,7 +38,7 @@ public class BuilderNewWizard extends NewPluginTemplateWizard {
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new BuilderTemplate() };
+		return new ITemplateSection[] {new BuilderTemplate()};
 	}
 
 }

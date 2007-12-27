@@ -15,7 +15,6 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
-
 public class OSGiPreferencesServiceNewWizard extends NewPluginTemplateWizard {
 
 	/* (non-Javadoc)
@@ -23,19 +22,18 @@ public class OSGiPreferencesServiceNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDETemplateMessages.OSGiPreferencesServiceNewWizard_title); 
+		setWindowTitle(PDETemplateMessages.OSGiPreferencesServiceNewWizard_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new OSGiPreferencesServiceTemplate()};
 	}
-	
+
 	public String[] getImportPackages() {
-		return new String[] {
-				"org.osgi.service.prefs;version=\"1.1\"", //$NON-NLS-1$
+		return new String[] {"org.osgi.service.prefs;version=\"1.1\"", //$NON-NLS-1$
 				"org.osgi.util.tracker;version=\"1.3.1\""}; //$NON-NLS-1$
 	}
 

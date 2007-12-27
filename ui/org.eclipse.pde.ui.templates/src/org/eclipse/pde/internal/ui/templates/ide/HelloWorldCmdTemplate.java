@@ -51,15 +51,9 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(KEY_PACKAGE_NAME,
-				PDETemplateMessages.HelloWorldCmdTemplate_packageName,
-				(String) null, 0);
-		addOption(KEY_CLASS_NAME,
-				PDETemplateMessages.HelloWorldCmdTemplate_className,
-				CLASS_NAME, 0);
-		addOption(KEY_MESSAGE,
-				PDETemplateMessages.HelloWorldCmdTemplate_messageText,
-				PDETemplateMessages.HelloWorldCmdTemplate_defaultMessage, 0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.HelloWorldCmdTemplate_packageName, (String) null, 0);
+		addOption(KEY_CLASS_NAME, PDETemplateMessages.HelloWorldCmdTemplate_className, CLASS_NAME, 0);
+		addOption(KEY_MESSAGE, PDETemplateMessages.HelloWorldCmdTemplate_messageText, PDETemplateMessages.HelloWorldCmdTemplate_defaultMessage, 0);
 	}
 
 	public void addPages(Wizard wizard) {
@@ -94,17 +88,14 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension commandsExtension = createExtension(
-				"org.eclipse.ui.commands", true); //$NON-NLS-1$
+		IPluginExtension commandsExtension = createExtension("org.eclipse.ui.commands", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement category = factory.createElement(commandsExtension);
 		category.setName("category"); //$NON-NLS-1$
 		String categoryId = plugin.getId() + ".commands.category"; //$NON-NLS-1$
 		category.setAttribute("id", categoryId); //$NON-NLS-1$ 
-		category
-				.setAttribute(
-						"name", PDETemplateMessages.HelloWorldCmdTemplate_sampleCategory); //$NON-NLS-1$
+		category.setAttribute("name", PDETemplateMessages.HelloWorldCmdTemplate_sampleCategory); //$NON-NLS-1$
 		commandsExtension.add(category);
 
 		IPluginElement command = factory.createElement(commandsExtension);
@@ -116,18 +107,15 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		command.setAttribute("id", commandId); //$NON-NLS-1$
 		commandsExtension.add(command);
 
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)
-				+ "." + getStringOption(KEY_CLASS_NAME); //$NON-NLS-1$
-		IPluginExtension handlersExtension = createExtension(
-				"org.eclipse.ui.handlers", true); //$NON-NLS-1$
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASS_NAME); //$NON-NLS-1$
+		IPluginExtension handlersExtension = createExtension("org.eclipse.ui.handlers", true); //$NON-NLS-1$
 		IPluginElement handler = factory.createElement(handlersExtension);
 		handler.setName("handler"); //$NON-NLS-1$
 		handler.setAttribute("class", fullClassName); //$NON-NLS-1$
 		handler.setAttribute("commandId", commandId); //$NON-NLS-1$
 		handlersExtension.add(handler);
-		
-		IPluginExtension bindingsExtension = createExtension(
-				"org.eclipse.ui.bindings", true); //$NON-NLS-1$
+
+		IPluginExtension bindingsExtension = createExtension("org.eclipse.ui.bindings", true); //$NON-NLS-1$
 		IPluginElement binding = factory.createElement(bindingsExtension);
 		binding.setName("key"); //$NON-NLS-1$
 		binding.setAttribute("commandId", commandId); //$NON-NLS-1$
@@ -135,9 +123,8 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		binding.setAttribute("contextId", IContextService.CONTEXT_ID_WINDOW); //$NON-NLS-1$
 		binding.setAttribute("sequence", "M1+6"); //$NON-NLS-1$ //$NON-NLS-2$
 		bindingsExtension.add(binding);
-		
-		IPluginExtension menusExtension = createExtension(
-				"org.eclipse.ui.menus", true); //$NON-NLS-1$
+
+		IPluginExtension menusExtension = createExtension("org.eclipse.ui.menus", true); //$NON-NLS-1$
 		IPluginElement menuAddition = factory.createElement(menusExtension);
 		menuAddition.setName("menuContribution"); //$NON-NLS-1$
 		menuAddition.setAttribute("locationURI", //$NON-NLS-1$
@@ -154,10 +141,8 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		menuCommand.setName("command"); //$NON-NLS-1$
 		menuCommand.setAttribute("commandId", commandId); //$NON-NLS-1$
 		menuCommand.setAttribute("id", plugin.getId() + ".menus.sampleCommand"); //$NON-NLS-1$ //$NON-NLS-2$
-		menuCommand
-				.setAttribute(
-						"mnemonic", //$NON-NLS-1$
-						PDETemplateMessages.HelloWorldCmdTemplate_sampleAction_mnemonic);
+		menuCommand.setAttribute("mnemonic", //$NON-NLS-1$
+				PDETemplateMessages.HelloWorldCmdTemplate_sampleAction_mnemonic);
 		menu.add(menuCommand);
 		menuAddition.add(menu);
 		menusExtension.add(menuAddition);
@@ -201,7 +186,7 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] { "icons/" }; //$NON-NLS-1$
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 
 	/*

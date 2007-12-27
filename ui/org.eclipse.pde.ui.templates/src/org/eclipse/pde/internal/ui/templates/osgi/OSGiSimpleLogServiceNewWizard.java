@@ -15,7 +15,6 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
-
 public class OSGiSimpleLogServiceNewWizard extends NewPluginTemplateWizard {
 
 	/* (non-Javadoc)
@@ -23,16 +22,16 @@ public class OSGiSimpleLogServiceNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDETemplateMessages.OSGiSimpleLogServiceNewWizard_title); 
+		setWindowTitle(PDETemplateMessages.OSGiSimpleLogServiceNewWizard_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new OSGiSimpleLogServiceTemplate()};
 	}
-	
+
 	public String[] getImportPackages() {
 		return new String[] {"org.osgi.framework;version=\"1.3.0\"", //$NON-NLS-1$
 				"org.osgi.util.tracker;version=\"1.3.1\"", //$NON-NLS-1$

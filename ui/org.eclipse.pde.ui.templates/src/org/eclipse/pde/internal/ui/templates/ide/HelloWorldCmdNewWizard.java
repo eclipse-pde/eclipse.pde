@@ -28,11 +28,11 @@ public class HelloWorldCmdNewWizard extends NewPluginTemplateWizard {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.HelloWorldCmdNewWizard_wtitle);
 	}
+
 	/*
 	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection [] {
-				new HelloWorldCmdTemplate() };
+		return new ITemplateSection[] {new HelloWorldCmdTemplate()};
 	}
 }

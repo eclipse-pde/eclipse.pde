@@ -40,29 +40,18 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	public String getSectionId() {
 		return "helloWorld"; //$NON-NLS-1$
 	}
+
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
-	
+
 	private void createOptions() {
-		addOption(
-			KEY_PACKAGE_NAME,
-			PDETemplateMessages.HelloWorldTemplate_packageName,
-			(String) null,
-			0);
-		addOption(
-			KEY_CLASS_NAME,
-			PDETemplateMessages.HelloWorldTemplate_className,
-			CLASS_NAME,
-			0);
-		addOption(
-			KEY_MESSAGE,
-			PDETemplateMessages.HelloWorldTemplate_messageText,
-			PDETemplateMessages.HelloWorldTemplate_defaultMessage,
-			0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.HelloWorldTemplate_packageName, (String) null, 0);
+		addOption(KEY_CLASS_NAME, PDETemplateMessages.HelloWorldTemplate_className, CLASS_NAME, 0);
+		addOption(KEY_MESSAGE, PDETemplateMessages.HelloWorldTemplate_messageText, PDETemplateMessages.HelloWorldTemplate_defaultMessage, 0);
 	}
 
 	public void addPages(Wizard wizard) {
@@ -71,7 +60,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		page.setDescription(PDETemplateMessages.HelloWorldTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
-	}	
+	}
 
 	public boolean isDependentOnParentWizard() {
 		return true;
@@ -81,13 +70,14 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	public String getUsedExtensionPoint() {
@@ -116,8 +106,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		menuElement.add(groupElement);
 		setElement.add(menuElement);
 
-		String fullClassName =
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASS_NAME); //$NON-NLS-1$
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASS_NAME); //$NON-NLS-1$
 
 		IPluginElement actionElement = factory.createElement(setElement);
 		actionElement.setName("action"); //$NON-NLS-1$
@@ -131,23 +120,23 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		setElement.add(actionElement);
 		extension.add(setElement);
 		if (!extension.isInTheModel())
-			plugin.add(extension);			
+			plugin.add(extension);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-     */
-    protected String getFormattedPackageName(String id) {
-        String packageName = super.getFormattedPackageName(id);
-        if (packageName.length() != 0)
-            return packageName + ".actions"; //$NON-NLS-1$
-        return "actions"; //$NON-NLS-1$
-    }
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+	 */
+	protected String getFormattedPackageName(String id) {
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".actions"; //$NON-NLS-1$
+		return "actions"; //$NON-NLS-1$
+	}
 }

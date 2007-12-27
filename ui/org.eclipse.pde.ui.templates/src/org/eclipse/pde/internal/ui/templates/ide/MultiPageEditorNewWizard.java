@@ -23,6 +23,7 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	public MultiPageEditorNewWizard() {
 		super();
 	}
+
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.MultiPageEditorNewWizard_wtitle);
@@ -32,8 +33,6 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection [] {
-				new MultiPageEditorTemplate(),
-				new NewWizardTemplate() };
+		return new ITemplateSection[] {new MultiPageEditorTemplate(), new NewWizardTemplate()};
 	}
 }

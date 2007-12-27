@@ -27,11 +27,12 @@ public class PropertyPageNewWizard extends NewPluginTemplateWizard {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.PropertyPageNewWizard_wtitle);
 	}
+
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new PropertyPageTemplate()};
+		return new ITemplateSection[] {new PropertyPageTemplate()};
 	}
 
 }

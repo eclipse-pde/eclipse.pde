@@ -28,15 +28,15 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 
-public class ImportWizardTemplate extends PDETemplateSection { 
+public class ImportWizardTemplate extends PDETemplateSection {
 	public static final String WIZARD_CLASS_NAME = "wizardClassName"; //$NON-NLS-1$
 	public static final String WIZARD_CATEGORY_NAME = "wizardCategoryName"; //$NON-NLS-1$
 	public static final String WIZARD_PAGE_CLASS_NAME = "wizardPageClassName"; //$NON-NLS-1$
 	public static final String WIZARD_IMPORT_NAME = "wizardImportName"; //$NON-NLS-1$
 	public static final String WIZARD_FILE_FILTERS = "wizardFileFilters"; //$NON-NLS-1$
-	
+
 	private WizardPage page;
-	
+
 	/**
 	 * Constructor for ImportWizardTemplate.
 	 */
@@ -44,7 +44,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 		setPageCount(1);
 		createOptions();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -64,19 +64,19 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getDirectoryCandidates()
 	 */
 	public String getSectionId() {
-		 // Identifier used for the folder name within the templates_3.X
-		 // hierarchy  and as part of the lookup key for the template label
-		 // variable.
+		// Identifier used for the folder name within the templates_3.X
+		// hierarchy  and as part of the lookup key for the template label
+		// variable.
 		return "importWizard"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
-	
+
 	/**
 	 * Creates the options to be displayed on the template wizard.
 	 * Various string options, blank fields and a multiple choice 
@@ -84,43 +84,19 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	 */
 	private void createOptions() {
 		String[][] choices = fromCommaSeparated(PDETemplateMessages.ImportWizardTemplate_filterChoices);
-		
-		addOption(
-				KEY_PACKAGE_NAME,
-				PDETemplateMessages.ImportWizardTemplate_packageName,
-				(String) null,
-				0);
-		addOption(
-				WIZARD_CLASS_NAME,
-				PDETemplateMessages.ImportWizardTemplate_wizardClass,
-				PDETemplateMessages.ImportWizardTemplate_wizardClassName,
-				0);	
-		addOption(
-				WIZARD_PAGE_CLASS_NAME,
-				PDETemplateMessages.ImportWizardTemplate_pageClass,
-				PDETemplateMessages.ImportWizardTemplate_pageClassName,
-				0);	
-		
-		addBlankField(0);
-		
-		addOption(
-				WIZARD_CATEGORY_NAME,
-				PDETemplateMessages.ImportWizardTemplate_importWizardCategory,
-				PDETemplateMessages.ImportWizardTemplate_importWizardCategoryName,
-				0);	
-		addOption(
-				WIZARD_IMPORT_NAME,
-				PDETemplateMessages.ImportWizardTemplate_wizardName,
-				PDETemplateMessages.ImportWizardTemplate_wizardDefaultName,
-				0);	
+
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.ImportWizardTemplate_packageName, (String) null, 0);
+		addOption(WIZARD_CLASS_NAME, PDETemplateMessages.ImportWizardTemplate_wizardClass, PDETemplateMessages.ImportWizardTemplate_wizardClassName, 0);
+		addOption(WIZARD_PAGE_CLASS_NAME, PDETemplateMessages.ImportWizardTemplate_pageClass, PDETemplateMessages.ImportWizardTemplate_pageClassName, 0);
 
 		addBlankField(0);
 
-		addOption(WIZARD_FILE_FILTERS,
-				PDETemplateMessages.ImportWizardTemplate_filters,
-				choices,
-				choices[0][0],
-				0);	
+		addOption(WIZARD_CATEGORY_NAME, PDETemplateMessages.ImportWizardTemplate_importWizardCategory, PDETemplateMessages.ImportWizardTemplate_importWizardCategoryName, 0);
+		addOption(WIZARD_IMPORT_NAME, PDETemplateMessages.ImportWizardTemplate_wizardName, PDETemplateMessages.ImportWizardTemplate_wizardDefaultName, 0);
+
+		addBlankField(0);
+
+		addOption(WIZARD_FILE_FILTERS, PDETemplateMessages.ImportWizardTemplate_filters, choices, choices[0][0], 0);
 	}
 
 	/* (non-Javadoc)
@@ -130,7 +106,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 		int pageIndex = 0;
 
 		page = createPage(pageIndex, IHelpContextIds.TEMPLATE_EDITOR);
-		page.setTitle(PDETemplateMessages.ImportWizardTemplate_title); 
+		page.setTitle(PDETemplateMessages.ImportWizardTemplate_title);
 		page.setDescription(PDETemplateMessages.ImportWizardTemplate_desc);
 
 		wizard.addPage(page);
@@ -148,50 +124,45 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.ui.IFieldData)
 	 */
 	protected void initializeFields(IFieldData data) {
-		 // In a new project wizard, we don't know this yet - the
-		 // model has not been created
+		// In a new project wizard, we don't know this yet - the
+		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.core.plugin.IPluginModelBase)
 	 */
 	public void initializeFields(IPluginModelBase model) {
-		 // In the new extension wizard, the model exists so 
-		 // we can initialize directly from it
+		// In the new extension wizard, the model exists so 
+		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-		 // This method creates the extension point structure through the use
-		 // of IPluginElement objects. The element attributes are set based on
-		 // user input from the wizard page as well as values required for the 
-		 // operation of the extension point.
+		// This method creates the extension point structure through the use
+		// of IPluginElement objects. The element attributes are set based on
+		// user input from the wizard page as well as values required for the 
+		// operation of the extension point.
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension(getUsedExtensionPoint(),true);
+		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement categoryElement = factory.createElement(extension);
 		categoryElement.setName("category"); //$NON-NLS-1$
-		categoryElement.setAttribute(
-				"id", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
-		categoryElement.setAttribute(
-				"name", getStringOption(WIZARD_CATEGORY_NAME)); //$NON-NLS-1$
+		categoryElement.setAttribute("id", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
+		categoryElement.setAttribute("name", getStringOption(WIZARD_CATEGORY_NAME)); //$NON-NLS-1$
 
 		IPluginElement wizardElement = factory.createElement(extension);
 		wizardElement.setName("wizard"); //$NON-NLS-1$
-		wizardElement.setAttribute(
-						"id", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("id", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		wizardElement.setAttribute("name", getStringOption(WIZARD_IMPORT_NAME)); //$NON-NLS-1$
-		wizardElement.setAttribute(
-						"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
-		wizardElement.setAttribute(
-						"category", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("category", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
 		wizardElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement descriptionElement = factory.createElement(extension);
@@ -209,15 +180,15 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
 	 */
 	public String[] getNewFiles() {
-		return new String[] { "icons/" }; //$NON-NLS-1$
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFormattedPackageName(java.lang.String)
 	 */
 	protected String getFormattedPackageName(String id) {
-		 // Package name addition to create a location for containing
-		 // any classes required by the decorator. 
+		// Package name addition to create a location for containing
+		// any classes required by the decorator. 
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
 			return packageName + ".importWizards"; //$NON-NLS-1$

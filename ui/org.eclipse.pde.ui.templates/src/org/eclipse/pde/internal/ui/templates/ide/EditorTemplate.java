@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
@@ -31,6 +30,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 	public static final String EDITOR_CLASS_NAME = "editorClass"; //$NON-NLS-1$
 	public static final String EDITOR_NAME = "editorName"; //$NON-NLS-1$
 	public static final String EXTENSIONS = "extensions"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for EditorTemplate.
 	 */
@@ -38,7 +38,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 		setPageCount(1);
 		createOptions();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -64,31 +64,18 @@ public class EditorTemplate extends BaseEditorTemplate {
 
 	private void createOptions() {
 		// first page	
-		addOption(
-			KEY_PACKAGE_NAME,
-			PDETemplateMessages.EditorTemplate_packageName,
-			(String) null,
-			0);
-		addOption(
-			EDITOR_CLASS_NAME,
-			PDETemplateMessages.EditorTemplate_editorClass,
-			"XMLEditor", //$NON-NLS-1$
-			0);
-		addOption(
-			EDITOR_NAME,
-			PDETemplateMessages.EditorTemplate_editorName,
-			PDETemplateMessages.EditorTemplate_defaultEditorName,
-			0);
-		addOption(
-			EXTENSIONS,
-			PDETemplateMessages.EditorTemplate_fileExtension,
-			"xml", //$NON-NLS-1$
-			0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.EditorTemplate_packageName, (String) null, 0);
+		addOption(EDITOR_CLASS_NAME, PDETemplateMessages.EditorTemplate_editorClass, "XMLEditor", //$NON-NLS-1$
+				0);
+		addOption(EDITOR_NAME, PDETemplateMessages.EditorTemplate_editorName, PDETemplateMessages.EditorTemplate_defaultEditorName, 0);
+		addOption(EXTENSIONS, PDETemplateMessages.EditorTemplate_fileExtension, "xml", //$NON-NLS-1$
+				0);
 	}
 
 	public String getSectionId() {
 		return "editor"; //$NON-NLS-1$
 	}
+
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
@@ -100,13 +87,14 @@ public class EditorTemplate extends BaseEditorTemplate {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	public boolean isDependentOnParentWizard() {
@@ -143,31 +131,28 @@ public class EditorTemplate extends BaseEditorTemplate {
 
 		IPluginElement editorElement = factory.createElement(extension);
 		editorElement.setName("editor"); //$NON-NLS-1$
-		editorElement.setAttribute(
-			"id", //$NON-NLS-1$
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
+		editorElement.setAttribute("id", //$NON-NLS-1$
+				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
 		editorElement.setAttribute("name", getStringOption(EDITOR_NAME)); //$NON-NLS-1$
 		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 		editorElement.setAttribute("extensions", getStringOption(EXTENSIONS)); //$NON-NLS-1$
 
-		editorElement.setAttribute(
-			"class", //$NON-NLS-1$
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
-		editorElement.setAttribute(
-			"contributorClass", //$NON-NLS-1$
-			"org.eclipse.ui.texteditor.BasicTextEditorActionContributor"); //$NON-NLS-1$
+		editorElement.setAttribute("class", //$NON-NLS-1$
+				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
+		editorElement.setAttribute("contributorClass", //$NON-NLS-1$
+				"org.eclipse.ui.texteditor.BasicTextEditorActionContributor"); //$NON-NLS-1$
 		extension.add(editorElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
 	protected String getFormattedPackageName(String id) {
-	    String packageName = super.getFormattedPackageName(id);
-	    if (packageName.length() != 0)
-	        return packageName + ".editors"; //$NON-NLS-1$
-	    return "editors"; //$NON-NLS-1$
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".editors"; //$NON-NLS-1$
+		return "editors"; //$NON-NLS-1$
 	}
 }

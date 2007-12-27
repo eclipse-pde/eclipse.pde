@@ -13,19 +13,12 @@ package org.eclipse.pde.internal.ui.templates.ide;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.AbstractTemplateSection;
 import org.eclipse.pde.ui.templates.PluginReference;
@@ -58,11 +51,10 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	private void createOptions() {
 		// options
 		addOption(KEY_INTRO_DIR, PDETemplateMessages.UniversalWelcomeTemplate_key_directoryName, "intro", 0); //$NON-NLS-1$
-		addOption(KEY_PATH, PDETemplateMessages.UniversalWelcomeTemplate_key_targetPage, new String[][] {
-				{ "overview/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Overview }, { "tutorials/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Tutorials }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				{ "firststeps/@", PDETemplateMessages.UniversalWelcomeTemplate_page_FirstSteps }, { "samples/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Samples }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				{ "whatsnew/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Whatsnew }, { "migrate/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Migrate }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				{ "webresources/@", PDETemplateMessages.UniversalWelcomeTemplate_page_WebResources } }, "overview/@", 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		addOption(KEY_PATH, PDETemplateMessages.UniversalWelcomeTemplate_key_targetPage, new String[][] { {"overview/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Overview}, {"tutorials/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Tutorials}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"firststeps/@", PDETemplateMessages.UniversalWelcomeTemplate_page_FirstSteps}, {"samples/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Samples}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"whatsnew/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Whatsnew}, {"migrate/@", PDETemplateMessages.UniversalWelcomeTemplate_page_Migrate}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"webresources/@", PDETemplateMessages.UniversalWelcomeTemplate_page_WebResources}}, "overview/@", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption(KEY_LINK_URL, PDETemplateMessages.UniversalWelcomeTemplate_linkUrl, "http://www.eclipse.org", 0); //$NON-NLS-1$
 	}
 
@@ -95,15 +87,12 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 
-		IPluginExtension extension = createExtension(
-				"org.eclipse.ui.intro.configExtension", false); //$NON-NLS-1$
+		IPluginExtension extension = createExtension("org.eclipse.ui.intro.configExtension", false); //$NON-NLS-1$
 
-		IPluginElement element = model.getPluginFactory().createElement(
-				extension);
+		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("configExtension"); //$NON-NLS-1$
-		element
-				.setAttribute("configId", //$NON-NLS-1$
-						"org.eclipse.ui.intro.universalConfig"); //$NON-NLS-1$
+		element.setAttribute("configId", //$NON-NLS-1$
+				"org.eclipse.ui.intro.universalConfig"); //$NON-NLS-1$
 		element.setAttribute("content", getStringOption(KEY_INTRO_DIR) //$NON-NLS-1$
 				+ "/sample.xml"); //$NON-NLS-1$
 		extension.add(element);
@@ -134,12 +123,10 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		// appears in 3.2 for the first time, just depending on
 		// its presence has the same effect.
 		result.add(new PluginReference("org.eclipse.ui.intro", null, 0)); //$NON-NLS-1$
-		result.add(new PluginReference(
-				"org.eclipse.ui.intro.universal", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui.intro.universal", null, 0)); //$NON-NLS-1$
 		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 
-		return (IPluginReference[]) result.toArray(new IPluginReference[result
-				.size()]);
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
 	public int getNumberOfWorkUnits() {
@@ -175,6 +162,6 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	}
 
 	public String[] getNewFiles() {
-		return new String[] { getStringOption(KEY_INTRO_DIR) + "/" }; //$NON-NLS-1$
+		return new String[] {getStringOption(KEY_INTRO_DIR) + "/"}; //$NON-NLS-1$
 	}
 }

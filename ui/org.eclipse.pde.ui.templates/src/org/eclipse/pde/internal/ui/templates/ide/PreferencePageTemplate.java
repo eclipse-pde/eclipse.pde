@@ -38,6 +38,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	public String getSectionId() {
 		return "preferences"; //$NON-NLS-1$
 	}
+
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
@@ -47,46 +48,35 @@ public class PreferencePageTemplate extends PDETemplateSection {
 
 	private void createOptions() {
 		// first page
-		addOption(
-			KEY_PACKAGE_NAME,
-			PDETemplateMessages.PreferencePageTemplate_packageName,
-			(String) null,
-			0);
-		addOption(
-			KEY_PAGE_CLASS_NAME,
-			PDETemplateMessages.PreferencePageTemplate_className,
-			"SamplePreferencePage", //$NON-NLS-1$
-			0);
-		addOption(
-			KEY_PAGE_NAME,
-			PDETemplateMessages.PreferencePageTemplate_pageName,
-			PDETemplateMessages.PreferencePageTemplate_defaultPageName,
-			0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.PreferencePageTemplate_packageName, (String) null, 0);
+		addOption(KEY_PAGE_CLASS_NAME, PDETemplateMessages.PreferencePageTemplate_className, "SamplePreferencePage", //$NON-NLS-1$
+				0);
+		addOption(KEY_PAGE_NAME, PDETemplateMessages.PreferencePageTemplate_pageName, PDETemplateMessages.PreferencePageTemplate_defaultPageName, 0);
 	}
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
-	
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		return "templates_" + schemaVersion == null ? "3.0" : schemaVersion; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -95,7 +85,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 			return super.getDependencies(schemaVersion);
 		PluginReference[] deps = new PluginReference[2];
 		deps[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
-		deps[1] = new PluginReference("org.eclipse.ui", null, 0);		 //$NON-NLS-1$
+		deps[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
 		return deps;
 	}
 
@@ -116,8 +106,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
 		IPluginModelFactory factory = model.getPluginFactory();
 
-		String fullClassName =
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_PAGE_CLASS_NAME); //$NON-NLS-1$
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_PAGE_CLASS_NAME); //$NON-NLS-1$
 
 		IPluginElement pageElement = factory.createElement(extension);
 		pageElement.setName("page"); //$NON-NLS-1$
@@ -131,20 +120,19 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		IPluginExtension extension2 = createExtension("org.eclipse.core.runtime.preferences", true); //$NON-NLS-1$
 		IPluginElement prefElement = factory.createElement(extension);
 		prefElement.setName("initializer"); //$NON-NLS-1$
-		prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME)+".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
+		prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension2.add(prefElement);
 		if (!extension2.isInTheModel())
 			plugin.add(extension2);
-    }
+	}
 
-	
 	/* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-     */
-    protected String getFormattedPackageName(String id) {
-        String packageName = super.getFormattedPackageName(id);
-        if (packageName.length() != 0)
-            return packageName + ".preferences"; //$NON-NLS-1$
-        return "preferences"; //$NON-NLS-1$
-    }
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+	 */
+	protected String getFormattedPackageName(String id) {
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".preferences"; //$NON-NLS-1$
+		return "preferences"; //$NON-NLS-1$
+	}
 }

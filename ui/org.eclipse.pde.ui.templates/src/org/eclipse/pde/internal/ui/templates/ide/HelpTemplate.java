@@ -28,16 +28,16 @@ import org.eclipse.pde.ui.templates.BooleanOption;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class HelpTemplate extends PDETemplateSection {
-	
-	public static final String KEY_TOC_LABEL   = "tocLabel"; //$NON-NLS-1$
-	public static final String KEY_IS_PRIMARY  = "isPrimary"; //$NON-NLS-1$
-	public static final String KEY_GEN_TEST    = "generateTest"; //$NON-NLS-1$
+
+	public static final String KEY_TOC_LABEL = "tocLabel"; //$NON-NLS-1$
+	public static final String KEY_IS_PRIMARY = "isPrimary"; //$NON-NLS-1$
+	public static final String KEY_GEN_TEST = "generateTest"; //$NON-NLS-1$
 	public static final String KEY_GET_STARTED = "gettingStarted"; //$NON-NLS-1$
-	public static final String KEY_CONCEPTS    = "concepts"; //$NON-NLS-1$
-	public static final String KEY_TASKS       = "tasks"; //$NON-NLS-1$
-	public static final String KEY_REFERENCE   = "reference"; //$NON-NLS-1$
-	public static final String KEY_SAMPLES     = "samples"; //$NON-NLS-1$
-	
+	public static final String KEY_CONCEPTS = "concepts"; //$NON-NLS-1$
+	public static final String KEY_TASKS = "tasks"; //$NON-NLS-1$
+	public static final String KEY_REFERENCE = "reference"; //$NON-NLS-1$
+	public static final String KEY_SAMPLES = "samples"; //$NON-NLS-1$
+
 	private TemplateOption tocLabelOption;
 	private BooleanOption primaryOption;
 	private BooleanOption genTestOption;
@@ -46,7 +46,7 @@ public class HelpTemplate extends PDETemplateSection {
 	private BooleanOption tasksOption;
 	private BooleanOption referenceOption;
 	private BooleanOption samplesOption;
-	
+
 	public HelpTemplate() {
 		setPageCount(1);
 		createOptions();
@@ -60,7 +60,7 @@ public class HelpTemplate extends PDETemplateSection {
 		wizard.addPage(page);
 		markPagesAdded();
 	}
-	
+
 	private void alterOptionStates() {
 		genTestOption.setEnabled(!primaryOption.isSelected());
 		gettingStartedOption.setEnabled(primaryOption.isSelected());
@@ -68,58 +68,27 @@ public class HelpTemplate extends PDETemplateSection {
 		tasksOption.setEnabled(primaryOption.isSelected());
 		referenceOption.setEnabled(primaryOption.isSelected());
 		samplesOption.setEnabled(primaryOption.isSelected());
-	}	
+	}
 
 	private void createOptions() {
-		tocLabelOption = addOption(
-			KEY_TOC_LABEL,
-			PDETemplateMessages.HelpTemplate_tocLabel,
-			PDETemplateMessages.HelpTemplate_sampleText,
-			0);
-			
-		primaryOption = (BooleanOption)addOption(
-			KEY_IS_PRIMARY,
-			PDETemplateMessages.HelpTemplate_isPrimary,
-			false,
-			0);
-			
-		genTestOption = (BooleanOption)addOption(
-			KEY_GEN_TEST,
-			PDETemplateMessages.HelpTemplate_generateTest,
-			true,
-			0);
+		tocLabelOption = addOption(KEY_TOC_LABEL, PDETemplateMessages.HelpTemplate_tocLabel, PDETemplateMessages.HelpTemplate_sampleText, 0);
 
-		gettingStartedOption = (BooleanOption)addOption(
-			KEY_GET_STARTED,
-			PDETemplateMessages.HelpTemplate_gettingStarted,
-			true,
-			0);
-			
-		conceptsOption = (BooleanOption)addOption(
-			KEY_CONCEPTS,
-			PDETemplateMessages.HelpTemplate_concepts,
-			true,
-			0);
-			
-		tasksOption = (BooleanOption)addOption(
-			KEY_TASKS,
-			PDETemplateMessages.HelpTemplate_tasks,
-			true,
-			0);
-			
-		referenceOption = (BooleanOption)addOption(
-			KEY_REFERENCE,
-			PDETemplateMessages.HelpTemplate_reference,
-			true,
-			0);
-			
-		samplesOption = (BooleanOption)addOption(
-			KEY_SAMPLES,
-			PDETemplateMessages.HelpTemplate_samples,
-			true,
-			0);
+		primaryOption = (BooleanOption) addOption(KEY_IS_PRIMARY, PDETemplateMessages.HelpTemplate_isPrimary, false, 0);
+
+		genTestOption = (BooleanOption) addOption(KEY_GEN_TEST, PDETemplateMessages.HelpTemplate_generateTest, true, 0);
+
+		gettingStartedOption = (BooleanOption) addOption(KEY_GET_STARTED, PDETemplateMessages.HelpTemplate_gettingStarted, true, 0);
+
+		conceptsOption = (BooleanOption) addOption(KEY_CONCEPTS, PDETemplateMessages.HelpTemplate_concepts, true, 0);
+
+		tasksOption = (BooleanOption) addOption(KEY_TASKS, PDETemplateMessages.HelpTemplate_tasks, true, 0);
+
+		referenceOption = (BooleanOption) addOption(KEY_REFERENCE, PDETemplateMessages.HelpTemplate_reference, true, 0);
+
+		samplesOption = (BooleanOption) addOption(KEY_SAMPLES, PDETemplateMessages.HelpTemplate_samples, true, 0);
 
 	}
+
 	/**
 	 * @see OptionTemplateSection#getSectionId()
 	 */
@@ -143,6 +112,7 @@ public class HelpTemplate extends PDETemplateSection {
 		}
 		return isOk;
 	}
+
 	/**
 	 * @see AbstractTemplateSection#isOkToCreateFile(File)
 	 */
@@ -161,20 +131,13 @@ public class HelpTemplate extends PDETemplateSection {
 			isOk = samplesOption.isEnabled() && samplesOption.isSelected();
 		} else if (fileName.equals("toctasks.xml")) { //$NON-NLS-1$
 			isOk = tasksOption.isEnabled() && tasksOption.isSelected();
-		} else if (
-			(fileName.equals("maintopic.html") || fileName.equals("subtopic.html")) //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ((fileName.equals("maintopic.html") || fileName.equals("subtopic.html")) //$NON-NLS-1$ //$NON-NLS-2$
 				&& sourceFile.getParentFile().getName().equals("html")) { //$NON-NLS-1$
-			isOk =
-				!primaryOption.isSelected()
-					|| (primaryOption.isSelected()
-						&& !gettingStartedOption.isSelected()
-						&& !conceptsOption.isSelected()
-						&& !tasksOption.isSelected()
-						&& !referenceOption.isSelected()
-						&& !samplesOption.isSelected());
+			isOk = !primaryOption.isSelected() || (primaryOption.isSelected() && !gettingStartedOption.isSelected() && !conceptsOption.isSelected() && !tasksOption.isSelected() && !referenceOption.isSelected() && !samplesOption.isSelected());
 		}
-		return isOk;	
+		return isOk;
 	}
+
 	/**
 	 * @see BaseOptionTemplateSection#validateOptions(TemplateOption)
 	 */
@@ -200,15 +163,16 @@ public class HelpTemplate extends PDETemplateSection {
 
 		IPluginElement tocElement = factory.createElement(extension);
 		tocElement.setName("toc"); //$NON-NLS-1$
-		tocElement.setAttribute("file","toc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (primaryOption.isSelected()) tocElement.setAttribute("primary","true"); //$NON-NLS-1$ //$NON-NLS-2$
+		tocElement.setAttribute("file", "toc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (primaryOption.isSelected())
+			tocElement.setAttribute("primary", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(tocElement);
-		
+
 		if (genTestOption.isSelected() && genTestOption.isEnabled()) {
 			IPluginElement testTocElement = factory.createElement(extension);
 			testTocElement.setName("toc"); //$NON-NLS-1$
-			testTocElement.setAttribute("file","testToc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-			testTocElement.setAttribute("primary","true"); //$NON-NLS-1$ //$NON-NLS-2$
+			testTocElement.setAttribute("file", "testToc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			testTocElement.setAttribute("primary", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(testTocElement);
 		}
 		addNonPrimaryTopic(conceptsOption, "tocconcepts.xml", extension); //$NON-NLS-1$
@@ -216,11 +180,11 @@ public class HelpTemplate extends PDETemplateSection {
 		addNonPrimaryTopic(referenceOption, "tocreference.xml", extension); //$NON-NLS-1$
 		addNonPrimaryTopic(samplesOption, "tocsamples.xml", extension); //$NON-NLS-1$
 		addNonPrimaryTopic(tasksOption, "toctasks.xml", extension); //$NON-NLS-1$
-		
+
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-	
+
 	private void addNonPrimaryTopic(BooleanOption option, String file, IPluginExtension extension) throws CoreException {
 		if (option.isEnabled() && option.isSelected()) {
 			IPluginElement tocElement = extension.getPluginModel().getPluginFactory().createElement(extension);
@@ -236,14 +200,14 @@ public class HelpTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.help.toc"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */

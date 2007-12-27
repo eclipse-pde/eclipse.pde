@@ -25,50 +25,48 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 
-
 public class ViewRCPTemplate extends PDETemplateSection {
-	
+
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
 	public static final String KEY_WINDOW_TITLE = "windowTitle"; //$NON-NLS-1$
-	
+
 	public ViewRCPTemplate() {
 		setPageCount(1);
 		createOptions();
 	}
-	
+
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
-		page.setTitle(PDETemplateMessages.ViewRCPTemplate_title); 
-		page.setDescription(PDETemplateMessages.ViewRCPTemplate_desc);  
+		page.setTitle(PDETemplateMessages.ViewRCPTemplate_title);
+		page.setDescription(PDETemplateMessages.ViewRCPTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 
-	
 	private void createOptions() {
 		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.ViewRCPTemplate_windowTitle, "RCP Application", 0); //$NON-NLS-1$ 
-		
-		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.ViewRCPTemplate_packageName, (String) null, 0); 
-		
+
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.ViewRCPTemplate_packageName, (String) null, 0);
+
 		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.ViewRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$
-		
+
 		createBrandingOptions();
 	}
-	
+
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));  
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
-	
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -88,29 +86,29 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		if (getBooleanOption(KEY_PRODUCT_BRANDING))
 			createProductExtension();
 	}
-	
+
 	private void createApplicationExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		
+
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		extension.setId(VALUE_APPLICATION_ID);
-		
+
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("application"); //$NON-NLS-1$
 		extension.add(element);
-		
+
 		IPluginElement run = model.getPluginFactory().createElement(element);
 		run.setName("run"); //$NON-NLS-1$
 		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_APPLICATION_CLASS)); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(run);
-		
+
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
 
 	private void createPerspectiveExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		
+
 		IPluginExtension extension = createExtension("org.eclipse.ui.perspectives", true); //$NON-NLS-1$
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("perspective"); //$NON-NLS-1$
@@ -118,27 +116,27 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		element.setAttribute("name", "Perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
-		
+
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-	
+
 	private void createViewExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		String id = plugin.getId();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true); //$NON-NLS-1$
-		
+
 		IPluginElement view = model.getPluginFactory().createElement(extension);
 		view.setName("view"); //$NON-NLS-1$
-		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".View" ); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
-		
+
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-	
+
 	private void createProductExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
@@ -162,7 +160,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
-   
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -171,21 +169,21 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -195,13 +193,13 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		dep[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
 		return dep;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
 	 */
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
-			return new String[] { "icons/", "splash.bmp" }; //$NON-NLS-1$ //$NON-NLS-2$
+			return new String[] {"icons/", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$
 		return super.getNewFiles();
 	}
 }

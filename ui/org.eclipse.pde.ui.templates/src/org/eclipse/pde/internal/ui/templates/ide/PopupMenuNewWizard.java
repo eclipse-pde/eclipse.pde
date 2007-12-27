@@ -27,11 +27,12 @@ public class PopupMenuNewWizard extends NewPluginTemplateWizard {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.PopupMenuNewWizard_wtitle);
 	}
+
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new PopupMenuTemplate()};
+		return new ITemplateSection[] {new PopupMenuTemplate()};
 	}
 
 }

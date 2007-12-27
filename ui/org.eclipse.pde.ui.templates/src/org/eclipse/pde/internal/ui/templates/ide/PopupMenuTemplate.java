@@ -53,41 +53,17 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(
-			KEY_TARGET_OBJECT,
-			PDETemplateMessages.PopupMenuTemplate_targetClass,
-			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
-			0);
-		addOption(
-			KEY_SUBMENU_LABEL,
-			PDETemplateMessages.PopupMenuTemplate_submenuName,
-			PDETemplateMessages.PopupMenuTemplate_defaultSubmenuName,
-			0);
-		addOption(
-			KEY_ACTION_LABEL,
-			PDETemplateMessages.PopupMenuTemplate_actionLabel,
-			PDETemplateMessages.PopupMenuTemplate_defaultActionName,
-			0);
-		addOption(
-			KEY_PACKAGE_NAME,
-			PDETemplateMessages.PopupMenuTemplate_packageName,
-			(String) null,
-			0);
-		addOption(
-			KEY_ACTION_CLASS,
-			PDETemplateMessages.PopupMenuTemplate_actionClass,
-			PDETemplateMessages.PopupMenuTemplate_newAction, 
-			0);
-		addOption(
-			KEY_SELECTION,
-			PDETemplateMessages.PopupMenuTemplate_enabledFor,
-			new String[][] {
-				{ "singleSelection", PDETemplateMessages.PopupMenuTemplate_singleSelection}, //$NON-NLS-1$
-				{
-				"multipleSelection", PDETemplateMessages.PopupMenuTemplate_multipleSelection //$NON-NLS-1$
-				}
-		}, "singleSelection", 0); //$NON-NLS-1$
+		addOption(KEY_TARGET_OBJECT, PDETemplateMessages.PopupMenuTemplate_targetClass, "org.eclipse.core.resources.IFile", //$NON-NLS-1$
+				0);
+		addOption(KEY_SUBMENU_LABEL, PDETemplateMessages.PopupMenuTemplate_submenuName, PDETemplateMessages.PopupMenuTemplate_defaultSubmenuName, 0);
+		addOption(KEY_ACTION_LABEL, PDETemplateMessages.PopupMenuTemplate_actionLabel, PDETemplateMessages.PopupMenuTemplate_defaultActionName, 0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.PopupMenuTemplate_packageName, (String) null, 0);
+		addOption(KEY_ACTION_CLASS, PDETemplateMessages.PopupMenuTemplate_actionClass, PDETemplateMessages.PopupMenuTemplate_newAction, 0);
+		addOption(KEY_SELECTION, PDETemplateMessages.PopupMenuTemplate_enabledFor, new String[][] { {"singleSelection", PDETemplateMessages.PopupMenuTemplate_singleSelection}, //$NON-NLS-1$
+				{"multipleSelection", PDETemplateMessages.PopupMenuTemplate_multipleSelection //$NON-NLS-1$
+				}}, "singleSelection", 0); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see PDETemplateSection#getSectionId()
 	 */
@@ -103,14 +79,14 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	/**
@@ -123,12 +99,10 @@ public class PopupMenuTemplate extends PDETemplateSection {
 
 		IPluginElement objectContributionElement = factory.createElement(extension);
 		objectContributionElement.setName("objectContribution"); //$NON-NLS-1$
-		objectContributionElement.setAttribute(
-			"objectClass", //$NON-NLS-1$
-			getStringOption(KEY_TARGET_OBJECT));
-		objectContributionElement.setAttribute(
-			"id", //$NON-NLS-1$
-			model.getPluginBase().getId() + ".contribution1"); //$NON-NLS-1$
+		objectContributionElement.setAttribute("objectClass", //$NON-NLS-1$
+				getStringOption(KEY_TARGET_OBJECT));
+		objectContributionElement.setAttribute("id", //$NON-NLS-1$
+				model.getPluginBase().getId() + ".contribution1"); //$NON-NLS-1$
 
 		IPluginElement menuElement = factory.createElement(objectContributionElement);
 		menuElement.setName("menu"); //$NON-NLS-1$
@@ -145,17 +119,14 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		IPluginElement actionElement = factory.createElement(objectContributionElement);
 		actionElement.setName("action"); //$NON-NLS-1$
 		actionElement.setAttribute("label", getStringOption(KEY_ACTION_LABEL)); //$NON-NLS-1$
-		actionElement.setAttribute(
-			"class", //$NON-NLS-1$
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_ACTION_CLASS)); //$NON-NLS-1$
-		actionElement.setAttribute(
-			"menubarPath", //$NON-NLS-1$
-			model.getPluginBase().getId() + ".menu1/group1"); //$NON-NLS-1$
-		actionElement.setAttribute(
-			"enablesFor", //$NON-NLS-1$
-			getValue(KEY_SELECTION).toString().equals("singleSelection") //$NON-NLS-1$
+		actionElement.setAttribute("class", //$NON-NLS-1$
+				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_ACTION_CLASS)); //$NON-NLS-1$
+		actionElement.setAttribute("menubarPath", //$NON-NLS-1$
+				model.getPluginBase().getId() + ".menu1/group1"); //$NON-NLS-1$
+		actionElement.setAttribute("enablesFor", //$NON-NLS-1$
+				getValue(KEY_SELECTION).toString().equals("singleSelection") //$NON-NLS-1$
 				? "1" //$NON-NLS-1$
-				: "multiple"); //$NON-NLS-1$
+						: "multiple"); //$NON-NLS-1$
 		actionElement.setAttribute("id", model.getPluginBase().getId() + ".newAction"); //$NON-NLS-1$ //$NON-NLS-2$
 		objectContributionElement.add(actionElement);
 
@@ -170,22 +141,22 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.popupMenus"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-     */
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+	 */
 	protected String getFormattedPackageName(String id) {
-	    String packageName = super.getFormattedPackageName(id);
-	    if (packageName.length() !=0)
-	        return packageName + ".popup.actions"; //$NON-NLS-1$
-	    return "popup.actions"; //$NON-NLS-1$
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".popup.actions"; //$NON-NLS-1$
+		return "popup.actions"; //$NON-NLS-1$
 	}
-	
+
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] result = new IPluginReference[2];
 		result[0] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
 		result[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
 		return result;
 	}
-	
+
 }

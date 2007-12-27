@@ -17,14 +17,14 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
 public class IntroNewWizard extends NewPluginTemplateWizard {
-    
-    public void init(IFieldData data) {
-        super.init(data);
-        setWindowTitle(PDETemplateMessages.IntroNewWizard_wtitle);      
-    }
 
-    public ITemplateSection[] createTemplateSections() {
-        return new ITemplateSection[] {new IntroTemplate()};
-    }
+	public void init(IFieldData data) {
+		super.init(data);
+		setWindowTitle(PDETemplateMessages.IntroNewWizard_wtitle);
+	}
+
+	public ITemplateSection[] createTemplateSections() {
+		return new ITemplateSection[] {new IntroTemplate()};
+	}
 
 }

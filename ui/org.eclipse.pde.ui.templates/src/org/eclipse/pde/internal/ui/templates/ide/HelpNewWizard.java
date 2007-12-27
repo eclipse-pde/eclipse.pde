@@ -21,9 +21,9 @@ public class HelpNewWizard extends NewPluginTemplateWizard {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.HelpNewWizard_wiz);
 	}
-	
+
 	public ITemplateSection[] createTemplateSections() {
-		return new ITemplateSection[] { new HelpTemplate() };
+		return new ITemplateSection[] {new HelpTemplate()};
 	}
 
 }

@@ -36,27 +36,28 @@ public class NewWizardTemplate extends PDETemplateSection {
 		setPageCount(1);
 		createOptions();
 	}
-	
+
 	public String getSectionId() {
 		return "newWizard"; //$NON-NLS-1$
 	}
+
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
 	public int getNumberOfWorkUnits() {
-		return super.getNumberOfWorkUnits()+1;
+		return super.getNumberOfWorkUnits() + 1;
 	}
-	
+
 	private void createOptions() {
 		// first page
-		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.NewWizardTemplate_packageName, (String)null, 0);
-		addOption("categoryId", PDETemplateMessages.NewWizardTemplate_categoryId, (String)null, 0); //$NON-NLS-1$
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.NewWizardTemplate_packageName, (String) null, 0);
+		addOption("categoryId", PDETemplateMessages.NewWizardTemplate_categoryId, (String) null, 0); //$NON-NLS-1$
 		addOption("categoryName", PDETemplateMessages.NewWizardTemplate_categoryName, "Sample Wizards", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardClassName", PDETemplateMessages.NewWizardTemplate_className, "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardPageClassName", PDETemplateMessages.NewWizardTemplate_pageClassName, "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardName", PDETemplateMessages.NewWizardTemplate_wizardName, PDETemplateMessages.NewWizardTemplate_defaultName, 0); //$NON-NLS-1$
-		addOption("extension", PDETemplateMessages.NewWizardTemplate_extension, "mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("initialFileName", PDETemplateMessages.NewWizardTemplate_fileName,"new_file.mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("extension", PDETemplateMessages.NewWizardTemplate_extension, "mpe", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("initialFileName", PDETemplateMessages.NewWizardTemplate_fileName, "new_file.mpe", 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void initializeFields(IFieldData data) {
@@ -66,6 +67,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 		initializeOption("categoryId", id); //$NON-NLS-1$
 	}
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -73,7 +75,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 		initializeOption("categoryId", pluginId); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -85,13 +87,13 @@ public class NewWizardTemplate extends PDETemplateSection {
 			result.add(new PluginReference("org.eclipse.ui.ide", null, 0)); //$NON-NLS-1$
 			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		}
-		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
-	
+
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
-	
+
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_NEW_WIZARD);
 		page.setTitle(PDETemplateMessages.NewWizardTemplate_title);
@@ -99,21 +101,21 @@ public class NewWizardTemplate extends PDETemplateSection {
 		wizard.addPage(page);
 		markPagesAdded();
 	}
-	
+
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.newWizards"; //$NON-NLS-1$
 	}
-	
+
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.newWizards", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
-		
+
 		String cid = getStringOption("categoryId"); //$NON-NLS-1$
 
 		createCategory(extension, cid);
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("wizardClassName"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("wizardClassName"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		IPluginElement viewElement = factory.createElement(extension);
 		viewElement.setName("wizard"); //$NON-NLS-1$
 		viewElement.setAttribute("id", fullClassName); //$NON-NLS-1$
@@ -127,14 +129,14 @@ public class NewWizardTemplate extends PDETemplateSection {
 	}
 
 	private void createCategory(IPluginExtension extension, String id) throws CoreException {
-		IPluginObject [] elements = extension.getChildren();
-		for (int i=0; i<elements.length; i++) {
-			IPluginElement element = (IPluginElement)elements[i];
+		IPluginObject[] elements = extension.getChildren();
+		for (int i = 0; i < elements.length; i++) {
+			IPluginElement element = (IPluginElement) elements[i];
 			if (element.getName().equalsIgnoreCase("category")) { //$NON-NLS-1$
 				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
-				if (att!=null) {
+				if (att != null) {
 					String cid = att.getValue();
-					if (cid!=null && cid.equals(id))
+					if (cid != null && cid.equals(id))
 						return;
 				}
 			}
@@ -145,21 +147,21 @@ public class NewWizardTemplate extends PDETemplateSection {
 		categoryElement.setAttribute("id", id); //$NON-NLS-1$
 		extension.add(categoryElement);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
 	protected String getFormattedPackageName(String id) {
-	    String packageName =  super.getFormattedPackageName(id);
-	    if (packageName.length() != 0 )
-	        return packageName + ".wizards"; //$NON-NLS-1$
-	    return "wizards"; //$NON-NLS-1$
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".wizards"; //$NON-NLS-1$
+		return "wizards"; //$NON-NLS-1$
 	}
 }

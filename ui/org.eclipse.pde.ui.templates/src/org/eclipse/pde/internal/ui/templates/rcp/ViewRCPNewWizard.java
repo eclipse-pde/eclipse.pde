@@ -15,7 +15,6 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
-
 public class ViewRCPNewWizard extends NewPluginTemplateWizard {
 
 	/* (non-Javadoc)
@@ -23,8 +22,9 @@ public class ViewRCPNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDETemplateMessages.ViewRCPNewWizard_title); 
+		setWindowTitle(PDETemplateMessages.ViewRCPNewWizard_title);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */

@@ -13,11 +13,11 @@ package org.eclipse.pde.internal.ui.templates.ide;
 import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 
 public abstract class BaseEditorTemplate extends PDETemplateSection {
-	
+
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.editors"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */

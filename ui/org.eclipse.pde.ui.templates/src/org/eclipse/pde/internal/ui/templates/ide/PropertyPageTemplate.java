@@ -53,32 +53,16 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	}
 
 	private void createOptions() {
-		addOption(
-			KEY_PACKAGE_NAME,
-			PDETemplateMessages.PropertyPageTemplate_packageName,
-			(String) null,
-			0);
-		addOption(
-			KEY_CLASSNAME,
-			PDETemplateMessages.PropertyPageTemplate_pageClass,
-			"SamplePropertyPage", //$NON-NLS-1$
-			0);
-		addOption(
-			KEY_PAGE_NAME,
-			PDETemplateMessages.PropertyPageTemplate_pageName,
-			PDETemplateMessages.PropertyPageTemplate_defaultPageName,
-			0);
-		addOption(
-			KEY_TARGET_CLASS,
-			PDETemplateMessages.PropertyPageTemplate_targetClass,
-			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
-			0);
-		addOption(
-			KEY_NAME_FILTER,
-			PDETemplateMessages.PropertyPageTemplate_nameFilter,
-			"*.*", //$NON-NLS-1$
-			0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.PropertyPageTemplate_packageName, (String) null, 0);
+		addOption(KEY_CLASSNAME, PDETemplateMessages.PropertyPageTemplate_pageClass, "SamplePropertyPage", //$NON-NLS-1$
+				0);
+		addOption(KEY_PAGE_NAME, PDETemplateMessages.PropertyPageTemplate_pageName, PDETemplateMessages.PropertyPageTemplate_defaultPageName, 0);
+		addOption(KEY_TARGET_CLASS, PDETemplateMessages.PropertyPageTemplate_targetClass, "org.eclipse.core.resources.IFile", //$NON-NLS-1$
+				0);
+		addOption(KEY_NAME_FILTER, PDETemplateMessages.PropertyPageTemplate_nameFilter, "*.*", //$NON-NLS-1$
+				0);
 	}
+
 	/**
 	 * @see PDETemplateSection#getSectionId()
 	 */
@@ -89,20 +73,19 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
-	
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME,getFormattedPackageName(pluginId)); 
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
 	/**
@@ -115,14 +98,12 @@ public class PropertyPageTemplate extends PDETemplateSection {
 
 		IPluginElement pageElement = factory.createElement(extension);
 		pageElement.setName("page"); //$NON-NLS-1$
-		pageElement.setAttribute(
-			"id", //$NON-NLS-1$
-			getStringOption(KEY_PACKAGE_NAME) + ".samplePropertyPage"); //$NON-NLS-1$
+		pageElement.setAttribute("id", //$NON-NLS-1$
+				getStringOption(KEY_PACKAGE_NAME) + ".samplePropertyPage"); //$NON-NLS-1$
 		pageElement.setAttribute("name", getStringOption(KEY_PAGE_NAME)); //$NON-NLS-1$
 		pageElement.setAttribute("objectClass", getStringOption(KEY_TARGET_CLASS)); //$NON-NLS-1$
-		pageElement.setAttribute(
-			"class", //$NON-NLS-1$
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASSNAME)); //$NON-NLS-1$
+		pageElement.setAttribute("class", //$NON-NLS-1$
+				getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASSNAME)); //$NON-NLS-1$
 		pageElement.setAttribute("nameFilter", getStringOption(KEY_NAME_FILTER)); //$NON-NLS-1$
 
 		extension.add(pageElement);
@@ -136,7 +117,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.propertyPages"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
@@ -144,20 +125,20 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		ArrayList result = new ArrayList();
 		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$
 		if (schemaVersion != null)
-			result.add(new PluginReference("org.eclipse.core.runtime", null, 0));		 //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.ui", null, 0));		 //$NON-NLS-1$
-			
-		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
+			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
+
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
-	
+
 	/* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-     */
-    protected String getFormattedPackageName(String id) {
-        String packageName = super.getFormattedPackageName(id);
-        if (packageName.length() != 0)
-            return packageName + ".properties"; //$NON-NLS-1$
-        return "properties"; //$NON-NLS-1$
-    }
+	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+	 */
+	protected String getFormattedPackageName(String id) {
+		String packageName = super.getFormattedPackageName(id);
+		if (packageName.length() != 0)
+			return packageName + ".properties"; //$NON-NLS-1$
+		return "properties"; //$NON-NLS-1$
+	}
 
 }
