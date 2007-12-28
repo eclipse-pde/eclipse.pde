@@ -137,7 +137,13 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 					fEEChoice.select(i);
 					break;							
 			}
-		}		
+		}
+		
+		fEEChoice.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				setPageComplete(validatePage());
+			}
+		});
 		
 		// Create button
 		fExeEnvButton = createButton(group, SWT.PUSH, 1, 0);
@@ -231,6 +237,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fTargetCombo.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateExecEnvSection();
+				setPageComplete(validatePage());
 			}
 		});
 		
@@ -328,6 +335,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     		return false;
     	}
     	
+    	String eeid = fEEChoice.getText();
+    	if(eeid != null && fEEChoice.isEnabled()) {
+    		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
+    		IVMInstall[] vms = ee.getCompatibleVMs();
+    		if(vms.length == 0) {
+    			setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidEE);
+    			return false;
+    		}
+    	}
+    	
     	if (fJavaButton.getSelection()) {
 	    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	    	IProject dmy = workspace.getRoot().getProject("project"); //$NON-NLS-1$
@@ -347,6 +364,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	    		}
 	    	}
     	}
+    	
     	setErrorMessage(null);
     	setMessage(null);
     	return true;
