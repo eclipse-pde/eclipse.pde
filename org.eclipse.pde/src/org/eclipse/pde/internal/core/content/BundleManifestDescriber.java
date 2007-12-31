@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.content;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
+import java.io.*;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.ITextContentDescriber;
@@ -24,7 +19,7 @@ import org.osgi.framework.Constants;
 public class BundleManifestDescriber implements ITextContentDescriber {
 
 	private final static String[] HEADERS = {Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_VERSION, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_VENDOR, Constants.BUNDLE_ACTIVATOR};
-	private final static int LINES = 50; 
+	private final static int LINES = 50;
 
 	private final static QualifiedName[] SUPPORTED_OPTIONS = {IContentDescription.BYTE_ORDER_MARK};
 
