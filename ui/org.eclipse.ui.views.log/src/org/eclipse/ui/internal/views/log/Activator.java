@@ -26,11 +26,12 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
-	public Activator() {}
+	public Activator() { // do nothing
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -53,18 +54,18 @@ public class Activator extends AbstractUIPlugin {
 	public static Activator getDefault() {
 		return plugin;
 	}
-	
+
 	protected void initializeImageRegistry(ImageRegistry registry) {
 		registry.put(SharedImages.DESC_PREV_EVENT, createImageDescriptor(SharedImages.DESC_PREV_EVENT));
 		registry.put(SharedImages.DESC_NEXT_EVENT, createImageDescriptor(SharedImages.DESC_NEXT_EVENT));
-		
+
 		registry.put(SharedImages.DESC_ERROR_ST_OBJ, createImageDescriptor(SharedImages.DESC_ERROR_ST_OBJ));
 		registry.put(SharedImages.DESC_ERROR_STACK_OBJ, createImageDescriptor(SharedImages.DESC_ERROR_STACK_OBJ));
 		registry.put(SharedImages.DESC_INFO_ST_OBJ, createImageDescriptor(SharedImages.DESC_INFO_ST_OBJ));
 		registry.put(SharedImages.DESC_OK_ST_OBJ, createImageDescriptor(SharedImages.DESC_OK_ST_OBJ));
 		registry.put(SharedImages.DESC_WARNING_ST_OBJ, createImageDescriptor(SharedImages.DESC_WARNING_ST_OBJ));
 		registry.put(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ, createImageDescriptor(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ));
-		
+
 		registry.put(SharedImages.DESC_CLEAR, createImageDescriptor(SharedImages.DESC_CLEAR));
 		registry.put(SharedImages.DESC_CLEAR_DISABLED, createImageDescriptor(SharedImages.DESC_CLEAR_DISABLED));
 		registry.put(SharedImages.DESC_REMOVE_LOG, createImageDescriptor(SharedImages.DESC_REMOVE_LOG));
@@ -82,7 +83,7 @@ public class Activator extends AbstractUIPlugin {
 		registry.put(SharedImages.DESC_READ_LOG, createImageDescriptor(SharedImages.DESC_READ_LOG));
 		registry.put(SharedImages.DESC_READ_LOG_DISABLED, createImageDescriptor(SharedImages.DESC_READ_LOG_DISABLED));
 	}
-	
+
 	private ImageDescriptor createImageDescriptor(String id) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, id);
 	}

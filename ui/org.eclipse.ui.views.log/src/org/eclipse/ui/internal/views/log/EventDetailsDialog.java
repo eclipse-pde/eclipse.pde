@@ -11,40 +11,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -52,17 +33,17 @@ public class EventDetailsDialog extends TrayDialog {
 	private AbstractEntry entry;
 	private AbstractEntry parentEntry; // parent of the entry
 	private AbstractEntry[] entryChildren; // children of the entry
-	
+
 	private LogViewLabelProvider labelProvider;
 	private TreeViewer provider;
-	
+
 	private static int COPY_ID = 22;
-	
+
 	private int childIndex = 0;
 	private boolean isOpen;
 	private boolean isLastChild;
 	private boolean isAtEndOfLog;
-	
+
 	private Label dateLabel;
 	private Label severityImageLabel;
 	private Label severityLabel;
@@ -74,16 +55,16 @@ public class EventDetailsDialog extends TrayDialog {
 	private Button backButton;
 	private Button nextButton;
 	private SashForm sashForm;
-	
+
 	// sorting
 	private Comparator comparator = null;
-	private Collator collator;
-	
+	Collator collator;
+
 	// location configuration
 	private Point dialogLocation;
 	private Point dialogSize;
 	private int[] sashWeights;
-	
+
 	/**
 	 * 
 	 * @param parentShell shell in which dialog is displayed
@@ -94,9 +75,9 @@ public class EventDetailsDialog extends TrayDialog {
 	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider, Comparator comparator) {
 		super(parentShell);
 		this.provider = (TreeViewer) provider;
-		labelProvider = (LogViewLabelProvider)this.provider.getLabelProvider();
+		labelProvider = (LogViewLabelProvider) this.provider.getLabelProvider();
 		labelProvider.connect(this);
-		this.entry = (AbstractEntry)selection;
+		this.entry = (AbstractEntry) selection;
 		this.comparator = comparator;
 		setShellStyle(SWT.MODELESS | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
 		clipboard = new Clipboard(parentShell.getDisplay());
@@ -109,7 +90,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 	private void initialize() {
 		parentEntry = (AbstractEntry) entry.getParent(entry);
-		if (isChild(entry)){
+		if (isChild(entry)) {
 			setEntryChildren(parentEntry);
 		} else {
 			setEntryChildren();
@@ -118,54 +99,54 @@ public class EventDetailsDialog extends TrayDialog {
 		isLastChild = false;
 		isAtEndOfLog = false;
 	}
-	
+
 	private void resetChildIndex() {
-		if (! (entry instanceof AbstractEntry)) {
+		if (!(entry instanceof AbstractEntry)) {
 			return;
 		}
-		
+
 		if (entryChildren == null)
 			return;
-		
+
 		LogEntry thisEntry = (LogEntry) entry;
-		
+
 		for (int i = 0; i < entryChildren.length; i++) {
 			if (entryChildren[i] instanceof LogEntry) {
-			
+
 				LogEntry logEntry = (LogEntry) entryChildren[i];
-				
+
 				if (logEntry == thisEntry) {
 					childIndex = i;
 					return;
 				}
 			}
 		}
-		
+
 		childIndex = 0;
 	}
-	
+
 	private boolean isChild(AbstractEntry entry) {
 		return entry.getParent(entry) != null;
 	}
-	
-	public boolean isOpen(){
+
+	public boolean isOpen() {
 		return isOpen;
 	}
 
-	public int open(){
+	public int open() {
 		isOpen = true;
-		if (sashWeights == null){
+		if (sashWeights == null) {
 			int width = getSashForm().getClientArea().width;
 			if (width - 100 > 0)
 				width -= 100;
 			else
-				width = width/2;
-			sashWeights = new int[]{width, getSashForm().getClientArea().width-width};
+				width = width / 2;
+			sashWeights = new int[] {width, getSashForm().getClientArea().width - width};
 		}
 		getSashForm().setWeights(sashWeights);
 		return super.open();
 	}
-	
+
 	public boolean close() {
 		storeSettings();
 		isOpen = false;
@@ -175,17 +156,17 @@ public class EventDetailsDialog extends TrayDialog {
 
 	public void create() {
 		super.create();
-		
+
 		// dialog location 
 		if (dialogLocation != null)
 			getShell().setLocation(dialogLocation);
-		
+
 		// dialog size
 		if (dialogSize != null)
 			getShell().setSize(dialogSize);
 		else
-			getShell().setSize(500,550);
-				
+			getShell().setSize(500, 550);
+
 		applyDialogFont(buttonBar);
 		getButton(IDialogConstants.OK_ID).setFocus();
 	}
@@ -205,38 +186,38 @@ public class EventDetailsDialog extends TrayDialog {
 
 	protected void backPressed() {
 		if (childIndex > 0) {
-				if (isLastChild && (isChild(entry))){
-					setEntryChildren(parentEntry);
-					isLastChild = false;
-				}
-				childIndex--;
-				entry = entryChildren[childIndex];
-			} else {
-				if (parentEntry instanceof LogEntry) {
-					entry = parentEntry;
-					if (isChild(entry)) {
-						setEntryChildren((AbstractEntry)entry.getParent(entry));
-					} else {
-						setEntryChildren();
-					}
-					resetChildIndex();
-				}
+			if (isLastChild && (isChild(entry))) {
+				setEntryChildren(parentEntry);
+				isLastChild = false;
 			}
+			childIndex--;
+			entry = entryChildren[childIndex];
+		} else {
+			if (parentEntry instanceof LogEntry) {
+				entry = parentEntry;
+				if (isChild(entry)) {
+					setEntryChildren((AbstractEntry) entry.getParent(entry));
+				} else {
+					setEntryChildren();
+				}
+				resetChildIndex();
+			}
+		}
 		setEntrySelectionInTable();
 	}
 
 	protected void nextPressed() {
-		if (childIndex < entryChildren.length-1) {
+		if (childIndex < entryChildren.length - 1) {
 			childIndex++;
 			entry = entryChildren[childIndex];
 			isLastChild = childIndex == entryChildren.length - 1;
-		} else if (isChild(entry) && isLastChild && !isAtEndOfLog){
+		} else if (isChild(entry) && isLastChild && !isAtEndOfLog) {
 			findNextSelectedChild(entry);
 		} else { // at end of list but can branch into child elements - bug 58083
-				setEntryChildren(entry);
-				entry = entryChildren[0];
-				isAtEndOfLog = entryChildren.length == 0;
-				isLastChild = entryChildren.length == 0;
+			setEntryChildren(entry);
+			entry = entryChildren[0];
+			isAtEndOfLog = entryChildren.length == 0;
+			isLastChild = entryChildren.length == 0;
 		}
 		setEntrySelectionInTable();
 	}
@@ -251,75 +232,76 @@ public class EventDetailsDialog extends TrayDialog {
 		try {
 			pwriter.close();
 			writer.close();
-		} catch (IOException e) {
+		} catch (IOException e) { // do nothing
 		}
 		// set the clipboard contents
-		clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer.getInstance()});	
+		clipboard.setContents(new Object[] {textVersion}, new Transfer[] {TextTransfer.getInstance()});
 	}
 
-	public void setComparator(Comparator comparator){
+	public void setComparator(Comparator comparator) {
 		this.comparator = comparator;
 		updateProperties();
 	}
-	private void setComparator(byte sortType, final int sortOrder){
-		if (sortType == LogView.DATE){
-			comparator = new Comparator(){
+
+	private void setComparator(byte sortType, final int sortOrder) {
+		if (sortType == LogView.DATE) {
+			comparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
 					Date date1 = ((LogEntry) e1).getDate();
 					Date date2 = ((LogEntry) e2).getDate();
-                    if (sortOrder == LogView.ASCENDING)
-                    	return date1.getTime() < date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
+					if (sortOrder == LogView.ASCENDING)
+						return date1.getTime() < date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
 					return date1.getTime() > date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
 				}
 			};
-		} else if (sortType == LogView.PLUGIN){
-			comparator = new Comparator(){
+		} else if (sortType == LogView.PLUGIN) {
+			comparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry)e1;
-					LogEntry entry2 = (LogEntry)e2;
+					LogEntry entry1 = (LogEntry) e1;
+					LogEntry entry2 = (LogEntry) e2;
 					return collator.compare(entry1.getPluginId(), entry2.getPluginId()) * sortOrder;
 				}
 			};
 		} else {
-			comparator = new Comparator(){
+			comparator = new Comparator() {
 				public int compare(Object e1, Object e2) {
-					LogEntry entry1 = (LogEntry)e1;
-					LogEntry entry2 = (LogEntry)e2;
+					LogEntry entry1 = (LogEntry) e1;
+					LogEntry entry2 = (LogEntry) e2;
 					return collator.compare(entry1.getMessage(), entry2.getMessage()) * sortOrder;
 				}
 			};
 		}
 	}
-	
-	public void resetSelection(IAdaptable selectedEntry, byte sortType, int sortOrder){
+
+	public void resetSelection(IAdaptable selectedEntry, byte sortType, int sortOrder) {
 		setComparator(sortType, sortOrder);
 		resetSelection(selectedEntry);
 	}
-	
-	public void resetSelection(IAdaptable selectedEntry){
-		if (entry.equals(selectedEntry)){
+
+	public void resetSelection(IAdaptable selectedEntry) {
+		if (entry.equals(selectedEntry)) {
 			updateProperties();
 			return;
 		}
 		if (selectedEntry instanceof AbstractEntry) {
-			entry = (AbstractEntry)selectedEntry;
+			entry = (AbstractEntry) selectedEntry;
 			initialize();
 			updateProperties();
 		}
 	}
-	
-	public void resetButtons(){
+
+	public void resetButtons() {
 		backButton.setEnabled(false);
 		nextButton.setEnabled(false);
 	}
-	
-	private void setEntrySelectionInTable(){
+
+	private void setEntrySelectionInTable() {
 		ISelection selection = new StructuredSelection(entry);
 		provider.setSelection(selection);
 	}
-	
-	public void updateProperties() {	
-		if (isChild(entry)){
+
+	public void updateProperties() {
+		if (isChild(entry)) {
 			parentEntry = (AbstractEntry) entry.getParent(entry);
 			setEntryChildren(parentEntry);
 			resetChildIndex();
@@ -329,7 +311,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 		if (entry instanceof LogEntry) {
 			LogEntry logEntry = (LogEntry) entry;
-			
+
 			String strDate = logEntry.getFormattedDate();
 			dateLabel.setText(strDate);
 			severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
@@ -341,12 +323,12 @@ public class EventDetailsDialog extends TrayDialog {
 			} else {
 				stackTraceText.setText(Messages.EventDetailsDialog_noStack);
 			}
-			
+
 			String session = logEntry.getSession().getSessionData();
 			if (session != null) {
 				sessionDataText.setText(session);
 			}
-			
+
 		} else {
 			dateLabel.setText(""); //$NON-NLS-1$
 			severityImageLabel.setImage(null);
@@ -355,13 +337,13 @@ public class EventDetailsDialog extends TrayDialog {
 			stackTraceText.setText(""); //$NON-NLS-1$
 			sessionDataText.setText(""); //$NON-NLS-1$
 		}
-		
+
 		updateButtons();
 	}
-	
-	private void updateButtons(){
+
+	private void updateButtons() {
 		boolean isAtEnd = childIndex == entryChildren.length - 1;
-		if (isChild(entry)){
+		if (isChild(entry)) {
 			boolean canGoToParent = (entry.getParent(entry) instanceof LogEntry);
 			backButton.setEnabled((childIndex > 0) || canGoToParent);
 			nextButton.setEnabled(nextChildExists(entry, parentEntry, entryChildren) || entry.hasChildren() || !isLastChild || !isAtEnd);
@@ -370,19 +352,19 @@ public class EventDetailsDialog extends TrayDialog {
 			nextButton.setEnabled(!isAtEnd || entry.hasChildren());
 		}
 	}
-	
-	private void findNextSelectedChild(AbstractEntry originalEntry){
-		if (isChild (parentEntry)){
+
+	private void findNextSelectedChild(AbstractEntry originalEntry) {
+		if (isChild(parentEntry)) {
 			// we're at the end of the child list; find next parent
 			// to select.  If the parent is a child at the end of the child
 			// list, find its next parent entry to select, etc.
-			
+
 			entry = parentEntry;
-			setEntryChildren((AbstractEntry)parentEntry.getParent(parentEntry));
-			parentEntry = (AbstractEntry)parentEntry.getParent(parentEntry);
+			setEntryChildren((AbstractEntry) parentEntry.getParent(parentEntry));
+			parentEntry = (AbstractEntry) parentEntry.getParent(parentEntry);
 			resetChildIndex();
-			isLastChild = childIndex == entryChildren.length-1;
-			if (isLastChild){
+			isLastChild = childIndex == entryChildren.length - 1;
+			if (isLastChild) {
 				findNextSelectedChild(originalEntry);
 			} else {
 				nextPressed();
@@ -391,8 +373,8 @@ public class EventDetailsDialog extends TrayDialog {
 			entry = parentEntry;
 			setEntryChildren();
 			resetChildIndex();
-			isLastChild = childIndex == entryChildren.length-1;
-			if (isLastChild){
+			isLastChild = childIndex == entryChildren.length - 1;
+			if (isLastChild) {
 				findNextSelectedChild(originalEntry);
 			} else {
 				nextPressed();
@@ -403,27 +385,26 @@ public class EventDetailsDialog extends TrayDialog {
 			nextPressed();
 		}
 	}
-	
-	private boolean nextChildExists(AbstractEntry originalEntry, AbstractEntry originalParent, AbstractEntry[] originalEntries){
-		if (isChild (parentEntry)){
+
+	private boolean nextChildExists(AbstractEntry originalEntry, AbstractEntry originalParent, AbstractEntry[] originalEntries) {
+		if (isChild(parentEntry)) {
 			// we're at the end of the child list; find next parent
 			// to select.  If the parent is a child at the end of the child
 			// list, find its next parent entry to select, etc.
-			
+
 			entry = parentEntry;
-			parentEntry = (AbstractEntry)entry.getParent(entry);
+			parentEntry = (AbstractEntry) entry.getParent(entry);
 			setEntryChildren(parentEntry);
 			resetChildIndex();
-			if (childIndex == entryChildren.length-1){
+			if (childIndex == entryChildren.length - 1) {
 				return nextChildExists(originalEntry, originalParent, originalEntries);
-			} else {
-				entry = originalEntry;
-				parentEntry = originalParent;
-				entryChildren = originalEntries;
-				resetChildIndex();
-				return true;
 			}
-		}  else if (parentEntry instanceof LogEntry) {
+			entry = originalEntry;
+			parentEntry = originalParent;
+			entryChildren = originalEntries;
+			resetChildIndex();
+			return true;
+		} else if (parentEntry instanceof LogEntry) {
 			entry = parentEntry;
 			setEntryChildren();
 			childIndex = -1;
@@ -434,52 +415,52 @@ public class EventDetailsDialog extends TrayDialog {
 				entryChildren = originalEntries;
 				resetChildIndex();
 				return true;
-			}			
+			}
 		}
 		entry = originalEntry;
 		parentEntry = originalParent;
 		entryChildren = originalEntries;
 		resetChildIndex();
 		return false;
-		
+
 	}
-	
+
 	/**
 	 * Sets entry children (Prev-Next navigable) to top-level elements
 	 */
-	private void setEntryChildren(){
+	private void setEntryChildren() {
 		AbstractEntry[] children = getElements();
 
 		if (comparator != null)
 			Arrays.sort(children, comparator);
 		entryChildren = new AbstractEntry[children.length];
-		
-		System.arraycopy(children,0,entryChildren,0,children.length);
+
+		System.arraycopy(children, 0, entryChildren, 0, children.length);
 	}
-	
+
 	/**
 	 * Sets entry children (Prev-Next navigable) to children of given entry
 	 */
-	private void setEntryChildren(AbstractEntry entry){
+	private void setEntryChildren(AbstractEntry entry) {
 		Object[] children = entry.getChildren(entry);
-		
+
 		if (comparator != null)
 			Arrays.sort(children, comparator);
-		
+
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof AbstractEntry) {
 				result.add(children[i]);
 			}
 		}
-		
-		entryChildren = (AbstractEntry[])result.toArray(new AbstractEntry[result.size()]);
+
+		entryChildren = (AbstractEntry[]) result.toArray(new AbstractEntry[result.size()]);
 	}
-	
-	public SashForm getSashForm(){
+
+	public SashForm getSashForm() {
 		return sashForm;
 	}
-	
+
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -498,14 +479,14 @@ public class EventDetailsDialog extends TrayDialog {
 		return container;
 	}
 
-	private void createSashForm(Composite parent){
+	private void createSashForm(Composite parent) {
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		sashForm.setLayout(layout);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
-	
+
 	private void createToolbarButtonBar(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -529,7 +510,7 @@ public class EventDetailsDialog extends TrayDialog {
 		backButton.setLayoutData(gd);
 		backButton.setToolTipText(Messages.EventDetailsDialog_previous);
 		backButton.setImage(SharedImages.getImage(SharedImages.DESC_PREV_EVENT));
-		
+
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -537,7 +518,7 @@ public class EventDetailsDialog extends TrayDialog {
 		nextButton.setLayoutData(gd);
 		nextButton.setToolTipText(Messages.EventDetailsDialog_next);
 		nextButton.setImage(SharedImages.getImage(SharedImages.DESC_NEXT_EVENT));
-		
+
 		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -572,21 +553,21 @@ public class EventDetailsDialog extends TrayDialog {
 		textContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(textContainer, SWT.NONE);
-		label.setText(Messages.EventDetailsDialog_date); 
+		label.setText(Messages.EventDetailsDialog_date);
 		dateLabel = new Label(textContainer, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		dateLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(Messages.EventDetailsDialog_severity); 
+		label.setText(Messages.EventDetailsDialog_severity);
 		severityImageLabel = new Label(textContainer, SWT.NULL);
 		severityLabel = new Label(textContainer, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		severityLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(Messages.EventDetailsDialog_message); 
+		label.setText(Messages.EventDetailsDialog_message);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
@@ -609,7 +590,7 @@ public class EventDetailsDialog extends TrayDialog {
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(Messages.EventDetailsDialog_exception); 
+		label.setText(Messages.EventDetailsDialog_exception);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -635,20 +616,20 @@ public class EventDetailsDialog extends TrayDialog {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = 1;
 		line.setLayoutData(gd);
-		
+
 		Label label = new Label(container, SWT.NONE);
-		label.setText(Messages.EventDetailsDialog_session); 
+		label.setText(Messages.EventDetailsDialog_session);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
-		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		sessionDataText.setLayoutData(gd);
 		sessionDataText.setEditable(false);
 	}
-	
+
 	//--------------- configuration handling --------------
-	
+
 	/**
 	 * Stores the current state in the dialog settings.
 	 * @since 2.0
@@ -656,6 +637,7 @@ public class EventDetailsDialog extends TrayDialog {
 	private void storeSettings() {
 		writeConfiguration();
 	}
+
 	/**
 	 * Returns the dialog settings object used to share state
 	 * between several event detail dialogs.
@@ -663,7 +645,7 @@ public class EventDetailsDialog extends TrayDialog {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings= Activator.getDefault().getDialogSettings();
+		IDialogSettings settings = Activator.getDefault().getDialogSettings();
 		IDialogSettings dialogSettings = settings.getSection(getClass().getName());
 		if (dialogSettings == null)
 			dialogSettings = settings.addNewSection(getClass().getName());
@@ -675,47 +657,47 @@ public class EventDetailsDialog extends TrayDialog {
 	 * as at the previous invocation.
 	 */
 	private void readConfiguration() {
-		IDialogSettings s= getDialogSettings();
+		IDialogSettings s = getDialogSettings();
 		try {
-			int x= s.getInt("x"); //$NON-NLS-1$
-			int y= s.getInt("y"); //$NON-NLS-1$
-			dialogLocation= new Point(x, y);
-			
+			int x = s.getInt("x"); //$NON-NLS-1$
+			int y = s.getInt("y"); //$NON-NLS-1$
+			dialogLocation = new Point(x, y);
+
 			x = s.getInt("width"); //$NON-NLS-1$
 			y = s.getInt("height"); //$NON-NLS-1$
-			dialogSize = new Point(x,y);
-			
+			dialogSize = new Point(x, y);
+
 			sashWeights = new int[2];
 			sashWeights[0] = s.getInt("sashWidth1"); //$NON-NLS-1$
 			sashWeights[1] = s.getInt("sashWidth2"); //$NON-NLS-1$
-			
+
 		} catch (NumberFormatException e) {
-			dialogLocation= null;
+			dialogLocation = null;
 			dialogSize = null;
 			sashWeights = null;
 		}
 	}
-	
-	private void writeConfiguration(){
+
+	private void writeConfiguration() {
 		IDialogSettings s = getDialogSettings();
 		Point location = getShell().getLocation();
 		s.put("x", location.x); //$NON-NLS-1$
 		s.put("y", location.y); //$NON-NLS-1$
-		
+
 		Point size = getShell().getSize();
 		s.put("width", size.x); //$NON-NLS-1$
 		s.put("height", size.y); //$NON-NLS-1$
-		
+
 		sashWeights = getSashForm().getWeights();
 		s.put("sashWidth1", sashWeights[0]); //$NON-NLS-1$
 		s.put("sashWidth2", sashWeights[1]); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Utility method to get all top level elements of the Log View
 	 * @return top level elements of the Log View
 	 */
 	private AbstractEntry[] getElements() {
-		return (AbstractEntry[])((ITreeContentProvider)provider.getContentProvider()).getElements(null);
+		return (AbstractEntry[]) ((ITreeContentProvider) provider.getContentProvider()).getElements(null);
 	}
 }

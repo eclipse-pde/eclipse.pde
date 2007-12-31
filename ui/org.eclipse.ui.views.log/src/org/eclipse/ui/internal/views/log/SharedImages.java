@@ -14,11 +14,11 @@ package org.eclipse.ui.internal.views.log;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-
 public final class SharedImages {
-	
-	private SharedImages() {}
-	
+
+	private SharedImages() { // do nothing
+	}
+
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
@@ -26,13 +26,12 @@ public final class SharedImages {
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_EVENTS = ICONS_PATH + "eview16/"; //$NON-NLS-1$
 
-	
 	/* Event Details */
 	public static final String DESC_PREV_EVENT = PATH_EVENTS + "event_prev.gif"; //$NON-NLS-1$
 	public static final String DESC_NEXT_EVENT = PATH_EVENTS + "event_next.gif"; //$NON-NLS-1$	
-	
+
 	public static final String DESC_CLEAR = PATH_LCL + "clear.gif"; //$NON-NLS-1$
-	public static final String DESC_CLEAR_DISABLED = PATH_LCL_DISABLED +"clear.gif"; //$NON-NLS-1$
+	public static final String DESC_CLEAR_DISABLED = PATH_LCL_DISABLED + "clear.gif"; //$NON-NLS-1$
 	public static final String DESC_REMOVE_LOG = PATH_LCL + "remove.gif"; //$NON-NLS-1$
 	public static final String DESC_REMOVE_LOG_DISABLED = PATH_LCL_DISABLED + "remove.gif"; //$NON-NLS-1$
 	public static final String DESC_EXPORT = PATH_LCL + "export_log.gif"; //$NON-NLS-1$
@@ -47,14 +46,14 @@ public final class SharedImages {
 	public static final String DESC_PROPERTIES_DISABLED = PATH_LCL_DISABLED + "properties.gif"; //$NON-NLS-1$
 	public static final String DESC_READ_LOG = PATH_LCL + "restore_log.gif"; //$NON-NLS-1$
 	public static final String DESC_READ_LOG_DISABLED = PATH_LCL_DISABLED + "restore_log.gif"; //$NON-NLS-1$
-	
+
 	public static final String DESC_ERROR_ST_OBJ = PATH_OBJ + "error_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_ERROR_STACK_OBJ = PATH_OBJ + "error_stack.gif"; //$NON-NLS-1$
 	public static final String DESC_INFO_ST_OBJ = PATH_OBJ + "info_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_OK_ST_OBJ = PATH_OBJ + "ok_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_WARNING_ST_OBJ = PATH_OBJ + "warning_st_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_HIERARCHICAL_LAYOUT_OBJ = PATH_OBJ + "hierarchical.gif"; //$NON-NLS-1$
-	
+
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);
 	}
@@ -62,5 +61,5 @@ public final class SharedImages {
 	public static Image getImage(String key) {
 		return Activator.getDefault().getImageRegistry().get(key);
 	}
-	
+
 }

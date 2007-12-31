@@ -32,11 +32,11 @@ public class TailInputStream extends InputStream {
 		if (file.length() > fTail) {
 			fRaf.seek(file.length() - fTail);
 			// skip bytes until a new line to be sure we start from a beginnng of valid UTF-8 character
-			int c= read();
-			while(c!='\n' && c!='r' && c!=-1){
-				c=read();
+			int c = read();
+			while (c != '\n' && c != 'r' && c != -1) {
+				c = read();
 			}
-			
+
 		}
 	}
 

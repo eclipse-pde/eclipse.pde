@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
-public class EventDetailsDialogAction extends SelectionProviderAction{
+public class EventDetailsDialogAction extends SelectionProviderAction {
 
 	/**
 	 * The shell in which to open the property dialog
@@ -28,6 +28,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	private ISelectionProvider provider;
 	private EventDetailsDialog propertyDialog;
 	private Comparator comparator;
+
 	/**
 	 * Creates a new action for opening a property dialog
 	 * on the elements from the given selection provider
@@ -35,58 +36,59 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	 * @param provider - the selection provider whose elements
 	 * the property dialog will describe
 	 */
-	public EventDetailsDialogAction(Shell shell, ISelectionProvider provider){
-		super(provider, Messages.EventDetailsDialog_title); 
+	public EventDetailsDialogAction(Shell shell, ISelectionProvider provider) {
+		super(provider, Messages.EventDetailsDialog_title);
 		Assert.isNotNull(shell);
 		this.shell = shell;
 		this.provider = provider;
 		// setToolTipText
 		//WorkbenchHelp.setHelp
 	}
-	
-	public boolean resetSelection(byte sortType, int sortOrder){
+
+	public boolean resetSelection(byte sortType, int sortOrder) {
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
 		if (element == null)
 			return false;
-		if (propertyDialog != null && propertyDialog.isOpen()){
+		if (propertyDialog != null && propertyDialog.isOpen()) {
 			propertyDialog.resetSelection(element, sortType, sortOrder);
 			return true;
 		}
 		return false;
 	}
-	public void resetSelection(){
+
+	public void resetSelection() {
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if ((element == null) || (! (element instanceof LogEntry)))
+		if ((element == null) || (!(element instanceof LogEntry)))
 			return;
 		if (propertyDialog != null && propertyDialog.isOpen())
 			propertyDialog.resetSelection(element);
 	}
-	
-	public void resetDialogButtons(){
+
+	public void resetDialogButtons() {
 		if (propertyDialog != null && propertyDialog.isOpen())
 			propertyDialog.resetButtons();
 	}
-	
-	public void setComparator(Comparator comparator){
+
+	public void setComparator(Comparator comparator) {
 		this.comparator = comparator;
 		if (propertyDialog != null && propertyDialog.isOpen())
 			propertyDialog.setComparator(comparator);
 	}
-	
-	public void run(){
-		if (propertyDialog != null && propertyDialog.isOpen()){
+
+	public void run() {
+		if (propertyDialog != null && propertyDialog.isOpen()) {
 			resetSelection();
 			return;
 		}
-		
+
 		//get initial selection
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if ((element == null) || (! (element instanceof LogEntry)))
+		if ((element == null) || (!(element instanceof LogEntry)))
 			return;
-		
+
 		propertyDialog = new EventDetailsDialog(shell, element, provider, comparator);
 		propertyDialog.create();
-		propertyDialog.getShell().setText(Messages.EventDetailsDialog_title); 
+		propertyDialog.getShell().setText(Messages.EventDetailsDialog_title);
 		propertyDialog.open();
 	}
 }

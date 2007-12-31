@@ -11,23 +11,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import com.ibm.icu.text.SimpleDateFormat;
-
 public class LogEntry extends AbstractEntry {
-	
+
 	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
 	private static final SimpleDateFormat F_SDF = new SimpleDateFormat(F_DATE_FORMAT);
-	
+
 	private String pluginId;
 	private int severity;
 	private int code;
@@ -37,12 +35,13 @@ public class LogEntry extends AbstractEntry {
 	private String stack;
 	private LogSession session;
 
-	public LogEntry() {}
+	public LogEntry() { // do nothing
+	}
 
 	public LogSession getSession() {
 		if ((session == null) && (parent != null) && (parent instanceof LogEntry))
-			return ((LogEntry)parent).getSession();
-		
+			return ((LogEntry) parent).getSession();
+
 		return session;
 	}
 
@@ -53,6 +52,7 @@ public class LogEntry extends AbstractEntry {
 	public LogEntry(IStatus status) {
 		processStatus(status);
 	}
+
 	public int getSeverity() {
 		return severity;
 	}
@@ -60,36 +60,43 @@ public class LogEntry extends AbstractEntry {
 	public boolean isOK() {
 		return severity == IStatus.OK;
 	}
+
 	public int getCode() {
 		return code;
 	}
+
 	public String getPluginId() {
 		return pluginId;
 	}
+
 	public String getMessage() {
 		return message;
 	}
+
 	public String getStack() {
 		return stack;
 	}
+
 	public String getFormattedDate() {
 		if (fDateString == null)
 			fDateString = F_SDF.format(getDate());
 		return fDateString;
 	}
+
 	public Date getDate() {
 		if (fDate == null)
 			fDate = new Date(0); // unknown date - return epoch
 		return fDate;
 	}
+
 	public String getSeverityText() {
 		return getSeverityText(severity);
 	}
-	
+
 	public String toString() {
 		return getSeverityText();
 	}
-	
+
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
@@ -118,14 +125,13 @@ public class LogEntry extends AbstractEntry {
 		return "?"; //$NON-NLS-1$
 	}
 
-
 	void processEntry(String line) {
 		//!ENTRY <pluginID> <severity> <code> <date>
 		//!ENTRY <pluginID> <date> if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, " "); //$NON-NLS-1$
-		int tokenCount = stok.countTokens();		
+		int tokenCount = stok.countTokens();
 		boolean noSeverity = stok.countTokens() < 5;
-		
+
 		// no severity means it should be represented as OK
 		if (noSeverity) {
 			severity = 0;
@@ -135,12 +141,12 @@ public class LogEntry extends AbstractEntry {
 		for (int i = 0; i < tokenCount; i++) {
 			String token = stok.nextToken();
 			switch (i) {
-				case 0:
+				case 0 :
 					break;
-				case 1:
+				case 1 :
 					pluginId = token;
 					break;
-				case 2:
+				case 2 :
 					if (noSeverity) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
@@ -149,7 +155,7 @@ public class LogEntry extends AbstractEntry {
 						severity = parseInteger(token);
 					}
 					break;
-				case 3:
+				case 3 :
 					if (noSeverity) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
@@ -157,7 +163,7 @@ public class LogEntry extends AbstractEntry {
 					} else
 						code = parseInteger(token);
 					break;
-				default:
+				default :
 					if (dateBuffer.length() > 0)
 						dateBuffer.append(" "); //$NON-NLS-1$
 					dateBuffer.append(token);
@@ -169,30 +175,31 @@ public class LogEntry extends AbstractEntry {
 				fDate = date;
 				fDateString = F_SDF.format(fDate);
 			}
-		} catch (ParseException e) {}
+		} catch (ParseException e) { // do nothing
+		}
 	}
-	
+
 	int processSubEntry(String line) {
 		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
 		//!SUBENTRY  <depth> <pluginID> <date>if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, " "); //$NON-NLS-1$
-		int tokenCount = stok.countTokens();		
+		int tokenCount = stok.countTokens();
 		boolean byFrameWork = stok.countTokens() < 5;
-		
+
 		StringBuffer dateBuffer = new StringBuffer();
 		int depth = 0;
 		for (int i = 0; i < tokenCount; i++) {
 			String token = stok.nextToken();
 			switch (i) {
-				case 0:
+				case 0 :
 					break;
-				case 1:
+				case 1 :
 					depth = parseInteger(token);
 					break;
-				case 2:
+				case 2 :
 					pluginId = token;
 					break;
-				case 3:
+				case 3 :
 					if (byFrameWork) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
@@ -201,7 +208,7 @@ public class LogEntry extends AbstractEntry {
 						severity = parseInteger(token);
 					}
 					break;
-				case 4:
+				case 4 :
 					if (byFrameWork) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
@@ -209,7 +216,7 @@ public class LogEntry extends AbstractEntry {
 					} else
 						code = parseInteger(token);
 					break;
-				default:
+				default :
 					if (dateBuffer.length() > 0)
 						dateBuffer.append(" "); //$NON-NLS-1$
 					dateBuffer.append(token);
@@ -221,10 +228,11 @@ public class LogEntry extends AbstractEntry {
 				fDate = date;
 				fDateString = F_SDF.format(fDate);
 			}
-		} catch (ParseException e) {}
-		return depth;	
+		} catch (ParseException e) { // do nothing
+		}
+		return depth;
 	}
-	
+
 	private int parseInteger(String token) {
 		try {
 			return Integer.parseInt(token);
@@ -236,6 +244,7 @@ public class LogEntry extends AbstractEntry {
 	void setStack(String stack) {
 		this.stack = stack;
 	}
+
 	void setMessage(String message) {
 		this.message = message;
 	}
@@ -264,17 +273,17 @@ public class LogEntry extends AbstractEntry {
 			}
 		}
 	}
-	
+
 	public void write(PrintWriter writer) {
 		if (session != null)
 			writer.println(session.getSessionData());
 		writer.println(getSeverityText());
 		if (fDate != null)
 			writer.println(getDate());
-		
+
 		if (message != null)
 			writer.println(getMessage());
-	
+
 		if (stack != null) {
 			writer.println();
 			writer.println(stack);

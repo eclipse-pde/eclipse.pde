@@ -20,25 +20,32 @@ public class LogViewContentProvider implements ITreeContentProvider {
 	public LogViewContentProvider(LogView logView) {
 		this.logView = logView;
 	}
-	public void dispose() {
+
+	public void dispose() { // do nothing
 	}
+
 	public Object[] getChildren(Object element) {
 		return ((AbstractEntry) element).getChildren(element);
 	}
+
 	public Object[] getElements(Object element) {
 		return logView.getElements();
 	}
+
 	public Object getParent(Object element) {
 		if (element instanceof LogSession) {
 			return null;
 		}
 		return ((AbstractEntry) element).getParent(element);
 	}
+
 	public boolean hasChildren(Object element) {
 		return ((AbstractEntry) element).getChildren(element).length > 0;
 	}
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
+
 	public boolean isDeleted(Object element) {
 		return false;
 	}

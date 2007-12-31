@@ -67,7 +67,7 @@ public class Messages extends NLS {
 
 	public static String LogViewLabelProvider_Session;
 	public static String LogViewLabelProvider_truncatedMessage;
-	
+
 	public static String EventDetailsDialog_title;
 	public static String EventDetailsDialog_date;
 	public static String EventDetailsDialog_severity;
@@ -78,16 +78,15 @@ public class Messages extends NLS {
 	public static String EventDetailsDialog_previous;
 	public static String EventDetailsDialog_next;
 	public static String EventDetailsDialog_copy;
-	
+
 	public static String OpenLogDialog_title;
 	public static String OpenLogDialog_message;
 	public static String OpenLogDialog_cannotDisplay;
-	
-	private static final String BUNDLE_NAME = 
-		"org.eclipse.ui.internal.views.log.messages"; //$NON-NLS-1$
-	
+
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.log.messages"; //$NON-NLS-1$
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
+
 }

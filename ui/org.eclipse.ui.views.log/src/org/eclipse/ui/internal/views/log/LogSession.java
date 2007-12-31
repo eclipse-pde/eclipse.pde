@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Date;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Group of entries with additional Session data.
@@ -23,23 +22,23 @@ import com.ibm.icu.text.SimpleDateFormat;
 public class LogSession extends Group {
 	private String sessionData;
 	private Date date;
-	
+
 	public LogSession() {
 		super(Messages.LogViewLabelProvider_Session);
 	}
-	
+
 	public Date getDate() {
 		return date;
 	}
-	
+
 	public void setDate(String dateString) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 		try {
 			date = formatter.parse(dateString);
-		} catch (ParseException e) {
+		} catch (ParseException e) { // do nothing
 		}
 	}
-	
+
 	public String getSessionData() {
 		return sessionData;
 	}
@@ -47,14 +46,14 @@ public class LogSession extends Group {
 	void setSessionData(String data) {
 		this.sessionData = data;
 	}
-	
+
 	public void processLogLine(String line) {
 		// process "!SESSION <dateUnknownFormat> ----------------------------"
 		line = line.substring(9); // strip "!SESSION "
 		int delim = line.indexOf("----"); //$NON-NLS-1$ // single "-" may be in date, so take few for sure
 		if (delim == -1)
 			return;
-		
+
 		String dateBuffer = line.substring(0, delim).trim();
 		setDate(dateBuffer);
 	}

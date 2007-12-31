@@ -23,12 +23,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-public class LogViewLabelProvider
-	extends LabelProvider
-	implements ITableLabelProvider, ITableFontProvider {
-	
+public class LogViewLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider {
+
 	private static int MAX_LABEL_LENGTH = 200;
-	
+
 	private Image infoImage;
 	private Image okImage;
 	private Image errorImage;
@@ -38,7 +36,7 @@ public class LogViewLabelProvider
 	ArrayList consumers = new ArrayList();
 
 	private LogView logView;
-	
+
 	public LogViewLabelProvider(LogView logView) {
 		errorImage = SharedImages.getImage(SharedImages.DESC_ERROR_ST_OBJ);
 		warningImage = SharedImages.getImage(SharedImages.DESC_WARNING_ST_OBJ);
@@ -46,19 +44,21 @@ public class LogViewLabelProvider
 		okImage = SharedImages.getImage(SharedImages.DESC_OK_ST_OBJ);
 		errorWithStackImage = SharedImages.getImage(SharedImages.DESC_ERROR_STACK_OBJ);
 		hierarchicalImage = SharedImages.getImage(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ);
-		
+
 		this.logView = logView;
 	}
+
 	public void dispose() {
-		if (consumers.size() == 0){
+		if (consumers.size() == 0) {
 			super.dispose();
 		}
 	}
+
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (element instanceof Group) {
 			return (columnIndex == 0) ? hierarchicalImage : null;
 		}
-		
+
 		LogEntry entry = (LogEntry) element;
 		if (columnIndex == 0) {
 			switch (entry.getSeverity()) {
@@ -74,43 +74,43 @@ public class LogViewLabelProvider
 		}
 		return null;
 	}
-	
+
 	public String getColumnText(Object element, int columnIndex) {
 		if ((element instanceof LogSession) && (columnIndex == 2)) {
 			LogSession session = (LogSession) element;
 			if (session.getDate() == null)
 				return ""; //$NON-NLS-1$
-			
+
 			DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
 			return formatter.format(session.getDate());
 		}
-		
+
 		if ((element instanceof Group) && (columnIndex == 0)) {
 			return element.toString();
 		}
-		
+
 		if (element instanceof LogEntry) {
 			LogEntry entry = (LogEntry) element;
 			switch (columnIndex) {
-			case 0:
-				if (entry.getMessage() != null) {
-					String message = entry.getMessage();
-					if (message.length() > MAX_LABEL_LENGTH) {
-						String warning = Messages.LogViewLabelProvider_truncatedMessage;
-						StringBuffer sb = new StringBuffer(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
-						sb.append(warning);
-						return sb.toString();
+				case 0 :
+					if (entry.getMessage() != null) {
+						String message = entry.getMessage();
+						if (message.length() > MAX_LABEL_LENGTH) {
+							String warning = Messages.LogViewLabelProvider_truncatedMessage;
+							StringBuffer sb = new StringBuffer(message.substring(0, MAX_LABEL_LENGTH - warning.length()));
+							sb.append(warning);
+							return sb.toString();
+						}
+						return entry.getMessage();
 					}
-					return entry.getMessage();
-				}
-			case 1:
-				if (entry.getPluginId() != null)
-					return entry.getPluginId();
-			case 2:
-				return entry.getFormattedDate();
+				case 1 :
+					if (entry.getPluginId() != null)
+						return entry.getPluginId();
+				case 2 :
+					return entry.getFormattedDate();
 			}
 		}
-		
+
 		return ""; //$NON-NLS-1$
 	}
 
@@ -118,19 +118,19 @@ public class LogViewLabelProvider
 		if (!consumers.contains(consumer))
 			consumers.add(consumer);
 	}
-	
+
 	public void disconnect(Object consumer) {
 		consumers.remove(consumer);
 		if (consumers.size() == 0) {
 			dispose();
 		}
 	}
-	
+
 	public Font getFont(Object element, int columnIndex) {
 		if ((element instanceof LogSession) && (logView.isCurrentLogSession((LogSession) element))) {
 			return JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
 		}
-		
+
 		return null;
 	}
 }

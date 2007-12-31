@@ -19,13 +19,14 @@ import java.io.PrintWriter;
 public class Group extends AbstractEntry {
 
 	private String name;
-	
+
 	public Group(String name) {
 		this.name = name;
 	}
-	
-	public void write(PrintWriter writer) {}
-	
+
+	public void write(PrintWriter writer) { // do nothing
+	}
+
 	public String toString() {
 		return name;
 	}
