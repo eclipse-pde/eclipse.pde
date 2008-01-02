@@ -17,5 +17,5 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public interface ISpySection {
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event);
-	
+
 }

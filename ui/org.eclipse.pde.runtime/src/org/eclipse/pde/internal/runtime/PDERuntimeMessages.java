@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class PDERuntimeMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.runtime.pderuntimeresources";//$NON-NLS-1$
-	
+
 	public static String RegistryView_refresh_label;
 	public static String RegistryView_refresh_tooltip;
 	public static String RegistryView_collapseAll_label;
@@ -37,14 +37,14 @@ public class PDERuntimeMessages extends NLS {
 	public static String RegistryView_diagnoseAction_label;
 	public static String RegistryView_disableAction_label;
 	public static String RegistryView_no_unresolved_constraints;
-	
+
 	public static String MessageHelper_missing_optional_required_bundle;
 	public static String MessageHelper_missing_required_bundle;
 	public static String MessageHelper_missing_imported_package;
 	public static String MessageHelper_missing_host;
-	
+
 	public static String RegistryBrowserLabelProvider_nameIdBind;
-	
+
 	public static String SpyDialog_title;
 	public static String SpyDialog_close;
 	public static String SpyDialog_activeShell_title;
@@ -64,14 +64,13 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyDialog_activeDialogPageSection_desc;
 	public static String SpyDialog_activeHelpSection_title;
 	public static String SpyDialog_activeHelpSection_desc;
-	
+
 	public static String SpyFormToolkit_saveImageAs_title;
 	public static String SpyFormToolkit_copyQualifiedName;
 
 	public static String RegistryBrowser_showExtOnlyLabel;
 	public static String RegistryBrowser_plugins;
 	public static String RegistryBrowserLabelProvider_contributedBy;
-
 
 	static {
 		// load message values from bundle file

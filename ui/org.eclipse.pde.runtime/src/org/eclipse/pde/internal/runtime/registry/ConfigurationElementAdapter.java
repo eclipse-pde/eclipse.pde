@@ -16,14 +16,16 @@ public class ConfigurationElementAdapter extends ParentAdapter {
 
 	class ConfigurationAttribute implements IConfigurationAttribute {
 		private String fLabel;
+
 		public ConfigurationAttribute(String name, String value) {
 			fLabel = name + " = " + value; //$NON-NLS-1$
 		}
+
 		public String getLabel() {
 			return fLabel;
 		}
 	}
-	
+
 	public ConfigurationElementAdapter(Object object) {
 		super(object);
 	}

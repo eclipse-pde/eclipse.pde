@@ -23,16 +23,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ActiveShellSection implements ISpySection {
 
-	public void build(ScrolledForm form, SpyFormToolkit toolkit,
-			ExecutionEvent event) {
+	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if(object == null)
+		if (object == null)
 			return;
 		Class clazz = object.getClass();
 
-		Section section = toolkit.createSection(form.getBody(),
-				ExpandableComposite.TITLE_BAR);
+		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = 9;
 
 		section.setText(PDERuntimeMessages.SpyDialog_activeShell_title);
@@ -47,10 +45,7 @@ public class ActiveShellSection implements ISpySection {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>"); //$NON-NLS-1$
 
-		buffer.append(toolkit.createClassSection(
-				text,
-				PDERuntimeMessages.SpyDialog_activeShell_desc,
-				new Class[] { clazz }));
+		buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeShell_desc, new Class[] {clazz}));
 
 		buffer.append("</form>"); //$NON-NLS-1$
 		text.setText(buffer.toString(), true, false);

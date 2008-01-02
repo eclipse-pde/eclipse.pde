@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.runtime;
 
 public interface IHelpContextIds {
 	public static final String PREFIX = "org.eclipse.pde.doc.user" + "."; //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	public static final String REGISTRY_VIEW = PREFIX + "registry_view"; //$NON-NLS-1$
 
 }

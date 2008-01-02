@@ -12,29 +12,18 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.io.IOException;
 import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.OverlayIcon;
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
-	
+
 	private Image fPluginImage;
 	private Image fActivePluginImage;
 	private Image fUnresolvedPluginImage;
@@ -52,7 +41,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fLocationImage;
 	private Image fDisabledImage;
 	private TreeViewer fViewer;
-	
+
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
 		fViewer = viewer;
 		fPluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
@@ -67,33 +56,21 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fGenericAttrImage = PDERuntimePluginImages.DESC_ATTR_XML_OBJ.createImage();
 		fRuntimeImage = PDERuntimePluginImages.DESC_RUNTIME_OBJ.createImage();
 		fLocationImage = PDERuntimePluginImages.DESC_LOCATION.createImage();
-		
-		ImageDescriptor activePluginDesc =
-			new OverlayIcon(
-				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
-				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_RUN_CO }});
+
+		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
-		
-		ImageDescriptor disabledPluginDesc =
-			new OverlayIcon(
-				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
-				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_ERROR_CO }});
+
+		ImageDescriptor disabledPluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_ERROR_CO}});
 		fDisabledImage = disabledPluginDesc.createImage();
-		
-		ImageDescriptor unresolvedPluginDesc =
-			new OverlayIcon(
-				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
-				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_ERROR_CO }});
+
+		ImageDescriptor unresolvedPluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_ERROR_CO}});
 		fUnresolvedPluginImage = unresolvedPluginDesc.createImage();
-		
-		
-		ImageDescriptor exportedRequiresDesc = 
-			new OverlayIcon(
-					PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ,
-					new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_EXPORT_CO }});
+
+		ImageDescriptor exportedRequiresDesc = new OverlayIcon(PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_EXPORT_CO}});
 		fExpReqPluginImage = exportedRequiresDesc.createImage();
-		
+
 	}
+
 	public void dispose() {
 		fPluginImage.dispose();
 		fActivePluginImage.dispose();
@@ -112,77 +89,77 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fLocationImage.dispose();
 		fDisabledImage.dispose();
 	}
+
 	public Image getImage(Object element) {
 		if (element instanceof PluginObjectAdapter)
 			element = ((PluginObjectAdapter) element).getObject();
-		
+
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
-			
+
 			// check if bundle is disabled
 			PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
 			State state = plaformAdmin.getState(false);
-			
+
 			BundleDescription description = state.getBundle(bundle.getBundleId());
-			if((state.getDisabledInfos(description)).length > 0)
+			if ((state.getDisabledInfos(description)).length > 0)
 				return fDisabledImage;
 
-
 			switch (bundle.getState()) {
-			case Bundle.ACTIVE:
-				return fActivePluginImage;
-			case Bundle.UNINSTALLED:
-				return fUnresolvedPluginImage;
-			case Bundle.INSTALLED:
-				if((state.getDisabledInfos(description)).length > 0)
+				case Bundle.ACTIVE :
+					return fActivePluginImage;
+				case Bundle.UNINSTALLED :
 					return fUnresolvedPluginImage;
-			default:
-				return fPluginImage;
+				case Bundle.INSTALLED :
+					if ((state.getDisabledInfos(description)).length > 0)
+						return fUnresolvedPluginImage;
+				default :
+					return fPluginImage;
 			}
 		}
 		if (element instanceof IBundleFolder) {
 			int id = ((IBundleFolder) element).getFolderId();
 			switch (id) {
-				case IBundleFolder.F_EXTENSIONS:
+				case IBundleFolder.F_EXTENSIONS :
 					return fExtensionsImage;
-				case IBundleFolder.F_EXTENSION_POINTS:
+				case IBundleFolder.F_EXTENSION_POINTS :
 					return fExtensionPointsImage;
-				case IBundleFolder.F_IMPORTS:
+				case IBundleFolder.F_IMPORTS :
 					return fRequiresImage;
-				case IBundleFolder.F_LIBRARIES:
+				case IBundleFolder.F_LIBRARIES :
 					return fRuntimeImage;
-				case IBundleFolder.F_LOCATION:
+				case IBundleFolder.F_LOCATION :
 					return fLocationImage;
 			}
 			return null;
 		}
 		if (element instanceof IExtension)
 			return fExtensionImage;
-		
+
 		if (element instanceof IExtensionPoint)
 			return fExtensionPointImage;
-		
+
 		if (element instanceof IBundlePrerequisite)
-			return ((IBundlePrerequisite)element).isExported() ?
-					fExpReqPluginImage : fReqPluginImage;
-		
+			return ((IBundlePrerequisite) element).isExported() ? fExpReqPluginImage : fReqPluginImage;
+
 		if (element instanceof IBundleLibrary)
 			return fLibraryImage;
-		
+
 		if (element instanceof IConfigurationElement)
 			return fGenericTagImage;
-		
+
 		if (element instanceof IConfigurationAttribute)
 			return fGenericAttrImage;
-		
+
 		return null;
 	}
+
 	public String getText(Object element) {
 		if (element instanceof PluginObjectAdapter)
 			element = ((PluginObjectAdapter) element).getObject();
 		if (element instanceof Bundle) {
-			String id = ((Bundle)element).getSymbolicName();
-			String version = (String)((Bundle)element).getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+			String id = ((Bundle) element).getSymbolicName();
+			String version = (String) ((Bundle) element).getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 			if (version == null)
 				return id;
 			return id + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -197,12 +174,12 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return PDERuntimeMessages.RegistryView_folders_extensionPoints;
 				case IBundleFolder.F_EXTENSIONS :
 					return PDERuntimeMessages.RegistryView_folders_extensions;
-				case IBundleFolder.F_LOCATION:
+				case IBundleFolder.F_LOCATION :
 					Bundle bundle = ((IBundleFolder) element).getBundle();
 					URL bundleEntry = bundle.getEntry("/"); //$NON-NLS-1$
 					try {
 						bundleEntry = FileLocator.resolve(bundleEntry);
-					} catch (IOException e) {
+					} catch (IOException e) { // do nothing
 					}
 					IPath path = new Path(bundleEntry.getFile());
 					String pathString = path.removeTrailingSeparator().toOSString();
@@ -214,7 +191,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 		}
 		if (element instanceof IExtension) {
-			if (((RegistryBrowserContentProvider)fViewer.getContentProvider()).isInExtensionSet) {
+			if (((RegistryBrowserContentProvider) fViewer.getContentProvider()).isInExtensionSet) {
 				String name = ((IExtension) element).getLabel();
 				String id = ((IExtension) element).getExtensionPointUniqueIdentifier();
 				if (name != null && name.length() > 0)
@@ -224,38 +201,38 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 
 			String contributor = ((IExtension) element).getNamespaceIdentifier();
 			return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor);
-			
+
 		}
 		if (element instanceof IExtensionPoint) {
-			String id = ((IExtensionPoint)element).getUniqueIdentifier();
-			String name = ((IExtensionPoint)element).getLabel();
+			String id = ((IExtensionPoint) element).getUniqueIdentifier();
+			String name = ((IExtensionPoint) element).getLabel();
 			if (name != null && name.length() > 0)
 				return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
 			return id;
 		}
 		if (element instanceof IBundlePrerequisite)
 			return ((IBundlePrerequisite) element).getLabel();
-		
+
 		if (element instanceof IBundleLibrary)
-			return ((IBundleLibrary)element).getLibrary();
-		
+			return ((IBundleLibrary) element).getLibrary();
+
 		if (element instanceof IConfigurationElement) {
 			String label = ((IConfigurationElement) element).getAttribute("label"); //$NON-NLS-1$
 			if (label == null)
 				label = ((IConfigurationElement) element).getName();
-			
+
 			if (label == null)
 				label = ((IConfigurationElement) element).getAttribute("name"); //$NON-NLS-1$
-			
-			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null){ //$NON-NLS-1$
+
+			if (label == null && ((IConfigurationElement) element).getAttribute("id") != null) { //$NON-NLS-1$
 				String[] labelSplit = ((IConfigurationElement) element).getAttribute("id").split("\\."); //$NON-NLS-1$ //$NON-NLS-2$
-				label = labelSplit.length == 0 ? null: labelSplit[labelSplit.length-1];
-			} 
+				label = labelSplit.length == 0 ? null : labelSplit[labelSplit.length - 1];
+			}
 			return label;
 		}
 		if (element instanceof IConfigurationAttribute)
-			return ((IConfigurationAttribute)element).getLabel();
-		
+			return ((IConfigurationAttribute) element).getLabel();
+
 		return super.getText(element);
 	}
 }

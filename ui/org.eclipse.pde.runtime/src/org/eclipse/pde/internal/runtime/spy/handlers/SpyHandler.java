@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.runtime.spy.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -21,15 +20,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
 public class SpyHandler extends AbstractHandler {
 
 	private SpyDialog INSTANCE = null;
-	
-	public SpyHandler() {}
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {		
-		if(event != null) {
+	public SpyHandler() { // do nothing
+	}
+
+	public Object execute(ExecutionEvent event) {
+		if (event != null) {
 			if (INSTANCE != null && INSTANCE.getShell() != null && !INSTANCE.getShell().isDisposed()) {
 				INSTANCE.close();
 			}
-		    Shell shell = HandlerUtil.getActiveShell(event);
+			Shell shell = HandlerUtil.getActiveShell(event);
 			SpyDialog dialog = new SpyDialog(shell, event, shell.getDisplay().getCursorLocation());
 			INSTANCE = dialog;
 			dialog.create();
@@ -37,5 +37,5 @@ public class SpyHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
+
 }

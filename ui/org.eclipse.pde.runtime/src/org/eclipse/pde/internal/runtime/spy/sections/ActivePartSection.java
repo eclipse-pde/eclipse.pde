@@ -39,39 +39,31 @@ import org.osgi.framework.Bundle;
 
 public class ActivePartSection implements ISpySection {
 
-	public void build(ScrolledForm form, SpyFormToolkit toolkit,
-			ExecutionEvent event) {
+	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		if(window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
+		if (window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
 			return;
 
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		String partType = part instanceof IEditorPart ? "editor" : "view"; //$NON-NLS-1$ //$NON-NLS-2$
-		Section section = toolkit.createSection(form.getBody(),
-				ExpandableComposite.TITLE_BAR);
+		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 
-		section.setText(NLS.bind(
-				PDERuntimeMessages.SpyDialog_activePart_title, 
-				part.getSite().getRegisteredName()));
-		
+		section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activePart_title, part.getSite().getRegisteredName()));
+
 		FormText text = toolkit.createFormText(section, true);
 		section.setClient(text);
 		TableWrapData td = new TableWrapData();
 		td.align = TableWrapData.FILL;
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
-		
+
 		toolkit.createImageAction(section, part.getTitleImage());
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>"); //$NON-NLS-1$
 
 		// time to analyze the active part
-		buffer.append(
-				toolkit.createClassSection(
-						text,
-						NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
-						new Class[] { part.getClass() }));
+		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType), new Class[] {part.getClass()}));
 
 		// time to analyze the contributing plug-in
 		final Bundle bundle = Platform.getBundle(part.getSite().getPluginId());
@@ -88,8 +80,7 @@ public class ActivePartSection implements ISpySection {
 			if (list != null && list.size() > 0) {
 				Set menuIds = new LinkedHashSet();
 				for (int i = 0; i < list.size(); i++) {
-					PopupMenuExtender extender = (PopupMenuExtender) list
-					.get(i);
+					PopupMenuExtender extender = (PopupMenuExtender) list.get(i);
 					menuIds.addAll(extender.getMenuIds());
 				}
 				buffer.append("<p>"); //$NON-NLS-1$

@@ -30,22 +30,20 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 public class ActiveWizardSection implements ISpySection {
 
-	public void build(ScrolledForm form, SpyFormToolkit toolkit,
-			ExecutionEvent event) {
+	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if(object == null)
+		if (object == null)
 			return;
 		Class clazz = object.getClass();
 
-		if(object instanceof WizardDialog) {
+		if (object instanceof WizardDialog) {
 			WizardDialog dialog = (WizardDialog) object;
 			IWizardPage page = dialog.getCurrentPage();
 			IWizard wizard = page.getWizard();
 			clazz = wizard.getClass();
 
-			Section section = toolkit.createSection(form.getBody(),
-					ExpandableComposite.TITLE_BAR);
+			Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 			section.clientVerticalSpacing = 9;
 
 			// the active wizard
@@ -58,15 +56,11 @@ public class ActiveWizardSection implements ISpySection {
 
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<form>"); //$NON-NLS-1$
-			section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeWizard_title, wizard.getWindowTitle()));			
+			section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeWizard_title, wizard.getWindowTitle()));
 
-			buffer.append(toolkit.createClassSection(
-					text,
-					PDERuntimeMessages.SpyDialog_activeWizard_desc,
-					new Class[] { clazz }));				
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeWizard_desc, new Class[] {clazz}));
 
-			PackageAdmin admin = 
-				PDERuntimePlugin.getDefault().getPackageAdmin();
+			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
 			Bundle bundle = admin.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "wizard", buffer, text); //$NON-NLS-1$
 			buffer.append("</form>"); //$NON-NLS-1$

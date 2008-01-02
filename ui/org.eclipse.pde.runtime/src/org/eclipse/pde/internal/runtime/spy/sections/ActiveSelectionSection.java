@@ -27,7 +27,7 @@ public class ActiveSelectionSection implements ISpySection {
 
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		if(window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
+		if (window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
 			return;
 
 		// analyze the selection
@@ -38,8 +38,7 @@ public class ActiveSelectionSection implements ISpySection {
 			if (object != null) { // check for a valid class
 				Class clazz = object.getClass();
 
-				Section section = toolkit.createSection(form.getBody(),
-						ExpandableComposite.TITLE_BAR);
+				Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 				section.clientVerticalSpacing = 9;
 				section.setText(PDERuntimeMessages.SpyDialog_activeSelection_title);
 				FormText text = toolkit.createFormText(section, true);
@@ -53,10 +52,7 @@ public class ActiveSelectionSection implements ISpySection {
 				// time to analyze the selection
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("<form>"); //$NON-NLS-1$
-				buffer.append(toolkit.createClassSection(
-						text,
-						PDERuntimeMessages.SpyDialog_activeSelection_desc, 
-						new Class[] { clazz }));
+				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeSelection_desc, new Class[] {clazz}));
 
 				Class[] interfaces = clazz.getInterfaces();
 				buffer.append(toolkit.createInterfaceSection(text, PDERuntimeMessages.SpyDialog_activeSelectionInterfaces_desc, interfaces));

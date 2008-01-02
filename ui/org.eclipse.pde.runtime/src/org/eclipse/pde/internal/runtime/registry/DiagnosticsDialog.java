@@ -20,8 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DiagnosticsDialog extends ErrorDialog {
 
-	public DiagnosticsDialog(Shell parentShell, String dialogTitle,
-			String message, IStatus status, int displayMask) {
+	public DiagnosticsDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask) {
 		super(parentShell, dialogTitle, message, status, displayMask);
 	}
 
@@ -37,8 +36,7 @@ public class DiagnosticsDialog extends ErrorDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-				true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
 
 }

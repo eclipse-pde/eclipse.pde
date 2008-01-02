@@ -19,7 +19,10 @@ public interface IBundleFolder extends IAdaptable {
 	public static final int F_EXTENSION_POINTS = 2;
 	public static final int F_IMPORTS = 3;
 	public static final int F_LIBRARIES = 4;
+
 	public Object[] getChildren();
+
 	int getFolderId();
+
 	public Bundle getBundle();
 }

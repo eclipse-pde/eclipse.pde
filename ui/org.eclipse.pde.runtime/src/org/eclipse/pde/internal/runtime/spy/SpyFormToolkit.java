@@ -54,15 +54,15 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Bundle;
 
 public class SpyFormToolkit extends FormToolkit {
-	
+
 	private static final String CLASS_PROTOCOL_PREFIX = "class://"; //$NON-NLS-1$
-	
+
 	private static final String BUNDLE_PROTOCOL_PREFIX = "bundle://"; //$NON-NLS-1$
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
-		
+
 		private SpyDialog dialog;
-		
+
 		public SpyHyperlinkAdapter(SpyDialog dialog) {
 			this.dialog = dialog;
 		}
@@ -81,7 +81,7 @@ public class SpyFormToolkit extends FormToolkit {
 			}
 		}
 	}
-	
+
 	private class SaveImageAction extends Action {
 
 		private Image image;
@@ -93,8 +93,8 @@ public class SpyFormToolkit extends FormToolkit {
 		public void run() {
 			FileDialog fileChooser = new FileDialog(PDERuntimePlugin.getActiveWorkbenchShell(), SWT.SAVE);
 			fileChooser.setFileName("image"); //$NON-NLS-1$
-			fileChooser.setFilterExtensions(new String[] { "*.png" }); //$NON-NLS-1$
-			fileChooser.setFilterNames(new String[] { "PNG (*.png)" }); //$NON-NLS-1$
+			fileChooser.setFilterExtensions(new String[] {"*.png"}); //$NON-NLS-1$
+			fileChooser.setFilterNames(new String[] {"PNG (*.png)"}); //$NON-NLS-1$
 			String filename = fileChooser.open();
 			if (filename == null)
 				return;
@@ -104,7 +104,7 @@ public class SpyFormToolkit extends FormToolkit {
 				return;
 			}
 			ImageLoader loader = new ImageLoader();
-			loader.data = new ImageData[] { image.getImageData() };
+			loader.data = new ImageData[] {image.getImageData()};
 			loader.save(filename, filetype);
 		}
 
@@ -114,23 +114,23 @@ public class SpyFormToolkit extends FormToolkit {
 				return SWT.IMAGE_GIF;
 			if (ext.equalsIgnoreCase("ico")) //$NON-NLS-1$
 				return SWT.IMAGE_ICO;
-			if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg"))  //$NON-NLS-1$//$NON-NLS-2$
+			if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) //$NON-NLS-1$//$NON-NLS-2$
 				return SWT.IMAGE_JPEG;
 			if (ext.equalsIgnoreCase("png")) //$NON-NLS-1$
 				return SWT.IMAGE_PNG;
 			return SWT.IMAGE_UNDEFINED;
 		}
 	}
-	
+
 	private Map bundleClassByName = new HashMap();
 	private SpyDialog dialog;
 	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
-	
+
 	public SpyFormToolkit(SpyDialog dialog) {
 		super(Display.getDefault());
 		this.dialog = dialog;
 	}
-	
+
 	public FormText createFormText(Composite parent, boolean trackFocus) {
 		FormText text = super.createFormText(parent, trackFocus);
 		if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
@@ -143,20 +143,14 @@ public class SpyFormToolkit extends FormToolkit {
 	private void addCopyQNameMenuItem(final FormText formText) {
 		Menu menu = formText.getMenu();
 		final MenuItem copyQNameItem = new MenuItem(menu, SWT.PUSH);
-		copyQNameItem.setImage(
-				PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_COPY_QNAME));
-		copyQNameItem.setText(
-				PDERuntimeMessages.SpyFormToolkit_copyQualifiedName);
+		copyQNameItem.setImage(PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_COPY_QNAME));
+		copyQNameItem.setText(PDERuntimeMessages.SpyFormToolkit_copyQualifiedName);
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget == copyQNameItem) {
 					Clipboard clipboard = new Clipboard(formText.getDisplay());
-					clipboard.setContents(
-							new Object[] { ((String) formText
-							.getSelectedLinkHref())
-							.substring(CLASS_PROTOCOL_PREFIX.length()) },
-							new Transfer[] { TextTransfer.getInstance() });
+					clipboard.setContents(new Object[] {((String) formText.getSelectedLinkHref()).substring(CLASS_PROTOCOL_PREFIX.length())}, new Transfer[] {TextTransfer.getInstance()});
 				}
 			}
 		};
@@ -164,19 +158,18 @@ public class SpyFormToolkit extends FormToolkit {
 		menu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {
 				String href = (String) formText.getSelectedLinkHref();
-				copyQNameItem.setEnabled(href != null
-						&& href.startsWith(CLASS_PROTOCOL_PREFIX));
+				copyQNameItem.setEnabled(href != null && href.startsWith(CLASS_PROTOCOL_PREFIX));
 			}
 		});
 	}
-	
+
 	public String createInterfaceSection(FormText text, String title, Class[] clazzes) {
 		StringBuffer buffer = new StringBuffer();
-		if(clazzes.length > 0) {
+		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for(int i = 0; i < clazzes.length; i++) {
+			for (int i = 0; i < clazzes.length; i++) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"interface\">"); //$NON-NLS-1$
 				createClassReference(buffer, clazzes[i]);
 				buffer.append("</li>"); //$NON-NLS-1$
@@ -186,82 +179,78 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 		return buffer.toString();
 	}
-	
+
 	public String createClassSection(FormText text, String title, Class[] clazzes) {
 		StringBuffer buffer = new StringBuffer();
-		if(clazzes.length > 0) {
+		if (clazzes.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for(int i = 0; i < clazzes.length; i++) {
+			for (int i = 0; i < clazzes.length; i++) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"class\">"); //$NON-NLS-1$
 				createClassReference(buffer, clazzes[i]);
-			    buffer.append("</li>"); //$NON-NLS-1$
+				buffer.append("</li>"); //$NON-NLS-1$
 			}
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
 			text.setImage("class", image); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
-	
+
 	public String createIdentifierSection(FormText text, String title, String[] ids) {
 		StringBuffer buffer = new StringBuffer();
-		if(ids.length > 0) {
+		if (ids.length > 0) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(title);
 			buffer.append("</p>"); //$NON-NLS-1$
-			for(int i = 0; i < ids.length; i++) {
+			for (int i = 0; i < ids.length; i++) {
 				buffer.append("<li bindent=\"20\" style=\"image\" value=\"id\">"); //$NON-NLS-1$
 				buffer.append(ids[i]);
-			    buffer.append("</li>"); //$NON-NLS-1$
+				buffer.append("</li>"); //$NON-NLS-1$
 			}
 			Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_ID_OBJ);
 			text.setImage("id", image); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
-	
+
 	public String createHelpIdentifierSection(Widget widget) {
 		return createHelpIdentifierSection(widget.getData(HELP_KEY));
 	}
-	
+
 	public String createHelpIdentifierSection(IContext context) {
 		if (context instanceof Context)
-			return createHelpIdentifierSection(((Context)context).getId());
+			return createHelpIdentifierSection(((Context) context).getId());
 		return new String();
 	}
-	
+
 	private String createHelpIdentifierSection(Object help) {
 		StringBuffer buffer = new StringBuffer();
-		if(help != null) {
+		if (help != null) {
 			buffer.append("<li bindent=\"20\" style=\"image\" value=\"contextid\">"); //$NON-NLS-1$
 			buffer.append(help);
-			buffer.append("</li>");  //$NON-NLS-1$
+			buffer.append("</li>"); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
-	
+
 	private void createClassReference(StringBuffer buffer, Class clazz) {
-		Bundle bundle = 
-			PDERuntimePlugin.HAS_IDE_BUNDLES ? PDERuntimePlugin.getDefault().getPackageAdmin().getBundle(clazz) : null;
-			if (bundle != null) {
-				bundleClassByName.put(clazz.getName(),
-						bundle);
-				buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
-						clazz.getName()).append("\">") //$NON-NLS-1$
-						.append(getSimpleName(clazz)).append(
-						"</a>"); //$NON-NLS-1$
-			} else {
-				buffer.append(clazz.getName());
-			}
+		Bundle bundle = PDERuntimePlugin.HAS_IDE_BUNDLES ? PDERuntimePlugin.getDefault().getPackageAdmin().getBundle(clazz) : null;
+		if (bundle != null) {
+			bundleClassByName.put(clazz.getName(), bundle);
+			buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
+					clazz.getName()).append("\">") //$NON-NLS-1$
+					.append(getSimpleName(clazz)).append("</a>"); //$NON-NLS-1$
+		} else {
+			buffer.append(clazz.getName());
+		}
 	}
-	
+
 	// TODO refactor me, I'm ugly
 	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuffer buffer, FormText text) {
 		if (bundle != null) {
-			String version = (String) (bundle.getHeaders()
-					.get(org.osgi.framework.Constants.BUNDLE_VERSION));
-			
+			String version = (String) (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
+
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(PDERuntimeMessages.SpyDialog_contributingPluginId_title);
 			buffer.append("</p>"); //$NON-NLS-1$
@@ -280,10 +269,10 @@ public class SpyFormToolkit extends FormToolkit {
 				buffer.append("</a>"); //$NON-NLS-1$
 			}
 			buffer.append("</li>"); //$NON-NLS-1$
-	
+
 			Image pluginImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_PLUGIN_OBJ);
 			text.setImage("plugin", pluginImage); //$NON-NLS-1$
-	
+
 			if (objectId != null) {
 				buffer.append("<p>"); //$NON-NLS-1$
 				buffer.append(NLS.bind(PDERuntimeMessages.SpyDialog_contributingPluginId_desc, objectType));
@@ -299,14 +288,14 @@ public class SpyFormToolkit extends FormToolkit {
 		String fullName = clazz.getName();
 		int index = fullName.lastIndexOf('.');
 		String name = fullName.substring(index + 1, fullName.length());
-		if(name != null)
+		if (name != null)
 			return name;
 		return fullName;
 	}
-	
+
 	private ToolBarManager createSectionToolbar(Section section) {
 		Object object = section.getData("toolbarmanager"); //$NON-NLS-1$
-		if(object instanceof ToolBarManager) {
+		if (object instanceof ToolBarManager) {
 			return (ToolBarManager) object;
 		}
 		ToolBarManager manager = new ToolBarManager(SWT.FLAT);
@@ -316,8 +305,7 @@ public class SpyFormToolkit extends FormToolkit {
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
@@ -328,7 +316,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	public void createImageAction(Section section, Image image) {
-		if(image == null)
+		if (image == null)
 			return;
 		ToolBarManager manager = createSectionToolbar(section);
 		SaveImageAction action = new SaveImageAction(image);
@@ -337,5 +325,5 @@ public class SpyFormToolkit extends FormToolkit {
 		manager.add(action);
 		manager.update(true);
 	}
-	
+
 }

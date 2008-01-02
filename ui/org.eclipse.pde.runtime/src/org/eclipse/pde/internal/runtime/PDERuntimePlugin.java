@@ -11,11 +11,7 @@
 package org.eclipse.pde.internal.runtime;
 
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.widgets.Shell;
@@ -28,18 +24,17 @@ import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
-	
+
 	public static final String ID = "org.eclipse.pde.runtime"; //$NON-NLS-1$
-	
+
 	private static PDERuntimePlugin inst;
 	private BundleContext fContext;
 	private ServiceTracker packageAdminTracker;
 	private ServiceTracker platformAdminTracker;
-	
+
 	private static boolean isBundleAvailable(String bundleID) {
 		Bundle bundle = Platform.getBundle(bundleID);
-		return bundle != null
-				&& (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0;
+		return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0;
 	}
 
 	public static final boolean HAS_IDE_BUNDLES;
@@ -52,73 +47,75 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 					&& isBundleAvailable("org.eclipse.help") //$NON-NLS-1$
 					&& isBundleAvailable("org.eclipse.pde.ui") //$NON-NLS-1$
 					&& isBundleAvailable("org.eclipse.jdt.ui"); //$NON-NLS-1$
-		} catch (Throwable exception) {}
+		} catch (Throwable exception) { // do nothing
+		}
 		HAS_IDE_BUNDLES = result;
 	}
 
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
-	
+
 	public static Shell getActiveWorkbenchShell() {
 		return getActiveWorkbenchWindow().getShell();
 	}
-	
+
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	public PackageAdmin getPackageAdmin() {
 		if (packageAdminTracker == null) {
 			return null;
 		}
 		return (PackageAdmin) packageAdminTracker.getService();
 	}
-	
+
 	public PlatformAdmin getPlatformAdmin() {
 		if (platformAdminTracker == null) {
 			return null;
 		}
 		return (PlatformAdmin) platformAdminTracker.getService();
 	}
-	
+
 	public static PDERuntimePlugin getDefault() {
 		return inst;
 	}
-	
+
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
 	}
-	
+
 	public PDERuntimePlugin() {
 		inst = this;
 	}
-	
+
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fContext = context;
-		
+
 		packageAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 		packageAdminTracker.open();
-		
+
 		platformAdminTracker = new ServiceTracker(context, PlatformAdmin.class.getName(), null);
 		platformAdminTracker.open();
 	}
-	
+
 	public BundleContext getBundleContext() {
 		return this.fContext;
 	}
-	
+
 	public State getState() {
 		return getPlatformAdmin().getState(false);
 	}
-	
+
 	public static void log(Throwable e) {
 		if (e instanceof InvocationTargetException)
 			e = ((InvocationTargetException) e).getTargetException();
@@ -126,17 +123,12 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
 		} else if (e.getMessage() != null) {
-			status = new Status(
-					IStatus.ERROR,
-					ID,
-					IStatus.OK,
-					e.getMessage(),
-					e);
+			status = new Status(IStatus.ERROR, ID, IStatus.OK, e.getMessage(), e);
 		}
-		if(status != null)
+		if (status != null)
 			getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * This method is called when the plug-in is stopped
 	 */

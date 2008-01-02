@@ -17,10 +17,7 @@ package org.eclipse.pde.internal.runtime.spy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -33,19 +30,18 @@ import org.eclipse.ui.PartInitException;
 public class SpyIDEUtil {
 	public static void openClass(String pluginId, String clazz) {
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
-		IResource resource = model != null ? model.getUnderlyingResource()
-				: null;
+		IResource resource = model != null ? model.getUnderlyingResource() : null;
 		IJavaProject project = null;
 		if (resource != null) { // project is open in workspace
 			project = JavaCore.create(resource.getProject());
 		} else {
-			SearchablePluginsManager manager = PDECore.getDefault()
-					.getSearchablePluginsManager();
+			SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 			try {
 				manager.createProxyProject(new NullProgressMonitor());
-				manager.addToJavaSearch(new IPluginModelBase[] { model });
+				manager.addToJavaSearch(new IPluginModelBase[] {model});
 				project = manager.getProxyProject();
-			} catch (CoreException e) {}
+			} catch (CoreException e) {
+			}
 		}
 		if (project != null)
 			openInEditor(project, clazz);
@@ -61,9 +57,9 @@ public class SpyIDEUtil {
 			PDERuntimePlugin.log(e);
 		}
 	}
-	
+
 	public static void openBundleManifest(String bundleID) {
 		ManifestEditor.openPluginEditor(bundleID);
 	}
-	
+
 }
