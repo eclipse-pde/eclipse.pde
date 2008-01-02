@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,38 +127,40 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 				final TreeItem item = (TreeItem) e.item;
 				if (!isEditable(item))
 					return;
-
-				final Spinner spinner = new Spinner(tree, SWT.BORDER);
-				spinner.setMinimum(0);
-				String level = item.getText(1);
-				int defaultLevel =  level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
-				spinner.setSelection(defaultLevel);
-				spinner.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						if (item.getChecked()) {
-							int selection = spinner.getSelection();
-							item.setText(1, selection == 0 
-												? "default"  //$NON-NLS-1$
-												: Integer.toString(selection));
-							fTab.updateLaunchConfigurationDialog();
+				
+				if (!isFragment(item)){ // only display editing controls if we're not a fragment
+					final Spinner spinner = new Spinner(tree, SWT.BORDER);
+					spinner.setMinimum(0);
+					String level = item.getText(1);
+					int defaultLevel =  level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+					spinner.setSelection(defaultLevel);
+					spinner.addModifyListener(new ModifyListener() {
+						public void modifyText(ModifyEvent e) {
+							if (item.getChecked()) {
+								int selection = spinner.getSelection();
+								item.setText(1, selection == 0 
+													? "default"  //$NON-NLS-1$
+													: Integer.toString(selection));
+								fTab.updateLaunchConfigurationDialog();
+							}
 						}
-					}
-				});
-				levelColumnEditor.setEditor(spinner, item, 1);
-
-				final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
-				combo.setItems(new String[] { "default", Boolean.toString(true), Boolean.toString(false) }); //$NON-NLS-1$
-				combo.setText(item.getText(2));
-				combo.pack();
-				combo.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						if (item.getChecked()) {
-							item.setText(2, combo.getText());
-							fTab.updateLaunchConfigurationDialog();
+					});
+					levelColumnEditor.setEditor(spinner, item, 1);
+					
+					final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
+					combo.setItems(new String[] { "default", Boolean.toString(true), Boolean.toString(false) }); //$NON-NLS-1$
+					combo.setText(item.getText(2));
+					combo.pack();
+					combo.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							if (item.getChecked()) {
+								item.setText(2, combo.getText());
+								fTab.updateLaunchConfigurationDialog();
+							}
 						}
-					}
-				});
-				autoColumnEditor.setEditor(combo, item, 2);
+					});
+					autoColumnEditor.setEditor(combo, item, 2);
+				}
 
 			}
 		});			
@@ -170,6 +172,14 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			IPluginModelBase model = (IPluginModelBase)obj;
 			if (!"org.eclipse.osgi".equals(model.getPluginBase().getId())) //$NON-NLS-1$
 				return fPluginTreeViewer.getChecked(model);
+		}
+		return false;
+	}
+	
+	private boolean isFragment(TreeItem item) {
+		Object obj = item.getData();
+		if (obj instanceof IPluginModelBase) {
+			return ((IPluginModelBase)obj).isFragmentModel();
 		}
 		return false;
 	}
@@ -327,7 +337,11 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			TreeItem item = (TreeItem)widget;
 			int index = value == null ? -1 : value.indexOf(':');
 			item.setText(1, index == -1 ? "" : value.substring(0, index)); //$NON-NLS-1$
-			item.setText(2, index == -1 ? "" : value.substring(index + 1)); //$NON-NLS-1$
+			if (model.isFragmentModel()){
+				item.setText(2, "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				item.setText(2, index == -1 ? "" : value.substring(index + 1)); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -344,7 +358,9 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
 			if (!"default".equals(item.getText(1))) //$NON-NLS-1$
 				item.setText(1, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (!"default".equals(item.getText(2))) //$NON-NLS-1$
+			if (model.isFragmentModel())
+				item.setText(2, "false"); //$NON-NLS-1$
+			else if (!"default".equals(item.getText(2))) //$NON-NLS-1$
 				item.setText(2, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			if (item.getText(1).length() > 0)
