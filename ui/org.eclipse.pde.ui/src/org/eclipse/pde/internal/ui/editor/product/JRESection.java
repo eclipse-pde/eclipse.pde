@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -53,8 +53,6 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import com.ibm.icu.text.MessageFormat;
-
 public class JRESection extends PDESection {
 
 	private Button fJRERadioButton;
@@ -63,7 +61,7 @@ public class JRESection extends PDESection {
 	private Button fExecutionEnvironmentsButton;
 	private ComboPart fJREsCombo;
 	private ComboPart fEEsCombo;
-	private ArrayList fEEChoices;
+	private TreeSet fEEChoices;
 	private boolean fBlockChanges;
 
 	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -90,6 +88,7 @@ public class JRESection extends PDESection {
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
@@ -147,7 +146,7 @@ public class JRESection extends PDESection {
 		fEERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				setEE(fEEsCombo.getSelectionIndex());
+				setEE(fEEsCombo.getSelection());
 			}
 		});
 
@@ -158,7 +157,7 @@ public class JRESection extends PDESection {
 		fEEsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if(!fBlockChanges)
-					setEE(fEEsCombo.getSelectionIndex());
+					setEE(fEEsCombo.getSelection());
 			}
 		});
 		
@@ -180,13 +179,10 @@ public class JRESection extends PDESection {
 		getProductModel().addModelChangedListener(this);		
 	}
 	
-	private void setEE(int selectionIndex){
-		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()){
-			IExecutionEnvironment ee = (IExecutionEnvironment)fEEChoices.get(selectionIndex);
-			if (ee != null){
-				IPath eePath = JavaRuntime.newJREContainerPath(ee);
-				getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
-			}
+	private void setEE(String eeName){		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeName);
+		if (ee != null){
+			IPath eePath = JavaRuntime.newJREContainerPath(ee);
+			getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
 		}
 	}
 	
@@ -199,31 +195,14 @@ public class JRESection extends PDESection {
 	}
 	
 	private void initializeExecutionEnvironments(){
-		fEEChoices = new ArrayList();
+		fEEChoices = new TreeSet();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++){
-			addToEECombo(envs[i]);
-		}
+		for (int i = 0; i < envs.length; i++)
+			fEEChoices.add(envs[i].getId());
+		fEEsCombo.setItems((String[])fEEChoices.toArray(new String[fEEChoices.size()]));
 	}
 	
-	/**
-	 * Adds the given execution environment to the list of known EEs and
-	 * adds an entry to the combo box "EE_ID (Associated_VM)".  The entries
-	 * will always be added to the end of the list/combo.
-	 * @param env environment to add
-	 */
-	private void addToEECombo(IExecutionEnvironment env){
-		IPath path = JavaRuntime.newJREContainerPath(env);
-		IVMInstall install = JavaRuntime.getVMInstall(path);
-		fEEChoices.add(env);
-		if (install != null) {
-			fEEsCombo.add(MessageFormat.format("{0} ({1})", new String[]{env.getId(), install.getName()}));
-		} else {
-			fEEsCombo.add(MessageFormat.format("{0} (unbound)", new String[]{env.getId()}));
-		}
-	}
-
 	private IProductModel getProductModel() {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}	
@@ -266,11 +245,10 @@ public class JRESection extends PDESection {
 		IPath jrePath = getJVMLocations().getJREContainerPath(getOS(fLastTab));
 		if (jrePath != null){
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
-			IExecutionEnvironment env = VMHelper.getExecutionEnvironment(eeID);
-			if (env != null){
-				if (!fEEChoices.contains(env))
-					addToEECombo(env);
-				fEEsCombo.select(fEEsCombo.getItemCount()-1);
+			if (eeID != null){
+				if (fEEsCombo.indexOf(eeID) < 0)
+					fEEsCombo.add(eeID);
+				fEEsCombo.setText(eeID);
 				fEERadioButton.setSelection(true);
 				fJRERadioButton.setSelection(false);
 			} else {
