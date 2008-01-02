@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,10 +192,14 @@ public abstract class AbstractPluginBlock {
 	public AbstractPluginBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fExternalModels = getExternalModels(); //PluginRegistry.getExternalModels(); //getExternalModels();
-		fWorkspaceModels = PluginRegistry.getWorkspaceModels();
+		fExternalModels = getExternalModels();
+		fWorkspaceModels = getWorkspaceModels();
 	}
 	
+	/**
+	 * Returns an array of external plugins that are currently enabled.
+	 * @return array of external enabled plugins, possibly empty
+	 */
 	protected IPluginModelBase[] getExternalModels() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
@@ -209,6 +213,22 @@ public abstract class AbstractPluginBlock {
 		ArrayList list = new ArrayList(models.length);
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].isEnabled()) {
+				list.add(models[i]);
+			}
+		}
+		return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
+	}
+	
+	/**
+	 * Returns an array of plugins from the workspace.  Non-OSGi plugins (no valid bundle
+	 * manifest) will be filtered out.
+	 * @return array of workspace OSGi plugins, possibly empty
+	 */
+	protected IPluginModelBase[] getWorkspaceModels() {
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+		ArrayList list = new ArrayList(models.length);
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].getBundleDescription() != null) {
 				list.add(models[i]);
 			}
 		}
