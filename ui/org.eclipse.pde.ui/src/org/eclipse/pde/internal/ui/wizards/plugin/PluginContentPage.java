@@ -121,10 +121,6 @@ public class PluginContentPage extends ContentPage {
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pprovider); 
 		fProviderText = createText(propertiesGroup, propertiesListener, 2);
-
-		fLibraryLabel = new Label(propertiesGroup, SWT.NONE);
-		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); 
-		fLibraryText = createText(propertiesGroup, propertiesListener, 2);
 		
 		createExecutionEnvironmentControls(propertiesGroup);
 	}

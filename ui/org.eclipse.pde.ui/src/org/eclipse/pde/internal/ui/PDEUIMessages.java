@@ -1266,7 +1266,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectNamesPage_emptyName;
 	public static String ProjectStructurePage_settings;
 	public static String ProjectStructurePage_java;
-	public static String ProjectStructurePage_library;
 	public static String ProjectStructurePage_source;
 	public static String ProjectStructurePage_output;
 

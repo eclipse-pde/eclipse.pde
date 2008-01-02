@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -28,7 +26,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public abstract class ContentPage extends WizardPage {
@@ -38,8 +35,6 @@ public abstract class ContentPage extends WizardPage {
 	protected Text fVersionText;
 	protected Text fNameText;
 	protected Text fProviderText;
-	protected Label fLibraryLabel;
-	protected Text fLibraryText;
 
 	protected NewProjectCreationPage fMainPage;
 	protected AbstractFieldData fData;
@@ -169,10 +164,6 @@ public abstract class ContentPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		if (visible) {		
-			// update the library field/label enabled state
-			fLibraryLabel.setEnabled(!fData.isSimple());
-			fLibraryText.setEnabled(!fData.isSimple());
-
 			String id = computeId();
 			// properties group
 			if ((fChangedGroups & PROPERTIES_GROUP) == 0) {
@@ -181,7 +172,6 @@ public abstract class ContentPage extends WizardPage {
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
 				fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
 				fProviderText.setText(IdUtil.getValidProvider(id));
-				presetLibraryField(id);
 				fChangedGroups = oldfChanged;
 			}
 			if (fInitialized)
@@ -196,21 +186,6 @@ public abstract class ContentPage extends WizardPage {
 		return IdUtil.getValidId(fProjectProvider.getProjectName());
 	}
 
-	private void presetLibraryField(String id){
-		double version = Double.parseDouble(fData.getTargetVersion());
-		if (version >= 3.1) {
-			fLibraryText.setText(""); //$NON-NLS-1$
-			return;
-		}
-		
-		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
-			if (!tok.hasMoreTokens())
-				fLibraryText.setText(token + ".jar"); //$NON-NLS-1$
-		}
-	}
-	
 	protected abstract String getNameFieldQualifier();
 
 	public void updateData() {
@@ -218,16 +193,6 @@ public abstract class ContentPage extends WizardPage {
 		fData.setVersion(fVersionText.getText().trim());
 		fData.setName(fNameText.getText().trim());
 		fData.setProvider(fProviderText.getText().trim());
-		if (!fData.isSimple()) {
-			String library = fLibraryText.getText().trim();
-			if (library.length() > 0) {			
-				if (!library.endsWith(".jar") &&!library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					library += "/"; //$NON-NLS-1$
-				fData.setLibraryName(library);
-			} else {
-				fData.setLibraryName(null);
-			}
-		}
 	}
 
 	public IFieldData getData() {
