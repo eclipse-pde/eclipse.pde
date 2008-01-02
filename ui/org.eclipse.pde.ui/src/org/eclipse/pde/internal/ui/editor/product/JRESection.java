@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -36,8 +36,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -61,7 +59,7 @@ public class JRESection extends PDESection {
 	private Button fExecutionEnvironmentsButton;
 	private ComboPart fJREsCombo;
 	private ComboPart fEEsCombo;
-	private TreeSet fEEChoices;
+	private ArrayList fEEChoices;
 	private boolean fBlockChanges;
 
 	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -124,8 +122,8 @@ public class JRESection extends PDESection {
 		String[] installs = VMHelper.getVMInstallNames();
 		fJREsCombo.setItems(installs);
 		fJREsCombo.add("", 0); //$NON-NLS-1$
-		fJREsCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fJREsCombo.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
 				if(!fBlockChanges)
 					setJRE(fJREsCombo.getSelection());
 			}
@@ -146,7 +144,7 @@ public class JRESection extends PDESection {
 		fEERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				setEE(fEEsCombo.getSelection());
+				setEE(fEEsCombo.getSelectionIndex());
 			}
 		});
 
@@ -154,10 +152,10 @@ public class JRESection extends PDESection {
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		initializeExecutionEnvironments();
-		fEEsCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fEEsCombo.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
 				if(!fBlockChanges)
-					setEE(fEEsCombo.getSelection());
+					setEE(fEEsCombo.getSelectionIndex());
 			}
 		});
 		
@@ -179,10 +177,13 @@ public class JRESection extends PDESection {
 		getProductModel().addModelChangedListener(this);		
 	}
 	
-	private void setEE(String eeName){		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeName);
-		if (ee != null){
-			IPath eePath = JavaRuntime.newJREContainerPath(ee);
-			getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
+	private void setEE(int selectionIndex){
+		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()){
+			IExecutionEnvironment ee = (IExecutionEnvironment)fEEChoices.get(selectionIndex);
+			if (ee != null){
+				IPath eePath = JavaRuntime.newJREContainerPath(ee);
+				getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
+			}
 		}
 	}
 	
@@ -195,7 +196,7 @@ public class JRESection extends PDESection {
 	}
 	
 	private void initializeExecutionEnvironments(){
-		fEEChoices = new TreeSet();
+		fEEChoices = new ArrayList();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (int i = 0; i < envs.length; i++)
