@@ -103,7 +103,6 @@
          </description>
       </wizard>
       <wizard
-            canFinishEarly="true"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
