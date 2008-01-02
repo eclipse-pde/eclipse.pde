@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,15 @@ public abstract class ContentPage extends WizardPage {
 	protected Text createText(Composite parent, ModifyListener listener) {
 		Text text = new Text(parent, SWT.BORDER | SWT.SINGLE);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		text.addModifyListener(listener);
+		return text;
+	}
+	
+	protected Text createText(Composite parent, ModifyListener listener, int horizSpan){
+		Text text = new Text(parent, SWT.BORDER | SWT.SINGLE);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = horizSpan;
+		text.setLayoutData(data);
 		text.addModifyListener(listener);
 		return text;
 	}

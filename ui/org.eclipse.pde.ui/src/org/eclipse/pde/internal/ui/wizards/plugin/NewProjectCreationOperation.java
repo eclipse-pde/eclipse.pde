@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -408,15 +408,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	private IClasspathEntry[] getClassPathEntries(IJavaProject project,
-			IFieldData data) {
-		IClasspathEntry[] internalClassPathEntries = getInternalClassPathEntries(
-				project, data);
+	private IClasspathEntry[] getClassPathEntries(IJavaProject project, IFieldData data) {
+		IClasspathEntry[] internalClassPathEntries = getInternalClassPathEntries(project, data);
 		IClasspathEntry[] entries = new IClasspathEntry[internalClassPathEntries.length + 2];
 		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
 
 		// Set EE of new project
-		String executionEnvironment = ""; //$NON-NLS-1$
+		String executionEnvironment = null; //$NON-NLS-1$
 		if(data instanceof AbstractFieldData) {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}

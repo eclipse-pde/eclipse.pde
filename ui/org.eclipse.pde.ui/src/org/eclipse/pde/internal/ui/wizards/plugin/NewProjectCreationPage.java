@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.TreeSet;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -31,7 +26,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -42,13 +36,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
@@ -65,8 +56,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Combo fOSGiCombo;
 	private Button fOSGIButton;
 	private IStructuredSelection fSelection;
-	private Button fExeEnvButton;
-	private Combo fEEChoice;
 	
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
 	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
@@ -86,7 +75,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		createProjectTypeGroup(control);
 		createFormatGroup(control);
-		createExecutionEnvironmentGroup(control);
 		createWorkingSetGroup(
 				control,
 				fSelection,
@@ -101,62 +89,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
 							: IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
 		setControl(control);
-	}
-	
-	private void createExecutionEnvironmentGroup(Composite container) {
-		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEUIMessages.NewProjectCreationPage_targetEnvironment);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		// Create label
-		Label envs = new Label(group, SWT.NONE);	
-		envs.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
-
-		// Create combo
-		fEEChoice = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		// Gather EEs 
-		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
-		TreeSet availableEEs = new TreeSet();		
-		for (int i = 0; i < exeEnvs.length; i++) {
-			availableEEs.add(exeEnvs[i].getId());		
-		}
-		
-		// Set data 
-		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size()-1]));
-		
-		// Set default EE based on strict match to default VM
-		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
-		String[] EEChoices = fEEChoice.getItems();
-		for (int i = 0; i < EEChoices.length; i++) {			
-			if(VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
-					fEEChoice.select(i);
-					break;							
-			}
-		}
-		
-		fEEChoice.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				setPageComplete(validatePage());
-			}
-		});
-		
-		// Create button
-		fExeEnvButton = createButton(group, SWT.PUSH, 1, 0);
-		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);		
-		fExeEnvButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(
-						getShell(), 
-						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
-			}
-		});
-		updateExecEnvSection();
 	}
 	
 	private void createProjectTypeGroup(Composite container) {
@@ -177,7 +109,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fSourceText.setEnabled(enabled);
 				fOutputlabel.setEnabled(enabled);
 				fOutputText.setEnabled(enabled);
-				updateExecEnvSection();
 				setPageComplete(validatePage());
 			}
 		});
@@ -234,12 +165,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			else
 				fTargetCombo.setText(ICoreConstants.TARGET33);
 		}
-		fTargetCombo.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				updateExecEnvSection();
-				setPageComplete(validatePage());
-			}
-		});
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   
@@ -257,16 +182,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		if (!comboInitialized)
 			fOSGiCombo.setText(ICoreConstants.EQUINOX);	
 		
-	}
-	
-	private void updateExecEnvSection() {
-		if (fTargetCombo.getText().equals(ICoreConstants.TARGET30) || !fJavaButton.getSelection()){
-			fEEChoice.setEnabled(false);
-			fExeEnvButton.setEnabled(false);
-		} else {
-			fEEChoice.setEnabled(true);
-			fExeEnvButton.setEnabled(true);
-		}
 	}
 	
 	private void updateRuntimeDependency() {
@@ -315,8 +230,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
-		if(fJavaButton.getSelection())
-			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 	}
 	
     protected boolean validatePage() {
@@ -333,16 +246,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     	if (location.indexOf('%') > 0) {
     		setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidLocationPath);
     		return false;
-    	}
-    	
-    	String eeid = fEEChoice.getText();
-    	if(eeid != null && fEEChoice.isEnabled()) {
-    		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
-    		IVMInstall[] vms = ee.getCompatibleVMs();
-    		if(vms.length == 0) {
-    			setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidEE);
-    			return false;
-    		}
     	}
     	
     	if (fJavaButton.getSelection()) {
@@ -364,7 +267,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	    		}
 	    	}
     	}
-    	
     	setErrorMessage(null);
     	setMessage(null);
     	return true;

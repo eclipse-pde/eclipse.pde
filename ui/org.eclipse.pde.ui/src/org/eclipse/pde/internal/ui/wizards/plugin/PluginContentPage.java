@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,13 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.Locale;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -22,6 +26,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,11 +36,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class PluginContentPage extends ContentPage {
 	protected final static int P_CLASS_GROUP = 2;
@@ -44,6 +53,9 @@ public class PluginContentPage extends ContentPage {
 	private Button fGenerateClass;
 	private Button fUIPlugin;
 	private Label fClassLabel;
+	private Label fEELabel;
+	private Button fExeEnvButton;
+	private Combo fEEChoice;
 
 	private Label fLabel;
     private Button fYesButton;
@@ -52,6 +64,8 @@ public class PluginContentPage extends ContentPage {
     private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
     private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
     private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
+    
+    private final static String NO_EXECUTION_ENVIRONMENT = "<No Execution Environment>";
     
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -88,29 +102,82 @@ public class PluginContentPage extends ContentPage {
 
 	private void createPluginPropertiesGroup(Composite container) {
 		Group propertiesGroup = new Group(container, SWT.NONE);
-		propertiesGroup.setLayout(new GridLayout(2, false));
+		propertiesGroup.setLayout(new GridLayout(3, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup); 
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pid); 
-		fIdText = createText(propertiesGroup, propertiesListener);
+		fIdText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pversion); 
-		fVersionText = createText(propertiesGroup, propertiesListener);
+		fVersionText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pname); 
-		fNameText = createText(propertiesGroup, propertiesListener);
+		fNameText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pprovider); 
-		fProviderText = createText(propertiesGroup, propertiesListener);
+		fProviderText = createText(propertiesGroup, propertiesListener, 2);
 
 		fLibraryLabel = new Label(propertiesGroup, SWT.NONE);
 		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); 
-		fLibraryText = createText(propertiesGroup, propertiesListener);
+		fLibraryText = createText(propertiesGroup, propertiesListener, 2);
+		
+		createExecutionEnvironmentControls(propertiesGroup);
+	}
+	
+	private void createExecutionEnvironmentControls(Composite container) {
+		// Create label
+		fEELabel = new Label(container, SWT.NONE);	
+		fEELabel.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
+
+		// Create combo
+		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Gather EEs 
+		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
+		TreeSet availableEEs = new TreeSet();		
+		for (int i = 0; i < exeEnvs.length; i++) {
+			availableEEs.add(exeEnvs[i].getId());		
+		}
+		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
+		
+		// Set data 
+		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size()-1]));
+		fEEChoice.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				validatePage();
+			}
+		});
+		
+		// Set default EE based on strict match to default VM
+		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		String[] EEChoices = fEEChoice.getItems();
+		for (int i = 0; i < EEChoices.length; i++) {
+			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)){
+				if(VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+						fEEChoice.select(i);
+						break;							
+				}
+			}
+		}
+		
+		// Create button
+		fExeEnvButton = new Button(container, SWT.PUSH);
+		fExeEnvButton.setLayoutData(new GridData());
+		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);		
+		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(
+						getShell(), 
+						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
+			}
+		});
 	}
 
 	private void createPluginClassGroup(Composite container) {
@@ -166,6 +233,11 @@ public class PluginContentPage extends ContentPage {
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
+		if(fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
+			fData.setExecutionEnvironment(fEEChoice.getText().trim());
+		} else {
+			fData.setExecutionEnvironment(null);
+		}
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -239,7 +311,13 @@ public class PluginContentPage extends ContentPage {
 				int oldfChanged = fChangedGroups;
 				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
-			}		
+			}	
+			
+			boolean allowEESelection = !fData.isSimple() && fData.hasBundleStructure();
+			fEELabel.setEnabled(allowEESelection);
+			fEEChoice.setEnabled(allowEESelection);
+			fExeEnvButton.setEnabled(allowEESelection);
+			
 			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());
     	}
         super.setVisible(visible);
@@ -264,6 +342,15 @@ public class PluginContentPage extends ContentPage {
 			} else if (status.getSeverity() == IStatus.WARNING) {
 				setMessage(status.getMessage(), IMessageProvider.WARNING);
 			}
+		}
+		if (errorMessage == null){
+			String eeid = fEEChoice.getText();
+	    	if(fEEChoice.isEnabled()) {
+	    		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
+	    		if(ee != null && ee.getCompatibleVMs().length == 0) {
+	    			errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
+	    		}
+	    	}
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
