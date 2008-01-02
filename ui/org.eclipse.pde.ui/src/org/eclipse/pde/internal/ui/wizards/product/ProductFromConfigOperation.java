@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,24 @@ package org.eclipse.pde.internal.ui.wizards.product;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
-
+/**
+ * This operation generates a product configuration filling in fields based on information
+ * stored a launch configuration. Product, application, JRE, and config information is 
+ * collected from the launch config.
+ */
 public class ProductFromConfigOperation extends BaseProductCreationOperation {
 
 	private ILaunchConfiguration fLaunchConfiguration;
@@ -51,6 +58,19 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				String appName = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 				product.setApplication(appName);
 			}
+			
+			// Set JRE info from information from the launch config
+			String jreString = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+			if (jreString != null){
+				IPath jreContainerPath = new Path(jreString);
+				IJREInfo jreInfo = product.getJREInfo();
+				if (jreInfo == null){
+					jreInfo = product.getModel().getFactory().createJVMInfo();
+				}
+				jreInfo.setJREContainerPath(TargetPlatform.getOS(), jreContainerPath);
+				product.setJREInfo(jreInfo);
+			}
+			
 			addPlugins(factory, product, LaunchPluginValidator.getPluginList(fLaunchConfiguration));
 			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);

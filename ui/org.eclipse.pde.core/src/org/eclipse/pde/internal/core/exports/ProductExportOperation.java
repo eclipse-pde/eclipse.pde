@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,55 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
+import java.util.*;
+import javax.xml.parsers.*;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.ExecutionArguments;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.build.BuildScriptGenerator;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IJREInfo;
-import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -155,13 +121,13 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 
 		IJREInfo jreInfo = fProduct.getJREInfo();
-		String vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
+		File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
 		if (vm != null) {
 			properties.put("root." + config[0] + //$NON-NLS-1$
 					"." + config[1] + //$NON-NLS-1$
 					"." + config[2] + //$NON-NLS-1$
 					".folder.jre", //$NON-NLS-1$
-					"absolute:" + vm); //$NON-NLS-1$
+					"absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$
 			String perms = (String) properties.get("root.permissions.755"); //$NON-NLS-1$
 			if (perms != null) {
 				StringBuffer buffer = new StringBuffer(perms);
@@ -519,7 +485,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private void createMacScript(String[] config, IProgressMonitor monitor) {
 		String entryName = TargetPlatformHelper.getTargetVersion() >= 3.3 ? "macosx/Info.plist" //$NON-NLS-1$
 				: "macosx/Info.plist.32"; //$NON-NLS-1$
-		URL url = PDECore.getDefault().getBundle().getEntry(entryName); //$NON-NLS-1$
+		URL url = PDECore.getDefault().getBundle().getEntry(entryName);
 		if (url == null)
 			return;
 

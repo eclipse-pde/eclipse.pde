@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -51,6 +53,8 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class JRESection extends PDESection {
 
 	private Button fJRERadioButton;
@@ -59,17 +63,12 @@ public class JRESection extends PDESection {
 	private Button fExecutionEnvironmentsButton;
 	private ComboPart fJREsCombo;
 	private ComboPart fEEsCombo;
-	private TreeSet fEEChoices;
+	private ArrayList fEEChoices;
 	private boolean fBlockChanges;
 
-	private static final String[] TAB_LABELS = new String[4];
-	static {
-		TAB_LABELS[IJREInfo.LINUX] = "linux"; //$NON-NLS-1$
-		TAB_LABELS[IJREInfo.MACOS] = "macosx"; //$NON-NLS-1$
-		TAB_LABELS[IJREInfo.SOLAR] = "solaris"; //$NON-NLS-1$
-		TAB_LABELS[IJREInfo.WIN32] = "win32"; //$NON-NLS-1$
-	}
-
+	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String[] TAB_OS = {Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	
 	private CTabFolder fTabFolder;
 	private int fLastTab;
 
@@ -92,8 +91,6 @@ public class JRESection extends PDESection {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		initializeValues();
-		
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -118,7 +115,7 @@ public class JRESection extends PDESection {
 		fJRERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getJVMLocations().setJVM(fJREsCombo.getSelection(), fLastTab, IJREInfo.TYPE_JRE);
+				setJRE(fJREsCombo.getSelection());
 			}
 		});
 
@@ -131,7 +128,7 @@ public class JRESection extends PDESection {
 		fJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if(!fBlockChanges)
-					getJVMLocations().setJVM(fJREsCombo.getSelection(), fLastTab, IJREInfo.TYPE_JRE);
+					setJRE(fJREsCombo.getSelection());
 			}
 		});
 
@@ -150,19 +147,18 @@ public class JRESection extends PDESection {
 		fEERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getJVMLocations().setJVM(fEEsCombo.getSelection(), fLastTab, IJREInfo.TYPE_EE);
+				setEE(fEEsCombo.getSelectionIndex());
 			}
 		});
 
 		fEEsCombo = new ComboPart();
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fEEsCombo.setItems((String[])fEEChoices.toArray(new String[fEEChoices.size()]));
-
+		initializeExecutionEnvironments();
 		fEEsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if(!fBlockChanges)
-					getJVMLocations().setJVM(fEEsCombo.getSelection(), fLastTab, IJREInfo.TYPE_EE);
+					setEE(fEEsCombo.getSelectionIndex());
 			}
 		});
 		
@@ -183,10 +179,51 @@ public class JRESection extends PDESection {
 		// Register to be notified when the model changes
 		getProductModel().addModelChangedListener(this);		
 	}
-
+	
+	private void setEE(int selectionIndex){
+		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()){
+			IExecutionEnvironment ee = (IExecutionEnvironment)fEEChoices.get(selectionIndex);
+			if (ee != null){
+				IPath eePath = JavaRuntime.newJREContainerPath(ee);
+				getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
+			}
+		}
+	}
+	
+	private void setJRE(String vmName){
+		IVMInstall install = VMHelper.getVMInstall(vmName);
+		if (install != null){
+			IPath jrePath = JavaRuntime.newJREContainerPath(install);
+			getJVMLocations().setJREContainerPath(getOS(fLastTab), jrePath);
+		}
+	}
+	
+	private void initializeExecutionEnvironments(){
+		fEEChoices = new ArrayList();
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
+		for (int i = 0; i < envs.length; i++){
+			addToEECombo(envs[i]);
+		}
+	}
+	
 	/**
-	 * @return
+	 * Adds the given execution environment to the list of known EEs and
+	 * adds an entry to the combo box "EE_ID (Associated_VM)".  The entries
+	 * will always be added to the end of the list/combo.
+	 * @param env environment to add
 	 */
+	private void addToEECombo(IExecutionEnvironment env){
+		IPath path = JavaRuntime.newJREContainerPath(env);
+		IVMInstall install = JavaRuntime.getVMInstall(path);
+		fEEChoices.add(env);
+		if (install != null) {
+			fEEsCombo.add(MessageFormat.format("{0} ({1})", new String[]{env.getId(), install.getName()}));
+		} else {
+			fEEsCombo.add(MessageFormat.format("{0} (unbound)", new String[]{env.getId()}));
+		}
+	}
+
 	private IProductModel getProductModel() {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}	
@@ -226,23 +263,26 @@ public class JRESection extends PDESection {
 	public void refresh() {
 		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
-		int type = getJVMLocations().getJVMType(fLastTab);
-		String name = getJVMLocations().getJVM(fLastTab);
-		switch(type) {
-		case IJREInfo.TYPE_JRE:
-			if (fJREsCombo.indexOf(name) < 0)
-				fJREsCombo.add(name);
-			fJREsCombo.setText(name);
-			fJRERadioButton.setSelection(true);
-			fEERadioButton.setSelection(false);
-			break;
-		case IJREInfo.TYPE_EE:
-			if (fEEsCombo.indexOf(name) < 0)
-				fEEsCombo.add(name);
-			fEEsCombo.setText(name);
-			fEERadioButton.setSelection(true);
-			fJRERadioButton.setSelection(false);
-			break;
+		IPath jrePath = getJVMLocations().getJREContainerPath(getOS(fLastTab));
+		if (jrePath != null){
+			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
+			IExecutionEnvironment env = VMHelper.getExecutionEnvironment(eeID);
+			if (env != null){
+				if (!fEEChoices.contains(env))
+					addToEECombo(env);
+				fEEsCombo.select(fEEsCombo.getItemCount()-1);
+				fEERadioButton.setSelection(true);
+				fJRERadioButton.setSelection(false);
+			} else {
+				IVMInstall install =  JavaRuntime.getVMInstall(jrePath);
+				if (install != null){
+					if (fJREsCombo.indexOf(install.getName()) < 0)
+						fJREsCombo.add(install.getName());
+					fJREsCombo.setText(install.getName());
+					fJRERadioButton.setSelection(true);
+					fEERadioButton.setSelection(false);
+				}
+			}
 		}
 		updateWidgets();
 		super.refresh();
@@ -256,6 +296,13 @@ public class JRESection extends PDESection {
 			getProduct().setJREInfo(info);
 		}
 		return info;
+	}
+	
+	private String getOS(int tab){
+		if (tab >= 0 && tab < TAB_OS.length){
+			return TAB_OS[tab];
+		}
+		return null;
 	}
 
 	private IProduct getProduct() {
@@ -276,14 +323,6 @@ public class JRESection extends PDESection {
 		fEEsCombo.setEnabled(fEERadioButton.getSelection());
 	}
 
-	protected void initializeValues() {
-		fEEChoices = new TreeSet();
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++)
-			fEEChoices.add(envs[i].getId()); 
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -294,9 +333,6 @@ public class JRESection extends PDESection {
  		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 		// Note:  A deferred selection event is fired from radio buttons when
