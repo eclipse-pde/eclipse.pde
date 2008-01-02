@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -74,6 +76,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private Combo fTargetCombo;
 	protected Button fJarredCheck;
 	protected Button fFindDependencies;
+	private Button fUpdateRefsCheck;
 	private IStructuredSelection fSelection;
 
 	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data, IStructuredSelection selection) {
@@ -147,6 +150,22 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd.horizontalSpan = 2;
 		fJarredCheck.setLayoutData(gd);
 		fJarredCheck.setSelection(Double.parseDouble(fTargetCombo.getText()) >= 3.1);
+		fUpdateRefsCheck = new Button(group, SWT.CHECK);
+		fUpdateRefsCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_UpdateReferences_button);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fUpdateRefsCheck.setLayoutData(gd);
+		//enable by default
+		fUpdateRefsCheck.setSelection(true);
+		fUpdateRefsCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
+					((NewLibraryPluginCreationUpdateRefPage)getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
+				}
+				getContainer().updateButtons();
+			}
+			
+		});
 	}
 	
 	private void createPluginPropertiesGroup(Composite container) {
@@ -223,6 +242,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setUnzipLibraries(fJarredCheck.isEnabled()
 				&& fJarredCheck.getSelection());
 		fData.setFindDependencies(fFindDependencies.getSelection());
+		fData.setUpdateReferences(fUpdateRefsCheck.getSelection());
 		fData.setWorkingSets(getSelectedWorkingSets());
 		
 		PluginFieldData data = fData;
@@ -293,5 +313,21 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd.horizontalIndent = indent;
 		button.setLayoutData(gd);
 		return button;		
+	}
+	
+	public void addSelectionListener(SelectionListener listener) {
+		if(fUpdateRefsCheck != null) {
+			fUpdateRefsCheck.addSelectionListener(listener);
+		}
+	}
+	
+	public void removeSelectionListener(SelectionListener listener) {
+		if(fUpdateRefsCheck != null) {
+			fUpdateRefsCheck.removeSelectionListener(listener);
+		}
+	}
+
+	public boolean canFlipToNextPage() {
+		return isPageComplete() && fUpdateRefsCheck.getSelection();
 	}
 }

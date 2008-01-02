@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -23,9 +26,14 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+
 
 public class NewLibraryPluginProjectWizard extends NewWizard implements
 		IExecutableExtension {
@@ -42,19 +50,31 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	private LibraryPluginJarsPage fJarsPage;
 
 	private NewLibraryPluginCreationPage fMainPage;
+	private NewLibraryPluginCreationUpdateRefPage fUpdatePage;
 
 	private LibraryPluginFieldData fPluginData;
 
 	private IProjectProvider fProjectProvider;
+	
+	private Collection fInitialJarPaths;
 
-	public NewLibraryPluginProjectWizard() {
+	private Collection fInitialSelection;
+
+	public NewLibraryPluginProjectWizard(Collection initialJarPaths, Collection initialSelection) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_JAR_TO_PLUGIN_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEUIMessages.NewLibraryPluginProjectWizard_title); 
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new LibraryPluginFieldData();
+		fInitialJarPaths = initialJarPaths == null ? new ArrayList() : initialJarPaths;
+		fInitialSelection = initialSelection == null ? new ArrayList() : initialSelection;
 	}
+	
+	public NewLibraryPluginProjectWizard() {
+		this(null,null);
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -62,9 +82,9 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData); //$NON-NLS-1$ 
-		addPage(fJarsPage);
+		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData, fInitialJarPaths); //$NON-NLS-1$ 
 		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData, getSelection()); //$NON-NLS-1$
+		fUpdatePage = new NewLibraryPluginCreationUpdateRefPage(fPluginData, fInitialJarPaths, fInitialSelection); 
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname != null)
 			fMainPage.setInitialProjectName(pname);
@@ -82,8 +102,9 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 				return fMainPage.getProjectName();
 			}
 		};
-
+		addPage(fJarsPage);
 		addPage(fMainPage);
+		addPage(fUpdatePage);
 	}
 
 	protected WizardElement createWizardElement(IConfigurationElement config) {
@@ -122,6 +143,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 		try {
 			fJarsPage.updateData();
 			fMainPage.updateData();
+			fUpdatePage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(
 					false,
@@ -148,6 +170,23 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 		fConfig = config;
+	}
+
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		fMainPage.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				Button updateRefsCheck = (Button) e.getSource();
+				if(updateRefsCheck.getSelection()) {
+					fUpdatePage.setVisible(true);
+				} else {
+					fUpdatePage.setVisible(false);
+				}	
+			}	
+		});
 	}
 
 }
