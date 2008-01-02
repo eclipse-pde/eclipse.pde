@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,70 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 209432
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.ResolverError;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.AbstractNLModel;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
-import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
-import org.eclipse.pde.internal.core.util.PDEJavaHelper;
-import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.Version;
+import org.eclipse.pde.internal.core.util.*;
+import org.osgi.framework.*;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
 
@@ -983,10 +941,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private void validateLazyStart() {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (header != null && TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
-			report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
-		} else {
-			validateStartHeader(header);
+		validateStartHeader(header);
+		if (header != null) {
+			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
+			if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
+				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+			}
+			if (TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
+				report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 	}
 
