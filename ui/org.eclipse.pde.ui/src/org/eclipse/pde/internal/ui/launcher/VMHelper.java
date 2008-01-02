@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,11 +76,16 @@ public class VMHelper {
 		return getDefaultVMInstallName();
 	}
 	
+	/**
+	 * Returns the name of the default VM Install from Java Runtime.
+	 * Will return an empty string if no default VM has been set.
+	 * @return name of the default vm install, possibly an empty string
+	 */
 	public static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
 			return install.getName();
-		return null;
+		return ""; //$NON-NLS-1$
 	}
 
 	public static String getDefaultVMInstallLocation() {
