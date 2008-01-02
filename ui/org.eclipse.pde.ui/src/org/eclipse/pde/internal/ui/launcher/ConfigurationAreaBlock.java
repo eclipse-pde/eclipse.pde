@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,8 @@ public class ConfigurationAreaBlock extends BaseBlock {
 				else
 					fLocationText.setText(fLastEnteredConfigArea);
 				enableBrowseSection(!useDefaultArea);
+				fLocationText.setEditable(!useDefaultArea);
+				if (useDefaultArea) fLocationText.setEnabled(true);
 			}
 		});
 
@@ -84,6 +86,8 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		boolean useDefaultArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true);
 		fUseDefaultLocationButton.setSelection(useDefaultArea);
 		enableBrowseSection(!useDefaultArea);
+		fLocationText.setEditable(!useDefaultArea);
+		if (useDefaultArea) fLocationText.setEnabled(true);
 		
 		fClearConfig.setSelection(configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false));
 		fLastEnteredConfigArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, ""); //$NON-NLS-1$
