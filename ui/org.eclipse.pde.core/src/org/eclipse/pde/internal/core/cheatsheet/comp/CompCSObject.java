@@ -34,19 +34,18 @@ import org.w3c.dom.Text;
  * CompCSObject
  *
  */
-public abstract class CompCSObject extends PlatformObject implements
-		ICompCSObject {
+public abstract class CompCSObject extends PlatformObject implements ICompCSObject {
 
 	private static final long serialVersionUID = 1L;
 
 	private transient ICompCSModel fModel;
-	
-	private transient ICompCSObject fParent;	
+
+	private transient ICompCSObject fParent;
 
 	protected static final HashSet DEFAULT_TAG_EXCEPTIONS = new HashSet(12);
-	
+
 	protected static final HashMap DEFAULT_SUBSTITUTE_CHARS = new HashMap(5);
-	
+
 	static {
 		DEFAULT_TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
@@ -60,14 +59,14 @@ public abstract class CompCSObject extends PlatformObject implements
 		DEFAULT_TAG_EXCEPTIONS.add("span"); //$NON-NLS-1$
 		DEFAULT_TAG_EXCEPTIONS.add("/span"); //$NON-NLS-1$			
 		DEFAULT_TAG_EXCEPTIONS.add("img"); //$NON-NLS-1$	
-		
+
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
 		DEFAULT_SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * @param model
 	 * @param parent
@@ -76,7 +75,7 @@ public abstract class CompCSObject extends PlatformObject implements
 		fModel = model;
 		fParent = parent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getChildren()
 	 */
@@ -147,8 +146,7 @@ public abstract class CompCSObject extends PlatformObject implements
 			// Assemble attributes
 			writeAttributes(buffer);
 			// Print start element and attributes
-			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
-					indent, false);
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(), indent, false);
 			// Print elements
 			writeElements(indent, writer);
 			// Print end element
@@ -156,7 +154,7 @@ public abstract class CompCSObject extends PlatformObject implements
 		} catch (IOException e) {
 			// Suppress
 			//e.printStackTrace();
-		} 			
+		}
 	}
 
 	/**
@@ -164,40 +162,37 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * @param oldValue
 	 * @param newValue
 	 */
-	protected void firePropertyChanged(String property, Object oldValue,
-			Object newValue) {
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-		
+
 	/**
 	 * @param object
 	 * @param property
 	 * @param oldValue
 	 * @param newValue
 	 */
-	private void firePropertyChanged(ICompCSObject object, String property,
-		Object oldValue, Object newValue) {
+	private void firePropertyChanged(ICompCSObject object, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
-		
+
 	/**
 	 * @param child
 	 * @param changeType
 	 */
 	protected void fireStructureChanged(ICompCSObject child, int changeType) {
-		fireStructureChanged(new ICompCSObject[] { child }, changeType);
+		fireStructureChanged(new ICompCSObject[] {child}, changeType);
 	}
-	
+
 	/**
 	 * @param newValue
 	 * @param oldValue
 	 * @param changeType
 	 */
-	protected void fireStructureChanged(ICompCSObject newValue,
-			ICompCSObject oldValue) {
+	protected void fireStructureChanged(ICompCSObject newValue, ICompCSObject oldValue) {
 
 		int changeType = -1;
 		ICompCSObject object = null;
@@ -210,32 +205,30 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 		fireStructureChanged(object, changeType);
 	}
-	
+
 	/**
 	 * @param children
 	 * @param changeType
 	 */
-	private void fireStructureChanged(ICompCSObject[] children,
-			int changeType) {
+	private void fireStructureChanged(ICompCSObject[] children, int changeType) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
-			provider.fireModelChanged(new ModelChangedEvent(provider,
-					changeType, children, null));
+			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}
-		
+
 	/**
 	 * @return
 	 */
 	protected boolean isEditable() {
 		return getModel().isEditable();
-	}	
-	
+	}
+
 	/**
 	 * @param element
 	 */
 	protected abstract void parseAttributes(Element element);
-	
+
 	/**
 	 * @param element
 	 */
@@ -245,13 +238,13 @@ public abstract class CompCSObject extends PlatformObject implements
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				parseElement((Element)child);
+				parseElement((Element) child);
 			} else if (child.getNodeType() == Node.TEXT_NODE) {
-				parseText((Text)child);
+				parseText((Text) child);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param element
 	 */
@@ -261,19 +254,19 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * @param element
 	 */
 	protected abstract void parseText(Text text);
-	
+
 	/**
 	 * @param buffer
 	 */
 	protected abstract void writeAttributes(StringBuffer buffer);
-	
+
 	/**
 	 * Writes child elements or child content
 	 * @param indent
 	 * @param writer
 	 */
 	protected abstract void writeElements(String indent, PrintWriter writer);
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject#getElement()
 	 */

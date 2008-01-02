@@ -33,19 +33,16 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.team.core.RepositoryProvider;
 
-public abstract class WorkspaceModelManager extends AbstractModelManager 
-		implements IResourceChangeListener, IResourceDeltaVisitor {
-	
+public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
+
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen())
-			return project.exists(ICoreConstants.MANIFEST_PATH)
-				   || project.exists(ICoreConstants.PLUGIN_PATH)
-				   || project.exists(ICoreConstants.FRAGMENT_PATH);
+			return project.exists(ICoreConstants.MANIFEST_PATH) || project.exists(ICoreConstants.PLUGIN_PATH) || project.exists(ICoreConstants.FRAGMENT_PATH);
 		return false;
 	}
 
 	public static boolean isFeatureProject(IProject project) {
-		return project.isOpen() && project.exists(ICoreConstants.FEATURE_PATH); 
+		return project.isOpen() && project.exists(ICoreConstants.FEATURE_PATH);
 	}
 
 	public static boolean isBinaryProject(IProject project) {
@@ -62,22 +59,23 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		}
 		return false;
 	}
-	
+
 	public static boolean isUnsharedProject(IProject project) {
 		return RepositoryProvider.getProvider(project) == null || isBinaryProject(project);
 	}
 
 	class ModelChange {
 		IModel model;
-		int type;		
+		int type;
+
 		public ModelChange(IModel model, int type) {
 			this.model = model;
 			this.type = type;
 		}
-		
+
 		public boolean equals(Object obj) {
 			if (obj instanceof ModelChange) {
-				ModelChange change = (ModelChange)obj;
+				ModelChange change = (ModelChange) obj;
 				IProject project = change.model.getUnderlyingResource().getProject();
 				int type = change.type;
 				return model.getUnderlyingResource().getProject().equals(project) && this.type == type;
@@ -85,39 +83,39 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 			return false;
 		}
 	}
-	
+
 	protected Map fModels = null;
-	private ArrayList fChangedModels;	
-	
+	private ArrayList fChangedModels;
+
 	protected synchronized void initialize() {
 		if (fModels != null)
 			return;
-		
-		fModels = Collections.synchronizedMap(new HashMap());		
-		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();	
+
+		fModels = Collections.synchronizedMap(new HashMap());
+		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (isInterestingProject(projects[i]))
-				createModel(projects[i], false);			
+				createModel(projects[i], false);
 		}
 		addListeners();
 	}
-	
+
 	protected abstract boolean isInterestingProject(IProject project);
-	
+
 	protected abstract void createModel(IProject project, boolean notify);
-	
+
 	protected abstract void addListeners();
-	
+
 	protected Object getModel(IProject project) {
 		initialize();
 		return fModels.get(project);
 	}
-	
+
 	protected Object[] getModels() {
 		initialize();
 		return fModels.values().toArray();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,14 +123,14 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
-		case IResourceChangeEvent.POST_CHANGE:
-			handleResourceDelta(event.getDelta());
-			processModelChanges();
-			break;
-		case IResourceChangeEvent.PRE_CLOSE:
-			removeModel((IProject)event.getResource());
-			processModelChanges();
-			break;
+			case IResourceChangeEvent.POST_CHANGE :
+				handleResourceDelta(event.getDelta());
+				processModelChanges();
+				break;
+			case IResourceChangeEvent.PRE_CLOSE :
+				removeModel((IProject) event.getResource());
+				processModelChanges();
+				break;
 		}
 	}
 
@@ -143,7 +141,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 			PDECore.logException(e);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
@@ -151,35 +149,33 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {
 
-			final IResource resource= delta.getResource();
+			final IResource resource = delta.getResource();
 			if (!resource.isDerived()) {
 				switch (resource.getType()) {
 
-				case IResource.ROOT: 
-					return true;
-				case IResource.PROJECT: {
-					IProject project = (IProject) resource;
-					if (isInterestingProject(project)
-							&& (delta.getKind() == IResourceDelta.ADDED || (delta
-									.getFlags() & IResourceDelta.OPEN) != 0)) {
-						createModel(project, true);
-						return false;
-					} else if (delta.getKind() == IResourceDelta.REMOVED) {
-						removeModel(project);
-						return false;
+					case IResource.ROOT :
+						return true;
+					case IResource.PROJECT : {
+						IProject project = (IProject) resource;
+						if (isInterestingProject(project) && (delta.getKind() == IResourceDelta.ADDED || (delta.getFlags() & IResourceDelta.OPEN) != 0)) {
+							createModel(project, true);
+							return false;
+						} else if (delta.getKind() == IResourceDelta.REMOVED) {
+							removeModel(project);
+							return false;
+						}
+						return true;
 					}
-					return true;
+					case IResource.FOLDER :
+						return isInterestingFolder((IFolder) resource);
+					case IResource.FILE :
+						// do not process 
+						if (isContentChange(delta)) {
+							handleFileDelta(delta);
+							return false;
+						}
 				}
-				case IResource.FOLDER:
-					return isInterestingFolder((IFolder) resource);
-				case IResource.FILE:
-					// do not process 
-					if( isContentChange(delta) ) { 
-						handleFileDelta(delta);
-						return false;
-					}
-				}
-			}  
+			}
 		}
 		return false;
 	}
@@ -188,38 +184,38 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		int kind = delta.getKind();
 		return (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED || (kind == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0));
 	}
-	
+
 	protected boolean isInterestingFolder(IFolder folder) {
 		return false;
 	}
-	
+
 	protected abstract void handleFileDelta(IResourceDelta delta);
-	
+
 	protected Object removeModel(IProject project) {
 		Object model = fModels != null ? fModels.remove(project) : null;
 		addChange(model, IModelProviderEvent.MODELS_REMOVED);
 		return model;
 	}
-	
+
 	protected void addChange(Object model, int eventType) {
 		if (model instanceof IModel) {
 			if (fChangedModels == null)
 				fChangedModels = new ArrayList();
-			ModelChange change = new ModelChange((IModel)model, eventType);
+			ModelChange change = new ModelChange((IModel) model, eventType);
 			if (!fChangedModels.contains(change))
 				fChangedModels.add(change);
 		}
 	}
-	
+
 	protected void processModelChanges() {
 		processModelChanges("org.eclipse.pde.core.IModelProviderEvent", fChangedModels); //$NON-NLS-1$
 		fChangedModels = null;
 	}
-	
+
 	protected void processModelChanges(String changeId, ArrayList changedModels) {
 		if (changedModels == null)
 			return;
-		
+
 		if (changedModels.size() == 0) {
 			return;
 		}
@@ -227,16 +223,16 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		ArrayList added = new ArrayList();
 		ArrayList removed = new ArrayList();
 		ArrayList changed = new ArrayList();
-		for (ListIterator li = changedModels.listIterator(); li.hasNext(); ) {
+		for (ListIterator li = changedModels.listIterator(); li.hasNext();) {
 			ModelChange change = (ModelChange) li.next();
 			switch (change.type) {
-				case IModelProviderEvent.MODELS_ADDED:
+				case IModelProviderEvent.MODELS_ADDED :
 					added.add(change.model);
 					break;
-				case IModelProviderEvent.MODELS_REMOVED:
+				case IModelProviderEvent.MODELS_REMOVED :
 					removed.add(change.model);
 					break;
-				case IModelProviderEvent.MODELS_CHANGED:
+				case IModelProviderEvent.MODELS_CHANGED :
 					changed.add(change.model);
 			}
 		}
@@ -249,16 +245,11 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 		if (changed.size() > 0)
 			type |= IModelProviderEvent.MODELS_CHANGED;
 
-		
 		if (type != 0) {
-			createAndFireEvent(changeId, 
-					type, 
-					added,
-					removed,
-					changed);
+			createAndFireEvent(changeId, type, added, removed, changed);
 		}
 	}
-	
+
 	protected void loadModel(IModel model, boolean reload) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		InputStream stream = null;
@@ -279,16 +270,10 @@ public abstract class WorkspaceModelManager extends AbstractModelManager
 			}
 		}
 	}
-	
+
 	protected void createAndFireEvent(String eventId, int type, Collection added, Collection removed, Collection changed) {
 		if (eventId.equals("org.eclipse.pde.core.IModelProviderEvent")) { //$NON-NLS-1$
-			final ModelProviderEvent event =
-				new ModelProviderEvent(
-					this,
-					type,
-					(IModel[])added.toArray(new IModel[added.size()]),
-					(IModel[])removed.toArray(new IModel[removed.size()]),
-					(IModel[])changed.toArray(new IModel[changed.size()]));
+			final ModelProviderEvent event = new ModelProviderEvent(this, type, (IModel[]) added.toArray(new IModel[added.size()]), (IModel[]) removed.toArray(new IModel[removed.size()]), (IModel[]) changed.toArray(new IModel[changed.size()]));
 			fireModelProviderEvent(event);
 		}
 	}

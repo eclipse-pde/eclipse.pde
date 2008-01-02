@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * Classes that implement this interface model the
  * XML elements found in the plug-in model.
@@ -32,6 +33,7 @@ public interface IPluginElement extends IPluginParent {
 	 * change in an element's attribute.
 	 */
 	String P_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+
 	/**
 	 * Creates an identical copy of this XML element.
 	 * The new element will share the same model and
@@ -40,6 +42,7 @@ public interface IPluginElement extends IPluginParent {
 	 * @return a copy of this element
 	 */
 	IPluginElement createCopy();
+
 	/**
 	 * Returns an attribute object whose name
 	 * matches the provided name.
@@ -47,22 +50,26 @@ public interface IPluginElement extends IPluginParent {
 	 * @return the attribute object, or <samp>null</samp> if not found
 	 */
 	IPluginAttribute getAttribute(String name);
+
 	/**
 	 * Returns all attributes currently defined in this element
 	 * @return an array of attribute objects that belong to this element
 	 */
 	IPluginAttribute[] getAttributes();
+
 	/**
 	 * Returns the number of attributes in this element.
 	 * @return number of attributes defined in this element
 	 */
 	int getAttributeCount();
+
 	/**
 	 * Returns the body text of this element.
 	 *
 	 * @return body text of this element or <samp>null</samp> if not set.
 	 */
 	String getText();
+
 	/**
 	 * Returns the schema for this element.
 	 * <p>This information is exposed here as implementation side-effect
@@ -71,6 +78,7 @@ public interface IPluginElement extends IPluginParent {
 	 * @return the schema for this element or <samp>null</samp> if not found.
 	 */
 	Object getElementInfo();
+
 	/**
 	 * Sets the attribute with the provided name
 	 * to the provided value. If attribute object
@@ -83,6 +91,7 @@ public interface IPluginElement extends IPluginParent {
 	 * @param value the value to be set 
 	 */
 	void setAttribute(String name, String value) throws CoreException;
+
 	/**
 	 * Sets the body text of this element
 	 * to the provided value. This method

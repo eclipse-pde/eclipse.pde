@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 import java.io.PrintWriter;
+
 /**
  * Classes that implement this interface can participate in saving the model to
  * the ASCII output stream using the provided writer.

@@ -17,12 +17,10 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
-public class ConfigurationFileInfo extends ProductObject implements
-		IConfigurationFileInfo {
+public class ConfigurationFileInfo extends ProductObject implements IConfigurationFileInfo {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String fUse;
 
 	private String fPath;
@@ -30,7 +28,7 @@ public class ConfigurationFileInfo extends ProductObject implements
 	public ConfigurationFileInfo(IProductModel model) {
 		super(model);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setPath(java.lang.String)
 	 */
@@ -53,7 +51,7 @@ public class ConfigurationFileInfo extends ProductObject implements
 	 */
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			fPath = element.getAttribute(P_PATH);
 			fUse = element.getAttribute(P_USE);
 		}
@@ -71,7 +69,6 @@ public class ConfigurationFileInfo extends ProductObject implements
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#setUse(java.lang.String)
 	 */
@@ -81,7 +78,6 @@ public class ConfigurationFileInfo extends ProductObject implements
 		if (isEditable())
 			firePropertyChanged(P_USE, old, fUse);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo#getUse()

@@ -45,13 +45,14 @@ public interface IDocumentSection extends ISchemaObject {
 	 * Section Id for the copyright statement section of the target reference document
 	 */
 	String COPYRIGHT = "copyright"; //$NON-NLS-1$
-	
+
 	/**
 	 * Section Id for the first version in which the extension point appears.
 	 */
 	String SINCE = "since"; //$NON-NLS-1$
-/**
- * Returns the Id of this section.
- */
-public String getSectionId();
+
+	/**
+	 * Returns the Id of this section.
+	 */
+	public String getSectionId();
 }

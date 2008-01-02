@@ -16,15 +16,14 @@ public class BundleNameHeader extends SingleManifestHeader {
 
 	private static final long serialVersionUID = 1L;
 
-	public BundleNameHeader(String name, String value, IBundle bundle,
-			String lineDelimiter) {
+	public BundleNameHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public String getBundleName() {
 		return getMainComponent();
 	}
-	
+
 	public void setBundleName(String name) {
 		setMainComponent(name);
 	}

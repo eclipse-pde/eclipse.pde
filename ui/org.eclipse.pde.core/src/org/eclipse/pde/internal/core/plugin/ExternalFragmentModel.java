@@ -14,8 +14,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 
-public class ExternalFragmentModel extends ExternalPluginModelBase implements
-		IFragmentModel {
+public class ExternalFragmentModel extends ExternalPluginModelBase implements IFragmentModel {
 
 	private static final long serialVersionUID = 1L;
 

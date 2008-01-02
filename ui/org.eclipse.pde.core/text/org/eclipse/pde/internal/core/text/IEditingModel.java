@@ -17,11 +17,14 @@ import org.eclipse.pde.core.IModelChangeProvider;
 
 public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilingParticipant, IEditable {
 
-public IDocument getDocument();
-public void setStale(boolean stale);
-public boolean isStale();
+	public IDocument getDocument();
+
+	public void setStale(boolean stale);
+
+	public boolean isStale();
 
 	public String getCharset();
+
 	public void setCharset(String charset);
 
 }

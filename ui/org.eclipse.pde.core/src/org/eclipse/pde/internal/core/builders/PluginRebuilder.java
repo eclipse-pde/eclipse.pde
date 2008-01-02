@@ -32,9 +32,9 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class PluginRebuilder implements IStateDeltaListener, IResourceChangeListener {
-	
+
 	private Set fProjectNames = new HashSet();
-	
+
 	private boolean fTouchWorkspace = false;
 
 	public void start() {
@@ -58,17 +58,16 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 			} else {
 				Iterator iter = fProjectNames.iterator();
 				while (iter.hasNext()) {
-					touchProject(root.getProject((String)iter.next()));
+					touchProject(root.getProject((String) iter.next()));
 				}
 			}
 			fTouchWorkspace = false;
 			fProjectNames.clear();
 		}
 	}
-	
+
 	private void touchProject(IProject project) {
-		if (WorkspaceModelManager.isPluginProject(project)
-			 && !WorkspaceModelManager.isBinaryProject(project)) {
+		if (WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project)) {
 			try {
 				// set session property on project
 				// to be read and reset in ManifestConsistencyChecker
@@ -80,7 +79,7 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 			}
 		}
 	}
-	
+
 	public void stateChanged(State newState) {
 		fTouchWorkspace = true;
 		fProjectNames.clear();
@@ -98,17 +97,15 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 				// only interested in workspace plug-ins that are affected by delta
 				// but not those who have caused it.
 				int type = deltas[i].getType();
-				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED 
-						|| (type & BundleDelta.ADDED) == BundleDelta.ADDED
-						|| (type & BundleDelta.REMOVED) == BundleDelta.REMOVED)
+				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED || (type & BundleDelta.ADDED) == BundleDelta.ADDED || (type & BundleDelta.REMOVED) == BundleDelta.REMOVED)
 					continue;
-			
+
 				IPluginModelBase model = PluginRegistry.findModel(deltas[i].getBundle());
 				IResource resource = model == null ? null : model.getUnderlyingResource();
 				if (resource != null)
-					fProjectNames.add(resource.getProject().getName());		
+					fProjectNames.add(resource.getProject().getName());
 			}
 		}
 	}
-	
+
 }

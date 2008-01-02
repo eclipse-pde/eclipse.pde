@@ -21,51 +21,49 @@ import org.w3c.dom.Element;
 public class ElementOccurrenceResult {
 
 	private Element fElement;
-	
+
 	private ISchemaElement fSchemaElement;
-	
+
 	private int fActualOccurrences;
-	
+
 	private int fAllowedOccurrences;
-	
+
 	/**
 	 * 
 	 */
-	public ElementOccurrenceResult(Element element,
-			ISchemaElement schemaElement, int actualOccurrences,
-			int allowedOccurrences) {
+	public ElementOccurrenceResult(Element element, ISchemaElement schemaElement, int actualOccurrences, int allowedOccurrences) {
 		fElement = element;
 		fActualOccurrences = actualOccurrences;
 		fAllowedOccurrences = allowedOccurrences;
 		fSchemaElement = schemaElement;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ISchemaElement getSchemaElement() {
 		return fSchemaElement;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public Element getElement() {
 		return fElement;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public int getActualOccurrences() {
 		return fActualOccurrences;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public int getAllowedOccurrences() {
 		return fAllowedOccurrences;
 	}
-	
+
 }

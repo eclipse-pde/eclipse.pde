@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.text.toc;
 
-
 /**
  * Toc - represents the root element of a Table of Contents
  * The TOC root element, like TOC topics, can hold many child topics,
@@ -30,8 +29,8 @@ public class Toc extends TocTopic {
 	 * 
 	 * @param model The model associated with this TOC.
 	 */
-	public Toc(TocModel model)
-	{	super(model, ELEMENT_TOC);
+	public Toc(TocModel model) {
+		super(model, ELEMENT_TOC);
 		setInTheModel(true);
 	}
 
@@ -45,8 +44,8 @@ public class Toc extends TocTopic {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#getType()
 	 */
-	public int getType()
-	{	return TYPE_TOC;
+	public int getType() {
+		return TYPE_TOC;
 	}
 
 	/**
@@ -63,15 +62,15 @@ public class Toc extends TocTopic {
 	 * 
 	 * @param value The new page location to be linked by this topic
 	 */
-	public void setFieldRef(String value)
-	{	setXMLAttribute(ATTRIBUTE_TOPIC, value);
+	public void setFieldRef(String value) {
+		setXMLAttribute(ATTRIBUTE_TOPIC, value);
 	}
 
 	/**
 	 * @return the anchor path associated with this TOC
 	 */
-	public String getFieldAnchorTo()
-	{	return getXMLAttributeValue(ATTRIBUTE_LINK_TO);
+	public String getFieldAnchorTo() {
+		return getXMLAttributeValue(ATTRIBUTE_LINK_TO);
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class Toc extends TocTopic {
 	 * 
 	 * @param The new anchor path to associate with this TOC
 	 */
-	public void setFieldAnchorTo(String name)
-	{	setXMLAttribute(ATTRIBUTE_LINK_TO, name);
+	public void setFieldAnchorTo(String name) {
+		setXMLAttribute(ATTRIBUTE_LINK_TO, name);
 	}
 }

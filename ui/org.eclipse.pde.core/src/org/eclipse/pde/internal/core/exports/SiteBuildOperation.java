@@ -14,13 +14,13 @@ import java.io.File;
 
 public class SiteBuildOperation extends FeatureBasedExportOperation {
 
-	public SiteBuildOperation(FeatureExportInfo info) {		
+	public SiteBuildOperation(FeatureExportInfo info) {
 		super(info);
 	}
-	
+
 	protected void createPostProcessingFiles() {
 		createPostProcessingFile(new File(fFeatureLocation, FEATURE_POST_PROCESSING));
-		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));		
+		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 	}
 
 }

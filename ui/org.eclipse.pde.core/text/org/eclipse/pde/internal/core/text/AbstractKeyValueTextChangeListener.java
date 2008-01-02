@@ -22,17 +22,17 @@ import org.eclipse.text.edits.TextEdit;
 public abstract class AbstractKeyValueTextChangeListener extends AbstractTextChangeListener {
 
 	protected HashMap fReadableNames = null;
-	
+
 	public AbstractKeyValueTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document);
 		if (generateReadableNames)
 			fReadableNames = new HashMap();
 	}
-	
+
 	public TextEdit[] getTextOperations() {
 		if (fOperationTable.size() == 0)
 			return new TextEdit[0];
-		return (TextEdit[])fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
+		return (TextEdit[]) fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
 	}
 
 	protected void insertKey(IDocumentKey key, String name) {
@@ -42,7 +42,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 		if (fReadableNames != null)
 			fReadableNames.put(edit, name);
 	}
-	
+
 	protected void deleteKey(IDocumentKey key, String name) {
 		if (key.getOffset() >= 0) {
 			DeleteEdit edit = new DeleteEdit(key.getOffset(), key.getLength());
@@ -51,8 +51,8 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 				fReadableNames.put(edit, name);
 		}
 	}
-	
-	protected void modifyKey(IDocumentKey key, String name) {		
+
+	protected void modifyKey(IDocumentKey key, String name) {
 		if (key.getOffset() == -1)
 			insertKey(key, name);
 		else {
@@ -65,7 +65,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 
 	public String getReadableName(TextEdit edit) {
 		if (fReadableNames != null && fReadableNames.containsKey(edit))
-			return (String)fReadableNames.get(edit);
+			return (String) fReadableNames.get(edit);
 		return null;
 	}
 }

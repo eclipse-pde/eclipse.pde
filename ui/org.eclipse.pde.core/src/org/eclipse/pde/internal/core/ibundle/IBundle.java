@@ -11,19 +11,19 @@
 package org.eclipse.pde.internal.core.ibundle;
 
 public interface IBundle {
-	
+
 	void setHeader(String key, String value);
-	
+
 	void renameHeader(String key, String newKey);
-	
+
 	String getHeader(String key);
-	
+
 	IManifestHeader getManifestHeader(String key);
-    
-    IBundleModel getModel();
-    
-    String getLocalization();
-    
-    void setLocalization(String localization);
-    
+
+	IBundleModel getModel();
+
+	String getLocalization();
+
+	void setLocalization(String localization);
+
 }

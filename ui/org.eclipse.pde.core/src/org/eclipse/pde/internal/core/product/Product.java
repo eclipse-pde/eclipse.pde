@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public class Product extends ProductObject implements IProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -184,7 +183,7 @@ public class Product extends ProductObject implements IProduct {
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
-			IProductPlugin plugin = (IProductPlugin)iter.next();
+			IProductPlugin plugin = (IProductPlugin) iter.next();
 			plugin.write(indent + "      ", writer); //$NON-NLS-1$
 		}
 		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
@@ -194,7 +193,7 @@ public class Product extends ProductObject implements IProduct {
 			writer.println(indent + "   <features>"); //$NON-NLS-1$
 			iter = fFeatures.iterator();
 			while (iter.hasNext()) {
-				IProductFeature feature = (IProductFeature)iter.next();
+				IProductFeature feature = (IProductFeature) iter.next();
 				feature.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </features>"); //$NON-NLS-1$
@@ -235,12 +234,11 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Node node) {
-		if (node.getNodeType() == Node.ELEMENT_NODE 
-				&& node.getNodeName().equals("product")) { //$NON-NLS-1$
-			Element element = (Element)node;
-			fApplication = element.getAttribute(P_APPLICATION); 
-			fId = element.getAttribute(P_ID); 
-			fName = element.getAttribute(P_NAME); 
+		if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("product")) { //$NON-NLS-1$
+			Element element = (Element) node;
+			fApplication = element.getAttribute(P_APPLICATION);
+			fId = element.getAttribute(P_ID);
+			fName = element.getAttribute(P_NAME);
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();
@@ -347,7 +345,7 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
 	public IProductPlugin[] getPlugins() {
-		return (IProductPlugin[])fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
+		return (IProductPlugin[]) fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -381,8 +379,8 @@ public class Product extends ProductObject implements IProduct {
 
 	public boolean containsFeature(String id) {
 		IProductFeature[] features = getFeatures();
-		for(int i = 0; i < features.length; i++) {
-			if(features[i].getId().equals(id))
+		for (int i = 0; i < features.length; i++) {
+			if (features[i].getId().equals(id))
 				return true;
 		}
 		return false;
@@ -435,7 +433,7 @@ public class Product extends ProductObject implements IProduct {
 	public void removeFeatures(IProductFeature[] features) {
 		boolean modified = false;
 		for (int i = 0; i < features.length; i++) {
-			if(features[i].getId() != null) {
+			if (features[i].getId() != null) {
 				fFeatures.remove(features[i]);
 				modified = true;
 			}
@@ -445,7 +443,7 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	public IProductFeature[] getFeatures() {
-		return (IProductFeature[])fFeatures.toArray(new IProductFeature[fFeatures.size()]);
+		return (IProductFeature[]) fFeatures.toArray(new IProductFeature[fFeatures.size()]);
 	}
 
 	public IArgumentsInfo getLauncherArguments() {
@@ -483,5 +481,5 @@ public class Product extends ProductObject implements IProduct {
 
 		fireStructureChanged(feature1, IModelChangedEvent.CHANGE);
 	}
-	
+
 }

@@ -33,10 +33,9 @@ import org.w3c.dom.Text;
 public class CompCS extends CompCSObject implements ICompCS {
 
 	private String fFieldName;
-	
+
 	private ICompCSTaskObject fFieldTaskObject;
-	
-	
+
 	/**
 	 * 
 	 */
@@ -47,9 +46,9 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 */
 	public CompCS(ICompCSModel model) {
 		super(model, null);
-		reset();		
+		reset();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getChildren()
 	 */
@@ -82,27 +81,27 @@ public class CompCS extends CompCSObject implements ICompCS {
 	protected void parseAttributes(Element element) {
 		// Process name attribute
 		// Trim leading and trailing whitespace
-		fFieldName = element.getAttribute(ATTRIBUTE_NAME).trim(); 
+		fFieldName = element.getAttribute(ATTRIBUTE_NAME).trim();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement(org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
-		
+
 		if (name.equals(ELEMENT_TASK)) {
 			// Process task element
 			fFieldTaskObject = factory.createCompCSTask(this);
 			fFieldTaskObject.parse(element);
-		} else if (name.equals(ELEMENT_TASKGROUP)) { 
+		} else if (name.equals(ELEMENT_TASKGROUP)) {
 			// Process taskGroup element
 			fFieldTaskObject = factory.createCompCSTaskGroup(this);
 			fFieldTaskObject.parse(element);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
 	 */
@@ -115,7 +114,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		
+
 		try {
 			// Print XML decl
 			XMLPrintHandler.printHead(writer, ATTRIBUTE_VALUE_ENCODING);
@@ -123,7 +122,7 @@ public class CompCS extends CompCSObject implements ICompCS {
 		} catch (IOException e) {
 			// Suppress
 			//e.printStackTrace();
-		} 			
+		}
 	}
 
 	/* (non-Javadoc)
@@ -131,15 +130,11 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
 		// Print name attribute
-		if ((fFieldName != null) && 
-				(fFieldName.length() > 0)) {
+		if ((fFieldName != null) && (fFieldName.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_NAME, 
-					PDETextHelper.translateWriteText(
-							fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
-		}		
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_NAME, PDETextHelper.translateWriteText(fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
+		}
 	}
 
 	/* (non-Javadoc)
@@ -150,9 +145,9 @@ public class CompCS extends CompCSObject implements ICompCS {
 		// Print task / taskGroup element
 		if (fFieldTaskObject != null) {
 			fFieldTaskObject.write(newIndent, writer);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS#getFieldName()
 	 */

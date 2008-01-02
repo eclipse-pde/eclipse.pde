@@ -17,13 +17,13 @@ import org.osgi.framework.BundleException;
 public class SingleManifestHeader extends ManifestHeader {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private PDEManifestElement fElement;
-	
+
 	public SingleManifestHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(getName(), value);
@@ -35,47 +35,47 @@ public class SingleManifestHeader extends ManifestHeader {
 			fElement = new PDEManifestElement(this, ""); //$NON-NLS-1$
 		fValue = value;
 	}
-	
-    public void setAttribute(String key, String value) {
-    	fElement.setAttribute(key, value);
-    	update();
-    }
-    
-    public void setDirective(String key, String value) {
-    	fElement.setDirective(key, value);
-    	update();
-    }
-    
-    public void setMainComponent(String value) {
-    	if (value == null)
-    		fElement.setValueComponents((String[])null);
-    	else
-    		fElement.setValueComponents(new String[] {value});
-    	update();
-    }
-    
-    public String getAttribute(String key) {
-    	return fElement.getAttribute(key);
-    }
-    
-    public String getDirective(String key) {
-    	return fElement.getDirective(key);
-    }
-    
-    public String getMainComponent() {
-    	return fElement.getValue();
-    }
-    
-    public void update() {
-    	// single headers will fire a change by default
-    	update(true);
-    }
-    
-    public void update(boolean notify) {
-    	String old = fValue;   	
-    	fValue = fElement.write();
-    	if (notify)
-    		fBundle.getModel().fireModelObjectChanged(this, fName, old, fValue);
-    }
+
+	public void setAttribute(String key, String value) {
+		fElement.setAttribute(key, value);
+		update();
+	}
+
+	public void setDirective(String key, String value) {
+		fElement.setDirective(key, value);
+		update();
+	}
+
+	public void setMainComponent(String value) {
+		if (value == null)
+			fElement.setValueComponents((String[]) null);
+		else
+			fElement.setValueComponents(new String[] {value});
+		update();
+	}
+
+	public String getAttribute(String key) {
+		return fElement.getAttribute(key);
+	}
+
+	public String getDirective(String key) {
+		return fElement.getDirective(key);
+	}
+
+	public String getMainComponent() {
+		return fElement.getValue();
+	}
+
+	public void update() {
+		// single headers will fire a change by default
+		update(true);
+	}
+
+	public void update(boolean notify) {
+		String old = fValue;
+		fValue = fElement.write();
+		if (notify)
+			fBundle.getModel().fireModelObjectChanged(this, fName, old, fValue);
+	}
 
 }

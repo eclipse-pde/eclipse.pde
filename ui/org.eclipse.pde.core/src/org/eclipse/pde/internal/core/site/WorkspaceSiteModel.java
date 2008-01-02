@@ -28,9 +28,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 
-public class WorkspaceSiteModel
-	extends AbstractSiteModel
-	implements IEditableModel {
+public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 	private boolean fDirty;
 	private IFile fFile;
@@ -39,8 +37,9 @@ public class WorkspaceSiteModel
 	public WorkspaceSiteModel(IFile file) {
 		fFile = file;
 	}
+
 	public void fireModelChanged(IModelChangedEvent event) {
-		setDirty(event.getChangeType()!=IModelChangedEvent.WORLD_CHANGED);
+		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
 	}
 
@@ -52,8 +51,7 @@ public class WorkspaceSiteModel
 				installLocation = "file:" + installLocation; //$NON-NLS-1$
 			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			String name = "site"; //$NON-NLS-1$
-			NLResourceHelper helper =
-				new NLResourceHelper(name, new URL[] { url });
+			NLResourceHelper helper = new NLResourceHelper(name, new URL[] {url});
 			return helper;
 		} catch (MalformedURLException e) {
 			return null;
@@ -72,18 +70,23 @@ public class WorkspaceSiteModel
 		}
 		return swriter.toString();
 	}
+
 	public IFile getFile() {
 		return fFile;
 	}
+
 	public String getInstallLocation() {
 		return fFile.getParent().getLocation().toOSString();
 	}
+
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
+
 	public boolean isDirty() {
 		return fDirty;
 	}
+
 	public boolean isEditable() {
 		return fEditable;
 	}
@@ -95,6 +98,7 @@ public class WorkspaceSiteModel
 	protected void updateTimeStamp() {
 		updateTimeStamp(fFile.getLocation().toFile());
 	}
+
 	public void load() {
 		if (fFile.exists()) {
 			InputStream stream = null;
@@ -115,11 +119,11 @@ public class WorkspaceSiteModel
 			setLoaded(true);
 		}
 	}
+
 	public void save() {
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
@@ -131,6 +135,7 @@ public class WorkspaceSiteModel
 		} catch (IOException e) {
 		}
 	}
+
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
@@ -138,6 +143,7 @@ public class WorkspaceSiteModel
 		}
 		setDirty(false);
 	}
+
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}

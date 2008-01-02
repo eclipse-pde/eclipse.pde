@@ -17,9 +17,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 
-public class SchemaSimpleType
-	extends SchemaType
-	implements ISchemaSimpleType, IWritable {
+public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, IWritable {
 
 	private static final long serialVersionUID = 1L;
 	private ISchemaRestriction restriction;
@@ -28,6 +26,7 @@ public class SchemaSimpleType
 	public SchemaSimpleType(ISchema schema, String typeName) {
 		super(schema, typeName);
 	}
+
 	public SchemaSimpleType(ISchemaSimpleType type) {
 		super(type.getSchema(), type.getName());
 		ISchemaRestriction rest = type.getRestriction();
@@ -38,6 +37,7 @@ public class SchemaSimpleType
 			}
 		}
 	}
+
 	public ISchemaRestriction getRestriction() {
 		return restriction;
 	}
@@ -53,12 +53,9 @@ public class SchemaSimpleType
 		this.restriction = restriction;
 		if (restriction != null)
 			restriction.setBaseType(this);
-		getSchema().fireModelObjectChanged(
-			this,
-			P_RESTRICTION,
-			oldValue,
-			restriction);
+		getSchema().fireModelObjectChanged(this, P_RESTRICTION, oldValue, restriction);
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<simpleType>"); //$NON-NLS-1$
 		if (restriction != null) {

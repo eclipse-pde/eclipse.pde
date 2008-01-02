@@ -66,16 +66,18 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		if (fFragment && model instanceof IFragmentModel)
 			return model.getPluginBase();
 		if (!fFragment && model instanceof IPluginModel)
-				return model.getPluginBase();
+			return model.getPluginBase();
 		return null;
 	}
-	
+
 	public String getVersion() {
 		return fVersion;
 	}
+
 	public boolean isUnpack() {
 		return fUnpack;
 	}
+
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fVersion;
@@ -90,8 +92,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		firePropertyChanged(this, P_UNPACK, new Boolean(oldValue), new Boolean(unpack));
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion(newValue != null ? newValue.toString() : null);
 		} else
@@ -113,7 +114,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		if (unpack != null && unpack.equalsIgnoreCase("false")) //$NON-NLS-1$
 			fUnpack = false;
 	}
-	
+
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
 		label = plugin.getTranslatedName();
@@ -155,5 +156,5 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	public String toString() {
 		return getLabel();
 	}
-	
+
 }

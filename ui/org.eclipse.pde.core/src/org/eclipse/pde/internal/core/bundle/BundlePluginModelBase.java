@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
+
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -43,19 +44,19 @@ import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 
-public abstract class BundlePluginModelBase extends AbstractNLModel
-		implements IBundlePluginModelBase, IPluginModelFactory {
-	
+public abstract class BundlePluginModelBase extends AbstractNLModel implements IBundlePluginModelBase, IPluginModelFactory {
+
 	private static final long serialVersionUID = 1L;
 	private IBundleModel fBundleModel;
 	private ISharedExtensionsModel fExtensionsModel;
 	private BundlePluginBase fBundlePluginBase;
 	private IBuildModel fBuildModel;
 	private BundleDescription fBundleDescription;
-	
+
 	public BundlePluginModelBase() {
 		getPluginBase();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,9 +65,11 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public IBundleModel getBundleModel() {
 		return fBundleModel;
 	}
+
 	public IResource getUnderlyingResource() {
 		return fBundleModel.getUnderlyingResource();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -75,6 +78,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public ISharedExtensionsModel getExtensionsModel() {
 		return fExtensionsModel;
 	}
+
 	public void dispose() {
 		if (fBundleModel != null) {
 			if (fBundlePluginBase != null)
@@ -90,19 +94,20 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 		}
 		super.dispose();
 	}
+
 	public void save() {
 		if (fBundleModel != null && fBundleModel instanceof IEditableModel) {
 			IEditableModel emodel = (IEditableModel) fBundleModel;
 			if (emodel.isDirty())
 				emodel.save();
 		}
-		if (fExtensionsModel != null
-				&& fExtensionsModel instanceof IEditableModel) {
+		if (fExtensionsModel != null && fExtensionsModel instanceof IEditableModel) {
 			IEditableModel emodel = (IEditableModel) fExtensionsModel;
 			if (emodel.isDirty())
 				emodel.save();
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,6 +121,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 		if (fBundleModel != null && fBundlePluginBase != null)
 			bundleModel.addModelChangedListener(fBundlePluginBase);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -127,7 +133,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 		}
 		fExtensionsModel = extensionsModel;
 		if (fExtensionsModel instanceof PluginModelBase) {
-			((PluginModelBase)fExtensionsModel).setLocalization(getBundleLocalization());
+			((PluginModelBase) fExtensionsModel).setLocalization(getBundleLocalization());
 		}
 		if (extensionsModel != null && fBundlePluginBase != null)
 			extensionsModel.addModelChangedListener(fBundlePluginBase);
@@ -136,32 +142,32 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
 	}
-	
+
 	public void setBuildModel(IBuildModel buildModel) {
 		fBuildModel = buildModel;
 	}
-	
+
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
-	
+
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void fireModelChanged(IModelChangedEvent event) {
 		super.fireModelChanged(event);
 		Object[] objects = event.getChangedObjects();
-		if (objects!= null && objects.length > 0) {
+		if (objects != null && objects.length > 0) {
 			if (objects[0] instanceof IPluginImport) {
-				fBundlePluginBase.updateImport((IPluginImport)objects[0]);				
+				fBundlePluginBase.updateImport((IPluginImport) objects[0]);
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -176,9 +182,11 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 		}
 		return fBundlePluginBase;
 	}
+
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -187,6 +195,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public IPluginModelFactory getPluginFactory() {
 		return this;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -197,6 +206,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 			return fExtensionsModel.getFactory();
 		return null;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -207,18 +217,16 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 			return fBundleModel.getInstallLocation();
 		return null;
 	}
-	
+
 	public String getBundleLocalization() {
 		IBundle bundle = fBundleModel != null ? fBundleModel.getBundle() : null;
 		return bundle != null ? bundle.getLocalization() : null;
-		
+
 	}
-	
+
 	protected NLResourceHelper createNLResourceHelper() {
 		String localization = getBundleLocalization();
-		return localization == null
-				? null
-				: new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this)); 
+		return localization == null ? null : new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this));
 	}
 
 	public URL getNLLookupLocation() {
@@ -228,6 +236,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 			return null;
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -240,24 +249,25 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 			return false;
 		return true;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
-		return ((fBundleModel == null || fBundleModel.isInSync()) && (fExtensionsModel == null || fExtensionsModel
-				.isInSync()));
+		return ((fBundleModel == null || fBundleModel.isInSync()) && (fExtensionsModel == null || fExtensionsModel.isInSync()));
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	public boolean isValid() {
-		return ((fBundleModel == null || fBundleModel.isValid()) && (fExtensionsModel == null || fExtensionsModel
-				.isValid()));
+		return ((fBundleModel == null || fBundleModel.isValid()) && (fExtensionsModel == null || fExtensionsModel.isValid()));
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -265,22 +275,23 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	 */
 	public void load() throws CoreException {
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
-	public void load(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public void load(InputStream source, boolean outOfSync) throws CoreException {
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public void reload(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 	}
+
 	/**
 	 * @return Returns the enabled.
 	 */
@@ -290,7 +301,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 
 	public void setEnabled(boolean enabled) {
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -298,14 +309,14 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	 */
 	protected void updateTimeStamp() {
 	}
-	
+
 	public IPluginImport createImport() {
 		PluginImport iimport = new PluginImport();
 		iimport.setModel(this);
 		iimport.setParent(getPluginBase());
 		return iimport;
 	}
-	
+
 	public IPluginImport createImport(String pluginId) {
 		PluginImport iimport = new PluginImport(this, pluginId);
 		iimport.setParent(getPluginBase());
@@ -318,21 +329,25 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 		library.setParent(getPluginBase());
 		return library;
 	}
+
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createAttribute(element);
 		return null;
 	}
+
 	public IPluginElement createElement(IPluginObject parent) {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createElement(parent);
 		return null;
 	}
+
 	public IPluginExtension createExtension() {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createExtension();
 		return null;
 	}
+
 	public IPluginExtensionPoint createExtensionPoint() {
 		if (fExtensionsModel != null)
 			return fExtensionsModel.getFactory().createExtensionPoint();
@@ -342,6 +357,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public boolean isBundleModel() {
 		return true;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -350,6 +366,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public BundleDescription getBundleDescription() {
 		return fBundleDescription;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -358,20 +375,20 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public void setBundleDescription(BundleDescription description) {
 		fBundleDescription = description;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
 	public boolean isDirty() {
-		if (fBundleModel != null && (fBundleModel instanceof IEditable)
-				&& ((IEditable) fBundleModel).isDirty())
+		if (fBundleModel != null && (fBundleModel instanceof IEditable) && ((IEditable) fBundleModel).isDirty())
 			return true;
-		if (fExtensionsModel != null && (fExtensionsModel instanceof IEditable)
-				&& ((IEditable) fExtensionsModel).isDirty())
+		if (fExtensionsModel != null && (fExtensionsModel instanceof IEditable) && ((IEditable) fExtensionsModel).isDirty())
 			return true;
 		return false;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -380,6 +397,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public void save(PrintWriter writer) {
 		// Does nothing - individual models are saved instead
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -388,7 +406,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel
 	public void setDirty(boolean dirty) {
 		//does nothing
 	}
-	
+
 	public String toString() {
 		IPluginBase base = getPluginBase();
 		if (base != null)

@@ -17,12 +17,13 @@ import org.eclipse.pde.core.build.IBuildModelFactory;
 public class BuildModelFactory implements IBuildModelFactory {
 	private IBuildModel model;
 
-public BuildModelFactory(IBuildModel model) {
-	this.model = model;
-}
-public IBuildEntry createEntry(String name) {
-	BuildEntry entry = new BuildEntry(name);
-	entry.setModel(model);
-	return entry;
-}
+	public BuildModelFactory(IBuildModel model) {
+		this.model = model;
+	}
+
+	public IBuildEntry createEntry(String name) {
+		BuildEntry entry = new BuildEntry(name);
+		entry.setModel(model);
+		return entry;
+	}
 }

@@ -42,22 +42,24 @@ public interface ISchemaCompositor extends ISchemaObject, ISchemaRepeatable {
 	/**
 	 * Keyword table for compositors.
 	 */
-	public static final String[] kindTable =
-		{ "all", "choice", "sequence", "group" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-/**
- * Returns the number of children of this compositor.
- * @return number of compositor children
- */
-public int getChildCount();
-/**
- * Returns children of this compositor.
- * @return compositor children
- */
-public ISchemaObject[] getChildren();
-/**
- * Returns a flag that defines how the children of this compositors should be
- * treated when computing type grammar (one of ALL, CHOICE, GROUP, SEQUENCE).
- * @return compositor kind value
- */
-public int getKind();
+	public static final String[] kindTable = {"all", "choice", "sequence", "group"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+	/**
+	 * Returns the number of children of this compositor.
+	 * @return number of compositor children
+	 */
+	public int getChildCount();
+
+	/**
+	 * Returns children of this compositor.
+	 * @return compositor children
+	 */
+	public ISchemaObject[] getChildren();
+
+	/**
+	 * Returns a flag that defines how the children of this compositors should be
+	 * treated when computing type grammar (one of ALL, CHOICE, GROUP, SEQUENCE).
+	 * @return compositor kind value
+	 */
+	public int getKind();
 }

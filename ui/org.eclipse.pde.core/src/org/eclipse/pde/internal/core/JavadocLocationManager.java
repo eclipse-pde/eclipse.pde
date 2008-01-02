@@ -29,20 +29,20 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class JavadocLocationManager {
-	
+
 	public static final String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
 
 	private HashMap fLocations;
-	
+
 	public String getJavadocLocation(IPluginModelBase model) {
-		File file = new File(model.getInstallLocation());			
+		File file = new File(model.getInstallLocation());
 		if (file.isDirectory()) {
 			File doc = new File(file, "doc"); //$NON-NLS-1$
 			if (new File(doc, "package-list").exists()) //$NON-NLS-1$
 				return doc.getAbsolutePath();
 		} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
 			return file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$
-		}		
+		}
 		return getEntry(model);
 	}
 
@@ -56,7 +56,7 @@ public class JavadocLocationManager {
 				Iterator iter = fLocations.keySet().iterator();
 				while (iter.hasNext()) {
 					String location = iter.next().toString();
-					Set set = (Set)fLocations.get(location);
+					Set set = (Set) fLocations.get(location);
 					if (set.contains(id))
 						return location;
 				}
@@ -64,11 +64,12 @@ public class JavadocLocationManager {
 		}
 		return null;
 	}
-	
+
 	private synchronized void initialize() {
-		if (fLocations != null) return;
+		if (fLocations != null)
+			return;
 		fLocations = new HashMap();
-		
+
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
@@ -78,7 +79,7 @@ public class JavadocLocationManager {
 			processExtension(extensions[i], base);
 		}
 	}
-	
+
 	private void processExtension(IExtension extension, IPluginModelBase base) {
 		IConfigurationElement[] children = extension.getConfigurationElements();
 		for (int i = 0; i < children.length; i++) {
@@ -94,20 +95,20 @@ public class JavadocLocationManager {
 					boolean archive = attr == null ? false : "true".equals(attr); //$NON-NLS-1$
 
 					IPath modelPath = new Path(base.getInstallLocation());
-					StringBuffer buffer = new StringBuffer();			
+					StringBuffer buffer = new StringBuffer();
 					File file = modelPath.toFile();
 					if (file.exists()) {
 						try {
 							buffer.append(file.toURI().toURL());
-				        } catch (MalformedURLException e1) {
-				        	buffer.append("file:/"); //$NON-NLS-1$
-				            buffer.append(modelPath.toPortableString());
-				        }
-				        if (file.isFile()) {
-				        	buffer.append("!/"); //$NON-NLS-1$
-				        	archive = true;
-				        }
-					} 
+						} catch (MalformedURLException e1) {
+							buffer.append("file:/"); //$NON-NLS-1$
+							buffer.append(modelPath.toPortableString());
+						}
+						if (file.isFile()) {
+							buffer.append("!/"); //$NON-NLS-1$
+							archive = true;
+						}
+					}
 					buffer.append(path);
 					if (archive)
 						buffer.insert(0, "jar:"); //$NON-NLS-1$
@@ -116,23 +117,23 @@ public class JavadocLocationManager {
 			}
 		}
 	}
-	
+
 	private void processPlugins(String path, IConfigurationElement[] plugins) {
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].getName().equals("plugin")) { //$NON-NLS-1$
 				String id = plugins[i].getAttribute("id"); //$NON-NLS-1$
 				if (id == null)
 					continue;
-				Set set = (Set)fLocations.get(path);
+				Set set = (Set) fLocations.get(path);
 				if (set == null) {
 					set = new HashSet();
 					fLocations.put(path, set);
 				}
 				set.add(id);
 			}
-		}		
+		}
 	}
-	
+
 	public void reset() {
 		fLocations = null;
 	}

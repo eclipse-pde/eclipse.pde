@@ -15,16 +15,16 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 
-public class WorkspaceBundlePluginModel extends WorkspaceBundlePluginModelBase implements IPluginModel{
+public class WorkspaceBundlePluginModel extends WorkspaceBundlePluginModelBase implements IPluginModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public WorkspaceBundlePluginModel(IFile manifestFile, IFile pluginFile) {
 		super(manifestFile, pluginFile);
 	}
 
 	public IPluginBase createPluginBase() {
-		BundlePlugin base =  new BundlePlugin();
+		BundlePlugin base = new BundlePlugin();
 		base.setModel(this);
 		return base;
 	}

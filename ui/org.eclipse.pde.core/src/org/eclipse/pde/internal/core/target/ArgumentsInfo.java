@@ -20,26 +20,26 @@ public class ArgumentsInfo extends TargetObject implements IArgumentsInfo {
 	private static final long serialVersionUID = 1L;
 	private String fProgramArgs = ""; //$NON-NLS-1$
 	private String fVMArgs = ""; //$NON-NLS-1$
-	
+
 	public ArgumentsInfo(ITargetModel model) {
 		super(model);
 	}
-	
+
 	public String getProgramArguments() {
 		return fProgramArgs;
 	}
-	
+
 	public String getVMArguments() {
 		return fVMArgs;
 	}
-	
+
 	public void setProgramArguments(String args) {
 		String oldValue = fProgramArgs;
-		fProgramArgs = args; 
+		fProgramArgs = args;
 		if (isEditable())
 			firePropertyChanged(P_PROG_ARGS, oldValue, fProgramArgs);
 	}
-	
+
 	public void setVMArguments(String args) {
 		String oldValue = fVMArgs;
 		fVMArgs = args;
@@ -60,7 +60,7 @@ public class ArgumentsInfo extends TargetObject implements IArgumentsInfo {
 			}
 		}
 	}
-	
+
 	private String getText(Node node) {
 		node.normalize();
 		Node text = node.getFirstChild();
@@ -70,8 +70,8 @@ public class ArgumentsInfo extends TargetObject implements IArgumentsInfo {
 		return ""; //$NON-NLS-1$
 	}
 
-	public void write(String indent,java.io.PrintWriter writer) {
-		if (( fProgramArgs == null || fProgramArgs.length()== 0) && (fVMArgs == null || fVMArgs.length() == 0))
+	public void write(String indent, java.io.PrintWriter writer) {
+		if ((fProgramArgs == null || fProgramArgs.length() == 0) && (fVMArgs == null || fVMArgs.length() == 0))
 			return;
 		writer.println();
 		writer.println(indent + "<launcherArgs>"); //$NON-NLS-1$

@@ -41,16 +41,16 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	protected String fText;
 
 	protected Hashtable fAttributes;
-	
+
 	private IConfigurationElement fElement = null;
-	
+
 	public PluginElement() {
 	}
-	
+
 	public PluginElement(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	PluginElement(PluginElement element) {
 		setModel(element.getModel());
 		setParent(element.getParent());
@@ -104,7 +104,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	public int getAttributeCount() {
 		// if attributes are initialized, don't load the entire map to find the # of elements
-		if (fAttributes == null && fElement != null) 
+		if (fAttributes == null && fElement != null)
 			return fElement.getAttributeNames().length;
 		return getAttributeMap().size();
 	}
@@ -145,13 +145,12 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		NamedNodeMap attributes = node.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
-			IPluginAttribute att = getModel().getFactory()
-					.createAttribute(this);
+			IPluginAttribute att = getModel().getFactory().createAttribute(this);
 			((PluginAttribute) att).load(attribute);
 			((PluginAttribute) att).setInTheModel(true);
 			this.fAttributes.put(attribute.getNodeName(), att);
 		}
-		
+
 		if (fChildren == null)
 			fChildren = new ArrayList();
 		NodeList children = node.getChildNodes();
@@ -164,8 +163,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				this.fChildren.add(childElement);
 				childElement.setParent(this);
 				childElement.load(child);
-			} else if (child.getNodeType() == Node.TEXT_NODE
-					&& child.getNodeValue() != null) {
+			} else if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue() != null) {
 				String text = child.getNodeValue();
 				text = text.trim();
 				if (isNotEmpty(text))
@@ -203,8 +201,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	public void setElementInfo(ISchemaElement newElementInfo) {
 		fElementInfo = newElementInfo;
 		if (fElementInfo == null) {
-			for (Enumeration atts = getAttributeMap().elements(); atts
-					.hasMoreElements();) {
+			for (Enumeration atts = getAttributeMap().elements(); atts.hasMoreElements();) {
 				PluginAttribute att = (PluginAttribute) atts.nextElement();
 				att.setAttributeInfo(null);
 			}
@@ -225,8 +222,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		String newIndent = indent + ATTRIBUTE_SHIFT;
 		if (getAttributeMap().isEmpty() == false) {
 			writer.println();
-			for (Iterator iter = getAttributeMap().values().iterator(); iter
-					.hasNext();) {
+			for (Iterator iter = getAttributeMap().values().iterator(); iter.hasNext();) {
 				IPluginAttribute attribute = (IPluginAttribute) iter.next();
 				attribute.write(newIndent, writer);
 				if (iter.hasNext())
@@ -245,7 +241,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 		writer.println(indent + "</" + getName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	protected Hashtable getAttributeMap() {
 		if (fAttributes == null) {
 			fAttributes = new Hashtable();
@@ -260,14 +256,14 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 		return fAttributes;
 	}
-	
+
 	private IPluginAttribute createAttribute(String name, String value) {
 		if (name == null || value == null)
 			return null;
 		try {
 			IPluginAttribute attr = getPluginModel().getFactory().createAttribute(this);
 			if (attr instanceof PluginAttribute)
-				((PluginAttribute)attr).load(name, value);
+				((PluginAttribute) attr).load(name, value);
 			else {
 				attr.setName(name);
 				attr.setValue(value);
@@ -277,7 +273,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 		return null;
 	}
-	
+
 	protected ArrayList getChildrenList() {
 		if (fChildren == null) {
 			fChildren = new ArrayList();
@@ -293,7 +289,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 		return fChildren;
 	}
-	
+
 	public String getName() {
 		if (fName == null && fElement != null) {
 			fName = fElement.getName();

@@ -20,22 +20,24 @@ public abstract class SchemaType implements ISchemaType, Serializable {
 	private String name;
 	transient private ISchema schema;
 
-public SchemaType(ISchema schema, String typeName) {
-	this.schema = schema;
-	name = typeName;
-}
-public String getName() {
-	return name;
-}
-public ISchema getSchema() {
-	return schema;
-}
+	public SchemaType(ISchema schema, String typeName) {
+		this.schema = schema;
+		name = typeName;
+	}
 
-public void setSchema(ISchema schema) {
-	this.schema = schema;
-}
+	public String getName() {
+		return name;
+	}
 
-public String toString() {
-	return name;
-}
+	public ISchema getSchema() {
+		return schema;
+	}
+
+	public void setSchema(ISchema schema) {
+		this.schema = schema;
+	}
+
+	public String toString() {
+		return name;
+	}
 }

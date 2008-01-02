@@ -25,18 +25,18 @@ import org.xml.sax.helpers.DefaultHandler;
 public class TocModel extends XMLEditingModel {
 
 	private TocDocumentHandler fHandler;
-	
+
 	private TocDocumentFactory fFactory;
-	
-	private Toc fToc;	
-	
+
+	private Toc fToc;
+
 	/**
 	 * @param document
 	 * @param isReconciling
 	 */
 	public TocModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
-		
+
 		fHandler = null;
 		fFactory = new TocDocumentFactory(this);
 		fToc = null;
@@ -45,9 +45,8 @@ public class TocModel extends XMLEditingModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel, boolean)
 	 */
-	protected DefaultHandler createDocumentHandler(IModel model,
-			boolean reconciling) {
-		
+	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
+
 		if (fHandler == null) {
 			fHandler = new TocDocumentHandler(this, reconciling);
 		}

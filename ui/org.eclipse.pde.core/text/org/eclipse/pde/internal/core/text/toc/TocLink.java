@@ -47,13 +47,10 @@ public class TocLink extends TocObject {
 		super(model, ELEMENT_LINK);
 
 		IPath path = file.getFullPath();
-		if(file.getProject().equals(getSharedModel().getUnderlyingResource().getProject()))
-		{	//If the file is from the same project,
+		if (file.getProject().equals(getSharedModel().getUnderlyingResource().getProject())) { //If the file is from the same project,
 			//remove the project name segment
 			setFieldTocPath(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
-		}
-		else
-		{	//If the file is from another project, add ".."
+		} else { //If the file is from another project, add ".."
 			//to traverse outside this model's project
 			setFieldTocPath(".." + path.toString()); //$NON-NLS-1$
 		}
@@ -76,19 +73,19 @@ public class TocLink extends TocObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#getName()
 	 */
-	public String getName()
-	{	return getFieldTocPath();
+	public String getName() {
+		return getFieldTocPath();
 	}
 
-	public String getPath()
-	{	return getFieldTocPath();
+	public String getPath() {
+		return getFieldTocPath();
 	}
 
 	/**
 	 * @return the path associated with this TOC link
 	 */
-	public String getFieldTocPath()
-	{	return getXMLAttributeValue(ATTRIBUTE_TOC);
+	public String getFieldTocPath() {
+		return getXMLAttributeValue(ATTRIBUTE_TOC);
 	}
 
 	/**
@@ -97,8 +94,8 @@ public class TocLink extends TocObject {
 	 * 
 	 * @param id The new path to associate with the link
 	 */
-	public void setFieldTocPath(String path)
-	{	setXMLAttribute(ATTRIBUTE_TOC, path);
+	public void setFieldTocPath(String path) {
+		setXMLAttribute(ATTRIBUTE_TOC, path);
 	}
-	
+
 }

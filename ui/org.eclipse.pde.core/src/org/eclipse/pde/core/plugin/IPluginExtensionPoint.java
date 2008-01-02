@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
+
 /**
  * Classes that implement this interface model an extension point
  * element specified in the plug-in manifest.
@@ -22,6 +23,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * about changes to the schema value.
 	 */
 	String P_SCHEMA = "schema"; //$NON-NLS-1$
+
 	/**
 	 * Returns the full extension point Id that
 	 * is composed as "pluginId.pointId". This full
@@ -31,6 +33,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * @return a full extension point Id
 	 */
 	String getFullId();
+
 	/**
 	 * Returns the name of the extension point XML schema
 	 * that defines this extension point.
@@ -38,6 +41,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * @return XML extension point schema file name
 	 */
 	String getSchema();
+
 	/**
 	 * Sets the plug-in relative name of
 	 * the extension point schema file that

@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
-
 public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 
 	private IProgressMonitor fMonitor;
@@ -25,7 +24,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	public UpdateSiteErrorReporter(IFile file) {
 		super(file);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#validateContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -40,7 +39,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		} else {
 			NamedNodeMap attributes = root.getAttributes();
 			for (int i = 0; i < attributes.getLength(); i++) {
-				Attr attr = (Attr)attributes.item(i);
+				Attr attr = (Attr) attributes.item(i);
 				String name = attr.getName();
 				if (!name.equals("type") && //$NON-NLS-1$
 						!name.equals("url") && //$NON-NLS-1$
@@ -67,12 +66,12 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
-			Element element = (Element)list.item(i);
+			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "path", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(element, "url", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
-				Attr attr = (Attr)attributes.item(j);
+				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (name.equals("url")) { //$NON-NLS-1$
 					validateURL(element, "url"); //$NON-NLS-1$
@@ -91,12 +90,12 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
-			Element element = (Element)list.item(i);
+			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(element, "label", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
-				Attr attr = (Attr)attributes.item(j);
+				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (!name.equals("name") && !name.equals("label")) { //$NON-NLS-1$ //$NON-NLS-2$
 					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
@@ -114,11 +113,11 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
-			Element element = (Element)list.item(i);
+			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
-				Attr attr = (Attr)attributes.item(j);
+				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (!name.equals("name")) { //$NON-NLS-1$
 					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
@@ -160,14 +159,12 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
-			Element element = (Element)list.item(0);
-			validateElementWithContent((Element)list.item(0), true);
+			Element element = (Element) list.item(0);
+			validateElementWithContent((Element) list.item(0), true);
 			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
 				validateURL(element, "url"); //$NON-NLS-1$
 			reportExtraneousElements(list, 1);
 		}
 	}
-	
-	
 
 }

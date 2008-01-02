@@ -50,8 +50,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 			IPluginAttribute target = (IPluginAttribute) obj;
 			if (target.getModel().equals(getModel()))
 				return false;
-			if (stringEqualWithNull(getName(), target.getName())
-					&& stringEqualWithNull(getValue(), target.getValue()))
+			if (stringEqualWithNull(getName(), target.getName()) && stringEqualWithNull(getValue(), target.getValue()))
 				return true;
 		}
 		return false;
@@ -66,8 +65,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		}
 		if (attributeInfo == null) {
 			PluginElement element = (PluginElement) getParent();
-			ISchemaElement elementInfo = (ISchemaElement) element
-					.getElementInfo();
+			ISchemaElement elementInfo = (ISchemaElement) element.getElementInfo();
 			if (elementInfo != null) {
 				attributeInfo = elementInfo.getAttribute(getName());
 			}
@@ -83,7 +81,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		fName = node.getNodeName();
 		fValue = node.getNodeValue();
 	}
-	
+
 	void load(String name, String value) {
 		fName = name;
 		fValue = value;
@@ -97,8 +95,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		ensureModelEditable();
 		String oldValue = fValue;
 		fValue = newValue;
-		AttributeChangedEvent e = new AttributeChangedEvent(getModel(),
-				getParent(), this, oldValue, newValue);
+		AttributeChangedEvent e = new AttributeChangedEvent(getModel(), getParent(), this, oldValue, newValue);
 		fireModelChanged(e);
 	}
 

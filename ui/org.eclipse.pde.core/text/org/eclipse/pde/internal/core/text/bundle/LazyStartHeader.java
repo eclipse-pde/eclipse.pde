@@ -23,7 +23,7 @@ public class LazyStartHeader extends SingleManifestHeader {
 	public boolean isLazyStart() {
 		return "true".equals(getMainComponent()); //$NON-NLS-1$
 	}
-	
+
 	public void setLazyStart(boolean lazy) {
 		setMainComponent(Boolean.toString(lazy));
 	}

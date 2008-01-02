@@ -28,9 +28,11 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
+
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
+
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -59,8 +61,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-		throws CoreException {
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
@@ -78,10 +79,9 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	
+
 	private void checkFile(IFile file, IProgressMonitor monitor) {
-		String message =
-			NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
+		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		UpdateSiteErrorReporter reporter = new UpdateSiteErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
@@ -91,5 +91,5 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();
 	}
-	
+
 }

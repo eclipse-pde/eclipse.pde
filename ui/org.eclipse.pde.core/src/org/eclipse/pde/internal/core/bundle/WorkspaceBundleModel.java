@@ -76,7 +76,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			return null;
 		}
 		IPath path = fUnderlyingResource.getLocation();
-		if(path == null)
+		if (path == null)
 			return null;
 		return path.removeLastSegments(2).addTrailingSeparator().toOSString();
 	}
@@ -130,15 +130,14 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF-8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF-8")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
 				// prevents Core Exception when META-INF folder does not exist
 				IContainer parent = fUnderlyingResource.getParent();
 				if (!parent.exists() && parent instanceof IFolder)
-					CoreUtility.createFolder((IFolder)parent);
+					CoreUtility.createFolder((IFolder) parent);
 				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
@@ -150,7 +149,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
-		Map headers = ((Bundle)bundle).getHeaders();
+		Map headers = ((Bundle) bundle).getHeaders();
 		boolean addManifestVersion = headers.get(MANIFEST_VERSION) == null;
 		if (addManifestVersion)
 			headers.put(MANIFEST_VERSION, "1.0"); //$NON-NLS-1$

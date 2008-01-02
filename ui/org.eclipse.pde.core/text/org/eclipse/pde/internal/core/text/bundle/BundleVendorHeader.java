@@ -19,11 +19,11 @@ public class BundleVendorHeader extends SingleManifestHeader {
 	public BundleVendorHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setVendor(String vendor) {
 		setMainComponent(vendor);
 	}
-	
+
 	public String getVendor() {
 		return getMainComponent();
 	}

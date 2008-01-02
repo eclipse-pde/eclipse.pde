@@ -11,74 +11,74 @@
 package org.eclipse.pde.internal.core.itarget;
 
 public interface ITarget extends ITargetObject {
-	
+
 	final String P_NAME = "name"; //$NON-NLS-1$
 	final String P_ALL_PLUGINS = "useAllPlugins"; //$NON-NLS-1$
-	
+
 	void reset();
-	
+
 	String getName();
-	
+
 	void setName(String name);
-	
+
 	IArgumentsInfo getArguments();
-	
+
 	void setArguments(IArgumentsInfo info);
-	
+
 	IEnvironmentInfo getEnvironment();
-	
+
 	void setEnvironment(IEnvironmentInfo info);
-	
+
 	ITargetJRE getTargetJREInfo();
-	
+
 	void setTargetJREInfo(ITargetJRE info);
-	
+
 	ILocationInfo getLocationInfo();
-	
+
 	void setImplicitPluginsInfo(IImplicitDependenciesInfo info);
-	
+
 	IImplicitDependenciesInfo getImplicitPluginsInfo();
-	
+
 	void setLocationInfo(ILocationInfo info);
-		
+
 	void addPlugin(ITargetPlugin plugin);
-	
+
 	void addPlugins(ITargetPlugin[] plugins);
-	
+
 	void addFeature(ITargetFeature feature);
-	
+
 	void addFeatures(ITargetFeature features[]);
-	
+
 	void removePlugin(ITargetPlugin plugin);
-	
+
 	void removePlugins(ITargetPlugin[] plugins);
-	
+
 	void removeFeature(ITargetFeature feature);
-	
+
 	void removeFeatures(ITargetFeature[] features);
-	
+
 	ITargetPlugin[] getPlugins();
-	
+
 	ITargetFeature[] getFeatures();
-	
+
 	boolean containsPlugin(String id);
-	
+
 	boolean containsFeature(String id);
-	
+
 	boolean useAllPlugins();
-	
+
 	void setUseAllPlugins(boolean value);
-	
+
 	IAdditionalLocation[] getAdditionalDirectories();
-	
+
 	void removeAdditionalDirectories(IAdditionalLocation[] dirs);
-	
+
 	void addAdditionalDirectories(IAdditionalLocation[] dirs);
-	
+
 	void setDescription(String desc);
-	
+
 	String getDescription();
-	
+
 	boolean isValidFeatureObject(Object featureObj);
 
 }

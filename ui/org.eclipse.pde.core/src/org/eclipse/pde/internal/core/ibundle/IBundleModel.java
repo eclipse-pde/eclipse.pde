@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.ibundle;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
+
 /**
  * This model is created from the "META-INF/MANIFEST.MF" file that represents
  * the plug-in manifest in Eclipse 3.0 OSGi format.
@@ -29,6 +30,7 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 * @return an object containing the manifest headers
 	 */
 	IBundle getBundle();
+
 	/**
 	 * Returns the location of the file used to create the model.
 	 * 
@@ -36,6 +38,7 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 *         file is in a workspace.
 	 */
 	public String getInstallLocation();
+
 	/**
 	 * Tests whether this is a model of a fragment bundle.
 	 * 
@@ -43,7 +46,7 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean isFragmentModel();
-	
+
 	public IBundleModelFactory getFactory();
-	
+
 }

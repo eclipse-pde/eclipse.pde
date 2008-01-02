@@ -33,30 +33,30 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		if (file.exists())
 			fLastModified = file.lastModified();
 	}
-	
+
 	public static URL computeURL(ISchemaDescriptor parentDesc, String schemaLocation) throws MalformedURLException {
 		URL parentURL = parentDesc == null ? null : parentDesc.getSchemaURL();
 		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
 			// extract plug-in ID
-			IPath path = new Path( schemaLocation.substring(9));
+			IPath path = new Path(schemaLocation.substring(9));
 			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentURL);
 		}
-		
+
 		if (parentURL == null)
 			return null;
-		
+
 		// parent-relative location
 		IPath path = new Path(parentURL.getPath());
 		path = path.removeLastSegments(1).append(schemaLocation);
-		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
+		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());
 	}
-	
-	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {		
+
+	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {
 		URL url = SchemaRegistry.getSchemaURL(pluginID, path.toString());
 		if (url == null) {
 			IPluginModelBase model = PluginRegistry.findModel(pluginID);
 			if (model != null)
-				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);		
+				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);
 		}
 		try {
 			if (url == null && parentURL != null) {
@@ -87,7 +87,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	 */
 	public String getPointId() {
 		int dotLoc = fSchemaLocation.lastIndexOf('.');
-		if (dotLoc!= -1) {
+		if (dotLoc != -1) {
 			return fSchemaLocation.substring(0, dotLoc);
 		}
 		return null;

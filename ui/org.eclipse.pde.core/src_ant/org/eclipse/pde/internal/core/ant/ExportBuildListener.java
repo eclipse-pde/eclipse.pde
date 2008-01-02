@@ -16,7 +16,7 @@ import org.apache.tools.ant.Project;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 
 public class ExportBuildListener implements BuildListener {
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */

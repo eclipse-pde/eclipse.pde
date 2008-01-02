@@ -27,40 +27,40 @@ import org.xml.sax.SAXException;
  */
 public class DOMParserWrapper {
 
-	protected DocumentBuilder fParser;	
+	protected DocumentBuilder fParser;
 	protected boolean isdisposed;
-	
+
 	/**
 	 * 
 	 */
 	public DOMParserWrapper() throws ParserConfigurationException, FactoryConfigurationError {
 		fParser = PDEXMLHelper.Instance().getDefaultDOMParser();
-		isdisposed = false;		
+		isdisposed = false;
 	}
 
 	// Explicit disposal
 	public void dispose() {
-		if (isdisposed == false) {		
+		if (isdisposed == false) {
 			PDEXMLHelper.Instance().recycleDOMParser(fParser);
 			isdisposed = true;
-		}			
+		}
 	}
-	
-	public Document	parse(File f) throws SAXException, IOException {
+
+	public Document parse(File f) throws SAXException, IOException {
 		return fParser.parse(f);
 	}
-	
+
 	public Document newDocument() {
 		return fParser.newDocument();
 	}
-	
+
 	// NOTE:  If other parser method calls are required, the corresponding
 	// wrapper method needs to be added here
-	
+
 	// Explicit disposal	
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dispose();
 	}
-	
+
 }

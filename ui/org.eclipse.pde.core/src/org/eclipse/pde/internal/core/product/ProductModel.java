@@ -27,14 +27,13 @@ import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-
 public class ProductModel extends AbstractModel implements IProductModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private IProductModelFactory fFactory;
 	private IProduct fProduct;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
@@ -82,8 +81,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
-	public void load(InputStream stream, boolean outOfSync)
-			throws CoreException {
+	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
@@ -106,14 +104,9 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public void reload(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
-		fireModelChanged(
-				new ModelChangedEvent(this,
-					IModelChangedEvent.WORLD_CHANGED,
-					new Object[] { fProduct },
-					null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fProduct}, null));
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +115,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 	public boolean isEditable() {
 		return false;
 	}
-	
+
 	private void processDocument(Document doc) {
 		Node rootNode = doc.getDocumentElement();
 		if (fProduct == null) {

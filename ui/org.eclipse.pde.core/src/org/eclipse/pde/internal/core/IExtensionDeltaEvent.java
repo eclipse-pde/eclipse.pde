@@ -15,10 +15,13 @@ public interface IExtensionDeltaEvent {
 	 * Event is sent after the models have been changed.
 	 */
 	int MODELS_CHANGED = 0x4;
-	
+
 	public IPluginModelBase[] getAddedModels();
+
 	public IPluginModelBase[] getChangedModels();
+
 	public IPluginModelBase[] getRemovedModels();
+
 	public int getEventTypes();
 
 }

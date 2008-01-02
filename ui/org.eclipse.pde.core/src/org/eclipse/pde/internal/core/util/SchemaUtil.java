@@ -30,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class SchemaUtil {
-	
+
 	public static InputStream getInputStream(URL url) throws IOException {
 		if (url == null) {
 			throw new MalformedURLException("URL specified is null"); //$NON-NLS-1$
@@ -38,7 +38,7 @@ public class SchemaUtil {
 			return new BufferedInputStream(new FileInputStream(url.getFile()));
 		}
 		return new BufferedInputStream(url.openStream());
-	}		
+	}
 
 	public static void parseURL(URL url, DefaultHandler handler) {
 		InputStream input = null;
@@ -66,8 +66,8 @@ public class SchemaUtil {
 				if (input != null)
 					input.close();
 			} catch (IOException e1) {
-			}		
+			}
 		}
-	}	
+	}
 
 }

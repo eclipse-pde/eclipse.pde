@@ -37,13 +37,13 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public PluginLibrary() {
 	}
-	
+
 	public boolean isValid() {
 		return fName != null;
 	}
-	
+
 	public String[] getContentFilters() {
-		IPluginModelBase model = (IPluginModelBase)getModel();
+		IPluginModelBase model = (IPluginModelBase) getModel();
 		if (ClasspathUtilCore.hasBundleStructure(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
@@ -52,49 +52,47 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				for (int i = 0; i < exports.length; i++) {
 					list.add(exports[i].getName());
 				}
-				return (String[])list.toArray(new String[list.size()]);
+				return (String[]) list.toArray(new String[list.size()]);
 			}
 		}
 		if (!isExported())
 			return new String[0];
 		return isFullyExported() ? new String[] {"**"} : fContentFilters; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
 	 */
 	public void addContentFilter(String filter) throws CoreException {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
 	 */
 	public void removeContentFilter(String filter) throws CoreException {
 	}
-	
+
 	public String[] getPackages() {
 		return new String[0];
 	}
-	
+
 	public boolean isExported() {
 		return fExported;
 	}
-	
+
 	public boolean isFullyExported() {
-		return fExported
-			&& (fContentFilters == null || fContentFilters.length == 0);
+		return fExported && (fContentFilters == null || fContentFilters.length == 0);
 	}
 
 	public String getType() {
 		return fType;
 	}
 
-	
 	public void load(String name) {
 		fName = name;
 		fExported = true;
 	}
-	
+
 	void load(Node node) {
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
@@ -115,7 +113,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 							exports.add(ename);
 						}
 					}
-				} 
+				}
 			}
 		}
 		if (exports.size() > 0) {
@@ -124,14 +122,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		}
 		fExported = all || exports.size() > 0;
 	}
+
 	public void setContentFilters(String[] filters) throws CoreException {
 		ensureModelEditable();
 		ArrayList oldValue = createArrayList(fContentFilters);
 		fContentFilters = filters;
-		firePropertyChanged(
-			P_CONTENT_FILTERS,
-			oldValue,
-			createArrayList(filters));
+		firePropertyChanged(P_CONTENT_FILTERS, oldValue, createArrayList(filters));
 	}
 
 	public void setPackages(String[] packages) throws CoreException {
@@ -151,13 +147,11 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		firePropertyChanged(P_TYPE, oldValue, type);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CONTENT_FILTERS)) {
 			ArrayList list = (ArrayList) newValue;
 			if (list != null)
-				setContentFilters(
-					(String[]) list.toArray(new String[list.size()]));
+				setContentFilters((String[]) list.toArray(new String[list.size()]));
 			else
 				setContentFilters(null);
 			return;
@@ -205,34 +199,31 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 						writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
 					} else {
 						for (int i = 0; i < fContentFilters.length; i++) {
-							writer.println(
-									indent2
-									+ "<export name=\"" //$NON-NLS-1$
-									+ fContentFilters[i]
-									                  + "\"/>"); //$NON-NLS-1$
+							writer.println(indent2 + "<export name=\"" //$NON-NLS-1$
+									+ fContentFilters[i] + "\"/>"); //$NON-NLS-1$
 						}
 					}
 				}
 				writer.println(indent + "</library>"); //$NON-NLS-1$
 			}
-		} else 
+		} else
 			writer.print(PDEXMLHelper.getWritableString(getName()));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.core.plugin.IPluginObject)
 	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		super.reconnect(model, parent);
 		// No transient fields
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginObject#writeDelimeter(java.io.PrintWriter)
 	 */
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(',');
 		writer.print(' ');
-	}	
-	
+	}
+
 }

@@ -48,14 +48,14 @@ import org.osgi.util.tracker.ServiceTracker;
 public class MinimalState {
 
 	protected State fState;
-		
+
 	protected long fId;
 
 	private PluginConverter fConverter = null;
 
 	private boolean fEEListChanged = false; // indicates that the EE has changed
-											// this could be due to the system bundle changing location
-											// or initially when the ee list is first created.
+	// this could be due to the system bundle changing location
+	// or initially when the ee list is first created.
 
 	private String[] fExecutionEnvironments; // an ordered list of known/supported execution environments
 
@@ -70,12 +70,11 @@ public class MinimalState {
 	protected static String DIR;
 
 	static {
-		DEBUG = PDECore.getDefault().isDebugging()
-				&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
+		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
 		DIR = PDECore.getDefault().getStateLocation().toOSString();
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
-	
+
 	protected MinimalState(MinimalState state) {
 		this.fState = stateObjectFactory.createState(state.fState);
 		this.fState.setPlatformProperties(state.fState.getPlatformProperties());
@@ -85,14 +84,14 @@ public class MinimalState {
 		this.fExecutionEnvironments = state.fExecutionEnvironments;
 		this.fNoProfile = state.fNoProfile;
 	}
-	
-	protected MinimalState() {		
+
+	protected MinimalState() {
 	}
-	
+
 	public void addBundle(IPluginModelBase model, boolean update) {
 		if (model == null)
 			return;
-		
+
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
@@ -100,17 +99,17 @@ public class MinimalState {
 			model.setBundleDescription(newDesc);
 			if (newDesc == null && update)
 				fState.removeBundle(desc);
-		} catch (IOException e) {			
+		} catch (IOException e) {
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 			PDECore.log(e);
-		} 
+		}
 	}
-	
+
 	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
 		try {
 			return addBundle(new File(model.getInstallLocation()), -1);
-		} catch (IOException e) {			
+		} catch (IOException e) {
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 		}
@@ -119,9 +118,7 @@ public class MinimalState {
 
 	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, long bundleId) {
 		try {
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(
-					fState, manifest, bundleLocation.getAbsolutePath(),
-					bundleId == -1 ? getNextId() : bundleId);
+			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, manifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
 			if (bundleId == -1) {
 				fState.addBundle(descriptor);
@@ -140,19 +137,12 @@ public class MinimalState {
 		Dictionary manifest = loadManifest(bundleLocation);
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
 		if (!hasBundleStructure) {
-			if (!bundleLocation.isFile() 
-					&& !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists()
-					&& !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
+			if (!bundleLocation.isFile() && !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
 				return null;
 			PluginConverter converter = acquirePluginConverter();
 			manifest = converter.convertManifest(bundleLocation, false, null, false, null);
-			if (manifest == null
-					|| manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
-				throw new CoreException(new Status(
-						IStatus.ERROR,
-						PDECore.PLUGIN_ID,
-						IStatus.ERROR,
-						"Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
+			if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
 		if (desc != null && SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
@@ -166,14 +156,14 @@ public class MinimalState {
 		}
 		return desc;
 	}
-	
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {		
+
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
 	}
 
 	protected void saveState(File dir) {
 		saveState(fState, dir);
 	}
-	
+
 	protected void saveState(State state, File dir) {
 		try {
 			if (!dir.exists())
@@ -228,11 +218,11 @@ public class MinimalState {
 		boolean fullBuildRequired = initializePlatformProperties();
 		return fState.resolve(incremental && !fullBuildRequired);
 	}
-	
+
 	protected boolean initializePlatformProperties() {
 		if (fExecutionEnvironments == null && !fNoProfile)
 			setExecutionEnvironments();
-	
+
 		if (fEEListChanged) {
 			fEEListChanged = false;
 			return fState.setPlatformProperties(getProfilePlatformProperties());
@@ -253,7 +243,7 @@ public class MinimalState {
 		return fState;
 	}
 
-	private void setExecutionEnvironments() {	
+	private void setExecutionEnvironments() {
 		String[] knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
 		if (knownExecutionEnviroments.length == 0) {
 			String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
@@ -266,7 +256,7 @@ public class MinimalState {
 		}
 		fEEListChanged = true; // alway indicate the list has changed
 	}
-	
+
 	public void addBundleDescription(BundleDescription toAdd) {
 		if (toAdd != null)
 			fState.addBundle(toAdd);
@@ -274,8 +264,7 @@ public class MinimalState {
 
 	private PluginConverter acquirePluginConverter() {
 		if (fConverter == null) {
-			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
-					.getBundleContext(), PluginConverter.class.getName(), null);
+			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault().getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			fConverter = (PluginConverter) tracker.getService();
 			tracker.close();
@@ -297,20 +286,17 @@ public class MinimalState {
 	}
 
 	protected void logResolutionErrors() {
-		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 1,
-				"Problems occurred during the resolution of the target platform",  //$NON-NLS-1$
+		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 1, "Problems occurred during the resolution of the target platform", //$NON-NLS-1$
 				null);
 
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		BundleDescription[] all = fState.getBundles();
 		for (int i = 0; i < all.length; i++) {
 			if (!all[i].isResolved()) {
-				VersionConstraint[] unsatisfiedConstraints = helper
-						.getUnsatisfiedConstraints(all[i]);
+				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 				if (unsatisfiedConstraints.length == 0) {
 					if (DEBUG) {
-						BundleDescription activeBundle = findActiveBundle(all[i]
-								.getSymbolicName());
+						BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
 						String message = "Plug-in located at \"" + all[i].getLocation() + "\" was disabled because plug-in located at \"" + activeBundle.getLocation() + "\" was selected."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						System.out.print(message);
 					}
@@ -318,8 +304,7 @@ public class MinimalState {
 					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
 						String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
 						if (message != null)
-							errors.add(new Status(IStatus.WARNING, all[i]
-									.getSymbolicName(), IStatus.WARNING, message, null));
+							errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					}
 				}
 			}
@@ -333,7 +318,7 @@ public class MinimalState {
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
 			return "Missing imported package: " + toString(unsatisfied); //$NON-NLS-1$
-		if (unsatisfied instanceof BundleSpecification && !((BundleSpecification)unsatisfied).isOptional())
+		if (unsatisfied instanceof BundleSpecification && !((BundleSpecification) unsatisfied).isOptional())
 			return "Missing required plug-in: " + toString(unsatisfied); //$NON-NLS-1$
 		if (unsatisfied instanceof HostSpecification)
 			return "Missing Fragment Host: " + toString(unsatisfied); //$NON-NLS-1$

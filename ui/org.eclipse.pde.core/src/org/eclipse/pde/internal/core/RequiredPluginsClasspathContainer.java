@@ -47,23 +47,22 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	private IPluginModelBase fModel;
 	private IBuild fBuild;
-	
+
 	private static boolean DEBUG = false;
-	
+
 	private IClasspathEntry[] fEntries = null;
-	
+
 	static {
-		DEBUG  = PDECore.getDefault().isDebugging() 
-					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
+		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
 	public RequiredPluginsClasspathContainer(IPluginModelBase model) {
 		this(model, null);
 	}
-	
+
 	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build) {
 		fModel = model;
 		fBuild = build;
@@ -84,15 +83,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	public IPath getPath() {
 		return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECoreMessages.RequiredPluginsClasspathContainer_description; 
+		return PDECoreMessages.RequiredPluginsClasspathContainer_description;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
@@ -120,18 +119,18 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	private IClasspathEntry[] computePluginEntries() {
 		ArrayList entries = new ArrayList();
-		try {			
+		try {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null)
 				return new IClasspathEntry[0];
-			
+
 			Map map = retrieveVisiblePackagesFromState(desc);
-			
+
 			HashSet added = new HashSet();
-			
+
 			// to avoid cycles, e.g. when a bundle imports a package it exports
 			added.add(desc);
-			
+
 			HostSpecification host = desc.getHost();
 			if (host != null) {
 				addHostPlugin(host, added, map, entries);
@@ -147,26 +146,26 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add dependencies
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
+				addDependency((BundleDescription) required[i].getSupplier(), added, map, entries);
 			}
-			
+
 			if (fBuild == null)
 				fBuild = ClasspathUtilCore.getBuild(fModel);
 			if (fBuild != null)
 				addSecondaryDependencies(desc, added, entries);
-			
+
 			// add Import-Package
 			// sort by symbolicName_version to get a consistent order
 			Map sortedMap = new TreeMap();
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
-				BundleDescription bundle = (BundleDescription)iter.next();
+				BundleDescription bundle = (BundleDescription) iter.next();
 				sortedMap.put(bundle.toString(), bundle);
 			}
-			
+
 			iter = sortedMap.values().iterator();
 			while (iter.hasNext()) {
-				BundleDescription bundle = (BundleDescription)iter.next();
+				BundleDescription bundle = (BundleDescription) iter.next();
 				IPluginModelBase model = PluginRegistry.findModel(bundle);
 				if (model != null && model.isEnabled())
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
@@ -177,15 +176,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		} catch (CoreException e) {
 		}
-		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
+		return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
 	}
-	
+
 	private Map retrieveVisiblePackagesFromState(BundleDescription desc) {
 		Map visiblePackages = new HashMap();
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null)
-			addVisiblePackagesFromState(helper, (BundleDescription)desc.getHost().getSupplier(), visiblePackages);
+			addVisiblePackagesFromState(helper, (BundleDescription) desc.getHost().getSupplier(), visiblePackages);
 		return visiblePackages;
 	}
 
@@ -197,8 +196,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			BundleDescription exporter = exports[i].getExporter();
 			if (exporter == null)
 				continue;
-			ArrayList list = (ArrayList)visiblePackages.get(exporter);
-			if (list == null) 
+			ArrayList list = (ArrayList) visiblePackages.get(exporter);
+			if (list == null)
 				list = new ArrayList();
 			Rule rule = getRule(helper, desc, exports[i]);
 			if (!list.contains(rule))
@@ -206,7 +205,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			visiblePackages.put(exporter, list);
 		}
 	}
-	
+
 	private Rule getRule(StateHelper helper, BundleDescription desc, ExportPackageDescription export) {
 		Rule rule = new Rule();
 		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
@@ -214,7 +213,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		rule.path = (name.equals(".")) ? new Path("*") : new Path(name.replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		return rule;
 	}
-	
+
 	protected void addDependencyViaImportPackage(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
 		if (desc == null || !added.add(desc))
 			return;
@@ -233,7 +232,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private void addDependency(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
 		addDependency(desc, added, map, entries, true);
 	}
-	
+
 	private void addDependency(BundleDescription desc, HashSet added, Map map, ArrayList entries, boolean useInclusion) throws CoreException {
 		if (desc == null || !added.add(desc))
 			return;
@@ -242,30 +241,29 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		// add fragment patches before host
 		for (int i = 0; i < fragments.length; i++) {
-			if (fragments[i].isResolved() && ClasspathUtilCore.isPatchFragment(fragments[i])) {			
-				addDependency(fragments[i], added, map, entries, useInclusion);	
+			if (fragments[i].isResolved() && ClasspathUtilCore.isPatchFragment(fragments[i])) {
+				addDependency(fragments[i], added, map, entries, useInclusion);
 			}
 		}
-		
+
 		addPlugin(desc, useInclusion, map, entries);
-		
+
 		// add fragments that are not patches after the host
 		for (int i = 0; i < fragments.length; i++) {
 			if (fragments[i].isResolved() && !ClasspathUtilCore.isPatchFragment(fragments[i])) {
 				addDependency(fragments[i], added, map, entries, useInclusion);
 			}
-		}			
+		}
 
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			if (required[i].isExported()) {
-				addDependency((BundleDescription)required[i].getSupplier(), added, map, entries, useInclusion);
+				addDependency((BundleDescription) required[i].getSupplier(), added, map, entries, useInclusion);
 			}
 		}
-	}	
-	
-	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries)
-			throws CoreException {		
+	}
+
+	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel(desc);
 		if (model == null || !model.isEnabled())
 			return false;
@@ -278,71 +276,68 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 		return true;
 	}
-	
+
 	private Rule[] getInclusions(Map map, IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
-		if (desc == null
-				|| "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
-				|| !(fModel instanceof IBundlePluginModelBase)
-				|| TargetPlatformHelper.getTargetVersion() < 3.1)
+		if (desc == null || "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
+				|| !(fModel instanceof IBundlePluginModelBase) || TargetPlatformHelper.getTargetVersion() < 3.1)
 			return null;
-		
+
 		Rule[] rules;
 
 		if (desc.getHost() != null)
-			rules = getInclusions(map, (BundleDescription)desc.getHost().getSupplier());
+			rules = getInclusions(map, (BundleDescription) desc.getHost().getSupplier());
 		else
 			rules = getInclusions(map, desc);
-		
+
 		return (rules.length == 0 && !ClasspathUtilCore.hasBundleStructure(model)) ? null : rules;
 	}
-	
+
 	private Rule[] getInclusions(Map map, BundleDescription desc) {
-		ArrayList list = (ArrayList)map.get(desc);
-		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : new Rule[0];		
+		ArrayList list = (ArrayList) map.get(desc);
+		return list != null ? (Rule[]) list.toArray(new Rule[list.size()]) : new Rule[0];
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, HashSet added, Map map, ArrayList entries) throws CoreException {
 		BaseDescription desc = hostSpec.getSupplier();
-		
+
 		if (desc instanceof BundleDescription) {
-			BundleDescription host = (BundleDescription)desc;
-			
+			BundleDescription host = (BundleDescription) desc;
+
 			// add host plug-in
-			if (added.add(host) && addPlugin(host, false, map, entries)) {			
+			if (added.add(host) && addPlugin(host, false, map, entries)) {
 				BundleSpecification[] required = host.getRequiredBundles();
 				for (int i = 0; i < required.length; i++) {
-					addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
+					addDependency((BundleDescription) required[i].getSupplier(), added, map, entries);
 				}
-				
+
 				// add Import-Package
 				ImportPackageSpecification[] imports = host.getImportPackages();
 				for (int i = 0; i < imports.length; i++) {
 					BaseDescription supplier = imports[i].getSupplier();
 					if (supplier instanceof ExportPackageDescription) {
-						addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
+						addDependencyViaImportPackage(((ExportPackageDescription) supplier).getExporter(), added, map, entries);
 					}
 				}
 			}
 		}
 	}
-	
+
 	private boolean hasExtensibleAPI(BundleDescription desc) {
 		IPluginModelBase model = PluginRegistry.findModel(desc);
 		return model != null ? ClasspathUtilCore.hasExtensibleAPI(model) : false;
 	}
-	
+
 	protected void addExtraClasspathEntries(HashSet added, ArrayList entries) throws CoreException {
 		IBuildEntry[] buildEntries = fBuild.getBuildEntries();
 		for (int i = 0; i < buildEntries.length; i++) {
 			String name = buildEntries[i].getName();
-			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) 
-					|| name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
+			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) || name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
 				addExtraClasspathEntries(added, entries, buildEntries[i].getTokens());
 			}
 		}
-	}	
-	
+	}
+
 	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, String[] tokens) throws CoreException {
 		for (int i = 0; i < tokens.length; i++) {
 			IPath path = Path.fromPortableString(tokens[i]);
@@ -362,19 +357,19 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					continue;
 				}
 			}
-			
+
 			if (!path.toPortableString().startsWith("platform:")) { //$NON-NLS-1$
-				addExtraLibrary(path, null, entries);			
+				addExtraLibrary(path, null, entries);
 			} else {
 				int count = path.getDevice() == null ? 4 : 3;
 				if (path.segmentCount() >= count) {
-					String pluginID = path.segment(count-2);
+					String pluginID = path.segment(count - 2);
 					if (added.contains(pluginID))
 						continue;
 					IPluginModelBase model = PluginRegistry.findModel(pluginID);
 					if (model != null && model.isEnabled()) {
 						path = path.setDevice(null);
-						path = path.removeFirstSegments(count-1);
+						path = path.removeFirstSegments(count - 1);
 						if (model.getUnderlyingResource() == null) {
 							File file = new File(model.getInstallLocation(), path.toOSString());
 							if (file.exists()) {
@@ -389,30 +384,30 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 						}
 					}
 				}
-			}						
-		}	
+			}
+		}
 	}
-	
+
 	private void addSecondaryDependencies(BundleDescription desc, HashSet added, ArrayList entries) {
 		try {
-		  IBuildEntry entry = fBuild.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-		  if (entry != null) {
-			  String[] tokens = entry.getTokens();
-			  for (int i = 0; i < tokens.length; i++) {
-				  String pluginId = tokens[i];
-				  if (added.contains(pluginId))
-					  continue;
-				  // Get PluginModelBase first to resolve system.bundle entry if it exists
-				  IPluginModelBase model = PluginRegistry.findModel(pluginId);
-				  if (model != null) {
-					  Map rules = new HashMap();
-					  findExportedPackages(model.getBundleDescription(), desc, rules);
-					  if (model != null) {
-						  addDependency(model.getBundleDescription(), added, rules, entries, true);
-					  }
-				  }
-			  }
-		  }
+			IBuildEntry entry = fBuild.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					String pluginId = tokens[i];
+					if (added.contains(pluginId))
+						continue;
+					// Get PluginModelBase first to resolve system.bundle entry if it exists
+					IPluginModelBase model = PluginRegistry.findModel(pluginId);
+					if (model != null) {
+						Map rules = new HashMap();
+						findExportedPackages(model.getBundleDescription(), desc, rules);
+						if (model != null) {
+							addDependency(model.getBundleDescription(), added, rules, entries, true);
+						}
+					}
+				}
+			}
 		} catch (CoreException e) {
 			return;
 		}
@@ -433,10 +428,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					rules.add(rule);
 				}
 				map.put(bdesc, rules);
-			
+
 				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
-				for (int i = 0; i < requiredBundles.length; i++) 
+				for (int i = 0; i < requiredBundles.length; i++)
 					if (requiredBundles[i].isExported()) {
 						BaseDescription bd = requiredBundles[i].getSupplier();
 						if (bd != null && bd instanceof BundleDescription)
@@ -445,21 +440,21 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 		}
 	}
-	
-	private boolean restrictPackage(BundleDescription desc, ExportPackageDescription pkg ) {
-		String[] friends = (String[])pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
+
+	private boolean restrictPackage(BundleDescription desc, ExportPackageDescription pkg) {
+		String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 		if (friends != null) {
 			String symbolicName = desc.getSymbolicName();
 			for (int i = 0; i < friends.length; i++) {
 				if (symbolicName.equals(friends[i]))
 					return false;
-				
+
 			}
 			return true;
-		} 
-		return (((Boolean)pkg.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)).booleanValue());
+		}
+		return (((Boolean) pkg.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)).booleanValue());
 	}
-	
+
 	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) throws CoreException {
 		IPath srcPath = null;
 		if (model != null) {
@@ -468,14 +463,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		} else {
 			String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());
 			IPath candidate = path.removeLastSegments(1).append(filename);
-			if (PDECore.getWorkspace().getRoot().getFile(candidate).exists()) 
+			if (PDECore.getWorkspace().getRoot().getFile(candidate).exists())
 				srcPath = candidate;
 		}
-		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(
-				path,
-				srcPath,
-				null);
+		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(path, srcPath, null);
 		if (!entries.contains(clsEntry))
-			entries.add(clsEntry);						
+			entries.add(clsEntry);
 	}
 }

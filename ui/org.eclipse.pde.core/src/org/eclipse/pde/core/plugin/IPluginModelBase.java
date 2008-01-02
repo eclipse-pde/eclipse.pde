@@ -15,6 +15,7 @@ import java.net.URL;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
+
 /**
  * This type of model is created by parsing the manifest file.
  * It serves as a base interface for both plug-in and
@@ -44,6 +45,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 */
 	IPluginBase createPluginBase();
+
 	/**
 	 * Returns an associated build.properties model
 	 * that works in conjunction with this model.
@@ -51,6 +53,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @return the matching plugin.jars model
 	 */
 	IBuildModel getBuildModel();
+
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(true)</pre>.
@@ -58,6 +61,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 */
 	IPluginBase getPluginBase();
+
 	/**
 	 * Returns a top-level model object.
 	 * 
@@ -67,12 +71,14 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @return a top-level model object
 	 */
 	IPluginBase getPluginBase(boolean createIfMissing);
+
 	/**
 	 * Returns </samp>true</samp> if this model is currently enabled.
 	 *
 	 *@return true if the model is enabled
 	 */
 	boolean isEnabled();
+
 	/**
 	 * Tests if this model is for the plug-in fragment.
 	 * 
@@ -80,18 +86,21 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * <code>false</code> otherwise.
 	 */
 	boolean isFragmentModel();
+
 	/**
 	 * Sets the enable state of the model.
 	 *
 	 * @param enabled the new enable state
 	 */
 	void setEnabled(boolean enabled);
+
 	/**
 	 * Returns the factory that can be used to
 	 * create new objects for this model
 	 * @return the plug-in model factory
 	 */
 	IPluginModelFactory getPluginFactory();
+
 	/**
 	 * Returns the location where property file containing
 	 * translations of names in this model can be found.
@@ -99,6 +108,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @return the location of the property file with translations
 	 */
 	URL getNLLookupLocation();
+
 	/**
 	 * Returns the bundle description of the plug-in
 	 * in case the plug-in uses the new OSGi bundle layout. 
@@ -110,6 +120,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @since 3.0
 	 */
 	BundleDescription getBundleDescription();
+
 	/**
 	 * Associates the bundle description of the plug-in
 	 * with this model in case the plug-in uses the new

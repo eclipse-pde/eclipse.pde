@@ -24,10 +24,10 @@ public interface ICompCSModel extends IModelChangeProvider, IModel {
 	 * @return
 	 */
 	ICompCS getCompCS();
-	
+
 	/**
 	 * @return
 	 */
-	ICompCSModelFactory getFactory();	
-	
+	ICompCSModelFactory getFactory();
+
 }

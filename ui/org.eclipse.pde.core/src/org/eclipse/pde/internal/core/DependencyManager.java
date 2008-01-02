@@ -26,7 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
 
 public class DependencyManager {
-	
+
 	/** 
 	 * @return a set of plug-in IDs
 	 * 
@@ -34,7 +34,7 @@ public class DependencyManager {
 	public static Set getSelfAndDependencies(IPluginModelBase model) {
 		return getDependencies(new Object[] {model}, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true);
 	}
-	
+
 	/** 
 	 * @return a set of plug-in IDs
 	 * 
@@ -42,7 +42,7 @@ public class DependencyManager {
 	public static Set getSelfandDependencies(IPluginModelBase[] models) {
 		return getDependencies(models, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true);
 	}
-	
+
 	/** 
 	 * @return a set of plug-in IDs
 	 * 
@@ -50,7 +50,7 @@ public class DependencyManager {
 	public static Set getDependencies(Object[] selected, String[] implicit, State state) {
 		return getDependencies(selected, implicit, state, true, true);
 	}
-	
+
 	/** 
 	 * @return a set of plug-in IDs
 	 * 
@@ -58,7 +58,7 @@ public class DependencyManager {
 	public static Set getDependencies(Object[] selected, boolean includeOptional) {
 		return getDependencies(selected, getImplicitDependencies(), TargetPlatformHelper.getState(), true, includeOptional);
 	}
-	
+
 	/** 
 	 * @return a set of plug-in IDs
 	 * 
@@ -68,7 +68,7 @@ public class DependencyManager {
 		for (int i = 0; i < selected.length; i++) {
 			if (!(selected[i] instanceof IPluginModelBase))
 				continue;
-			IPluginModelBase model = (IPluginModelBase)selected[i];
+			IPluginModelBase model = (IPluginModelBase) selected[i];
 			addBundleAndDependencies(model.getBundleDescription(), set, includeOptional);
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
@@ -82,22 +82,22 @@ public class DependencyManager {
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < implicit.length; i++) {
 			addBundleAndDependencies(state.getBundle(implicit[i], null), set, includeOptional);
 		}
-		
+
 		if (removeSelf) {
 			for (int i = 0; i < selected.length; i++) {
 				if (!(selected[i] instanceof IPluginModelBase))
 					continue;
-				IPluginModelBase model = (IPluginModelBase)selected[i];
+				IPluginModelBase model = (IPluginModelBase) selected[i];
 				set.remove(model.getPluginBase().getId());
 			}
 		}
 		return set;
 	}
-	
+
 	private static String[] getImplicitDependencies() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String dependencies = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
@@ -109,20 +109,19 @@ public class DependencyManager {
 			implicitIds[i] = tokenizer.nextToken();
 		return implicitIds;
 	}
-	
+
 	private static void addBundleAndDependencies(BundleDescription desc, Set set, boolean includeOptional) {
 		if (desc != null && set.add(desc.getSymbolicName())) {
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
 				if (includeOptional || !required[i].isOptional())
-					addBundleAndDependencies((BundleDescription)required[i].getSupplier(), set, includeOptional);
+					addBundleAndDependencies((BundleDescription) required[i].getSupplier(), set, includeOptional);
 			}
 			ImportPackageSpecification[] importedPkgs = desc.getImportPackages();
 			for (int i = 0; i < importedPkgs.length; i++) {
-				ExportPackageDescription exporter = (ExportPackageDescription)importedPkgs[i].getSupplier();
+				ExportPackageDescription exporter = (ExportPackageDescription) importedPkgs[i].getSupplier();
 				// Continue if the Imported Package is unresolved of the package is optional and don't want optional packages
-				if (exporter == null || (!includeOptional && 
-						Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE))))
+				if (exporter == null || (!includeOptional && Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE))))
 					continue;
 				addBundleAndDependencies(exporter.getExporter(), set, includeOptional);
 			}
@@ -136,9 +135,8 @@ public class DependencyManager {
 			}
 			HostSpecification host = desc.getHost();
 			if (host != null)
-				addBundleAndDependencies((BundleDescription)host.getSupplier(), set, includeOptional);
+				addBundleAndDependencies((BundleDescription) host.getSupplier(), set, includeOptional);
 		}
 	}
-	
-	
+
 }

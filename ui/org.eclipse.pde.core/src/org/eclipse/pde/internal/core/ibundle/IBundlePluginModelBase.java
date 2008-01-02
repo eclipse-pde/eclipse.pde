@@ -9,11 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
+
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+
 /**
  * An adapter of the pre-3.0 plug-in model base interface that is capable of
  * maintaining the predictable facade when dealing with plug-in with OSGi
@@ -32,6 +34,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 *         not present.
 	 */
 	IBundleModel getBundleModel();
+
 	/**
 	 * Returns the model that is responsible for tracking extensions and
 	 * extension points. Typically this content is stored in plugin.xml file.
@@ -39,6 +42,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 * @return extensions model or <code>null</code> if not present.
 	 */
 	ISharedExtensionsModel getExtensionsModel();
+
 	/**
 	 * Sets the bundle manifest model for this adapter. All calls related to
 	 * data that is normally stored in this model (e.g. plug-in ID, plug-in
@@ -50,6 +54,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 *            if there is no bundle model.
 	 */
 	void setBundleModel(IBundleModel bundleModel);
+
 	/**
 	 * Sets the extensions model for this adapter. All the calls related to
 	 * extensions and extension points will be delegated to this model if not
@@ -59,6 +64,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 *            the model that stores extensions and extension points
 	 */
 	void setExtensionsModel(ISharedExtensionsModel extensionsModel);
+
 	/**
 	 * Factory method for creating a new import object. This is important for
 	 * maintaining the adapter because <code>IPluginBase</code> returns an
@@ -67,6 +73,7 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 * @return a newly created import object
 	 */
 	IPluginImport createImport();
+
 	/**
 	 * Factory method for creating a new runtime object. This is important for
 	 * maintaining the adapter because <code>IPluginBase</code> returns an
@@ -75,12 +82,13 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 * @return a newly created plug-in library object
 	 */
 	IPluginLibrary createLibrary();
+
 	/**
 	 * Saves the adapter by delegating the operation to the underlying models
 	 * that need saving.
 	 */
 	void save();
-	
+
 	/**
 	 * Returns the bundle localization
 	 * @return the bundle localization

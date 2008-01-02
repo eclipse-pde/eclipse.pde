@@ -18,9 +18,7 @@ import org.eclipse.pde.internal.core.isite.ISiteDescription;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class SiteCategoryDefinition
-	extends SiteObject
-	implements ISiteCategoryDefinition {
+public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryDefinition {
 
 	private static final long serialVersionUID = 1L;
 	private String name;
@@ -32,9 +30,9 @@ public class SiteCategoryDefinition
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isValid() {
-		return name!=null && getLabel()!=null;
+		return name != null && getLabel() != null;
 	}
 
 	/**
@@ -57,8 +55,7 @@ public class SiteCategoryDefinition
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
 	 */
-	public void setDescription(ISiteDescription description)
-		throws CoreException {
+	public void setDescription(ISiteDescription description) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.description;
 		this.description = description;
@@ -77,26 +74,24 @@ public class SiteCategoryDefinition
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().equalsIgnoreCase("description")) { //$NON-NLS-1$
+			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equalsIgnoreCase("description")) { //$NON-NLS-1$
 				description = getModel().getFactory().createDescription(this);
 				((SiteDescription) description).parse(child);
-				((SiteDescription)description).setInTheModel(true);
+				((SiteDescription) description).setInTheModel(true);
 				break;
 			}
 		}
 	}
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
-		} else if (
-			name.equals(P_DESCRIPTION)
-				&& newValue instanceof ISiteDescription) {
+		} else if (name.equals(P_DESCRIPTION) && newValue instanceof ISiteDescription) {
 			setDescription((ISiteDescription) newValue);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<category-def"); //$NON-NLS-1$

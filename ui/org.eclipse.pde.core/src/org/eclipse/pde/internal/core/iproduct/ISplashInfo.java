@@ -10,22 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
-
 public interface ISplashInfo extends IProductObject {
-	
+
 	public static final String P_LOCATION = "location"; //$NON-NLS-1$
-	public static final String P_PROGRESS_GEOMETRY= "startupProgressRect"; //$NON-NLS-1$
+	public static final String P_PROGRESS_GEOMETRY = "startupProgressRect"; //$NON-NLS-1$
 	public static final String P_MESSAGE_GEOMETRY = "startupMessageRect"; //$NON-NLS-1$
 	public static final String P_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
-	
-	public static final String F_ATTRIBUTE_HANDLER_TYPE = "handlerType";	 //$NON-NLS-1$
-	
+
+	public static final String F_ATTRIBUTE_HANDLER_TYPE = "handlerType"; //$NON-NLS-1$
+
 	void setLocation(String location, boolean blockNotification);
-	
+
 	String getLocation();
-	
+
 	void addProgressBar(boolean add, boolean blockNotification);
-	
+
 	/**
 	 * 
 	 * @param geo array of length 4 where geo[0] = x
@@ -35,11 +34,11 @@ public interface ISplashInfo extends IProductObject {
 	 * @param blockNotification
 	 */
 	void setProgressGeometry(int[] geo, boolean blockNotification);
-	
+
 	int[] getProgressGeometry();
-	
+
 	void addProgressMessage(boolean add, boolean blockNotification);
-	
+
 	/**
 	 * 
 	 * @param geo array of length 4 where geo[0] = x
@@ -49,13 +48,12 @@ public interface ISplashInfo extends IProductObject {
 	 * @param blockNotification
 	 */
 	void setMessageGeometry(int[] geo, boolean blockNotification);
-	
+
 	int[] getMessageGeometry();
-	
+
 	void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException;
-	
+
 	String getForegroundColor();
-	
 
 	/**
 	 * @param type
@@ -67,15 +65,15 @@ public interface ISplashInfo extends IProductObject {
 	 * @return
 	 */
 	public String getFieldSplashHandlerType();
-	
+
 	/**
 	 * @return
 	 */
 	public boolean isDefinedSplashHandlerType();
-	
+
 	/**
 	 * @return
 	 */
-	public boolean isDefinedGeometry();	
-	
+	public boolean isDefinedGeometry();
+
 }

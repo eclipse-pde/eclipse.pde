@@ -30,7 +30,7 @@ import org.w3c.dom.Text;
 public class CompCSDependency extends CompCSObject implements ICompCSDependency {
 
 	private String fFieldTask;
-	
+
 	/**
 	 * 
 	 */
@@ -101,15 +101,11 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
 		// Print task attribute
-		if ((fFieldTask != null) && 
-				(fFieldTask.length() > 0)) {
+		if ((fFieldTask != null) && (fFieldTask.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_TASK, 
-					PDETextHelper.translateWriteText(
-							fFieldTask.trim(), DEFAULT_SUBSTITUTE_CHARS)));
-		}	
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_TASK, PDETextHelper.translateWriteText(fFieldTask.trim(), DEFAULT_SUBSTITUTE_CHARS)));
+		}
 	}
 
 	/* (non-Javadoc)

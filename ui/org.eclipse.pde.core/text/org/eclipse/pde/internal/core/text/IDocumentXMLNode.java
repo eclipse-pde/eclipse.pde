@@ -22,7 +22,7 @@ public interface IDocumentXMLNode {
 	public static final int F_TYPE_ATTRIBUTE = 1;
 
 	public static final int F_TYPE_TEXT = 2;
-	
+
 	public int getXMLType();
-	
+
 }

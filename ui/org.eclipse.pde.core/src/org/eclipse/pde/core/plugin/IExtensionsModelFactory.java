@@ -25,6 +25,7 @@ public interface IExtensionsModelFactory {
 	 * @return the new attribute instance
 	 */
 	IPluginAttribute createAttribute(IPluginElement element);
+
 	/**
 	 * Creates a new element instance for the
 	 * provided parent.
@@ -33,11 +34,13 @@ public interface IExtensionsModelFactory {
 	 * @return the new element instance
 	 */
 	IPluginElement createElement(IPluginObject parent);
+
 	/**
 	 * Creates a new extension instance.
 	 * @return the new extension instance
 	 */
 	IPluginExtension createExtension();
+
 	/**
 	 * Creates a new extension point instance
 	 *

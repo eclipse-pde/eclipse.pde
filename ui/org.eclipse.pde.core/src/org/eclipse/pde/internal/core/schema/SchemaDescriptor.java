@@ -18,9 +18,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
-
 public class SchemaDescriptor implements ISchemaDescriptor {
-	
+
 	private String fPoint;
 	private URL fSchemaURL;
 	private Schema fSchema;
@@ -36,7 +35,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 				fLastModified = file.lastModified();
 		}
 	}
-	
+
 	public SchemaDescriptor(IFile file, boolean editable) {
 		this(new File(file.getLocation().toOSString()));
 		fEditable = editable;
@@ -88,7 +87,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	public boolean isStandalone() {
 		return true;
 	}
-	
+
 	public long getLastModified() {
 		return fLastModified;
 	}

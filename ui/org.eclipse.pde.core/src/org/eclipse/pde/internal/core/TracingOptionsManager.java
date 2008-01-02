@@ -42,9 +42,9 @@ public class TracingOptionsManager {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			addToTemplate(models[i]);
-		}		
+		}
 	}
-	
+
 	private void addToTemplate(IPluginModelBase model) {
 		Properties modelOptions = getOptions(model);
 		if (modelOptions == null)
@@ -56,7 +56,7 @@ public class TracingOptionsManager {
 				template.setProperty(key, value);
 		}
 	}
-	
+
 	public Hashtable getTemplateTable(String pluginId) {
 		if (template == null)
 			createTemplate();
@@ -86,7 +86,7 @@ public class TracingOptionsManager {
 				String key = iter.next().toString();
 				if (defaults.containsKey(key)) {
 					defaults.setProperty(key, (String) storedOptions.get(key));
-				}			
+				}
 			}
 		}
 		return defaults;
@@ -102,14 +102,14 @@ public class TracingOptionsManager {
 		String location = model.getInstallLocation();
 		if (location == null)
 			return false;
-		
+
 		File pluginLocation = new File(location);
 		InputStream stream = null;
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory())
 				return new File(pluginLocation, ".options").exists(); //$NON-NLS-1$
-			
+
 			jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
 			ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
 			if (manifestEntry != null) {
@@ -119,7 +119,7 @@ public class TracingOptionsManager {
 		} catch (IOException e) {
 		} finally {
 			try {
-				if (stream != null) 
+				if (stream != null)
 					stream.close();
 				if (jarFile != null)
 					jarFile.close();
@@ -128,7 +128,7 @@ public class TracingOptionsManager {
 		}
 		return stream != null;
 	}
-	
+
 	public void reset() {
 		template = null;
 	}
@@ -157,28 +157,28 @@ public class TracingOptionsManager {
 	}
 
 	public void save(String filename, Map map) {
-		save(filename, getTracingOptions(map));		
+		save(filename, getTracingOptions(map));
 	}
-	
+
 	private Properties getOptions(IPluginModelBase model) {
 		String location = model.getInstallLocation();
 		if (location == null)
 			return null;
-		
+
 		File pluginLocation = new File(location);
 		InputStream stream = null;
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory()) {
 				File file = new File(pluginLocation, ".options"); //$NON-NLS-1$
-				if (file.exists()) 
+				if (file.exists())
 					stream = new FileInputStream(file);
 			} else {
-					jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-					ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
-					if (manifestEntry != null) {
-						stream = jarFile.getInputStream(manifestEntry);
-					}
+				jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
+				if (manifestEntry != null) {
+					stream = jarFile.getInputStream(manifestEntry);
+				}
 			}
 			if (stream != null) {
 				Properties modelOptions = new Properties();
@@ -189,7 +189,7 @@ public class TracingOptionsManager {
 		} catch (IOException e) {
 		} finally {
 			try {
-				if (stream != null) 
+				if (stream != null)
 					stream.close();
 				if (jarFile != null)
 					jarFile.close();

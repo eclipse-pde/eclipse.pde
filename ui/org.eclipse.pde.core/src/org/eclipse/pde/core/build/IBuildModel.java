@@ -12,6 +12,7 @@ package org.eclipse.pde.core.build;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
+
 /**
  * This model is created from the "build.properties" file
  * that defines what source folders in the plug-in are
@@ -29,12 +30,14 @@ public interface IBuildModel extends IModel, IModelChangeProvider {
 	 * @return a build.properties top-level model object
 	 */
 	IBuild getBuild();
+
 	/**
 	 * Returns the factory that should be used
 	 * to create new instance of model objects.
 	 * @return the build.properties model factory
 	 */
 	IBuildModelFactory getFactory();
+
 	/**
 	 * Returns the location of the file
 	 * used to create the model.

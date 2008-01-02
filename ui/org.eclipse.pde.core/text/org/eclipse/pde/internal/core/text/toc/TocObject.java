@@ -34,8 +34,8 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 * @param model The model associated with this TocObject.
 	 * @param parent The parent of this TocObject.
 	 */
-	public TocObject(TocModel model, String tagName)
-	{	super(model, tagName);
+	public TocObject(TocModel model, String tagName) {
+		super(model, tagName);
 	}
 
 	protected String getAttributeIndent() {
@@ -45,18 +45,17 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	/**
 	 * @return the children of the object or an empty List if none exist.
 	 */
-	public List getChildren()
-	{	//Create a copy of the child list instead of 
+	public List getChildren() { //Create a copy of the child list instead of 
 		//returning the list itself. That way, our list
 		//of children cannot be altered from outside
 		ArrayList list = new ArrayList();
 
 		// Add children of this topic
 		IDocumentElementNode[] childNodes = getChildNodes();
-		if (childNodes.length > 0)
-		{	for(int i = 0; i < childNodes.length; ++i)
-			{	if(childNodes[i] instanceof TocObject)
-				{	list.add(childNodes[i]);
+		if (childNodes.length > 0) {
+			for (int i = 0; i < childNodes.length; ++i) {
+				if (childNodes[i] instanceof TocObject) {
+					list.add(childNodes[i]);
 				}
 			}
 		}
@@ -78,8 +77,8 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 */
 	public TocModel getModel() {
 		final IModel sharedModel = getSharedModel();
-		if(sharedModel instanceof TocModel)
-		{	return (TocModel)sharedModel;
+		if (sharedModel instanceof TocModel) {
+			return (TocModel) sharedModel;
 		}
 
 		return null;
@@ -91,8 +90,8 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	public Toc getToc() {
 		final TocModel model = getModel();
 
-		if(model != null)
-		{	return model.getToc();
+		if (model != null) {
+			return model.getToc();
 		}
 
 		return null;
@@ -115,7 +114,7 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 */
 	public TocObject getParent() {
 		IDocumentElementNode parent = getParentNode();
-		return parent instanceof TocObject ? (TocObject)parent : null;
+		return parent instanceof TocObject ? (TocObject) parent : null;
 	}
 
 	/**
@@ -125,13 +124,13 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 * @param obj The TOC object to find in this object's ancestry
 	 * @return true iff obj is an ancestor of this TOC object
 	 */
-	public boolean descendsFrom(TocObject obj)
-	{	if(this.equals(obj))
-		{	return true;
+	public boolean descendsFrom(TocObject obj) {
+		if (this.equals(obj)) {
+			return true;
 		}
 
-		if(getParent() != null && obj.canBeParent())
-		{	return getParent().descendsFrom(obj);	
+		if (getParent() != null && obj.canBeParent()) {
+			return getParent().descendsFrom(obj);
 		}
 
 		return false;
@@ -148,7 +147,7 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 * in the list of children
 	 */
 	public TocObject getPreviousSibling(TocObject tocObject) {
-		return (TocObject)getPreviousSibling(tocObject, TocObject.class);
+		return (TocObject) getPreviousSibling(tocObject, TocObject.class);
 	}
 
 	/**
@@ -157,29 +156,27 @@ public abstract class TocObject extends DocumentObject implements ITocConstants,
 	 * in the list of children
 	 */
 	public TocObject getNextSibling(TocObject tocObject) {
-		return (TocObject)getNextSibling(tocObject, TocObject.class);
+		return (TocObject) getNextSibling(tocObject, TocObject.class);
 	}
 
 	/**
 	 * @return true iff a child object can be removed
 	 */
-	public boolean canBeRemoved()
-	{	if(getType() == TYPE_TOC)
-		{	//Semantic Rule: The TOC root element can never be removed
+	public boolean canBeRemoved() {
+		if (getType() == TYPE_TOC) { //Semantic Rule: The TOC root element can never be removed
 			return false;
 		}
-		
+
 		TocObject parent = getParent();
-		if(parent != null)
-		{	if (parent.getType() == TYPE_TOC)
-			{	//Semantic Rule: The TOC root element must always
+		if (parent != null) {
+			if (parent.getType() == TYPE_TOC) { //Semantic Rule: The TOC root element must always
 				//have at least one child
 				return parent.getChildren().size() > 1;
 			}
-			
+
 			return true;
 		}
-	
+
 		return false;
 	}
 }

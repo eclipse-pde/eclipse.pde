@@ -61,17 +61,17 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$
 
 	public static final String P_NOT_EXTERNALIZED = "compilers.p.not-externalized-att"; //$NON-NLS-1$
-	
+
 	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
-	
+
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
-	
+
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
 
 	public static final String P_MISSING_BUNDLE_CLASSPATH_ENTRIES = "compilers.p.missing-bundle-classpath-entries"; //$NON-NLS-1$
-	
+
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
@@ -82,25 +82,7 @@ public class CompilerFlags {
 
 	public static final String F_UNRESOLVED_FEATURES = "compilers.f.unresolved-features"; //$NON-NLS-1$
 
-	private static final String[][] fFlags = {
-			{ P_UNRESOLVED_IMPORTS,
-			  P_INCOMPATIBLE_ENV,
-			  P_UNRESOLVED_EX_POINTS, 
-			  P_NO_REQUIRED_ATT,
-			  P_UNKNOWN_ELEMENT, 
-			  P_UNKNOWN_ATTRIBUTE, 
-			  P_DEPRECATED,
-			  P_UNKNOWN_CLASS, 
-			  P_UNKNOWN_RESOURCE, 
-			  P_NOT_EXTERNALIZED,
-			  P_BUILD,
-			  P_MISSING_EXPORT_PKGS,
-			  P_MISSING_BUNDLE_CLASSPATH_ENTRIES},
-			{ S_CREATE_DOCS, 
-			  S_DOC_FOLDER, 
-			  S_OPEN_TAGS },
-			{ F_UNRESOLVED_PLUGINS, 
-			  F_UNRESOLVED_FEATURES }};
+	private static final String[][] fFlags = { {P_UNRESOLVED_IMPORTS, P_INCOMPATIBLE_ENV, P_UNRESOLVED_EX_POINTS, P_NO_REQUIRED_ATT, P_UNKNOWN_ELEMENT, P_UNKNOWN_ATTRIBUTE, P_DEPRECATED, P_UNKNOWN_CLASS, P_UNKNOWN_RESOURCE, P_NOT_EXTERNALIZED, P_BUILD, P_MISSING_EXPORT_PKGS, P_MISSING_BUNDLE_CLASSPATH_ENTRIES}, {S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS}, {F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES}};
 
 	public static int getFlagType(String flagId) {
 		if (flagId.equals(S_CREATE_DOCS))
@@ -132,8 +114,7 @@ public class CompilerFlags {
 	 */
 	public static String getString(IProject project, String flagId) {
 		IPreferencesService service = Platform.getPreferencesService();
-		IScopeContext[] contexts = project == null ? null
-				: new IScopeContext[] { new ProjectScope(project) };
+		IScopeContext[] contexts = project == null ? null : new IScopeContext[] {new ProjectScope(project)};
 		return service.getString(PDE.PLUGIN_ID, flagId, "", //$NON-NLS-1$
 				project == null ? null : contexts);
 	}
@@ -147,8 +128,7 @@ public class CompilerFlags {
 	}
 
 	public static boolean getDefaultBoolean(String flagId) {
-		return new DefaultScope().getNode(PDE.PLUGIN_ID).getBoolean(flagId,
-				false);
+		return new DefaultScope().getNode(PDE.PLUGIN_ID).getBoolean(flagId, false);
 	}
 
 	public static void setFlag(String flagId, int value) {
@@ -166,8 +146,7 @@ public class CompilerFlags {
 		if (getDefaultBoolean(flagId) == value)
 			new InstanceScope().getNode(PDE.PLUGIN_ID).remove(flagId);
 		else
-			new InstanceScope().getNode(PDE.PLUGIN_ID)
-					.putBoolean(flagId, value);
+			new InstanceScope().getNode(PDE.PLUGIN_ID).putBoolean(flagId, value);
 	}
 
 	public static void setBoolean(IProject project, String flagId, boolean value) {
@@ -191,8 +170,7 @@ public class CompilerFlags {
 	public static void setString(IProject project, String flagId, String value) {
 		if (project == null)
 			return;
-		Preferences preferences = new ProjectScope(project)
-				.getNode(PDE.PLUGIN_ID);
+		Preferences preferences = new ProjectScope(project).getNode(PDE.PLUGIN_ID);
 		preferences.put(flagId, value);
 		try {
 			preferences.flush();
@@ -209,8 +187,7 @@ public class CompilerFlags {
 	public static void clear(IProject project, String flagId) {
 		if (project == null)
 			return;
-		Preferences preferences = new ProjectScope(project)
-				.getNode(PDE.PLUGIN_ID);
+		Preferences preferences = new ProjectScope(project).getNode(PDE.PLUGIN_ID);
 		preferences.remove(flagId);
 		try {
 			preferences.flush();

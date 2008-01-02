@@ -25,13 +25,13 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 	private static final long serialVersionUID = 1L;
 
 	private static final HashSet TAG_EXCEPTIONS = new HashSet(3);
-	
+
 	static {
 		TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
 		TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
 		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
@@ -44,8 +44,7 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 	 */
 	public String write() {
 		String content = getText().trim();
-		return PDETextHelper.translateWriteText(content,
-				TAG_EXCEPTIONS, SUBSTITUTE_CHARS);
+		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS, SUBSTITUTE_CHARS);
 	}
-	
+
 }

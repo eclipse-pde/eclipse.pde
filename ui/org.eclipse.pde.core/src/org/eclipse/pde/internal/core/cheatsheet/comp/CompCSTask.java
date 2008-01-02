@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 
 	private ArrayList fFieldParams;
-	
+
 	/**
 	 * 
 	 */
@@ -83,7 +83,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		super.parseElement(element);
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
-		
+
 		if (name.equals(ELEMENT_PARAM)) {
 			// Process param element
 			ICompCSParam param = factory.createCompCSParam(this);
@@ -106,8 +106,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#getFieldParams()
 	 */
 	public ICompCSParam[] getFieldParams() {
-		return (ICompCSParam[]) fFieldParams
-		.toArray(new ICompCSParam[fFieldParams.size()]);
+		return (ICompCSParam[]) fFieldParams.toArray(new ICompCSParam[fFieldParams.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -117,7 +116,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		fFieldParams.remove(param);
 		if (isEditable()) {
 			fireStructureChanged(param, IModelChangedEvent.REMOVE);
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -125,10 +124,10 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	 */
 	public void reset() {
 		super.reset();
-		
-		fFieldParams = new ArrayList();		
+
+		fFieldParams = new ArrayList();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSTaskObject#writeElements(java.lang.String, java.io.PrintWriter)
 	 */
@@ -138,9 +137,9 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		// Print param elements
 		Iterator iterator = fFieldParams.iterator();
 		while (iterator.hasNext()) {
-			ICompCSParam param = (ICompCSParam)iterator.next();
+			ICompCSParam param = (ICompCSParam) iterator.next();
 			param.write(newIndent, writer);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -162,11 +161,11 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 		}
 		ListIterator iterator = fFieldParams.listIterator();
 		while (iterator.hasNext()) {
-			ICompCSParam parameter = (ICompCSParam)iterator.next();
+			ICompCSParam parameter = (ICompCSParam) iterator.next();
 			if (parameter.getFieldName().equals(name)) {
 				return parameter;
 			}
 		}
 		return null;
-	}	
+	}
 }

@@ -22,7 +22,7 @@ public abstract class TargetObject extends PlatformObject implements ITargetObje
 
 	private static final long serialVersionUID = 1L;
 	private transient ITargetModel fModel;
-	
+
 	public TargetObject(ITargetModel model) {
 		fModel = model;
 	}
@@ -43,8 +43,7 @@ public abstract class TargetObject extends PlatformObject implements ITargetObje
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
 
-	protected void firePropertyChanged(ITargetObject object, String property,
-			Object oldValue, Object newValue) {
+	protected void firePropertyChanged(ITargetObject object, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
@@ -52,14 +51,13 @@ public abstract class TargetObject extends PlatformObject implements ITargetObje
 	}
 
 	protected void fireStructureChanged(ITargetObject child, int changeType) {
-		fireStructureChanged(new ITargetObject[] { child }, changeType);
+		fireStructureChanged(new ITargetObject[] {child}, changeType);
 	}
 
 	protected void fireStructureChanged(ITargetObject[] children, int changeType) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
-			provider.fireModelChanged(new ModelChangedEvent(provider, changeType,
-					children, null));
+			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}
 

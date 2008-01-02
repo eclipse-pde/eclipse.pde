@@ -15,14 +15,14 @@ import java.io.Serializable;
 import org.eclipse.pde.core.IWritable;
 import org.w3c.dom.Node;
 
-public interface IProductObject extends IWritable, Serializable{
-	
+public interface IProductObject extends IWritable, Serializable {
+
 	IProductModel getModel();
-	
+
 	void setModel(IProductModel model);
-	
+
 	IProduct getProduct();
-	
+
 	void parse(Node node);
-	
+
 }

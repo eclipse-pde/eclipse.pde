@@ -20,11 +20,11 @@ public class BundleVersionHeader extends SingleManifestHeader {
 	public BundleVersionHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setVersionRange(String range) {
 		setMainComponent(range);
 	}
-	
+
 	public VersionRange getVersionRange() {
 		return new VersionRange(getMainComponent());
 	}

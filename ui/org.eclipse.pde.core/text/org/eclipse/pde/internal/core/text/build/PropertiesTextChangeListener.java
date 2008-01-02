@@ -22,6 +22,7 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 	public PropertiesTextChangeListener(IDocument document) {
 		super(document, false);
 	}
+
 	public PropertiesTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document, generateReadableNames);
 	}
@@ -30,8 +31,8 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
-			IDocumentKey key = (IDocumentKey)object;
-			Object op =	fOperationTable.remove(key);
+			IDocumentKey key = (IDocumentKey) object;
+			Object op = fOperationTable.remove(key);
 			if (fReadableNames != null)
 				fReadableNames.remove(op);
 			String name = null;

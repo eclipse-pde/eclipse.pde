@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
-
 /**
  * ISimpleCS
  *
@@ -23,7 +22,7 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @return
 	 */
 	public String getTitle();
-	
+
 	/**
 	 * Attribute: title
 	 * @param title
@@ -35,13 +34,13 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @return
 	 */
 	public ISimpleCSIntro getIntro();
-	
+
 	/**
 	 * Element:  intro
 	 * @param intro
 	 */
 	public void setIntro(ISimpleCSIntro intro);
-	
+
 	/**
 	 * Element:  item
 	 * @return
@@ -66,7 +65,7 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param item
 	 */
 	public void removeItem(ISimpleCSItem item);
-	
+
 	/**
 	 * Element:  item
 	 * @param index
@@ -78,20 +77,20 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param item
 	 * @param newRelativeIndex
 	 */
-	public void moveItem(ISimpleCSItem item, int newRelativeIndex);	
-	
+	public void moveItem(ISimpleCSItem item, int newRelativeIndex);
+
 	/**
 	 * Element:  item
 	 * @param item
 	 */
 	public boolean isFirstItem(ISimpleCSItem item);
-	
+
 	/**
 	 * Element:  item
 	 * @param item
 	 */
 	public boolean isLastItem(ISimpleCSItem item);
-	
+
 	/**
 	 * @param item
 	 * @return
@@ -101,27 +100,27 @@ public interface ISimpleCS extends ISimpleCSObject {
 	/**
 	 * Element:  item
 	 * @return
-	 */	
+	 */
 	public int getItemCount();
 
 	/**
 	 * Element:  item
 	 * @return
-	 */	
-	public boolean hasItems();	
-	
+	 */
+	public boolean hasItems();
+
 	/**
 	 * Element:  item
 	 * @param item
 	 * @return
 	 */
 	public ISimpleCSItem getNextSibling(ISimpleCSItem item);
-	
+
 	/**
 	 * Element:  item
 	 * @param item
 	 * @return
 	 */
 	public ISimpleCSItem getPreviousSibling(ISimpleCSItem item);
-	
+
 }

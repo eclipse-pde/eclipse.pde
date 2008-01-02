@@ -22,23 +22,23 @@ public interface ISimpleCSHelpObject extends ISimpleCSObject {
 	 * @return
 	 */
 	public String getContextId();
-	
+
 	/**
 	 * Attribute:  contextId
 	 * @param contextId
 	 */
 	public void setContextId(String contextId);
-	
+
 	/**
 	 * Attribute:  href
 	 * @return
 	 */
 	public String getHref();
-	
+
 	/**
 	 * Attribute:  href
 	 * @param href
 	 */
-	public void setHref(String href);	
-	
+	public void setHref(String href);
+
 }

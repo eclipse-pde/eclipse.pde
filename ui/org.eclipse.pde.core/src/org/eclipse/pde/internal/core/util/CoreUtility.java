@@ -38,9 +38,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 
-
 public class CoreUtility {
-	
+
 	/**
 	 * Read a file from an InputStream and write it to the file system.
 	 *
@@ -84,8 +83,7 @@ public class CoreUtility {
 		}
 	}
 
-	public static void addNatureToProject(IProject proj, String natureId,
-			IProgressMonitor monitor) throws CoreException {
+	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -94,7 +92,7 @@ public class CoreUtility {
 		description.setNatureIds(newNatures);
 		proj.setDescription(description, monitor);
 	}
-	
+
 	public static void createFolder(IFolder folder) throws CoreException {
 		if (!folder.exists()) {
 			IContainer parent = folder.getParent();
@@ -105,21 +103,19 @@ public class CoreUtility {
 		}
 	}
 
-	public static void createProject(IProject project, IPath location,
-			IProgressMonitor monitor) throws CoreException {
+	public static void createProject(IProject project, IPath location, IProgressMonitor monitor) throws CoreException {
 		if (!Platform.getLocation().equals(location)) {
-			IProjectDescription desc = project.getWorkspace()
-					.newProjectDescription(project.getName());
+			IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
 			desc.setLocation(location);
 			project.create(desc, monitor);
 		} else
 			project.create(monitor);
 	}
-	
+
 	public static String normalize(String text) {
 		if (text == null || text.trim().length() == 0)
 			return ""; //$NON-NLS-1$
-		
+
 		text = text.replaceAll("\\r|\\n|\\f|\\t", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		return text.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -137,47 +133,47 @@ public class CoreUtility {
 			curr.delete();
 		}
 	}
-	
-    public static boolean guessUnpack(BundleDescription bundle) {
+
+	public static boolean guessUnpack(BundleDescription bundle) {
 		if (bundle == null)
 			return true;
-	
-		if (new File(bundle.getLocation()).isFile()) 
+
+		if (new File(bundle.getLocation()).isFile())
 			return false;
-		
+
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IContainer container = root.getContainerForLocation(new Path(bundle.getLocation()));
-		if (container == null) 
+		if (container == null)
 			return true;
-		
+
 		if (container instanceof IProject) {
 			try {
-				if (!((IProject)container).hasNature(JavaCore.NATURE_ID)) 
+				if (!((IProject) container).hasNature(JavaCore.NATURE_ID))
 					return true;
 			} catch (CoreException e) {
 			}
-		}		
-		
+		}
+
 		IPluginModelBase model = PluginRegistry.findModel(bundle);
 		if (model == null)
 			return true;
-	
+
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		if (libraries.length == 0)
 			return false;
-	
+
 		for (int i = 0; i < libraries.length; i++) {
 			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
 				return false;
 		}
 		return true;
 	}
-    
+
 	public static boolean jarContainsResource(File file, String resource, boolean directory) {
 		ZipFile jarFile = null;
 		try {
 			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-			ZipEntry resourceEntry = jarFile.getEntry(resource); 
+			ZipEntry resourceEntry = jarFile.getEntry(resource);
 			if (resourceEntry != null)
 				return directory ? resourceEntry.isDirectory() : true;
 		} catch (IOException e) {
@@ -191,7 +187,7 @@ public class CoreUtility {
 		}
 		return false;
 	}
-	
+
 	public static void copyFile(IPath originPath, String name, File target) {
 		File source = new File(originPath.toFile(), name);
 		if (source.exists() == false)
@@ -220,7 +216,7 @@ public class CoreUtility {
 			}
 		}
 	}
-	
+
 	public static org.eclipse.jface.text.Document getTextDocument(File bundleLocation, String path) {
 		ZipFile jarFile = null;
 		InputStream stream = null;
@@ -248,7 +244,7 @@ public class CoreUtility {
 		}
 		return null;
 	}
-	
+
 	public static org.eclipse.jface.text.Document getTextDocument(InputStream in) {
 		ByteArrayOutputStream output = null;
 		String result = null;
@@ -284,5 +280,5 @@ public class CoreUtility {
 		}
 		return result == null ? null : new org.eclipse.jface.text.Document(result);
 	}
-	
+
 }

@@ -17,11 +17,11 @@ public class ExecutionEnvironment extends PDEManifestElement {
 	public ExecutionEnvironment(ManifestHeader header, String value) {
 		super(header, value);
 	}
-	
+
 	public String getName() {
 		return getValue();
 	}
-	
+
 	public String toString() {
 		return getName();
 	}

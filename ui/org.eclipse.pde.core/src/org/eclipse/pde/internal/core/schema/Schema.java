@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
-	
+
 	private URL fURL;
 
 	private Vector fListeners = new Vector();
@@ -64,7 +64,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private String fPointID;
 
 	private String fPluginID;
-	
+
 	private ISchemaDescriptor fSchemaDescriptor;
 
 	private boolean fLoaded;
@@ -100,8 +100,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void addDocumentSection(IDocumentSection docSection) {
 		fDocSections.addElement(docSection);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
-				new Object[] { docSection }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {docSection}, null));
 
 	}
 
@@ -118,24 +117,21 @@ public class Schema extends PlatformObject implements ISchema {
 			fElements.add(index + 1, element);
 		else
 			fElements.add(element);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
-				new Object[] { element }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {element}, null));
 	}
 
 	public void addInclude(ISchemaInclude include) {
 		if (fIncludes == null)
 			fIncludes = new Vector();
 		fIncludes.add(include);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
-				new Object[] { include }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {include}, null));
 	}
 
 	public void removeInclude(ISchemaInclude include) {
 		if (fIncludes == null)
 			return;
 		fIncludes.remove(include);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
-				new Object[] { include }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE, new Object[] {include}, null));
 	}
 
 	public void addModelChangedListener(IModelChangedListener listener) {
@@ -194,16 +190,13 @@ public class Schema extends PlatformObject implements ISchema {
 		if (!fNotificationEnabled)
 			return;
 		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			IModelChangedListener listener = (IModelChangedListener) iter
-					.next();
+			IModelChangedListener listener = (IModelChangedListener) iter.next();
 			listener.modelChanged(event);
 		}
 	}
 
-	public void fireModelObjectChanged(Object object, String property,
-			Object oldValue, Object newValue) {
-		fireModelChanged(new ModelChangedEvent(this, object, property,
-				oldValue, newValue));
+	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
+		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 
 	private String getAttribute(Node node, String name) {
@@ -221,7 +214,7 @@ public class Schema extends PlatformObject implements ISchema {
 		Vector candidates = new Vector();
 		ISchemaType type = element.getType();
 		if (type instanceof ISchemaComplexType) {
-			ISchemaCompositor compositor = ((ISchemaComplexType)type).getCompositor();
+			ISchemaCompositor compositor = ((ISchemaComplexType) type).getCompositor();
 			if (compositor != null)
 				collectElements(compositor, candidates);
 		}
@@ -270,7 +263,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fElements.copyInto(result);
 		return result;
 	}
-	
+
 	public String[] getElementNames() {
 		ISchemaElement[] elements = getElements();
 		String[] names = new String[elements.length];
@@ -294,15 +287,13 @@ public class Schema extends PlatformObject implements ISchema {
 			for (int j = 0; j < ielements.length; j++)
 				result.add(ielements[j]);
 		}
-		return (ISchemaElement[]) result.toArray(new ISchemaElement[result
-				.size()]);
+		return (ISchemaElement[]) result.toArray(new ISchemaElement[result.size()]);
 	}
 
 	public ISchemaInclude[] getIncludes() {
 		if (fIncludes == null)
 			return new ISchemaInclude[0];
-		return (ISchemaInclude[]) fIncludes.toArray(new ISchemaInclude[fIncludes
-				.size()]);
+		return (ISchemaInclude[]) fIncludes.toArray(new ISchemaInclude[fIncludes.size()]);
 	}
 
 	public String getName() {
@@ -312,7 +303,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private String getNormalizedText(String source) {
 		if (source == null)
 			return ""; //$NON-NLS-1$
-		
+
 		String result = source.replace('\t', ' ');
 		result = result.trim();
 		return result;
@@ -325,10 +316,10 @@ public class Schema extends PlatformObject implements ISchema {
 	public void setParent(ISchemaObject obj) {
 	}
 
-	public ISchemaElement getElementAt(int index)
-	{	return (ISchemaElement)fElements.get(index);
+	public ISchemaElement getElementAt(int index) {
+		return (ISchemaElement) fElements.get(index);
 	}
-	
+
 	public String getQualifiedPointId() {
 		return fPluginID + "." + fPointID; //$NON-NLS-1$
 	}
@@ -356,7 +347,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public int indexOf(Object obj) {
 		return fElements.indexOf(obj);
 	}
-	
+
 	public boolean isDisposed() {
 		return fDisposed;
 	}
@@ -387,7 +378,7 @@ public class Schema extends PlatformObject implements ISchema {
 				if (input != null)
 					input.close();
 			} catch (IOException e1) {
-			}		
+			}
 		}
 	}
 
@@ -406,8 +397,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 
-	private ISchemaAttribute processAttribute(ISchemaElement element,
-			Node elementNode) {
+	private ISchemaAttribute processAttribute(ISchemaElement element, Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		if (aname == null)
 			return null;
@@ -464,16 +454,10 @@ public class Schema extends PlatformObject implements ISchema {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
 							if (meta.getNodeName().equals("meta.attribute")) { //$NON-NLS-1$
-								element.setKind(processKind(getAttribute(meta,
-										"kind"))); //$NON-NLS-1$
-								element.setBasedOn(
-										getAttribute(meta,"basedOn")); //$NON-NLS-1$
-								element.setTranslatableProperty(
-										processTranslatable(getAttribute(
-												meta, "translatable"))); //$NON-NLS-1$
-								element.setDeprecatedProperty(
-										processDeprecated(getAttribute(
-												meta, "deprecated"))); //$NON-NLS-1$
+								element.setKind(processKind(getAttribute(meta, "kind"))); //$NON-NLS-1$
+								element.setBasedOn(getAttribute(meta, "basedOn")); //$NON-NLS-1$
+								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
+								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
 					}
@@ -490,8 +474,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return value != null && "true".equals(value); //$NON-NLS-1$
 	}
 
-	private SchemaSimpleType processAttributeRestriction(
-			SchemaAttribute attribute, Node node) {
+	private SchemaSimpleType processAttributeRestriction(SchemaAttribute attribute, Node node) {
 		NodeList children = node.getChildNodes();
 		if (children.getLength() == 0)
 			return null;
@@ -499,22 +482,19 @@ public class Schema extends PlatformObject implements ISchema {
 		if (baseName.equals("string") == false) { //$NON-NLS-1$
 			return new SchemaSimpleType(attribute.getSchema(), "string"); //$NON-NLS-1$
 		}
-		SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(),
-				baseName);
+		SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(), baseName);
 		Vector items = new Vector();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("enumeration")) { //$NON-NLS-1$
-					ISchemaEnumeration enumeration = processEnumeration(
-							attribute.getSchema(), child);
+					ISchemaEnumeration enumeration = processEnumeration(attribute.getSchema(), child);
 					if (enumeration != null)
 						items.addElement(enumeration);
 				}
 			}
 		}
-		ChoiceRestriction restriction = new ChoiceRestriction(attribute
-				.getSchema());
+		ChoiceRestriction restriction = new ChoiceRestriction(attribute.getSchema());
 		restriction.setChildren(items);
 		type.setRestriction(restriction);
 		return type;
@@ -537,8 +517,7 @@ public class Schema extends PlatformObject implements ISchema {
 			attribute.setType(type);
 	}
 
-	private SchemaComplexType processComplexType(ISchemaElement owner,
-			Node typeNode) {
+	private SchemaComplexType processComplexType(ISchemaElement owner, Node typeNode) {
 		String aname = getAttribute(typeNode, "name"); //$NON-NLS-1$
 		String amixed = getAttribute(typeNode, "mixed"); //$NON-NLS-1$
 		SchemaComplexType complexType = new SchemaComplexType(this, aname);
@@ -552,10 +531,8 @@ public class Schema extends PlatformObject implements ISchema {
 				if (child.getNodeName().equals("attribute")) { //$NON-NLS-1$
 					complexType.addAttribute(processAttribute(owner, child));
 				} else {
-					ISchemaObject object = processCompositorChild(owner, child,
-							ISchemaCompositor.ROOT);
-					if (object instanceof ISchemaCompositor
-							&& compositor == null) {
+					ISchemaObject object = processCompositorChild(owner, child, ISchemaCompositor.ROOT);
+					if (object instanceof ISchemaCompositor && compositor == null) {
 						compositor = (ISchemaCompositor) object;
 					}
 				}
@@ -565,8 +542,7 @@ public class Schema extends PlatformObject implements ISchema {
 		return complexType;
 	}
 
-	private ISchemaCompositor processCompositor(ISchemaObject parent,
-			Node node, int type) {
+	private ISchemaCompositor processCompositor(ISchemaObject parent, Node node, int type) {
 		SchemaCompositor compositor = new SchemaCompositor(parent, type);
 		NodeList children = node.getChildNodes();
 		int minOccurs = 1;
@@ -586,16 +562,14 @@ public class Schema extends PlatformObject implements ISchema {
 		compositor.setMaxOccurs(maxOccurs);
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			ISchemaObject object = processCompositorChild(compositor, child,
-					type);
+			ISchemaObject object = processCompositorChild(compositor, child, type);
 			if (object != null)
 				compositor.addChild(object);
 		}
 		return compositor;
 	}
 
-	private ISchemaObject processCompositorChild(ISchemaObject parent,
-			Node child, int parentKind) {
+	private ISchemaObject processCompositorChild(ISchemaObject parent, Node child, int parentKind) {
 		String tag = child.getNodeName();
 		if (tag.equals("element") && parentKind != ISchemaCompositor.ROOT) { //$NON-NLS-1$
 			return processElement(parent, child);
@@ -623,18 +597,18 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 		if (parent instanceof ISchemaCompositor)
-			return processElementReference((ISchemaCompositor)parent, elementNode);
+			return processElementReference((ISchemaCompositor) parent, elementNode);
 		return processElementDeclaration(parent, elementNode);
 	}
-	
-	private ISchemaElement processElementDeclaration (ISchemaObject parent, Node elementNode) {
+
+	private ISchemaElement processElementDeclaration(ISchemaObject parent, Node elementNode) {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		if (aname == null)
 			return null;
 		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$	
 		int minOccurs = getMinOccurs(elementNode);
 		int maxOccurs = getMaxOccurs(elementNode);
-		
+
 		ISchemaType type = null;
 		if (atype != null) {
 			type = resolveTypeReference(atype);
@@ -663,8 +637,8 @@ public class Schema extends PlatformObject implements ISchema {
 		element.setType(type);
 		return element;
 	}
-	
-	private ISchemaElement processElementReference (ISchemaCompositor compositor, Node elementNode) {
+
+	private ISchemaElement processElementReference(ISchemaCompositor compositor, Node elementNode) {
 		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
 		if (aref == null) {
 			return null;
@@ -672,8 +646,7 @@ public class Schema extends PlatformObject implements ISchema {
 		int minOccurs = getMinOccurs(elementNode);
 		int maxOccurs = getMaxOccurs(elementNode);
 
-		SchemaElementReference reference = new SchemaElementReference(
-				compositor, aref);
+		SchemaElementReference reference = new SchemaElementReference(compositor, aref);
 		reference.addComments(elementNode);
 		reference.setMinOccurs(minOccurs);
 		reference.setMaxOccurs(maxOccurs);
@@ -681,16 +654,16 @@ public class Schema extends PlatformObject implements ISchema {
 		//reference.bindSourceLocation(elementNode, lineTable);
 		return reference;
 	}
-	
-	private int getMinOccurs (Node elementNode) {
+
+	private int getMinOccurs(Node elementNode) {
 		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
 		if (aminOccurs != null)
 			return Integer.valueOf(aminOccurs).intValue();
 		return 1;
-		
+
 	}
-	
-	private int getMaxOccurs (Node elementNode) {
+
+	private int getMaxOccurs(Node elementNode) {
 		String amaxOccurs = getAttribute(elementNode, "maxOccurs"); //$NON-NLS-1$
 		if (amaxOccurs != null) {
 			if (amaxOccurs.equals("unbounded")) //$NON-NLS-1$
@@ -706,28 +679,22 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("documentation") && !fAbbreviated) { //$NON-NLS-1$
-					element.setDescription(getNormalizedText(child
-							.getFirstChild().getNodeValue()));
+					element.setDescription(getNormalizedText(child.getFirstChild().getNodeValue()));
 				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
 							if (meta.getNodeName().equals("meta.element")) { //$NON-NLS-1$
-								element.setLabelProperty(getAttribute(meta,
-										"labelAttribute")); //$NON-NLS-1$
-								element.setIconProperty(getAttribute(meta,
-										"icon")); //$NON-NLS-1$
+								element.setLabelProperty(getAttribute(meta, "labelAttribute")); //$NON-NLS-1$
+								element.setIconProperty(getAttribute(meta, "icon")); //$NON-NLS-1$
 								if (element.getIconProperty() == null)
-									element.setIconProperty(getAttribute(meta,
-											"iconName")); //$NON-NLS-1$
-								element.setTranslatableProperty(processTranslatable(getAttribute(
-												meta, "translatable"))); //$NON-NLS-1$
-								element.setDeprecatedProperty(processDeprecated(getAttribute(
-												meta, "deprecated"))); //$NON-NLS-1$
+									element.setIconProperty(getAttribute(meta, "iconName")); //$NON-NLS-1$
+								element.setTranslatableProperty(processTranslatable(getAttribute(meta, "translatable"))); //$NON-NLS-1$
+								element.setDeprecatedProperty(processDeprecated(getAttribute(meta, "deprecated"))); //$NON-NLS-1$
 								if (element instanceof ISchemaRootElement) {
 									String depSug = getAttribute(meta, SchemaRootElement.P_DEP_REPLACEMENT);
-									((ISchemaRootElement)element).setDeprecatedSuggestion(depSug);
+									((ISchemaRootElement) element).setDeprecatedSuggestion(depSug);
 								}
 							}
 						}
@@ -760,14 +727,12 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("documentation") && !fAbbreviated) { //$NON-NLS-1$
-					String text = getNormalizedText(child.getFirstChild()
-							.getNodeValue());
+					String text = getNormalizedText(child.getFirstChild().getNodeValue());
 					if (section != null) {
 						if (section.equals("overview")) { //$NON-NLS-1$
 							setDescription(text);
 						} else {
-							DocumentSection sec = new DocumentSection(this,
-									section, sectionName);
+							DocumentSection sec = new DocumentSection(this, section, sectionName);
 							sec.setDescription(text);
 							fDocSections.addElement(sec);
 						}
@@ -783,8 +748,7 @@ public class Schema extends PlatformObject implements ISchema {
 								fPluginID = getAttribute(meta, "plugin"); //$NON-NLS-1$
 								fPointID = getAttribute(meta, "id"); //$NON-NLS-1$
 								fValid = true;
-							} else if (meta.getNodeName()
-									.equals("meta.section")) { //$NON-NLS-1$
+							} else if (meta.getNodeName().equals("meta.section")) { //$NON-NLS-1$
 								section = getAttribute(meta, "type"); //$NON-NLS-1$
 								sectionName = getAttribute(meta, "name"); //$NON-NLS-1$
 								if (sectionName == null)
@@ -818,14 +782,12 @@ public class Schema extends PlatformObject implements ISchema {
 			load();
 		setNotificationEnabled(true);
 		if (isLoaded())
-			fireModelChanged(new ModelChangedEvent(this,
-					IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
+			fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
 	}
 
 	public void removeDocumentSection(IDocumentSection docSection) {
 		fDocSections.removeElement(docSection);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
-				new Object[] { docSection }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE, new Object[] {docSection}, null));
 	}
 
 	public void moveElementToSibling(ISchemaElement element, ISchemaObject sibling) {
@@ -837,7 +799,7 @@ public class Schema extends PlatformObject implements ISchema {
 			newIndex = fElements.indexOf(sibling);
 		else
 			newIndex = fElements.size() - 1;
-		
+
 		if (index > newIndex) {
 			for (int i = index; i > newIndex; i--) {
 				fElements.set(i, fElements.elementAt(i - 1));
@@ -846,17 +808,16 @@ public class Schema extends PlatformObject implements ISchema {
 			for (int i = index; i < newIndex; i++) {
 				fElements.set(i, fElements.elementAt(i + 1));
 			}
-		} else // don't need to move
+		} else
+			// don't need to move
 			return;
 		fElements.set(newIndex, element);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.CHANGE,
-				new Object[] { this }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.CHANGE, new Object[] {this}, null));
 	}
-	
+
 	public void removeElement(ISchemaElement element) {
 		fElements.removeElement(element);
-		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
-				new Object[] { element }, null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE, new Object[] {element}, null));
 	}
 
 	public void removeModelChangedListener(IModelChangedListener listener) {
@@ -880,8 +841,7 @@ public class Schema extends PlatformObject implements ISchema {
 		ISchemaElement[] elementList = getResolvedElements();
 		for (int i = 0; i < elementList.length; i++) {
 			ISchemaElement element = elementList[i];
-			if (!(element instanceof ISchemaObjectReference)
-					&& element.getName().equals(reference.getName())) {
+			if (!(element instanceof ISchemaObjectReference) && element.getName().equals(reference.getName())) {
 				// Link
 				reference.setReferencedObject(element);
 				break;
@@ -898,8 +858,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void resolveReferences(Vector references) {
 		for (int i = 0; i < references.size(); i++) {
-			ISchemaObjectReference reference = (ISchemaObjectReference) references
-					.elementAt(i);
+			ISchemaObjectReference reference = (ISchemaObjectReference) references.elementAt(i);
 			resolveReference(reference);
 		}
 	}
@@ -978,7 +937,7 @@ public class Schema extends PlatformObject implements ISchema {
 			resolveReferences(fReferences);
 		fReferences = null;
 	}
-	
+
 	private void addOmittedDocumentSections() {
 		for (int i = 0; i < DocumentSection.DOC_SECTIONS.length; i++) {
 			DocumentSection section = new DocumentSection(this, DocumentSection.DOC_SECTIONS[i], null);
@@ -1000,8 +959,7 @@ public class Schema extends PlatformObject implements ISchema {
 				continue;
 			ISchemaType type = el.getType();
 			if (type instanceof ISchemaComplexType) {
-				SchemaCompositor compositor = (SchemaCompositor) ((ISchemaComplexType) type)
-						.getCompositor();
+				SchemaCompositor compositor = (SchemaCompositor) ((ISchemaComplexType) type).getCompositor();
 				if (compositor != null)
 					compositor.updateReferencesFor(element, kind);
 			}
@@ -1021,8 +979,7 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
-		writer.println(indent3
-				+ getWritableDescription());
+		writer.println(indent3 + getWritableDescription());
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 		writer.println(INDENT + "</annotation>"); //$NON-NLS-1$
 		writer.println();
@@ -1052,8 +1009,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private String getWritableDescription() {
 		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
 		String description = PDEXMLHelper.getWritableString(getDescription());
-		String platformDescription = description.replaceAll(
-				"\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
+		String platformDescription = description.replaceAll("\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 
 		return platformDescription;
 	}
@@ -1063,7 +1019,7 @@ public class Schema extends PlatformObject implements ISchema {
 		while (it.hasNext()) {
 			Object next = it.next();
 			if (next instanceof SchemaRootElement)
-				return ((SchemaRootElement)next).isDeprecated();
+				return ((SchemaRootElement) next).isDeprecated();
 		}
 		return false;
 	}
@@ -1073,7 +1029,7 @@ public class Schema extends PlatformObject implements ISchema {
 		while (it.hasNext()) {
 			Object next = it.next();
 			if (next instanceof SchemaRootElement)
-				return ((SchemaRootElement)next).getDeprecatedSuggestion();
+				return ((SchemaRootElement) next).getDeprecatedSuggestion();
 		}
 		return null;
 	}

@@ -92,8 +92,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("8859_1")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
@@ -118,7 +117,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	public void setEditable(boolean editable) {
 		fEditable = editable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModel#getInstallLocation()
 	 */

@@ -32,70 +32,70 @@ public class WindowImages extends ProductObject implements IWindowImages {
 
 	public String getImagePath(int size) {
 		switch (size) {
-		case 0:
-			return f16ImagePath;
-		case 1: 
-			return f32ImagePath;
-		case 2:
-			return f48ImagePath;
-		case 3:
-			return f64ImagePath;
-		case 4:
-			return f128ImagePath;
+			case 0 :
+				return f16ImagePath;
+			case 1 :
+				return f32ImagePath;
+			case 2 :
+				return f48ImagePath;
+			case 3 :
+				return f64ImagePath;
+			case 4 :
+				return f128ImagePath;
 		}
 		return null;
 	}
 
 	public void setImagePath(String path, int size) {
 		String old;
-		switch(size) {
-		case 0:
-			old = f16ImagePath;
-			f16ImagePath = path;
-			if (isEditable())
-				firePropertyChanged(P_16, old, f16ImagePath);
-			break;
-		case 1: 
-			old = f32ImagePath;
-			f32ImagePath = path;
-			if (isEditable())
-				firePropertyChanged(P_32, old, f32ImagePath);
-			break;
-		case 2:
-			old = f48ImagePath;
-			f48ImagePath = path;
-			if (isEditable())
-				firePropertyChanged(P_48, old, f48ImagePath);
-			break;
-		case 3:
-			old = f64ImagePath;
-			f64ImagePath = path;
-			if (isEditable())
-				firePropertyChanged(P_64, old, f64ImagePath);
-			break;
-		case 4:
-			old = f128ImagePath;
-			f128ImagePath = path;
-			if (isEditable())
-				firePropertyChanged(P_128, old, f128ImagePath);
-			break;
+		switch (size) {
+			case 0 :
+				old = f16ImagePath;
+				f16ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_16, old, f16ImagePath);
+				break;
+			case 1 :
+				old = f32ImagePath;
+				f32ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_32, old, f32ImagePath);
+				break;
+			case 2 :
+				old = f48ImagePath;
+				f48ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_48, old, f48ImagePath);
+				break;
+			case 3 :
+				old = f64ImagePath;
+				f64ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_64, old, f64ImagePath);
+				break;
+			case 4 :
+				old = f128ImagePath;
+				f128ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_128, old, f128ImagePath);
+				break;
 		}
-		
+
 	}
-	
+
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			f16ImagePath = element.getAttribute(P_16); //$NON-NLS-1$
 			// try the old 3.1 attribute name
 			if (f16ImagePath == null || f16ImagePath.length() == 0)
 				f16ImagePath = element.getAttribute("small"); //$NON-NLS-1$
-			
+
 			f32ImagePath = element.getAttribute(P_32); //$NON-NLS-1$
 			// try the old 3.1 attribute name
 			if (f32ImagePath == null || f32ImagePath.length() == 0)
 				f32ImagePath = element.getAttribute("large"); //$NON-NLS-1$
-			
+
 			f48ImagePath = element.getAttribute(P_48); //$NON-NLS-1$
 			f64ImagePath = element.getAttribute(P_64); //$NON-NLS-1$
 			f128ImagePath = element.getAttribute(P_128); //$NON-NLS-1$

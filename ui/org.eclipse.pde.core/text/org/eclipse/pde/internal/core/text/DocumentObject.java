@@ -31,25 +31,24 @@ import org.eclipse.pde.core.ModelChangedEvent;
  * DocumentObject
  *
  */
-public abstract class DocumentObject extends DocumentElementNode implements
-		IDocumentObject {
-	
+public abstract class DocumentObject extends DocumentElementNode implements IDocumentObject {
+
 	// TODO: MP: TEO: LOW: Integrate with plugin model?
 	// TODO: MP: TEO: LOW: Investigate document node to see if any methods to pull down
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private transient IModel fModel;
-	
+
 	private transient boolean fInTheModel;
-	
+
 	/**
 	 * @param model
 	 * @param tagName
 	 */
 	public DocumentObject(IModel model, String tagName) {
 		super();
-		
+
 		fModel = model;
 		fInTheModel = false;
 		setXMLTagName(tagName);
@@ -61,14 +60,14 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	public void setSharedModel(IModel model) {
 		fModel = model;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getSharedModel()
 	 */
 	public IModel getSharedModel() {
 		return fModel;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#reset()
 	 */
@@ -76,22 +75,22 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// TODO: MP: TEO: LOW: Reset parent fields? or super.reset?
 		fModel = null;
 		fInTheModel = false;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isInTheModel()
 	 */
 	public boolean isInTheModel() {
 		return fInTheModel;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#setInTheModel(boolean)
 	 */
 	public void setInTheModel(boolean inModel) {
 		fInTheModel = inModel;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#isEditable()
 	 */
@@ -99,7 +98,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Convenience method
 		return fModel.isEditable();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -109,18 +108,18 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getLineDelimiter()
 	 */
 	protected String getLineDelimiter() {
 		if (fModel instanceof IEditingModel) {
-			IDocument document = ((IEditingModel)fModel).getDocument();
+			IDocument document = ((IEditingModel) fModel).getDocument();
 			return TextUtilities.getDefaultLineDelimiter(document);
 		}
 		return super.getLineDelimiter();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
@@ -134,15 +133,14 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		fInTheModel = true;
 		// Transient field:  Model
 		fModel = model;
-	}	
-	
+	}
+
 	/**
 	 * @param property
 	 * @param oldValue
 	 * @param newValue
 	 */
-	protected void firePropertyChanged(String property, Object oldValue,
-			Object newValue) {
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
 
@@ -152,63 +150,58 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param oldValue
 	 * @param newValue
 	 */
-	private void firePropertyChanged(Object object, String property,
-		Object oldValue, Object newValue) {
-		if (fModel.isEditable() && 
-				(fModel instanceof IModelChangeProvider)) {
-			IModelChangeProvider provider = (IModelChangeProvider)fModel;
+	private void firePropertyChanged(Object object, String property, Object oldValue, Object newValue) {
+		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider)) {
+			IModelChangeProvider provider = (IModelChangeProvider) fModel;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param child
 	 * @param changeType
 	 */
 	protected void fireStructureChanged(Object child, int changeType) {
-		fireStructureChanged(new Object[] { child }, changeType);
-	}	
-	
+		fireStructureChanged(new Object[] {child}, changeType);
+	}
+
 	/**
 	 * @param children
 	 * @param changeType
 	 */
 	protected void fireStructureChanged(Object[] children, int changeType) {
-		if (fModel.isEditable() && 
-				(fModel instanceof IModelChangeProvider)) {
-			IModelChangeProvider provider = (IModelChangeProvider)fModel;
-			IModelChangedEvent event = new ModelChangedEvent(provider, changeType,
-					children, null);
+		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider)) {
+			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+			IModelChangedEvent event = new ModelChangedEvent(provider, changeType, children, null);
 			provider.fireModelChanged(event);
 		}
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public void addChildNode(IDocumentElementNode child) {
 		if (child instanceof IDocumentObject) {
-			((IDocumentObject)child).setInTheModel(true);
+			((IDocumentObject) child).setInTheModel(true);
 		}
 		super.addChildNode(child);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode, int)
 	 */
 	public void addChildNode(IDocumentElementNode child, int position) {
 		// Ensure the position is valid
 		// 0 <= position <= number of children
-		if ((position < 0) ||
-				(position > getChildCount())) {
+		if ((position < 0) || (position > getChildCount())) {
 			return;
 		}
 		if (child instanceof IDocumentObject) {
-			((IDocumentObject)child).setInTheModel(true);
+			((IDocumentObject) child).setInTheModel(true);
 		}
 		super.addChildNode(child, position);
 	}
-	
+
 	/**
 	 * @param child
 	 * @param position
@@ -219,9 +212,9 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param child
 	 * @param fireEvent
@@ -231,33 +224,31 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.INSERT);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public IDocumentElementNode removeChildNode(IDocumentElementNode child) {
 		IDocumentElementNode node = super.removeChildNode(child);
-		if ((node != null) &&
-				(node instanceof IDocumentObject)) {
-			((IDocumentObject)node).setInTheModel(false);
+		if ((node != null) && (node instanceof IDocumentObject)) {
+			((IDocumentObject) node).setInTheModel(false);
 		}
 		return node;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
 	 */
 	public IDocumentElementNode removeChildNode(int index) {
 		IDocumentElementNode node = super.removeChildNode(index);
-		if ((node != null) &&
-				(node instanceof IDocumentObject)) {
-			((IDocumentObject)node).setInTheModel(false);
+		if ((node != null) && (node instanceof IDocumentObject)) {
+			((IDocumentObject) node).setInTheModel(false);
 		}
-		return node;		
+		return node;
 	}
-	
+
 	/**
 	 * @param child
 	 * @param fireEvent
@@ -268,10 +259,10 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(child, IModelChangedEvent.REMOVE);
-		}	
+		}
 		return node;
 	}
-	
+
 	/**
 	 * @param index
 	 * @param clazz
@@ -283,15 +274,13 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			fireStructureChanged(node, IModelChangedEvent.REMOVE);
-		}	
+		}
 		return node;
 	}
-	
+
 	public IDocumentElementNode removeChildNode(int index, Class clazz) {
 		// Validate index
-		if ((index < 0) ||
-				(index >= getChildCount()) ||
-				(clazz.isInstance(getChildAt(index)) == false)) {
+		if ((index < 0) || (index >= getChildCount()) || (clazz.isInstance(getChildAt(index)) == false)) {
 			// 0 <= index < child element count
 			// Cannot remove a node that is not the specified type		
 			return null;
@@ -299,15 +288,15 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Remove the node
 		IDocumentElementNode node = removeChildNode(index);
 		return node;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSObject#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
-	}	
+	}
 
 	/**
 	 * @param newNode
@@ -318,9 +307,8 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		boolean fireEvent = shouldFireEvent();
 		// Get the old node
 		IDocumentElementNode oldNode = getChildNode(clazz);
-		
-		if ((newNode == null) &&
-				(oldNode == null)) {
+
+		if ((newNode == null) && (oldNode == null)) {
 			// NEW = NULL, OLD = NULL
 			// If the new and old nodes are not defined, nothing to do
 			return;
@@ -343,20 +331,19 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 * @param oldNode
 	 * @param fireEvent
 	 */
-	protected void replaceChildNode(IDocumentElementNode newNode,
-			IDocumentElementNode oldNode, boolean fireEvent) {
+	protected void replaceChildNode(IDocumentElementNode newNode, IDocumentElementNode oldNode, boolean fireEvent) {
 		// Get the index of the old node
-		int position = indexOf((IDocumentElementNode)oldNode);
+		int position = indexOf((IDocumentElementNode) oldNode);
 		// Validate position
 		if (position < 0) {
 			return;
 		}
 		// Add the new node to the same position occupied by the old node
-		addChildNode((IDocumentElementNode)newNode, position, fireEvent);
+		addChildNode((IDocumentElementNode) newNode, position, fireEvent);
 		// Remove the old node
-		removeChildNode((IDocumentElementNode)oldNode, fireEvent);
+		removeChildNode((IDocumentElementNode) oldNode, fireEvent);
 	}
-	
+
 	/**
 	 * @param clazz
 	 * @return
@@ -366,14 +353,14 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode)iterator.next();
+			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
 				return node;
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * @param clazz
 	 * @return
@@ -384,22 +371,22 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode)iterator.next();
+			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
 				count++;
 			}
-		}		
-		return count;		
+		}
+		return count;
 	}
-	
+
 	/**
 	 * @param clazz
 	 * @return
 	 */
 	public ArrayList getChildNodesList(Class clazz, boolean match) {
-		return getChildNodesList(new Class[]{ clazz }, match);
+		return getChildNodesList(new Class[] {clazz}, match);
 	}
-	
+
 	/**
 	 * @param classes
 	 * @return
@@ -409,18 +396,18 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode)iterator.next();
+			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			for (int i = 0; i < classes.length; i++) {
 				Class clazz = classes[i];
 				if (clazz.isInstance(node) == match) {
 					filteredChildren.add(node);
 					break;
-				}				
+				}
 			}
-		}		
+		}
 		return filteredChildren;
 	}
-	
+
 	/**
 	 * @param node
 	 * @param clazz
@@ -429,8 +416,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
-		if ((position < 0) ||
-				(position >= lastIndex)) {
+		if ((position < 0) || (position >= lastIndex)) {
 			// Either the node was not found or the node was found but it is 
 			// at the last index
 			return null;
@@ -442,9 +428,9 @@ public abstract class DocumentObject extends DocumentElementNode implements
 				return currentNode;
 			}
 		}
-		return null;			
+		return null;
 	}
-	
+
 	/**
 	 * @param node
 	 * @param clazz
@@ -452,8 +438,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	 */
 	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
-		if ((position <= 0) ||
-				(position >= getChildCount())) {
+		if ((position <= 0) || (position >= getChildCount())) {
 			// Either the item was not found or the item was found but it is 
 			// at the first index
 			return null;
@@ -465,9 +450,9 @@ public abstract class DocumentObject extends DocumentElementNode implements
 				return currentNode;
 			}
 		}
-		return null;		
-	}	
-	
+		return null;
+	}
+
 	/**
 	 * @param clazz
 	 * @return
@@ -476,14 +461,14 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode)iterator.next();
+			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
 				return true;
 			}
-		}		
-		return false;		
+		}
+		return false;
 	}
-	
+
 	/**
 	 * @param node
 	 * @param clazz
@@ -492,8 +477,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 	public boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		// Check to see if node is found
-		if ((position < 0) ||
-				(position >= getChildCount())) {
+		if ((position < 0) || (position >= getChildCount())) {
 			// Node not found
 			return false;
 		} else if (position == 0) {
@@ -512,7 +496,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// All nodes before the specified node were of a different type
 		return true;
 	}
-	
+
 	/**
 	 * @param node
 	 * @param clazz
@@ -522,8 +506,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		// Check to see if node is found
-		if ((position < 0) ||
-				(position > lastIndex)) {
+		if ((position < 0) || (position > lastIndex)) {
 			// Node not found
 			return false;
 		} else if (position == lastIndex) {
@@ -540,9 +523,9 @@ public abstract class DocumentObject extends DocumentElementNode implements
 			}
 		}
 		// All nodes after the specified node were of a different type
-		return true;		
+		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#swap(org.eclipse.pde.internal.core.text.IDocumentElementNode, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
@@ -551,9 +534,9 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
 			firePropertyChanged(this, IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP, child1, child2);
-		}	
+		}
 	}
-	
+
 	/**
 	 * @param node
 	 * @param newRelativeIndex
@@ -578,15 +561,13 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		int newIndex = newRelativeIndex + currentIndex;
 		// Validate the new index
 		// 0 <= newIndex < child element count
-		if ((newIndex < 0) ||
-				(newIndex >= getChildCount())) {
+		if ((newIndex < 0) || (newIndex >= getChildCount())) {
 			return;
 		}
 		// If we are only moving a node up and down one position use a swap
 		// operation.  Otherwise, delete the node, clone it and then re-insert
 		// the node
-		if ((newRelativeIndex == -1) ||
-				(newRelativeIndex == 1)) {
+		if ((newRelativeIndex == -1) || (newRelativeIndex == 1)) {
 			IDocumentElementNode sibling = getChildAt(newIndex);
 			// Ensure sibling exists
 			if (sibling == null) {
@@ -608,7 +589,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 			addChildNode(clone, newIndex, fireEvent);
 		}
 	}
-	
+
 	/**
 	 * @param node
 	 * @return
@@ -626,8 +607,8 @@ public abstract class DocumentObject extends DocumentElementNode implements
 			// Deserialize
 			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
 			ObjectInputStream in = new ObjectInputStream(bin);
-			clone = (IDocumentElementNode)in.readObject();
-			in.close();	
+			clone = (IDocumentElementNode) in.readObject();
+			in.close();
 			// Reconnect
 			clone.reconnect(this, fModel);
 		} catch (IOException e) {
@@ -635,10 +616,10 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		} catch (ClassNotFoundException e) {
 			clone = null;
 		}
-		
+
 		return clone;
 	}
-	
+
 	/**
 	 * @param name
 	 * @param defaultValue
@@ -655,7 +636,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		}
 		return defaultValue;
 	}
-	
+
 	/**
 	 * @param name
 	 * @param value
@@ -665,7 +646,7 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		String newValue = Boolean.valueOf(value).toString();
 		return setXMLAttribute(name, newValue);
 	}
-	
+
 	/**
 	 * @param name
 	 * @param newValue
@@ -679,12 +660,12 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		}
 		return changed;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLContent(java.lang.String)
 	 */
 	public boolean setXMLContent(String text) {
-		String oldText = null; 
+		String oldText = null;
 		// Get old text node
 		IDocumentTextNode node = getTextNode();
 		if (node == null) {
@@ -693,28 +674,24 @@ public abstract class DocumentObject extends DocumentElementNode implements
 		} else {
 			// Text exists
 			oldText = node.getText();
-		}		
+		}
 		boolean changed = super.setXMLContent(text);
-		
+
 		// Fire an event 
 		if (changed && shouldFireEvent()) {
-			firePropertyChanged(node, 
-					IDocumentTextNode.F_PROPERTY_CHANGE_TYPE_PCDATA, 
-					oldText, 
-					text);
+			firePropertyChanged(node, IDocumentTextNode.F_PROPERTY_CHANGE_TYPE_PCDATA, oldText, text);
 		}
 		return changed;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
 	 */
 	protected String getFileEncoding() {
-		if ((fModel != null) &&
-				(fModel instanceof IEditingModel)) {
-			return ((IEditingModel)fModel).getCharset();
+		if ((fModel != null) && (fModel instanceof IEditingModel)) {
+			return ((IEditingModel) fModel).getCharset();
 		}
 		return super.getFileEncoding();
-	}	
-	
+	}
+
 }

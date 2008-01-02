@@ -22,15 +22,15 @@ import java.util.TreeMap;
 public class HeaderMap extends TreeMap {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private static class HeaderComparator implements Comparator {
 		public int compare(Object arg0, Object arg1) {
-			String header0 = (String)arg0;
-			String header1 = (String)arg1;
+			String header0 = (String) arg0;
+			String header1 = (String) arg1;
 			return header0.compareToIgnoreCase(header1);
 		}
 	}
-	
+
 	public HeaderMap() {
 		super(new HeaderComparator());
 	}

@@ -42,7 +42,7 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 	public void setNamedJRE(String name) {
 		int oldType = fType;
 		String oldName = fName;
-		fName =  (name == null) ? "" : name; //$NON-NLS-1$
+		fName = (name == null) ? "" : name; //$NON-NLS-1$
 		fType = TYPE_NAMED;
 		if (oldType != fType)
 			firePropertyChanged(P_TARGET_JRE, new Integer(oldType), new Integer(fType));
@@ -53,7 +53,7 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 	public void setExecutionEnvJRE(String name) {
 		int oldType = fType;
 		String oldName = fName;
-		fName =  (name == null) ? "" : name; //$NON-NLS-1$
+		fName = (name == null) ? "" : name; //$NON-NLS-1$
 		fType = TYPE_EXECUTION_ENV;
 		if (oldType != fType)
 			firePropertyChanged(P_TARGET_JRE, new Integer(oldType), new Integer(fType));
@@ -63,7 +63,7 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 
 	public void setDefaultJRE() {
 		int oldType = fType;
-		fName =  "";  //$NON-NLS-1$
+		fName = ""; //$NON-NLS-1$
 		fType = TYPE_DEFAULT;
 		if (oldType != fType)
 			firePropertyChanged(P_TARGET_JRE, new Integer(oldType), new Integer(fType));
@@ -80,7 +80,7 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 				} else if (child.getNodeName().equals("execEnv")) { //$NON-NLS-1$
 					fType = TYPE_EXECUTION_ENV;
 					fName = getText(child);
-				} 
+				}
 			}
 		}
 		if (list.getLength() == 0) {
@@ -88,7 +88,7 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 			fName = ""; //$NON-NLS-1$
 		}
 	}
-	
+
 	private String getText(Node node) {
 		node.normalize();
 		Node text = node.getFirstChild();
@@ -99,46 +99,46 @@ public class TargetJRE extends TargetObject implements ITargetJRE {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		if (fType == 0) 
+		if (fType == 0)
 			return;
 		writer.println();
 		writer.println(indent + "<targetJRE>"); //$NON-NLS-1$
-		if (fType == 1) 
+		if (fType == 1)
 			writer.println(indent + "   <jreName>" + getWritableString(fName) + "</jreName>"); //$NON-NLS-1$ //$NON-NLS-2$
 		else if (fType == 2)
 			writer.println(indent + "   <execEnv>" + getWritableString(fName) + "</execEnv>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent + "</targetJRE>"); //$NON-NLS-1$
 	}
-	
+
 	public String getCompatibleJRE() {
 		int jreType = getJREType();
 
 		switch (jreType) {
-		case ITargetJRE.TYPE_DEFAULT:
-			return JavaRuntime.getDefaultVMInstall().getName();
-		case ITargetJRE.TYPE_NAMED:
-			return getJREName();
-		case ITargetJRE.TYPE_EXECUTION_ENV:
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			IExecutionEnvironment environment = manager.getEnvironment(getJREName());
-			IVMInstall vm = null;
-			if (environment != null) {
-				vm = environment.getDefaultVM();
-				if (vm == null) {
-					IVMInstall[] installs = environment.getCompatibleVMs();
-					// take the first strictly compatible vm if there is no default
-					for (int i = 0; i < installs.length; i++) {
-						IVMInstall install = installs[i];
-						if (environment.isStrictlyCompatible(install)) {
-							return install.getName();
+			case ITargetJRE.TYPE_DEFAULT :
+				return JavaRuntime.getDefaultVMInstall().getName();
+			case ITargetJRE.TYPE_NAMED :
+				return getJREName();
+			case ITargetJRE.TYPE_EXECUTION_ENV :
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				IExecutionEnvironment environment = manager.getEnvironment(getJREName());
+				IVMInstall vm = null;
+				if (environment != null) {
+					vm = environment.getDefaultVM();
+					if (vm == null) {
+						IVMInstall[] installs = environment.getCompatibleVMs();
+						// take the first strictly compatible vm if there is no default
+						for (int i = 0; i < installs.length; i++) {
+							IVMInstall install = installs[i];
+							if (environment.isStrictlyCompatible(install)) {
+								return install.getName();
+							}
 						}
+						// use the first vm failing that
+						if (vm == null && installs.length > 0)
+							return installs[0].getName();
 					}
-					// use the first vm failing that
-					if (vm == null && installs.length > 0) 
-						return installs[0].getName();
+					return vm.getName();
 				}
-				return vm.getName();
-			}
 		}
 		return JavaRuntime.getDefaultVMInstall().getName();
 	}

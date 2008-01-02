@@ -22,18 +22,19 @@ package org.eclipse.pde.internal.core.ischema;
  * of XML Schema grammar.
  */
 public interface ISchemaRepeatable {
-/**
- * Returns maximal number of occurences of the object in the
- * instance document.
- *
- *@return maximal number of occurences in the document
- */
-public int getMaxOccurs();
-/**
- * Returns minimal number of occurences of the object in the
- * instance document.
- *
- *@return minimal number of occurences in the document
- */
-public int getMinOccurs();
+	/**
+	 * Returns maximal number of occurences of the object in the
+	 * instance document.
+	 *
+	 *@return maximal number of occurences in the document
+	 */
+	public int getMaxOccurs();
+
+	/**
+	 * Returns minimal number of occurences of the object in the
+	 * instance document.
+	 *
+	 *@return minimal number of occurences in the document
+	 */
+	public int getMinOccurs();
 }

@@ -52,7 +52,7 @@ public class Target extends TargetObject implements ITarget {
 	private boolean fUseAllTargetPlatform = false;
 	private Set fAdditionalDirectories = new HashSet();
 	private String fDescription = null;
-	
+
 	public Target(ITargetModel model) {
 		super(model);
 	}
@@ -70,10 +70,9 @@ public class Target extends TargetObject implements ITarget {
 	}
 
 	public void parse(Node node) {
-		if (node.getNodeType() == Node.ELEMENT_NODE 
-				&& node.getNodeName().equals("target")) { //$NON-NLS-1$
-			Element element = (Element)node; 
-			fName = element.getAttribute(P_NAME); 
+		if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("target")) { //$NON-NLS-1$
+			Element element = (Element) node;
+			fName = element.getAttribute(P_NAME);
 			NodeList children = node.getChildNodes();
 			ITargetModelFactory factory = getModel().getFactory();
 			for (int i = 0; i < children.getLength(); i++) {
@@ -84,7 +83,7 @@ public class Target extends TargetObject implements ITarget {
 						fArgsInfo = factory.createArguments();
 						fArgsInfo.parse(child);
 					} else if (name.equals("content")) { //$NON-NLS-1$
-						parseContent((Element)child);
+						parseContent((Element) child);
 					} else if (name.equals("environment")) { //$NON-NLS-1$
 						fEnvInfo = factory.createEnvironment();
 						fEnvInfo.parse(child);
@@ -102,10 +101,9 @@ public class Target extends TargetObject implements ITarget {
 			}
 		}
 	}
-	
+
 	private void parseContent(Element content) {
-		fUseAllTargetPlatform =
-			"true".equals(content.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
+		fUseAllTargetPlatform = "true".equals(content.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
 		NodeList children = content.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
@@ -116,9 +114,9 @@ public class Target extends TargetObject implements ITarget {
 			} else if ("extraLocations".equals(node.getNodeName())) { //$NON-NLS-1$
 				parseLocations(node.getChildNodes());
 			}
-		}	
+		}
 	}
-	
+
 	private void parsePlugins(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -131,7 +129,7 @@ public class Target extends TargetObject implements ITarget {
 			}
 		}
 	}
-	
+
 	private void parseFeatures(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -144,7 +142,7 @@ public class Target extends TargetObject implements ITarget {
 			}
 		}
 	}
-	
+
 	private void parseLocations(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -175,14 +173,14 @@ public class Target extends TargetObject implements ITarget {
 		if (fLocationInfo != null) {
 			fLocationInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		
+
 		writer.println();
 		if (fUseAllTargetPlatform) {
 			writer.println(indent + "   <content useAllPlugins=\"true\">"); //$NON-NLS-1$
 		} else {
 			writer.println(indent + "   <content>"); //$NON-NLS-1$
 		}
-		
+
 		writer.println(indent + "      <plugins>"); //$NON-NLS-1$
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
@@ -213,11 +211,11 @@ public class Target extends TargetObject implements ITarget {
 		writer.println();
 		writer.println(indent + "</target>"); //$NON-NLS-1$
 	}
-	
+
 	public IArgumentsInfo getArguments() {
 		return fArgsInfo;
 	}
-	
+
 	public void setArguments(IArgumentsInfo info) {
 		fArgsInfo = info;
 	}
@@ -236,7 +234,7 @@ public class Target extends TargetObject implements ITarget {
 
 	public void setTargetJREInfo(ITargetJRE info) {
 		fRuntimeInfo = info;
-		
+
 	}
 
 	public String getName() {
@@ -260,10 +258,10 @@ public class Target extends TargetObject implements ITarget {
 	public void addPlugin(ITargetPlugin plugin) {
 		addPlugins(new ITargetPlugin[] {plugin});
 	}
-	
+
 	public void addPlugins(ITargetPlugin[] plugins) {
 		ArrayList list = new ArrayList();
-		for (int i = 0; i < plugins.length; i ++ ) {
+		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
 			if (fPlugins.containsKey(id))
 				continue;
@@ -272,15 +270,14 @@ public class Target extends TargetObject implements ITarget {
 			fPlugins.put(id, plugins[i]);
 		}
 		if (isEditable() && list.size() > 0) {
-			fireStructureChanged((ITargetObject[])list.toArray(new ITargetObject[list.size()]), 
-								IModelChangedEvent.INSERT);
+			fireStructureChanged((ITargetObject[]) list.toArray(new ITargetObject[list.size()]), IModelChangedEvent.INSERT);
 		}
 	}
 
 	public void addFeature(ITargetFeature feature) {
 		addFeatures(new ITargetFeature[] {feature});
 	}
-	
+
 	public void addFeatures(ITargetFeature[] features) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
@@ -292,17 +289,16 @@ public class Target extends TargetObject implements ITarget {
 			fFeatures.put(id, features[i]);
 		}
 		if (isEditable() && list.size() > 0)
-			fireStructureChanged((ITargetObject[])list.toArray(new ITargetObject[list.size()]), 
-					IModelChangedEvent.INSERT);
+			fireStructureChanged((ITargetObject[]) list.toArray(new ITargetObject[list.size()]), IModelChangedEvent.INSERT);
 	}
 
 	public void removePlugin(ITargetPlugin plugin) {
 		removePlugins(new ITargetPlugin[] {plugin});
 	}
-	
+
 	public void removePlugins(ITargetPlugin[] plugins) {
 		boolean modify = false;
-		for (int i =0; i < plugins.length; i++) 
+		for (int i = 0; i < plugins.length; i++)
 			modify = ((fPlugins.remove(plugins[i].getId()) != null) || modify);
 		if (isEditable() && modify)
 			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
@@ -311,14 +307,14 @@ public class Target extends TargetObject implements ITarget {
 	public void removeFeature(ITargetFeature feature) {
 		removeFeatures(new ITargetFeature[] {feature});
 	}
-	
+
 	public void removeFeatures(ITargetFeature[] features) {
 		boolean modify = false;
 		for (int i = 0; i < features.length; i++) {
 			modify = ((fFeatures.remove(features[i].getId()) != null) || modify);
 		}
 		if (isEditable() && modify)
-			fireStructureChanged(features, IModelChangedEvent.REMOVE);	
+			fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
 	public ITargetPlugin[] getPlugins() {
@@ -357,8 +353,7 @@ public class Target extends TargetObject implements ITarget {
 	}
 
 	public IAdditionalLocation[] getAdditionalDirectories() {
-		return (IAdditionalLocation[])
-			fAdditionalDirectories.toArray(new IAdditionalLocation[fAdditionalDirectories.size()]);
+		return (IAdditionalLocation[]) fAdditionalDirectories.toArray(new IAdditionalLocation[fAdditionalDirectories.size()]);
 	}
 
 	public void addAdditionalDirectories(IAdditionalLocation[] dirs) {
@@ -367,7 +362,7 @@ public class Target extends TargetObject implements ITarget {
 		}
 		fireStructureChanged(dirs, IModelChangedEvent.INSERT);
 	}
-	
+
 	public void removeAdditionalDirectories(IAdditionalLocation[] dirs) {
 		for (int i = 0; i < dirs.length; i++) {
 			fAdditionalDirectories.remove(dirs[i]);
@@ -382,7 +377,7 @@ public class Target extends TargetObject implements ITarget {
 	public String getDescription() {
 		return fDescription;
 	}
-	
+
 	//  Would be better implemented if IFeaturePlugin extends IEnvironment.  Look at doing this post 3.2
 	public boolean isValidFeatureObject(Object featureObj) {
 		IEnvironment env = null;
@@ -392,7 +387,7 @@ public class Target extends TargetObject implements ITarget {
 		else
 			plugin = (IFeaturePlugin) featureObj;
 		boolean result = true;
-		
+
 		String value = (env != null) ? env.getArch() : plugin.getArch();
 		if (value != null && result) {
 			String arch = (fEnvInfo != null) ? fEnvInfo.getArch() : null;
@@ -400,7 +395,7 @@ public class Target extends TargetObject implements ITarget {
 				arch = Platform.getOSArch();
 			result = containsProperty(arch, value);
 		}
-		
+
 		value = (env != null) ? env.getOS() : plugin.getOS();
 		if (value != null && result) {
 			String os = (fEnvInfo != null) ? fEnvInfo.getOS() : null;
@@ -408,7 +403,7 @@ public class Target extends TargetObject implements ITarget {
 				os = Platform.getOS();
 			result = containsProperty(os, value);
 		}
-		
+
 		value = (env != null) ? env.getWS() : plugin.getWS();
 		if (value != null && result) {
 			String ws = (fEnvInfo != null) ? fEnvInfo.getWS() : null;
@@ -416,7 +411,7 @@ public class Target extends TargetObject implements ITarget {
 				ws = Platform.getWS();
 			result = containsProperty(ws, value);
 		}
-		
+
 		value = (env != null) ? env.getNL() : plugin.getNL();
 		if (value != null && result) {
 			String nl = (fEnvInfo != null) ? fEnvInfo.getNL() : null;
@@ -426,7 +421,7 @@ public class Target extends TargetObject implements ITarget {
 		}
 		return result;
 	}
-	
+
 	private boolean containsProperty(String property, String value) {
 		if (value == null || property == null)
 			return false;

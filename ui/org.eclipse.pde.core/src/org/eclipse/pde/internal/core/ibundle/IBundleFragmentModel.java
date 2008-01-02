@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
  * 
  * @since 3.0
  */
-public interface IBundleFragmentModel
-	extends IBundlePluginModelBase, IFragmentModel {
+public interface IBundleFragmentModel extends IBundlePluginModelBase, IFragmentModel {
 
 }

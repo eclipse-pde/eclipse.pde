@@ -11,6 +11,7 @@
 package org.eclipse.pde.core;
 
 import java.io.PrintWriter;
+
 /**
  * Models that implement this interface indicate that
  * they can be changed. When a model is changed,
@@ -37,12 +38,14 @@ public interface IEditable {
 	 * otherwise.
 	 */
 	public boolean isEditable();
+
 	/**
 	 * Tests whether the model has been changed from the last clean
 	 * state.
 	 * @return <code>true</code> if the model has been changed and need saving
 	 */
 	public boolean isDirty();
+
 	/**
 	 * Saves the model into the provided writer.
 	 * The assumption is that the model can be
@@ -54,6 +57,7 @@ public interface IEditable {
 	 * write ASCII representation of the model
 	 */
 	public void save(PrintWriter writer);
+
 	/**
 	 * Sets the dirty flag of the model. This method is
 	 * normally not intended to be used outside the model. 

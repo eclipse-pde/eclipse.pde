@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.core.icheatsheet.comp;
 
-
-
 /**
  * ICompCSTaskGroup
  *
@@ -37,29 +35,28 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 	 * @param taskObject
 	 * @return
 	 */
-	public void removeFieldTaskObject(ICompCSTaskObject taskObject);	
-	
+	public void removeFieldTaskObject(ICompCSTaskObject taskObject);
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param taskObject
 	 * @param newRelativeIndex
 	 */
-	public void moveFieldTaskObject(ICompCSTaskObject taskObject, 
-			int newRelativeIndex);
-	
+	public void moveFieldTaskObject(ICompCSTaskObject taskObject, int newRelativeIndex);
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param index
 	 * @return
 	 */
-	public void removeFieldTaskObject(int index);	
-	
+	public void removeFieldTaskObject(int index);
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @return
 	 */
 	public ICompCSTaskObject[] getFieldTaskObjects();
-	
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param subitem
@@ -73,14 +70,14 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 	 * @return
 	 */
 	public boolean isLastFieldTaskObject(ICompCSTaskObject taskObject);
-	
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param taskObjectm
 	 * @return
 	 */
 	public int indexOfFieldTaskObject(ICompCSTaskObject taskObject);
-	
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @return
@@ -91,20 +88,20 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 	 * Elements:  taskGroup, task
 	 * @return
 	 */
-	public boolean hasFieldTaskObjects();	
-	
+	public boolean hasFieldTaskObjects();
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param taskObject
 	 * @return
 	 */
 	public ICompCSTaskObject getNextSibling(ICompCSTaskObject taskObject);
-	
+
 	/**
 	 * Elements:  taskGroup, task
 	 * @param taskObject
 	 * @return
 	 */
-	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject);	
-	
+	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject);
+
 }

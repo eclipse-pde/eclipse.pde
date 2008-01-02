@@ -44,12 +44,12 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private IResource fUnderlyingResource;
 	private String fInstallLocation;
 	private boolean fStale;
-	
+
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;
-		fReconciling = isReconciling;		
+		fReconciling = isReconciling;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#dispose()
 	 */
@@ -61,17 +61,17 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fDisposed = true;
 		fListeners.clear();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getResourceString(java.lang.String)
 	 */
 	public String getResourceString(String key) {
 		if (key == null || key.length() == 0)
 			return ""; //$NON-NLS-1$
-		
-		if (fNLResourceHelper == null) 
+
+		if (fNLResourceHelper == null)
 			fNLResourceHelper = createNLResourceHelper();
-		
+
 		return (fNLResourceHelper == null) ? key : fNLResourceHelper.getResourceString(key);
 	}
 
@@ -83,19 +83,21 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public boolean isDisposed() {
 		return fDisposed;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	public boolean isEditable() {
 		return fReconciling;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isLoaded()
 	 */
 	public boolean isLoaded() {
 		return fLoaded;
 	}
-	
+
 	/**
 	 * @param loaded
 	 */
@@ -103,25 +105,28 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		// TODO: MP: TEO: LOW: Set as API?
 		fLoaded = loaded;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
 		return fInSync;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	public boolean isValid() {
 		return isLoaded();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getTimeStamp()
 	 */
 	public final long getTimeStamp() {
 		return fTimestamp;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
@@ -131,29 +136,27 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public final void reload(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public final void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
-		fireModelChanged(
-				new ModelChangedEvent(this, 
-					IModelChangedEvent.WORLD_CHANGED,
-					new Object[] {this},
-					null));
-		
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {this}, null));
+
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
 	public boolean isReconcilingModel() {
 		return fReconciling;
 	}
-	
+
 	public IDocument getDocument() {
 		return fDocument;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
 	 */
@@ -173,27 +176,27 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 				setDirty(false);
 		}
 	}
-	
+
 	public abstract void adjustOffsets(IDocument document) throws CoreException;
-	
+
 	protected InputStream getInputStream(IDocument document) throws UnsupportedEncodingException {
 		return new BufferedInputStream(new ByteArrayInputStream(document.get().getBytes(getCharset())));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IEditingModel#getCharset()
 	 */
 	public String getCharset() {
 		return fCharset != null ? fCharset : "UTF-8"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IEditingModel#setCharset(java.lang.String)
 	 */
 	public void setCharset(String charset) {
 		fCharset = charset;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#addModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
 	 */
@@ -201,11 +204,12 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
+
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
-		List oldList = (List)fListeners.clone();
-		for (int i=0; i<oldList.size(); i++) {
-			IModelChangedListener listener = (IModelChangedListener)oldList.get(i);
-			if (filter==null || filter.accept(listener)) {
+		List oldList = (List) fListeners.clone();
+		for (int i = 0; i < oldList.size(); i++) {
+			IModelChangedListener listener = (IModelChangedListener) oldList.get(i);
+			if (filter == null || filter.accept(listener)) {
 				// add the listener to the target
 				target.addModelChangedListener(listener);
 				// remove the listener from our list
@@ -213,70 +217,74 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void fireModelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.CHANGE &&
-				event.getOldValue() != null &&
-				event.getOldValue().equals(event.getNewValue()))
+		if (event.getChangeType() == IModelChangedEvent.CHANGE && event.getOldValue() != null && event.getOldValue().equals(event.getNewValue()))
 			return;
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		for (int i = 0; i < fListeners.size(); i++) {
-			((IModelChangedListener)fListeners.get(i)).modelChanged(event);
+			((IModelChangedListener) fListeners.get(i)).modelChanged(event);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelObjectChanged(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#removeModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
 	 */
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
 	public boolean isDirty() {
 		return fDirty;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
 	 */
 	public void save(PrintWriter writer) {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
 	 */
 	public void setDirty(boolean dirty) {
 		this.fDirty = dirty;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#isStale()
 	 */
 	public boolean isStale() {
 		return fStale;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#setStale(boolean)
 	 */
 	public void setStale(boolean stale) {
 		fStale = stale;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
-	
+
 	public void setUnderlyingResource(IResource resource) {
 		fUnderlyingResource = resource;
 	}
@@ -291,7 +299,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		}
 		return fInstallLocation;
 	}
-	
+
 	public void setInstallLocation(String location) {
 		fInstallLocation = location;
 	}
@@ -300,7 +308,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		for (int i = fListeners.size() - 1; i >= 0; i--) {
 			Object obj = fListeners.get(i);
 			if (obj instanceof IModelTextChangeListener)
-				return (IModelTextChangeListener)obj;
+				return (IModelTextChangeListener) obj;
 		}
 		return null;
 	}

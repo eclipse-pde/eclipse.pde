@@ -40,7 +40,7 @@ public class PluginReference extends PlatformObject {
 	public IPlugin getPlugin() {
 		if (fPlugin == null && fId != null) {
 			IPluginModelBase model = PluginRegistry.findModel(fId);
-			fPlugin = model instanceof IPluginModel ? ((IPluginModel)model).getPlugin() : null;
+			fPlugin = model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
 		}
 		return fPlugin;
 	}
@@ -55,7 +55,7 @@ public class PluginReference extends PlatformObject {
 	public boolean isResolved() {
 		return getPlugin() != null;
 	}
-	
+
 	/**
 	 * @param plugin
 	 */
@@ -71,5 +71,5 @@ public class PluginReference extends PlatformObject {
 		// If we have a fragment model, leave the plugin as null
 		fPlugin = plugin;
 	}
-	
+
 }

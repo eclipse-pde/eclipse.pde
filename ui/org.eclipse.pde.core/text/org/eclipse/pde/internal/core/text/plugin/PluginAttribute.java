@@ -18,9 +18,8 @@ import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
-public class PluginAttribute extends PluginObjectNode implements
-		IPluginAttribute, IDocumentAttributeNode {
-	
+public class PluginAttribute extends PluginObjectNode implements IPluginAttribute, IDocumentAttributeNode {
+
 	private static final long serialVersionUID = 1L;
 
 	// The plugin attribute interface requires this class to extend PluginObjectNode
@@ -31,7 +30,7 @@ public class PluginAttribute extends PluginObjectNode implements
 	private DocumentAttributeNode fAttribute;
 
 	private String fValue;
-	
+
 	/**
 	 * 
 	 */
@@ -40,105 +39,105 @@ public class PluginAttribute extends PluginObjectNode implements
 		fAttribute = new DocumentAttributeNode();
 		fValue = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()
 	 */
 	public String getValue() {
 		return fValue;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#setValue(java.lang.String)
 	 */
 	public void setValue(String value) throws CoreException {
 		fValue = value;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setEnclosingElement(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
 	public void setEnclosingElement(IDocumentElementNode node) {
 		fAttribute.setEnclosingElement(node);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getEnclosingElement()
 	 */
 	public IDocumentElementNode getEnclosingElement() {
 		return fAttribute.getEnclosingElement();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameOffset(int)
 	 */
 	public void setNameOffset(int offset) {
 		fAttribute.setNameOffset(offset);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameOffset()
 	 */
 	public int getNameOffset() {
 		return fAttribute.getNameOffset();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setNameLength(int)
 	 */
 	public void setNameLength(int length) {
 		fAttribute.setNameLength(length);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getNameLength()
 	 */
 	public int getNameLength() {
 		return fAttribute.getNameLength();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueOffset(int)
 	 */
 	public void setValueOffset(int offset) {
 		fAttribute.setValueOffset(offset);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueOffset()
 	 */
 	public int getValueOffset() {
 		return fAttribute.getValueOffset();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#setValueLength(int)
 	 */
 	public void setValueLength(int length) {
 		fAttribute.setValueLength(length);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getValueLength()
 	 */
 	public int getValueLength() {
 		return fAttribute.getValueLength();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeName()
 	 */
 	public String getAttributeName() {
 		return getName();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#getAttributeValue()
 	 */
 	public String getAttributeValue() {
 		return getValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#write()
 	 */
@@ -150,26 +149,24 @@ public class PluginAttribute extends PluginObjectNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#getWritableString(java.lang.String)
 	 */
 	public String getWritableString(String source) {
-		return super
-				.getWritableString(source)
-				.replaceAll("\\r", "&#x0D;") //$NON-NLS-1$ //$NON-NLS-2$
+		return super.getWritableString(source).replaceAll("\\r", "&#x0D;") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
 	public void setAttributeName(String name) throws CoreException {
 		setName(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
 	public void setAttributeValue(String value) throws CoreException {
 		setValue(value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
@@ -180,7 +177,7 @@ public class PluginAttribute extends PluginObjectNode implements
 		super.reconnect(parent, getModel());
 		fAttribute.reconnect(parent);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -189,5 +186,5 @@ public class PluginAttribute extends PluginObjectNode implements
 		// Although attributes cannot be copied directly
 		writer.write(write());
 	}
-	
+
 }

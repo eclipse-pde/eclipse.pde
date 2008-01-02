@@ -43,14 +43,14 @@ public class JREInfo extends ProductObject implements IJREInfo {
 
 	public String getJVM(int platform) {
 		switch (platform) {
-		case LINUX:
-			return fJVMLin;
-		case MACOS:
-			return fJVMMac;
-		case SOLAR:
-			return fJVMSol;
-		case WIN32:
-			return fJVMWin;
+			case LINUX :
+				return fJVMLin;
+			case MACOS :
+				return fJVMMac;
+			case SOLAR :
+				return fJVMSol;
+			case WIN32 :
+				return fJVMWin;
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -69,10 +69,9 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	}
 
 	private String getJVMLocation(String name, int type) {
-		if(type == TYPE_EE) {
-			IExecutionEnvironmentsManager manager = 
-				JavaRuntime.getExecutionEnvironmentsManager();
-			IExecutionEnvironment environment= manager.getEnvironment(name);
+		if (type == TYPE_EE) {
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment environment = manager.getEnvironment(name);
 			IVMInstall vm = null;
 			if (environment != null) {
 				vm = environment.getDefaultVM();
@@ -86,13 +85,12 @@ public class JREInfo extends ProductObject implements IJREInfo {
 						}
 					}
 					// use the first vm failing that
-					if (vm == null && installs.length > 0) 
+					if (vm == null && installs.length > 0)
 						return installs[0].getInstallLocation().getAbsolutePath();
 				}
 				return vm.getInstallLocation().getAbsolutePath();
 			}
-		}
-		else if(type == TYPE_JRE) {
+		} else if (type == TYPE_JRE) {
 			IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 			for (int i = 0; i < types.length; i++) {
 				IVMInstall[] installs = types[i].getVMInstalls();
@@ -111,34 +109,34 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		if (args == null)
 			args = ""; //$NON-NLS-1$
 		switch (platform) {
-		case LINUX:
-			old = fJVMLin;
-			fJVMLin = args;
-			fJVMLinType = type;
-			if (isEditable())
-				firePropertyChanged(JRE_LIN, old, fJVMLin);
-			break;
-		case MACOS:
-			old = fJVMMac;
-			fJVMMac = args;
-			fJVMMacType = type;
-			if (isEditable())
-				firePropertyChanged(JRE_MAC, old, fJVMMac);
-			break;
-		case SOLAR:
-			old = fJVMSol;
-			fJVMSol = args;
-			fJVMSolType = type;
-			if (isEditable())
-				firePropertyChanged(JRE_SOL, old, fJVMSol);
-			break;
-		case WIN32:
-			old = fJVMWin;
-			fJVMWin = args;
-			fJVMWinType = type;
-			if (isEditable())
-				firePropertyChanged(JRE_WIN, old, fJVMWin);
-			break;
+			case LINUX :
+				old = fJVMLin;
+				fJVMLin = args;
+				fJVMLinType = type;
+				if (isEditable())
+					firePropertyChanged(JRE_LIN, old, fJVMLin);
+				break;
+			case MACOS :
+				old = fJVMMac;
+				fJVMMac = args;
+				fJVMMacType = type;
+				if (isEditable())
+					firePropertyChanged(JRE_MAC, old, fJVMMac);
+				break;
+			case SOLAR :
+				old = fJVMSol;
+				fJVMSol = args;
+				fJVMSolType = type;
+				if (isEditable())
+					firePropertyChanged(JRE_SOL, old, fJVMSol);
+				break;
+			case WIN32 :
+				old = fJVMWin;
+				fJVMWin = args;
+				fJVMWinType = type;
+				if (isEditable())
+					firePropertyChanged(JRE_WIN, old, fJVMWin);
+				break;
 		}
 	}
 
@@ -191,31 +189,31 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	}
 
 	private String getWritableTypeString(int type) {
-		if(type == TYPE_EE)
+		if (type == TYPE_EE)
 			return EE;
-		if(type == TYPE_JRE)
+		if (type == TYPE_JRE)
 			return JRE;
 		return ""; //$NON-NLS-1$
 	}
 
 	private int parseTypeString(String type) {
-		if(type.equalsIgnoreCase(EE))
+		if (type.equalsIgnoreCase(EE))
 			return TYPE_EE;
-		if(type.equalsIgnoreCase(JRE))
+		if (type.equalsIgnoreCase(JRE))
 			return TYPE_JRE;
 		return TYPE_JRE;
 	}
 
 	public int getJVMType(int platform) {
 		switch (platform) {
-		case LINUX:
-			return fJVMLinType;
-		case MACOS:
-			return fJVMMacType;
-		case SOLAR:
-			return fJVMSolType;
-		case WIN32:
-			return fJVMWinType;
+			case LINUX :
+				return fJVMLinType;
+			case MACOS :
+				return fJVMMacType;
+			case SOLAR :
+				return fJVMSolType;
+			case WIN32 :
+				return fJVMWinType;
 		}
 		return TYPE_JRE;
 	}

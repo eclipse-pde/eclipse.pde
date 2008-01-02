@@ -21,7 +21,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class PDEBuilderHelper {
-	
+
 	public static String[] getUnlistedClasspaths(ArrayList sourceEntries, IProject project, IClasspathEntry[] cpes) {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
@@ -31,7 +31,7 @@ public class PDEBuilderHelper {
 			IPath path = cpes[i].getPath();
 			boolean found = false;
 			for (int j = 0; j < sourceEntries.size(); j++) {
-				IBuildEntry be = (IBuildEntry)sourceEntries.get(j);
+				IBuildEntry be = (IBuildEntry) sourceEntries.get(j);
 				String[] tokens = be.getTokens();
 				for (int k = 0; k < tokens.length; k++) {
 					IResource res = project.findMember(tokens[k]);
@@ -47,7 +47,7 @@ public class PDEBuilderHelper {
 		}
 		return unlisted;
 	}
-	
+
 	public static ArrayList getSourceEntries(IBuild build) {
 		ArrayList sourceEntryKeys = new ArrayList();
 		IBuildEntry[] entries = build.getBuildEntries();
@@ -55,13 +55,11 @@ public class PDEBuilderHelper {
 			String name = entries[i].getName();
 			if (name.startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX)) {
 				// splice the entry
-				String entry = 
-					name.substring(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX.length(), name.length());
+				String entry = name.substring(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX.length(), name.length());
 				sourceEntryKeys.add(entry);
 			}
 		}
 		return sourceEntryKeys;
 	}
-
 
 }

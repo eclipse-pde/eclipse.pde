@@ -29,7 +29,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		IDocumentElementNode[] children = getChildNodes();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode)children[i];
+			PluginObjectNode node = (PluginObjectNode) children[i];
 			if (node.getName().equals(P_EXPORTED)) {
 				String name = children[i].getXMLAttributeValue(P_NAME);
 				if (name != null && !name.equals("*")) { //$NON-NLS-1$
@@ -40,33 +40,36 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 				}
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return (String[]) result.toArray(new String[result.size()]);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getPackages()
 	 */
 	public String[] getPackages() {
 		return new String[0];
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isExported()
 	 */
 	public boolean isExported() {
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode)children[i];
+			PluginObjectNode node = (PluginObjectNode) children[i];
 			if (node.getName().equals(P_EXPORTED))
 				return true;
 		}
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#isFullyExported()
 	 */
 	public boolean isFullyExported() {
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
-			PluginObjectNode node = (PluginObjectNode)children[i];
+			PluginObjectNode node = (PluginObjectNode) children[i];
 			if (node.getName().equals(P_EXPORTED)) {
 				String name = children[i].getXMLAttributeValue(P_NAME);
 				if (name != null && name.equals("*")) //$NON-NLS-1$
@@ -75,7 +78,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getType()
 	 */
@@ -83,11 +86,13 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		String type = getXMLAttributeValue(P_TYPE);
 		return (type != null && type.equals("resource")) ? IPluginLibrary.RESOURCE : IPluginLibrary.CODE; //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setContentFilters(java.lang.String[])
 	 */
 	public void setContentFilters(String[] filters) throws CoreException {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
 	 */
@@ -99,7 +104,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		node.setXMLAttribute(P_NAME, "*".equals(filter) || filter.endsWith(".*") ? filter : filter + ".*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addContentFilter(node);
 	}
-	
+
 	public void addContentFilter(PluginElementNode node) throws CoreException {
 		addChildNode(node);
 		if (isInTheModel()) {
@@ -107,7 +112,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 			fireStructureChanged(node, IModelChangedEvent.INSERT);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
 	 */
@@ -116,26 +121,26 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 			filter += ".*"; //$NON-NLS-1$
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].getXMLTagName().equals(P_EXPORTED)
-				   && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
-				removeContentFilter((PluginElementNode)children[i]);
+			if (children[i].getXMLTagName().equals(P_EXPORTED) && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
+				removeContentFilter((PluginElementNode) children[i]);
 			}
-		}		
+		}
 	}
-	
+
 	public void removeContentFilter(PluginElementNode node) {
 		removeChildNode(node);
 		if (isInTheModel()) {
 			node.setInTheModel(false);
 			fireStructureChanged(node, IModelChangedEvent.REMOVE);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setPackages(java.lang.String[])
 	 */
 	public void setPackages(String[] packages) throws CoreException {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setExported(boolean)
 	 */
@@ -145,11 +150,11 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].getXMLTagName().equals(P_EXPORTED)) {
 				if (!"*".equals(children[i].getXMLAttributeValue(P_NAME))) { //$NON-NLS-1$
-					removeContentFilter((PluginElementNode)children[i]);
+					removeContentFilter((PluginElementNode) children[i]);
 				} else {
 					alreadyExported = true;
 					if (!exported) {
-						removeContentFilter((PluginElementNode)children[i]);
+						removeContentFilter((PluginElementNode) children[i]);
 					}
 				}
 			}
@@ -158,27 +163,27 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 			addContentFilter("*"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setType(java.lang.String)
 	 */
 	public void setType(String type) throws CoreException {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
@@ -187,10 +192,10 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());
-		
+
 		IDocumentElementNode[] children = getChildNodes();
 		if (children.length > 0) {
-			buffer.append(writeShallow(false) + sep);		
+			buffer.append(writeShallow(false) + sep);
 			for (int i = 0; i < children.length; i++) {
 				children[i].setLineIndent(getLineIndent() + 3);
 				buffer.append(children[i].write(true) + sep);
@@ -201,7 +206,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		}
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
@@ -217,9 +222,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
-    
-    public String toString() {
-        return getName();
-    }
+
+	public String toString() {
+		return getName();
+	}
 
 }

@@ -25,7 +25,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
  * @since 3.3
  */
 public class ModelEntry extends PlatformObject {
-	
+
 	private String fId;
 	protected ArrayList fWorkspaceEntries = new ArrayList(1);
 	protected ArrayList fExternalEntries = new ArrayList(1);
@@ -38,16 +38,16 @@ public class ModelEntry extends PlatformObject {
 	public ModelEntry(String id) {
 		fId = id;
 	}
-	
+
 	/**
 	 * Returns all the workspace plug-ins that have the model entry ID
 	 * 
 	 * @return an array of workspace plug-ins that have the model entry ID
 	 */
 	public IPluginModelBase[] getWorkspaceModels() {
-		return (IPluginModelBase[])fWorkspaceEntries.toArray(new IPluginModelBase[fWorkspaceEntries.size()]);
+		return (IPluginModelBase[]) fWorkspaceEntries.toArray(new IPluginModelBase[fWorkspaceEntries.size()]);
 	}
-	
+
 	/**
 	 * Returns all plug-ins in the target platform that have the model entry ID.
 	 * The returned result contains both plug-ins that are enabled (ie. checked on the
@@ -56,9 +56,9 @@ public class ModelEntry extends PlatformObject {
 	 * @return an array of plug-ins in the target platform that have the model entry ID
 	 */
 	public IPluginModelBase[] getExternalModels() {
-		return (IPluginModelBase[])fExternalEntries.toArray(new IPluginModelBase[fExternalEntries.size()]);
+		return (IPluginModelBase[]) fExternalEntries.toArray(new IPluginModelBase[fExternalEntries.size()]);
 	}
-	
+
 	/**
 	 * Returns the plug-in model for the best match plug-in with the given ID.
 	 * A null value is returned if no such bundle is found in the workspace or target platform.
@@ -84,37 +84,37 @@ public class ModelEntry extends PlatformObject {
 			model = getBestCandidate(getExternalModels());
 		return model;
 	}
-	
+
 	private IPluginModelBase getBestCandidate(IPluginModelBase[] models) {
 		IPluginModelBase model = null;
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].getBundleDescription() == null)
 				continue;
-			
+
 			if (model == null) {
 				model = models[i];
 				continue;
 			}
-			
+
 			if (!model.isEnabled() && models[i].isEnabled()) {
 				model = models[i];
 				continue;
 			}
-			
+
 			BundleDescription current = model.getBundleDescription();
 			BundleDescription candidate = models[i].getBundleDescription();
 			if (!current.isResolved() && candidate.isResolved()) {
 				model = models[i];
 				continue;
 			}
-			
+
 			if (current.getVersion().compareTo(candidate.getVersion()) < 0) {
 				model = models[i];
 			}
 		}
 		return model;
 	}
-	
+
 	/**
 	 * Returns all the plug-ins, with the model entry ID, that are currently active.
 	 * <p>
@@ -131,19 +131,19 @@ public class ModelEntry extends PlatformObject {
 	public IPluginModelBase[] getActiveModels() {
 		if (fWorkspaceEntries.size() > 0)
 			return getWorkspaceModels();
-		
+
 		if (fExternalEntries.size() > 0) {
 			ArrayList list = new ArrayList(fExternalEntries.size());
 			for (int i = 0; i < fExternalEntries.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase)fExternalEntries.get(i);
+				IPluginModelBase model = (IPluginModelBase) fExternalEntries.get(i);
 				if (model.isEnabled())
 					list.add(model);
 			}
-			return (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]);
-		}	
+			return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+		}
 		return new IPluginModelBase[0];
 	}
-	
+
 	/**
 	 * Returns the model entry ID
 	 * 
@@ -152,7 +152,7 @@ public class ModelEntry extends PlatformObject {
 	public String getId() {
 		return fId;
 	}
-	
+
 	/**
 	 * Return the plug-in model associated with the given bundle description or 
 	 * <code>null</code> if none is found.
@@ -165,20 +165,20 @@ public class ModelEntry extends PlatformObject {
 	public IPluginModelBase getModel(BundleDescription desc) {
 		if (desc == null)
 			return null;
-		
+
 		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase)fWorkspaceEntries.get(i);
+			IPluginModelBase model = (IPluginModelBase) fWorkspaceEntries.get(i);
 			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}
 		for (int i = 0; i < fExternalEntries.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase)fExternalEntries.get(i);
+			IPluginModelBase model = (IPluginModelBase) fExternalEntries.get(i);
 			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}
-		return null;			
+		return null;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if there are workspace plug-ins associated with the ID
 	 * of this model entry; <code>false</code>otherwise.
@@ -189,7 +189,7 @@ public class ModelEntry extends PlatformObject {
 	public boolean hasWorkspaceModels() {
 		return !fWorkspaceEntries.isEmpty();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if there are target plug-ins associated with the ID
 	 * of this model entry; <code>false</code>otherwise.
@@ -200,5 +200,5 @@ public class ModelEntry extends PlatformObject {
 	public boolean hasExternalModels() {
 		return !fExternalEntries.isEmpty();
 	}
-	
+
 }

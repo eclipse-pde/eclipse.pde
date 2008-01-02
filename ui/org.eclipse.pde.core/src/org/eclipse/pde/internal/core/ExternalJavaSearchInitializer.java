@@ -19,26 +19,20 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 public class ExternalJavaSearchInitializer extends ClasspathContainerInitializer {
-	
+
 	ExternalJavaSearchClasspathContainer fContainer;
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
-	public void initialize(IPath containerPath, IJavaProject javaProject)
-		throws CoreException {
+	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		try {
-			JavaCore.setClasspathContainer(
-					PDECore.JAVA_SEARCH_CONTAINER_PATH, 
-					new IJavaProject[] {javaProject}, 
-					new IClasspathContainer[]{new ExternalJavaSearchClasspathContainer()}, 
-					null);
+			JavaCore.setClasspathContainer(PDECore.JAVA_SEARCH_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new ExternalJavaSearchClasspathContainer()}, null);
 		} catch (OperationCanceledException e) {
 			throw e;
 		}
-		
+
 	}
-	
-	
+
 }

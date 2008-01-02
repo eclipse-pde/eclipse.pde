@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * A model object that represents the content of the plugin.xml
  * file.
@@ -36,5 +37,5 @@ public interface IPlugin extends IPluginBase {
 	 * @param className the new class name
 	 */
 	void setClassName(String className) throws CoreException;
-	
+
 }

@@ -23,52 +23,52 @@ public interface ISimpleCSModelFactory extends IDocumentNodeFactory {
 	 * @return
 	 */
 	public ISimpleCS createSimpleCS();
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSAction createSimpleCSAction(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSCommand createSimpleCSCommand(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSIntro createSimpleCSIntro(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSOnCompletion createSimpleCSOnCompletion(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSPerformWhen createSimpleCSPerformWhen(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent);
-	
+
 	/**
 	 * @return
 	 */

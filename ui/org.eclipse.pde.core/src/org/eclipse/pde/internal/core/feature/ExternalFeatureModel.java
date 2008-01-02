@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 public class ExternalFeatureModel extends AbstractFeatureModel {
 	private static final long serialVersionUID = 1L;
 	private String location;
+
 	/**
 	 * @see AbstractModel#updateTimeStamp()
 	 */
@@ -32,7 +33,7 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	public boolean isInSync() {
 		return true;
 	}
-	
+
 	public boolean isEditable() {
 		return false;
 	}
@@ -42,22 +43,23 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	 */
 	public void load() throws CoreException {
 	}
-	
+
 	public void setInstallLocation(String location) {
 		this.location = location;
 	}
+
 	public String getInstallLocation() {
 		return location;
 	}
-	
+
 	protected NLResourceHelper createNLResourceHelper() {
 		if (location != null) {
 			URL url = getNLLookupLocation();
-			return new NLResourceHelper("feature", new URL[] { url }); //$NON-NLS-1$
+			return new NLResourceHelper("feature", new URL[] {url}); //$NON-NLS-1$
 		}
 		return null;
 	}
-		
+
 	public URL getNLLookupLocation() {
 		try {
 			if (location != null && new File(location).isDirectory() && !location.endsWith("/")) //$NON-NLS-1$

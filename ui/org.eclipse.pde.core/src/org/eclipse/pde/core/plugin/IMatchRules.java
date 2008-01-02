@@ -71,6 +71,5 @@ public interface IMatchRules {
 	 * interface. It can be used directly against the rule values
 	 * used in plug-in models.
 	 */
-	String[] RULE_NAME_TABLE =
-		{ "", RULE_EQUIVALENT, RULE_COMPATIBLE, RULE_PERFECT, RULE_GREATER_OR_EQUAL }; //$NON-NLS-1$
+	String[] RULE_NAME_TABLE = {"", RULE_EQUIVALENT, RULE_COMPATIBLE, RULE_PERFECT, RULE_GREATER_OR_EQUAL}; //$NON-NLS-1$
 }

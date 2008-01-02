@@ -31,7 +31,7 @@ public interface IMetaAttribute {
 	 * resource.
 	 */
 	public static final int RESOURCE = 2;
-	
+
 	/**
 	 * Property that indicates if an attribute is translatable
 	 */
@@ -45,24 +45,23 @@ public interface IMetaAttribute {
 	/*
 	 * non-Javadoc
 	 */
-	public static final String[] kindTable = { "string", "java", "resource" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public static final String[] kindTable = {"string", "java", "resource"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * Returns optional name of the Java type this type must be based on (only
 	 * for JAVA kind).
 	 */
 	public String getBasedOn();
-	
+
 	/**
 	 * Returns <samp>true</samp> if the attribute is translatable; <samp>false</samp> otherwise.
 	 */
 	public boolean isTranslatable();
-	
+
 	/**
 	 * Returns <samp>true</samp> if the attribute is deprecated; <samp>false</samp> otherwise.
 	 */
 	public boolean isDeprecated();
-
 
 	/**
 	 * Returns the kind of this attribute's value (STRING, JAVA or RESOURCE).

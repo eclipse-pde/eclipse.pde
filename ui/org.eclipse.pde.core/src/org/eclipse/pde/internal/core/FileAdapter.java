@@ -35,11 +35,12 @@ public class FileAdapter extends PlatformObject {
 		String fileName = fFile.getName();
 		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml") || fileName.equalsIgnoreCase("manifest.mf")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+
 	public boolean isSchema() {
 		String fileName = fFile.getName().toLowerCase(Locale.ENGLISH);
 		return fileName.endsWith(".exsd"); //$NON-NLS-1$
 	}
-			
+
 	public FileAdapter getParent() {
 		return fParent;
 	}
@@ -78,7 +79,7 @@ public class FileAdapter extends PlatformObject {
 		File[] files = fFile.listFiles();
 		fChildren = new Object[files.length];
 		for (int i = 0; i < files.length; i++) {
-			if (fFactory == null)	
+			if (fFactory == null)
 				fChildren[i] = new FileAdapter(this, files[i], null);
 			else
 				fChildren[i] = fFactory.createAdapterChild(this, files[i]);

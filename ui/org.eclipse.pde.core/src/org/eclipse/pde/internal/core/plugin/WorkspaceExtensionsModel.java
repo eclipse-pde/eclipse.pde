@@ -28,20 +28,17 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
 
-public class WorkspaceExtensionsModel
-	extends AbstractExtensionsModel
-	implements IEditableModel, IBundlePluginModelProvider {
+public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements IEditableModel, IBundlePluginModelProvider {
 	private static final long serialVersionUID = 1L;
 	private IFile fUnderlyingResource;
 	private boolean fDirty;
 	private boolean fEditable = true;
 	private transient IBundlePluginModelBase fBundleModel;
 
-
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper("plugin", getNLLookupLocations()); //$NON-NLS-1$
 	}
-	
+
 	public URL getNLLookupLocation() {
 		try {
 			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -53,7 +50,7 @@ public class WorkspaceExtensionsModel
 	public WorkspaceExtensionsModel(IFile file) {
 		fUnderlyingResource = file;
 	}
-	
+
 	public void fireModelChanged(IModelChangedEvent event) {
 		fDirty = true;
 		super.fireModelChanged(event);
@@ -70,11 +67,11 @@ public class WorkspaceExtensionsModel
 		}
 		return swriter.toString();
 	}
-	
+
 	public String getInstallLocation() {
 		return fUnderlyingResource.getLocation().removeLastSegments(1).addTrailingSeparator().toOSString();
 	}
-	
+
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
@@ -91,6 +88,7 @@ public class WorkspaceExtensionsModel
 	public boolean isDirty() {
 		return fDirty;
 	}
+
 	public boolean isEditable() {
 		return fEditable;
 	}
@@ -98,9 +96,9 @@ public class WorkspaceExtensionsModel
 	public void load() {
 		if (fUnderlyingResource == null)
 			return;
-		getExtensions(true);		
+		getExtensions(true);
 	}
-	
+
 	protected void updateTimeStamp() {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
@@ -110,8 +108,7 @@ public class WorkspaceExtensionsModel
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
@@ -123,18 +120,22 @@ public class WorkspaceExtensionsModel
 		} catch (IOException e) {
 		}
 	}
+
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			fExtensions.write("", writer); //$NON-NLS-1$
 		}
 		fDirty = false;
 	}
+
 	public void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
+
 	public void setEditable(boolean editable) {
 		fEditable = editable;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractExtensionsModel#createExtensions()
 	 */
@@ -143,21 +144,20 @@ public class WorkspaceExtensionsModel
 		extensions.setIsFragment(fUnderlyingResource.getName().equals("fragment.xml")); //$NON-NLS-1$
 		return extensions;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return fUnderlyingResource.getName();
 	}
-	
+
 	public void setBundleModel(IBundlePluginModelBase model) {
 		fBundleModel = model;
 	}
-	
+
 	public IBundlePluginModelBase getBundlePluginModel() {
 		return fBundleModel;
 	}
-	
-	
+
 }

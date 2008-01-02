@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Platform;
 
-
 public class NLResourceHelper {
 	public static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	public static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
@@ -36,31 +35,29 @@ public class NLResourceHelper {
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public void dispose() {
 		bundle = null;
 	}
 
 	private InputStream getResourceStream(String name, URL[] locations) {
 		URLClassLoader resourceLoader = new URLClassLoader(locations, null);
-		
+
 		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_"); //$NON-NLS-1$
 		String language = tokenizer.nextToken();
 		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : ""); //$NON-NLS-1$
 		String variant = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : ""); //$NON-NLS-1$
-		
+
 		String suffix1 = "_" + language + "_" + country + "_" + variant; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String suffix2 = "_" + language + "_" + country; //$NON-NLS-1$ //$NON-NLS-2$
 		String suffix3 = "_" + language; //$NON-NLS-1$
 		String suffix4 = ""; //$NON-NLS-1$
 
-		String[] suffices = new String[] { suffix1, suffix2, suffix3, suffix4 };
+		String[] suffices = new String[] {suffix1, suffix2, suffix3, suffix4};
 
 		InputStream stream = null;
 		for (int i = 0; i < suffices.length; i++) {
-			stream =
-				resourceLoader.getResourceAsStream(
-					name + suffices[i] + ".properties"); //$NON-NLS-1$
+			stream = resourceLoader.getResourceAsStream(name + suffices[i] + ".properties"); //$NON-NLS-1$
 			if (stream != null)
 				break;
 		}
@@ -89,7 +86,7 @@ public class NLResourceHelper {
 			return dflt;
 		}
 	}
-	
+
 	public boolean resourceExists(String value) {
 		if (bundle == null)
 			return false;

@@ -16,7 +16,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 
 public class PluginModel extends PluginModelBase implements IPluginModel {
-	
+
 	public PluginModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 	}
@@ -25,9 +25,9 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
 	 */
 	public IPlugin getPlugin() {
-		return (IPlugin)getPluginBase();
+		return (IPlugin) getPluginBase();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
 	 */
@@ -47,5 +47,5 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	 */
 	public void setBundleDescription(BundleDescription description) {
 	}
-	
+
 }

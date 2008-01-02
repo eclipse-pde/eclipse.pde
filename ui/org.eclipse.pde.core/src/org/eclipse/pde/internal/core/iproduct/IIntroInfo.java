@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 public interface IIntroInfo extends IProductObject {
-	
+
 	void setId(String id);
-	
+
 	String getId();
-	
+
 }

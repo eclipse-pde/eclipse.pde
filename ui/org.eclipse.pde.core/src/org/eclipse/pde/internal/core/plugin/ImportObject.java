@@ -24,37 +24,41 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 
 	private static final long serialVersionUID = 1L;
 	private IPluginImport iimport;
-	
+
 	public ImportObject() {
 		super();
 	}
+
 	public ImportObject(IPluginImport iimport) {
 		super(iimport.getId());
 		this.iimport = iimport;
 	}
+
 	public ImportObject(IPluginImport iimport, IPlugin plugin) {
 		super(plugin);
 		this.iimport = iimport;
 	}
+
 	public IPluginImport getImport() {
 		return iimport;
 	}
+
 	public boolean equals(Object object) {
 		if (object instanceof ImportObject) {
-			ImportObject io = (ImportObject)object;
+			ImportObject io = (ImportObject) object;
 			if (iimport.equals(io.getImport()))
-			   return true;
+				return true;
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 		iimport.write(indent, writer);
 	}
-	
+
 	public Object getAdapter(Class key) {
 		if (key.equals(ISourceObject.class)) {
 			if (iimport instanceof ISourceObject)
@@ -62,7 +66,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		}
 		return super.getAdapter(key);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginReference#reconnect(org.eclipse.pde.core.plugin.IPlugin)
 	 */
@@ -73,10 +77,10 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
 		// is usually done by the '*Node' classes; but, it is the opposite here
 		if (iimport instanceof PluginImport) {
-			((PluginImport)iimport).reconnect(model, parent);
+			((PluginImport) iimport).reconnect(model, parent);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
@@ -84,8 +88,8 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		// Note:  Cannot make into a 'IDocument*' interface.  The functionality
 		// is usually done by the '*Node' classes; but, it is the opposite here
 		if (iimport instanceof PluginImport) {
-			((PluginImport)iimport).writeDelimeter(writer);
+			((PluginImport) iimport).writeDelimeter(writer);
 		}
 	}
-	
+
 }

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 /**
  * This interface indicates that a model object is created by parsing an
  * editable source file and can be traced back to a particular location in the
@@ -24,6 +25,7 @@ public interface ISourceObject {
 	 * @return the first line in the source file
 	 */
 	public int getStartLine();
+
 	/**
 	 * Returns the line in the source file where the source representation of
 	 * this object stops, or -1 if not known.

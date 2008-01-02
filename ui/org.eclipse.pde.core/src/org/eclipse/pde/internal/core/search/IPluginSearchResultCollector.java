@@ -14,17 +14,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginObject;
 
 public interface IPluginSearchResultCollector {
-	
+
 	void accept(IPluginObject match);
-	
+
 	void done();
 
 	PluginSearchOperation getOperation();
-	
+
 	void searchStarted();
-	
+
 	void setOperation(PluginSearchOperation operation);
-	
+
 	void setProgressMonitor(IProgressMonitor monitor);
-	
+
 }

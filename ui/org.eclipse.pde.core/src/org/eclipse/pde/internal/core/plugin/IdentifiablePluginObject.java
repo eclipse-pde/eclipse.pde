@@ -15,8 +15,7 @@ import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 
-public abstract class IdentifiablePluginObject extends PluginObject implements
-		IIdentifiable {
+public abstract class IdentifiablePluginObject extends PluginObject implements IIdentifiable {
 
 	private static final long serialVersionUID = 1L;
 	protected String fID;
@@ -35,8 +34,7 @@ public abstract class IdentifiablePluginObject extends PluginObject implements
 		firePropertyChanged(P_ID, oldValue, id);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-			throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
 			setId(newValue != null ? newValue.toString() : null);
 			return;
@@ -52,5 +50,4 @@ public abstract class IdentifiablePluginObject extends PluginObject implements
 		// No transient fields
 	}
 
-	
 }

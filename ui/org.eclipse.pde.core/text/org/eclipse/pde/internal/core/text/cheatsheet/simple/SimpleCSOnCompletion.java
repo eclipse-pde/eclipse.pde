@@ -21,8 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
  * SimpleCSOnCompletion
  *
  */
-public class SimpleCSOnCompletion extends SimpleCSObject implements
-		ISimpleCSOnCompletion {
+public class SimpleCSOnCompletion extends SimpleCSObject implements ISimpleCSOnCompletion {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,6 +72,6 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 */
 	public boolean isContentCollapsed() {
 		return true;
-	}	
-	
+	}
+
 }

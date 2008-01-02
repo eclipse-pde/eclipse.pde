@@ -76,7 +76,6 @@ public class PDECoreMessages extends NLS {
 	public static String FeatureObject_readOnlyChange;
 	public static String SiteObject_readOnlyChange;
 
-
 	public static String BuildObject_readOnlyException;
 	public static String PluginBase_librariesNotFoundException;
 	public static String PluginParent_siblingsNotFoundException;
@@ -247,7 +246,7 @@ public class PDECoreMessages extends NLS {
 	public static String LoadTargetOperation_enablePluginsTaskName;
 
 	public static String LoadTargetOperation_findPluginsTaskName;
-	
+
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
@@ -255,14 +254,14 @@ public class PDECoreMessages extends NLS {
 	public static String TargetPlatformResetJob_resetTarget;
 
 	public static String XMLErrorReporter_ExternalEntityResolution;
-	
+
 	public static String ExtensionsErrorReporter_InvalidSchema;
-	
+
 	public static String PluginConverter_BundleLocationIsNull;
 	public static String PluginConverter_EclipseConverterErrorCreatingBundleManifest;
 	public static String PluginConverter_EclipseConverterErrorParsingPluginManifest;
 	public static String PluginConverter_EclipseConverterFileNotFound;
-	
+
 	public static String PluginParser_EclipseConverterMissingAttribute;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
@@ -272,9 +271,9 @@ public class PDECoreMessages extends NLS {
 	public static String XMLTextChangeListener_editNames_modifyNode;
 	public static String XMLTextChangeListener_editNames_removeAttribute;
 	public static String XMLTextChangeListener_editNames_removeNode;
-	
+
 	public static String SearchablePluginsManager_createProjectTaskName;
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
-	
+
 }

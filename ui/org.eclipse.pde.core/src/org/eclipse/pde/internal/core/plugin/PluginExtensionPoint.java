@@ -20,22 +20,21 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.w3c.dom.Node;
 
-public class PluginExtensionPoint extends IdentifiablePluginObject
-	implements IPluginExtensionPoint {
+public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private IExtensionPoint fPoint = null;
-	
+
 	protected String fSchema;
-	
+
 	public PluginExtensionPoint() {
 	}
-	
+
 	public PluginExtensionPoint(IExtensionPoint point) {
 		fPoint = point;
 	}
-	
+
 	public boolean isValid() {
 		return getId() != null && getName() != null;
 	}
@@ -50,25 +49,25 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 			if (pointId.indexOf('.') > 0)
 				return pointId;
 		}
-		
+
 		if (pluginBase instanceof IFragment)
 			return ((IFragment) pluginBase).getPluginId() + '.' + pointId;
 		return pluginBase.getId() + '.' + pointId;
 	}
-	
+
 	public String getSchema() {
 		if (fSchema == null && fPoint != null)
 			fSchema = fPoint.getSchemaReference();
 		return fSchema;
 	}
-	
+
 	void load(Node node) {
 		this.fID = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fSchema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
 		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -78,9 +77,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 			// binary equal
 			if (target.getModel().equals(getModel()))
 				return false;
-			if (stringEqualWithNull(target.getId(), getId())
-				&& stringEqualWithNull(target.getName(), getName())
-				&& stringEqualWithNull(target.getSchema(), getSchema()))
+			if (stringEqualWithNull(target.getId(), getId()) && stringEqualWithNull(target.getName(), getName()) && stringEqualWithNull(target.getSchema(), getSchema()))
 				return true;
 		}
 		return false;
@@ -93,8 +90,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 		firePropertyChanged(P_SCHEMA, oldValue, fSchema);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_SCHEMA)) {
 			setSchema(newValue != null ? newValue.toString() : null);
 			return;
@@ -113,13 +109,13 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 			writer.print(" schema=\"" + getSchema() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	public String getName() {
-		if (fName == null) 
+		if (fName == null)
 			fName = fPoint.getLabel();
 		return fName;
 	}
-	
+
 	public String getId() {
 		if (fID == null) {
 			fID = fPoint.getUniqueIdentifier();

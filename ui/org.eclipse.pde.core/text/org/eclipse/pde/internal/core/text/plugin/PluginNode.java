@@ -23,13 +23,14 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 	public String getClassName() {
 		return getXMLAttributeValue(P_CLASS_NAME);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
 	 */
 	public void setClassName(String className) throws CoreException {
 		setXMLAttribute(P_CLASS_NAME, className);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
 	 */
@@ -39,8 +40,9 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 			return new String[] {"   " + P_CLASS_NAME + "=\"" + classname + "\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return new String[0];
 	}
+
 	public boolean hasExtensibleAPI() {
 		return false;
 	}
-	
+
 }

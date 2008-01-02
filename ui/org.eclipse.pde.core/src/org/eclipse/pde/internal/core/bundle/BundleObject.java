@@ -25,9 +25,9 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 
 public class BundleObject implements Serializable, IWritable, IWritableDelimiter {
-    private static final long serialVersionUID = 1L;
-    
-    private transient IBundleModel model;
+	private static final long serialVersionUID = 1L;
+
+	private transient IBundleModel model;
 
 	public BundleObject() {
 	}
@@ -35,48 +35,35 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 	public IBundleModel getModel() {
 		return model;
 	}
+
 	public void setModel(IBundleModel newModel) {
 		model = newModel;
 	}
+
 	protected void throwCoreException(String message) throws CoreException {
-		Status status =
-			new Status(
-				IStatus.ERROR,
-				PDECore.PLUGIN_ID,
-				IStatus.OK,
-				message,
-				null);
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
-    protected void fireStructureChanged(BundleObject[] children, int changeType) {
-        IModelChangedEvent e = new ModelChangedEvent(
-                model, 
-                changeType,
-                children, 
-                null);
-        fireModelChanged(e);
- }
+	protected void fireStructureChanged(BundleObject[] children, int changeType) {
+		IModelChangedEvent e = new ModelChangedEvent(model, changeType, children, null);
+		fireModelChanged(e);
+	}
 
-    protected void fireStructureChanged(BundleObject child, int changeType) {
-            IModelChangedEvent e = new ModelChangedEvent(
-                    model, 
-                    changeType,
-                    new Object[]{child}, 
-                    null);
-            fireModelChanged(e);
-     }
+	protected void fireStructureChanged(BundleObject child, int changeType) {
+		IModelChangedEvent e = new ModelChangedEvent(model, changeType, new Object[] {child}, null);
+		fireModelChanged(e);
+	}
 
-    protected void fireModelChanged(IModelChangedEvent e) {
-        IModelChangeProvider provider = model;
-        provider.fireModelChanged(e);
-    }
-    
-    protected void firePropertyChanged(BundleObject object, String property,
-            Object oldValue, Object newValue) {
-        IModelChangeProvider provider = model;
-        provider.fireModelObjectChanged(object, property, oldValue, newValue);
-    }
+	protected void fireModelChanged(IModelChangedEvent e) {
+		IModelChangeProvider provider = model;
+		provider.fireModelChanged(e);
+	}
+
+	protected void firePropertyChanged(BundleObject object, String property, Object oldValue, Object newValue) {
+		IModelChangeProvider provider = model;
+		provider.fireModelObjectChanged(object, property, oldValue, newValue);
+	}
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
@@ -98,5 +85,5 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 		writer.println(',');
 		writer.print(' ');
 	}
-	
+
 }

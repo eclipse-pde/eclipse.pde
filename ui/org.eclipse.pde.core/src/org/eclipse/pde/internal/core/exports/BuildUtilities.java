@@ -17,7 +17,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
 public class BuildUtilities {
-	
+
 	public static String getBootClasspath() {
 		return getBootClasspath(JavaRuntime.getDefaultVMInstall());
 	}

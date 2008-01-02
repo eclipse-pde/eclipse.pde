@@ -19,43 +19,43 @@ import org.osgi.framework.Constants;
 
 public abstract class BasePackageHeader extends CompositeManifestHeader {
 
-    private static final long serialVersionUID = 1L;
-    
+	private static final long serialVersionUID = 1L;
+
 	public BasePackageHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter, true);
 	}
 
-    protected String getVersionAttribute() {
-        int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
-        return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
-    }
-    
-    public void addPackage(PackageObject object) {
-        addManifestElement(object);
-    }
-    
-    public Object removePackage(PackageObject object) {
-        return removeManifestElement(object);
-    }
-    
-    public boolean hasPackage(String packageName) {
-        return hasElement(packageName);
-    }
-    
-    public Object removePackage(String name) {
-    	return removeManifestElement(name);
-    }
-    
-    public boolean renamePackage(String oldName, String newName) {
-    	if (hasPackage(oldName)) {
-    		PackageObject object = (PackageObject)removeManifestElement(oldName);
-    		object.setName(newName);
-    		addManifestElement(object);
-    		return true;
-    	}
-    	return false;
-    }
-    
+	protected String getVersionAttribute() {
+		int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
+		return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
+	}
+
+	public void addPackage(PackageObject object) {
+		addManifestElement(object);
+	}
+
+	public Object removePackage(PackageObject object) {
+		return removeManifestElement(object);
+	}
+
+	public boolean hasPackage(String packageName) {
+		return hasElement(packageName);
+	}
+
+	public Object removePackage(String name) {
+		return removeManifestElement(name);
+	}
+
+	public boolean renamePackage(String oldName, String newName) {
+		if (hasPackage(oldName)) {
+			PackageObject object = (PackageObject) removeManifestElement(oldName);
+			object.setName(newName);
+			addManifestElement(object);
+			return true;
+		}
+		return false;
+	}
+
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);
@@ -65,7 +65,7 @@ public abstract class BasePackageHeader extends CompositeManifestHeader {
 					String[] values = elements[i].getValueComponents();
 					for (int j = 0; j < values.length; j++) {
 						PDEManifestElement elem = createElement(elements[i]);
-						elem.setValueComponents(new String[] { values [j] });
+						elem.setValueComponents(new String[] {values[j]});
 						addManifestElement(elem, false);
 					}
 				} else {

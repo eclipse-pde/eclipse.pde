@@ -10,39 +10,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 public abstract class DocumentElementNode extends DocumentXMLNode implements IDocumentElementNode {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
-	
+
 	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$	
-	
+
 	private transient IDocumentElementNode fParent;
 	private transient boolean fIsErrorNode;
 	private transient int fLength;
 	private transient int fOffset;
 	private transient IDocumentElementNode fPreviousSibling;
 	private transient int fIndent;
-	
+
 	private ArrayList fChildren;
 	private TreeMap fAttributes;
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
 	// TODO: MP: TEO: LOW: Regenerate comments
-	
+
 	/**
 	 * 
 	 */
@@ -53,13 +50,13 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fOffset = -1;
 		fPreviousSibling = null;
 		fIndent = 0;
-		
+
 		fChildren = new ArrayList();
 		fAttributes = new TreeMap();
 		fTag = null;
-		fTextNode = null;		
+		fTextNode = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getChildNodesList()
 	 */
@@ -67,7 +64,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 		return fChildren;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getNodeAttributesMap()
 	 */
@@ -75,7 +72,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 		return fAttributes;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#writeShallow(boolean)
 	 */
@@ -94,26 +91,24 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		// Print closing angle bracket
 		buffer.append(">"); //$NON-NLS-1$
-		
+
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#isContentCollapsed()
 	 */
 	public boolean isLeafNode() {
 		return false;
 	}
-	
+
 	public boolean canTerminateStartTag() {
-		if ((hasXMLChildren() == false) &&
-				(hasXMLContent() == false) &&
-				(isLeafNode() == true)) {
+		if ((hasXMLChildren() == false) && (hasXMLContent() == false) && (isLeafNode() == true)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#write(boolean)
 	 */
@@ -125,7 +120,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		boolean hasChildren = hasXMLChildren();
 		boolean hasContent = hasXMLContent();
 		boolean terminate = canTerminateStartTag();
-		
+
 		// Print XML decl if root
 		if (isRoot()) {
 			buffer.append(writeXMLDecl());
@@ -135,7 +130,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			buffer.append(getIndent());
 		}
 		// Print start element and attributes
-		buffer.append(writeShallow(terminate));	
+		buffer.append(writeShallow(terminate));
 		// Print child elements
 		if (hasChildren) {
 			IDocumentElementNode[] children = getChildNodes();
@@ -156,7 +151,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			buffer.append(getXMLTagName());
 			buffer.append(">"); //$NON-NLS-1$
 		}
-		
+
 		return buffer.toString();
 	}
 
@@ -177,12 +172,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			IDocumentAttributeNode attribute = attributes[i];
 			if (isDefined(attribute)) {
 				buffer.append(getAttributeIndent() + attribute.write());
-			}			
+			}
 		}
 		return buffer.toString();
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getChildNodes()
 	 */
@@ -190,7 +184,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return (IDocumentElementNode[]) fChildren.toArray(new IDocumentElementNode[fChildren.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#indexOf(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -198,17 +192,17 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 		return fChildren.indexOf(child);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getChildAt(int)
 	 */
 	public IDocumentElementNode getChildAt(int index) {
 		// Used by text edit operations
 		if (index < fChildren.size())
-			return (IDocumentElementNode)fChildren.get(index);
+			return (IDocumentElementNode) fChildren.get(index);
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getParentNode()
 	 */
@@ -216,7 +210,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fParent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#setParentNode(org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode)
 	 */
@@ -224,7 +218,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations (indirectly)
 		fParent = node;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#addChildNode(org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode)
 	 */
@@ -232,7 +226,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		addChildNode(child, fChildren.size());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#addChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode, int)
 	 */
@@ -242,7 +236,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		child.setParentNode(this);
 		linkNodeWithSiblings(child);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -252,25 +246,24 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		if (index != -1) {
 			fChildren.remove(child);
 			if (index < fChildren.size()) {
-				IDocumentElementNode prevSibling = index == 0 ? null : (IDocumentElementNode)fChildren.get(index - 1);
-				((IDocumentElementNode)fChildren.get(index)).setPreviousSibling(prevSibling);
+				IDocumentElementNode prevSibling = index == 0 ? null : (IDocumentElementNode) fChildren.get(index - 1);
+				((IDocumentElementNode) fChildren.get(index)).setPreviousSibling(prevSibling);
 				return child;
 			}
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
 	public IDocumentElementNode removeChildNode(int index) {
 		// NOT used by text edit operations
-		if ((index < 0) ||
-				(index >= fChildren.size())) {
+		if ((index < 0) || (index >= fChildren.size())) {
 			return null;
 		}
 		// Get the child at the specified index
-		IDocumentElementNode child = (IDocumentElementNode)fChildren.get(index);
+		IDocumentElementNode child = (IDocumentElementNode) fChildren.get(index);
 		// Remove the child
 		fChildren.remove(child);
 		// Determine the new previous sibling for the new element at the
@@ -278,14 +271,14 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		if (index < fChildren.size()) {
 			IDocumentElementNode previousSibling = null;
 			if (index != 0) {
-				previousSibling = (IDocumentElementNode)fChildren.get(index - 1);
+				previousSibling = (IDocumentElementNode) fChildren.get(index - 1);
 			}
-			IDocumentElementNode newNode = (IDocumentElementNode)fChildren.get(index);
+			IDocumentElementNode newNode = (IDocumentElementNode) fChildren.get(index);
 			newNode.setPreviousSibling(previousSibling);
 		}
 		return child;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#isErrorNode()
 	 */
@@ -293,7 +286,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations (indirectly)
 		return fIsErrorNode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#setIsErrorNode(boolean)
 	 */
@@ -301,7 +294,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fIsErrorNode = isErrorNode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setOffset(int)
 	 */
@@ -309,7 +302,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fOffset = offset;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setLength(int)
 	 */
@@ -317,7 +310,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fLength = length;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getOffset()
 	 */
@@ -325,7 +318,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fOffset;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLength()
 	 */
@@ -333,7 +326,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fLength;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
 	 */
@@ -341,19 +334,19 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fAttributes.put(attribute.getAttributeName(), attribute);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLAttributeValue(java.lang.String)
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Not used by text edit operations
-		IDocumentAttributeNode attribute  = (IDocumentAttributeNode)fAttributes.get(name);
+		IDocumentAttributeNode attribute = (IDocumentAttributeNode) fAttributes.get(name);
 		if (attribute == null) {
 			return null;
 		}
 		return attribute.getAttributeValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLTagName(java.lang.String)
 	 */
@@ -361,7 +354,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations (indirectly)
 		fTag = tag;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLTagName()
 	 */
@@ -369,15 +362,15 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fTag;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getDocumentAttribute(java.lang.String)
 	 */
 	public IDocumentAttributeNode getDocumentAttribute(String name) {
 		// Used by text edit operations
-		return (IDocumentAttributeNode)fAttributes.get(name);
+		return (IDocumentAttributeNode) fAttributes.get(name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLineIndent()
 	 */
@@ -385,7 +378,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fIndent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setLineIndent(int)
 	 */
@@ -393,7 +386,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fIndent = indent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getAttributes()
 	 */
@@ -403,9 +396,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		Iterator iter = fAttributes.values().iterator();
 		while (iter.hasNext())
 			list.add(iter.next());
-		return (IDocumentAttributeNode[])list.toArray(new IDocumentAttributeNode[list.size()]);
+		return (IDocumentAttributeNode[]) list.toArray(new IDocumentAttributeNode[list.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getPreviousSibling()
 	 */
@@ -413,7 +406,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fPreviousSibling;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setPreviousSibling(org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -421,9 +414,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fPreviousSibling = sibling;
 	}
-	
+
 	/**
-	 * @return
+	 * @return the length to indent
 	 */
 	public String getIndent() {
 		StringBuffer buffer = new StringBuffer();
@@ -432,7 +425,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return buffer.toString();
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#swap(org.eclipse.pde.internal.ui.model.IDocumentNode, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -440,20 +433,20 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 		int index1 = fChildren.indexOf(child1);
 		int index2 = fChildren.indexOf(child2);
-		
+
 		fChildren.set(index1, child2);
 		fChildren.set(index2, child1);
-		
-		child1.setPreviousSibling(index2 == 0 ? null : (IDocumentElementNode)fChildren.get(index2 - 1));
-		child2.setPreviousSibling(index1 == 0 ? null : (IDocumentElementNode)fChildren.get(index1 - 1));
-		
+
+		child1.setPreviousSibling(index2 == 0 ? null : (IDocumentElementNode) fChildren.get(index2 - 1));
+		child2.setPreviousSibling(index1 == 0 ? null : (IDocumentElementNode) fChildren.get(index1 - 1));
+
 		if (index1 < fChildren.size() - 1)
-			((IDocumentElementNode)fChildren.get(index1 + 1)).setPreviousSibling(child2);
-		
+			((IDocumentElementNode) fChildren.get(index1 + 1)).setPreviousSibling(child2);
+
 		if (index2 < fChildren.size() - 1)
-			((IDocumentElementNode)fChildren.get(index2 + 1)).setPreviousSibling(child1);
+			((IDocumentElementNode) fChildren.get(index2 + 1)).setPreviousSibling(child1);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#addTextNode(org.eclipse.pde.internal.ui.model.IDocumentTextNode)
 	 */
@@ -461,7 +454,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fTextNode = textNode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getTextNode()
 	 */
@@ -469,7 +462,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return fTextNode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeTextNode()
 	 */
@@ -477,7 +470,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fTextNode = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeDocumentAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
 	 */
@@ -485,7 +478,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		fAttributes.remove(attr.getAttributeName());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#reconnectRoot(org.eclipse.pde.core.plugin.ISharedPluginModel)
 	 */
@@ -504,7 +497,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Reconnect children nodes
 		reconnectChildren(model);
 	}
-	
+
 	/**
 	 * @param model
 	 * @param schema
@@ -514,12 +507,12 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		Iterator keys = fAttributes.keySet().iterator();
 		// Fill in appropriate transient field values for all attributes
 		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			IDocumentAttributeNode attribute = (IDocumentAttributeNode)fAttributes.get(key);
+			String key = (String) keys.next();
+			IDocumentAttributeNode attribute = (IDocumentAttributeNode) fAttributes.get(key);
 			attribute.reconnect(this);
 		}
 	}
-	
+
 	/**
 	 * @param model
 	 * @param schema
@@ -527,12 +520,12 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	private void reconnectChildren(IModel model) {
 		// Fill in appropriate transient field values
 		for (int i = 0; i < fChildren.size(); i++) {
-			IDocumentElementNode child = (IDocumentElementNode)fChildren.get(i);
+			IDocumentElementNode child = (IDocumentElementNode) fChildren.get(i);
 			// Reconnect child
 			child.reconnect(this, model);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -546,15 +539,15 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Transient field:  Offset
 		fOffset = -1;
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	private void reconnectParent(IDocumentElementNode parent) {
 		// Transient field:  Parent
-		fParent = parent;		
+		fParent = parent;
 	}
-	
+
 	/**
 	 * @param parent
 	 */
@@ -562,7 +555,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Transient field:  Previous Sibling
 		linkNodeWithSiblings(this);
 	}
-	
+
 	/**
 	 * PRE: Node must have a set parent
 	 * @param node
@@ -582,24 +575,21 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		if (targetNodePosition <= 0) {
 			// null <- targetNode <- ?
 			targetNode.setPreviousSibling(null);
-		} else if ((targetNodePosition >= 1) && 
-				(parentNodeChildCount >= 2)) {
+		} else if ((targetNodePosition >= 1) && (parentNodeChildCount >= 2)) {
 			// ? <- previousNode <- targetNode <- ?
 			IDocumentElementNode previousNode = parentNode.getChildAt(targetNodePosition - 1);
 			targetNode.setPreviousSibling(previousNode);
 		}
 		int secondLastNodeIndex = parentNodeChildCount - 2;
 		// Set the node after this node's previous sibling as this node
-		if ((targetNodePosition >= 0) &&
-				(targetNodePosition <= secondLastNodeIndex) &&
-				(parentNodeChildCount >= 2)) {
+		if ((targetNodePosition >= 0) && (targetNodePosition <= secondLastNodeIndex) && (parentNodeChildCount >= 2)) {
 			// ? <- targetNode <- nextNode <- ?
-			IDocumentElementNode nextNode = parentNode.getChildAt(targetNodePosition + 1); 
+			IDocumentElementNode nextNode = parentNode.getChildAt(targetNodePosition + 1);
 			nextNode.setPreviousSibling(targetNode);
 		}
 		// previousNode <- targetNode <- nextNode
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -607,9 +597,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Transient field:  Text Node
 		if (fTextNode != null) {
 			fTextNode.reconnect(this);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getChildCount()
 	 */
@@ -617,7 +607,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 		return fChildren.size();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#isRoot()
 	 */
@@ -625,11 +615,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		return false;
 	}
-	
+
 	protected String getFileEncoding() {
 		return ATTRIBUTE_VALUE_ENCODING;
 	}
-	
+
 	protected String writeXMLDecl() {
 		StringBuffer buffer = new StringBuffer(XMLPrintHandler.XML_HEAD);
 		buffer.append(getFileEncoding());
@@ -638,28 +628,24 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		buffer.append(getLineDelimiter());
 		return buffer.toString();
 	}
-	
+
 	protected String getAttributeIndent() {
-		return getLineDelimiter() + 
-			   getIndent() + 
-			   "      "; //$NON-NLS-1$
+		return getLineDelimiter() + getIndent() + "      "; //$NON-NLS-1$
 	}
-	
+
 	protected String getContentIndent() {
 		// TODO: MP: TEO: LOW: Add indent methods on documenttextnode?
-		return getLineDelimiter() + 
-		   getIndent() + 
-		   "   "; //$NON-NLS-1$
+		return getLineDelimiter() + getIndent() + "   "; //$NON-NLS-1$
 	}
-	
+
 	protected String getLineDelimiter() {
 		// Subclasses to override
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @param attribute
-	 * @return
+	 * @return if the attribute is defined
 	 */
 	protected boolean isDefined(IDocumentAttributeNode attribute) {
 		if (attribute == null) {
@@ -668,11 +654,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			return false;
 		}
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * @param node
-	 * @return
+	 * @return if the node is defined
 	 */
 	protected boolean isDefined(IDocumentTextNode node) {
 		if (node == null) {
@@ -680,7 +666,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return PDETextHelper.isDefinedAfterTrim(node.getText());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#hasXMLChildren()
 	 */
@@ -690,7 +676,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#hasXMLContent()
 	 */
@@ -700,13 +686,13 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getNodeAttributesCount()
 	 */
 	public int getNodeAttributesCount() {
 		// Returns the number of attributes with defined values
-		int count = 0; 
+		int count = 0;
 		IDocumentAttributeNode[] attributes = getNodeAttributes();
 		for (int i = 0; i < attributes.length; i++) {
 			IDocumentAttributeNode attribute = attributes[i];
@@ -714,9 +700,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 				count++;
 			}
 		}
-		return count; 
+		return count;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#hasXMLAttributes()
 	 */
@@ -726,7 +712,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
 	 */
@@ -734,23 +720,20 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Not used by text edit operations
 
 		// Ensure name is defined
-		if ((name == null) || 
-				(name.length() == 0)) {
+		if ((name == null) || (name.length() == 0)) {
 			return false;
 		}
 		// Null values are not allowed
 		if (value == null) {
 			value = ""; //$NON-NLS-1$
-		}		
+		}
 		String oldValue = getXMLAttributeValue(name);
 		// Check if the value is different
-		if ((oldValue != null) && 
-				oldValue.equals(value)) {
+		if ((oldValue != null) && oldValue.equals(value)) {
 			return false;
 		}
 		// Check to see if the attribute already exists
-		IDocumentAttributeNode attribute = 
-			(IDocumentAttributeNode)getNodeAttributesMap().get(name);
+		IDocumentAttributeNode attribute = (IDocumentAttributeNode) getNodeAttributesMap().get(name);
 		try {
 			if (attribute == null) {
 				// Attribute does not exist
@@ -766,7 +749,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			return false;
 		}
 		return true;
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#setXMLContent(java.lang.String)
@@ -776,7 +759,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Null text not allowed
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
-		}	
+		}
 		// Check to see if the node already exists
 		IDocumentTextNode node = getTextNode();
 		if (node == null) {
@@ -789,8 +772,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		node.setText(text);
 		// Always changed
 		return true;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getXMLContent()
 	 */
@@ -802,40 +785,34 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		}
 		return node.getText();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentXMLNode#write()
 	 */
 	public String write() {
 		return write(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentXMLNode#getXMLType()
 	 */
 	public int getXMLType() {
 		return F_TYPE_ELEMENT;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#isContentCollapsed()
 	 */
 	public boolean isContentCollapsed() {
 		return false;
 	}
-	
-	/**
-	 * @return
-	 */
+
 	protected IDocumentAttributeNode createDocumentAttributeNode() {
 		return new DocumentAttributeNode();
 	}
-	
-	/**
-	 * @return
-	 */
+
 	protected IDocumentTextNode createDocumentTextNode() {
 		return new DocumentTextNode();
 	}
-	
+
 }

@@ -20,39 +20,45 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 	private static final long serialVersionUID = 1L;
 	private String url;
 	private String path;
-	
+
 	public boolean isValid() {
-		return url!=null && path!=null;
+		return url != null && path != null;
 	}
 
 	public String getURL() {
 		return url;
 	}
+
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
 		this.url = url;
 		firePropertyChanged(P_URL, oldValue, url);
 	}
+
 	public String getPath() {
 		return path;
 	}
+
 	public void setPath(String path) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.path;
 		this.path = path;
 		firePropertyChanged(P_PATH, oldValue, path);
 	}
+
 	public void reset() {
 		super.reset();
 		url = null;
 		path = null;
 	}
+
 	protected void parse(Node node) {
 		super.parse(node);
 		path = getNodeAttribute(node, "path"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<archive"); //$NON-NLS-1$
@@ -62,8 +68,8 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 			writer.print(" url=\"" + SiteObject.getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("/>"); //$NON-NLS-1$
 	}
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_PATH)) {
 			setPath(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {

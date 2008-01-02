@@ -27,14 +27,12 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
-public abstract class BundleModel
-	extends AbstractModel
-	implements IBundleModel {
+public abstract class BundleModel extends AbstractModel implements IBundleModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Bundle fBundle;
-	
+
 	public BundleModel() {
 		fBundle = new Bundle();
 		fBundle.setModel(this);
@@ -67,7 +65,7 @@ public abstract class BundleModel
 		} finally {
 		}
 	}
-	
+
 	public void load(BundleDescription desc, PDEState state) {
 		long id = desc.getBundleId();
 		Properties properties = new Properties();
@@ -108,14 +106,14 @@ public abstract class BundleModel
 		updateTimeStamp();
 		setLoaded(true);
 	}
-	
+
 	private String writeFragmentHost(HostSpecification host) {
 		String id = host.getName();
 		String version = host.getVersionRange().toString();
 		StringBuffer buffer = new StringBuffer();
 		if (id != null)
 			buffer.append(id);
-		
+
 		if (version != null && version.trim().length() > 0) {
 			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -124,10 +122,6 @@ public abstract class BundleModel
 
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this,
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[0],
-				null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
 	}
 }

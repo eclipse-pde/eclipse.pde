@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.xml.sax.SAXException;
 
 public class ValidatingSAXParser {
-	
+
 	private static SAXParserFactory fFactory;
-	
+
 	public static void parse(IFile file, XMLErrorReporter reporter) {
 		InputStream stream = null;
 		try {
@@ -43,13 +43,12 @@ public class ValidatingSAXParser {
 			}
 		}
 	}
-	
-	private static SAXParser getParser()
-		throws ParserConfigurationException, SAXException {
+
+	private static SAXParser getParser() throws ParserConfigurationException, SAXException {
 		if (fFactory == null) {
 			fFactory = SAXParserFactory.newInstance();
 		}
 		return fFactory.newSAXParser();
 	}
-	
+
 }

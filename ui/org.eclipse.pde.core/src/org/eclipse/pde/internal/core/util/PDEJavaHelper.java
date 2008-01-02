@@ -40,7 +40,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 
 public class PDEJavaHelper {
-	
+
 	/*static class Requestor extends TypeNameRequestor {
 		int count = 0;
 		
@@ -53,7 +53,7 @@ public class PDEJavaHelper {
 			return count > 0;
 		}
 	}*/
-	
+
 	public static boolean isOnClasspath(String fullyQualifiedName, IJavaProject project) {
 		if (fullyQualifiedName.indexOf('$') != -1)
 			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
@@ -80,7 +80,7 @@ public class PDEJavaHelper {
 		}
 		return false;*/
 	}
-	
+
 	public static IJavaSearchScope getSearchScope(IJavaProject project) {
 		return SearchEngine.createJavaSearchScope(getNonJRERoots(project));
 	}
@@ -88,6 +88,7 @@ public class PDEJavaHelper {
 	public static IJavaSearchScope getSearchScope(IProject project) {
 		return getSearchScope(JavaCore.create(project));
 	}
+
 	public static IPackageFragmentRoot[] getNonJRERoots(IJavaProject project) {
 		ArrayList result = new ArrayList();
 		try {
@@ -100,31 +101,29 @@ public class PDEJavaHelper {
 		} catch (JavaModelException e) {
 		}
 		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
-	}	
-	
+	}
+
 	public static boolean isJRELibrary(IPackageFragmentRoot root) {
 		try {
 			IPath path = root.getRawClasspathEntry().getPath();
-			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))
-					|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER)) || path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
 				return true;
 			}
 		} catch (JavaModelException e) {
 		}
 		return false;
-	}	
-	
-	
+	}
+
 	/**
 	 * @param packageName - the name of the package
 	 * @param pluginID - the id of the containing plug-in - can be null if <code>project</code> is not null
 	 * @param project - if null will search for an external package fragment, otherwise will search in project
 	 * @return
 	 */
-    public static IPackageFragment getPackageFragment(String packageName, String pluginID, IProject project) {
-		if (project == null) 
+	public static IPackageFragment getPackageFragment(String packageName, String pluginID, IProject project) {
+		if (project == null)
 			return getExternalPackageFragment(packageName, pluginID);
-		
+
 		IJavaProject jp = JavaCore.create(project);
 		if (jp != null)
 			try {
@@ -138,40 +137,40 @@ public class PDEJavaHelper {
 			} catch (JavaModelException e) {
 			}
 		return null;
-    }
-    
-    private static IPackageFragment getExternalPackageFragment(String packageName, String pluginID) {
-    	if (pluginID == null)
-    		return null;
-    	IPluginModelBase base = null;
-    	try {
-    		IPluginModelBase plugin = PluginRegistry.findModel(pluginID);
-    		if (plugin == null)
-    			return null;
-    		ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
-    		for (int i =0; i < packages.length; i++)
-    			if (packages[i].getName().equals(packageName)) {
-    				ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
-    				if (desc != null)
-    					base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
-    				break;
-    			}
-    		if (base == null)
-    			return null;
-    		IResource res = base.getUnderlyingResource();
-    		if (res != null) {
-    			IJavaProject jp = JavaCore.create(res.getProject());
-    			if (jp != null)
-    				try {
-    					IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-    					for (int i = 0; i < roots.length; i++) {
-    						IPackageFragment frag = roots[i].getPackageFragment(packageName);
-    						if (frag.exists()) 
-    							return frag;
-    					}
-    				} catch (JavaModelException e) {
-    				}
-    		}
+	}
+
+	private static IPackageFragment getExternalPackageFragment(String packageName, String pluginID) {
+		if (pluginID == null)
+			return null;
+		IPluginModelBase base = null;
+		try {
+			IPluginModelBase plugin = PluginRegistry.findModel(pluginID);
+			if (plugin == null)
+				return null;
+			ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
+			for (int i = 0; i < packages.length; i++)
+				if (packages[i].getName().equals(packageName)) {
+					ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
+					if (desc != null)
+						base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
+					break;
+				}
+			if (base == null)
+				return null;
+			IResource res = base.getUnderlyingResource();
+			if (res != null) {
+				IJavaProject jp = JavaCore.create(res.getProject());
+				if (jp != null)
+					try {
+						IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
+						for (int i = 0; i < roots.length; i++) {
+							IPackageFragment frag = roots[i].getPackageFragment(packageName);
+							if (frag.exists())
+								return frag;
+						}
+					} catch (JavaModelException e) {
+					}
+			}
 			IProject proj = PDECore.getWorkspace().getRoot().getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
 			if (proj == null)
 				return searchWorkspaceForPackage(packageName, base);
@@ -185,7 +184,7 @@ public class PDEJavaHelper {
 					if (frag.exists())
 						return frag;
 				}
-			// else model is in folder form, try to find model's libraries on filesystem
+				// else model is in folder form, try to find model's libraries on filesystem
 			} else {
 				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
 				for (int i = 0; i < libs.length; i++) {
@@ -200,18 +199,18 @@ public class PDEJavaHelper {
 					}
 				}
 			}
-		} catch (JavaModelException e){
+		} catch (JavaModelException e) {
 		}
 		return searchWorkspaceForPackage(packageName, base);
-    }
-    
-    private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
-    	IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-    	ArrayList libPaths = new ArrayList();
-    	IPath path = new Path(base.getInstallLocation());
-    	if (libs.length == 0) {
-    		libPaths.add(path);
-    	}
+	}
+
+	private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
+		IPluginLibrary[] libs = base.getPluginBase().getLibraries();
+		ArrayList libPaths = new ArrayList();
+		IPath path = new Path(base.getInstallLocation());
+		if (libs.length == 0) {
+			libPaths.add(path);
+		}
 		for (int i = 0; i < libs.length; i++) {
 			if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
 				continue;
@@ -221,12 +220,12 @@ public class PDEJavaHelper {
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			try {
-				if(!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
+				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
 					continue;
 				IJavaProject jp = JavaCore.create(projects[i]);
 				ListIterator li = libPaths.listIterator();
 				while (li.hasNext()) {
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath)li.next());
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath) li.next());
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
 						if (frag.exists())
@@ -237,17 +236,16 @@ public class PDEJavaHelper {
 			}
 		}
 		return null;
-    }
-    
-    /**
-     * @param jProject
-     * @param existingPackages
-     * @param allowJava
-     * @return
-     */
-    public static IPackageFragment[] getPackageFragments (IJavaProject jProject, Collection existingPackages, boolean allowJava) {
-		HashMap map = getPackageFragmentsHash(jProject, existingPackages,
-				allowJava);
+	}
+
+	/**
+	 * @param jProject
+	 * @param existingPackages
+	 * @param allowJava
+	 * @return
+	 */
+	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
+		HashMap map = getPackageFragmentsHash(jProject, existingPackages, allowJava);
 		return (IPackageFragment[]) map.values().toArray(new IPackageFragment[map.size()]);
 	}
 
@@ -257,19 +255,18 @@ public class PDEJavaHelper {
 	 * @param allowJava
 	 * @return
 	 */
-	public static HashMap getPackageFragmentsHash(IJavaProject jProject,
-			Collection existingPackages, boolean allowJava) {
+	public static HashMap getPackageFragmentsHash(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
 		HashMap map = new HashMap();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
 			for (int i = 0; i < roots.length; i++) {
 				IJavaElement[] children = roots[i].getChildren();
 				for (int j = 0; j < children.length; j++) {
-					IPackageFragment fragment = (IPackageFragment)children[j];
+					IPackageFragment fragment = (IPackageFragment) children[j];
 					String name = fragment.getElementName();
 					if (name.length() == 0)
 						name = "."; //$NON-NLS-1$
-					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0 )&& !existingPackages.contains(name)) {
+					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
 						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
 					}
@@ -279,39 +276,37 @@ public class PDEJavaHelper {
 		}
 		return map;
 	}
-	
+
 	private static IPackageFragmentRoot[] getRoots(IJavaProject jProject) {
 		ArrayList result = new ArrayList();
 		try {
 			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
-						|| jProject.getProject().equals(roots[i].getCorrespondingResource())
-						|| (roots[i].isArchive() && !roots[i].isExternal())) {
+				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || jProject.getProject().equals(roots[i].getCorrespondingResource()) || (roots[i].isArchive() && !roots[i].isExternal())) {
 					result.add(roots[i]);
 				}
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragmentRoot[])result.toArray(new IPackageFragmentRoot[result.size()]);	
+		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
-	
+
 	/**
 	 * @param project
 	 * @return
 	 */
 	public static String getJavaSourceLevel(IProject project) {
-		return getJavaLevel(project, JavaCore.COMPILER_SOURCE);	
+		return getJavaLevel(project, JavaCore.COMPILER_SOURCE);
 	}
-	
+
 	/**
 	 * @param project
 	 * @return
 	 */
 	public static String getJavaComplianceLevel(IProject project) {
-		return getJavaLevel(project, JavaCore.COMPILER_COMPLIANCE);		
-	}	
-	
+		return getJavaLevel(project, JavaCore.COMPILER_COMPLIANCE);
+	}
+
 	/**
 	 * Precedence order from high to low:  (1) Project specific option;
 	 * (2) General preference option; (3) Default option; (4) Java 1.3
@@ -325,15 +320,14 @@ public class PDEJavaHelper {
 		IJavaProject javaProject = JavaCore.create(project);
 		String value = null;
 		// Preferred to use the project
-		if ((javaProject != null) && 
-				javaProject.exists()) {
+		if ((javaProject != null) && javaProject.exists()) {
 			// Get the project specific option if one exists. Rolls up to the 
 			// general preference option if no project specific option exists.
 			value = javaProject.getOption(optionName, true);
 			if (value != null) {
 				return value;
 			}
-		} 
+		}
 		// Get the general preference option
 		value = JavaCore.getJavaCore().getPluginPreferences().getString(optionName);
 		if (value != null) {
@@ -347,5 +341,5 @@ public class PDEJavaHelper {
 		// Return the default
 		return JavaCore.VERSION_1_3;
 	}
-	
+
 }

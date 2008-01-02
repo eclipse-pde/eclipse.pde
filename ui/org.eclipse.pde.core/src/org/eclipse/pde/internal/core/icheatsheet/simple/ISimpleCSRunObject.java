@@ -22,43 +22,43 @@ public interface ISimpleCSRunObject extends ISimpleCSRunContainerObject {
 	 * @return
 	 */
 	public boolean getConfirm();
-	
+
 	/**
 	 * Attribute: confirm
 	 * @param confirm
 	 */
 	public void setConfirm(boolean confirm);
-	
+
 	/**
 	 * Attribute: when
 	 * @return
 	 */
 	public String getWhen();
-	
+
 	/**
 	 * Attribute: when
 	 * @param when
 	 */
 	public void setWhen(String when);
-	
+
 	/**
 	 * Attribute: translate
 	 * @return
 	 */
 	public String getTranslate();
-	
+
 	/**
 	 * Attribute: translate
 	 * @param translate
 	 */
-	public void setTranslate(String translate);	
-	
+	public void setTranslate(String translate);
+
 	/**
 	 * Attribute: required
 	 * @return
 	 */
 	public boolean getRequired();
-	
+
 	/**
 	 * Attribute: required
 	 * @param required

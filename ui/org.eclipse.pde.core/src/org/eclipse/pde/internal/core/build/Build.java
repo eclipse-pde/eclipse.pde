@@ -26,13 +26,11 @@ public class Build extends BuildObject implements IBuild {
 		ensureModelEditable();
 		fEntries.add(entry);
 		((BuildEntry) entry).setInTheModel(true);
-		getModel().fireModelChanged(
-				new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT,
-						new Object[] { entry }, null));
+		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] {entry}, null));
 	}
 
 	public IBuildEntry[] getBuildEntries() {
-		return (IBuildEntry[])fEntries.toArray(new IBuildEntry[fEntries.size()]);
+		return (IBuildEntry[]) fEntries.toArray(new IBuildEntry[fEntries.size()]);
 	}
 
 	public IBuildEntry getEntry(String name) {
@@ -45,8 +43,7 @@ public class Build extends BuildObject implements IBuild {
 	}
 
 	public void processEntry(String name, String value) {
-		BuildEntry entry = (BuildEntry) getModel().getFactory().createEntry(
-				name);
+		BuildEntry entry = (BuildEntry) getModel().getFactory().createEntry(name);
 		fEntries.add(entry);
 		entry.processEntry(value);
 	}
@@ -54,9 +51,7 @@ public class Build extends BuildObject implements IBuild {
 	public void remove(IBuildEntry entry) throws CoreException {
 		ensureModelEditable();
 		fEntries.remove(entry);
-		getModel().fireModelChanged(
-				new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE,
-						new Object[] { entry }, null));
+		getModel().fireModelChanged(new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE, new Object[] {entry}, null));
 	}
 
 	public void reset() {

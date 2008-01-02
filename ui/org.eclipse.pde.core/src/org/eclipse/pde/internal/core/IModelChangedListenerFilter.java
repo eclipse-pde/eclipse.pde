@@ -18,12 +18,12 @@ import org.eclipse.pde.core.IModelChangedListener;
  * the process.
  */
 public interface IModelChangedListenerFilter {
-/**
- * Tests if the listener should be accepted.
- * @param listener the listener to test
- * @return <code>true</code> if the listener should pass
- * the filter, <code>false</code> otherwise.
- */
+	/**
+	 * Tests if the listener should be accepted.
+	 * @param listener the listener to test
+	 * @return <code>true</code> if the listener should pass
+	 * the filter, <code>false</code> otherwise.
+	 */
 	public boolean accept(IModelChangedListener listener);
 
 }

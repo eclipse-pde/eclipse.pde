@@ -14,13 +14,15 @@ import org.eclipse.core.runtime.CoreException;
 
 public class FeatureProject extends BaseProject {
 
-public FeatureProject() {
-	super();
-}
-public void configure() throws CoreException {
-	addToBuildSpec(PDE.FEATURE_BUILDER_ID);
-}
-public void deconfigure() throws CoreException {
-	removeFromBuildSpec(PDE.FEATURE_BUILDER_ID);
-}
+	public FeatureProject() {
+		super();
+	}
+
+	public void configure() throws CoreException {
+		addToBuildSpec(PDE.FEATURE_BUILDER_ID);
+	}
+
+	public void deconfigure() throws CoreException {
+		removeFromBuildSpec(PDE.FEATURE_BUILDER_ID);
+	}
 }

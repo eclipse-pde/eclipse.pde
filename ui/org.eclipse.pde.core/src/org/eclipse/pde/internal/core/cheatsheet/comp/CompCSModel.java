@@ -35,9 +35,9 @@ import org.w3c.dom.Element;
 public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	private ICompCSModelFactory fFactory;
-	
-	private ICompCS fCompCS;	
-	
+
+	private ICompCS fCompCS;
+
 	/**
 	 * 
 	 */
@@ -49,7 +49,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 	public CompCSModel() {
 		// NO-OP
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
@@ -94,8 +94,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
-	public void load(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public void load(InputStream source, boolean outOfSync) throws CoreException {
 
 		try {
 			SAXParser parser = getSaxParser();
@@ -116,22 +115,17 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 			} catch (IOException e) {
 				// Ignore
 			}
-		}		
+		}
 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public void reload(InputStream source, boolean outOfSync)
-			throws CoreException {
-		
+	public void reload(InputStream source, boolean outOfSync) throws CoreException {
+
 		load(source, outOfSync);
-		fireModelChanged(
-				new ModelChangedEvent(this,
-					IModelChangedEvent.WORLD_CHANGED,
-					new Object[] { fCompCS },
-					null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fCompCS}, null));
 	}
 
 	/* (non-Javadoc)
@@ -152,6 +146,6 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 			fCompCS.reset();
 		}
 		fCompCS.parse(rootNode);
-	}		
-	
+	}
+
 }

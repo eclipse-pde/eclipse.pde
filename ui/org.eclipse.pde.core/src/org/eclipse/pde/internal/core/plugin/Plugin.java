@@ -28,7 +28,7 @@ public class Plugin extends PluginBase implements IPlugin {
 	public Plugin(boolean readOnly) {
 		super(readOnly);
 	}
-	
+
 	public String getClassName() {
 		return fClassname;
 	}
@@ -42,7 +42,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		fHasExtensibleAPI = state.hasExtensibleAPI(bundleDescription.getBundleId());
 		super.load(bundleDescription, state);
 	}
-	
+
 	void load(Node node, String schemaVersion) {
 		fClassname = getNodeAttribute(node, "class"); //$NON-NLS-1$
 		super.load(node, schemaVersion);
@@ -52,6 +52,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		fClassname = null;
 		super.reset();
 	}
+
 	public void setClassName(String newClassName) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fClassname;
@@ -59,8 +60,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		firePropertyChanged(P_CLASS_NAME, oldValue, fClassname);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CLASS_NAME)) {
 			setClassName(newValue != null ? newValue.toString() : null);
 			return;
@@ -70,9 +70,9 @@ public class Plugin extends PluginBase implements IPlugin {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		if (getSchemaVersion()!=null) {
+		if (getSchemaVersion() != null) {
 			writer.println("<?eclipse version=\"" + getSchemaVersion() + "\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
-		}		
+		}
 		writer.print("<plugin"); //$NON-NLS-1$
 		if (getId() != null) {
 			writer.println();
@@ -88,10 +88,8 @@ public class Plugin extends PluginBase implements IPlugin {
 		}
 		if (getProviderName() != null) {
 			writer.println();
-			writer.print(
-				"   provider-name=\"" //$NON-NLS-1$
-					+ getWritableString(getProviderName())
-					+ "\""); //$NON-NLS-1$
+			writer.print("   provider-name=\"" //$NON-NLS-1$
+					+ getWritableString(getProviderName()) + "\""); //$NON-NLS-1$
 		}
 		if (getClassName() != null) {
 			writer.println();
@@ -130,7 +128,7 @@ public class Plugin extends PluginBase implements IPlugin {
 		}
 		if (children.length > 0)
 			writer.println();
-		
+
 		writer.println("</plugin>"); //$NON-NLS-1$
 	}
 

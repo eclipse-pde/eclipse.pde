@@ -28,21 +28,20 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private static final long serialVersionUID = 1L;
 
 	private String fInstallLocation;
-	
+
 	private String fLocalization;
 
 	public ExternalPluginModelBase() {
 		super();
 	}
-	
+
 	protected NLResourceHelper createNLResourceHelper() {
-		return (fLocalization == null)
-			    ? null : new NLResourceHelper(fLocalization, PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
+		return (fLocalization == null) ? null : new NLResourceHelper(fLocalization, PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
-	
+
 	public URL getNLLookupLocation() {
 		try {
-			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/"))  //$NON-NLS-1$
+			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/")) //$NON-NLS-1$
 				return new URL("file:" + fInstallLocation + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			return new URL("file:" + fInstallLocation); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
@@ -53,18 +52,18 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public IBuildModel getBuildModel() {
 		return null;
 	}
-	
+
 	public String getInstallLocation() {
 		return fInstallLocation;
 	}
-	
+
 	public boolean isEditable() {
 		return false;
 	}
-	
+
 	public void load() {
 	}
-	
+
 	public void load(BundleDescription description, PDEState state) {
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
@@ -74,7 +73,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		fLocalization = state.getBundleLocalization(description.getBundleId());
 		super.load(description, state);
 	}
-		
+
 	public boolean isInSync() {
 		return isInSync(getLocalFile());
 	}
@@ -86,8 +85,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 		file = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {
-			String manifest = isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
-					: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+			String manifest = isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 			file = new File(getInstallLocation(), manifest);
 		}
 		return file;
@@ -100,7 +98,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public void setInstallLocation(String newInstallLocation) {
 		fInstallLocation = newInstallLocation;
 	}
-	
+
 	public String getLocalization() {
 		return fLocalization;
 	}

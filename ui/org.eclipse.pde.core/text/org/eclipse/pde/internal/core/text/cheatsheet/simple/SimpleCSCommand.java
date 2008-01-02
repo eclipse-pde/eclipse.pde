@@ -26,7 +26,7 @@ public class SimpleCSCommand extends SimpleCSRunObject implements ISimpleCSComma
 	private static final long serialVersionUID = 1L;
 
 	// TODO: MP: TEO: HIGH: Verify translate attribute values okay - no translate before
-	
+
 	/**
 	 * @param model
 	 */
@@ -90,5 +90,5 @@ public class SimpleCSCommand extends SimpleCSRunObject implements ISimpleCSComma
 	public boolean isLeafNode() {
 		return true;
 	}
-	
+
 }

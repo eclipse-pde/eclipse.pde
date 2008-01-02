@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.PDECore;
  * @since 3.3
  */
 public class PluginRegistry {
-	
+
 	/**
 	 * Returns a model entry containing all workspace and target plug-ins by the given ID
 	 * 
@@ -36,7 +36,7 @@ public class PluginRegistry {
 	public static ModelEntry findEntry(String id) {
 		return PDECore.getDefault().getModelManager().findEntry(id);
 	}
-	
+
 	/**
 	 * Returns the plug-in model for the best match plug-in with the given ID.
 	 * A null value is returned if no such bundle is found in the workspace or target platform.
@@ -60,7 +60,7 @@ public class PluginRegistry {
 	public static IPluginModelBase findModel(String id) {
 		return PDECore.getDefault().getModelManager().findModel(id);
 	}
-		
+
 	/**
 	 * Returns the plug-in model corresponding to the given project, or <code>null</code>
 	 * if the project does not represent a plug-in project or if it contains a manifest file
@@ -73,7 +73,7 @@ public class PluginRegistry {
 	public static IPluginModelBase findModel(IProject project) {
 		return PDECore.getDefault().getModelManager().findModel(project);
 	}
-	
+
 	/**
 	 * Returns a plug-in model associated with the given bundle description
 	 * 
@@ -85,7 +85,7 @@ public class PluginRegistry {
 	public static IPluginModelBase findModel(BundleDescription desc) {
 		return PDECore.getDefault().getModelManager().findModel(desc);
 	}
-	
+
 	/**
 	 * Returns all plug-ins and fragments in the workspace as well as all plug-ins and fragments that are
 	 * checked on the Target Platform preference page.
@@ -141,7 +141,7 @@ public class PluginRegistry {
 	public static IPluginModelBase[] getAllModels() {
 		return getAllModels(true);
 	}
-	
+
 	/**
 	 * Returns all plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
 	 * and (possibly) fragments, regardless whether or not they are
@@ -159,11 +159,11 @@ public class PluginRegistry {
 	 * @return ll plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
 	 * and (possibly) fragments, regardless whether or not they are
 	 * checked on the Target Platform preference page.
-	 */	
+	 */
 	public static IPluginModelBase[] getAllModels(boolean includeFragments) {
 		return PDECore.getDefault().getModelManager().getAllModels(includeFragments);
 	}
-	
+
 	/**
 	 * Returns all plug-in models in the workspace
 	 * 
@@ -172,7 +172,7 @@ public class PluginRegistry {
 	public static IPluginModelBase[] getWorkspaceModels() {
 		return PDECore.getDefault().getModelManager().getWorkspaceModels();
 	}
-	
+
 	/**
 	 * Return the model manager that keeps track of plug-ins in the target platform
 	 * 

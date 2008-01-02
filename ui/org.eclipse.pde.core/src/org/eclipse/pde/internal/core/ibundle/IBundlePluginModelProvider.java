@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
 
-
 /**
  * Models that implement this interface can provide a reference
  * of the bundle plug-in model that owns the model in question.
@@ -22,11 +21,11 @@ package org.eclipse.pde.internal.core.ibundle;
  * @since 3.0
  */
 public interface IBundlePluginModelProvider {
-/**
- * Returns the parent bundle plug-in model if the provider
- * belongs to it.
- * @return the parent bundle plug-in model or <code>null</code>
- * if the provider does not have a bundle plug-in model parent.
- */	
+	/**
+	 * Returns the parent bundle plug-in model if the provider
+	 * belongs to it.
+	 * @return the parent bundle plug-in model or <code>null</code>
+	 * if the provider does not have a bundle plug-in model parent.
+	 */
 	IBundlePluginModelBase getBundlePluginModel();
 }

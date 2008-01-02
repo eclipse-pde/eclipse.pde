@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 import org.eclipse.core.resources.IFile;
+
 /**
  * Classes that implement this interface are responsible for holding a table of
  * models associated with the underlying objects. They have several
@@ -34,6 +36,7 @@ public interface IModelProvider {
 	 *            the listener that will be registered
 	 */
 	void addModelProviderListener(IModelProviderListener listener);
+
 	/**
 	 * Returns the model for the provided file resource.
 	 * 
@@ -43,6 +46,7 @@ public interface IModelProvider {
 	 *         file content
 	 */
 	public IModel getModel(IFile file);
+
 	/**
 	 * Deregisters a listener from notification.
 	 * 

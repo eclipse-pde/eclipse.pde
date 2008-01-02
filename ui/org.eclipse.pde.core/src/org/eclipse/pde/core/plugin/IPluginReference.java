@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
+
 /**
  * Objects that implement this interface represent references of
  * plug-ins. Plug-ins are referenced using their identifiers,
@@ -28,6 +29,7 @@ public interface IPluginReference extends IIdentifiable, IMatchRules {
 	 * about changes in the "version" field.
 	 */
 	String P_VERSION = "version"; //$NON-NLS-1$
+
 	/**
 	 * Returns the required match for the imported plug-in. The
 	 * choices are defined in IMatchRules interface.
@@ -35,12 +37,14 @@ public interface IPluginReference extends IIdentifiable, IMatchRules {
 	 * @return the desired type of the import plug-in match
 	 */
 	int getMatch();
+
 	/**
 	 * Returns the required version of the plug-in.
 	 *
 	 * @return required version or <samp>null</samp> if not set
 	 */
 	String getVersion();
+
 	/**
 	 * Sets the match type for the require plug-in.
 	 * This method will throw a CoreException if the model
@@ -49,6 +53,7 @@ public interface IPluginReference extends IIdentifiable, IMatchRules {
 	 * @param match the desired match type
 	 */
 	void setMatch(int match) throws CoreException;
+
 	/**
 	 * Sets the desired version of the required plug-in.
 	 * This method will throw a CoreException if

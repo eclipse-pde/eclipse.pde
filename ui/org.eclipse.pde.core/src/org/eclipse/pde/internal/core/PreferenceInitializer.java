@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 
-public class PreferenceInitializer extends AbstractPreferenceInitializer  {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/*
 	 * (non-Javadoc)
@@ -26,20 +26,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer  {
 	 */
 	public void initializeDefaultPreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		preferences.setDefault(
-				ICoreConstants.TARGET_MODE,
-				ICoreConstants.VALUE_USE_THIS);
-		preferences.setDefault(
-				ICoreConstants.CHECKED_PLUGINS,
-				ICoreConstants.VALUE_SAVED_ALL);
+		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		preferences.setDefault(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 		if (preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS))
-			preferences.setValue(
-					ICoreConstants.PLATFORM_PATH,
-					TargetPlatform.getDefaultLocation());
+			preferences.setValue(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 		else
-			preferences.setDefault(
-					ICoreConstants.PLATFORM_PATH,
-					TargetPlatform.getDefaultLocation());
+			preferences.setDefault(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 
 		// set defaults for the target environment variables.
 		preferences.setDefault(ICoreConstants.OS, Platform.getOS());

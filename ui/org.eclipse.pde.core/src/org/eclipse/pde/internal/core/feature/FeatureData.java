@@ -17,9 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.w3c.dom.Node;
 
-public class FeatureData
-	extends IdentifiableObject
-	implements IFeatureData {
+public class FeatureData extends IdentifiableObject implements IFeatureData {
 	private static final long serialVersionUID = 1L;
 	private String os;
 	private String ws;
@@ -30,7 +28,7 @@ public class FeatureData
 
 	public FeatureData() {
 	}
-	
+
 	protected void reset() {
 		super.reset();
 		os = null;
@@ -40,12 +38,12 @@ public class FeatureData
 		downloadSize = 0;
 		installSize = 0;
 	}
-	
+
 	public boolean exists() {
 		String location = getModel().getInstallLocation();
 		if (location.startsWith("file:")) //$NON-NLS-1$
-		   location = location.substring(5);
-		File file = new File(location + File.separator+getId());
+			location = location.substring(5);
+		File file = new File(location + File.separator + getId());
 		return file.exists();
 	}
 
@@ -58,6 +56,7 @@ public class FeatureData
 		downloadSize = getIntegerAttribute(node, "download-size"); //$NON-NLS-1$
 		installSize = getIntegerAttribute(node, "install-size"); //$NON-NLS-1$
 	}
+
 	protected void writeAttributes(String indent2, PrintWriter writer) {
 		writeAttribute("id", getId(), indent2, writer); //$NON-NLS-1$
 		writeAttribute("os", getOS(), indent2, writer); //$NON-NLS-1$
@@ -69,7 +68,7 @@ public class FeatureData
 		writer.println();
 		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private void writeAttribute(String attribute, String value, String indent2, PrintWriter writer) {
 		if (value != null && value.length() > 0) {
 			writer.println();
@@ -202,33 +201,28 @@ public class FeatureData
 		this.installSize = installSize;
 		firePropertyChanged(P_INSTALL_SIZE, oldValue, new Long(installSize));
 	}
-	
+
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_OS)) {
-			setOS((String)newValue);
-		}
-		else if (name.equals(P_WS)) {
-			setWS((String)newValue);
-		}
-		else if (name.equals(P_NL)) {
-			setNL((String)newValue);
-		}
-		else if (name.equals(P_ARCH)) {
-			setArch((String)newValue);
-		}
-		else if (name.equals(P_DOWNLOAD_SIZE)) {
-			setDownloadSize(newValue!=null?((Integer)newValue).intValue():0);
-		}
-		else if (name.equals(P_INSTALL_SIZE)) {
-			setInstallSize(newValue!=null?((Integer)newValue).intValue():0);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+			setOS((String) newValue);
+		} else if (name.equals(P_WS)) {
+			setWS((String) newValue);
+		} else if (name.equals(P_NL)) {
+			setNL((String) newValue);
+		} else if (name.equals(P_ARCH)) {
+			setArch((String) newValue);
+		} else if (name.equals(P_DOWNLOAD_SIZE)) {
+			setDownloadSize(newValue != null ? ((Integer) newValue).intValue() : 0);
+		} else if (name.equals(P_INSTALL_SIZE)) {
+			setInstallSize(newValue != null ? ((Integer) newValue).intValue() : 0);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	public String getLabel() {
 		return getId();
 	}
-	
+
 	public String toString() {
 		return getLabel();
 	}

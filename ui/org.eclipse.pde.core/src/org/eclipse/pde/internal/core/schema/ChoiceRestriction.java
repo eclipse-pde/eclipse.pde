@@ -19,9 +19,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 
-public class ChoiceRestriction
-	extends SchemaObject
-	implements ISchemaRestriction {
+public class ChoiceRestriction extends SchemaObject implements ISchemaRestriction {
 
 	private static final long serialVersionUID = 1L;
 	private ISchemaSimpleType baseType;
@@ -32,23 +30,24 @@ public class ChoiceRestriction
 		super(schema, "__choice__"); //$NON-NLS-1$
 
 	}
+
 	public ChoiceRestriction(ChoiceRestriction source) {
 		this(source.getSchema());
 		children = new Vector();
 		Object[] choices = source.getChildren();
 		for (int i = 0; i < choices.length; i++) {
-			children.add(
-				new SchemaEnumeration(
-					this,
-					((ISchemaEnumeration) choices[i]).getName()));
+			children.add(new SchemaEnumeration(this, ((ISchemaEnumeration) choices[i]).getName()));
 		}
 	}
+
 	public ISchemaSimpleType getBaseType() {
 		return baseType;
 	}
+
 	public Object[] getChildren() {
 		return (children != null) ? children.toArray() : new Object[0];
 	}
+
 	public String[] getChoicesAsStrings() {
 		if (children == null)
 			return new String[0];
@@ -61,11 +60,13 @@ public class ChoiceRestriction
 		result.copyInto(choices);
 		return choices;
 	}
+
 	public ISchemaObject getParent() {
 		if (baseType != null)
 			return baseType.getSchema();
 		return super.getParent();
 	}
+
 	public boolean isValueValid(java.lang.Object value) {
 		if (children == null)
 			return false;
@@ -78,19 +79,18 @@ public class ChoiceRestriction
 		}
 		return false;
 	}
+
 	public void setBaseType(ISchemaSimpleType baseType) {
 		this.baseType = baseType;
 	}
+
 	public void setChildren(Vector children) {
 		Vector oldValue = this.children;
 		this.children = children;
 		if (getParent() != null)
-			getSchema().fireModelObjectChanged(
-				this,
-				P_CHOICES,
-				oldValue,
-				children);
+			getSchema().fireModelObjectChanged(this, P_CHOICES, oldValue, children);
 	}
+
 	public String toString() {
 		if (children == null)
 			return ""; //$NON-NLS-1$
@@ -107,9 +107,9 @@ public class ChoiceRestriction
 		}
 		return buffer.toString();
 	}
+
 	public void write(String indent, PrintWriter writer) {
-		writer.println(
-			indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
 			if (child instanceof ISchemaEnumeration) {

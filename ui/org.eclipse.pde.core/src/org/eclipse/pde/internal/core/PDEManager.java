@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 public class PDEManager {
 
 	public static IFragmentModel[] findFragmentsFor(IPluginModelBase model) {
-		ArrayList result = new ArrayList();	
+		ArrayList result = new ArrayList();
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
@@ -36,10 +36,10 @@ public class PDEManager {
 					result.add(candidate);
 				}
 			}
-		} 
-		return (IFragmentModel[])result.toArray(new IFragmentModel[result.size()]);
+		}
+		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
-	
+
 	public static IPluginModel findHostFor(IFragmentModel fragment) {
 		BundleDescription desc = getBundleDescription(fragment);
 		if (desc != null) {
@@ -47,15 +47,15 @@ public class PDEManager {
 			if (spec != null) {
 				IPluginModelBase host = PluginRegistry.findModel(spec.getName());
 				if (host instanceof IPluginModel)
-					return (IPluginModel)host;
+					return (IPluginModel) host;
 			}
 		}
 		return null;
 	}
-	
+
 	private static BundleDescription getBundleDescription(IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
-		
+
 		if (desc == null && model.getUnderlyingResource() != null) {
 			// the model may be an editor model. 
 			// editor models don't carry a bundle description
@@ -67,7 +67,7 @@ public class PDEManager {
 		}
 		return desc;
 	}
-	
+
 	public static URL[] getNLLookupLocations(IPluginModelBase model) {
 		ArrayList urls = new ArrayList();
 		addNLLocation(model, urls);
@@ -76,27 +76,27 @@ public class PDEManager {
 			for (int i = 0; i < fragments.length; i++) {
 				addNLLocation(fragments[i], urls);
 			}
-		} else if (model instanceof IFragmentModel){
-			IPluginModel host = findHostFor((IFragmentModel)model);
+		} else if (model instanceof IFragmentModel) {
+			IPluginModel host = findHostFor((IFragmentModel) model);
 			if (host != null)
 				addNLLocation(host, urls);
-		}	
-		return (URL[])urls.toArray(new URL[urls.size()]);
+		}
+		return (URL[]) urls.toArray(new URL[urls.size()]);
 	}
-	
+
 	private static void addNLLocation(IPluginModelBase model, ArrayList urls) {
 		URL location = model.getNLLookupLocation();
 		if (location != null)
-			urls.add(location);		
+			urls.add(location);
 	}
-	
+
 	public static String getBundleLocalization(IPluginModelBase model) {
 		if (model instanceof IBundlePluginModelBase && model.getUnderlyingResource() != null)
-				return((IBundlePluginModelBase)model).getBundleLocalization();
-		
+			return ((IBundlePluginModelBase) model).getBundleLocalization();
+
 		if (model instanceof ExternalPluginModelBase)
-			return ((ExternalPluginModelBase)model).getLocalization();
-		
+			return ((ExternalPluginModelBase) model).getLocalization();
+
 		return "plugin"; //$NON-NLS-1$
 	}
 

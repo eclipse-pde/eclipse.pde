@@ -21,17 +21,17 @@ import org.xml.sax.SAXException;
 public class AbbreviatedPluginHandler extends PluginHandler {
 
 	private String[] fExtensionPointIDs;
-	
+
 	/**
 	 * @param abbreviated
 	 * @param extensionPointIDs
 	 */
 	public AbbreviatedPluginHandler(String[] extensionPointIDs) {
 		super(true);
-		
+
 		fExtensionPointIDs = extensionPointIDs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginHandler#isInterestingExtension(org.w3c.dom.Element)
 	 */
@@ -44,13 +44,12 @@ public class AbbreviatedPluginHandler extends PluginHandler {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.PluginHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] characters, int start, int length)
-			throws SAXException {
+	public void characters(char[] characters, int start, int length) throws SAXException {
 		processCharacters(characters, start, length);
 	}
-	
+
 }

@@ -34,7 +34,7 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	String P_POINT = "pointId"; //$NON-NLS-1$
 
 	String P_PLUGIN = "pluginId"; //$NON-NLS-1$
-	
+
 	int REFRESH_ADD = 1;
 
 	int REFRESH_DELETE = 2;
@@ -152,14 +152,14 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 *         none.
 	 */
 	ISchemaInclude[] getIncludes();
-	
+
 	/**
 	 * Returns whether the root schema element ( the <exension> element)
 	 * has been marked deprecated, making this schema deprecated.
 	 * @return true if this schema is deprecated
 	 */
 	public boolean isDeperecated();
-	
+
 	/**
 	 * Returns replacement schema in case this one is deprecated.
 	 * @return the replacement schema 

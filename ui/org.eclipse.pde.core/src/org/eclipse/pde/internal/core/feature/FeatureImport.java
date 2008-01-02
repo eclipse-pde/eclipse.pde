@@ -24,9 +24,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 
-public class FeatureImport
-	extends VersionableObject
-	implements IFeatureImport {
+public class FeatureImport extends VersionableObject implements IFeatureImport {
 	private static final long serialVersionUID = 1L;
 	private int fMatch = NONE;
 	private int fIdMatch = PERFECT;
@@ -39,48 +37,44 @@ public class FeatureImport
 	public IPlugin getPlugin() {
 		if (id != null && fType == PLUGIN) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
-			return model instanceof IPluginModel ? ((IPluginModel)model).getPlugin() : null;
+			return model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
 		}
 		return null;
 	}
 
 	public IFeature getFeature() {
-		if (id != null && fType == FEATURE) { 
+		if (id != null && fType == FEATURE) {
 			return findFeature(id, getVersion(), fMatch);
 		}
 		return null;
 	}
 
-	private IFeature findFeature(
-			IFeatureModel[] models,
-			String id,
-			String version,
-			int match) {
+	private IFeature findFeature(IFeatureModel[] models, String id, String version, int match) {
 
-			for (int i = 0; i < models.length; i++) {
-				IFeatureModel model = models[i];
+		for (int i = 0; i < models.length; i++) {
+			IFeatureModel model = models[i];
 
-				IFeature feature = model.getFeature();
-				String pid = feature.getId();
-				String pversion = feature.getVersion();
-				if (VersionUtil.compare(pid, pversion, id, version, match))
-					return feature;
-			}
-			return null;
+			IFeature feature = model.getFeature();
+			String pid = feature.getId();
+			String pversion = feature.getVersion();
+			if (VersionUtil.compare(pid, pversion, id, version, match))
+				return feature;
 		}
+		return null;
+	}
 
-		/**
-		 * Finds a feature with the given ID and satisfying constraints
-		 * of the version and the match.
-		 * @param id
-		 * @param version
-		 * @param match
-		 * @return IFeature or null
-		 */
-		public IFeature findFeature(String id, String version, int match) {
-			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(id);
-			return findFeature(models, id, version, match);
-		}
+	/**
+	 * Finds a feature with the given ID and satisfying constraints
+	 * of the version and the match.
+	 * @param id
+	 * @param version
+	 * @param match
+	 * @return IFeature or null
+	 */
+	public IFeature findFeature(String id, String version, int match) {
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(id);
+		return findFeature(models, id, version, match);
+	}
 
 	public int getIdMatch() {
 		return fIdMatch;
@@ -170,18 +164,15 @@ public class FeatureImport
 		firePropertyChanged(P_PATCH, oldValue, new Boolean(patch));
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_MATCH)) {
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
 		} else if (name.equals(P_ID_MATCH)) {
 			setIdMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
 		} else if (name.equals(P_TYPE)) {
-			setType(
-				newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
+			setType(newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
 		} else if (name.equals(P_PATCH)) {
-			setPatch(
-				newValue != null ? ((Boolean) newValue).booleanValue() : false);
+			setPatch(newValue != null ? ((Boolean) newValue).booleanValue() : false);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}

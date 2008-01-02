@@ -50,7 +50,7 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
-	
+
 	private ArrayList fExtensionListeners = new ArrayList();
 	private ArrayList fChangedExtensions = null;
 
@@ -77,24 +77,23 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		IPluginModelBase model = null;
 		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
 			WorkspaceBundleModel bmodel = new WorkspaceBundleModel(project.getFile(ICoreConstants.MANIFEST_PATH));
-			loadModel(bmodel, false);		
+			loadModel(bmodel, false);
 			if (bmodel.isFragmentModel())
 				model = new BundleFragmentModel();
 			else
 				model = new BundlePluginModel();
 			model.setEnabled(true);
-			((IBundlePluginModelBase)model).setBundleModel(bmodel);
-			
-			IFile efile = project.getFile(bmodel.isFragmentModel() 
-							? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH); 
+			((IBundlePluginModelBase) model).setBundleModel(bmodel);
+
+			IFile efile = project.getFile(bmodel.isFragmentModel() ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
 			if (efile.exists()) {
 				WorkspaceExtensionsModel extModel = new WorkspaceExtensionsModel(efile);
 				extModel.setEditable(false);
 				loadModel(extModel, false);
-				((IBundlePluginModelBase)model).setExtensionsModel(extModel);
-				extModel.setBundleModel((IBundlePluginModelBase)model);
+				((IBundlePluginModelBase) model).setExtensionsModel(extModel);
+				extModel.setBundleModel((IBundlePluginModelBase) model);
 			}
-			
+
 		} else if (project.exists(ICoreConstants.PLUGIN_PATH)) {
 			model = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_PATH), true);
 			loadModel(model, false);
@@ -102,61 +101,60 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			model = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_PATH), true);
 			loadModel(model, false);
 		}
-		
+
 		if (project.getFile(".options").exists()) //$NON-NLS-1$
 			PDECore.getDefault().getTracingOptionsManager().reset();
 
 		if (model != null) {
-			if (fModels == null) 
+			if (fModels == null)
 				fModels = new HashMap();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
 		}
 	}
-	
+
 	/**
 	 * Reacts to changes in files of interest to PDE
 	 */
 	protected void handleFileDelta(IResourceDelta delta) {
-		IFile file = (IFile)delta.getResource();
+		IFile file = (IFile) delta.getResource();
 		String filename = file.getName();
 		if (filename.equals(".options")) { //$NON-NLS-1$
 			PDECore.getDefault().getTracingOptionsManager().reset();
-		} else if (filename.endsWith(".properties")) {	 //$NON-NLS-1$
+		} else if (filename.endsWith(".properties")) { //$NON-NLS-1$
 			// change in build.properties should trigger a Classpath Update
 			// we therefore fire a notification
 			//TODO this is inefficient.  we could do better.
-			 if (filename.equals("build.properties")) { //$NON-NLS-1$
+			if (filename.equals("build.properties")) { //$NON-NLS-1$
 				Object model = getModel(file.getProject());
 				if (model != null)
 					addChange(model, IModelProviderEvent.MODELS_CHANGED);
-			 } else {
-				 // reset bundle resource if localization file has changed.
-				 IPluginModelBase model = getPluginModel(file.getProject());
-				 String localization = null;
-				 if (model instanceof IBundlePluginModelBase) {
-					localization = ((IBundlePluginModelBase)model).getBundleLocalization();			 
-				 } else if (model != null) {
-					 localization = "plugin"; //$NON-NLS-1$
-				 }
-				 if (localization != null && filename.startsWith(localization)) {
-					((AbstractNLModel)model).resetNLResourceHelper();					 
-				 }
-			 }
+			} else {
+				// reset bundle resource if localization file has changed.
+				IPluginModelBase model = getPluginModel(file.getProject());
+				String localization = null;
+				if (model instanceof IBundlePluginModelBase) {
+					localization = ((IBundlePluginModelBase) model).getBundleLocalization();
+				} else if (model != null) {
+					localization = "plugin"; //$NON-NLS-1$
+				}
+				if (localization != null && filename.startsWith(localization)) {
+					((AbstractNLModel) model).resetNLResourceHelper();
+				}
+			}
 		} else if (filename.endsWith(".exsd")) { //$NON-NLS-1$
 			handleEclipseSchemaDelta(file, delta);
 		} else {
 			IPath path = file.getProjectRelativePath();
-			if (path.equals(ICoreConstants.PLUGIN_PATH) 
-					|| path.equals(ICoreConstants.FRAGMENT_PATH)){
+			if (path.equals(ICoreConstants.PLUGIN_PATH) || path.equals(ICoreConstants.FRAGMENT_PATH)) {
 				handleExtensionFileDelta(file, delta);
 			} else if (path.equals(ICoreConstants.MANIFEST_PATH)) {
 				handleBundleManifestDelta(file, delta);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @param delta
@@ -173,8 +171,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		// Get the schema preview file session property
 		Object property = null;
 		try {
-			property = 
-				schemaFile.getSessionProperty(PDECore.SCHEMA_PREVIEW_FILE);
+			property = schemaFile.getSessionProperty(PDECore.SCHEMA_PREVIEW_FILE);
 		} catch (CoreException e) {
 			// Ignore
 			return;
@@ -188,7 +185,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		} else if ((property instanceof File) == false) {
 			return;
 		}
-		File schemaPreviewFile = (File)property;
+		File schemaPreviewFile = (File) property;
 		// Ensure the file exists and is writable
 		if (schemaPreviewFile.exists() == false) {
 			return;
@@ -200,7 +197,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		// Get the schema model object
 		ISchemaDescriptor descriptor = new SchemaDescriptor(schemaFile, false);
 		ISchema schema = descriptor.getSchema(false);
-		
+
 		try {
 			// Re-generate the schema preview file contents in order to reflect
 			// the changes in the schema
@@ -215,16 +212,15 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @param schema
 	 * @throws IOException
 	 */
-	private void recreateSchemaPreviewFileContents(File schemaPreviewFile,
-			ISchema schema) throws IOException {
+	private void recreateSchemaPreviewFileContents(File schemaPreviewFile, ISchema schema) throws IOException {
 		SchemaTransformer transformer = new SchemaTransformer();
 		OutputStream os = new FileOutputStream(schemaPreviewFile);
 		PrintWriter printWriter = new PrintWriter(os, true);
-		transformer.transform(schema, printWriter); 
+		transformer.transform(schema, printWriter);
 		os.flush();
-		os.close();		
+		os.close();
 	}
-	
+
 	/**
 	 * Reacts to changes in the plugin.xml or fragment.xml file.
 	 * <ul>
@@ -248,37 +244,36 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	private void handleExtensionFileDelta(IFile file, IResourceDelta delta) {
 		int kind = delta.getKind();
-		IPluginModelBase model = (IPluginModelBase)getModel(file.getProject());
+		IPluginModelBase model = (IPluginModelBase) getModel(file.getProject());
 		if (kind == IResourceDelta.REMOVED) {
 			if (model instanceof IBundlePluginModelBase) {
-				((IBundlePluginModelBase)model).setExtensionsModel(null);
+				((IBundlePluginModelBase) model).setExtensionsModel(null);
 				addExtensionChange(model, IModelProviderEvent.MODELS_REMOVED);
 			} else {
 				removeModel(file.getProject());
 			}
 		} else if (kind == IResourceDelta.ADDED) {
-			if (model instanceof IBundlePluginModelBase){
+			if (model instanceof IBundlePluginModelBase) {
 				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
 				extensions.setEditable(false);
-				((IBundlePluginModelBase)model).setExtensionsModel(extensions);
-				extensions.setBundleModel((IBundlePluginModelBase)model);
-				loadModel(extensions, false);				
+				((IBundlePluginModelBase) model).setExtensionsModel(extensions);
+				extensions.setBundleModel((IBundlePluginModelBase) model);
+				loadModel(extensions, false);
 				addExtensionChange(model, IModelProviderEvent.MODELS_ADDED);
 			} else {
 				createModel(file.getProject(), true);
 			}
-		} else if (kind == IResourceDelta.CHANGED 
-				    && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+		} else if (kind == IResourceDelta.CHANGED && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
-				ISharedExtensionsModel extensions = ((IBundlePluginModelBase)model).getExtensionsModel();
+				ISharedExtensionsModel extensions = ((IBundlePluginModelBase) model).getExtensionsModel();
 				boolean reload = extensions != null;
 				if (extensions == null) {
 					extensions = new WorkspaceExtensionsModel(file);
-					((WorkspaceExtensionsModel)extensions).setEditable(false);
-					((IBundlePluginModelBase)model).setExtensionsModel(extensions);
-					((WorkspaceExtensionsModel)extensions).setBundleModel((IBundlePluginModelBase)model);
+					((WorkspaceExtensionsModel) extensions).setEditable(false);
+					((IBundlePluginModelBase) model).setExtensionsModel(extensions);
+					((WorkspaceExtensionsModel) extensions).setBundleModel((IBundlePluginModelBase) model);
 				}
-				loadModel(extensions, reload);				
+				loadModel(extensions, reload);
 			} else if (model != null) {
 				loadModel(model, true);
 				addChange(model, IModelProviderEvent.MODELS_CHANGED);
@@ -286,7 +281,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			addExtensionChange(model, IModelProviderEvent.MODELS_CHANGED);
 		}
 	}
-	
+
 	/**
 	 * Reacts to changes in the MANIFEST.MF file.
 	 * <ul>
@@ -306,34 +301,31 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		if (kind == IResourceDelta.REMOVED && model != null) {
 			removeModel(project);
 			// switch to legacy plugin structure, if applicable
-			createModel(project, true);		
+			createModel(project, true);
 		} else if (kind == IResourceDelta.ADDED || model == null) {
 			createModel(project, true);
-		} else if (kind == IResourceDelta.CHANGED 
-				    && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+		} else if (kind == IResourceDelta.CHANGED && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
 				// check to see if localization changed (bug 146912)
-				String oldLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-				IBundleModel bmodel = ((IBundlePluginModelBase)model).getBundleModel();
+				String oldLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
+				IBundleModel bmodel = ((IBundlePluginModelBase) model).getBundleModel();
 				boolean wasFragment = bmodel.isFragmentModel();
 				loadModel(bmodel, true);
-				String newLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-				
+				String newLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
+
 				// Fragment-Host header was added or removed
 				if (wasFragment != bmodel.isFragmentModel()) {
 					removeModel(project);
 					createModel(project, true);
-				} else {			
-					if (model instanceof AbstractNLModel && 
-							(oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) ||
-							(newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
-						((AbstractNLModel)model).resetNLResourceHelper();
+				} else {
+					if (model instanceof AbstractNLModel && (oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) || (newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
+						((AbstractNLModel) model).resetNLResourceHelper();
 					addChange(model, IModelProviderEvent.MODELS_CHANGED);
 				}
-			} 
-		}		
+			}
+		}
 	}
-	
+
 	/**
 	 * Removes the model associated with the given project from the table,
 	 * if the given project is a plug-in project
@@ -345,14 +337,14 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		if (model instanceof IPluginModelBase) {
 			// PluginModelManager will remove IPluginModelBase form ModelEntry before triggering IModelChangedEvent
 			// Therefore, if we want to track a removed model we need to create an entry for it in the ExtensionDeltaEvent
-//			String id = ((IPluginModelBase)model).getPluginBase().getId();
-//			ModelEntry entry = PluginRegistry.findEntry(id);
-//			if (entry.getWorkspaceModels().length + entry.getExternalModels().length < 2)
-				addExtensionChange((IPluginModelBase)model, IModelProviderEvent.MODELS_REMOVED);
+			//			String id = ((IPluginModelBase)model).getPluginBase().getId();
+			//			ModelEntry entry = PluginRegistry.findEntry(id);
+			//			if (entry.getWorkspaceModels().length + entry.getExternalModels().length < 2)
+			addExtensionChange((IPluginModelBase) model, IModelProviderEvent.MODELS_REMOVED);
 		}
 		return model;
 	}
-	
+
 	/**
 	 * Returns a plug-in model associated with the given project, or <code>null</code>
 	 * if the project is not a plug-in project or the manifest file is missing vital data
@@ -364,9 +356,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * if no such valid model exists
 	 */
 	protected IPluginModelBase getPluginModel(IProject project) {
-		return (IPluginModelBase)getModel(project);
+		return (IPluginModelBase) getModel(project);
 	}
-	
+
 	/**
 	 * Returns a list of all workspace plug-in models
 	 * 
@@ -374,9 +366,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected IPluginModelBase[] getPluginModels() {
 		initialize();
-		return (IPluginModelBase[])fModels.values().toArray(new IPluginModelBase[fModels.size()]);
+		return (IPluginModelBase[]) fModels.values().toArray(new IPluginModelBase[fModels.size()]);
 	}
-	
+
 	/**
 	 * Adds listeners to the workspace and to the java model
 	 * to be notified of PRE_CLOSE events and POST_CHANGE events.
@@ -400,7 +392,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			fExtensionListeners.clear();
 		super.removeListeners();
 	}
-	
+
 	/**
 	 * Returns true if the folder being visited is of interest to PDE.
 	 * In this case, PDE is only interested in META-INF folders at the root of a plug-in project
@@ -414,14 +406,14 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		if (folder.getName().equals("META-INF") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
 			return true;
 		}
-		
+
 		if (folder.getName().equals("schema") && folder.getParent() instanceof IProject) { //$NON-NLS-1$
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * This method is called when workspace models are read and initialized
 	 * from the cache.  No need to read the workspace plug-ins from scratch.
@@ -429,21 +421,21 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @param models  the workspace plug-in models
 	 */
 	protected void initializeModels(IPluginModelBase[] models) {
-		fModels = Collections.synchronizedMap(new HashMap());		
+		fModels = Collections.synchronizedMap(new HashMap());
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();
 			fModels.put(project, models[i]);
 		}
-		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();	
+		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			// if any projects contained Manifest files and were not included in the PDEState,
 			// we should create models for them now
 			if (!fModels.containsKey(projects[i]) && isInterestingProject(projects[i]))
-				createModel(projects[i], false);			
+				createModel(projects[i], false);
 		}
 		addListeners();
 	}
-	
+
 	/**
 	 * Return URLs to projects in the workspace that have a manifest file (MANIFEST.MF
 	 * or plugin.xml)
@@ -454,7 +446,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		ArrayList list = new ArrayList();
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (isPluginProject(projects[i])) {			
+			if (isPluginProject(projects[i])) {
 				try {
 					IPath path = projects[i].getLocation();
 					if (path != null) {
@@ -464,45 +456,41 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				}
 			}
 		}
-		return (URL[])list.toArray(new URL[list.size()]);
+		return (URL[]) list.toArray(new URL[list.size()]);
 	}
-	
+
 	void addExtensionDeltaListener(IExtensionDeltaListener listener) {
 		if (!fExtensionListeners.contains(listener))
 			fExtensionListeners.add(listener);
 	}
-	
+
 	void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fExtensionListeners.remove(listener);
 	}
-	
+
 	public void fireExtensionDeltaEvent(IExtensionDeltaEvent event) {
 		for (ListIterator li = fExtensionListeners.listIterator(); li.hasNext();) {
-			((IExtensionDeltaListener)li.next()).extensionsChanged(event);
+			((IExtensionDeltaListener) li.next()).extensionsChanged(event);
 		}
 	}
-	
+
 	protected void processModelChanges() {
 		// process model changes first so model manager is accurate when we process extension events - bug 209155
 		super.processModelChanges();
 		processModelChanges("org.eclipse.pde.internal.core.IExtensionDeltaEvent", fChangedExtensions); //$NON-NLS-1$
 		fChangedExtensions = null;
 	}
-	
-	protected void createAndFireEvent(String eventId, int type, Collection added,
-			Collection removed, Collection changed) {
+
+	protected void createAndFireEvent(String eventId, int type, Collection added, Collection removed, Collection changed) {
 		if (eventId.equals("org.eclipse.pde.internal.core.IExtensionDeltaEvent")) { //$NON-NLS-1$
-			IExtensionDeltaEvent event = new ExtensionDeltaEvent(type,
-					(IPluginModelBase[])added.toArray(new IPluginModelBase[added.size()]),
-					(IPluginModelBase[])removed.toArray(new IPluginModelBase[removed.size()]),
-					(IPluginModelBase[])changed.toArray(new IPluginModelBase[changed.size()]));
+			IExtensionDeltaEvent event = new ExtensionDeltaEvent(type, (IPluginModelBase[]) added.toArray(new IPluginModelBase[added.size()]), (IPluginModelBase[]) removed.toArray(new IPluginModelBase[removed.size()]), (IPluginModelBase[]) changed.toArray(new IPluginModelBase[changed.size()]));
 			fireExtensionDeltaEvent(event);
-		} else 
+		} else
 			super.createAndFireEvent(eventId, type, added, removed, changed);
 	}
 
 	protected void addExtensionChange(IPluginModelBase plugin, int type) {
-		if (fChangedExtensions == null) 
+		if (fChangedExtensions == null)
 			fChangedExtensions = new ArrayList();
 		ModelChange change = new ModelChange(plugin, type);
 		fChangedExtensions.add(change);

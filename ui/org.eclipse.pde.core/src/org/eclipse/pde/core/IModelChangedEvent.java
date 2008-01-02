@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 /**
  * Model change events are fired by the model when it is changed from the last
  * clean state. Model change listeners can use these events to update
@@ -34,18 +35,21 @@ public interface IModelChangedEvent {
 	 * indicates that a model object's property has been changed.
 	 */
 	int CHANGE = 3;
+
 	/**
 	 * Returns the provider that fired this event.
 	 * 
 	 * @return the event provider
 	 */
 	public IModelChangeProvider getChangeProvider();
+
 	/**
 	 * Returns an array of model objects that are affected by the change.
 	 * 
 	 * @return array of affected objects
 	 */
 	public Object[] getChangedObjects();
+
 	/**
 	 * Returns a name of the object's property that has been changed if change
 	 * type is CHANGE.
@@ -55,6 +59,7 @@ public interface IModelChangedEvent {
 	 *         been changed.
 	 */
 	public String getChangedProperty();
+
 	/**
 	 * When model change is of type <samp>CHANGE</samp>, this method is used to
 	 * obtain the old value of the property (before the change).
@@ -62,6 +67,7 @@ public interface IModelChangedEvent {
 	 * @return the old value of the changed property
 	 */
 	public Object getOldValue();
+
 	/**
 	 * When model change is of type <samp>CHANGE</samp>, this method is used to
 	 * obtain the new value of the property (after the change).
@@ -69,6 +75,7 @@ public interface IModelChangedEvent {
 	 * @return the new value of the changed property.
 	 */
 	public Object getNewValue();
+
 	/**
 	 * Returns the type of change that occured in the model (one of <samp>INSERT</samp>,
 	 * <samp>REMOVE</samp>, <samp>CHANGE</samp> or

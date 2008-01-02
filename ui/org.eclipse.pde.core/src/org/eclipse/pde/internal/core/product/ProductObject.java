@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductObject;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-
 public abstract class ProductObject extends PlatformObject implements IProductObject {
 
 	private static final long serialVersionUID = 1L;
@@ -34,7 +33,7 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 	public IProductModel getModel() {
 		return fModel;
 	}
-	
+
 	public void setModel(IProductModel model) {
 		fModel = model;
 	}
@@ -46,45 +45,34 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 		return getModel().getProduct();
 	}
 
-	protected void firePropertyChanged(
-		String property,
-		Object oldValue,
-		Object newValue) {
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-	
-	protected void firePropertyChanged(
-		IProductObject object,
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(IProductObject object, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
-	
+
 	protected void fireStructureChanged(IProductObject child, int changeType) {
-		fireStructureChanged(new IProductObject[] { child }, changeType);
+		fireStructureChanged(new IProductObject[] {child}, changeType);
 	}
-	
-	protected void fireStructureChanged(
-		IProductObject[] children,
-		int changeType) {
+
+	protected void fireStructureChanged(IProductObject[] children, int changeType) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
 			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}
-	
+
 	protected boolean isEditable() {
 		return getModel().isEditable();
 	}
-	
+
 	public String getWritableString(String source) {
 		return PDEXMLHelper.getWritableString(source);
 	}
-
-
 
 }

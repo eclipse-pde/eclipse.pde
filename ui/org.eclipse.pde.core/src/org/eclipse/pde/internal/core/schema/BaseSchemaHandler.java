@@ -26,25 +26,25 @@ import org.xml.sax.helpers.DefaultHandler;
 public class BaseSchemaHandler extends DefaultHandler {
 
 	protected LinkedList fElementList;
-	
+
 	public BaseSchemaHandler() {
 		reset();
 	}
 
 	protected void reset() {
 		fElementList = new LinkedList();
-	}	
-	
+	}
+
 	public void startDocument() throws SAXException {
 		reset();
-	}	
-	
+	}
+
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		// Track where we are in the XML document
 		// Note:  XML namespaces not utilized, safe to use qualified name
 		fElementList.addFirst(qName);
-	}	
-	
+	}
+
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		// Track where we are in the XML document
 		if (fElementList.size() != 0) {
@@ -60,6 +60,6 @@ public class BaseSchemaHandler extends DefaultHandler {
 		// prevent the parser from accessing the Internet
 		// This will prevent huge workbench performance degradations and hangs
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
-	}	
-	
+	}
+
 }

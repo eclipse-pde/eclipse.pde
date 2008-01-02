@@ -17,8 +17,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
-public class PluginExtensionPointNode extends PluginObjectNode implements
-		IPluginExtensionPoint {
+public class PluginExtensionPointNode extends PluginObjectNode implements IPluginExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,52 +33,56 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 		String pluginID = getPluginBase().getId();
 		return (pluginID != null) ? pluginID + "." + id : id; //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getSchema()
 	 */
 	public String getSchema() {
 		return getXMLAttributeValue("schema"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#setSchema(java.lang.String)
 	 */
 	public void setSchema(String schema) throws CoreException {
 		setXMLAttribute(P_SCHEMA, schema);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
 		return getXMLAttributeValue(P_ID);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
 		setXMLAttribute(P_ID, id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
 		return indent ? getIndent() + writeShallow(true) : writeShallow(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
@@ -94,14 +97,14 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -109,12 +112,12 @@ public class PluginExtensionPointNode extends PluginObjectNode implements
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#writeDelimeter(java.io.PrintWriter)
 	 */
 	public void writeDelimeter(PrintWriter writer) {
 		writer.println(getIndent());
 	}
-	
+
 }

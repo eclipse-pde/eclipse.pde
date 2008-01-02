@@ -20,8 +20,7 @@ public interface IDocumentNodeFactory {
 	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement);
 
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent);
-	
-	public IDocumentTextNode createDocumentTextNode(String content, 
-			IDocumentElementNode parent);
-	
+
+	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent);
+
 }

@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.xml.sax.SAXException;
 
 public class PluginDocumentHandler extends DocumentHandler {
-	
+
 	private PluginModelBase fModel;
 	private String fSchemaVersion;
 	protected PluginDocumentNodeFactory fFactory;
@@ -31,16 +31,16 @@ public class PluginDocumentHandler extends DocumentHandler {
 	public PluginDocumentHandler(PluginModelBase model, boolean reconciling) {
 		super(reconciling);
 		fModel = model;
-		fFactory = (PluginDocumentNodeFactory)getModel().getPluginFactory();
+		fFactory = (PluginDocumentNodeFactory) getModel().getPluginFactory();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocument()
 	 */
 	protected IDocument getDocument() {
 		return fModel.getDocument();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
@@ -52,7 +52,6 @@ public class PluginDocumentHandler extends DocumentHandler {
 		} catch (CoreException e) {
 		}
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
@@ -62,7 +61,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 			fSchemaVersion = "version=\"3.0\"".equals(data) ? "3.0" : "3.2"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.DocumentHandler#startDocument()
 	 */
@@ -70,18 +69,18 @@ public class PluginDocumentHandler extends DocumentHandler {
 		super.startDocument();
 		fSchemaVersion = null;
 	}
-	
+
 	protected PluginModelBase getModel() {
 		return fModel;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
 	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
 		IDocumentElementNode node = null;
 		if (parent == null) {
-			node = (IDocumentElementNode)getModel().getPluginBase();
+			node = (IDocumentElementNode) getModel().getPluginBase();
 			if (node != null) {
 				node.setOffset(-1);
 				node.setLength(-1);
@@ -97,10 +96,10 @@ public class PluginDocumentHandler extends DocumentHandler {
 				}
 			}
 		}
-		
+
 		if (node == null)
 			return fFactory.createDocumentNode(name, parent);
-		
+
 		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			attrs[i].setNameOffset(-1);
@@ -108,23 +107,23 @@ public class PluginDocumentHandler extends DocumentHandler {
 			attrs[i].setValueOffset(-1);
 			attrs[i].setValueLength(-1);
 		}
-		
+
 		for (int i = 0; i < node.getChildNodes().length; i++) {
 			IDocumentElementNode child = node.getChildAt(i);
 			child.setOffset(-1);
 			child.setLength(-1);
 		}
-		
+
 		// clear text nodes if the user is typing on the source page
 		// they will be recreated in the characters() method
 		if (isReconciling()) {
 			node.removeTextNode();
 			node.setIsErrorNode(false);
 		}
-		
+
 		return node;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -132,7 +131,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
-				attr = fFactory.createAttribute(name, value, parent);				
+				attr = fFactory.createAttribute(name, value, parent);
 			} else {
 				if (!name.equals(attr.getAttributeName()))
 					attr.setAttributeName(name);
@@ -147,9 +146,8 @@ public class PluginDocumentHandler extends DocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
 	 */
-	protected IDocumentTextNode getDocumentTextNode(String content, 
-			IDocumentElementNode parent) {
-		
+	protected IDocumentTextNode getDocumentTextNode(String content, IDocumentElementNode parent) {
+
 		IDocumentTextNode textNode = parent.getTextNode();
 		if (textNode == null) {
 			if (content.trim().length() > 0) {
@@ -161,5 +159,5 @@ public class PluginDocumentHandler extends DocumentHandler {
 		}
 		return textNode;
 	}
-	
+
 }

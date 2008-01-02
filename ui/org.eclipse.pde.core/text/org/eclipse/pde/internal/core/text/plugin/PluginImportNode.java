@@ -44,6 +44,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		String value = getXMLAttributeValue(P_REEXPORTED);
 		return value != null && value.equals("true"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isOptional()
 	 */
@@ -51,18 +52,21 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		String value = getXMLAttributeValue(P_OPTIONAL);
 		return value != null && value.equals("true"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#setReexported(boolean)
 	 */
 	public void setReexported(boolean value) throws CoreException {
 		setXMLAttribute(P_REEXPORTED, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#setOptional(boolean)
 	 */
 	public void setOptional(boolean value) throws CoreException {
 		setXMLAttribute(P_OPTIONAL, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#getMatch()
 	 */
@@ -70,67 +74,72 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		String match = getXMLAttributeValue(P_MATCH);
 		if (match == null || match.trim().length() == 0)
 			return IMatchRules.NONE;
-		if (match.equals("compatible"))			 //$NON-NLS-1$
-			return IMatchRules.COMPATIBLE;		
+		if (match.equals("compatible")) //$NON-NLS-1$
+			return IMatchRules.COMPATIBLE;
 		if (match.equals("perfect")) //$NON-NLS-1$
 			return IMatchRules.PERFECT;
 		if (match.equals("equivalent")) //$NON-NLS-1$
 			return IMatchRules.EQUIVALENT;
 		return IMatchRules.GREATER_OR_EQUAL;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#getVersion()
 	 */
 	public String getVersion() {
 		return getXMLAttributeValue(P_VERSION);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#setMatch(int)
 	 */
 	public void setMatch(int match) throws CoreException {
-		switch(match) {
-			case IMatchRules.GREATER_OR_EQUAL:
+		switch (match) {
+			case IMatchRules.GREATER_OR_EQUAL :
 				setXMLAttribute(P_MATCH, "greaterOrEqual"); //$NON-NLS-1$
 				break;
-			case IMatchRules.EQUIVALENT:
+			case IMatchRules.EQUIVALENT :
 				setXMLAttribute(P_MATCH, "equivalent"); //$NON-NLS-1$
 				break;
-			case IMatchRules.COMPATIBLE:
+			case IMatchRules.COMPATIBLE :
 				setXMLAttribute(P_MATCH, "compatible"); //$NON-NLS-1$
 				break;
-			case IMatchRules.PERFECT:
+			case IMatchRules.PERFECT :
 				setXMLAttribute(P_MATCH, "perfect"); //$NON-NLS-1$
 				break;
-			default:
+			default :
 				setXMLAttribute(P_MATCH, null);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginReference#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
 		setXMLAttribute(P_VERSION, version);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
 		return getXMLAttributeValue("plugin"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
 		setXMLAttribute("plugin", id); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
 		return indent ? getIndent() + writeShallow(true) : writeShallow(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
@@ -145,7 +154,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		if (terminate)
 			buffer.append("/"); //$NON-NLS-1$
 		buffer.append(">"); //$NON-NLS-1$
-		return buffer.toString();		
+		return buffer.toString();
 	}
-	
+
 }

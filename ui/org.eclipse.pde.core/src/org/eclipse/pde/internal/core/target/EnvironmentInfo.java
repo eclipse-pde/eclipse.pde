@@ -21,12 +21,12 @@ import org.w3c.dom.NodeList;
 public class EnvironmentInfo extends TargetObject implements IEnvironmentInfo {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String fOS;
 	private String fWS;
 	private String fArch;
 	private String fNL;
-	
+
 	public EnvironmentInfo(ITargetModel model) {
 		super(model);
 	}
@@ -88,7 +88,7 @@ public class EnvironmentInfo extends TargetObject implements IEnvironmentInfo {
 			}
 		}
 	}
-		
+
 	private String getText(Node node) {
 		node.normalize();
 		Node text = node.getFirstChild();
@@ -97,18 +97,17 @@ public class EnvironmentInfo extends TargetObject implements IEnvironmentInfo {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public void write(String indent, PrintWriter writer) {
 		// if no elements set, then don't write anything
-		if ((fOS == null || fOS.length() == 0) && (fWS == null || fWS.length() == 0) &&
-				(fArch == null || fArch.length() == 0) && (fNL == null || fNL.length() == 0))
+		if ((fOS == null || fOS.length() == 0) && (fWS == null || fWS.length() == 0) && (fArch == null || fArch.length() == 0) && (fNL == null || fNL.length() == 0))
 			return;
 		writer.println();
 		writer.println(indent + "<environment>"); //$NON-NLS-1$
 		if (fOS != null && fOS.length() > 0)
-			writer.println(indent + "   <" + P_OS + ">" + getWritableString(fOS) + "</" + P_OS + ">");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			writer.println(indent + "   <" + P_OS + ">" + getWritableString(fOS) + "</" + P_OS + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (fWS != null && fWS.length() > 0)
-			writer.println(indent + "   <" + P_WS + ">" + getWritableString(fWS) + "</" + P_WS + ">");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			writer.println(indent + "   <" + P_WS + ">" + getWritableString(fWS) + "</" + P_WS + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (fArch != null && fArch.length() > 0)
 			writer.println(indent + "   <" + P_ARCH + ">" + getWritableString(fArch) + "</" + P_ARCH + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (fNL != null && fNL.length() > 0)

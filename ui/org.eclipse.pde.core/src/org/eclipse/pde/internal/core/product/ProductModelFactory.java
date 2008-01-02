@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 
-
 public class ProductModelFactory implements IProductModelFactory {
 
 	private IProductModel fModel;
@@ -46,14 +45,14 @@ public class ProductModelFactory implements IProductModelFactory {
 	public IAboutInfo createAboutInfo() {
 		return new AboutInfo(fModel);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createPlugin()
 	 */
 	public IProductPlugin createPlugin() {
 		return new ProductPlugin(fModel);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createConfigFileInfo()
 	 */
@@ -84,7 +83,7 @@ public class ProductModelFactory implements IProductModelFactory {
 	public IIntroInfo createIntroInfo() {
 		return new IntroInfo(fModel);
 	}
-	
+
 	public IJREInfo createJVMInfo() {
 		return new JREInfo(fModel);
 	}

@@ -36,8 +36,7 @@ public class JarManifestHeader implements IHeader {
 	 * @param errorReporter
 	 *            JarManinfestErrorReporter or null
 	 */
-	public JarManifestHeader(String name, String value, int lineNumber,
-			JarManifestErrorReporter errorReporter) {
+	public JarManifestHeader(String name, String value, int lineNumber, JarManifestErrorReporter errorReporter) {
 		fName = name;
 		fValue = value;
 		fLineNumber = lineNumber;
@@ -54,15 +53,12 @@ public class JarManifestHeader implements IHeader {
 		if (fManifestElements == null) {
 			if (getValue().trim().length() > 0) {
 				try {
-					fManifestElements = ManifestElement.parseHeader(getName(),
-							getValue());
+					fManifestElements = ManifestElement.parseHeader(getName(), getValue());
 				} catch (BundleException be) {
 					fManifestElements = new ManifestElement[0];
 					if (fErrorReporter != null) {
-						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_parseHeader, getName()); 
-						fErrorReporter.report(message, getLineNumber() + 1,
-								CompilerFlags.ERROR,
-								PDEMarkerFactory.CAT_FATAL);
+						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_parseHeader, getName());
+						fErrorReporter.report(message, getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					}
 				}
 			} else {

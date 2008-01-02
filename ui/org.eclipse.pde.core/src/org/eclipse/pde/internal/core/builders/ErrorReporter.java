@@ -25,9 +25,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.PDECore;
 
 public abstract class ErrorReporter {
-	
-	protected static final String[] BOOLEAN_VALUES = 
-		new String[] { "true", "false" };  //$NON-NLS-1$ //$NON-NLS-2$
+
+	protected static final String[] BOOLEAN_VALUES = new String[] {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private int fErrorCount;
 	protected IFile fFile;
@@ -42,8 +41,7 @@ public abstract class ErrorReporter {
 		}
 	}
 
-	protected IMarker addMarker(String message, int lineNumber, int severity,
-			int problemID, String category) {
+	protected IMarker addMarker(String message, int lineNumber, int severity, int problemID, String category) {
 		try {
 			IMarker marker = getMarkerFactory().createMarker(fFile, problemID, category);
 			marker.setAttribute(IMarker.MESSAGE, message);
@@ -70,9 +68,8 @@ public abstract class ErrorReporter {
 			return null;
 		}
 		try {
-			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);			
-			ITextFileBuffer textBuf = 
-				manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
+			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);
+			ITextFileBuffer textBuf = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
 			IDocument document = textBuf.getDocument();
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			return document;
@@ -91,7 +88,6 @@ public abstract class ErrorReporter {
 			fMarkerFactory = new PDEMarkerFactory();
 		return fMarkerFactory;
 	}
-
 
 	private void removeFileMarkers() {
 		try {
@@ -114,8 +110,7 @@ public abstract class ErrorReporter {
 		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION, category);
 	}
 
-	protected IMarker report(String message, int line, String compilerFlag,
-			int problemID, String category) {
+	protected IMarker report(String message, int line, String compilerFlag, int problemID, String category) {
 		int severity = CompilerFlags.getFlag(fProject, compilerFlag);
 		if (severity != CompilerFlags.IGNORE) {
 			return report(message, line, severity, problemID, category);
@@ -131,6 +126,6 @@ public abstract class ErrorReporter {
 		removeFileMarkers();
 		validate(monitor);
 	}
-	
+
 	protected abstract void validate(IProgressMonitor monitor);
 }

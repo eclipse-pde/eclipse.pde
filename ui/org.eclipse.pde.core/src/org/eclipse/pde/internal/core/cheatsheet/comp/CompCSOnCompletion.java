@@ -19,8 +19,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
  * CompCSOnCompletion
  *
  */
-public class CompCSOnCompletion extends CompCSDataObject implements
-		ICompCSOnCompletion {
+public class CompCSOnCompletion extends CompCSDataObject implements ICompCSOnCompletion {
 
 	/**
 	 * 

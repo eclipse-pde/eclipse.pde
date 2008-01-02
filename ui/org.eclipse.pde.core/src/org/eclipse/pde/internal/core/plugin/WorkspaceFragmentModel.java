@@ -15,8 +15,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 
-public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements
-		IFragmentModel {
+public class WorkspaceFragmentModel extends WorkspacePluginModelBase implements IFragmentModel {
 
 	private static final long serialVersionUID = 1L;
 

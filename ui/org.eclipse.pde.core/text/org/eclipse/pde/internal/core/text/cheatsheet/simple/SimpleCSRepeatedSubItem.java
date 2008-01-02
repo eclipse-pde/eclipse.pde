@@ -22,8 +22,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
  * SimpleCSRepeatedSubItem
  *
  */
-public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
-		ISimpleCSRepeatedSubItem {
+public class SimpleCSRepeatedSubItem extends SimpleCSObject implements ISimpleCSRepeatedSubItem {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +37,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#getSubItem()
 	 */
 	public ISimpleCSSubItem getSubItem() {
-		return (ISimpleCSSubItem)getChildNode(ISimpleCSSubItem.class);
+		return (ISimpleCSSubItem) getChildNode(ISimpleCSSubItem.class);
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +51,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void setSubItem(ISimpleCSSubItem subitem) {
-		setChildNode((IDocumentElementNode)subitem, ISimpleCSSubItem.class);
+		setChildNode((IDocumentElementNode) subitem, ISimpleCSSubItem.class);
 	}
 
 	/* (non-Javadoc)

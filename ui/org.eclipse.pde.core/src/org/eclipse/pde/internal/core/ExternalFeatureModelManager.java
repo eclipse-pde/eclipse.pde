@@ -34,8 +34,7 @@ import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
-public class ExternalFeatureModelManager implements
-		Preferences.IPropertyChangeListener {
+public class ExternalFeatureModelManager implements Preferences.IPropertyChangeListener {
 
 	/**
 	 * 
@@ -76,8 +75,7 @@ public class ExternalFeatureModelManager implements
 			IFeatureModel model = createModel(manifest);
 			if (model != null && model.isLoaded()) {
 				IFeature feature = model.getFeature();
-				uniqueFeatures.put(
-						feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
+				uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
 			}
 			monitor.worked(1);
 		}
@@ -117,8 +115,7 @@ public class ExternalFeatureModelManager implements
 
 	private void fireModelProviderEvent(IModelProviderEvent e) {
 		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			IModelProviderListener listener = (IModelProviderListener) iter
-					.next();
+			IModelProviderListener listener = (IModelProviderListener) iter.next();
 			listener.modelsChanged(e);
 		}
 	}
@@ -140,10 +137,10 @@ public class ExternalFeatureModelManager implements
 	public static IFeatureModel[] createModels(String platformHome, ArrayList additionalLocations, IProgressMonitor monitor) {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
-			
-			if (additionalLocations.size() == 0) 
+
+			if (additionalLocations.size() == 0)
 				return createModels(featureURLs, monitor);
-			
+
 			File[] dirs = new File[additionalLocations.size()];
 			for (int i = 0; i < dirs.length; i++) {
 				String directory = additionalLocations.get(i).toString();
@@ -152,24 +149,24 @@ public class ExternalFeatureModelManager implements
 					dir = new File(directory);
 				dirs[i] = dir;
 			}
-			
+
 			URL[] newUrls = PluginPathFinder.scanLocations(dirs);
-			
+
 			URL[] result = new URL[featureURLs.length + newUrls.length];
 			System.arraycopy(featureURLs, 0, result, 0, featureURLs.length);
 			System.arraycopy(newUrls, 0, result, featureURLs.length, newUrls.length);
 			return createModels(result, monitor);
-		} 
-		return new IFeatureModel[0];	
+		}
+		return new IFeatureModel[0];
 	}
-	
+
 	public void loadModels(String platformHome, String additionalLocations) {
 		IFeatureModel[] oldModels = fModels != null ? fModels : new IFeatureModel[0];
-		fModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);		
+		fModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
 		fPlatformHome = platformHome;
 		notifyListeners(oldModels, fModels);
 	}
-	
+
 	private ArrayList parseAdditionalLocations(String additionalLocations) {
 		ArrayList result = new ArrayList();
 		StringTokenizer tokenizer = new StringTokenizer(additionalLocations, ","); //$NON-NLS-1$
@@ -179,16 +176,14 @@ public class ExternalFeatureModelManager implements
 		return result;
 	}
 
-	private void notifyListeners(IFeatureModel[] oldModels,
-			IFeatureModel[] newFeatureModels) {
+	private void notifyListeners(IFeatureModel[] oldModels, IFeatureModel[] newFeatureModels) {
 		if (oldModels.length > 0 || newFeatureModels.length > 0) {
 			int type = 0;
 			if (oldModels.length > 0)
 				type |= IModelProviderEvent.MODELS_REMOVED;
 			if (newFeatureModels.length > 0)
 				type |= IModelProviderEvent.MODELS_ADDED;
-			ModelProviderEvent replacedFeatures = new ModelProviderEvent(this,
-					type, newFeatureModels, oldModels, null);
+			ModelProviderEvent replacedFeatures = new ModelProviderEvent(this, type, newFeatureModels, oldModels, null);
 			fireModelProviderEvent(replacedFeatures);
 		}
 
@@ -220,11 +215,11 @@ public class ExternalFeatureModelManager implements
 		fPref.addPropertyChangeListener(this);
 		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
 	}
-	
+
 	public synchronized void reload() {
 		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
 	}
-	
+
 	public IFeatureModel[] getModels() {
 		return fModels;
 	}

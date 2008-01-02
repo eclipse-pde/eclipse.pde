@@ -19,16 +19,17 @@ package org.eclipse.pde.internal.core.ischema;
  * initial value space (for example, "string", "boolean" etc.).
  */
 public interface ISchemaType {
-/**
- * Returns the logical name of this type.
- * @return name of the type
- */ 
-public String getName();
-/**
- * Returns the schema object in which this type is defined.
- * @return the top-level schema object
- */
-public ISchema getSchema();
+	/**
+	 * Returns the logical name of this type.
+	 * @return name of the type
+	 */
+	public String getName();
 
-public void setSchema(ISchema schema);
+	/**
+	 * Returns the schema object in which this type is defined.
+	 * @return the top-level schema object
+	 */
+	public ISchema getSchema();
+
+	public void setSchema(ISchema schema);
 }

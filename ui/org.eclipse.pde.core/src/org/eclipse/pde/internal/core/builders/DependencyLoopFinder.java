@@ -22,29 +22,23 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class DependencyLoopFinder {
 
-	public static DependencyLoop [] findLoops(IPlugin root) {
+	public static DependencyLoop[] findLoops(IPlugin root) {
 		return findLoops(root, null);
 	}
 
-	public static DependencyLoop [] findLoops(IPlugin root, IPlugin [] candidates) {
+	public static DependencyLoop[] findLoops(IPlugin root, IPlugin[] candidates) {
 		return findLoops(root, candidates, false);
 	}
-	
-	public static DependencyLoop [] findLoops(IPlugin root, IPlugin [] candidates, boolean onlyCandidates) {
+
+	public static DependencyLoop[] findLoops(IPlugin root, IPlugin[] candidates, boolean onlyCandidates) {
 		Vector loops = new Vector();
-		
+
 		Vector path = new Vector();
 		findLoops(loops, path, root, candidates, onlyCandidates, new Vector());
-		return (DependencyLoop[])loops.toArray(new DependencyLoop[loops.size()]);
+		return (DependencyLoop[]) loops.toArray(new DependencyLoop[loops.size()]);
 	}
-	
-	private static void findLoops(
-		Vector loops,
-		Vector path,
-		IPlugin subroot,
-		IPlugin[] candidates,
-		boolean onlyCandidates,
-		Vector exploredPlugins) {
+
+	private static void findLoops(Vector loops, Vector path, IPlugin subroot, IPlugin[] candidates, boolean onlyCandidates, Vector exploredPlugins) {
 		if (path.size() > 0) {
 			// test the path so far
 			// is the subroot the same as root - if yes, that's it
@@ -130,10 +124,11 @@ public class DependencyLoopFinder {
 
 	private static IPlugin findPlugin(String id) {
 		IPluginModelBase childModel = PluginRegistry.findModel(id);
-		if (childModel == null || !(childModel instanceof IPluginModel)) return null;
-		return (IPlugin)childModel.getPluginBase();
+		if (childModel == null || !(childModel instanceof IPluginModel))
+			return null;
+		return (IPlugin) childModel.getPluginBase();
 	}
-	
+
 	private static boolean isEquivalent(IPlugin left, IPlugin right) {
 		return left.getId().equals(right.getId());
 	}

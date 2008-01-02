@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IVersionable;
 import org.w3c.dom.Node;
 
-public class VersionableObject
-	extends IdentifiableObject
-	implements IVersionable {
+public class VersionableObject extends IdentifiableObject implements IVersionable {
 	private static final long serialVersionUID = 1L;
 	protected String version;
 
@@ -35,13 +33,12 @@ public class VersionableObject
 		this.version = version;
 		firePropertyChanged(this, P_VERSION, oldValue, version);
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion(newValue != null ? newValue.toString() : null);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	protected void reset() {

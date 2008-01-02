@@ -14,11 +14,11 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 
 public interface ITargetModel extends IModel, IModelChangeProvider {
-	
+
 	ITarget getTarget();
-	
+
 	ITargetModelFactory getFactory();
-	
+
 	String getInstallLocation();
 
 }

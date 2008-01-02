@@ -30,41 +30,39 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.BundleException;
 
 public class PDEPluginConverter {
-	
+
 	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, IProgressMonitor monitor) throws CoreException {
 		convertToOSGIFormat(project, target, dictionary, null, monitor);
 	}
-	
+
 	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
-			File outputFile = new File(project.getLocation().append(
-					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
+			File outputFile = new File(project.getLocation().append(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
 			File inputFile = new File(project.getLocation().toOSString());
 			PluginConverter converter = PluginConverter.getDefault();
 			converter.convertManifest(inputFile, outputFile, false, target, true, dictionary);
 
 			if (newProps != null && newProps.size() > 0)
 				converter.writeManifest(outputFile, getProperties(outputFile, newProps), false);
-		
+
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (PluginConversionException e) {
-		}  finally {
+		} finally {
 			monitor.done();
 		}
 	}
-	
+
 	public static void createBundleForFramework(IProject project, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
-			File outputFile = new File(project.getLocation().append(
-					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
+			File outputFile = new File(project.getLocation().append(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
 			File inputFile = new File(project.getLocation().toOSString());
 			PluginConverter converter = PluginConverter.getDefault();
 			double version = TargetPlatformHelper.getTargetVersion();
-			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatformHelper.getTargetVersionString();
+			String versionString = version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatformHelper.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
-			
+
 			Map prop = getProperties(outputFile, newProps);
-			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
+			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART);
 			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
 			converter.writeManifest(outputFile, prop, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -74,7 +72,7 @@ public class PDEPluginConverter {
 			monitor.done();
 		}
 	}
-	
+
 	private static Map getProperties(File file, HashMap newProps) {
 		try {
 			Map prop = ManifestElement.parseBundleManifest(new FileInputStream(file), null);
@@ -92,5 +90,5 @@ public class PDEPluginConverter {
 		}
 		return new HashMap();
 	}
-	
+
 }

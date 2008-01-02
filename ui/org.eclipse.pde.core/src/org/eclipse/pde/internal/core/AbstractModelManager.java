@@ -17,9 +17,9 @@ import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 
 public abstract class AbstractModelManager {
-	
+
 	private ArrayList fListeners = new ArrayList();
-	
+
 	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
 		fListeners.remove(listener);
 	}
@@ -28,7 +28,7 @@ public abstract class AbstractModelManager {
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
-	
+
 	public void fireModelProviderEvent(IModelProviderEvent event) {
 		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
 			((IModelProviderListener) iter.next()).modelsChanged(event);

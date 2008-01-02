@@ -28,7 +28,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction
 	private static final int F_MAX_PARAMS = 9;
 
 	// TODO: MP: TEO: MED: Verify translate of paramaters on write is okay - no translate before
-	
+
 	/**
 	 * @param model
 	 */
@@ -48,8 +48,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction
 	 */
 	public String getParam(int index) {
 		// Ensure in valid range
-		if ((index < 1) ||
-				(index > F_MAX_PARAMS)) {
+		if ((index < 1) || (index > F_MAX_PARAMS)) {
 			return null;
 		}
 		StringBuffer buffer = new StringBuffer(ATTRIBUTE_PARAM);
@@ -71,7 +70,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction
 			}
 			list.add(parameter);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -93,8 +92,7 @@ public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction
 	 */
 	public void setParam(String param, int index) {
 		// Ensure proper index
-		if ((index < 1) ||
-				(index > F_MAX_PARAMS)) {
+		if ((index < 1) || (index > F_MAX_PARAMS)) {
 			return;
 		}
 		StringBuffer buffer = new StringBuffer(ATTRIBUTE_PARAM);
@@ -137,5 +135,5 @@ public class SimpleCSAction extends SimpleCSRunObject implements ISimpleCSAction
 	public boolean isLeafNode() {
 		return true;
 	}
-	
+
 }

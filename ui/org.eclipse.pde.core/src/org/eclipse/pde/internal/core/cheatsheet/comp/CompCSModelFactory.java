@@ -29,14 +29,14 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 public class CompCSModelFactory implements ICompCSModelFactory {
 
 	private ICompCSModel fModel;
-	
+
 	/**
 	 * @param model
 	 */
 	public CompCSModelFactory(ICompCSModel model) {
 		fModel = model;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory#createCompCS()
 	 */

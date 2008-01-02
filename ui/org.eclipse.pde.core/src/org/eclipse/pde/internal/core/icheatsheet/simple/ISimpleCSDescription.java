@@ -22,10 +22,10 @@ public interface ISimpleCSDescription extends ISimpleCSObject {
 	 * @return
 	 */
 	public String getContent();
-	
+
 	/**
 	 * Content (element)
 	 * @param content
 	 */
-	public void setContent(String content);	
+	public void setContent(String content);
 }

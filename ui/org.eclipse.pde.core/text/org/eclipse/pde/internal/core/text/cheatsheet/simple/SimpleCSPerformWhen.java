@@ -23,8 +23,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
  * SimpleCSPerformWhen
  *
  */
-public class SimpleCSPerformWhen extends SimpleCSObject implements
-		ISimpleCSPerformWhen {
+public class SimpleCSPerformWhen extends SimpleCSObject implements ISimpleCSPerformWhen {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,7 +38,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#addExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void addExecutable(ISimpleCSRunObject executable) {
-		addChildNode((IDocumentElementNode)executable, true);
+		addChildNode((IDocumentElementNode) executable, true);
 	}
 
 	/* (non-Javadoc)
@@ -54,14 +53,14 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 */
 	public ISimpleCSRunObject[] getExecutables() {
 		ArrayList filteredChildren = getChildNodesList(ISimpleCSRunObject.class, true);
-		return (ISimpleCSRunObject[])filteredChildren.toArray(new ISimpleCSRunObject[filteredChildren.size()]);	
+		return (ISimpleCSRunObject[]) filteredChildren.toArray(new ISimpleCSRunObject[filteredChildren.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen#removeExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject)
 	 */
 	public void removeExecutable(ISimpleCSRunObject executable) {
-		removeChildNode((IDocumentElementNode)executable, true);
+		removeChildNode((IDocumentElementNode) executable, true);
 	}
 
 	/* (non-Javadoc)

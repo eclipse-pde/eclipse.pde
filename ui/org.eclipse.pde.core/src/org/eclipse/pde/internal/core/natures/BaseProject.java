@@ -41,8 +41,7 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 		}
 	}
 
-	private ICommand getBuilderCommand(IProjectDescription description, String builderId)
-			throws CoreException {
+	private ICommand getBuilderCommand(IProjectDescription description, String builderId) throws CoreException {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderId)) {
@@ -67,21 +66,17 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 			if (commands[i].getBuilderName().equals(builderID)) {
 				ICommand[] newCommands = new ICommand[commands.length - 1];
 				System.arraycopy(commands, 0, newCommands, 0, i);
-				System
-						.arraycopy(commands, i + 1, newCommands, i, commands.length - i
-								- 1);
+				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
 				description.setBuildSpec(newCommands);
 				return;
 			}
 		}
 	}
 
-	private void setBuilderCommand(IProjectDescription description, ICommand newCommand)
-			throws CoreException {
+	private void setBuilderCommand(IProjectDescription description, ICommand newCommand) throws CoreException {
 
 		ICommand[] oldCommands = description.getBuildSpec();
-		ICommand oldBuilderCommand = getBuilderCommand(description, newCommand
-				.getBuilderName());
+		ICommand oldBuilderCommand = getBuilderCommand(description, newCommand.getBuilderName());
 
 		ICommand[] newCommands;
 

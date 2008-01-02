@@ -16,13 +16,13 @@ import org.eclipse.pde.core.IWritable;
 import org.w3c.dom.Node;
 
 public interface ITargetObject extends IWritable, Serializable {
-	
+
 	ITargetModel getModel();
-	
+
 	void setModel(ITargetModel model);
-	
+
 	ITarget getTarget();
-	
+
 	void parse(Node node);
 
 }

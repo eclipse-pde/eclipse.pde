@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.IPluginModel;
  * 
  * @since 3.0
  */
-public interface IBundlePluginModel
-	extends IBundlePluginModelBase, IPluginModel {
+public interface IBundlePluginModel extends IBundlePluginModelBase, IPluginModel {
 
 }

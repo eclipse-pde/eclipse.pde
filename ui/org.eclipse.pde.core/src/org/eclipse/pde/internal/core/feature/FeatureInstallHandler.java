@@ -16,9 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.w3c.dom.Node;
 
-public class FeatureInstallHandler
-	extends FeatureObject
-	implements IFeatureInstallHandler {
+public class FeatureInstallHandler extends FeatureObject implements IFeatureInstallHandler {
 	private static final long serialVersionUID = 1L;
 	private String fLibrary;
 	private String fHandlerName;
@@ -56,8 +54,8 @@ public class FeatureInstallHandler
 		this.fHandlerName = handlerName;
 		firePropertyChanged(P_HANDLER_NAME, oldValue, handlerName);
 	}
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_LIBRARY)) {
 			setLibrary((String) newValue);
 		} else if (name.equals(P_HANDLER_NAME)) {
@@ -65,10 +63,12 @@ public class FeatureInstallHandler
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
+
 	protected void parse(Node node) {
 		fLibrary = getNodeAttribute(node, "library"); //$NON-NLS-1$
 		fHandlerName = getNodeAttribute(node, "handler"); //$NON-NLS-1$
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<install-handler"); //$NON-NLS-1$
 		if (fLibrary != null) {

@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
-	
+
 	protected FeatureExportOperation getExportOperation() {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;
@@ -35,12 +35,11 @@ public class FeatureExportTask extends BaseExportTask {
 		if (!new File(fDestination).isAbsolute()) {
 			File home = new File(getLocation().getFileName()).getParentFile();
 			info.destinationDirectory = new File(home, fDestination).toString();
-		}
-		else
+		} else
 			info.destinationDirectory = fDestination;
 		return new FeatureExportOperation(info);
 	}
-	
+
 	public void setFeatures(String features) {
 		StringTokenizer tok = new StringTokenizer(features, ","); //$NON-NLS-1$
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
@@ -51,7 +50,7 @@ public class FeatureExportTask extends BaseExportTask {
 			if (model != null)
 				list.add(model);
 		}
-		
-		fFeatures = (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);
+
+		fFeatures = (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 }

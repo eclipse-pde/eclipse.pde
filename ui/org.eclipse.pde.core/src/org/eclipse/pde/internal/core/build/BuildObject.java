@@ -32,7 +32,7 @@ public class BuildObject implements IBuildObject {
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!fModel.isEditable()) {
-			throwCoreException(PDECoreMessages.BuildObject_readOnlyException); 
+			throwCoreException(PDECoreMessages.BuildObject_readOnlyException);
 		}
 	}
 
@@ -45,12 +45,10 @@ public class BuildObject implements IBuildObject {
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-				IStatus.OK, message, null);
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-			throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 	}
 }

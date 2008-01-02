@@ -60,9 +60,8 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
  * JARs to the proxy project. This makes the libraries visible to the Java
  * model, and they can take part in various Java searches.
  */
-public class SearchablePluginsManager 
-		implements IFileAdapterFactory, IPluginModelListener, ISaveParticipant {
-	
+public class SearchablePluginsManager implements IFileAdapterFactory, IPluginModelListener, ISaveParticipant {
+
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
@@ -77,6 +76,7 @@ public class SearchablePluginsManager
 				handleDelta(e.getDelta());
 			}
 		}
+
 		private boolean handleDelta(IJavaElementDelta delta) {
 			Object element = delta.getElement();
 			if (element instanceof IJavaModel) {
@@ -124,15 +124,16 @@ public class SearchablePluginsManager
 					String value = properties.getProperty(KEY);
 					if (value != null) {
 						StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
-						while(stok.hasMoreTokens())
+						while (stok.hasMoreTokens())
 							fPluginIdSet.add(stok.nextToken());
 					}
 				}
 			}
-		} catch (IOException e) {} 
-		catch (CoreException e) {}				
+		} catch (IOException e) {
+		} catch (CoreException e) {
+		}
 	}
-	
+
 	public IJavaProject getProxyProject() {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
@@ -140,23 +141,23 @@ public class SearchablePluginsManager
 			if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
 				return JavaCore.create(project);
 			}
-			
-		} catch (CoreException e) {}
+
+		} catch (CoreException e) {
+		}
 		return null;
 	}
 
-	public void shutdown() throws CoreException {		
+	public void shutdown() throws CoreException {
 		// remove listener
 		JavaCore.removeElementChangedListener(fElementListener);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		if (fListeners != null)
-			fListeners.clear();	
+			fListeners.clear();
 	}
-	
-	public IClasspathEntry[] computeContainerClasspathEntries()
-			throws CoreException {
+
+	public IClasspathEntry[] computeContainerClasspathEntries() throws CoreException {
 		ArrayList result = new ArrayList();
-		
+
 		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < wModels.length; i++) {
 			IProject project = wModels[i].getUnderlyingResource().getProject();
@@ -184,12 +185,12 @@ public class SearchablePluginsManager
 				}
 			}
 		}
-		
+
 		if (result.size() > 1) {
 			// sort
 			Map map = new TreeMap();
 			for (int i = 0; i < result.size(); i++) {
-				IClasspathEntry entry = (IClasspathEntry)result.get(i);
+				IClasspathEntry entry = (IClasspathEntry) result.get(i);
 				String key = entry.getPath().lastSegment().toString();
 				if (map.containsKey(key)) {
 					key += System.currentTimeMillis();
@@ -227,12 +228,12 @@ public class SearchablePluginsManager
 					IPath path = root.getPath();
 					if (path.equals(jarPath))
 						return root;
-	
+
 				}
 			} catch (JavaModelException e) {
 			}
 		}
-	
+
 		// Find in other plugin (and fragments) projects dependencies
 		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < pluginModels.length; i++) {
@@ -252,17 +253,17 @@ public class SearchablePluginsManager
 
 		return null;
 	}
-	
+
 	private void checkForProxyProject() {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		try {
-			IProject project = 
-				root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+			IProject project = root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
 			if (!project.exists())
 				createProxyProject(new NullProgressMonitor());
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
-		
+
 	public void addToJavaSearch(IPluginModelBase[] models) {
 		checkForProxyProject();
 		PluginModelDelta delta = new PluginModelDelta();
@@ -280,7 +281,7 @@ public class SearchablePluginsManager
 			fireDelta(delta);
 		}
 	}
-	
+
 	public void removeFromJavaSearch(IPluginModelBase[] models) {
 		PluginModelDelta delta = new PluginModelDelta();
 		int size = fPluginIdSet.size();
@@ -298,20 +299,16 @@ public class SearchablePluginsManager
 			fireDelta(delta);
 		}
 	}
-	
+
 	public boolean isInJavaSearch(String symbolicName) {
 		return fPluginIdSet.contains(symbolicName);
 	}
-	
+
 	private void resetContainer() {
 		IJavaProject jProject = getProxyProject();
 		try {
 			if (jProject != null) {
-				JavaCore.setClasspathContainer(
-						PDECore.JAVA_SEARCH_CONTAINER_PATH, 
-						new IJavaProject[] {jProject}, 
-						new IClasspathContainer[]{new ExternalJavaSearchClasspathContainer()}, 
-						null);	
+				JavaCore.setClasspathContainer(PDECore.JAVA_SEARCH_CONTAINER_PATH, new IJavaProject[] {jProject}, new IClasspathContainer[] {new ExternalJavaSearchClasspathContainer()}, null);
 			}
 		} catch (JavaModelException e) {
 		}
@@ -323,25 +320,25 @@ public class SearchablePluginsManager
 			if (fPluginIdSet.contains(entries[i].getId())) {
 				fPluginIdSet.remove(entries[i].getId());
 			}
-		}	
-		resetContainer();		
+		}
+		resetContainer();
 	}
-	
+
 	private void fireDelta(PluginModelDelta delta) {
-		if (fListeners !=  null) {
+		if (fListeners != null) {
 			for (int i = 0; i < fListeners.size(); i++) {
-				((IPluginModelListener)fListeners.get(i)).modelsChanged(delta);
+				((IPluginModelListener) fListeners.get(i)).modelsChanged(delta);
 			}
 		}
 	}
-	
+
 	public void addPluginModelListener(IPluginModelListener listener) {
 		if (fListeners == null)
 			fListeners = new ArrayList();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
-	
+
 	public void removePluginModelListener(IPluginModelListener listener) {
 		if (fListeners != null)
 			fListeners.remove(listener);
@@ -362,7 +359,7 @@ public class SearchablePluginsManager
 	public void saving(ISaveContext context) throws CoreException {
 		if (context.getKind() != ISaveContext.FULL_SAVE)
 			return;
-		
+
 		// persist state
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
@@ -393,19 +390,18 @@ public class SearchablePluginsManager
 			}
 		}
 	}
-	
+
 	public IProject createProxyProject(IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IProject project = 
-			root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+		IProject project = root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
 		if (project.exists()) {
 			if (!project.isOpen()) {
 				project.open(monitor);
 			}
 			return project;
 		}
-		
-		monitor.beginTask(NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5); 
+
+		monitor.beginTask(NLS.bind(PDECoreMessages.SearchablePluginsManager_createProjectTaskName, SearchablePluginsManager.PROXY_PROJECT_NAME), 5);
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new SubProgressMonitor(monitor, 1));
 		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, new SubProgressMonitor(monitor, 1));
@@ -421,7 +417,8 @@ public class SearchablePluginsManager
 		classpath[1] = JavaCore.newContainerEntry(PDECore.JAVA_SEARCH_CONTAINER_PATH);
 		try {
 			project.setRawClasspath(classpath, monitor);
-		} catch (JavaModelException e) {}
+		} catch (JavaModelException e) {
+		}
 	}
-	
+
 }

@@ -24,22 +24,22 @@ import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class BundleValidationOperation implements IWorkspaceRunnable {
-	
+
 	private static StateObjectFactory FACTORY;
-	
+
 	private IPluginModelBase[] fModels;
 	private Dictionary[] fProperties;
 	private State fState;
-	
+
 	public BundleValidationOperation(IPluginModelBase[] models) {
-		this(models, new Dictionary[] { TargetPlatformHelper.getTargetEnvironment()});
+		this(models, new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()});
 	}
-	
+
 	public BundleValidationOperation(IPluginModelBase[] models, Dictionary[] properties) {
 		fModels = models;
 		fProperties = properties;
 	}
-	
+
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (FACTORY == null)
 			FACTORY = Platform.getPlatformAdmin().getFactory();
@@ -55,7 +55,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		fState.resolve(false);
 		monitor.done();
 	}
-	
+
 	public Map getResolverErrors() {
 		Map map = new HashMap();
 		BundleDescription[] bundles = fState.getBundles();
@@ -66,14 +66,13 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		}
 		return map;
 	}
-	
+
 	public State getState() {
 		return fState;
 	}
-	
+
 	public boolean hasErrors() {
-		return fState.getHighestBundleId() > -1 
-				&& fState.getBundles().length > fState.getResolvedBundles().length;
+		return fState.getHighestBundleId() > -1 && fState.getBundles().length > fState.getResolvedBundles().length;
 	}
-		
+
 }

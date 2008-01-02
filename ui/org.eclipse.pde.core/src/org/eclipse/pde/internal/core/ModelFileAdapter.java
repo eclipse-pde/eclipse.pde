@@ -21,7 +21,7 @@ public class ModelFileAdapter extends FileAdapter {
 		super(null, file, factory);
 		fModel = model;
 	}
-	
+
 	public IPluginModelBase getModel() {
 		return fModel;
 	}

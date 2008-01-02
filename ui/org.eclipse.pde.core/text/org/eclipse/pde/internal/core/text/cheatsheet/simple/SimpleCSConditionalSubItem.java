@@ -38,7 +38,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void addSubItem(ISimpleCSSubItem subitem) {
-		addChildNode((IDocumentElementNode)subitem, true);
+		addChildNode((IDocumentElementNode) subitem, true);
 	}
 
 	/* (non-Javadoc)
@@ -53,14 +53,14 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements ISimpl
 	 */
 	public ISimpleCSSubItem[] getSubItems() {
 		ArrayList filteredChildren = getChildNodesList(ISimpleCSSubItem.class, true);
-		return (ISimpleCSSubItem[])filteredChildren.toArray(new ISimpleCSSubItem[filteredChildren.size()]);	
+		return (ISimpleCSSubItem[]) filteredChildren.toArray(new ISimpleCSSubItem[filteredChildren.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void removeSubItem(ISimpleCSSubItem subitem) {
-		removeChildNode((IDocumentElementNode)subitem, true);
+		removeChildNode((IDocumentElementNode) subitem, true);
 	}
 
 	/* (non-Javadoc)

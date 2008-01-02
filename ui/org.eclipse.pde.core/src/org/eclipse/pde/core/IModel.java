@@ -9,10 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * A generic model. Classes that implement this interface are expected to be
  * able to:
@@ -38,6 +40,7 @@ public interface IModel extends IBaseModel {
 	 *         if not found
 	 */
 	String getResourceString(String key);
+
 	/**
 	 * Returns a workspace resource that this model is created from. Load/reload
 	 * operations are not directly connected with the resource (although they
@@ -53,12 +56,14 @@ public interface IModel extends IBaseModel {
 	 *         resource.
 	 */
 	public IResource getUnderlyingResource();
+
 	/**
 	 * Tests if this model is loaded and can be used.
 	 * 
 	 * @return <code>true</code> if the model has been loaded
 	 */
 	boolean isLoaded();
+
 	/**
 	 * Tests if this model is in sync with the storage object it was loaded
 	 * from. Models loaded from resources are in sync if underlying resources
@@ -68,6 +73,7 @@ public interface IModel extends IBaseModel {
 	 * @return <code>true</code> if the model is in sync with the file system.
 	 */
 	boolean isInSync();
+
 	/**
 	 * Returns the last modification time stamp. The model itself does not have
 	 * the time stamp. It is 'borrowed' from the underlying physical object.
@@ -75,6 +81,7 @@ public interface IModel extends IBaseModel {
 	 * @return the time stamp of the underlying physical object.
 	 */
 	long getTimeStamp();
+
 	/**
 	 * Loads the model directly from an underlying resource. This method does
 	 * nothing if this model has no underlying resource or if there is a buffer
@@ -84,6 +91,7 @@ public interface IModel extends IBaseModel {
 	 *             if errors are encountered during the loading.
 	 */
 	public void load() throws CoreException;
+
 	/**
 	 * Loads the model from the provided input stream. This method throws a
 	 * CoreException if errors are encountered during the loading. Upon
@@ -97,8 +105,8 @@ public interface IModel extends IBaseModel {
 	 * @throws CoreException
 	 *             if errors are encountered during the loading.
 	 */
-	public void load(InputStream source, boolean outOfSync)
-			throws CoreException;
+	public void load(InputStream source, boolean outOfSync) throws CoreException;
+
 	/**
 	 * Reload is a version of 'load' operation that has the following steps:
 	 * <ul>
@@ -121,8 +129,8 @@ public interface IModel extends IBaseModel {
 	 * @throws CoreException
 	 *             if errors are encountered during the reloading.
 	 */
-	public void reload(InputStream source, boolean outOfSync)
-			throws CoreException;
+	public void reload(InputStream source, boolean outOfSync) throws CoreException;
+
 	/**
 	 * Returns whether this model needs to react to changes in source and
 	 * reconcile them. Only model instances used in editors need to perform this

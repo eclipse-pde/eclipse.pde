@@ -24,7 +24,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	private String fProgramArgsMac = ""; //$NON-NLS-1$
 	private String fProgramArgsSol = ""; //$NON-NLS-1$
 	private String fProgramArgsWin = ""; //$NON-NLS-1$
-	
+
 	private String fVMArgs = ""; //$NON-NLS-1$
 	private String fVMArgsLin = ""; //$NON-NLS-1$
 	private String fVMArgsMac = ""; //$NON-NLS-1$
@@ -40,55 +40,55 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		if (args == null)
 			args = ""; //$NON-NLS-1$
 		switch (platform) {
-		case L_ARGS_ALL:
-			old = fProgramArgs;
-			fProgramArgs = args;
-			if (isEditable())
-				firePropertyChanged(P_PROG_ARGS, old, fProgramArgs);
-			break;
-		case L_ARGS_LINUX:
-			old = fProgramArgsLin;
-			fProgramArgsLin = args;
-			if (isEditable())
-				firePropertyChanged(P_PROG_ARGS_LIN, old, fProgramArgsLin);
-			break;
-		case L_ARGS_MACOS:
-			old = fProgramArgsMac;
-			fProgramArgsMac = args;
-			if (isEditable())
-				firePropertyChanged(P_PROG_ARGS_MAC, old, fProgramArgsMac);
-			break;
-		case L_ARGS_SOLAR:
-			old = fProgramArgsSol;
-			fProgramArgsSol = args;
-			if (isEditable())
-				firePropertyChanged(P_PROG_ARGS_SOL, old, fProgramArgsSol);
-			break;
-		case L_ARGS_WIN32:
-			old = fProgramArgsWin;
-			fProgramArgsWin = args;
-			if (isEditable())
-				firePropertyChanged(P_PROG_ARGS_WIN, old, fProgramArgsWin);
-			break;
+			case L_ARGS_ALL :
+				old = fProgramArgs;
+				fProgramArgs = args;
+				if (isEditable())
+					firePropertyChanged(P_PROG_ARGS, old, fProgramArgs);
+				break;
+			case L_ARGS_LINUX :
+				old = fProgramArgsLin;
+				fProgramArgsLin = args;
+				if (isEditable())
+					firePropertyChanged(P_PROG_ARGS_LIN, old, fProgramArgsLin);
+				break;
+			case L_ARGS_MACOS :
+				old = fProgramArgsMac;
+				fProgramArgsMac = args;
+				if (isEditable())
+					firePropertyChanged(P_PROG_ARGS_MAC, old, fProgramArgsMac);
+				break;
+			case L_ARGS_SOLAR :
+				old = fProgramArgsSol;
+				fProgramArgsSol = args;
+				if (isEditable())
+					firePropertyChanged(P_PROG_ARGS_SOL, old, fProgramArgsSol);
+				break;
+			case L_ARGS_WIN32 :
+				old = fProgramArgsWin;
+				fProgramArgsWin = args;
+				if (isEditable())
+					firePropertyChanged(P_PROG_ARGS_WIN, old, fProgramArgsWin);
+				break;
 		}
 	}
 
 	public String getProgramArguments(int platform) {
 		switch (platform) {
-		case L_ARGS_ALL:
-			return fProgramArgs;
-		case L_ARGS_LINUX:
-			return fProgramArgsLin;
-		case L_ARGS_MACOS:
-			return fProgramArgsMac;
-		case L_ARGS_SOLAR:
-			return fProgramArgsSol;
-		case L_ARGS_WIN32:
-			return fProgramArgsWin;
+			case L_ARGS_ALL :
+				return fProgramArgs;
+			case L_ARGS_LINUX :
+				return fProgramArgsLin;
+			case L_ARGS_MACOS :
+				return fProgramArgsMac;
+			case L_ARGS_SOLAR :
+				return fProgramArgsSol;
+			case L_ARGS_WIN32 :
+				return fProgramArgsWin;
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	public String getCompleteProgramArguments(String os) {
 		if (Platform.OS_WIN32.equals(os)) {
 			return getCompleteArgs(getProgramArguments(L_ARGS_WIN32), fProgramArgs);
@@ -102,57 +102,57 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			return getProgramArguments(L_ARGS_ALL);
 		}
 	}
-	
+
 	public void setVMArguments(String args, int platform) {
 		String old;
 		if (args == null)
 			args = ""; //$NON-NLS-1$
 		switch (platform) {
-		case L_ARGS_ALL:
-			old = fVMArgs;
-			fVMArgs = args;
-			if (isEditable())
-				firePropertyChanged(P_VM_ARGS, old, fVMArgs);
-			break;
-		case L_ARGS_LINUX:
-			old = fVMArgsLin;
-			fVMArgsLin = args;
-			if (isEditable())
-				firePropertyChanged(P_VM_ARGS_LIN, old, fVMArgsLin);
-			break;
-		case L_ARGS_MACOS:
-			old = fVMArgsMac;
-			fVMArgsMac = args;
-			if (isEditable())
-				firePropertyChanged(P_VM_ARGS_MAC, old, fVMArgsMac);
-			break;
-		case L_ARGS_SOLAR:
-			old = fVMArgsSol;
-			fVMArgsSol = args;
-			if (isEditable())
-				firePropertyChanged(P_VM_ARGS_SOL, old, fVMArgsSol);
-			break;
-		case L_ARGS_WIN32:
-			old = fVMArgsWin;
-			fVMArgsWin = args;
-			if (isEditable())
-				firePropertyChanged(P_VM_ARGS_WIN, old, fVMArgsWin);
-			break;
+			case L_ARGS_ALL :
+				old = fVMArgs;
+				fVMArgs = args;
+				if (isEditable())
+					firePropertyChanged(P_VM_ARGS, old, fVMArgs);
+				break;
+			case L_ARGS_LINUX :
+				old = fVMArgsLin;
+				fVMArgsLin = args;
+				if (isEditable())
+					firePropertyChanged(P_VM_ARGS_LIN, old, fVMArgsLin);
+				break;
+			case L_ARGS_MACOS :
+				old = fVMArgsMac;
+				fVMArgsMac = args;
+				if (isEditable())
+					firePropertyChanged(P_VM_ARGS_MAC, old, fVMArgsMac);
+				break;
+			case L_ARGS_SOLAR :
+				old = fVMArgsSol;
+				fVMArgsSol = args;
+				if (isEditable())
+					firePropertyChanged(P_VM_ARGS_SOL, old, fVMArgsSol);
+				break;
+			case L_ARGS_WIN32 :
+				old = fVMArgsWin;
+				fVMArgsWin = args;
+				if (isEditable())
+					firePropertyChanged(P_VM_ARGS_WIN, old, fVMArgsWin);
+				break;
 		}
 	}
 
 	public String getVMArguments(int platform) {
 		switch (platform) {
-		case L_ARGS_ALL:
-			return fVMArgs;
-		case L_ARGS_LINUX:
-			return fVMArgsLin;
-		case L_ARGS_MACOS:
-			return fVMArgsMac;
-		case L_ARGS_SOLAR:
-			return fVMArgsSol;
-		case L_ARGS_WIN32:
-			return fVMArgsWin;
+			case L_ARGS_ALL :
+				return fVMArgs;
+			case L_ARGS_LINUX :
+				return fVMArgsLin;
+			case L_ARGS_MACOS :
+				return fVMArgsMac;
+			case L_ARGS_SOLAR :
+				return fVMArgsSol;
+			case L_ARGS_WIN32 :
+				return fVMArgsWin;
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -177,7 +177,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			args = univArgs + " " + args; //$NON-NLS-1$
 		return args.trim();
 	}
-	
+
 	public void parse(Node node) {
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -207,7 +207,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			}
 		}
 	}
-	
+
 	private String getText(Node node) {
 		node.normalize();
 		Node text = node.getFirstChild();
@@ -216,8 +216,8 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
-	public void write(String indent,java.io.PrintWriter writer) {
+
+	public void write(String indent, java.io.PrintWriter writer) {
 		writer.println(indent + "<launcherArgs>"); //$NON-NLS-1$
 		if (fProgramArgs.length() > 0) {
 			writer.println(indent + "   " + "<" + P_PROG_ARGS + ">" + getWritableString(fProgramArgs) + "</" + P_PROG_ARGS + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -251,5 +251,5 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 		writer.println(indent + "</launcherArgs>"); //$NON-NLS-1$
 	}
-	
+
 }

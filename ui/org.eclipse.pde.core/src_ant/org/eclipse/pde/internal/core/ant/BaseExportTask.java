@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 
 public abstract class BaseExportTask extends Task {
-	
+
 	protected String fDestination;
 	protected String fZipFilename;
 	protected boolean fToDirectory;
@@ -33,17 +33,17 @@ public abstract class BaseExportTask extends Task {
 
 	public BaseExportTask() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
 	public void execute() throws BuildException {
 		if (fDestination == null)
 			throw new BuildException("No destination is specified"); //$NON-NLS-1$
-		
+
 		if (!fToDirectory && fZipFilename == null)
 			throw new BuildException("No zip file is specified"); //$NON-NLS-1$
-		
+
 		Job job = new Job(PDECoreMessages.BaseExportTask_pdeExport) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -54,7 +54,7 @@ public abstract class BaseExportTask extends Task {
 				return Status.OK_STATUS;
 			}
 		};
-		
+
 		// if running in ant runner, block until job is done.  Prevents Exiting before completed
 		// blocking will cause errors if done when running in regular runtime.
 		if (isAntRunner()) {
@@ -63,42 +63,42 @@ public abstract class BaseExportTask extends Task {
 				job.join();
 			} catch (InterruptedException e) {
 			}
-		} else 
+		} else
 			job.schedule(2000);
 	}
-	
+
 	public void setExportType(String type) {
 		fToDirectory = !"zip".equals(type); //$NON-NLS-1$
 	}
-	
+
 	public void setUseJARFormat(String useJarFormat) {
 		fUseJarFormat = "true".equals(useJarFormat); //$NON-NLS-1$
 	}
-	
+
 	public void setExportSource(String doExportSource) {
 		fExportSource = "true".equals(doExportSource); //$NON-NLS-1$
 	}
-	
+
 	public void setDestination(String destination) {
 		fDestination = destination;
 	}
-	
+
 	public void setFilename(String filename) {
 		fZipFilename = filename;
 	}
-	
+
 	public void setQualifier(String qualifier) {
 		fQualifier = qualifier;
 	}
-	
+
 	public boolean isAntRunner() {
-		String args [] = Platform.getCommandLineArgs();
+		String args[] = Platform.getCommandLineArgs();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-application")) //$NON-NLS-1$
-				return args[i+1].equals("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
+				return args[i + 1].equals("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
 		}
 		return false;
 	}
-	
+
 	protected abstract FeatureExportOperation getExportOperation();
 }

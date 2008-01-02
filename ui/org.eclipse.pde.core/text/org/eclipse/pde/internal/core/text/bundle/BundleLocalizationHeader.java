@@ -19,11 +19,11 @@ public class BundleLocalizationHeader extends SingleManifestHeader {
 	public BundleLocalizationHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setLocalization(String localization) {
 		setMainComponent(localization);
 	}
-	
+
 	public String getLocalization() {
 		return getMainComponent();
 	}

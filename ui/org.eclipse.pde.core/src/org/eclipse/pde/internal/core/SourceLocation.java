@@ -23,7 +23,7 @@ public class SourceLocation {
 	public IPath getPath() {
 		return path;
 	}
-	
+
 	public void setPath(IPath path) {
 		this.path = path;
 	}
@@ -35,19 +35,19 @@ public class SourceLocation {
 	public void setUserDefined(boolean userDefined) {
 		this.userDefined = userDefined;
 	}
-	
+
 	public String toString() {
 		return path.toOSString();
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj instanceof SourceLocation) {
-			SourceLocation object = (SourceLocation)obj;
+			SourceLocation object = (SourceLocation) obj;
 			return object.getPath().equals(path);
 		}
 		return false;
 	}
-	
+
 	public int hashCode() {
 		return path.hashCode();
 	}

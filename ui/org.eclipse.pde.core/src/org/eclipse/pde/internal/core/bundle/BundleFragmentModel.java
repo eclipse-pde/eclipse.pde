@@ -14,10 +14,8 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 
-public class BundleFragmentModel
-	extends BundlePluginModelBase
-	implements IBundleFragmentModel {
-	
+public class BundleFragmentModel extends BundlePluginModelBase implements IBundleFragmentModel {
+
 	private static final long serialVersionUID = 1L;
 
 	public IPluginBase createPluginBase() {
@@ -30,7 +28,7 @@ public class BundleFragmentModel
 	 * @see org.eclipse.pde.core.plugin.IFragmentModel#getFragment()
 	 */
 	public IFragment getFragment() {
-		return (IFragment)getPluginBase();
+		return (IFragment) getPluginBase();
 	}
 
 	/* (non-Javadoc)

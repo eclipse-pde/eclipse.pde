@@ -14,10 +14,10 @@ import org.eclipse.core.runtime.CoreException;
 
 public interface ISiteCategory extends ISiteObject {
 	String P_NAME = "name"; //$NON-NLS-1$
-	
+
 	String getName();
 
 	void setName(String name) throws CoreException;
-	
+
 	ISiteCategoryDefinition getDefinition();
 }

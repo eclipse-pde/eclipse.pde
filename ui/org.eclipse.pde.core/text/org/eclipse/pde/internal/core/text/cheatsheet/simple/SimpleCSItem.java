@@ -42,21 +42,21 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
-		addChildNode((IDocumentElementNode)subitem, true);
+		addChildNode((IDocumentElementNode) subitem, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
-		addChildNode((IDocumentElementNode)subitem, index, true);
+		addChildNode((IDocumentElementNode) subitem, index, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDescription()
 	 */
 	public ISimpleCSDescription getDescription() {
-		return (ISimpleCSDescription)getChildNode(ISimpleCSDescription.class);
+		return (ISimpleCSDescription) getChildNode(ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)
@@ -70,24 +70,21 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem) {
-		return (ISimpleCSSubItemObject)getNextSibling((IDocumentElementNode)subitem, 
-				ISimpleCSSubItemObject.class);
+		return (ISimpleCSSubItemObject) getNextSibling((IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getOnCompletion()
 	 */
 	public ISimpleCSOnCompletion getOnCompletion() {
-		return (ISimpleCSOnCompletion)getChildNode(ISimpleCSOnCompletion.class);
+		return (ISimpleCSOnCompletion) getChildNode(ISimpleCSOnCompletion.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getPreviousSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
-	public ISimpleCSSubItemObject getPreviousSibling(
-			ISimpleCSSubItemObject subitem) {
-		return (ISimpleCSSubItemObject)getPreviousSibling((IDocumentElementNode)subitem, 
-				ISimpleCSSubItemObject.class);
+	public ISimpleCSSubItemObject getPreviousSibling(ISimpleCSSubItemObject subitem) {
+		return (ISimpleCSSubItemObject) getPreviousSibling((IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +106,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public ISimpleCSSubItemObject[] getSubItems() {
 		ArrayList filteredChildren = getChildNodesList(ISimpleCSSubItemObject.class, true);
-		return (ISimpleCSSubItemObject[])filteredChildren.toArray(new ISimpleCSSubItemObject[filteredChildren.size()]);	
+		return (ISimpleCSSubItemObject[]) filteredChildren.toArray(new ISimpleCSSubItemObject[filteredChildren.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -130,35 +127,35 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem) {
-		return indexOf((IDocumentElementNode)subitem);
+		return indexOf((IDocumentElementNode) subitem);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem) {
-		return isFirstChildNode((IDocumentElementNode)subitem, ISimpleCSSubItemObject.class);
+		return isFirstChildNode((IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public boolean isLastSubItem(ISimpleCSSubItemObject subitem) {
-		return isLastChildNode((IDocumentElementNode)subitem, ISimpleCSSubItemObject.class);	
+		return isLastChildNode((IDocumentElementNode) subitem, ISimpleCSSubItemObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#moveSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject, int)
 	 */
 	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
-		moveChildNode((IDocumentElementNode)subitem, newRelativeIndex, true);
+		moveChildNode((IDocumentElementNode) subitem, newRelativeIndex, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
-		removeChildNode((IDocumentElementNode)subitem, true);
+		removeChildNode((IDocumentElementNode) subitem, true);
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +169,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDescription(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
-		setChildNode((IDocumentElementNode)description, ISimpleCSDescription.class);
+		setChildNode((IDocumentElementNode) description, ISimpleCSDescription.class);
 	}
 
 	/* (non-Javadoc)
@@ -186,7 +183,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setOnCompletion(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion)
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
-		setChildNode((IDocumentElementNode)onCompletion, ISimpleCSOnCompletion.class);
+		setChildNode((IDocumentElementNode) onCompletion, ISimpleCSOnCompletion.class);
 	}
 
 	/* (non-Javadoc)
@@ -235,14 +232,14 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
-		return (ISimpleCSRunContainerObject)getChildNode(ISimpleCSRunContainerObject.class);
+		return (ISimpleCSRunContainerObject) getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		setChildNode((IDocumentElementNode)executable, ISimpleCSRunContainerObject.class);
+		setChildNode((IDocumentElementNode) executable, ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)
@@ -265,9 +262,8 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	public List getChildren() {
 		// Add subitems
 		// Add unsupported perform-when if it is set as the executable
-		Class[] classes = { ISimpleCSSubItemObject.class,
-							ISimpleCSPerformWhen.class };
+		Class[] classes = {ISimpleCSSubItemObject.class, ISimpleCSPerformWhen.class};
 		return getChildNodesList(classes, true);
-	}	
-	
+	}
+
 }

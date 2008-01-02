@@ -22,30 +22,30 @@ public interface ICompCSTask extends ICompCSTaskObject {
 	 * @param param
 	 */
 	public void addFieldParam(ICompCSParam param);
-	
+
 	/**
 	 * Element: param
 	 * @param param
 	 */
 	public void removeFieldParam(ICompCSParam param);
-	
+
 	/**
 	 * Element: param
 	 * @return
 	 */
 	public ICompCSParam[] getFieldParams();
-	
+
 	/**
 	 * Element: param
 	 * @return
 	 */
 	public boolean hasFieldParams();
-	
+
 	/**
 	 * Element: param
 	 * @param name
 	 * @return
 	 */
 	public ICompCSParam getFieldParam(String name);
-	
+
 }

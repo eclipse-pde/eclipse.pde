@@ -12,29 +12,28 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 
-
 public class BundleClasspathHeader extends CompositeManifestHeader {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public BundleClasspathHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void addLibrary(String name) {
 		addManifestElement(name);
 	}
-	
-    /**
-     * @param name
-     * @param index
-     */
-    public void addLibrary(String name, int index) {
-    	addManifestElement(name, index);
-    }
-	
+
+	/**
+	 * @param name
+	 * @param index
+	 */
+	public void addLibrary(String name, int index) {
+		addManifestElement(name, index);
+	}
+
 	public void removeLibrary(String name) {
 		removeManifestElement(name);
 	}
-	
+
 }

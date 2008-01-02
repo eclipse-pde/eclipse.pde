@@ -31,22 +31,20 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 	public URL getSchemaURL() {
 		return fSchema != null ? fSchema.getURL() : null;
 	}
-	
+
 	public String getPointId() {
 		return fSchema == null ? null : fSchema.getQualifiedPointId();
 	}
-	
+
 	protected void loadSchema(boolean abbreviated) {
 		fSchema = new Schema(this, null, false);
 		try {
 			InputStream stream = fStorage.getContents();
 			fSchema.load(fStorage.getContents());
 			stream.close();
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			PDECore.logException(e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			PDECore.logException(e);
 		}
 	}
@@ -55,7 +53,7 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 		if (fSchema != null) {
 			fSchema.reload();
 		}
-	}	
+	}
 
 	public boolean isEnabled() {
 		return true;

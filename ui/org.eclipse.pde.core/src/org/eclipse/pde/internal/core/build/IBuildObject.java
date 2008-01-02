@@ -15,5 +15,6 @@ package org.eclipse.pde.internal.core.build;
  */
 public interface IBuildObject {
 	boolean isInTheModel();
+
 	void setInTheModel(boolean inTheModel);
 }

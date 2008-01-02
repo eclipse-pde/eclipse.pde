@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
+
 /**
  * This type of model is created by parsing the manifest file. If the file is
  * a workspace resource, it will be available as the underlying resource of the

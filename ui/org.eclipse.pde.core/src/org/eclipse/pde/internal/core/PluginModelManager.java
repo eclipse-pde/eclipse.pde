@@ -40,7 +40,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 
 public class PluginModelManager implements IModelProviderListener {
-	
+
 	/**
 	 * Subclass of ModelEntry
 	 * It adds methods that add/remove model from the entry.
@@ -50,7 +50,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 */
 	private class LocalModelEntry extends ModelEntry {
-		
+
 		/**
 		 * Constructs a model entry that will keep track
 		 * of all bundles in the workspace and target that share the same ID.
@@ -60,7 +60,7 @@ public class PluginModelManager implements IModelProviderListener {
 		public LocalModelEntry(String id) {
 			super(id);
 		}
-		
+
 		/**
 		 * Adds a model to the entry.  
 		 * An entry keeps two lists: one for workspace models 
@@ -91,11 +91,11 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 	}
 
-	private ExternalModelManager fExternalManager;  // keeps track of changes in target models
-	private WorkspacePluginModelManager fWorkspaceManager;  // keeps track of changes in the workspace
-	private PDEState fState;  // keeps the combined view of the target and workspace
-	
-	private Map fEntries;  // a master table keyed by plugin ID and the value is a ModelEntry
+	private ExternalModelManager fExternalManager; // keeps track of changes in target models
+	private WorkspacePluginModelManager fWorkspaceManager; // keeps track of changes in the workspace
+	private PDEState fState; // keeps the combined view of the target and workspace
+
+	private Map fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
 	private ArrayList fListeners; // a list of listeners interested in changes to the plug-in models
 	private ArrayList fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
 
@@ -109,13 +109,13 @@ public class PluginModelManager implements IModelProviderListener {
 		fExternalManager.addModelProviderListener(this);
 		fWorkspaceManager.addModelProviderListener(this);
 	}
-		
+
 	/**
 	 * React to changes in plug-ins in the workspace and/or target
 	 */
 	public void modelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
-		
+
 		// Removes from the master table and the state all workspace plug-ins that have been
 		// removed (project closed/deleted) from the workspace.
 		// Also if the taget location changes, all models from the old target are removed
@@ -125,18 +125,18 @@ public class PluginModelManager implements IModelProviderListener {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				String id = model.getPluginBase().getId();
 				if (id != null)
-					handleRemove(id, model, delta);	
+					handleRemove(id, model, delta);
 			}
 		}
-		
+
 		// reset the state
 		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
 			Object newState = e.getEventSource();
 			if (newState instanceof PDEState) {
-				fState = (PDEState)newState;
+				fState = (PDEState) newState;
 			}
 		}
-		
+
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -149,18 +149,18 @@ public class PluginModelManager implements IModelProviderListener {
 					handleAdd(id, model, delta);
 			}
 		}
-		
+
 		// add workspace plug-ins to the new state
 		// and remove their target counterparts from the state.
 		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
-			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();		
+			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
 			for (int i = 0; i < models.length; i++) {
 				addWorkspaceBundleToState(models[i]);
-			}	
+			}
 			if (models.length > 0)
 				fState.resolveState(true);
 		}
-		
+
 		// Update the bundle description of plug-ins whose state has changed.
 		// A plug-in changes state if the MANIFEST.MF has been touched.
 		// or if a plug-in on the Target Platform has changed state (from checked to unchecked,
@@ -168,26 +168,24 @@ public class PluginModelManager implements IModelProviderListener {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
 			for (int i = 0; i < changed.length; i++)
-				handleChange((IPluginModelBase)changed[i], delta);
+				handleChange((IPluginModelBase) changed[i], delta);
 		}
-		
+
 		if (fState != null) {
 			// if the target location has not changed, incrementally re-resolve the state after processing all the add/remove/modify changes
 			// Otherwise, the state is in a good resolved state
-			StateDelta stateDelta =	(e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 
-									? null 
-									: fState.resolveState((e.getEventTypes() & ICoreConstants.ENVIRONMENT_CHANGED) != 0 ? false : true);
+			StateDelta stateDelta = (e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 ? null : fState.resolveState((e.getEventTypes() & ICoreConstants.ENVIRONMENT_CHANGED) != 0 ? false : true);
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
 			updateAffectedEntries(stateDelta);
 			fireStateDelta(stateDelta);
-			
+
 		}
-		
+
 		// notify all interested listeners in the changes made to the master table of entries
 		fireDelta(delta);
 	}
-	
+
 	/**
 	 * Trigger a classpath update for all workspace plug-ins affected by the processed
 	 * model changes
@@ -205,8 +203,7 @@ public class PluginModelManager implements IModelProviderListener {
 				IProject project = models[i].getUnderlyingResource().getProject();
 				try {
 					if (project.hasNature(JavaCore.NATURE_ID)) {
-						map.put(JavaCore.create(project), 
-								new RequiredPluginsClasspathContainer(models[i]));
+						map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(models[i]));
 					}
 				} catch (CoreException e) {
 				}
@@ -240,42 +237,40 @@ public class PluginModelManager implements IModelProviderListener {
 						continue;
 					IJavaProject jProject = JavaCore.create(project);
 					if (map.containsKey(jProject))
-						continue;			
+						continue;
 					IBuild build = ClasspathUtilCore.getBuild(models[i]);
 					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
-						map.put(jProject, 
-								new RequiredPluginsClasspathContainer(models[i], build));
+						map.put(jProject, new RequiredPluginsClasspathContainer(models[i], build));
 					}
 				} catch (CoreException e) {
 				}
 			}
-		}	
-		
+		}
+
 		if (map.size() > 0) {
 			try {
 				// update classpath for all affected workspace plug-ins in one operation
-				IJavaProject[] jProjects = (IJavaProject[])map.keySet().toArray(new IJavaProject[map.size()]);
-				IClasspathContainer[] containers = (IClasspathContainer[])map.values().toArray(new IClasspathContainer[map.size()]);
-				JavaCore.setClasspathContainer(
-					PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProjects, containers, null);
+				IJavaProject[] jProjects = (IJavaProject[]) map.keySet().toArray(new IJavaProject[map.size()]);
+				IClasspathContainer[] containers = (IClasspathContainer[]) map.values().toArray(new IClasspathContainer[map.size()]);
+				JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProjects, containers, null);
 			} catch (JavaModelException e) {
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners in changes made to the master table
 	 * 
 	 * @param delta  the delta of changes
 	 */
 	private void fireDelta(PluginModelDelta delta) {
-		if (fListeners !=  null) {
+		if (fListeners != null) {
 			for (int i = 0; i < fListeners.size(); i++) {
-				((IPluginModelListener)fListeners.get(i)).modelsChanged(delta);
+				((IPluginModelListener) fListeners.get(i)).modelsChanged(delta);
 			}
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners in changes made to the resolver State
 	 * 
@@ -285,10 +280,10 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fStateListeners != null) {
 			ListIterator li = fStateListeners.listIterator();
 			while (li.hasNext())
-				((IStateDeltaListener)li.next()).stateResolved(delta);
+				((IStateDeltaListener) li.next()).stateResolved(delta);
 		}
 	}
-	
+
 	/**
 	 * Notify all interested listeners the cached PDEState has changed
 	 * 
@@ -298,7 +293,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fStateListeners != null) {
 			ListIterator li = fStateListeners.listIterator();
 			while (li.hasNext())
-				((IStateDeltaListener)li.next()).stateChanged(newState.getState());
+				((IStateDeltaListener) li.next()).stateChanged(newState.getState());
 		}
 	}
 
@@ -313,7 +308,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
-	
+
 	/**
 	 * Add a StateDelta listener to model manager
 	 * 
@@ -324,8 +319,8 @@ public class PluginModelManager implements IModelProviderListener {
 			fStateListeners = new ArrayList();
 		if (!fStateListeners.contains(listener))
 			fStateListeners.add(listener);
-	}	
-	
+	}
+
 	/**
 	 * Remove a listener from the model manager
 	 * 
@@ -335,7 +330,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fListeners != null)
 			fListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Remove a StateDelta listener from the model manager
 	 * 
@@ -345,7 +340,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fStateListeners != null)
 			fStateListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if neither the workspace nor target contains plug-ins;
 	 * <code>false</code> otherwise.
@@ -356,7 +351,7 @@ public class PluginModelManager implements IModelProviderListener {
 	public boolean isEmpty() {
 		return getEntryTable().size() == 0;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the master table has been initialized;
 	 * <code>false</code> otherwise.
@@ -367,7 +362,7 @@ public class PluginModelManager implements IModelProviderListener {
 	public boolean isInitialized() {
 		return fEntries != null;
 	}
-	
+
 	/**
 	 * Allow access to the table only through this getter.
 	 * It always calls initialize to make sure the table is initialized.
@@ -387,26 +382,23 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 */
 	private synchronized void initializeTable() {
-		if (fEntries != null) return;
+		if (fEntries != null)
+			return;
 		fEntries = Collections.synchronizedMap(new TreeMap());
-		
+
 		// Create a state that contains all bundles from the target and workspace
 		// If a workspace bundle has the same symbolic name as a target bundle,
 		// the target counterpart is subsequently removed from the state.
-		fState = new PDEState(
-						fWorkspaceManager.getPluginPaths(),
-						fExternalManager.getPluginPaths(),
-						true,
-						new NullProgressMonitor());
-		
+		fState = new PDEState(fWorkspaceManager.getPluginPaths(), fExternalManager.getPluginPaths(), true, new NullProgressMonitor());
+
 		// initialize the enabled/disabled state of target models
 		// based on whether the bundle is checked/unchecked on the Target Platform
 		// preference page.
 		fExternalManager.initializeModels(fState.getTargetModels());
-		
+
 		// add target models to the master table
 		boolean statechanged = addToTable(fExternalManager.getAllModels());
-		
+
 		// a state is combined only if the workspace plug-ins have not changed
 		// since the last shutdown of the workbench
 		if (fState.isCombined()) {
@@ -423,25 +415,25 @@ public class PluginModelManager implements IModelProviderListener {
 			// if we have no good cached state of workspace plug-ins,
 			// re-parse all/any workspace plug-ins
 			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
-			
+
 			// add workspace plug-ins to the master table
-			addToTable(models);	
-			
+			addToTable(models);
+
 			// add workspace plug-ins to the state
 			// and remove their target counterparts from the state.
 			for (int i = 0; i < models.length; i++) {
 				addWorkspaceBundleToState(models[i]);
 			}
-			
+
 			// resolve the state incrementally if any workspace plug-ins were found
 			if (models.length > 0)
 				fState.resolveState(true);
-			
+
 			// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
 			PDECore.getDefault().getExtensionsRegistry().targetReloaded();
 		}
 	}
-	
+
 	/**
 	 * Adds the given models to the corresponding ModelEntry in the master table
 	 * 
@@ -455,7 +447,7 @@ public class PluginModelManager implements IModelProviderListener {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			LocalModelEntry entry = (LocalModelEntry)fEntries.get(id);
+			LocalModelEntry entry = (LocalModelEntry) fEntries.get(id);
 			// create a new entry for the given ID if none already exists
 			if (entry == null) {
 				entry = new LocalModelEntry(id);
@@ -463,7 +455,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 			// add the model to the entry
 			entry.addModel(models[i]);
-			
+
 			// if the model is a disabled external (target) model, remove it from 
 			// the state and set the stateChanged flag to true
 			if (models[i].getUnderlyingResource() == null && !models[i].isEnabled()) {
@@ -472,8 +464,8 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 		return stateChanged;
-	}	
-	
+	}
+
 	/**
 	 * Add a workspace bundle to the state
 	 * 
@@ -485,30 +477,27 @@ public class PluginModelManager implements IModelProviderListener {
 			return;
 
 		// remove target models by the same ID from the state, if any
-		ModelEntry entry = (ModelEntry)fEntries.get(id);
+		ModelEntry entry = (ModelEntry) fEntries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();
 			for (int i = 0; i < models.length; i++)
 				fState.removeBundleDescription(models[i].getBundleDescription());
 		}
-		
+
 		// add new bundle to the state
 		fState.addBundle(model, false);
-		
+
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			// refresh host if a fragment is added to the state.
 			// this is necessary because the state will not re-resolve dynamically added fragments
 			// on its own
 			HostSpecification spec = desc.getHost();
-			if (spec != null 
-				&& ("true".equals(System.getProperty("pde.allowCycles")) //$NON-NLS-1$ //$NON-NLS-2$
-					|| ClasspathUtilCore.isPatchFragment(desc)
-					|| desc.getImportPackages().length > 0 
-					|| desc.getRequiredBundles().length > 0)) {
-				BundleDescription host = (BundleDescription)spec.getSupplier();
+			if (spec != null && ("true".equals(System.getProperty("pde.allowCycles")) //$NON-NLS-1$ //$NON-NLS-2$
+					|| ClasspathUtilCore.isPatchFragment(desc) || desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
+				BundleDescription host = (BundleDescription) spec.getSupplier();
 				if (host != null) {
-					ModelEntry hostEntry = (ModelEntry)fEntries.get(host.getName());
+					ModelEntry hostEntry = (ModelEntry) fEntries.get(host.getName());
 					if (hostEntry != null) {
 						fState.addBundle(hostEntry.getModel(host), true);
 					}
@@ -516,7 +505,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a model to the master table and state
 	 * 
@@ -524,8 +513,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param model  the model being added
 	 */
 	private void handleAdd(String id, IPluginModelBase model, PluginModelDelta delta) {
-		LocalModelEntry entry = (LocalModelEntry)getEntryTable().get(id);
-		
+		LocalModelEntry entry = (LocalModelEntry) getEntryTable().get(id);
+
 		// add model to the corresponding ModelEntry.  Create a new entry if necessary
 		if (entry == null) {
 			entry = new LocalModelEntry(id);
@@ -535,7 +524,7 @@ public class PluginModelManager implements IModelProviderListener {
 			delta.addEntry(entry, PluginModelDelta.CHANGED);
 		}
 		entry.addModel(model);
-		
+
 		// if the model added is a workspace model, add it to the state and
 		// remove all its external counterparts
 		if (model.getUnderlyingResource() != null) {
@@ -549,7 +538,7 @@ public class PluginModelManager implements IModelProviderListener {
 				fState.addBundleDescription(desc);
 		}
 	}
-	
+
 	/**
 	 * Removes the model from the ModelEntry and the state.  The entire model entry is removed
 	 * once the last model it retains is removed.
@@ -558,7 +547,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param model  the model to be removed
 	 */
 	private void handleRemove(String id, IPluginModelBase model, PluginModelDelta delta) {
-		LocalModelEntry entry = (LocalModelEntry)getEntryTable().get(id);
+		LocalModelEntry entry = (LocalModelEntry) getEntryTable().get(id);
 		if (entry != null) {
 			// remove model from the entry
 			entry.removeModel(model);
@@ -569,7 +558,7 @@ public class PluginModelManager implements IModelProviderListener {
 				getEntryTable().remove(id);
 				delta.addEntry(entry, PluginModelDelta.REMOVED);
 				return;
-			} else if (model.getUnderlyingResource() != null && !entry.hasWorkspaceModels()){
+			} else if (model.getUnderlyingResource() != null && !entry.hasWorkspaceModels()) {
 				// re-add enabled external counterparts to the state, if the last workspace
 				// plug-in with a particular symbolic name is removed
 				IPluginModelBase[] external = entry.getExternalModels();
@@ -581,7 +570,7 @@ public class PluginModelManager implements IModelProviderListener {
 			delta.addEntry(entry, PluginModelDelta.CHANGED);
 		}
 	}
-	
+
 	/**
 	 * Update the state and master table to account for the change in the given model
 	 * 
@@ -591,12 +580,12 @@ public class PluginModelManager implements IModelProviderListener {
 		BundleDescription desc = model.getBundleDescription();
 		String oldID = desc == null ? null : desc.getSymbolicName();
 		String newID = model.getPluginBase().getId();
-		
+
 		// if the model still has no symbolic name (ie. a MANIFEST.MF without the
 		// Bundle-SymbolicName header), keep ignoring it
 		if (oldID == null && newID == null)
 			return;
-		
+
 		// if the model used to lack a Bundle-SymbolicName header and now it has one,
 		// treat it as a regular model addition
 		if (oldID == null && newID != null) {
@@ -635,9 +624,9 @@ public class PluginModelManager implements IModelProviderListener {
 			// remove the model from the old entry, and add the model to the new entry
 			handleRemove(oldID, model, delta);
 			handleAdd(newID, model, delta);
-		}		
+		}
 	}
-		
+
 	/**
 	 * Returns a model entry containing all workspace and target plug-ins by the given ID
 	 * 
@@ -647,8 +636,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public ModelEntry findEntry(String id) {
 		if ("system.bundle".equals(id)) //$NON-NLS-1$
-			id = "org.eclipse.osgi";  //$NON-NLS-1$
-		return id == null ? null : (ModelEntry)getEntryTable().get(id);
+			id = "org.eclipse.osgi"; //$NON-NLS-1$
+		return id == null ? null : (ModelEntry) getEntryTable().get(id);
 	}
 
 	/**
@@ -675,7 +664,7 @@ public class PluginModelManager implements IModelProviderListener {
 		ModelEntry entry = findEntry(id);
 		return entry == null ? null : entry.getModel();
 	}
-	
+
 	/**
 	 * Returns the plug-in model corresponding to the given project, or <code>null</code>
 	 * if the project does not represent a plug-in project or if it contains a manifest file
@@ -689,7 +678,7 @@ public class PluginModelManager implements IModelProviderListener {
 		initializeTable();
 		return fWorkspaceManager.getPluginModel(project);
 	}
-	
+
 	/**
 	 * Returns a plug-in model associated with the given bundle description
 	 * 
@@ -702,7 +691,7 @@ public class PluginModelManager implements IModelProviderListener {
 		ModelEntry entry = (desc != null) ? findEntry(desc.getSymbolicName()) : null;
 		return entry == null ? null : entry.getModel(desc);
 	}
-	
+
 	/**
 	 * Returns all plug-ins and fragments in the workspace as well as all plug-ins and fragments that are
 	 * checked on the Target Platform preference page.
@@ -742,14 +731,14 @@ public class PluginModelManager implements IModelProviderListener {
 		ArrayList result = new ArrayList(size);
 		Iterator iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
-			ModelEntry entry = (ModelEntry)iter.next();
+			ModelEntry entry = (ModelEntry) iter.next();
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int i = 0; i < models.length; i++) {
 				if (models[i] instanceof IPluginModel || includeFragments)
 					result.add(models[i]);
 			}
 		}
-		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**
@@ -769,7 +758,7 @@ public class PluginModelManager implements IModelProviderListener {
 	public IPluginModelBase[] getAllModels() {
 		return getAllModels(true);
 	}
-	
+
 	/**
 	 * Returns all plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
 	 * and (possibly) fragments, regardless whether or not they are
@@ -787,24 +776,22 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return ll plug-ins and (possibly) fragments in the workspace as well as all plug-ins 
 	 * and (possibly) fragments, regardless whether or not they are
 	 * checked on the Target Platform preference page.
-	 */	
+	 */
 	public IPluginModelBase[] getAllModels(boolean includeFragments) {
 		int size = getEntryTable().size();
 		ArrayList result = new ArrayList(size);
 		Iterator iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
-			ModelEntry entry = (ModelEntry)iter.next();
-			IPluginModelBase[] models =  entry.hasWorkspaceModels() 
-											? entry.getWorkspaceModels() 
-											: entry.getExternalModels();
+			ModelEntry entry = (ModelEntry) iter.next();
+			IPluginModelBase[] models = entry.hasWorkspaceModels() ? entry.getWorkspaceModels() : entry.getExternalModels();
 			for (int i = 0; i < models.length; i++) {
 				if (models[i] instanceof IPluginModel || includeFragments)
 					result.add(models[i]);
 			}
 		}
-		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
-	
+
 	/**
 	 * Returns all plug-in models in the target platform
 	 * 
@@ -814,7 +801,7 @@ public class PluginModelManager implements IModelProviderListener {
 		initializeTable();
 		return fExternalManager.getAllModels();
 	}
-	
+
 	/**
 	 * Returns all plug-in models in the workspace
 	 * 
@@ -824,7 +811,7 @@ public class PluginModelManager implements IModelProviderListener {
 		initializeTable();
 		return fWorkspaceManager.getPluginModels();
 	}
-	
+
 	/**
 	 * Return the model manager that keeps track of plug-ins in the target platform
 	 * 
@@ -844,7 +831,7 @@ public class PluginModelManager implements IModelProviderListener {
 		initializeTable();
 		return fState;
 	}
-	
+
 	/**
 	 * Sets the PDE state.  This method is meant to be called when the target platform
 	 * location changes.
@@ -862,16 +849,11 @@ public class PluginModelManager implements IModelProviderListener {
 		IModel[] added = state.getTargetModels();
 		if (added.length > 0)
 			type |= IModelProviderEvent.MODELS_ADDED;
-		modelsChanged(new ModelProviderEvent(
-						state,
-						type,
-						added,
-						removed,
-						new IModel[0]));
+		modelsChanged(new ModelProviderEvent(state, type, added, removed, new IModel[0]));
 
 		fireStateChanged(state);
 	}
-	
+
 	/**
 	 * Perform cleanup upon shutting down
 	 */
@@ -885,11 +867,11 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fStateListeners != null)
 			fStateListeners.clear();
 	}
-	
+
 	public void addExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.addExtensionDeltaListener(listener);
 	}
-	
+
 	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.removeExtensionDeltaListener(listener);
 	}

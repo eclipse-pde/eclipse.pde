@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.text.toc;
 
-
 /**
  * The TocAnchor class represents an anchor, which is used as a point
  * of inclusion for other tables of contents.
@@ -25,7 +24,7 @@ package org.eclipse.pde.internal.core.text.toc;
 public class TocAnchor extends TocObject {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * Constructs an anchor with the given model and parent.
 	 * 
@@ -75,7 +74,7 @@ public class TocAnchor extends TocObject {
 	 * 
 	 * @param id The new ID to associate with the anchor
 	 */
-	public void setFieldAnchorId(String id)
-	{	setXMLAttribute(ATTRIBUTE_ID, id);
+	public void setFieldAnchorId(String id) {
+		setXMLAttribute(ATTRIBUTE_ID, id);
 	}
 }

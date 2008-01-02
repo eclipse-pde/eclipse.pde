@@ -26,17 +26,12 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
-	public void initialize(IPath containerPath, IJavaProject javaProject)
-		throws CoreException {
+	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		IProject project = javaProject.getProject();
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		JavaCore.setClasspathContainer(
-				PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
-				new IJavaProject[] { javaProject },
-				new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)},
-				null);
+		JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)}, null);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getComparisonID(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
@@ -44,7 +39,7 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	public Object getComparisonID(IPath containerPath, IJavaProject project) {
 		if (containerPath == null || project == null)
 			return null;
-			
+
 		return containerPath.segment(0) + "/" + project.getPath().segment(0); //$NON-NLS-1$
 	}
 

@@ -44,15 +44,13 @@ public interface ISite extends ISiteObject {
 
 	void addArchives(ISiteArchive[] archives) throws CoreException;
 
-	void addCategoryDefinitions(ISiteCategoryDefinition[] defs)
-			throws CoreException;
+	void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
 
 	void removeFeatures(ISiteFeature[] features) throws CoreException;
 
 	void removeArchives(ISiteArchive[] archives) throws CoreException;
 
-	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs)
-			throws CoreException;
+	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
 
 	ISiteFeature[] getFeatures();
 

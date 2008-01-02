@@ -63,7 +63,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 			String oldValue = getPluginId();
 			IManifestHeader header = getManifestHeader(Constants.FRAGMENT_HOST);
 			if (header instanceof FragmentHostHeader) {
-				((FragmentHostHeader)header).setHostId(id);
+				((FragmentHostHeader) header).setHostId(id);
 			} else {
 				bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(id, getPluginVersion()));
 			}
@@ -80,7 +80,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 			String oldValue = getPluginVersion();
 			IManifestHeader header = getManifestHeader(Constants.FRAGMENT_HOST);
 			if (header instanceof FragmentHostHeader) {
-				((FragmentHostHeader)header).setHostRange(version);
+				((FragmentHostHeader) header).setHostRange(version);
 			} else {
 				bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(getPluginId(), version));
 			}
@@ -93,18 +93,18 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	 */
 	public void setRule(int rule) throws CoreException {
 	}
-	
+
 	private String writeFragmentHost(String id, String version) {
 		StringBuffer buffer = new StringBuffer();
 		if (id != null)
 			buffer.append(id);
-		
+
 		if (version != null && version.trim().length() > 0) {
 			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return buffer.toString();
 	}
-	
+
 	private String getAttribute(String key, String attribute) {
 		IBundle bundle = getBundle();
 		if (bundle == null)
@@ -118,9 +118,9 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 				return elements[0].getAttribute(attribute);
 		} catch (BundleException e) {
 		}
-		return null;				
+		return null;
 	}
-	
+
 	public boolean isPatch() {
 		return "true".equals(getValue(ICoreConstants.PATCH_FRAGMENT, false)); //$NON-NLS-1$ 
 	}

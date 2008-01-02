@@ -56,11 +56,11 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	private Map fRequiredPlugins = new HashMap();
 	private List fMissingFeatures = new ArrayList();
 	private IPath fPath = null;
-	
+
 	public LoadTargetOperation(ITarget target) {
-		this(target, (IPath)null);
+		this(target, (IPath) null);
 	}
-	
+
 	public LoadTargetOperation(ITarget target, IPath workspaceLoc) {
 		fTarget = target;
 		fPath = workspaceLoc;
@@ -71,7 +71,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			Preferences preferences = PDECore.getDefault().getPluginPreferences();
 			monitor.beginTask(PDECoreMessages.LoadTargetOperation_mainTaskName, 100);
 			loadEnvironmentInfo(preferences, new SubProgressMonitor(monitor, 5));
-			loadProgramArgs(preferences, new SubProgressMonitor(monitor,5));
+			loadProgramArgs(preferences, new SubProgressMonitor(monitor, 5));
 			loadJREInfo(preferences, new SubProgressMonitor(monitor, 15));
 			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
 			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
@@ -81,15 +81,15 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			monitor.done();
 		}
 	}
-		
+
 	public Object[] getMissingPlugins() {
 		return fRequiredPlugins.values().toArray();
 	}
-	
+
 	public Object[] getMissingFeatures() {
 		return fMissingFeatures.toArray();
 	}
-	
+
 	protected void loadProgramArgs(Preferences pref, IProgressMonitor monitor) {
 		IArgumentsInfo args = fTarget.getArguments();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_argsTaskName, 2);
@@ -98,7 +98,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		pref.setValue(ICoreConstants.VM_ARGS, (args != null) ? args.getVMArguments() : ""); //$NON-NLS-1$
 		monitor.done();
 	}
-	
+
 	protected void loadEnvironmentInfo(Preferences pref, IProgressMonitor monitor) {
 		IEnvironmentInfo env = fTarget.getEnvironment();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_envTaskName, 1);
@@ -115,7 +115,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		}
 		monitor.done();
 	}
-	
+
 	protected void loadJREInfo(Preferences pref, IProgressMonitor monitor) {
 		ITargetJRE jreInfo = fTarget.getTargetJREInfo();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_jreTaskName, 1);
@@ -130,7 +130,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		}
 		monitor.done();
 	}
-	
+
 	private IVMInstall getVMInstall(String name) {
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
@@ -142,7 +142,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		}
 		return JavaRuntime.getDefaultVMInstall();
 	}
-	
+
 	protected void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {
 		IImplicitDependenciesInfo info = fTarget.getImplicitPluginsInfo();
 		if (info != null) {
@@ -159,13 +159,13 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		}
 		monitor.done();
 	}
-	
+
 	protected void loadPlugins(Preferences pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_loadPluginsTaskName, 100);
 		ILocationInfo info = fTarget.getLocationInfo();
 		String currentPath = pref.getString(ICoreConstants.PLATFORM_PATH);
 		String path;
-		if (info == null || info.useDefault()) { 
+		if (info == null || info.useDefault()) {
 			path = TargetPlatform.getDefaultLocation();
 		} else {
 			try {
@@ -173,86 +173,83 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 				path = manager.performStringSubstitution(info.getPath());
 			} catch (CoreException e) {
 				return;
-			}			
+			}
 		}
 		monitor.worked(10);
 		// TODO in 3.4, check timestamp of plug-ins to see if anything changed and a reload is required (bug 181659)
-//		if (!new Path(path).equals(new Path(currentPath)) || !areAdditionalLocationsEqual(pref)) {
-			// reload required
-			List additional = getAdditionalLocs();
-			handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
-			
-			// update preferences (Note: some preferences updated in handleReload())
-			pref.setValue(ICoreConstants.PLATFORM_PATH, path);
-			String mode =
-				new Path(path).equals(new Path(TargetPlatform.getDefaultLocation()))
-				? ICoreConstants.VALUE_USE_THIS
-						: ICoreConstants.VALUE_USE_OTHER;
-			pref.setValue(ICoreConstants.TARGET_MODE, mode);
-			
-			ListIterator li = additional.listIterator();
-			StringBuffer buffer = new StringBuffer();
-			while (li.hasNext()) 
-				buffer.append(li.next()).append(","); //$NON-NLS-1$
-			if (buffer.length() > 0) 
-				buffer.setLength(buffer.length() - 1);
-			pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
-			
-			String newValue = currentPath;
-			for (int i = 0; i < 4; i++) {
-				String value = pref.getString(ICoreConstants.SAVED_PLATFORM + i);
-				pref.setValue(ICoreConstants.SAVED_PLATFORM + i, newValue);
-				if (!value.equals(currentPath)) 
-					newValue = value;
-				else
-					break;
-			}	
-//		} else {
-//			PDECore core = PDECore.getDefault();
-//			IPluginModelBase[] changed = handlePluginSelection(TargetPlatformHelper.getPDEState(), core.getFeatureModelManager(),
-//					pref, new SubProgressMonitor(monitor,85));
-//			if (changed.length > 0) {
-//				ExternalModelManager pluginManager = core.getModelManager().getExternalModelManager();
-//				pluginManager.fireModelProviderEvent(
-//						new ModelProviderEvent(
-//							pluginManager,
-//							IModelProviderEvent.MODELS_CHANGED,
-//							null,
-//							null,
-//							changed));
-//			}
-//		}
+		//		if (!new Path(path).equals(new Path(currentPath)) || !areAdditionalLocationsEqual(pref)) {
+		// reload required
+		List additional = getAdditionalLocs();
+		handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
+
+		// update preferences (Note: some preferences updated in handleReload())
+		pref.setValue(ICoreConstants.PLATFORM_PATH, path);
+		String mode = new Path(path).equals(new Path(TargetPlatform.getDefaultLocation())) ? ICoreConstants.VALUE_USE_THIS : ICoreConstants.VALUE_USE_OTHER;
+		pref.setValue(ICoreConstants.TARGET_MODE, mode);
+
+		ListIterator li = additional.listIterator();
+		StringBuffer buffer = new StringBuffer();
+		while (li.hasNext())
+			buffer.append(li.next()).append(","); //$NON-NLS-1$
+		if (buffer.length() > 0)
+			buffer.setLength(buffer.length() - 1);
+		pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
+
+		String newValue = currentPath;
+		for (int i = 0; i < 4; i++) {
+			String value = pref.getString(ICoreConstants.SAVED_PLATFORM + i);
+			pref.setValue(ICoreConstants.SAVED_PLATFORM + i, newValue);
+			if (!value.equals(currentPath))
+				newValue = value;
+			else
+				break;
+		}
+		//		} else {
+		//			PDECore core = PDECore.getDefault();
+		//			IPluginModelBase[] changed = handlePluginSelection(TargetPlatformHelper.getPDEState(), core.getFeatureModelManager(),
+		//					pref, new SubProgressMonitor(monitor,85));
+		//			if (changed.length > 0) {
+		//				ExternalModelManager pluginManager = core.getModelManager().getExternalModelManager();
+		//				pluginManager.fireModelProviderEvent(
+		//						new ModelProviderEvent(
+		//							pluginManager,
+		//							IModelProviderEvent.MODELS_CHANGED,
+		//							null,
+		//							null,
+		//							changed));
+		//			}
+		//		}
 		monitor.done();
 	}
-	
+
 	protected void loadAdditionalPreferences(Preferences pref) {
 		if (fPath == null)
 			return;
 		String newValue = "${workspace_loc:".concat(fPath.toOSString()).concat("}"); //$NON-NLS-1$ //$NON-NLS-2$
 		pref.setValue(ICoreConstants.TARGET_PROFILE, newValue);
 	}
-	
-//	private boolean areAdditionalLocationsEqual(Preferences pref) {
-//		IAdditionalLocation[] addtionalLocs = fTarget.getAdditionalDirectories();
-//		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
-//		StringTokenizer tokenzier = new StringTokenizer(value);
-//		if (addtionalLocs.length != tokenzier.countTokens()) 
-//			return false;
-//		while (tokenzier.hasMoreTokens()) {
-//			boolean found = false;
-//			String location = tokenzier.nextToken();
-//			for (int i = 0; i < addtionalLocs.length; i++) {
-//				if (addtionalLocs[i].getPath().equals(location)) {
-//					found = true;
-//					break;
-//				}
-//			}
-//			if (!found) 
-//				return false;
-//		}
-//		return true;
-//	}
-	
+
+	//	private boolean areAdditionalLocationsEqual(Preferences pref) {
+	//		IAdditionalLocation[] addtionalLocs = fTarget.getAdditionalDirectories();
+	//		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+	//		StringTokenizer tokenzier = new StringTokenizer(value);
+	//		if (addtionalLocs.length != tokenzier.countTokens()) 
+	//			return false;
+	//		while (tokenzier.hasMoreTokens()) {
+	//			boolean found = false;
+	//			String location = tokenzier.nextToken();
+	//			for (int i = 0; i < addtionalLocs.length; i++) {
+	//				if (addtionalLocs[i].getPath().equals(location)) {
+	//					found = true;
+	//					break;
+	//				}
+	//			}
+	//			if (!found) 
+	//				return false;
+	//		}
+	//		return true;
+	//	}
+
 	private List getAdditionalLocs() {
 		ArrayList additional = new ArrayList();
 		IAdditionalLocation[] locations = fTarget.getAdditionalDirectories();
@@ -262,41 +259,41 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 				additional.add(manager.performStringSubstitution(locations[i].getPath()));
 			} catch (CoreException e) {
 				additional.add(locations[i]);
-			}			
+			}
 		}
 		return additional;
 	}
-	
+
 	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_reloadTaskName, 85);
 		URL[] paths = getURLs(targetLocation, additionalLocations);
 		PDEState state = new PDEState(paths, true, new SubProgressMonitor(monitor, 45));
-		
+
 		ExternalFeatureModelManager featureManager = getFeatureManager(targetLocation, additionalLocations);
 		IFeatureModel[] models = featureManager.getModels();
 		Map features = new HashMap();
-		for (int i = 0; i < models.length; i++) 
+		for (int i = 0; i < models.length; i++)
 			features.put(models[i].getFeature().getId(), models[i]);
 		monitor.worked(5);
 		models = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		for (int i = 0; i < models.length; i++) 
+		for (int i = 0; i < models.length; i++)
 			features.put(models[i].getFeature().getId(), models[i]);
 		monitor.worked(5);
-		
-		handlePluginSelection(state, features, pref, new SubProgressMonitor(monitor,25));
-		
+
+		handlePluginSelection(state, features, pref, new SubProgressMonitor(monitor, 25));
+
 		Job job = new TargetPlatformResetJob(state);
-		job.schedule();		
+		job.schedule();
 		monitor.done();
 	}
-	
+
 	private URL[] getURLs(String targetLocation, List additionalLocations) {
 		int length = additionalLocations.size();
 		File[] locations = new File[2 * length + 2];
 		ListIterator li = additionalLocations.listIterator();
-		while (li.hasNext())  {
-			File dir = new File((String)li.next());
-			locations[2 *length] = dir;
+		while (li.hasNext()) {
+			File dir = new File((String) li.next());
+			locations[2 * length] = dir;
 			locations[2 * length + 1] = new File(dir, "plugins"); //$NON-NLS-1$
 			--length;
 		}
@@ -305,11 +302,11 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		locations[1] = new File(targetDir, "plugins"); //$NON-NLS-1$
 		return PluginPathFinder.scanLocations(locations);
 	}
-	
+
 	private ExternalFeatureModelManager getFeatureManager(String targetLocation, List additionalLocations) {
 		StringBuffer buffer = new StringBuffer();
 		ListIterator li = additionalLocations.listIterator();
-		while (li.hasNext()) 
+		while (li.hasNext())
 			buffer.append(li.next()).append(',');
 		if (buffer.length() > 0)
 			buffer.setLength(buffer.length() - 1);
@@ -317,14 +314,14 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		featureManager.loadModels(targetLocation, buffer.toString());
 		return featureManager;
 	}
-	
+
 	protected IPluginModelBase[] handlePluginSelection(PDEState state, Map featureMap, Preferences pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_selectPluginsTaskName, 80);
 		Set optionalPlugins = new HashSet();
 		getPluginIds(featureMap, null, optionalPlugins, new SubProgressMonitor(monitor, 40));
 		return handlePluginSelection(state, optionalPlugins, pref, new SubProgressMonitor(monitor, 40));
 	}
-	
+
 	protected IPluginModelBase[] handlePluginSelection(PDEState state, FeatureModelManager manager, Preferences pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_selectPluginsTaskName, 80);
 		Set optionalPlugins = new HashSet();
@@ -336,7 +333,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	private IPluginModelBase[] handlePluginSelection(PDEState state, Set optionalPlugins, Preferences pref, IProgressMonitor monitor) {
 		List changed = new ArrayList();
 		boolean useAll = fTarget.useAllPlugins();
-		
+
 		IPluginModelBase[] models = state.getTargetModels();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_enablePluginsTaskName, models.length);
 		boolean anyPluginsEnabled = false;
@@ -356,13 +353,13 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		else if (!anyPluginsEnabled)
 			pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 		monitor.done();
-		return (IPluginModelBase[])changed.toArray(new IPluginModelBase[changed.size()]);
+		return (IPluginModelBase[]) changed.toArray(new IPluginModelBase[changed.size()]);
 	}
-	
+
 	private void getPluginIds(Map featureMap, FeatureModelManager manager, Set optionalPlugins, IProgressMonitor monitor) {
 		ITargetFeature[] targetFeatures = fTarget.getFeatures();
 		ITargetPlugin[] plugins = fTarget.getPlugins();
-		
+
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_findPluginsTaskName, targetFeatures.length + plugins.length);
 		if (fTarget.useAllPlugins()) {
 			monitor.done();
@@ -370,10 +367,9 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		}
 		boolean useMap = featureMap != null;
 		Stack features = new Stack();
-		
-		for (int i = 0 ; i < targetFeatures.length; i++) {
-			IFeatureModel model = (useMap)? (IFeatureModel)featureMap.get(targetFeatures[i].getId()):
-				manager.findFeatureModel(targetFeatures[i].getId());
+
+		for (int i = 0; i < targetFeatures.length; i++) {
+			IFeatureModel model = (useMap) ? (IFeatureModel) featureMap.get(targetFeatures[i].getId()) : manager.findFeatureModel(targetFeatures[i].getId());
 			if (model != null)
 				features.push(model);
 			else if (!targetFeatures[i].isOptional()) {
@@ -382,32 +378,31 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			}
 			while (!features.isEmpty()) {
 				IFeature feature = ((IFeatureModel) features.pop()).getFeature();
-				IFeaturePlugin [] featurePlugins = feature.getPlugins();
+				IFeaturePlugin[] featurePlugins = feature.getPlugins();
 				for (int j = 0; j < featurePlugins.length; j++) {
 					if (targetFeatures[i].isOptional() || featurePlugins[j].isFragment())
 						optionalPlugins.add(featurePlugins[j].getId());
-					else 
+					else
 						fRequiredPlugins.put(featurePlugins[j].getId(), featurePlugins[j]);
 				}
 				IFeatureChild[] children = feature.getIncludedFeatures();
 				for (int j = 0; j < children.length; j++) {
-					model = (useMap)? (IFeatureModel)featureMap.get(children[j].getId()):
-						manager.findFeatureModel(children[j].getId());
+					model = (useMap) ? (IFeatureModel) featureMap.get(children[j].getId()) : manager.findFeatureModel(children[j].getId());
 					if (model != null)
 						features.push(model);
 				}
 			}
 			monitor.worked(1);
 		}
-		
+
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].isOptional())
 				optionalPlugins.add(plugins[i].getId());
-			else 
+			else
 				fRequiredPlugins.put(plugins[i].getId(), plugins[i]);
 			monitor.worked(1);
 		}
-		
+
 		monitor.done();
 	}
 }

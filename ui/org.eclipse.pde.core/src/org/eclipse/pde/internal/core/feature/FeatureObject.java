@@ -26,9 +26,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
 
-public abstract class FeatureObject
-	extends PlatformObject
-	implements IFeatureObject {
+public abstract class FeatureObject extends PlatformObject implements IFeatureObject {
 
 	private static final long serialVersionUID = 1L;
 	transient IFeatureModel model;
@@ -46,40 +44,37 @@ public abstract class FeatureObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.FeatureObject_readOnlyChange); 
+			throwCoreException(PDECoreMessages.FeatureObject_readOnlyChange);
 		}
 	}
-	protected void firePropertyChanged(
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-	protected void firePropertyChanged(
-		IFeatureObject object,
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(IFeatureObject object, String property, Object oldValue, Object newValue) {
 		if (model.isEditable()) {
 			IModelChangeProvider provider = model;
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
+
 	protected void fireStructureChanged(IFeatureObject child, int changeType) {
-		fireStructureChanged(new IFeatureObject[] { child }, changeType);
+		fireStructureChanged(new IFeatureObject[] {child}, changeType);
 	}
-	protected void fireStructureChanged(
-		IFeatureObject[] children,
-		int changeType) {
+
+	protected void fireStructureChanged(IFeatureObject[] children, int changeType) {
 		IFeatureModel model = getModel();
 		if (model.isEditable()) {
 			IModelChangeProvider provider = model;
 			provider.fireModelChanged(new ModelChangedEvent(provider, changeType, children, null));
 		}
 	}
+
 	public IFeature getFeature() {
 		return model.getFeature();
 	}
+
 	public String getLabel() {
 		return label;
 	}
@@ -89,9 +84,11 @@ public abstract class FeatureObject
 			return ""; //$NON-NLS-1$
 		return model.getResourceString(label);
 	}
+
 	public IFeatureModel getModel() {
 		return model;
 	}
+
 	String getNodeAttribute(Node node, String name) {
 		Node attribute = node.getAttributes().getNamedItem(name);
 		if (attribute != null)
@@ -109,7 +106,7 @@ public abstract class FeatureObject
 		}
 		return 0;
 	}
-	
+
 	boolean getBooleanAttribute(Node node, String name) {
 		String value = getNodeAttribute(node, name);
 		if (value != null) {
@@ -117,7 +114,7 @@ public abstract class FeatureObject
 		}
 		return false;
 	}
-	
+
 	protected String getNormalizedText(String source) {
 		String result = source.replace('\t', ' ');
 		result = result.trim();
@@ -143,16 +140,15 @@ public abstract class FeatureObject
 		label = newLabel;
 		firePropertyChanged(P_LABEL, oldValue, newLabel);
 	}
+
 	protected void throwCoreException(String message) throws CoreException {
-		Status status =
-			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 		CoreException ce = new CoreException(status);
 		ce.fillInStackTrace();
 		throw ce;
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_LABEL)) {
 			setLabel(newValue != null ? newValue.toString() : null);
 		}
@@ -160,14 +156,15 @@ public abstract class FeatureObject
 
 	public void write(String indent, PrintWriter writer) {
 	}
+
 	public void setModel(IFeatureModel model) {
 		this.model = model;
 	}
-	
+
 	public void setParent(IFeatureObject parent) {
 		this.parent = parent;
 	}
-	
+
 	protected String getWritableString(String source) {
 		return PDEXMLHelper.getWritableString(source);
 	}

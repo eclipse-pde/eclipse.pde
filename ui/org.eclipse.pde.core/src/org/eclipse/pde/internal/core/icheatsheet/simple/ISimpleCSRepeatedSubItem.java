@@ -22,23 +22,23 @@ public interface ISimpleCSRepeatedSubItem extends ISimpleCSSubItemObject {
 	 * @return
 	 */
 	public String getValues();
-	
+
 	/**
 	 * Attribute: values
 	 * @param values
 	 */
-	public void setValues(String values);			
+	public void setValues(String values);
 
 	/**
 	 * Element:  subitem
 	 * @return
 	 */
 	public ISimpleCSSubItem getSubItem();
-	
+
 	/**
 	 * Element:  subitem
 	 * @param subitem
 	 */
-	public void setSubItem(ISimpleCSSubItem subitem);	
-	
+	public void setSubItem(ISimpleCSSubItem subitem);
+
 }

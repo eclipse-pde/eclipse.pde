@@ -44,7 +44,7 @@ public class FeatureModelManager {
 	private FeatureTable fInactiveModels;
 
 	private ExternalFeatureModelManager fExternalManager;
-	
+
 	private boolean fReloadExternalNeeded = false;
 
 	private WorkspaceFeatureModelManager fWorkspaceManager;
@@ -64,7 +64,7 @@ public class FeatureModelManager {
 	public synchronized void shutdown() {
 		if (fWorkspaceManager != null)
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
-		if (fExternalManager != null){
+		if (fExternalManager != null) {
 			fExternalManager.removeModelProviderListener(fProviderListener);
 			fExternalManager.shutdown();
 		}
@@ -78,10 +78,10 @@ public class FeatureModelManager {
 			}
 			return;
 		}
-		
+
 		fActiveModels = new FeatureTable();
 		fInactiveModels = new FeatureTable();
-		
+
 		fProviderListener = new IModelProviderListener() {
 			public void modelsChanged(IModelProviderEvent e) {
 				handleModelsChanged(e);
@@ -109,19 +109,19 @@ public class FeatureModelManager {
 		init();
 		IFeatureModel[] allModels = fActiveModels.getAll();
 		ArrayList valid = new ArrayList(allModels.length);
-		for( int i =0; i< allModels.length; i++){
-			if(allModels[i].isValid()){
+		for (int i = 0; i < allModels.length; i++) {
+			if (allModels[i].isValid()) {
 				valid.add(allModels[i]);
 			}
 		}
-		return (IFeatureModel[])valid.toArray(new IFeatureModel[valid.size()]);
+		return (IFeatureModel[]) valid.toArray(new IFeatureModel[valid.size()]);
 	}
-	
+
 	public IFeatureModel[] getWorkspaceModels() {
 		init();
 		return fWorkspaceManager.getFeatureModels();
 	}
-	
+
 	public IFeatureModel getFeatureModel(IProject project) {
 		init();
 		return fWorkspaceManager.getFeatureModel(project);
@@ -185,14 +185,14 @@ public class FeatureModelManager {
 		init();
 		IFeatureModel[] models = fActiveModels.get(id);
 		ArrayList valid = new ArrayList(models.length);
-		for( int i =0; i< models.length; i++){
-			if(models[i].isValid()){
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].isValid()) {
 				valid.add(models[i]);
 			}
 		}
-		return (IFeatureModel[])valid.toArray(new IFeatureModel[valid.size()]);
+		return (IFeatureModel[]) valid.toArray(new IFeatureModel[valid.size()]);
 	}
-	
+
 	public IFeatureModel findFeatureModel(String id) {
 		IFeatureModel[] models = findFeatureModels(id);
 		IFeatureModel model = null;
@@ -275,8 +275,7 @@ public class FeatureModelManager {
 						// ignore duplicate external models
 						continue;
 					}
-					IFeatureModel[] activeModels = fActiveModels.get(id,
-							version);
+					IFeatureModel[] activeModels = fActiveModels.get(id, version);
 					for (int j = 0; j < activeModels.length; j++) {
 						if (activeModels[j].getUnderlyingResource() == null) {
 							// ignore duplicate external models
@@ -331,8 +330,7 @@ public class FeatureModelManager {
 				if (!(changed[i] instanceof IFeatureModel))
 					continue;
 				IFeatureModel model = (IFeatureModel) changed[i];
-				if (!delta.contains(model, IFeatureModelDelta.ADDED
-						| IFeatureModelDelta.REMOVED)) {
+				if (!delta.contains(model, IFeatureModelDelta.ADDED | IFeatureModelDelta.REMOVED)) {
 					delta.add(model, IFeatureModelDelta.CHANGED);
 				}
 
@@ -345,8 +343,7 @@ public class FeatureModelManager {
 	 * @param delta
 	 * @param affectedIdVers
 	 */
-	private void adjustExternalVisibility(FeatureModelDelta delta,
-			Set affectedIdVers) {
+	private void adjustExternalVisibility(FeatureModelDelta delta, Set affectedIdVers) {
 		if (affectedIdVers != null) {
 			for (Iterator it = affectedIdVers.iterator(); it.hasNext();) {
 				FeatureTable.Idver idver = (FeatureTable.Idver) it.next();
@@ -361,8 +358,7 @@ public class FeatureModelManager {
 							// move external to inactive
 							fActiveModels.remove(affectedModels[j]);
 							fInactiveModels.add(affectedModels[j]);
-							delta.add(affectedModels[j],
-									IFeatureModelDelta.REMOVED);
+							delta.add(affectedModels[j], IFeatureModelDelta.REMOVED);
 						}
 					}
 				}
@@ -394,7 +390,7 @@ public class FeatureModelManager {
 	public void targetReloaded() {
 		fReloadExternalNeeded = true;
 	}
-	
+
 	public IFeatureModel getDeltaPackFeature() {
 		IFeatureModel model = findFeatureModel("org.eclipse.equinox.executable"); //$NON-NLS-1$
 		if (model == null)

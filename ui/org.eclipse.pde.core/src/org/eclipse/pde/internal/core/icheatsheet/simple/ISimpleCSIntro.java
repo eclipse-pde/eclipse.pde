@@ -22,12 +22,11 @@ public interface ISimpleCSIntro extends ISimpleCSObject, ISimpleCSHelpObject {
 	 * @return
 	 */
 	public ISimpleCSDescription getDescription();
-	
+
 	/**
 	 * Element:  description
 	 * @param description
 	 */
 	public void setDescription(ISimpleCSDescription description);
-	
-	
+
 }

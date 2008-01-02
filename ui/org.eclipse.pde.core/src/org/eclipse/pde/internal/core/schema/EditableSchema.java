@@ -22,11 +22,10 @@ public class EditableSchema extends Schema implements IEditable {
 	public EditableSchema(ISchemaDescriptor schemaDescriptor, URL url, boolean abbreviated) {
 		super(schemaDescriptor, url, abbreviated);
 	}
-	
+
 	public EditableSchema(String pluginId, String pointId, String name, boolean abbreviated) {
 		super(pluginId, pointId, name, abbreviated);
 	}
-	
 
 	private boolean dirty;
 

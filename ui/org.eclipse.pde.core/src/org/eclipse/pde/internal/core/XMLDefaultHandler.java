@@ -26,20 +26,20 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLDefaultHandler extends DefaultHandler {
-	
+
 	private org.w3c.dom.Document fDocument;
 	private Element fRootElement;
-	
+
 	protected Stack fElementStack = new Stack();
 	protected boolean fAbbreviated;
-	
+
 	public XMLDefaultHandler() {
 	}
-	
+
 	public XMLDefaultHandler(boolean abbreviated) {
 		fAbbreviated = abbreviated;
 	}
-	
+
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if (!isPrepared())
 			return;
@@ -47,19 +47,19 @@ public class XMLDefaultHandler extends DefaultHandler {
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
 		}
-		
+
 		if (fRootElement == null)
 			fRootElement = element;
-		else 
-			((Element)fElementStack.peek()).appendChild(element);
+		else
+			((Element) fElementStack.peek()).appendChild(element);
 		fElementStack.push(element);
 	}
-	
+
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (isPrepared() && !fElementStack.isEmpty())
 			fElementStack.pop();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
@@ -76,7 +76,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		} catch (ParserConfigurationException e) {
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
@@ -84,7 +84,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		if (isPrepared())
 			fDocument.appendChild(fRootElement);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
@@ -92,7 +92,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		if (isPrepared())
 			fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
@@ -106,38 +106,38 @@ public class XMLDefaultHandler extends DefaultHandler {
 		Text text = fDocument.createTextNode(buff.toString());
 		if (fRootElement == null)
 			fDocument.appendChild(text);
-		else 
-			((Element)fElementStack.peek()).appendChild(text);
+		else
+			((Element) fElementStack.peek()).appendChild(text);
 	}
-	
+
 	public Node getDocumentElement() {
 		if (!isPrepared())
 			return null;
 		normalizeDocumentElement();
 		return fDocument.getDocumentElement();
 	}
-	
+
 	public org.w3c.dom.Document getDocument() {
 		if (!isPrepared())
 			return null;
 		normalizeDocumentElement();
 		return fDocument;
 	}
-	
+
 	public boolean isPrepared() {
 		return fDocument != null;
 	}
-	
+
 	private void normalizeDocumentElement() {
 		if (fDocument.getDocumentElement() != null)
 			fDocument.getDocumentElement().normalize();
 	}
-	
+
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
 		// prevent the parser from accessing the Internet
 		// This will prevent huge workbench performance degradations and hangs
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
-	}	
-	
+	}
+
 }

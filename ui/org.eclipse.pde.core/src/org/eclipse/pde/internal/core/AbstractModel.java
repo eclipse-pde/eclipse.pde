@@ -32,8 +32,7 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractModel extends PlatformObject implements IModel,
-		IModelChangeProviderExtension, Serializable {
+public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProviderExtension, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,8 +54,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel,
 		fListeners.add(listener);
 	}
 
-	public void transferListenersTo(IModelChangeProviderExtension target,
-			IModelChangedListenerFilter filter) {
+	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		ArrayList removed = new ArrayList();
 		for (int i = 0; i < fListeners.size(); i++) {
 			IModelChangedListener listener = (IModelChangedListener) fListeners.get(i);
@@ -73,16 +71,14 @@ public abstract class AbstractModel extends PlatformObject implements IModel,
 	}
 
 	public void fireModelChanged(IModelChangedEvent event) {
-		IModelChangedListener[] list = (IModelChangedListener[]) fListeners
-				.toArray(new IModelChangedListener[fListeners.size()]);
+		IModelChangedListener[] list = (IModelChangedListener[]) fListeners.toArray(new IModelChangedListener[fListeners.size()]);
 		for (int i = 0; i < list.length; i++) {
 			IModelChangedListener listener = list[i];
 			listener.modelChanged(event);
 		}
 	}
 
-	public void fireModelObjectChanged(Object object, String property, Object oldValue,
-			Object newValue) {
+	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 		fireModelChanged(new ModelChangedEvent(this, object, property, oldValue, newValue));
 	}
 
@@ -138,14 +134,12 @@ public abstract class AbstractModel extends PlatformObject implements IModel,
 	}
 
 	public void throwParseErrorsException(Throwable e) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK,
-				"Error in the manifest file", //$NON-NLS-1$
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, "Error in the manifest file", //$NON-NLS-1$
 				e);
 		throw new CoreException(status);
 	}
 
-	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException,
-			FactoryConfigurationError {
+	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
 		return SAXParserFactory.newInstance().newSAXParser();
 	}
 

@@ -16,41 +16,41 @@ import org.eclipse.pde.internal.core.bundle.BundleObject;
 
 public class PackageFriend extends BundleObject {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String fName;
+	private String fName;
 
-    private transient PackageObject fPackageObject;
-    
-    public PackageFriend(PackageObject object, String name) {
-        fName = name;
-        fPackageObject = object;
-    }
+	private transient PackageObject fPackageObject;
 
-    public String getName() {
-        return fName;
-    }
-    
-    public String toString() {
-        return fName;
-    }
-    
-    public ManifestHeader getHeader() {
-        return fPackageObject.getHeader();
-    }
+	public PackageFriend(PackageObject object, String name) {
+		fName = name;
+		fPackageObject = object;
+	}
 
-    /**
-     * @param object
-     */
-    public void reconnect(PackageObject object) {
-    	fPackageObject = object;
-    }
+	public String getName() {
+		return fName;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.core.bundle.BundleObject#writeDelimeter(java.io.PrintWriter)
-     */
-    public void writeDelimeter(PrintWriter writer) {
-    	writer.print(',');
-    }
-    
+	public String toString() {
+		return fName;
+	}
+
+	public ManifestHeader getHeader() {
+		return fPackageObject.getHeader();
+	}
+
+	/**
+	 * @param object
+	 */
+	public void reconnect(PackageObject object) {
+		fPackageObject = object;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.bundle.BundleObject#writeDelimeter(java.io.PrintWriter)
+	 */
+	public void writeDelimeter(PrintWriter writer) {
+		writer.print(',');
+	}
+
 }

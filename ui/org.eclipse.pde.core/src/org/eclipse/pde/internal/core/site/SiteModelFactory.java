@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.isite.ISiteObject;
 
 public class SiteModelFactory implements ISiteModelFactory {
 	private ISiteModel model;
+
 	public SiteModelFactory(ISiteModel model) {
 		this.model = model;
 	}

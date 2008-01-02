@@ -22,22 +22,40 @@ public interface ISiteFeature extends IVersionable, ISiteObject {
 	String P_NL = "nl"; //$NON-NLS-1$
 	String P_ARCH = "arch"; //$NON-NLS-1$
 	String P_PATCH = "patch"; //$NON-NLS-1$
+
 	void addCategories(ISiteCategory[] categories) throws CoreException;
+
 	void removeCategories(ISiteCategory[] categories) throws CoreException;
-	ISiteCategory [] getCategories();
+
+	ISiteCategory[] getCategories();
+
 	String getType();
+
 	String getURL();
+
 	String getOS();
+
 	String getNL();
+
 	String getArch();
+
 	String getWS();
+
 	boolean isPatch();
+
 	void setType(String type) throws CoreException;
+
 	void setURL(String url) throws CoreException;
+
 	void setOS(String os) throws CoreException;
+
 	void setWS(String ws) throws CoreException;
+
 	void setArch(String arch) throws CoreException;
+
 	void setNL(String nl) throws CoreException;
+
 	void setIsPatch(boolean patch) throws CoreException;
+
 	IFile getArchiveFile();
 }

@@ -34,7 +34,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private String fArch;
 	private String fNL;
 	private boolean fIsPatch;
-	
+
 	public boolean isValid() {
 		if (fUrl == null)
 			return false;
@@ -49,8 +49,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
 	 */
-	public void addCategories(ISiteCategory[] newCategories)
-		throws CoreException {
+	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newCategories.length; i++) {
 			ISiteCategory category = newCategories[i];
@@ -63,8 +62,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
 	 */
-	public void removeCategories(ISiteCategory[] newCategories)
-		throws CoreException {
+	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newCategories.length; i++) {
 			ISiteCategory category = newCategories[i];
@@ -73,13 +71,12 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		}
 		fireStructureChanged(newCategories, IModelChangedEvent.REMOVE);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
 	 */
 	public ISiteCategory[] getCategories() {
-		return (ISiteCategory[]) fCategories.toArray(
-			new ISiteCategory[fCategories.size()]);
+		return (ISiteCategory[]) fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
 	/**
@@ -129,10 +126,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().equalsIgnoreCase("category")) { //$NON-NLS-1$
-				SiteCategory category =
-					(SiteCategory) getModel().getFactory().createCategory(this);
+			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equalsIgnoreCase("category")) { //$NON-NLS-1$
+				SiteCategory category = (SiteCategory) getModel().getFactory().createCategory(this);
 				category.parse(child);
 				category.setInTheModel(true);
 				fCategories.add(category);
@@ -152,13 +147,12 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fCategories.clear();
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
-		} else  if (name.equals(P_ARCH)) {
+		} else if (name.equals(P_ARCH)) {
 			setArch(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_NL)) {
 			setNL(newValue != null ? newValue.toString() : null);
@@ -167,7 +161,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		} else if (name.equals(P_WS)) {
 			setWS(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_PATCH)) {
-			setIsPatch(((Boolean)newValue).booleanValue());
+			setIsPatch(((Boolean) newValue).booleanValue());
 		} else {
 			super.restoreProperty(name, oldValue, newValue);
 		}
@@ -210,14 +204,17 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		} else
 			writer.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	public IFile getArchiveFile() {
-		if (fUrl==null) return null;
+		if (fUrl == null)
+			return null;
 		IResource resource = getModel().getUnderlyingResource();
-		if (resource==null) return null;
+		if (resource == null)
+			return null;
 		IProject project = resource.getProject();
 		IFile file = project.getFile(new Path(fUrl));
-		if (file.exists()) return file;
+		if (file.exists())
+			return file;
 		return null;
 	}
 
@@ -252,7 +249,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setOS(java.lang.String)
 	 */
-	public void setOS(String os) throws CoreException{
+	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = fOS;
 		fOS = os;

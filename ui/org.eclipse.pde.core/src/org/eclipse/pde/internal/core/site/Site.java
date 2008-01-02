@@ -86,7 +86,7 @@ public class Site extends SiteObject implements ISite {
 	public String getMirrorsURL() {
 		return mirrorsUrl;
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getDescription()
 	 */
@@ -97,8 +97,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
 	 */
-	public void setDescription(ISiteDescription description)
-		throws CoreException {
+	public void setDescription(ISiteDescription description) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.description;
 		this.description = description;
@@ -134,8 +133,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#addCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition)
 	 */
-	public void addCategoryDefinitions(ISiteCategoryDefinition[] defs)
-		throws CoreException {
+	public void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
@@ -148,8 +146,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#removeFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature)
 	 */
-	public void removeFeatures(ISiteFeature[] newFeatures)
-		throws CoreException {
+	public void removeFeatures(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newFeatures.length; i++) {
 			ISiteFeature feature = newFeatures[i];
@@ -175,8 +172,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#removeCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition)
 	 */
-	public void removeCategoryDefinitions(ISiteCategoryDefinition[] defs)
-		throws CoreException {
+	public void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
@@ -190,25 +186,23 @@ public class Site extends SiteObject implements ISite {
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getFeatures()
 	 */
 	public ISiteFeature[] getFeatures() {
-		return (ISiteFeature[]) features.toArray(
-			new ISiteFeature[features.size()]);
+		return (ISiteFeature[]) features.toArray(new ISiteFeature[features.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getArchives()
 	 */
 	public ISiteArchive[] getArchives() {
-		return (ISiteArchive[]) archives.toArray(
-			new ISiteArchive[archives.size()]);
+		return (ISiteArchive[]) archives.toArray(new ISiteArchive[archives.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getCategoryDefinitions()
 	 */
 	public ISiteCategoryDefinition[] getCategoryDefinitions() {
-		return (ISiteCategoryDefinition[]) categoryDefs.toArray(
-			new ISiteCategoryDefinition[categoryDefs.size()]);
+		return (ISiteCategoryDefinition[]) categoryDefs.toArray(new ISiteCategoryDefinition[categoryDefs.size()]);
 	}
+
 	protected void reset() {
 		archives.clear();
 		categoryDefs.clear();
@@ -218,6 +212,7 @@ public class Site extends SiteObject implements ISite {
 		url = null;
 		mirrorsUrl = null;
 	}
+
 	protected void parse(Node node) {
 		type = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
@@ -244,8 +239,7 @@ public class Site extends SiteObject implements ISite {
 			((SiteArchive) archive).setInTheModel(true);
 			archives.add(archive);
 		} else if (tag.equals("category-def")) { //$NON-NLS-1$
-			ISiteCategoryDefinition def =
-				getModel().getFactory().createCategoryDefinition();
+			ISiteCategoryDefinition def = getModel().getFactory().createCategoryDefinition();
 			((SiteCategoryDefinition) def).parse(child);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
@@ -257,21 +251,20 @@ public class Site extends SiteObject implements ISite {
 			((SiteDescription) description).setInTheModel(true);
 		}
 	}
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_MIRRORS_URL)) {
 			setMirrorsURL(newValue != null ? newValue.toString() : null);
-		} else if (
-			name.equals(P_DESCRIPTION)
-				&& newValue instanceof ISiteDescription) {
+		} else if (name.equals(P_DESCRIPTION) && newValue instanceof ISiteDescription) {
 			setDescription((ISiteDescription) newValue);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
@@ -289,43 +282,38 @@ public class Site extends SiteObject implements ISite {
 		writeChildren(indent2, categoryDefs, writer);
 		writer.println(indent + "</site>"); //$NON-NLS-1$
 	}
-	
+
 	public boolean isValid() {
-		for (int i=0; i<features.size(); i++) {
-			ISiteFeature feature = (ISiteFeature)features.get(i);
-			if (!feature.isValid()) return false;
+		for (int i = 0; i < features.size(); i++) {
+			ISiteFeature feature = (ISiteFeature) features.get(i);
+			if (!feature.isValid())
+				return false;
 		}
-		for (int i=0; i<archives.size(); i++) {
-			ISiteArchive archive = (ISiteArchive)archives.get(i);
-			if (!archive.isValid()) return false;
+		for (int i = 0; i < archives.size(); i++) {
+			ISiteArchive archive = (ISiteArchive) archives.get(i);
+			if (!archive.isValid())
+				return false;
 		}
-		for (int i=0; i<categoryDefs.size(); i++) {
-			ISiteCategoryDefinition def = (ISiteCategoryDefinition)categoryDefs.get(i);
-			if (!def.isValid()) return false;
+		for (int i = 0; i < categoryDefs.size(); i++) {
+			ISiteCategoryDefinition def = (ISiteCategoryDefinition) categoryDefs.get(i);
+			if (!def.isValid())
+				return false;
 		}
 		return true;
 	}
-	
-	
-	
-	private void writeChildren(
-		String indent,
-		Vector children,
-		PrintWriter writer) {
+
+	private void writeChildren(String indent, Vector children, PrintWriter writer) {
 		for (int i = 0; i < children.size(); i++) {
 			IWritable writable = (IWritable) children.get(i);
 			writable.write(indent, writer);
 		}
 	}
-	private void writeIfDefined(
-		String indent,
-		PrintWriter writer,
-		String attName,
-		String attValue) {
+
+	private void writeIfDefined(String indent, PrintWriter writer, String attName, String attValue) {
 		if (attValue == null || attValue.length() <= 0)
 			return;
 		writer.println();
 		writer.print(indent + attName + "=\"" + SiteObject.getWritableString(attValue) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 }

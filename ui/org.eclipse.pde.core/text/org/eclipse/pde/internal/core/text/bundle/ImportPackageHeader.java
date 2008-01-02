@@ -15,31 +15,31 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 
 public class ImportPackageHeader extends BasePackageHeader {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public ImportPackageHeader(String name, String value, IBundle bundle, String lineDelimiter) {
+	public ImportPackageHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
 
-    protected PDEManifestElement createElement(ManifestElement element) {
-    	return new ImportPackageObject(this, element, getVersionAttribute());
-    }
-    
-    public ImportPackageObject getPackage(String packageName) {
-    	return (fElementMap == null) ? null : (ImportPackageObject) fElementMap.get(packageName);
-    }
-    
-    public ImportPackageObject[] getPackages() {
-    	PDEManifestElement[] elements = getElements();
-    	ImportPackageObject[] result = new ImportPackageObject[elements.length];
-    	System.arraycopy(elements, 0, result, 0, elements.length);
-        return result;
-    }
-    
-    public ImportPackageObject addPackage(String id) {
-    	ImportPackageObject obj = new ImportPackageObject(this, id, null, getVersionAttribute());
-    	addManifestElement(obj);
-    	return obj;
-    }
-    
+	protected PDEManifestElement createElement(ManifestElement element) {
+		return new ImportPackageObject(this, element, getVersionAttribute());
+	}
+
+	public ImportPackageObject getPackage(String packageName) {
+		return (fElementMap == null) ? null : (ImportPackageObject) fElementMap.get(packageName);
+	}
+
+	public ImportPackageObject[] getPackages() {
+		PDEManifestElement[] elements = getElements();
+		ImportPackageObject[] result = new ImportPackageObject[elements.length];
+		System.arraycopy(elements, 0, result, 0, elements.length);
+		return result;
+	}
+
+	public ImportPackageObject addPackage(String id) {
+		ImportPackageObject obj = new ImportPackageObject(this, id, null, getVersionAttribute());
+		addManifestElement(obj);
+		return obj;
+	}
+
 }

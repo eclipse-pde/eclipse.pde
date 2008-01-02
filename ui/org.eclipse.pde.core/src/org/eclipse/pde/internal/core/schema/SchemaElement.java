@@ -24,8 +24,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
-public class SchemaElement extends RepeatableSchemaObject implements
-		ISchemaElement {
+public class SchemaElement extends RepeatableSchemaObject implements ISchemaElement {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +33,7 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	public static final String P_LABEL_PROPERTY = "labelProperty"; //$NON-NLS-1$
 
 	public static final String P_TYPE = "type"; //$NON-NLS-1$
-	
+
 	private String labelProperty;
 
 	private ISchemaType type;
@@ -49,12 +48,10 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		super(parent, name);
 	}
 
-	private String calculateChildRepresentation(ISchemaObject object,
-			boolean addLinks) {
+	private String calculateChildRepresentation(ISchemaObject object, boolean addLinks) {
 		String child = ""; //$NON-NLS-1$
 		if (object instanceof ISchemaCompositor) {
-			child = calculateCompositorRepresentation(
-					(ISchemaCompositor) object, addLinks);
+			child = calculateCompositorRepresentation((ISchemaCompositor) object, addLinks);
 			if (!child.equals("EMPTY") && child.length() > 0) { //$NON-NLS-1$
 				child = "(" + child + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -82,8 +79,7 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		return child;
 	}
 
-	private String calculateCompositorRepresentation(
-			ISchemaCompositor compositor, boolean addLinks) {
+	private String calculateCompositorRepresentation(ISchemaCompositor compositor, boolean addLinks) {
 		int kind = compositor.getKind();
 		ISchemaObject[] children = compositor.getChildren();
 		if (children.length == 0)
@@ -126,7 +122,7 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		}
 		return new ISchemaAttribute[0];
 	}
-	
+
 	public String[] getAttributeNames() {
 		ISchemaAttribute[] attributes = getAttributes();
 		String[] names = new String[attributes.length];
@@ -179,12 +175,11 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		}
 		return null;
 	}
-	
+
 	private boolean isValidLabelProperty(ISchemaAttribute a) {
-		return a.getKind() == IMetaAttribute.STRING &&
-			a.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]) &&
-			a.isTranslatable();
+		return a.getKind() == IMetaAttribute.STRING && a.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]) && a.isTranslatable();
 	}
+
 	private boolean isValidIconProperty(ISchemaAttribute a) {
 		return a.getKind() == IMetaAttribute.RESOURCE;
 	}
@@ -216,29 +211,25 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	public void setIconProperty(String newIconName) {
 		String oldValue = iconName;
 		iconName = newIconName;
-		getSchema().fireModelObjectChanged(this, P_ICON_NAME, oldValue,
-				iconName);
+		getSchema().fireModelObjectChanged(this, P_ICON_NAME, oldValue, iconName);
 	}
-	
+
 	public void setTranslatableProperty(boolean translatable) {
 		boolean oldValue = fTranslatable;
 		fTranslatable = translatable;
-		getSchema().fireModelObjectChanged(this, P_TRANSLATABLE,
-				Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
+		getSchema().fireModelObjectChanged(this, P_TRANSLATABLE, Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
 	}
-	
+
 	public void setDeprecatedProperty(boolean deprecated) {
 		boolean oldValue = fDeprecated;
 		fDeprecated = deprecated;
-		getSchema().fireModelObjectChanged(this, P_DEPRECATED,
-				Boolean.valueOf(oldValue), Boolean.valueOf(deprecated));		
+		getSchema().fireModelObjectChanged(this, P_DEPRECATED, Boolean.valueOf(oldValue), Boolean.valueOf(deprecated));
 	}
 
 	public void setLabelProperty(String labelProperty) {
 		String oldValue = this.labelProperty;
 		this.labelProperty = labelProperty;
-		getSchema().fireModelObjectChanged(this, P_LABEL_PROPERTY, oldValue,
-				labelProperty);
+		getSchema().fireModelObjectChanged(this, P_LABEL_PROPERTY, oldValue, labelProperty);
 	}
 
 	public void setType(ISchemaType newType) {
@@ -253,14 +244,13 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		if (type instanceof SchemaSimpleType) {
 			writer.print(" type=\"" + type.getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		writer.println(">"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;
 		String realDescription = getWritableDescription();
 		if (realDescription.length() == 0)
 			realDescription = null;
-		if (realDescription != null || iconName != null
-				|| labelProperty != null || isDeprecated() || hasTranslatableContent()) {
+		if (realDescription != null || iconName != null || labelProperty != null || isDeprecated() || hasTranslatableContent()) {
 			String indent3 = indent2 + Schema.INDENT;
 			String indent4 = indent3 + Schema.INDENT;
 			writer.println(indent2 + "<annotation>"); //$NON-NLS-1$
@@ -312,40 +302,35 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	public boolean isDeprecated() {
 		return fDeprecated;
 	}
-	
+
 	public String getExtendedAttributes() {
 		return null;
 	}
-	
+
 	public String getDescription() {
 		if (super.getDescription() != null) {
 			return super.getDescription();
 		}
 		ISchema schema = getSchema();
-		if ((schema == null) ||
-				(schema.getURL() == null)) {
+		if ((schema == null) || (schema.getURL() == null)) {
 			// This can happen when creating a new extension point schema
 			return null;
 		}
 		String hashkey = schema.getURL().hashCode() + "_" + getName(); //$NON-NLS-1$
-		String description = 
-			XMLComponentRegistry.Instance().getDescription(
-				hashkey, XMLComponentRegistry.F_ELEMENT_COMPONENT);
+		String description = XMLComponentRegistry.Instance().getDescription(hashkey, XMLComponentRegistry.F_ELEMENT_COMPONENT);
 		if (description == null) {
-			SchemaElementHandler handler = 
-				new SchemaElementHandler(getName());
+			SchemaElementHandler handler = new SchemaElementHandler(getName());
 			SchemaUtil.parseURL(schema.getURL(), handler);
 			description = handler.getDescription();
-			XMLComponentRegistry.Instance().putDescription(hashkey, description,
-					XMLComponentRegistry.F_ELEMENT_COMPONENT);
+			XMLComponentRegistry.Instance().putDescription(hashkey, description, XMLComponentRegistry.F_ELEMENT_COMPONENT);
 		}
-		
+
 		return description;
 	}
 
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof ISchemaElement)
-			return getName().compareToIgnoreCase(((ISchemaElement)arg0).getName());
+			return getName().compareToIgnoreCase(((ISchemaElement) arg0).getName());
 		return -1;
 	}
 }

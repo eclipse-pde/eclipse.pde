@@ -24,51 +24,51 @@ import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle implements IBundle {
-	
+
 	private BundleModel fModel;
-	private Map fDocumentHeaders = new HeaderMap(); 
-	
+	private Map fDocumentHeaders = new HeaderMap();
+
 	public Bundle(BundleModel model) {
 		fModel = model;
 	}
-	
+
 	public void clearHeaders() {
 		fDocumentHeaders.clear();
 	}
-	
+
 	public void load(Map headers) {
 		Iterator iter = headers.keySet().iterator();
-		while (iter.hasNext())  {
+		while (iter.hasNext()) {
 			String key = iter.next().toString();
-			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {				
-	            String value = headers.get(key).toString();
+			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {
+				String value = headers.get(key).toString();
 				IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
 				fDocumentHeaders.put(key.toString(), header);
 				break;
 			}
 		}
-		
+
 		iter = headers.keySet().iterator();
-		while (iter.hasNext())  {
+		while (iter.hasNext()) {
 			String key = iter.next().toString();
-			if (key.equals(Constants.BUNDLE_MANIFESTVERSION))			
+			if (key.equals(Constants.BUNDLE_MANIFESTVERSION))
 				continue;
-            String value = headers.get(key).toString();
+			String value = headers.get(key).toString();
 			IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
 			fDocumentHeaders.put(key.toString(), header);
 		}
-		adjustOffsets(fModel.getDocument());		
+		adjustOffsets(fModel.getDocument());
 	}
-	
+
 	public void clearOffsets() {
 		Iterator iter = fDocumentHeaders.values().iterator();
 		while (iter.hasNext()) {
-			ManifestHeader header = (ManifestHeader)iter.next();
+			ManifestHeader header = (ManifestHeader) iter.next();
 			header.setOffset(-1);
 			header.setLength(-1);
 		}
 	}
-	
+
 	protected void adjustOffsets(IDocument document) {
 		int lines = document.getNumberOfLines();
 		try {
@@ -77,7 +77,7 @@ public class Bundle implements IBundle {
 				int offset = document.getLineOffset(i);
 				int length = document.getLineLength(i);
 				String line = document.get(offset, length);
-				
+
 				if (currentKey != null) {
 					int lineNumber = line.startsWith(" ") ? i : i - 1; //$NON-NLS-1$
 					IRegion region = document.getLineInformation(lineNumber);
@@ -86,13 +86,13 @@ public class Bundle implements IBundle {
 					currentKey.setLength(delimiter != null ? keyLength + delimiter.length() : keyLength);
 					if (!line.startsWith(" ")) { //$NON-NLS-1$
 						currentKey = null;
-					} 
-				}  
-				
+					}
+				}
+
 				if (currentKey == null) {
-					int index = line.indexOf(':');				
+					int index = line.indexOf(':');
 					String name = (index != -1) ? line.substring(0, index) : line;
-					currentKey = (IDocumentKey)fDocumentHeaders.get(name);
+					currentKey = (IDocumentKey) fDocumentHeaders.get(name);
 					if (currentKey != null) {
 						IRegion region = document.getLineInformation(i);
 						currentKey.setOffset(region.getOffset());
@@ -104,41 +104,42 @@ public class Bundle implements IBundle {
 		} catch (BadLocationException e) {
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
 	 */
 	public void setHeader(String key, String value) {
-		IManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
+		IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
 		String old = null;
- 		if (header == null) {
+		if (header == null) {
 			header = getModel().getFactory().createHeader(key, value);
 			fDocumentHeaders.put(key, header);
 			fModel.fireModelObjectChanged(header, key, old, value);
 		} else {
 			old = header.getValue();
-            header.setValue(value);
-        }
+			header.setValue(value);
+		}
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
 	 */
 	public String getHeader(String key) {
-		ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
+		ManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
 		return (header != null) ? header.getValue() : null;
 	}
-    
-    public IManifestHeader getManifestHeader(String key) {
-        return (ManifestHeader)fDocumentHeaders.get(key);
-    }
-	
+
+	public IManifestHeader getManifestHeader(String key) {
+		return (ManifestHeader) fDocumentHeaders.get(key);
+	}
+
 	public Map getHeaders() {
 		return fDocumentHeaders;
 	}
 
-    public IBundleModel getModel() {
-        return fModel;
-    }
+	public IBundleModel getModel() {
+		return fModel;
+	}
 
 	public String getLocalization() {
 		return getHeader(Constants.BUNDLE_LOCALIZATION);
@@ -149,7 +150,7 @@ public class Bundle implements IBundle {
 	}
 
 	public void renameHeader(String key, String newKey) {
-		ManifestHeader header = (ManifestHeader)getManifestHeader(key);
+		ManifestHeader header = (ManifestHeader) getManifestHeader(key);
 		if (header != null) {
 			header.setName(newKey);
 			fDocumentHeaders.put(newKey, fDocumentHeaders.remove(key));

@@ -25,11 +25,10 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.PDECore;
 
-
 public class WorkspaceProductModel extends ProductModel implements IWorkspaceModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private IFile fFile;
 
 	private boolean fDirty;
@@ -40,7 +39,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		fFile = file;
 		fEditable = editable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#load()
 	 */
@@ -51,10 +50,10 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 				stream = new BufferedInputStream(fFile.getContents(true));
 				load(stream, false);
 			} catch (CoreException e) {
-			} 
-		} 
+			}
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#isInSync()
 	 */
@@ -62,14 +61,14 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		IPath path = fFile.getLocation();
 		return path == null ? false : isInSync(path.toFile());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#getInstallLocation()
 	 */
@@ -83,8 +82,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	public void save() {
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
@@ -96,7 +94,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
@@ -109,7 +107,6 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		}
 		return swriter.toString();
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
@@ -145,14 +142,14 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		setDirty(true);
 		super.fireModelChanged(event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductModel#isEditable()
 	 */
 	public boolean isEditable() {
 		return fEditable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
 	 */
@@ -169,8 +166,8 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 				setDirty(false);
 			} catch (CoreException e) {
 				// Ignore
-			} 
-		} 		
-	}	
-	
+			}
+		}
+	}
+
 }

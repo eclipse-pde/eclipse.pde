@@ -30,9 +30,9 @@ import org.w3c.dom.Text;
 public class CompCSParam extends CompCSObject implements ICompCSParam {
 
 	private String fFieldName;
-	
+
 	private String fFieldValue;
-	
+
 	/**
 	 * 
 	 */
@@ -107,22 +107,16 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
 		// Print name attribute
-		if ((fFieldName != null) && 
-				(fFieldName.length() > 0)) {
+		if ((fFieldName != null) && (fFieldName.length() > 0)) {
 			// No trim required
 			// No encode required
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_NAME, fFieldName));
-		}		
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_NAME, fFieldName));
+		}
 		// Print value attribute
-		if ((fFieldValue != null) && 
-				(fFieldValue.length() > 0)) {
+		if ((fFieldValue != null) && (fFieldValue.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_VALUE, 
-					PDETextHelper.translateWriteText(
-							fFieldValue.trim(), DEFAULT_SUBSTITUTE_CHARS)));
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_VALUE, PDETextHelper.translateWriteText(fFieldValue.trim(), DEFAULT_SUBSTITUTE_CHARS)));
 		}
 	}
 

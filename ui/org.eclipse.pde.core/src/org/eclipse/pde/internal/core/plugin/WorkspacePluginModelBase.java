@@ -33,9 +33,8 @@ import org.eclipse.pde.internal.core.PDEManager;
 /**
  * This class only represents 3.0 style plug-ins
  */
-public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
-		implements IEditableModel {
-	
+public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase implements IEditableModel {
+
 	private static final long serialVersionUID = 1L;
 
 	private IFile fUnderlyingResource;
@@ -47,7 +46,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	private IBuildModel fBuildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin" , PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
+		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 
 	public URL getNLLookupLocation() {
@@ -72,7 +71,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
 	}
-	
+
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
@@ -142,8 +141,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {

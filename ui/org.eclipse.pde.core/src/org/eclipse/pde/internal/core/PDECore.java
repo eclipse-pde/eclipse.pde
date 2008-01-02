@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
-	
+
 	public static final IPath REQUIRED_PLUGINS_CONTAINER_PATH = new Path(PLUGIN_ID + ".requiredPlugins"); //$NON-NLS-1$
 	public static final IPath JAVA_SEARCH_CONTAINER_PATH = new Path(PLUGIN_ID + ".externalJavaSearch"); //$NON-NLS-1$
 
@@ -45,19 +45,18 @@ public class PDECore extends Plugin {
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported"); //$NON-NLS-1$
 	public static final QualifiedName TOUCH_PROJECT = new QualifiedName(PLUGIN_ID, "TOUCH_PROJECT"); //$NON-NLS-1$
 
-	public static final QualifiedName SCHEMA_PREVIEW_FILE = 
-		new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
-	
+	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
+
 	// Shared instance
 	private static PDECore inst;
-	
+
 	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
 	public static PDECore getDefault() {
 		return inst;
 	}
-	
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
@@ -74,23 +73,13 @@ public class PDECore extends Plugin {
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
 		} else if (e.getMessage() != null) {
-			status = new Status(
-					IStatus.ERROR,
-					PLUGIN_ID,
-					IStatus.OK,
-					e.getMessage(),
-					e);
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 		}
 		log(status);
 	}
 
 	public static void logErrorMessage(String message) {
-		log(new Status(
-				IStatus.ERROR,
-				PLUGIN_ID,
-				IStatus.ERROR,
-				message,
-				null));
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
 	}
 
 	public static void logException(Throwable e) {
@@ -109,20 +98,14 @@ public class PDECore extends Plugin {
 				message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status =
-				new Status(
-					IStatus.ERROR,
-					PLUGIN_ID,
-					IStatus.OK,
-					message,
-					e);
+			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
 		}
 		log(status);
 	}
-	
+
 	private PluginModelManager fModelManager;
 	private FeatureModelManager fFeatureModelManager;
-	
+
 	private TargetDefinitionManager fTargetProfileManager;
 
 	// Schema registry
@@ -152,7 +135,7 @@ public class PDECore extends Plugin {
 			return null;
 		}
 	}
-	
+
 	public IPluginModelBase findPluginInHost(String id) {
 		if (registryPlugins == null) {
 			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
@@ -176,29 +159,29 @@ public class PDECore extends Plugin {
 		}
 		return fModelManager;
 	}
-	
+
 	public TargetDefinitionManager getTargetProfileManager() {
 		if (fTargetProfileManager == null)
 			fTargetProfileManager = new TargetDefinitionManager();
 		return fTargetProfileManager;
 	}
-	
+
 	public FeatureModelManager getFeatureModelManager() {
 		if (fFeatureModelManager == null)
 			fFeatureModelManager = new FeatureModelManager();
 		return fFeatureModelManager;
 	}
-	
+
 	public JavaElementChangeListener getJavaElementChangeListener() {
 		return fJavaElementChangeListener;
 	}
-	
+
 	public SchemaRegistry getSchemaRegistry() {
 		if (fSchemaRegistry == null)
 			fSchemaRegistry = new SchemaRegistry();
 		return fSchemaRegistry;
 	}
-	
+
 	public PDEExtensionRegistry getExtensionsRegistry() {
 		if (fExtensionRegistry == null) {
 			fExtensionRegistry = new PDEExtensionRegistry();
@@ -211,7 +194,7 @@ public class PDECore extends Plugin {
 			fSourceLocationManager = new SourceLocationManager();
 		return fSourceLocationManager;
 	}
-	
+
 	public JavadocLocationManager getJavadocLocationManager() {
 		if (fJavadocLocationManager == null)
 			fJavadocLocationManager = new JavadocLocationManager();
@@ -223,7 +206,7 @@ public class PDECore extends Plugin {
 			fTracingOptionsManager = new TracingOptionsManager();
 		return fTracingOptionsManager;
 	}
-	
+
 	public SearchablePluginsManager getSearchablePluginsManager() {
 		if (fSearchablePluginsManager == null) {
 			fSearchablePluginsManager = new SearchablePluginsManager();
@@ -235,7 +218,7 @@ public class PDECore extends Plugin {
 		}
 		return fSearchablePluginsManager;
 	}
-	
+
 	public boolean areModelsInitialized() {
 		return fModelManager != null && fModelManager.isInitialized();
 	}
@@ -258,11 +241,11 @@ public class PDECore extends Plugin {
 
 	public void stop(BundleContext context) throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
-		
+
 		fJavaElementChangeListener.shutdown();
 		fPluginRebuilder.stop();
 		fFeatureRebuilder.stop();
-		
+
 		if (fSchemaRegistry != null) {
 			fSchemaRegistry.shutdown();
 			fSchemaRegistry = null;

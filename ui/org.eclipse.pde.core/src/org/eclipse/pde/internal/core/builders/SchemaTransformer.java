@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.osgi.framework.Bundle;
 
 public class SchemaTransformer {
-	
+
 	private static final String PLATFORM_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String PLATFORM_PLUGIN_DOC = "org.eclipse.platform.doc.isv"; //$NON-NLS-1$
 	private static final String SCHEMA_CSS = "schema.css"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class SchemaTransformer {
 
 	public static final byte TEMP = 0x00;
 	public static final byte BUILD = 0x01;
-	
+
 	private byte fCssPurpose;
 	private PrintWriter fWriter;
 	private ISchema fSchema;
@@ -49,7 +49,7 @@ public class SchemaTransformer {
 	public void transform(ISchema schema, PrintWriter out) {
 		transform(schema, out, null, TEMP);
 	}
-		
+
 	public void transform(ISchema schema, PrintWriter out, URL cssURL, byte cssPurpose) {
 		fSchema = schema;
 		fWriter = out;
@@ -57,10 +57,10 @@ public class SchemaTransformer {
 		setCssURL(cssURL);
 		printHTMLContent();
 	}
-	
+
 	private void setCssURL(URL cssURL) {
 		try {
-			if (cssURL != null) 
+			if (cssURL != null)
 				fCssURL = FileLocator.resolve(cssURL);
 		} catch (IOException e) {
 		}
@@ -69,14 +69,14 @@ public class SchemaTransformer {
 		if (fCssURL == null && fCssPurpose != BUILD)
 			fCssURL = getResourceURL(PDECore.PLUGIN_ID, PLATFORM_CSS);
 	}
-	
+
 	private String getCssURL() {
 		return (fCssURL != null) ? fCssURL.toString() : "../../" + PLATFORM_CSS; //$NON-NLS-1$
 	}
-	
+
 	private String getSchemaCssURL() {
 		if (fCssPurpose == BUILD)
-			return "../../" +  SCHEMA_CSS; //$NON-NLS-1$
+			return "../../" + SCHEMA_CSS; //$NON-NLS-1$
 		URL url = getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS);
 		if (url == null) {
 			// this CSS file is last resort and is always there.
@@ -84,20 +84,20 @@ public class SchemaTransformer {
 		}
 		return url.toString();
 	}
-	
+
 	private void printHTMLContent() {
 		fWriter.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
 		fWriter.println("<HTML>"); //$NON-NLS-1$
 		printHeader();
 		printBody();
-		fWriter.println("</HTML>");		 //$NON-NLS-1$
+		fWriter.println("</HTML>"); //$NON-NLS-1$
 	}
-	
+
 	private void printHeader() {
 		fWriter.print("<HEAD>"); //$NON-NLS-1$
 		fWriter.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
 		fWriter.println("<title>" + fSchema.getName() + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		printStyles();	
+		printStyles();
 		fWriter.println("</HEAD>"); //$NON-NLS-1$
 	}
 
@@ -105,7 +105,7 @@ public class SchemaTransformer {
 		fWriter.println("<style type=\"text/css\">@import url(\"" + getCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		fWriter.println("<style type=\"text/css\">@import url(\"" + getSchemaCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private URL getResourceURL(String bundleID, String resourcePath) {
 		try {
 			Bundle bundle = Platform.getBundle(bundleID);
@@ -118,7 +118,7 @@ public class SchemaTransformer {
 		}
 		return null;
 	}
-	
+
 	private void printBody() {
 		fWriter.println("<BODY>"); //$NON-NLS-1$
 		fWriter.println("<H1 style=\"text-align:center\">" + fSchema.getName() + "</H1>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -147,7 +147,7 @@ public class SchemaTransformer {
 		fWriter.println("</p>"); //$NON-NLS-1$
 		fWriter.println("</BODY>"); //$NON-NLS-1$		
 	}
-	
+
 	private void transformSection(String title, String sectionId) {
 		IDocumentSection section = findSection(fSchema.getDocumentSections(), sectionId);
 		if (section == null)
@@ -264,56 +264,51 @@ public class SchemaTransformer {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation(true);
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
+
 		if (element.isDeprecated() && !(element instanceof SchemaRootElement))
 			fWriter.print("<div style=\"color: red; font-style: italic;\">The <b>" + name + "</b> element is deprecated</div> "); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		fWriter.print(
-			"<p class=\"code SchemaDtd\">&lt;!ELEMENT " //$NON-NLS-1$
-				+ nameLink
-				+ " " //$NON-NLS-1$
+
+		fWriter.print("<p class=\"code SchemaDtd\">&lt;!ELEMENT " //$NON-NLS-1$
+				+ nameLink + " " //$NON-NLS-1$
 				+ dtd);
 		fWriter.println("&gt;</p>"); //$NON-NLS-1$
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 
-		if (attributes.length > 0) { 
-			fWriter.println(
-				"<p class=\"code SchemaDtd\">&lt;!ATTLIST " //$NON-NLS-1$
-					+ name
-					+ "</p>"); //$NON-NLS-1$
+		if (attributes.length > 0) {
+			fWriter.println("<p class=\"code SchemaDtd\">&lt;!ATTLIST " //$NON-NLS-1$
+					+ name + "</p>"); //$NON-NLS-1$
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
 				appendAttlist(attributes[i], maxWidth);
 			}
 			fWriter.println("&gt;</p>"); //$NON-NLS-1$
-			
+
 		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
-		
+
 		// inserted desc here for element
 		String description = element.getDescription();
 
 		if (description != null && description.trim().length() > 0) {
 			String elementType = containsParagraph(description) ? "div" : "p"; //$NON-NLS-1$ //$NON-NLS-2$
-			fWriter.println("<" + elementType + " class=\"ConfigMarkupElementDesc\">");  //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.println("<" + elementType + " class=\"ConfigMarkupElementDesc\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(description);
 			fWriter.println("</" + elementType + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		} 
+		}
 		// end of inserted desc for element
-		if (attributes.length == 0){
+		if (attributes.length == 0) {
 			fWriter.println("<br><br>"); //$NON-NLS-1$
 			return;
-		} else if (description != null && description.trim().length() > 0){
+		} else if (description != null && description.trim().length() > 0) {
 			fWriter.println("<br>"); //$NON-NLS-1$
 		}
-		
+
 		fWriter.println("<ul class=\"ConfigMarkupAttlistDesc\">"); //$NON-NLS-1$
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
 			if (name.equals("extension")) { //$NON-NLS-1$
-				if (att.getDescription() == null
-					|| att.getDescription().trim().length() == 0) {
+				if (att.getDescription() == null || att.getDescription().trim().length() == 0) {
 					continue;
 				}
 			}
@@ -322,13 +317,13 @@ public class SchemaTransformer {
 				fWriter.print("<i style=\"color: red;\">Deprecated</i> "); //$NON-NLS-1$
 			fWriter.print("<b>" + att.getName() + "</b> - "); //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(att.getDescription());
-			fWriter.println("</li>");			 //$NON-NLS-1$
+			fWriter.println("</li>"); //$NON-NLS-1$
 		}
 		fWriter.println("</ul>"); //$NON-NLS-1$
 		// adding spaces for new shifted view
 		fWriter.print("<br>"); //$NON-NLS-1$
 	}
-	
+
 	private boolean containsParagraph(String input) {
 		if (input.indexOf("<p>") != -1) //$NON-NLS-1$
 			return true;
@@ -336,7 +331,7 @@ public class SchemaTransformer {
 			return true;
 		return false;
 	}
-	
+
 	private void appendAttlist(ISchemaAttribute att, int maxWidth) {
 		fWriter.print("<p class=\"code SchemaDtdAttlist\">"); //$NON-NLS-1$
 		// add name
@@ -352,8 +347,7 @@ public class SchemaTransformer {
 		boolean choices = false;
 		if (type != null)
 			restriction = type.getRestriction();
-		String typeName =
-			type != null ? type.getName().toLowerCase(Locale.ENGLISH) : "string"; //$NON-NLS-1$
+		String typeName = type != null ? type.getName().toLowerCase(Locale.ENGLISH) : "string"; //$NON-NLS-1$
 		if (typeName.equals("boolean")) { //$NON-NLS-1$
 			fWriter.print("(true | false) "); //$NON-NLS-1$
 			choices = true;
@@ -373,7 +367,7 @@ public class SchemaTransformer {
 		} else if (!choices)
 			fWriter.print("#IMPLIED"); //$NON-NLS-1$
 	}
-	
+
 	private void appendRestriction(ISchemaRestriction restriction) {
 		if (restriction instanceof ChoiceRestriction) {
 			String[] choices = ((ChoiceRestriction) restriction).getChoicesAsStrings();
@@ -386,13 +380,13 @@ public class SchemaTransformer {
 			fWriter.print(") "); //$NON-NLS-1$
 		}
 	}
-	
+
 	private boolean isPreEnd(String text, int loc) {
 		if (loc + 5 >= text.length())
 			return false;
 		return (text.substring(loc, loc + 6).toLowerCase(Locale.ENGLISH).equals("</pre>")); //$NON-NLS-1$
 	}
-	
+
 	private boolean isPreStart(String text, int loc) {
 		if (loc + 4 >= text.length())
 			return false;

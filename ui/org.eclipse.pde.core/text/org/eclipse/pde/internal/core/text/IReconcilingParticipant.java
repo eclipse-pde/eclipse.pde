@@ -13,6 +13,6 @@ package org.eclipse.pde.internal.core.text;
 import org.eclipse.jface.text.IDocument;
 
 public interface IReconcilingParticipant {
-	
+
 	void reconciled(IDocument document);
 }

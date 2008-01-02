@@ -29,34 +29,37 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
 		fDiscoveries.add(discovery);
-		((FeatureURLElement)discovery).setInTheModel(true);
+		((FeatureURLElement) discovery).setInTheModel(true);
 		fireStructureChanged(discovery, IModelChangedEvent.INSERT);
 	}
+
 	public void setUpdate(IFeatureURLElement update) throws CoreException {
 		ensureModelEditable();
-		if(fUpdate == update){
+		if (fUpdate == update) {
 			return;
 		}
-		if(fUpdate!=null){
-			((FeatureURLElement)fUpdate).setInTheModel(false);
+		if (fUpdate != null) {
+			((FeatureURLElement) fUpdate).setInTheModel(false);
 		}
 		IFeatureURLElement oldValue = fUpdate;
 		fUpdate = update;
-		if(oldValue!=null){
-			fireStructureChanged(oldValue, IModelChangedEvent.REMOVE);	
+		if (oldValue != null) {
+			fireStructureChanged(oldValue, IModelChangedEvent.REMOVE);
 		}
-		if(update!=null){
-			((FeatureURLElement)update).setInTheModel(true);
+		if (update != null) {
+			((FeatureURLElement) update).setInTheModel(true);
 			fireStructureChanged(update, IModelChangedEvent.INSERT);
 		}
 	}
+
 	public IFeatureURLElement[] getDiscoveries() {
-		return (IFeatureURLElement[]) fDiscoveries
-				.toArray(new IFeatureURLElement[fDiscoveries.size()]);
+		return (IFeatureURLElement[]) fDiscoveries.toArray(new IFeatureURLElement[fDiscoveries.size()]);
 	}
+
 	public IFeatureURLElement getUpdate() {
 		return fUpdate;
 	}
+
 	protected void parse(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -70,36 +73,35 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 					urlType = IFeatureURLElement.DISCOVERY;
 				}
 				if (urlType != -1) {
-					IFeatureURLElement element =
-						getModel().getFactory().createURLElement(this, urlType);
+					IFeatureURLElement element = getModel().getFactory().createURLElement(this, urlType);
 					((FeatureURLElement) element).parse(child);
 					if (urlType == IFeatureURLElement.UPDATE) {
-						((FeatureURLElement)element).setInTheModel(true);
+						((FeatureURLElement) element).setInTheModel(true);
 						fUpdate = element;
-					}
-					else if (urlType == IFeatureURLElement.DISCOVERY) {
-						((FeatureURLElement)element).setInTheModel(true);			
+					} else if (urlType == IFeatureURLElement.DISCOVERY) {
+						((FeatureURLElement) element).setInTheModel(true);
 						fDiscoveries.add(element);
 					}
 				}
 			}
 		}
 	}
-	public void removeDiscovery(IFeatureURLElement discovery)
-		throws CoreException {
+
+	public void removeDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
 		fDiscoveries.remove(discovery);
-		((FeatureURLElement)discovery).setInTheModel(false);
+		((FeatureURLElement) discovery).setInTheModel(false);
 		fireStructureChanged(discovery, IModelChangedEvent.REMOVE);
 	}
+
 	public void write(String indent, PrintWriter writer) {
-		if(fUpdate == null && fDiscoveries.size() <=0){
+		if (fUpdate == null && fDiscoveries.size() <= 0) {
 			return;
 		}
 		writer.println();
 		writer.println(indent + "<url>"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT;
-		if(fUpdate!=null) {
+		if (fUpdate != null) {
 			fUpdate.write(indent2, writer);
 		}
 		for (int i = 0; i < fDiscoveries.size(); i++) {

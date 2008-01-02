@@ -40,7 +40,7 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			fIntroId = element.getAttribute(P_INTRO_ID);
 		}
 	}

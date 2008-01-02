@@ -9,8 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.build;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IWritable;
+
 /**
  * The top-level model object of the model that is created from
  * "build.properties" file.
@@ -25,12 +27,14 @@ public interface IBuild extends IWritable {
 	 *            an entry to be added
 	 */
 	void add(IBuildEntry entry) throws CoreException;
+
 	/**
 	 * Returns all the build entries in this object.
 	 * 
 	 * @return an array of build entries
 	 */
 	IBuildEntry[] getBuildEntries();
+
 	/**
 	 * Returns the build entry with the specified name.
 	 * 
@@ -40,6 +44,7 @@ public interface IBuild extends IWritable {
 	 *         if not found.
 	 */
 	IBuildEntry getEntry(String name);
+
 	/**
 	 * Removes a build entry. This method can throw a CoreException if the model
 	 * is not editable.

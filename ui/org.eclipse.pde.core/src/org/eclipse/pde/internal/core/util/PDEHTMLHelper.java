@@ -26,9 +26,9 @@ public class PDEHTMLHelper {
 		fgEntityLookup.put("nbsp", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("amp", "&"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("apos", "'"); //$NON-NLS-1$ //$NON-NLS-2$
-		fgEntityLookup.put("quot", "\"");		 //$NON-NLS-1$ //$NON-NLS-2$
+		fgEntityLookup.put("quot", "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	public static String stripTags(String html) {
 		if (html == null) {
 			return null;
@@ -40,10 +40,10 @@ public class PDEHTMLHelper {
 
 		boolean processingEntity = false;
 		StringBuffer entityBuffer = null;
-		
+
 		for (int i = 0; i < length; i++) {
 			char curr = html.charAt(i);
-			
+
 			// Detect predefined character entities
 			if (curr == '&') {
 				// Process predefined character entity found
@@ -54,7 +54,7 @@ public class PDEHTMLHelper {
 				// End of predefined character entity found
 				processingEntity = false;
 				// Resolve the entity
-				String entity = ((String)fgEntityLookup.get(entityBuffer.toString()));
+				String entity = ((String) fgEntityLookup.get(entityBuffer.toString()));
 				if (entity == null) {
 					// If the entity is not found or supported, ignore it
 					continue;
@@ -67,7 +67,7 @@ public class PDEHTMLHelper {
 				entityBuffer.append(curr);
 				continue;
 			}
-			
+
 			if (curr == '<') {
 				write = false;
 			} else if (curr == '>') {
@@ -84,7 +84,7 @@ public class PDEHTMLHelper {
 		}
 		return sb.toString();
 	}
-	
+
 	public static boolean isAllWhitespace(String string) {
 		if (string == null) {
 			return false;
@@ -97,5 +97,5 @@ public class PDEHTMLHelper {
 		}
 		return true;
 	}
-	
+
 }

@@ -23,25 +23,21 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 	public PluginExportOperation(FeatureExportInfo info) {
 		super(info);
 	}
-	
+
 	protected void createPostProcessingFiles() {
-		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));		
+		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 	}
 
 	protected State getState(String os, String ws, String arch) {
 		// the way plug-in export works, the os, ws and arch should ALWAYS equal the target settings.
-		if (os.equals(TargetPlatform.getOS()) 
-				&& ws.equals(TargetPlatform.getWS())
-				&& arch.equals(TargetPlatform.getOSArch())
-				&& fStateCopy != null) {
+		if (os.equals(TargetPlatform.getOS()) && ws.equals(TargetPlatform.getWS()) && arch.equals(TargetPlatform.getOSArch()) && fStateCopy != null) {
 			fStateCopy.resolve(true);
 			return fStateCopy;
 		}
 		return super.getState(os, ws, arch);
 	}
 
-	protected boolean shouldAddPlugin(BundleDescription bundle,
-			Dictionary environment) {
+	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary environment) {
 		// if there is an environment conflict
 		boolean conflict = !super.shouldAddPlugin(bundle, environment);
 		if (conflict) {
@@ -50,14 +46,11 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 				copyState(TargetPlatformHelper.getState());
 			// replace the current BundleDescription with a copy who does not have the platform filter.  This will allow the plug-in to be resolved
 			BundleDescription desc = fStateCopy.removeBundle(bundle.getBundleId());
-        	BundleDescription newDesc = fStateCopy.getFactory().createBundleDescription(desc.getBundleId(), desc.getSymbolicName(), 
-        			desc.getVersion(), desc.getLocation(), desc.getRequiredBundles(), desc.getHost(), desc.getImportPackages(), 
-        			desc.getExportPackages(), desc.isSingleton(), desc.attachFragments(), desc.dynamicFragments(), null, 
-        			desc.getExecutionEnvironments(), desc.getGenericRequires(), desc.getGenericCapabilities());
-        	fStateCopy.addBundle(newDesc);
+			BundleDescription newDesc = fStateCopy.getFactory().createBundleDescription(desc.getBundleId(), desc.getSymbolicName(), desc.getVersion(), desc.getLocation(), desc.getRequiredBundles(), desc.getHost(), desc.getImportPackages(), desc.getExportPackages(), desc.isSingleton(), desc.attachFragments(), desc.dynamicFragments(), null, desc.getExecutionEnvironments(), desc.getGenericRequires(), desc.getGenericCapabilities());
+			fStateCopy.addBundle(newDesc);
 		}
 		// always include plug-ins, even ones with environment conflicts
 		return true;
 	}
-	
+
 }

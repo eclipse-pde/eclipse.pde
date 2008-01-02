@@ -22,74 +22,74 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 * @return
 	 */
 	public ISimpleCSDescription getDescription();
-	
+
 	/**
 	 * Element:  description
 	 * @param description
 	 */
-	public void setDescription(ISimpleCSDescription description);	
-	
+	public void setDescription(ISimpleCSDescription description);
+
 	/**
 	 * Attribute: title
 	 * @return
 	 */
 	public String getTitle();
-	
+
 	/**
 	 * Attribute: title
 	 * @param title
 	 */
 	public void setTitle(String title);
-	
+
 	/**
 	 * Attribute: dialog
 	 * @return
 	 */
 	public boolean getDialog();
-	
+
 	/**
 	 * Attribute: dialog
 	 * @param dialog
 	 */
-	public void setDialog(boolean dialog);	
-	
+	public void setDialog(boolean dialog);
+
 	/**
 	 * Attribute: skip
 	 * @return
 	 */
 	public boolean getSkip();
-	
+
 	/**
 	 * Attribute: skip
 	 * @param skip
 	 */
-	public void setSkip(boolean skip);		
+	public void setSkip(boolean skip);
 
 	/**
 	 * Elements:  subitem, repeated-subitem, conditional-subitem
 	 * @return
 	 */
 	public ISimpleCSSubItemObject[] getSubItems();
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param index
 	 * @param subitem
 	 */
 	public void addSubItem(int index, ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param index
@@ -101,21 +101,20 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 * @param subitem
 	 * @param newRelativeIndex
 	 */
-	public void moveSubItem(ISimpleCSSubItemObject subitem, 
-			int newRelativeIndex);	
-	
+	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex);
+
 	/**
 	 * Element:  onCompletion
 	 * @return
 	 */
 	public ISimpleCSOnCompletion getOnCompletion();
-	
+
 	/**
 	 * Element:  onCompletion
 	 * @param onCompletion
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
@@ -129,33 +128,33 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 * @return
 	 */
 	public boolean isLastSubItem(ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 * @return
 	 */
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @return
-	 */	
+	 */
 	public int getSubItemCount();
 
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @return
-	 */	
+	 */
 	public boolean hasSubItems();
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 * @return
 	 */
 	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem);
-	
+
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem

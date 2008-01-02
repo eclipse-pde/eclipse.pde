@@ -13,19 +13,18 @@ package org.eclipse.pde.internal.core.ibundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 
-
 public interface IManifestHeader extends IDocumentKey {
-	
+
 	/**
 	 * Returns the header key
 	 */
-	String getKey();	
+	String getKey();
 
 	/**
 	 * Returns the header value
-	 */	
+	 */
 	String getValue();
-		
+
 	/**
 	 * Sets the name of the header
 	 * This method will throw a CoreException if the model
@@ -34,7 +33,7 @@ public interface IManifestHeader extends IDocumentKey {
 	 * @param key the header key
 	 */
 	void setKey(String key) throws CoreException;
-	
+
 	/**
 	 * Sets the value of the header
 	 * This method will throw a CoreException if the model
@@ -43,14 +42,14 @@ public interface IManifestHeader extends IDocumentKey {
 	 * @param value the header value
 	 */
 	void setValue(String value);
-	
+
 	/**
 	 * Forces the header to update its value based on the current components,
 	 * attributes and directives it contains.
 	 * 
 	 */
 	void update();
-	
+
 	/**
 	 * Forces the header to update its value based on the current components,
 	 * attributes and directives it contains.

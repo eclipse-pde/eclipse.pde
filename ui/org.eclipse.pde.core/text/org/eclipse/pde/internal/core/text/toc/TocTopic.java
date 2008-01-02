@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IPath;
  * A topic can link to a specific Help page. It can also have
  * children, which can be more topics.
  */
-public class TocTopic extends TocObject
-{	/**
+public class TocTopic extends TocObject {
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class TocTopic extends TocObject
 	public TocTopic(TocModel model, String tagName) {
 		super(model, tagName);
 	}
-	
+
 	/**
 	 * Constructs a topic with the given model, parent and file.
 	 * 
@@ -56,18 +56,15 @@ public class TocTopic extends TocObject
 		super(model, ELEMENT_TOPIC);
 
 		IPath path = file.getFullPath();
-		if(file.getProject().equals(getSharedModel().getUnderlyingResource().getProject()))
-		{	//If the file is from the same project,
+		if (file.getProject().equals(getSharedModel().getUnderlyingResource().getProject())) { //If the file is from the same project,
 			//remove the project name segment
 			setFieldRef(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
-		}
-		else
-		{	//If the file is from another project, add ".."
+		} else { //If the file is from another project, add ".."
 			//to traverse outside this model's project
 			setFieldRef(".." + path.toString()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.toc.TocObject#canBeParent()
 	 */
@@ -131,8 +128,8 @@ public class TocTopic extends TocObject
 	 */
 	public void addChild(TocObject child, TocObject sibling, boolean insertBefore) {
 		int currentIndex = indexOf(sibling);
-		if(!insertBefore)
-		{	currentIndex++;
+		if (!insertBefore) {
+			currentIndex++;
 		}
 
 		addChildNode(child, currentIndex, true);
@@ -144,7 +141,7 @@ public class TocTopic extends TocObject
 	public void moveChild(TocObject tocObject, int newRelativeIndex) {
 		moveChildNode(tocObject, newRelativeIndex, true);
 	}
-	
+
 	/**
 	 * Remove a TocObject child from this topic
 	 * and signal the model if necessary.
@@ -168,16 +165,16 @@ public class TocTopic extends TocObject
 	 * 
 	 * @param name The new label for the topic
 	 */
-	public void setFieldLabel(String name)
-	{	setXMLAttribute(ATTRIBUTE_LABEL, name);
+	public void setFieldLabel(String name) {
+		setXMLAttribute(ATTRIBUTE_LABEL, name);
 	}
 
 	/**
 	 * @return the link associated with this topic, <br />
 	 * or <code>null</code> if none exists.
 	 */
-	public String getFieldRef()
-	{	return getXMLAttributeValue(ATTRIBUTE_HREF);
+	public String getFieldRef() {
+		return getXMLAttributeValue(ATTRIBUTE_HREF);
 	}
 
 	/**
@@ -186,7 +183,7 @@ public class TocTopic extends TocObject
 	 * 
 	 * @param value The new page location to be linked by this topic
 	 */
-	public void setFieldRef(String value)
-	{	setXMLAttribute(ATTRIBUTE_HREF, value);
+	public void setFieldRef(String value) {
+		setXMLAttribute(ATTRIBUTE_HREF, value);
 	}
 }

@@ -27,9 +27,9 @@ public class IdentifiableObject extends SiteObject implements IIdentifiable {
 		super.parse(node);
 		id = getNodeAttribute(node, "id"); //$NON-NLS-1$
 	}
-	
+
 	public boolean isValid() {
-		return id!=null;
+		return id != null;
 	}
 
 	public void setId(String id) throws CoreException {
@@ -38,12 +38,12 @@ public class IdentifiableObject extends SiteObject implements IIdentifiable {
 		this.id = id;
 		firePropertyChanged(this, P_ID, oldValue, id);
 	}
-	
+
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
-			setId(newValue!=null ? newValue.toString() : null);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+			setId(newValue != null ? newValue.toString() : null);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	protected void reset() {

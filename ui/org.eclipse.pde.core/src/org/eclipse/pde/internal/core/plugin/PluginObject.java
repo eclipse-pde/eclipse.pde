@@ -34,8 +34,7 @@ import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
-public abstract class PluginObject extends PlatformObject implements
-		IPluginObject, ISourceObject, Serializable, IWritableDelimiter {
+public abstract class PluginObject extends PlatformObject implements IPluginObject, ISourceObject, Serializable, IWritableDelimiter {
 	private static final long serialVersionUID = 1L;
 
 	protected String fName;
@@ -49,12 +48,14 @@ public abstract class PluginObject extends PlatformObject implements
 
 	public PluginObject() {
 	}
+
 	public boolean isValid() {
 		return true;
 	}
+
 	protected void ensureModelEditable() throws CoreException {
 		if (!fModel.isEditable()) {
-			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange); 
+			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange);
 		}
 	}
 
@@ -66,42 +67,33 @@ public abstract class PluginObject extends PlatformObject implements
 		return fInTheModel;
 	}
 
-	protected void firePropertyChanged(
-		String property,
-		Object oldValue,
-		Object newValue) {
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-	protected void firePropertyChanged(
-		IPluginObject object,
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(IPluginObject object, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
-			provider.fireModelObjectChanged(
-				object,
-				property,
-				oldValue,
-				newValue);
+			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
+
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangedEvent e =
-				new ModelChangedEvent((IModelChangeProvider)model, changeType, new Object[] { child }, null);
+			IModelChangedEvent e = new ModelChangedEvent((IModelChangeProvider) model, changeType, new Object[] {child}, null);
 			fireModelChanged(e);
 		}
 	}
+
 	protected void fireStructureChanged(IPluginObject[] children, int changeType) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangedEvent e =
-				new ModelChangedEvent((IModelChangeProvider)model, changeType, children, null);
+			IModelChangedEvent e = new ModelChangedEvent((IModelChangeProvider) model, changeType, children, null);
 			fireModelChanged(e);
 		}
 	}
+
 	protected void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
@@ -109,17 +101,18 @@ public abstract class PluginObject extends PlatformObject implements
 			provider.fireModelChanged(e);
 		}
 	}
+
 	public ISharedPluginModel getModel() {
 		return fModel;
 	}
-	
+
 	public IPluginModelBase getPluginModel() {
 		if (fModel instanceof IBundlePluginModelProvider)
-			return ((IBundlePluginModelProvider)fModel).getBundlePluginModel();
-		
-		return fModel instanceof IPluginModelBase? (IPluginModelBase)fModel : null;
+			return ((IBundlePluginModelProvider) fModel).getBundlePluginModel();
+
+		return fModel instanceof IPluginModelBase ? (IPluginModelBase) fModel : null;
 	}
-	
+
 	public String getName() {
 		return fName;
 	}
@@ -139,16 +132,20 @@ public abstract class PluginObject extends PlatformObject implements
 			return attribute.getNodeValue();
 		return null;
 	}
+
 	public IPluginObject getParent() {
 		return fParent;
 	}
+
 	public IPluginBase getPluginBase() {
 		IPluginModelBase pluginModel = getPluginModel();
 		return pluginModel != null ? pluginModel.getPluginBase() : null;
 	}
+
 	public String getResourceString(String key) {
 		return fModel.getResourceString(key);
 	}
+
 	static boolean isNotEmpty(String text) {
 		for (int i = 0; i < text.length(); i++) {
 			if (Character.isWhitespace(text.charAt(i)) == false)
@@ -157,8 +154,7 @@ public abstract class PluginObject extends PlatformObject implements
 		return false;
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
 		}
@@ -168,27 +164,25 @@ public abstract class PluginObject extends PlatformObject implements
 		this.fModel = model;
 		fTranslatedName = null;
 	}
+
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.fName;
 		this.fName = name;
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
+
 	public void setParent(IPluginObject parent) {
 		this.fParent = parent;
 	}
+
 	protected void throwCoreException(String message) throws CoreException {
-		Status status =
-			new Status(
-				IStatus.ERROR,
-				PDECore.PLUGIN_ID,
-				IStatus.OK,
-				message,
-				null);
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 		CoreException ce = new CoreException(status);
 		ce.fillInStackTrace();
 		throw ce;
 	}
+
 	public String toString() {
 		if (fName != null)
 			return fName;
@@ -196,16 +190,14 @@ public abstract class PluginObject extends PlatformObject implements
 	}
 
 	public Vector addComments(Node node, Vector result) {
-		for (Node prev = node.getPreviousSibling();
-			prev != null;
-			prev = prev.getPreviousSibling()) {
+		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
 			if (prev.getNodeType() == Node.TEXT_NODE)
 				continue;
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
 				if (result == null)
 					result = new Vector();
-				result.add(0,comment);
+				result.add(0, comment);
 			} else
 				break;
 		}
@@ -232,18 +224,18 @@ public abstract class PluginObject extends PlatformObject implements
 	public int getStartLine() {
 		return fStartLine;
 	}
-	
+
 	public int getStopLine() {
 		return fStartLine;
 	}
-	
+
 	public Object getAdapter(Class adapter) {
-		if(adapter.equals(IPluginModelBase.class)) {
+		if (adapter.equals(IPluginModelBase.class)) {
 			return getPluginModel();
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	/**
 	 * @param model
 	 * @param parent
@@ -266,5 +258,5 @@ public abstract class PluginObject extends PlatformObject implements
 		// NO-OP
 		// Child classes to override
 	}
-	
+
 }

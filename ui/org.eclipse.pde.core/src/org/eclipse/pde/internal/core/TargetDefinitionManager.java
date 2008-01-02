@@ -27,12 +27,12 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-public class TargetDefinitionManager implements IRegistryChangeListener{
-	
+public class TargetDefinitionManager implements IRegistryChangeListener {
+
 	Map fTargets;
 	private static String[] attributes;
 	{
-		attributes = new String[] {"id", "name" }; //$NON-NLS-1$ //$NON-NLS-2$
+		attributes = new String[] {"id", "name"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
@@ -49,42 +49,42 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 			}
 		}
 	}
-	
+
 	public IConfigurationElement[] getTargets() {
 		if (fTargets == null)
 			loadElements();
-		return (IConfigurationElement[])fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
+		return (IConfigurationElement[]) fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 	}
-	
+
 	public IConfigurationElement[] getSortedTargets() {
 		if (fTargets == null)
 			loadElements();
-		IConfigurationElement[] result = (IConfigurationElement[])fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
+		IConfigurationElement[] result = (IConfigurationElement[]) fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 		Arrays.sort(result, new Comparator() {
 
 			public int compare(Object o1, Object o2) {
-				String value1 = getString((IConfigurationElement)o1);
-				String value2 = getString((IConfigurationElement)o2);
+				String value1 = getString((IConfigurationElement) o1);
+				String value2 = getString((IConfigurationElement) o2);
 				return value1.compareTo(value2);
 			}
-			
-			private String getString(IConfigurationElement elem){
+
+			private String getString(IConfigurationElement elem) {
 				String name = elem.getAttribute("name"); //$NON-NLS-1$
 				String id = elem.getAttribute("id"); //$NON-NLS-1$
 				name = name + " [" + id + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				return name;
 			}
-			
+
 		});
 		return result;
 	}
-	
+
 	public IConfigurationElement getTarget(String id) {
 		if (fTargets == null)
 			loadElements();
-		return (IConfigurationElement)fTargets.get(id);
+		return (IConfigurationElement) fTargets.get(id);
 	}
-	
+
 	private void loadElements() {
 		fTargets = new HashMap();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -92,8 +92,8 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.targets"); //$NON-NLS-1$
 		add(elements);
 	}
-	
-	private boolean isValid (IConfigurationElement elem) {
+
+	private boolean isValid(IConfigurationElement elem) {
 		String value;
 		for (int i = 0; i < attributes.length; i++) {
 			value = elem.getAttribute(attributes[i]);
@@ -111,7 +111,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 		}
 		return false;
 	}
-	
+
 	public static URL getResourceURL(String bundleID, String resourcePath) {
 		try {
 			Bundle bundle = Platform.getBundle(bundleID);
@@ -124,7 +124,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 		}
 		return null;
 	}
-	
+
 	private void add(IConfigurationElement[] elems) {
 		for (int i = 0; i < elems.length; i++) {
 			IConfigurationElement elem = elems[i];
@@ -134,13 +134,13 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 			}
 		}
 	}
-	
+
 	private void remove(IConfigurationElement[] elems) {
-		for (int i = 0 ; i < elems.length; i++) {
+		for (int i = 0; i < elems.length; i++) {
 			fTargets.remove(elems[i].getAttribute("id")); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void shutdown() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.removeRegistryChangeListener(this);

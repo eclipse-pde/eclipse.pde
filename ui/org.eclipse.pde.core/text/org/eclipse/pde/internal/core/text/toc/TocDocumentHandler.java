@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 public class TocDocumentHandler extends NodeDocumentHandler {
 
 	private TocModel fModel;
-	
+
 	/**
 	 * @param reconciling
 	 */
@@ -42,7 +42,7 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
 	protected IDocumentElementNode getRootNode() {
-		return (IDocumentElementNode)fModel.getToc();
-	}	
+		return (IDocumentElementNode) fModel.getToc();
+	}
 
 }

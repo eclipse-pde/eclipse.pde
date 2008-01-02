@@ -43,6 +43,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fArch = null;
 		fNl = null;
 	}
+
 	protected void parse(Node node) {
 		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
@@ -81,6 +82,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fOptional = false;
 		fName = null;
 	}
+
 	/**
 	 * @see IFeatureChild#getVersion()
 	 */
@@ -103,15 +105,15 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	public int getMatch() {
 		return fMatch;
 	}
-	
+
 	public String getOS() {
 		return fOs;
 	}
-	
+
 	public String getWS() {
 		return fWs;
 	}
-	
+
 	public String getArch() {
 		return fArch;
 	}
@@ -121,8 +123,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	}
 
 	public IFeature getReferencedFeature() {
-		IFeatureModel workspaceModel = PDECore.getDefault()
-				.getFeatureModelManager().findFeatureModel(getId(), fVersion);
+		IFeatureModel workspaceModel = PDECore.getDefault().getFeatureModelManager().findFeatureModel(getId(), fVersion);
 		if (workspaceModel != null) {
 			return workspaceModel.getFeature();
 		}
@@ -157,10 +158,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.fSearchLocation);
 		this.fSearchLocation = searchLocation;
-		firePropertyChanged(
-			P_SEARCH_LOCATION,
-			oldValue,
-			new Integer(searchLocation));
+		firePropertyChanged(P_SEARCH_LOCATION, oldValue, new Integer(searchLocation));
 	}
 
 	public void setOptional(boolean optional) throws CoreException {
@@ -169,21 +167,21 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		this.fOptional = optional;
 		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
 	}
-	
+
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fOs;
 		this.fOs = os;
 		firePropertyChanged(P_OS, oldValue, os);
 	}
-	
+
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fWs;
 		this.fWs = ws;
 		firePropertyChanged(P_WS, oldValue, ws);
 	}
-	
+
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fArch;
@@ -198,8 +196,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_NL, oldValue, nl);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion((String) newValue);
 		} else if (name.equals(P_OPTIONAL)) {
@@ -209,16 +206,15 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		} else if (name.equals(P_MATCH)) {
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : NONE);
 		} else if (name.equals(P_OS)) {
-			setOS((String)newValue);
+			setOS((String) newValue);
 		} else if (name.equals(P_WS)) {
-			setWS((String)newValue);
+			setWS((String) newValue);
 		} else if (name.equals(P_ARCH)) {
-			setArch((String)newValue);
+			setArch((String) newValue);
 		} else if (name.equals(P_NL)) {
-			setNL((String)newValue);
+			setNL((String) newValue);
 		} else if (name.equals(P_SEARCH_LOCATION)) {
-			setSearchLocation(
-				newValue != null ? ((Integer) newValue).intValue() : ROOT);
+			setSearchLocation(newValue != null ? ((Integer) newValue).intValue() : ROOT);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
@@ -249,30 +245,30 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			writer.println();
 			writer.print(indent2 + "optional=\"true\""); //$NON-NLS-1$
 		}
-		if (fMatch!=NONE) {
+		if (fMatch != NONE) {
 			writer.println();
-			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[fMatch]+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "match=\"" + RULE_NAME_TABLE[fMatch] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getOS() != null) {
 			writer.println();
-			writer.print(indent2 + "os=\""+getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "os=\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getWS() != null) {
 			writer.println();
-			writer.print(indent2 + "ws=\""+getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "ws=\"" + getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getArch() != null) {
 			writer.println();
-			writer.print(indent2 + "arch=\""+getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "arch=\"" + getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getNL() != null) {
 			writer.println();
-			writer.print(indent2 + "nl=\""+getNL() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "nl=\"" + getNL() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (fSearchLocation!=ROOT) {
+		if (fSearchLocation != ROOT) {
 			writer.println();
-			String value=fSearchLocation==SELF?"self":"both"; //$NON-NLS-1$ //$NON-NLS-2$
-			writer.print(indent2 + "search-location=\""+value+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			String value = fSearchLocation == SELF ? "self" : "both"; //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "search-location=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}

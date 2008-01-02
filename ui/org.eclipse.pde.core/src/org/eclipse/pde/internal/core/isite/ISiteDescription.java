@@ -15,11 +15,13 @@ import org.eclipse.core.runtime.CoreException;
 public interface ISiteDescription extends ISiteObject {
 	String P_URL = "url"; //$NON-NLS-1$
 	String P_TEXT = "text"; //$NON-NLS-1$
-	
+
 	String getURL();
+
 	String getText();
-	
+
 	void setURL(String url) throws CoreException;
+
 	void setText(String text) throws CoreException;
 
 }

@@ -19,11 +19,11 @@ package org.eclipse.pde.core;
  * @since 2.0
  */
 public interface IEditableModel extends IEditable {
-/**
- * Saves the editable model using the mechanism suitable for the 
- * concrete model implementation. It is responsible for 
- * wrapping the <code>IEditable.save(PrintWriter)</code> operation
- * and providing the print writer.
- */
+	/**
+	 * Saves the editable model using the mechanism suitable for the 
+	 * concrete model implementation. It is responsible for 
+	 * wrapping the <code>IEditable.save(PrintWriter)</code> operation
+	 * and providing the print writer.
+	 */
 	void save();
 }

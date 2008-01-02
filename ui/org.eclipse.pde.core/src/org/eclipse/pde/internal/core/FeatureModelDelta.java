@@ -70,15 +70,15 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 
 	void add(IFeatureModel model, int type) {
 		switch (type) {
-		case ADDED:
-			fAdded = add(fAdded, model);
-			break;
-		case REMOVED:
-			fRemoved = add(fRemoved, model);
-			break;
-		case CHANGED:
-			fChanged = add(fChanged, model);
-			break;
+			case ADDED :
+				fAdded = add(fAdded, model);
+				break;
+			case REMOVED :
+				fRemoved = add(fRemoved, model);
+				break;
+			case CHANGED :
+				fChanged = add(fChanged, model);
+				break;
 		}
 		kind |= type;
 	}
@@ -94,12 +94,10 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 		if ((type & ADDED) != 0 && fAdded != null && fAdded.contains(model)) {
 			return true;
 		}
-		if ((type & REMOVED) != 0 && fRemoved != null
-				&& fRemoved.contains(model)) {
+		if ((type & REMOVED) != 0 && fRemoved != null && fRemoved.contains(model)) {
 			return true;
 		}
-		if ((type & CHANGED) != 0 && fChanged != null
-				&& fChanged.contains(model)) {
+		if ((type & CHANGED) != 0 && fChanged != null && fChanged.contains(model)) {
 			return true;
 		}
 		return false;

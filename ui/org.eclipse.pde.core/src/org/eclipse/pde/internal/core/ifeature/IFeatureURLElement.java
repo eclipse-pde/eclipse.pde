@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.ifeature;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * A URL element is a model object that represents
  * a single URL reference. The reference has a type
@@ -47,6 +48,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 * about changes in the 'siteType' field. 
 	 */
 	public static final String P_SITE_TYPE = "siteType"; //$NON-NLS-1$
+
 	/**
 	 * Returns the type of this URL element (UPDATE or DISCOVERY)
 	 */
@@ -57,12 +59,14 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 * @return UPDATE_SITE or WEB_SITE
 	 */
 	public int getSiteType();
+
 	/**
 	 * Returns the URL of this element.
 	 *
 	 * @return the URL
 	 */
 	public URL getURL();
+
 	/**
 	 * Sets the URL of this element.
 	 * This method will throw a CoreException
@@ -71,6 +75,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 * @param url the new URL 
 	 */
 	public void setURL(URL url) throws CoreException;
+
 	/**
 	 * Sets the type of the site with the specified URL.
 	 * @param UPDATE_SITE or WEB_SITE

@@ -30,6 +30,7 @@ public interface IBaseModel extends IAdaptable {
 	 * by reloading.
 	 */
 	void dispose();
+
 	/**
 	 * Tests if this model has been disposed.
 	 * Disposed model cannot be used until
@@ -37,6 +38,7 @@ public interface IBaseModel extends IAdaptable {
 	 * @return <code>true</code> if the model has been disposed
 	 */
 	boolean isDisposed();
+
 	/**
 	 * Tests if this model can be modified. Modification
 	 * of a model that is not editable will result
@@ -44,6 +46,7 @@ public interface IBaseModel extends IAdaptable {
 	 * @return <code>true</code> if this model can be modified
 	 */
 	boolean isEditable();
+
 	/**
 	 * Tests if this model valid. When models
 	 * are loaded from the file, they may pass the
@@ -53,5 +56,5 @@ public interface IBaseModel extends IAdaptable {
 	 * @return <code>true</code> only if the model can be safely used in all
 	 * computations.
 	 */
-	boolean isValid();	
+	boolean isValid();
 }

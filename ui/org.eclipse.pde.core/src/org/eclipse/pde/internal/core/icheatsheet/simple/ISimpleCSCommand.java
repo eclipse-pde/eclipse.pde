@@ -18,12 +18,11 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
 public interface ISimpleCSCommand extends ISimpleCSRunObject {
 
 	public String getSerialization();
-	
-	public void setSerialization(String serialization);			
+
+	public void setSerialization(String serialization);
 
 	public String getReturns();
-	
-	public void setReturns(String returns);		
-		
-	
+
+	public void setReturns(String returns);
+
 }

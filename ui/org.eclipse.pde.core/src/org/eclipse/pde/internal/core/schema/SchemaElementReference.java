@@ -30,9 +30,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
-public class SchemaElementReference extends PlatformObject implements
-		ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject,
-		Serializable {
+public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -165,7 +163,7 @@ public class SchemaElementReference extends PlatformObject implements
 			return compositor.getSchema();
 		return null;
 	}
-	
+
 	public ISchemaType getType() {
 		if (element == null)
 			return null;
@@ -185,8 +183,7 @@ public class SchemaElementReference extends PlatformObject implements
 		maxOccurs = newMaxOccurs;
 		ISchema schema = getCompositorsSchema();
 		if (schema != null)
-			schema.fireModelObjectChanged(this, P_MAX_OCCURS, oldValue,
-					new Integer(maxOccurs));
+			schema.fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, new Integer(maxOccurs));
 	}
 
 	public void setMinOccurs(int newMinOccurs) {
@@ -194,8 +191,7 @@ public class SchemaElementReference extends PlatformObject implements
 		minOccurs = newMinOccurs;
 		ISchema schema = getCompositorsSchema();
 		if (schema != null)
-			schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue,
-					new Integer(minOccurs));
+			schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, new Integer(minOccurs));
 	}
 
 	public void setReferencedObject(ISchemaObject referencedObject) {
@@ -210,8 +206,7 @@ public class SchemaElementReference extends PlatformObject implements
 		this.referenceName = name;
 		ISchema schema = getCompositorsSchema();
 		if (schema != null)
-			schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue,
-					name);
+			schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue, name);
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -222,8 +217,7 @@ public class SchemaElementReference extends PlatformObject implements
 			String min = "" + getMinOccurs(); //$NON-NLS-1$
 			String max = getMaxOccurs() == Integer.MAX_VALUE ? "unbounded" //$NON-NLS-1$
 					: ("" + getMaxOccurs()); //$NON-NLS-1$
-			writer
-					.print(" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
@@ -233,8 +227,7 @@ public class SchemaElementReference extends PlatformObject implements
 	}
 
 	public Vector addComments(Node node, Vector result) {
-		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev
-				.getPreviousSibling()) {
+		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
 			if (prev.getNodeType() == Node.TEXT_NODE)
 				continue;
 			if (prev instanceof Comment) {
@@ -274,7 +267,7 @@ public class SchemaElementReference extends PlatformObject implements
 			return;
 		Integer[] data = (Integer[]) lineTable.get(node);
 		if (data != null) {
-			range = new int[] { data[0].intValue(), data[1].intValue() };
+			range = new int[] {data[0].intValue(), data[1].intValue()};
 		}
 	}
 

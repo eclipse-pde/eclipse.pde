@@ -17,14 +17,14 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class TargetPlatformResetJob extends Job {
-	
+
 	private PDEState fState;
 
 	public TargetPlatformResetJob(PDEState newState) {
 		super(PDECoreMessages.TargetPlatformResetJob_resetTarget);
 		fState = newState;
 	}
-	
+
 	protected IStatus run(IProgressMonitor monitor) {
 		EclipseHomeInitializer.resetEclipseHomeVariable();
 		PDECore.getDefault().getSourceLocationManager().reset();
@@ -40,7 +40,7 @@ public class TargetPlatformResetJob extends Job {
 		monitor.done();
 		return Status.OK_STATUS;
 	}
-	
+
 	private void removeDisabledBundles(IPluginModelBase[] models) {
 		int number = models.length;
 		for (int i = 0; i < models.length; i++) {
@@ -50,7 +50,7 @@ public class TargetPlatformResetJob extends Job {
 			}
 		}
 		if (number < models.length)
-			fState.resolveState(true);		
+			fState.resolveState(true);
 	}
 
 }

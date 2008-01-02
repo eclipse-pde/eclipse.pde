@@ -61,10 +61,8 @@ class FeatureTable {
 		}
 
 		public boolean equals(String id, String version) {
-			boolean sameId = fId == null && id == null || fId != null
-					&& fId.equals(id);
-			boolean sameVer = fVer == null && version == null || fVer != null
-					&& fVer.equals(version);
+			boolean sameId = fId == null && id == null || fId != null && fId.equals(id);
+			boolean sameVer = fVer == null && version == null || fVer != null && fVer.equals(version);
 			return sameId && sameVer;
 
 		}
@@ -128,8 +126,7 @@ class FeatureTable {
 		if (models == null) {
 			return NO_MODELS;
 		}
-		return (IFeatureModel[]) models
-				.toArray(new IFeatureModel[models.size()]);
+		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
 	}
 
 	public synchronized IFeatureModel[] get(String id) {
@@ -145,8 +142,7 @@ class FeatureTable {
 			}
 			allModels.addAll(models);
 		}
-		return (IFeatureModel[]) allModels.toArray(new IFeatureModel[allModels
-				.size()]);
+		return (IFeatureModel[]) allModels.toArray(new IFeatureModel[allModels.size()]);
 	}
 
 	public synchronized IFeatureModel[] getAll() {
@@ -157,8 +153,7 @@ class FeatureTable {
 	 * @return
 	 */
 	private IFeatureModel[] getAllImpl() {
-		return (IFeatureModel[]) fModel2idver.keySet().toArray(
-				new IFeatureModel[fModel2idver.size()]);
+		return (IFeatureModel[]) fModel2idver.keySet().toArray(new IFeatureModel[fModel2idver.size()]);
 	}
 
 	/**

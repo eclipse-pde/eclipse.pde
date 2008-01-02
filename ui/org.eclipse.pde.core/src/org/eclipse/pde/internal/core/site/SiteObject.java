@@ -25,9 +25,7 @@ import org.eclipse.pde.internal.core.isite.ISiteObject;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-public abstract class SiteObject
-	extends PlatformObject
-	implements ISiteObject {
+public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	private static final long serialVersionUID = 1L;
 	transient ISiteModel model;
 	transient ISiteObject parent;
@@ -44,38 +42,35 @@ public abstract class SiteObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.SiteObject_readOnlyChange); 
+			throwCoreException(PDECoreMessages.SiteObject_readOnlyChange);
 		}
 	}
-	protected void firePropertyChanged(
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
-	protected void firePropertyChanged(
-		ISiteObject object,
-		String property,
-		Object oldValue,
-		Object newValue) {
+
+	protected void firePropertyChanged(ISiteObject object, String property, Object oldValue, Object newValue) {
 		if (model.isEditable()) {
 			model.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
+
 	protected void fireStructureChanged(ISiteObject child, int changeType) {
-		fireStructureChanged(new ISiteObject[] { child }, changeType);
+		fireStructureChanged(new ISiteObject[] {child}, changeType);
 	}
-	protected void fireStructureChanged(
-		ISiteObject[] children,
-		int changeType) {
+
+	protected void fireStructureChanged(ISiteObject[] children, int changeType) {
 		ISiteModel model = getModel();
 		if (model.isEditable()) {
 			model.fireModelChanged(new ModelChangedEvent(model, changeType, children, null));
 		}
 	}
+
 	public ISite getSite() {
 		return model.getSite();
 	}
+
 	public String getLabel() {
 		return label;
 	}
@@ -85,14 +80,16 @@ public abstract class SiteObject
 			return ""; //$NON-NLS-1$
 		return model.getResourceString(label);
 	}
+
 	public ISiteModel getModel() {
 		return model;
 	}
+
 	String getNodeAttribute(Node node, String name) {
 		NamedNodeMap atts = node.getAttributes();
 		Node attribute = null;
 		if (atts != null)
-		   attribute = atts.getNamedItem(name);
+			attribute = atts.getNamedItem(name);
 		if (attribute != null)
 			return attribute.getNodeValue();
 		return null;
@@ -108,7 +105,7 @@ public abstract class SiteObject
 		}
 		return 0;
 	}
-	
+
 	boolean getBooleanAttribute(Node node, String name) {
 		String value = getNodeAttribute(node, name);
 		if (value != null) {
@@ -116,7 +113,7 @@ public abstract class SiteObject
 		}
 		return false;
 	}
-	
+
 	protected String getNormalizedText(String source) {
 		String result = source.replace('\t', ' ');
 		result = result.trim();
@@ -142,10 +139,10 @@ public abstract class SiteObject
 		label = newLabel;
 		firePropertyChanged(P_LABEL, oldValue, newLabel);
 	}
+
 	protected void throwCoreException(String message) throws CoreException {
-		Status status =
-			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		CoreException ce= new CoreException(status);
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
+		CoreException ce = new CoreException(status);
 		ce.fillInStackTrace();
 		throw ce;
 	}
@@ -180,8 +177,7 @@ public abstract class SiteObject
 		return buf.toString();
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_LABEL)) {
 			setLabel(newValue != null ? newValue.toString() : null);
 		}
@@ -189,10 +185,11 @@ public abstract class SiteObject
 
 	public void write(String indent, PrintWriter writer) {
 	}
+
 	public void setModel(ISiteModel model) {
 		this.model = model;
 	}
-	
+
 	public void setParent(ISiteObject parent) {
 		this.parent = parent;
 	}

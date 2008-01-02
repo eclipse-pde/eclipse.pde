@@ -22,13 +22,13 @@ public interface ICompCSParam extends ICompCSObject {
 	 * @param name
 	 */
 	public void setFieldName(String name);
-	
+
 	/**
 	 * Attribute: name
 	 * @return
 	 */
 	public String getFieldName();
-	
+
 	/**
 	 * Attribute: value
 	 * @param value
@@ -40,5 +40,5 @@ public interface ICompCSParam extends ICompCSObject {
 	 * @return
 	 */
 	public String getFieldValue();
-	
+
 }

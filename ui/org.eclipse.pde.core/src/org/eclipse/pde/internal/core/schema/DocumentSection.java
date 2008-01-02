@@ -19,14 +19,8 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String [] DOC_SECTIONS = {
-		IDocumentSection.SINCE,
-		IDocumentSection.EXAMPLES,
-		IDocumentSection.API_INFO,
-		IDocumentSection.IMPLEMENTATION,
-		IDocumentSection.COPYRIGHT
-	};
-	
+	public static final String[] DOC_SECTIONS = {IDocumentSection.SINCE, IDocumentSection.EXAMPLES, IDocumentSection.API_INFO, IDocumentSection.IMPLEMENTATION, IDocumentSection.COPYRIGHT};
+
 	private String sectionId;
 
 	public DocumentSection(ISchemaObject parent, String sectionId, String name) {
@@ -53,16 +47,16 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 		writer.println(indent + "</annotation>"); //$NON-NLS-1$
 	}
-	
+
 	public boolean equals(Object obj) {
-		if (obj instanceof DocumentSection && ((DocumentSection)obj).getSectionId().equals(sectionId))
+		if (obj instanceof DocumentSection && ((DocumentSection) obj).getSectionId().equals(sectionId))
 			return true;
 		return false;
 	}
 
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof DocumentSection) {
-			int otherIndex = getIndex(((DocumentSection)arg0).getSectionId());
+			int otherIndex = getIndex(((DocumentSection) arg0).getSectionId());
 			int thisIndex = getIndex(sectionId);
 			if (otherIndex == thisIndex)
 				return 0;
@@ -73,8 +67,8 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		}
 		return -1;
 	}
-	
-	private int getIndex (String sectionId) {
+
+	private int getIndex(String sectionId) {
 		if (sectionId == null)
 			return -1;
 		for (int i = 0; i < DOC_SECTIONS.length; i++) {

@@ -18,8 +18,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
  * SimpleCSRunObject
  *
  */
-public abstract class SimpleCSRunObject extends SimpleCSObject implements
-		ISimpleCSRunObject {
+public abstract class SimpleCSRunObject extends SimpleCSObject implements ISimpleCSRunObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -71,7 +70,7 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 	 */
 	public void setRequired(boolean required) {
 		setBooleanAttributeValue(ATTRIBUTE_REQUIRED, required);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setTranslate(java.lang.String)

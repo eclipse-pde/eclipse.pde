@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.ischema;
 
 import org.eclipse.pde.core.IWritable;
+
 /**
  * Classes that implement this interface define
  * simple types. Simple types do not have compositors.
@@ -19,12 +20,12 @@ import org.eclipse.pde.core.IWritable;
  * restriction that can narrow the value space for the type.
  */
 public interface ISchemaSimpleType extends ISchemaType, IWritable {
-/**
- * Returns the restriction that narrows the value space of
- * this type.
- *
- * @return restriction for this simple type, or <samp>null</samp> if there
- * is no restriction.
- */
-ISchemaRestriction getRestriction();
+	/**
+	 * Returns the restriction that narrows the value space of
+	 * this type.
+	 *
+	 * @return restriction for this simple type, or <samp>null</samp> if there
+	 * is no restriction.
+	 */
+	ISchemaRestriction getRestriction();
 }

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.site;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 public class ExternalSiteModel extends AbstractSiteModel {
 
 	private static final long serialVersionUID = 1L;
@@ -29,7 +28,7 @@ public class ExternalSiteModel extends AbstractSiteModel {
 	public boolean isInSync() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.site.AbstractSiteModel#isEditable()
 	 */

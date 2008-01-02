@@ -21,9 +21,9 @@ import org.eclipse.jface.text.IDocument;
 public abstract class NodeDocumentHandler extends DocumentHandler {
 
 	private IDocumentNodeFactory fFactory;
-	
+
 	// TODO: MP: TEO: LOW: Make PluginDocumentHandler extend this
-	
+
 	/**
 	 * @param reconciling
 	 */
@@ -38,7 +38,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	protected IDocumentNodeFactory getFactory() {
 		return fFactory;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocument()
 	 */
@@ -51,7 +51,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		IDocumentAttributeNode attr = parent.getDocumentAttribute(name);
 		try {
 			if (attr == null) {
-				attr = fFactory.createAttribute(name, value, parent);				
+				attr = fFactory.createAttribute(name, value, parent);
 			} else {
 				if (!name.equals(attr.getAttributeName()))
 					attr.setAttributeName(name);
@@ -67,7 +67,7 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 	 * @return
 	 */
 	protected abstract IDocumentElementNode getRootNode();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.DocumentHandler#getDocumentNode(java.lang.String, org.eclipse.pde.internal.ui.model.IDocumentNode)
 	 */
@@ -90,10 +90,10 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 				}
 			}
 		}
-		
+
 		if (node == null)
 			return fFactory.createDocumentNode(name, parent);
-		
+
 		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			attrs[i].setNameOffset(-1);
@@ -101,29 +101,28 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 			attrs[i].setValueOffset(-1);
 			attrs[i].setValueLength(-1);
 		}
-		
+
 		for (int i = 0; i < node.getChildNodes().length; i++) {
 			IDocumentElementNode child = node.getChildAt(i);
 			child.setOffset(-1);
 			child.setLength(-1);
 		}
-		
+
 		// clear text nodes if the user is typing on the source page
 		// they will be recreated in the characters() method
 		if (isReconciling()) {
 			node.removeTextNode();
 			node.setIsErrorNode(false);
 		}
-		
+
 		return node;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#getDocumentTextNode()
 	 */
-	protected IDocumentTextNode getDocumentTextNode(String content, 
-			IDocumentElementNode parent) {
-		
+	protected IDocumentTextNode getDocumentTextNode(String content, IDocumentElementNode parent) {
+
 		IDocumentTextNode textNode = parent.getTextNode();
 		if (textNode == null) {
 			if (content.trim().length() > 0) {

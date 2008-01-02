@@ -26,6 +26,7 @@ public interface IExtensions extends IPluginObject {
 	 * changes in this object.
 	 */
 	String P_EXTENSION_ORDER = "extension_order"; //$NON-NLS-1$
+
 	/**
 	 * Adds a new extension to this object. This
 	 * method will throw a CoreException if
@@ -34,6 +35,7 @@ public interface IExtensions extends IPluginObject {
 	 * @param extension the extension object
 	 */
 	void add(IPluginExtension extension) throws CoreException;
+
 	/**
 	 * Adds a new extension point to this object.
 	 * This method will throw a CoreException if the model is not editable.
@@ -41,17 +43,20 @@ public interface IExtensions extends IPluginObject {
 	 * @param extensionPoint the extension point
 	 */
 	void add(IPluginExtensionPoint extensionPoint) throws CoreException;
+
 	/**
 	 * Returns extension points defined in this object.
 	 * @return an array of extension point objects
 	 */
 	IPluginExtensionPoint[] getExtensionPoints();
+
 	/**
 	 * Returns extensions defined in this object.
 	 *
 	 * @return an array of extension objects
 	 */
 	IPluginExtension[] getExtensions();
+
 	/**
 	 * Removes an extension from this object. This
 	 * method will throw a CoreException if
@@ -60,6 +65,7 @@ public interface IExtensions extends IPluginObject {
 	 * @param extension the extension object
 	 */
 	void remove(IPluginExtension extension) throws CoreException;
+
 	/**
 	 * Removes an extension point from this object. This
 	 * method will throw a CoreException if
@@ -68,6 +74,7 @@ public interface IExtensions extends IPluginObject {
 	 * @param extensionPoint the extension point object
 	 */
 	void remove(IPluginExtensionPoint extensionPoint) throws CoreException;
+
 	/**
 	 * Swaps the positions of the provided extensions
 	 * in the list of extensions.
@@ -76,10 +83,11 @@ public interface IExtensions extends IPluginObject {
 	 * @param e2 the second extension object
 	 */
 	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
+
 	/**
 	 * Returns the position of the extension in the receiver.
 	 * @param e the extension
 	 * @return the 0-based index of the extension in the receiver.
 	 */
-	int getIndexOf(IPluginExtension e);	
+	int getIndexOf(IPluginExtension e);
 }

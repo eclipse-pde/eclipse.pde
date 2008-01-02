@@ -26,9 +26,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModelFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public abstract class AbstractSiteModel
-	extends AbstractModel
-	implements ISiteModel {
+public abstract class AbstractSiteModel extends AbstractModel implements ISiteModel {
 	private static final long serialVersionUID = 1L;
 	protected transient Site site;
 	private transient ISiteModelFactory factory;
@@ -37,6 +35,7 @@ public abstract class AbstractSiteModel
 	public AbstractSiteModel() {
 		super();
 	}
+
 	public ISite getSite() {
 		if (site == null) {
 			Site s = new Site();
@@ -45,24 +44,31 @@ public abstract class AbstractSiteModel
 		}
 		return site;
 	}
+
 	public ISiteModelFactory getFactory() {
 		if (factory == null)
 			factory = new SiteModelFactory(this);
 		return factory;
 	}
+
 	public String getInstallLocation() {
 		return null;
 	}
+
 	public boolean isEditable() {
 		return true;
 	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
+
 	public boolean isValid() {
-		if (!isLoaded() || site==null) return false;
+		if (!isLoaded() || site == null)
+			return false;
 		return site.isValid();
 	}
+
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
@@ -89,17 +95,14 @@ public abstract class AbstractSiteModel
 		}
 		site.parse(rootNode);
 	}
-	public void reload(InputStream stream, boolean outOfSync)
-		throws CoreException {
+
+	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		if (site != null)
 			site.reset();
 		load(stream, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this,
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] { site },
-				null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {site}, null));
 	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}

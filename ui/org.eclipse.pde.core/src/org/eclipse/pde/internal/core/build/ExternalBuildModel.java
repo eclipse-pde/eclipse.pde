@@ -59,7 +59,7 @@ public class ExternalBuildModel extends BuildModel {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		return (file.isFile()) ? file : new File(file, "build.properties");		 //$NON-NLS-1$
+		return (file.isFile()) ? file : new File(file, "build.properties"); //$NON-NLS-1$
 	}
 
 	public boolean isInSync() {

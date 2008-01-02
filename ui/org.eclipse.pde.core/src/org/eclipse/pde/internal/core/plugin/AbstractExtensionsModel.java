@@ -34,9 +34,7 @@ import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.PDEState;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractExtensionsModel
-	extends AbstractNLModel
-	implements IExtensionsModel, IExtensionsModelFactory {
+public abstract class AbstractExtensionsModel extends AbstractNLModel implements IExtensionsModel, IExtensionsModelFactory {
 
 	private static final long serialVersionUID = 1L;
 	protected Extensions fExtensions;
@@ -44,7 +42,7 @@ public abstract class AbstractExtensionsModel
 	public IExtensionsModelFactory getFactory() {
 		return this;
 	}
-	
+
 	protected Extensions createExtensions() {
 		Extensions extensions = new Extensions(!isEditable());
 		extensions.setModel(this);
@@ -54,6 +52,7 @@ public abstract class AbstractExtensionsModel
 	public IExtensions getExtensions() {
 		return getExtensions(true);
 	}
+
 	public IExtensions getExtensions(boolean createIfMissing) {
 		if (fExtensions == null && createIfMissing) {
 			fExtensions = createExtensions();
@@ -65,12 +64,11 @@ public abstract class AbstractExtensionsModel
 	public abstract URL getNLLookupLocation();
 
 	protected URL[] getNLLookupLocations() {
-		URL locations [] = { getNLLookupLocation() };
+		URL locations[] = {getNLLookupLocation()};
 		return locations;
 	}
 
-	public synchronized void load(InputStream stream, boolean outOfSync)
-		throws CoreException {
+	public synchronized void load(InputStream stream, boolean outOfSync) throws CoreException {
 
 		if (fExtensions == null) {
 			fExtensions = createExtensions();
@@ -95,7 +93,7 @@ public abstract class AbstractExtensionsModel
 		} catch (IOException e) {
 		}
 	}
-	
+
 	// loaded from workspace when creating workspace model
 	public void load(BundleDescription desc, PDEState state) {
 		fExtensions = createExtensions();
@@ -104,15 +102,11 @@ public abstract class AbstractExtensionsModel
 		setLoaded(true);
 	}
 
-	public void reload(InputStream stream, boolean outOfSync)
-		throws CoreException {
+	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this,
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] { fExtensions },
-				null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fExtensions}, null));
 	}
+
 	protected abstract void updateTimeStamp();
 
 	public IPluginAttribute createAttribute(IPluginElement element) {
@@ -121,28 +115,33 @@ public abstract class AbstractExtensionsModel
 		attribute.setParent(element);
 		return attribute;
 	}
+
 	public IPluginElement createElement(IPluginObject parent) {
 		PluginElement element = new PluginElement();
 		element.setModel(this);
 		element.setParent(parent);
 		return element;
 	}
+
 	public IPluginExtension createExtension() {
 		PluginExtension extension = new PluginExtension();
 		extension.setParent(getExtensions());
 		extension.setModel(this);
 		return extension;
 	}
+
 	public IPluginExtensionPoint createExtensionPoint() {
 		PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
 		extensionPoint.setModel(this);
 		extensionPoint.setParent(getExtensions());
 		return extensionPoint;
 	}
-	
+
 	public boolean isValid() {
-		if (!isLoaded()) return false;
-		if (fExtensions==null) return false;
-		return fExtensions.isValid();	
+		if (!isLoaded())
+			return false;
+		if (fExtensions == null)
+			return false;
+		return fExtensions.isValid();
 	}
 }

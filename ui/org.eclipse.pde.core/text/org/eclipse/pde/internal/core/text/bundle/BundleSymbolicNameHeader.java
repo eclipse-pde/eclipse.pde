@@ -20,36 +20,32 @@ public class BundleSymbolicNameHeader extends SingleManifestHeader {
 	public BundleSymbolicNameHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setId(String id) {
 		setMainComponent(id);
 	}
-	
+
 	public String getId() {
 		return getMainComponent();
 	}
-	
+
 	public void setSingleton(boolean singleton) {
 		if (getManifestVersion() > 1) {
-			setDirective(Constants.SINGLETON_DIRECTIVE, 
-						singleton ? Boolean.toString(true) : null);
+			setDirective(Constants.SINGLETON_DIRECTIVE, singleton ? Boolean.toString(true) : null);
 			if (getAttribute(Constants.SINGLETON_DIRECTIVE) != null)
 				setAttribute(Constants.SINGLETON_DIRECTIVE, null);
 		} else {
-			setAttribute(Constants.SINGLETON_DIRECTIVE, 
-					singleton ? Boolean.toString(true) : null);
+			setAttribute(Constants.SINGLETON_DIRECTIVE, singleton ? Boolean.toString(true) : null);
 			if (getDirective(Constants.SINGLETON_DIRECTIVE) != null)
 				setDirective(Constants.SINGLETON_DIRECTIVE, null);
 		}
 	}
-	
+
 	public boolean isSingleton() {
-		String value = getManifestVersion() > 1
-						? getDirective(Constants.SINGLETON_DIRECTIVE)
-						: getAttribute(Constants.SINGLETON_DIRECTIVE);
+		String value = getManifestVersion() > 1 ? getDirective(Constants.SINGLETON_DIRECTIVE) : getAttribute(Constants.SINGLETON_DIRECTIVE);
 		return "true".equals(value); //$NON-NLS-1$
 	}
-	
+
 	public void fixUnsupportedDirective() {
 		String value = getDirective(Constants.SINGLETON_DIRECTIVE);
 		if (value != null) {
@@ -57,6 +53,5 @@ public class BundleSymbolicNameHeader extends SingleManifestHeader {
 			setDirective(Constants.SINGLETON_DIRECTIVE, null);
 		}
 	}
-	
-	
+
 }

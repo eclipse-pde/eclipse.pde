@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 
-
 public interface IFileAdapterFactory {
 	public Object createAdapterChild(FileAdapter parent, File file);
 

@@ -49,14 +49,14 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class TargetPlatformHelper {
-	
+
 	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
-	
+
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 
 	private static Map fCachedLocations;
-	
+
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
 		if (!iniFile.exists())
@@ -68,10 +68,10 @@ public class TargetPlatformHelper {
 			fis.close();
 			return pini;
 		} catch (IOException e) {
-		}		
+		}
 		return null;
 	}
-	
+
 	public static String getBundleList() {
 		Properties properties = getConfigIniProperties();
 		String osgiBundles = properties == null ? null : properties.getProperty("osgi.bundles"); //$NON-NLS-1$
@@ -91,24 +91,24 @@ public class TargetPlatformHelper {
 		}
 		return osgiBundles;
 	}
-	
+
 	public static String stripPathInformation(String osgiBundles) {
 		StringBuffer result = new StringBuffer();
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token = tokenizer.nextToken();
 			int index = token.indexOf('@');
-			
+
 			// read up until the first @, if there
 			String bundle = index > 0 ? token.substring(0, index) : token;
 			bundle = bundle.trim();
-			
+
 			// strip [reference:][file:/] prefixes if any
 			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length())
 				bundle = bundle.substring(REFERENCE_PREFIX.length());
 			if (bundle.startsWith(FILE_URL_PREFIX) && bundle.length() > FILE_URL_PREFIX.length())
 				bundle = bundle.substring(FILE_URL_PREFIX.length());
-			
+
 			// if the path is relative, the last segment is the bundle symbolic name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
 			IPath path = new Path(bundle);
@@ -121,16 +121,16 @@ public class TargetPlatformHelper {
 		}
 		return result.toString();
 	}
-	
+
 	private static synchronized String getSymbolicName(String path) {
 		if (fCachedLocations == null)
 			fCachedLocations = new HashMap();
-		
+
 		File file = new File(path);
 		if (file.exists() && !fCachedLocations.containsKey(path)) {
 			try {
 				Dictionary dictionary = MinimalState.loadManifest(file);
-				String value = (String)dictionary.get(Constants.BUNDLE_SYMBOLICNAME);
+				String value = (String) dictionary.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
 					String id = elements.length > 0 ? elements[0].getValue() : null;
@@ -140,42 +140,41 @@ public class TargetPlatformHelper {
 			} catch (IOException e) {
 			} catch (BundleException e) {
 			}
-		}			
-		return (String)fCachedLocations.get(path);
+		}
+		return (String) fCachedLocations.get(path);
 	}
 
-	
 	public static void checkPluginPropertiesConsistency(Map map, File configDir) {
 		File runtimeDir = new File(configDir, "org.eclipse.core.runtime"); //$NON-NLS-1$
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
 			Iterator iter = map.values().iterator();
 			while (iter.hasNext()) {
-				if (hasChanged((IPluginModelBase)iter.next(), timestamp)) {
-                    CoreUtility.deleteContent(runtimeDir);
-                    break;
-                }
+				if (hasChanged((IPluginModelBase) iter.next(), timestamp)) {
+					CoreUtility.deleteContent(runtimeDir);
+					break;
+				}
 			}
- 		}
+		}
 	}
-    
-    private static boolean hasChanged(IPluginModelBase model, long timestamp) {
-        if (model.getUnderlyingResource() != null) {
-            File[] files = new File(model.getInstallLocation()).listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory())
-                    continue;
-                String name = files[i].getName();
-                if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
-                        && files[i].lastModified() > timestamp) {
-                     return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    public static Set getApplicationNameSet() {
+
+	private static boolean hasChanged(IPluginModelBase model, long timestamp) {
+		if (model.getUnderlyingResource() != null) {
+			File[] files = new File(model.getInstallLocation()).listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory())
+					continue;
+				String name = files[i].getName();
+				if (name.startsWith("plugin") && name.endsWith(".properties") //$NON-NLS-1$ //$NON-NLS-2$
+						&& files[i].lastModified() > timestamp) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static Set getApplicationNameSet() {
 		TreeSet result = new TreeSet();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
@@ -186,13 +185,13 @@ public class TargetPlatformHelper {
 		}
 		result.add("org.eclipse.ui.ide.workbench"); //$NON-NLS-1$
 		return result;
-    }
+	}
 
 	public static String[] getApplicationNames() {
 		Set result = getApplicationNameSet();
-		return (String[])result.toArray(new String[result.size()]);
+		return (String[]) result.toArray(new String[result.size()]);
 	}
-	
+
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
@@ -203,32 +202,32 @@ public class TargetPlatformHelper {
 			if (!"product".equals(elements[0].getName())) //$NON-NLS-1$
 				continue;
 			String id = extensions[i].getUniqueIdentifier();
-			if (id != null && id.trim().length() > 0) 
+			if (id != null && id.trim().length() > 0)
 				result.add(id);
 		}
 		return result;
 	}
-	
+
 	public static String[] getProductNames() {
 		TreeSet result = getProductNameSet();
-		return (String[])result.toArray(new String[result.size()]);
+		return (String[]) result.toArray(new String[result.size()]);
 	}
-	
+
 	public static Dictionary getTargetEnvironment() {
 		Dictionary result = new Hashtable();
-		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
-		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
-		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
-		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+		result.put("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
+		result.put("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
+		result.put("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
+		result.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
 		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		result.put("osgi.resolverMode", "development"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
-	
+
 	public static Dictionary[] getPlatformProperties(String[] profiles, MinimalState state) {
 		if (profiles == null || profiles.length == 0)
 			return new Dictionary[] {getTargetEnvironment()};
-		
+
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
@@ -245,15 +244,15 @@ public class TargetPlatformHelper {
 			}
 		}
 		if (result.size() > 0)
-			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
+			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 	}
-	
+
 	private static Properties getJavaProfileProperties(String ee, State state) {
 		BundleDescription osgiBundle = state.getBundle(SYSTEM_BUNDLE, null);
-		if (osgiBundle == null) 
+		if (osgiBundle == null)
 			return null;
-		
+
 		File location = new File(osgiBundle.getLocation());
 		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
 		InputStream is = null;
@@ -298,22 +297,22 @@ public class TargetPlatformHelper {
 		}
 		return null;
 	}
-	
+
 	public static String[] getKnownExecutionEnvironments() {
 		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
 		if (jreProfile != null && jreProfile.length() > 0) {
-			if ("none".equals(jreProfile))  //$NON-NLS-1$
+			if ("none".equals(jreProfile)) //$NON-NLS-1$
 				return new String[0];
-			return new String[] {jreProfile};	
-		}	
+			return new String[] {jreProfile};
+		}
 		return ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 	}
 
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
-		if (model == null) 
+		if (model == null)
 			return ICoreConstants.TARGET33;
-		
+
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
 			Version vid = new Version(version);
@@ -325,22 +324,22 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET31;
 			if (major == 3 && minor == 2)
 				return ICoreConstants.TARGET32;
-		}			
-		return ICoreConstants.TARGET33;	
+		}
+		return ICoreConstants.TARGET33;
 	}
-	
+
 	public static double getTargetVersion() {
 		return Double.parseDouble(getTargetVersionString());
 	}
-	
+
 	public static PDEState getPDEState() {
 		return PDECore.getDefault().getModelManager().getState();
 	}
-	
+
 	public static State getState() {
 		return getPDEState().getState();
 	}
-	
+
 	public static Map getPatchMap(PDEState state) {
 		HashMap properties = new HashMap();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
@@ -354,19 +353,19 @@ public class TargetPlatformHelper {
 			} else if (ClasspathUtilCore.isPatchFragment(models[i])) {
 				properties.put(id, ICoreConstants.PATCH_FRAGMENT + ": true"); //$NON-NLS-1$
 			}
-		}		
-		return properties;		
+		}
+		return properties;
 	}
-	
+
 	public static HashMap getBundleClasspaths(PDEState state) {
 		HashMap properties = new HashMap();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			properties.put(new Long(bundles[i].getBundleId()), getValue(bundles[i], state));
-		}		
+		}
 		return properties;
 	}
-	
+
 	private static String[] getValue(BundleDescription bundle, PDEState state) {
 		IPluginModelBase model = PluginRegistry.findModel(bundle);
 		String[] result = null;
@@ -381,13 +380,13 @@ public class TargetPlatformHelper {
 			result = new String[libs.length];
 			for (int i = 0; i < libs.length; i++) {
 				result[i] = libs[i];
-			}			
+			}
 		}
 		if (result.length == 0)
 			return new String[] {"."}; //$NON-NLS-1$
 		return result;
 	}
-	
+
 	public static String[] getFeaturePaths() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		ArrayList list = new ArrayList();
@@ -400,19 +399,19 @@ public class TargetPlatformHelper {
 	}
 
 	public static boolean matchesCurrentEnvironment(IPluginModelBase model) {
-        BundleContext context = PDECore.getDefault().getBundleContext();	        
+		BundleContext context = PDECore.getDefault().getBundleContext();
 		Dictionary environment = getTargetEnvironment();
 		BundleDescription bundle = model.getBundleDescription();
-        String filterSpec = bundle != null ? bundle.getPlatformFilter() : null;
-        try {
-			return filterSpec == null|| context.createFilter(filterSpec).match(environment);
+		String filterSpec = bundle != null ? bundle.getPlatformFilter() : null;
+		try {
+			return filterSpec == null || context.createFilter(filterSpec).match(environment);
 		} catch (InvalidSyntaxException e) {
 			return false;
-		}		
+		}
 	}
-	
+
 	public static boolean usesNewApplicationModel() {
 		return PluginRegistry.findModel("org.eclipse.equinox.app") != null; //$NON-NLS-1$
 	}
-		
+
 }

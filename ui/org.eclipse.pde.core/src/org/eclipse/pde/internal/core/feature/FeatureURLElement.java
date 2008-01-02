@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.w3c.dom.Node;
 
-public class FeatureURLElement
-	extends FeatureObject
-	implements IFeatureURLElement {
+public class FeatureURLElement extends FeatureObject implements IFeatureURLElement {
 	private static final long serialVersionUID = 1L;
 	private int fElementType;
 	private int fSiteType = UPDATE_SITE;
@@ -29,24 +27,29 @@ public class FeatureURLElement
 	public FeatureURLElement(int elementType) {
 		this.fElementType = elementType;
 	}
+
 	public FeatureURLElement(int elementType, URL url) {
 		this.fElementType = elementType;
 		this.fUrl = url;
 	}
+
 	public int getElementType() {
 		return fElementType;
 	}
+
 	public URL getURL() {
 		return fUrl;
 	}
+
 	public int getSiteType() {
 		return fSiteType;
 	}
+
 	protected void parse(Node node) {
 		super.parse(node);
 		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		try {
-			if(urlName!=null)
+			if (urlName != null)
 				fUrl = new URL(urlName);
 		} catch (MalformedURLException e) {
 		}
@@ -69,8 +72,7 @@ public class FeatureURLElement
 		firePropertyChanged(this, P_URL, oldValue, new Integer(type));
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_URL)) {
 			setURL((URL) newValue);
 		} else if (name.equals(P_SITE_TYPE)) {
@@ -86,6 +88,7 @@ public class FeatureURLElement
 			return fUrl.toString();
 		return super.toString();
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		String tag = null;
 		switch (fElementType) {
@@ -99,7 +102,7 @@ public class FeatureURLElement
 		if (tag == null)
 			return;
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
-		if (label != null && label.length()>0) {
+		if (label != null && label.length() > 0) {
 			writer.print(" label=\"" + getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fUrl != null) {

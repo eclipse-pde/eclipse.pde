@@ -37,42 +37,41 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
 		}
 	}
-	
+
 	protected void handleFileDelta(IResourceDelta delta) {
-		IFile file = (IFile)delta.getResource();
- 		if (file.getProjectRelativePath().equals(ICoreConstants.FEATURE_PATH)) {
- 			IProject project = file.getProject();
+		IFile file = (IFile) delta.getResource();
+		if (file.getProjectRelativePath().equals(ICoreConstants.FEATURE_PATH)) {
+			IProject project = file.getProject();
 			Object model = getModel(project);
 			int kind = delta.getKind();
 			if (kind == IResourceDelta.REMOVED && model != null) {
 				removeModel(project);
 			} else if (kind == IResourceDelta.ADDED || model == null) {
 				createModel(file.getProject(), true);
-			} else if (kind == IResourceDelta.CHANGED 
-					    && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-				loadModel((IFeatureModel)model, true);
+			} else if (kind == IResourceDelta.CHANGED && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
+				loadModel((IFeatureModel) model, true);
 				addChange(model, IModelProviderEvent.MODELS_CHANGED);
-			}		
+			}
 		}
 	}
-	
+
 	protected void addListeners() {
-		int event = IResourceChangeEvent.PRE_CLOSE|IResourceChangeEvent.POST_CHANGE; 
+		int event = IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE;
 		PDECore.getWorkspace().addResourceChangeListener(this, event);
 	}
-	
+
 	protected void removeListeners() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		super.removeListeners();
 	}
-	
+
 	protected IFeatureModel[] getFeatureModels() {
 		initialize();
-		return (IFeatureModel[])fModels.values().toArray(new IFeatureModel[fModels.size()]);
+		return (IFeatureModel[]) fModels.values().toArray(new IFeatureModel[fModels.size()]);
 	}
-	
+
 	protected IFeatureModel getFeatureModel(IProject project) {
-		return (IFeatureModel)getModel(project);
+		return (IFeatureModel) getModel(project);
 	}
 
 }

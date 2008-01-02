@@ -13,19 +13,9 @@ package org.eclipse.pde.internal.core.text;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
@@ -36,7 +26,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	private Locator fLocator;
 	private IDocumentElementNode fLastError;
 	private boolean fReconciling;
-	
+
 	public DocumentHandler(boolean reconciling) {
 		fReconciling = reconciling;
 	}
@@ -50,23 +40,19 @@ public abstract class DocumentHandler extends DefaultHandler {
 		fLastError = null;
 		fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
 	}
-	
-	/**
-	 * @return
-	 */
+
 	protected IDocumentElementNode getLastParsedDocumentNode() {
 		if (fDocumentNodeStack.isEmpty()) {
 			return null;
 		}
-		return (IDocumentElementNode)fDocumentNodeStack.peek(); 
+		return (IDocumentElementNode) fDocumentNodeStack.peek();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
-		IDocumentElementNode parent = getLastParsedDocumentNode();		
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		IDocumentElementNode parent = getLastParsedDocumentNode();
 		IDocumentElementNode node = getDocumentNode(qName, parent);
 		try {
 			int nodeOffset = getStartOffset(qName);
@@ -116,14 +102,13 @@ public abstract class DocumentHandler extends DefaultHandler {
 		}
 		fDocumentNodeStack.push(node);
 	}
-	
+
 	protected abstract IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent);
-	
+
 	protected abstract IDocumentAttributeNode getDocumentAttribute(String name, String value, IDocumentElementNode parent);
-	
-	protected abstract IDocumentTextNode getDocumentTextNode(String content, 
-			IDocumentElementNode parent);
-	
+
+	protected abstract IDocumentTextNode getDocumentTextNode(String content, IDocumentElementNode parent);
+
 	private int getStartOffset(String elementName) throws BadLocationException {
 		int line = fLocator.getLineNumber();
 		int col = fLocator.getColumnNumber();
@@ -138,9 +123,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 			if (idx == -1)
 				break;
 			int end = text.indexOf("-->", idx); //$NON-NLS-1$
-			if (end == -1) 
+			if (end == -1)
 				break;
-			
+
 			commentPositions.add(new Position(idx, end - idx));
 			idx = end + 1;
 		}
@@ -152,7 +137,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 				break;
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = (Position)commentPositions.get(i);
+				Position pos = (Position) commentPositions.get(i);
 				if (pos.includes(idx)) {
 					valid = false;
 					break;
@@ -165,30 +150,30 @@ public abstract class DocumentHandler extends DefaultHandler {
 			fHighestOffset += idx + 1;
 		return fHighestOffset;
 	}
-	
+
 	private int getElementLength(IDocumentElementNode node, int line, int column) throws BadLocationException {
 		int endIndex = node.getOffset();
 		IDocument doc = getDocument();
 		int start = Math.max(doc.getLineOffset(line), node.getOffset());
 		column = doc.getLineLength(line);
-		String lineText= doc.get(start, column - start + doc.getLineOffset(line));
-		
+		String lineText = doc.get(start, column - start + doc.getLineOffset(line));
+
 		int index = lineText.indexOf("</" + node.getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (index == -1) {
-			index= lineText.indexOf(">"); //$NON-NLS-1$
-			if (index == -1 ) {
+			index = lineText.indexOf(">"); //$NON-NLS-1$
+			if (index == -1) {
 				endIndex = column;
 			} else {
 				endIndex = index + 1;
 			}
-		} else{
+		} else {
 			endIndex = index + node.getXMLTagName().length() + 3;
 		}
 		return start + endIndex - node.getOffset();
 	}
-	
-	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"\\s*=\\s*\"", true, true, false, true); //$NON-NLS-1$
+
+	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException {
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "\\s*=\\s*\"", true, true, false, true); //$NON-NLS-1$
 		if (nameRegion != null) {
 			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
 				return new Region(nameRegion.getOffset(), nameRegion.getLength() + value.length() + 1);
@@ -196,16 +181,14 @@ public abstract class DocumentHandler extends DefaultHandler {
 		return null;
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (fDocumentNodeStack.isEmpty())
 			return;
-		
-		IDocumentElementNode node = (IDocumentElementNode)fDocumentNodeStack.pop();
+
+		IDocumentElementNode node = (IDocumentElementNode) fDocumentNodeStack.pop();
 		try {
 			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
 			setTextNodeOffset(node);
@@ -213,7 +196,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		}
 		removeOrphanElements(node);
 	}
-	
+
 	protected void setTextNodeOffset(IDocumentElementNode node) throws BadLocationException {
 		IDocumentTextNode textNode = node.getTextNode();
 		if (textNode != null && textNode.getText() != null) {
@@ -227,40 +210,38 @@ public abstract class DocumentHandler extends DefaultHandler {
 			int relativeStartOffset = text.indexOf('>') + 1;
 			// last char of text node
 			int relativeEndOffset = text.lastIndexOf('<') - 1;
-			
-			if ((relativeStartOffset < 0) ||
-					(relativeStartOffset >= text.length())) {
+
+			if ((relativeStartOffset < 0) || (relativeStartOffset >= text.length())) {
 				return;
-			} else if ((relativeEndOffset < 0) ||
-					(relativeEndOffset >= text.length())) {
+			} else if ((relativeEndOffset < 0) || (relativeEndOffset >= text.length())) {
 				return;
 			}
-			
+
 			// trim whitespace
 			while (Character.isWhitespace(text.charAt(relativeStartOffset)))
 				relativeStartOffset += 1;
 			while (Character.isWhitespace(text.charAt(relativeEndOffset)))
 				relativeEndOffset -= 1;
-			
+
 			textNode.setOffset(node.getOffset() + relativeStartOffset);
-		    textNode.setLength(relativeEndOffset - relativeStartOffset + 1);
-		    textNode.setText(textNode.getText().trim());
-		}	
+			textNode.setLength(relativeEndOffset - relativeStartOffset + 1);
+			textNode.setText(textNode.getText().trim());
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#fatalError(org.xml.sax.SAXParseException)
 	 */
 	public void fatalError(SAXParseException e) throws SAXException {
 		generateErrorElementHierarchy();
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void generateErrorElementHierarchy() {
 		while (!fDocumentNodeStack.isEmpty()) {
-			IDocumentElementNode node = (IDocumentElementNode)fDocumentNodeStack.pop(); 
+			IDocumentElementNode node = (IDocumentElementNode) fDocumentNodeStack.pop();
 			node.setIsErrorNode(true);
 			removeOrphanAttributes(node);
 			removeOrphanElements(node);
@@ -275,40 +256,40 @@ public abstract class DocumentHandler extends DefaultHandler {
 	public void error(SAXParseException e) throws SAXException {
 		generateErrorElementHierarchy();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
 	public void setDocumentLocator(Locator locator) {
 		fLocator = locator;
 	}
-	
+
 	protected abstract IDocument getDocument();
-	
+
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
 		// prevent the parser from accessing the Internet
 		// This will prevent huge workbench performance degradations and hangs
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
-	
+
 	public IDocumentElementNode getLastErrorNode() {
 		return fLastError;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] ch, int start, int length) throws SAXException {	
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (!fReconciling || fDocumentNodeStack.isEmpty())
 			return;
-		
-		IDocumentElementNode parent = (IDocumentElementNode)fDocumentNodeStack.peek();
+
+		IDocumentElementNode parent = (IDocumentElementNode) fDocumentNodeStack.peek();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(ch, start, length);
 		getDocumentTextNode(buffer.toString(), parent);
 	}
-	
+
 	private void removeOrphanAttributes(IDocumentElementNode node) {
 		// when typing by hand, one element may overwrite a different existing one
 		// remove all attributes from previous element, if any.
@@ -318,7 +299,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 				if (attrs[i].getNameOffset() == -1)
 					node.removeDocumentAttribute(attrs[i]);
 			}
-		}		
+		}
 	}
 
 	private void removeOrphanElements(IDocumentElementNode node) {
@@ -333,9 +314,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 			}
 		}
 	}
-	
+
 	protected boolean isReconciling() {
 		return fReconciling;
 	}
-	
+
 }

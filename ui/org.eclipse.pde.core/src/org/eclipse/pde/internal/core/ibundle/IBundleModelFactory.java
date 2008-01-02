@@ -15,13 +15,13 @@ package org.eclipse.pde.internal.core.ibundle;
  * instances of a manifest.mf header.
  */
 public interface IBundleModelFactory {
-	
+
 	/**
 	 * Creates a new manifest header
 	 * @return a new manifest header instance
 	 */
 	IManifestHeader createHeader();
-	
+
 	/**
 	 * Creates a new manifest header
 	 *
@@ -32,5 +32,4 @@ public interface IBundleModelFactory {
 	 */
 	IManifestHeader createHeader(String key, String value);
 
-	
 }

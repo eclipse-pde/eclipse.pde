@@ -20,56 +20,54 @@ import org.w3c.dom.Element;
  * ISimpleCSObject
  *
  */
-public interface ISimpleCSObject extends IDocumentObject,
-		ISimpleCSConstants {
+public interface ISimpleCSObject extends IDocumentObject, ISimpleCSConstants {
 
 	/**
 	 * @return
 	 */
 	ISimpleCSModel getModel();
-	
+
 	/**
 	 * @param model
 	 */
 	void setModel(ISimpleCSModel model);
-	
+
 	/**
 	 * @return
 	 */
 	ISimpleCS getSimpleCS();
-	
+
 	/**
 	 * @param node
 	 */
-	void parse(Element element);	
+	void parse(Element element);
 
 	/**
 	 * 
 	 */
 	public void reset();
-	
+
 	/**
 	 * To avoid using instanceof all over the place
 	 * @return
 	 */
 	public int getType();
-	
-	
+
 	/**
 	 * For the label provider
 	 * @return
 	 */
 	public String getName();
-	
+
 	/**
 	 * For the content provider
 	 * @return A empty / non-empty list - never null
 	 */
 	public List getChildren();
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSObject getParent();
-	
+
 }

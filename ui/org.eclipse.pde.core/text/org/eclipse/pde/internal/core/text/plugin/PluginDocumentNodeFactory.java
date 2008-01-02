@@ -26,44 +26,44 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocumentNodeFactory {
-	
+
 	private PluginModelBase fModel;
 
 	public PluginDocumentNodeFactory(PluginModelBase model) {
 		fModel = model;
 	}
-	
+
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
 		if (parent == null)
 			return createPluginBase(name);
-		
+
 		if (parent instanceof PluginBaseNode) {
 			if ("extension".equals(name)) //$NON-NLS-1$
-				return (IDocumentElementNode)createExtension();
+				return (IDocumentElementNode) createExtension();
 			if ("extension-point".equals(name)) //$NON-NLS-1$
-				return (IDocumentElementNode)createExtensionPoint();
+				return (IDocumentElementNode) createExtensionPoint();
 		} else {
 			if (name.equals("import") && parent instanceof PluginElementNode) { //$NON-NLS-1$
-				if (((PluginElementNode)parent).getName().equals("requires")) { //$NON-NLS-1$
+				if (((PluginElementNode) parent).getName().equals("requires")) { //$NON-NLS-1$
 					IDocumentElementNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
-						return (IDocumentElementNode)createImport();
+						return (IDocumentElementNode) createImport();
 					}
 				}
 			} else if (name.equals("library") && parent instanceof PluginElementNode) { //$NON-NLS-1$
-				if (((PluginElementNode)parent).getName().equals("runtime")) { //$NON-NLS-1$
+				if (((PluginElementNode) parent).getName().equals("runtime")) { //$NON-NLS-1$
 					IDocumentElementNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
-						return (IDocumentElementNode)createLibrary();
+						return (IDocumentElementNode) createLibrary();
 					}
-				}				
-			}		
+				}
+			}
 		}
-		IDocumentElementNode node = (IDocumentElementNode)createElement((IPluginObject)parent);
+		IDocumentElementNode node = (IDocumentElementNode) createElement((IPluginObject) parent);
 		node.setXMLTagName(name);
 		return node;
 	}
-	
+
 	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement) {
 		PluginAttribute attribute = new PluginAttribute();
 		try {
@@ -76,10 +76,10 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		attribute.setInTheModel(true);
 		return attribute;
 	}
-	
+
 	private PluginBaseNode createPluginBase(String name) {
-		return (PluginBaseNode)fModel.createPluginBase(name.equals("fragment")); //$NON-NLS-1$
-		
+		return (PluginBaseNode) fModel.createPluginBase(name.equals("fragment")); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +91,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 		node.setXMLTagName("import"); //$NON-NLS-1$
 		return node;
 	}
-	
+
 	public IPluginImport createImport(String pluginId) {
 		PluginImportNode node = new PluginImportNode(pluginId);
 		node.setModel(fModel);
@@ -148,8 +148,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentTextNode createDocumentTextNode(String content,
-			IDocumentElementNode parent) {
+	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
 		DocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);

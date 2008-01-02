@@ -30,12 +30,10 @@ import org.w3c.dom.Element;
  * CompCSTaskGroup
  *
  */
-public class CompCSTaskGroup extends CompCSTaskObject implements
-		ICompCSTaskGroup {
+public class CompCSTaskGroup extends CompCSTaskObject implements ICompCSTaskGroup {
 
-	
-	private ArrayList fFieldTaskObjects;	
-	
+	private ArrayList fFieldTaskObjects;
+
 	/**
 	 * 
 	 */
@@ -99,7 +97,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#addFieldTaskObject(int, org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject)
 	 */
 	public void addFieldTaskObject(int index, ICompCSTaskObject taskObject) {
-		if (index < 0){
+		if (index < 0) {
 			return;
 		}
 		if (index >= fFieldTaskObjects.size()) {
@@ -107,10 +105,10 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		} else {
 			fFieldTaskObjects.add(index, taskObject);
 		}
-		
+
 		if (isEditable()) {
 			fireStructureChanged(taskObject, IModelChangedEvent.INSERT);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -124,8 +122,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#getFieldTaskObjects()
 	 */
 	public ICompCSTaskObject[] getFieldTaskObjects() {
-		return (ICompCSTaskObject[]) fFieldTaskObjects
-		.toArray(new ICompCSTaskObject[fFieldTaskObjects.size()]);
+		return (ICompCSTaskObject[]) fFieldTaskObjects.toArray(new ICompCSTaskObject[fFieldTaskObjects.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -175,22 +172,20 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		fFieldTaskObjects.remove(taskObject);
 		if (isEditable()) {
 			fireStructureChanged(taskObject, IModelChangedEvent.REMOVE);
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#removeFieldTaskObject(int)
 	 */
 	public void removeFieldTaskObject(int index) {
-		if ((index < 0) ||
-				(index > (fFieldTaskObjects.size() - 1))) {
+		if ((index < 0) || (index > (fFieldTaskObjects.size() - 1))) {
 			return;
 		}
-		ICompCSTaskObject taskObject = 
-			(ICompCSTaskObject)fFieldTaskObjects.remove(index);
+		ICompCSTaskObject taskObject = (ICompCSTaskObject) fFieldTaskObjects.remove(index);
 		if (isEditable()) {
 			fireStructureChanged(taskObject, IModelChangedEvent.REMOVE);
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -200,18 +195,18 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		super.parseElement(element);
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
-		
+
 		if (name.equals(ELEMENT_TASK)) {
 			// Process task element
 			ICompCSTask task = factory.createCompCSTask(this);
 			fFieldTaskObjects.add(task);
 			task.parse(element);
-		} else if (name.equals(ELEMENT_TASKGROUP)) { 
+		} else if (name.equals(ELEMENT_TASKGROUP)) {
 			// Process taskGroup element
 			ICompCSTaskGroup taskGroup = factory.createCompCSTaskGroup(this);
 			fFieldTaskObjects.add(taskGroup);
 			taskGroup.parse(element);
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -223,9 +218,9 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		// Print dependency elements
 		Iterator iterator = fFieldTaskObjects.iterator();
 		while (iterator.hasNext()) {
-			ICompCSTaskObject taskObject = (ICompCSTaskObject)iterator.next();
+			ICompCSTaskObject taskObject = (ICompCSTaskObject) iterator.next();
 			taskObject.write(newIndent, writer);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -241,13 +236,12 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	public ICompCSTaskObject getNextSibling(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
 		int lastIndex = fFieldTaskObjects.size() - 1;
-		if ((position == -1) ||
-				(position == lastIndex)) {
+		if ((position == -1) || (position == lastIndex)) {
 			// Either the item was not found or the item was found but it is 
 			// at the last index
 			return null;
 		}
-		return (ICompCSTaskObject)fFieldTaskObjects.get(position + 1);		
+		return (ICompCSTaskObject) fFieldTaskObjects.get(position + 1);
 	}
 
 	/* (non-Javadoc)
@@ -255,20 +249,18 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	 */
 	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject) {
 		int position = fFieldTaskObjects.indexOf(taskObject);
-		if ((position == -1) ||
-				(position == 0)) {
+		if ((position == -1) || (position == 0)) {
 			// Either the item was not found or the item was found but it is 
 			// at the first index
 			return null;
 		}
-		return (ICompCSTaskObject)fFieldTaskObjects.get(position - 1);		
+		return (ICompCSTaskObject) fFieldTaskObjects.get(position - 1);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#moveFieldTaskObject(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject, int)
 	 */
-	public void moveFieldTaskObject(ICompCSTaskObject taskObject,
-			int newRelativeIndex) {
+	public void moveFieldTaskObject(ICompCSTaskObject taskObject, int newRelativeIndex) {
 		// Get the current index of the task object
 		int currentIndex = indexOfFieldTaskObject(taskObject);
 		// Ensure the object is found
@@ -278,8 +270,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		// Calculate the new index
 		int newIndex = newRelativeIndex + currentIndex;
 		// Validate the new index
-		if ((newIndex < 0) ||
-				(newIndex >= fFieldTaskObjects.size())) {
+		if ((newIndex < 0) || (newIndex >= fFieldTaskObjects.size())) {
 			return;
 		}
 		// Remove the task object
@@ -289,7 +280,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		// Send an insert event
 		if (isEditable()) {
 			fireStructureChanged(taskObject, IModelChangedEvent.INSERT);
-		}	
+		}
 	}
-	
+
 }

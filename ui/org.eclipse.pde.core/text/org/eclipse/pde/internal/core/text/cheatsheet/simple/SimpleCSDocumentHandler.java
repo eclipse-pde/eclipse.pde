@@ -25,9 +25,9 @@ import org.xml.sax.SAXException;
 public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
 	private SimpleCSModel fModel;
-	
+
 	private String fCollapsibleParentName;
-	
+
 	/**
 	 * @param reconciling
 	 */
@@ -48,32 +48,30 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	 * @see org.eclipse.pde.internal.core.text.NodeDocumentHandler#getRootNode()
 	 */
 	protected IDocumentElementNode getRootNode() {
-		return (IDocumentElementNode)fModel.getSimpleCS();
+		return (IDocumentElementNode) fModel.getSimpleCS();
 	}
-	
+
 	/**
 	 * @param tagName
 	 */
 	private void setCollapsibleParentName(String tagName) {
 		fCollapsibleParentName = tagName;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private String getCollapsibleParentName() {
 		return fCollapsibleParentName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
-	public void startElement(String uri, String localName, String name,
-			Attributes attributes) throws SAXException {
-		
+	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+
 		IDocumentElementNode parent = getLastParsedDocumentNode();
-		if ((parent != null) &&
-				(parent.isContentCollapsed() == true)) {
+		if ((parent != null) && (parent.isContentCollapsed() == true)) {
 			setCollapsibleParentName(parent.getXMLTagName());
 			processCollapsedStartElement(name, attributes, parent);
 		} else {
@@ -84,22 +82,20 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void endElement(String uri, String localName, String name)
-			throws SAXException {
-		
-		if ((getCollapsibleParentName() != null) &&
-				(getCollapsibleParentName().equals(name))) {
+	public void endElement(String uri, String localName, String name) throws SAXException {
+
+		if ((getCollapsibleParentName() != null) && (getCollapsibleParentName().equals(name))) {
 			setCollapsibleParentName(null);
 		}
-	
+
 		if ((getCollapsibleParentName() != null)) {
 			IDocumentElementNode parent = getLastParsedDocumentNode();
 			processCollapsedEndElement(name, parent);
 		} else {
 			super.endElement(uri, localName, name);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param name
 	 * @param parent
@@ -127,8 +123,7 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 	 * @param attributes
 	 * @param parent
 	 */
-	private void processCollapsedStartElement(String name, Attributes attributes,
-			IDocumentElementNode parent) {
+	private void processCollapsedStartElement(String name, Attributes attributes, IDocumentElementNode parent) {
 		// Create the document node
 		IDocumentElementNode node = getDocumentNode(name, parent);
 		// Create the attributes
@@ -146,5 +141,5 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 		// Set the XML start tag string as text in the text node
 		getDocumentTextNode(startElementString, parent);
 	}
-	
+
 }

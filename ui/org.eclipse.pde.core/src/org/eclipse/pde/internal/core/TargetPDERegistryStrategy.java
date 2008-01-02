@@ -14,11 +14,10 @@ import java.io.File;
 
 public class TargetPDERegistryStrategy extends PDERegistryStrategy {
 
-	public TargetPDERegistryStrategy(File[] storageDirs,
-			boolean[] cacheReadOnly, Object key, PDEExtensionRegistry registry) {
+	public TargetPDERegistryStrategy(File[] storageDirs, boolean[] cacheReadOnly, Object key, PDEExtensionRegistry registry) {
 		super(storageDirs, cacheReadOnly, key, registry);
 	}
-	
+
 	protected void init() {
 		// don't attach listeners to ModelManager since we don't need to listen for changes
 	}

@@ -45,14 +45,14 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	public void setIconPath(String iconId, String path) {
 		if (path == null)
 			path = ""; //$NON-NLS-1$
-		String old = (String)fIcons.get(iconId);
+		String old = (String) fIcons.get(iconId);
 		fIcons.put(iconId, path);
 		if (isEditable())
 			firePropertyChanged(iconId, old, path);
 	}
 
 	public String getIconPath(String iconId) {
-		return (String)fIcons.get(iconId);
+		return (String) fIcons.get(iconId);
 	}
 
 	public boolean usesWinIcoFile() {
@@ -68,32 +68,32 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			fLauncherName = ((Element)node).getAttribute("name"); //$NON-NLS-1$
+			fLauncherName = ((Element) node).getAttribute("name"); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
 					if (name.equals("linux")) { //$NON-NLS-1$
-						parseLinux((Element)child);
+						parseLinux((Element) child);
 					} else if (name.equals("macosx")) { //$NON-NLS-1$
-						parseMac((Element)child);
+						parseMac((Element) child);
 					} else if (name.equals("solaris")) { //$NON-NLS-1$
-						parseSolaris((Element)child);
+						parseSolaris((Element) child);
 					} else if (name.equals("win")) { //$NON-NLS-1$
-						parseWin((Element)child);
+						parseWin((Element) child);
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void parseWin(Element element) {
 		fUseIcoFile = "true".equals(element.getAttribute(P_USE_ICO)); //$NON-NLS-1$
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				Element child = (Element)children.item(i);
+				Element child = (Element) children.item(i);
 				String name = child.getNodeName();
 				if (name.equals("ico")) { //$NON-NLS-1$
 					fIcons.put(P_ICO_PATH, child.getAttribute("path")); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		if (fLauncherName != null && fLauncherName.length() > 0)
 			writer.print(" name=\"" + fLauncherName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(">"); //$NON-NLS-1$
-		
+
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$
 		writeMac(indent + "   ", writer); //$NON-NLS-1$
 		writeSolaris(indent + "   ", writer); //$NON-NLS-1$
@@ -139,7 +139,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void writerWin(String indent, PrintWriter writer) {
 		writer.println(indent + "<win " + P_USE_ICO + "=\"" + Boolean.toString(fUseIcoFile) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		String path = (String)fIcons.get(P_ICO_PATH);
+		String path = (String) fIcons.get(P_ICO_PATH);
 		if (path != null && path.length() > 0)
 			writer.println(indent + "   <ico path=\"" + getWritableString(path) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent + "   <bmp"); //$NON-NLS-1$
@@ -161,24 +161,24 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writeIcon(indent + "   ", SOLARIS_TINY, writer); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	private void writeIcon(String indent, String iconId, PrintWriter writer) {
-		String icon = (String)fIcons.get(iconId);
+		String icon = (String) fIcons.get(iconId);
 		if (icon != null && icon.length() > 0) {
 			writer.println();
 			writer.print(indent + "   " + iconId + "=\"" + getWritableString(icon) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		
+
 	}
 
 	private void writeMac(String indent, PrintWriter writer) {
-		String icon = (String)fIcons.get(MACOSX_ICON);
+		String icon = (String) fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
 			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
-		String icon = (String)fIcons.get(LINUX_ICON);
+		String icon = (String) fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
 			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}

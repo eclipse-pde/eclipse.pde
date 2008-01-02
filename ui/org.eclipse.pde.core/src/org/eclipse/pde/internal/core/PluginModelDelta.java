@@ -31,15 +31,19 @@ public class PluginModelDelta {
 	public int getKind() {
 		return kind;
 	}
+
 	public ModelEntry[] getAddedEntries() {
 		return getEntries(added);
 	}
+
 	public ModelEntry[] getRemovedEntries() {
 		return getEntries(removed);
 	}
+
 	public ModelEntry[] getChangedEntries() {
 		return getEntries(changed);
 	}
+
 	private ModelEntry[] getEntries(ArrayList list) {
 		if (list == null)
 			return new ModelEntry[0];
@@ -60,6 +64,7 @@ public class PluginModelDelta {
 		}
 		kind |= type;
 	}
+
 	private ArrayList addEntry(ArrayList list, ModelEntry entry) {
 		if (list == null)
 			list = new ArrayList();

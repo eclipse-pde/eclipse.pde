@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 
-
 public class PDEStateHelper {
 
 	/**
@@ -32,8 +31,7 @@ public class PDEStateHelper {
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList resolvedImports = new ArrayList(packages.length);
 		for (int i = 0; i < packages.length; i++)
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation())
-					&& !resolvedImports.contains(packages[i].getExporter()))
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
 		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}

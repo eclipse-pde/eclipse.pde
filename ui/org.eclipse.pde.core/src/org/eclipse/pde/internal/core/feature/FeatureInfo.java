@@ -60,8 +60,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_DESC)) {
 			setDescription(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
@@ -79,23 +78,25 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		this.description = description;
 		firePropertyChanged(P_DESC, oldValue, description);
 	}
+
 	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		Node firstChild = node.getFirstChild();
-		if (firstChild!=null)
+		if (firstChild != null)
 			description = getNormalizedText(firstChild.getNodeValue());
 	}
 
 	public void write(String indent, PrintWriter writer) {
 		String indent2 = indent + Feature.INDENT;
-		String desc = description!=null?getWritableString(description.trim()):null;
+		String desc = description != null ? getWritableString(description.trim()) : null;
 		writer.println();
 		writer.print(indent + "<" + getTag()); //$NON-NLS-1$
 		if (url != null) {
 			writer.print(" url=\"" + getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println(">"); //$NON-NLS-1$
-		if (desc!=null) writer.println(indent2 + desc);
+		if (desc != null)
+			writer.println(indent2 + desc);
 		writer.println(indent + "</" + getTag() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

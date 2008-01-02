@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
+
 /**
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common
@@ -34,18 +35,19 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * that library order in a plug-in has changed. 
 	 */
 	String P_LIBRARY_ORDER = "library_order"; //$NON-NLS-1$
-	
+
 	/**
 	 * A property that will be used to notify
 	 * that import order in a plug-in has changed. 
 	 */
 	String P_IMPORT_ORDER = "import_order"; //$NON-NLS-1$
-	
+
 	/**
 	 * A property that will be used to notify
 	 * that 3.0 release compatibility flag has been changed. 
 	 */
 	String P_SCHEMA_VERSION = "schema-version"; //$NON-NLS-1$
+
 	/**
 	 * Adds a new library to this plugin.
 	 * This method will throw a CoreException if
@@ -63,6 +65,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param pluginImport the new import object
 	 */
 	void add(IPluginImport pluginImport) throws CoreException;
+
 	/**
 	 * Removes an import from the plugin. This
 	 * method will throw a CoreException if
@@ -71,29 +74,34 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param pluginImport the import object
 	 */
 	void remove(IPluginImport pluginImport) throws CoreException;
+
 	/**
 	 * Returns libraries referenced in this plug-in.
 	 *
 	 * @return an array of libraries
 	 */
 	IPluginLibrary[] getLibraries();
+
 	/**
 	 * Returns imports defined in this plug-in.
 	 *
 	 * @return an array of import objects
 	 */
 	IPluginImport[] getImports();
+
 	/**
 	 * Returns a name of the plug-in provider.
 	 *
 	 * @return plug-in provider name
 	 */
 	String getProviderName();
+
 	/**
 	 * Returns this plug-in's version
 	 * @return the version of the plug-in
 	 */
 	String getVersion();
+
 	/**
 	 * Removes a library from the plugin. This
 	 * method will throw a CoreException if
@@ -102,6 +110,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param library the library object
 	 */
 	void remove(IPluginLibrary library) throws CoreException;
+
 	/**
 	 * Sets the name of the plug-in provider.
 	 * This method will throw a CoreException
@@ -110,6 +119,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param providerName the new provider name
 	 */
 	void setProviderName(String providerName) throws CoreException;
+
 	/**
 	 * Sets the version of the plug-in.
 	 * This method will throw a CoreException
@@ -118,6 +128,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param version the new plug-in version
 	 */
 	void setVersion(String version) throws CoreException;
+
 	/**
 	 * Swaps the positions of the provided libraries
 	 * in the list of libraries. Libraries are looked up
@@ -130,7 +141,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param l2 the second library object
 	 */
 	void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException;
-	
+
 	/**
 	 * Swaps the positions of the plug-ins provided in
 	 * in the dependency list. This order is the one used
@@ -140,16 +151,17 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param import2 the second import object
 	 */
 	void swap(IPluginImport import1, IPluginImport import2) throws CoreException;
-	
+
 	/**
 	 * Returns version of the manifest grammar
 	 * @return version of the manifest grammar, or <samp>null</samp>
 	 */
 	String getSchemaVersion();
+
 	/**
 	 * Sets the R3.0 compatibility flag
 	 * @param schemaVersion version of the manifest grammar
 	 */
 	void setSchemaVersion(String schemaVersion) throws CoreException;
-	
+
 }

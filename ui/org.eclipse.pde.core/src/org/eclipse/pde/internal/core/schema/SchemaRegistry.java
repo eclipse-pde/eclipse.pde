@@ -31,11 +31,10 @@ import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
-
 public class SchemaRegistry {
-	
+
 	private HashMap fRegistry = new HashMap();
-	
+
 	public ISchema getSchema(String extPointID) {
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPointID);
 		if (point == null) {
@@ -44,26 +43,26 @@ public class SchemaRegistry {
 				fRegistry.remove(extPointID);
 			return null;
 		}
-		
+
 		URL url = getSchemaURL(point);
 		if (url == null)
 			return null;
-		
+
 		ISchemaDescriptor desc = getExistingDescriptor(extPointID, url);
 		if (desc == null) {
 			desc = new SchemaDescriptor(extPointID, url);
 			fRegistry.put(extPointID, desc);
 		}
-		
+
 		return (desc == null) ? null : desc.getSchema(true);
 	}
-	
+
 	public ISchema getIncludedSchema(ISchemaDescriptor parent, String schemaLocation) {
 		try {
 			URL url = IncludedSchemaDescriptor.computeURL(parent, schemaLocation);
 			if (url == null)
 				return null;
-			
+
 			ISchemaDescriptor desc = getExistingDescriptor(url.toString(), url);
 			if (desc == null) {
 				desc = new IncludedSchemaDescriptor(url);
@@ -74,52 +73,50 @@ public class SchemaRegistry {
 		}
 		return null;
 	}
-	
+
 	private ISchemaDescriptor getExistingDescriptor(String key, URL url) {
 		ISchemaDescriptor desc = null;
 		if (fRegistry.containsKey(key)) {
-			desc = (ISchemaDescriptor)fRegistry.get(key);
+			desc = (ISchemaDescriptor) fRegistry.get(key);
 			if (hasSchemaChanged(desc, url))
 				desc = null;
 		}
 		return desc;
 	}
 
-	public static URL getSchemaURL(IPluginExtensionPoint point,
-			IPluginModelBase base) {
+	public static URL getSchemaURL(IPluginExtensionPoint point, IPluginModelBase base) {
 		URL url = getSchemaURL(point);
 		if (url != null) {
 			return url;
 		}
 		String schema = point.getSchema();
-		if ((schema == null) || 
-				(schema.trim().length() == 0)) {
+		if ((schema == null) || (schema.trim().length() == 0)) {
 			return null;
 		}
-		return getSchemaURL(getId(point, base), schema);	
-	}	
-	
+		return getSchemaURL(getId(point, base), schema);
+	}
+
 	public static URL getSchemaURL(IPluginExtensionPoint point) {
 		String schema = point.getSchema();
 		if (schema == null || schema.trim().length() == 0)
 			return null;
-		
+
 		IPluginModelBase model = point.getPluginModel();
-		URL url = getSchemaURL(model.getPluginBase().getId(), schema);		
+		URL url = getSchemaURL(model.getPluginBase().getId(), schema);
 		if (url == null)
 			url = getSchemaFromSourceExtension(point.getPluginBase(), new Path(schema));
 		return url;
 	}
-	
+
 	public static URL getSchemaFromSourceExtension(IPluginBase plugin, IPath path) {
 		SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
 		return mgr.findSourceFile(plugin, path);
 	}
-	
+
 	public static URL getSchemaURL(String pluginID, String schema) {
 		if (pluginID == null)
 			return null;
-		
+
 		URL url = null;
 		ModelEntry entry = PluginRegistry.findEntry(pluginID);
 		if (entry != null) {
@@ -140,17 +137,17 @@ public class SchemaRegistry {
 		}
 		return url;
 	}
-	
+
 	private static URL getSchemaURL(IPluginModelBase model, String schema) {
 		try {
 			if (model == null)
 				return null;
-			
+
 			String location = model.getInstallLocation();
 			if (location == null)
 				return null;
-			
-			File file = new File(location);			
+
+			File file = new File(location);
 			if (file.isDirectory()) {
 				File schemaFile = new File(file, schema);
 				if (schemaFile.exists())
@@ -159,17 +156,17 @@ public class SchemaRegistry {
 				return new URL("jar:file:" + file.getAbsolutePath() + "!/" + schema); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (MalformedURLException e) {
-		}		
+		}
 		return null;
 	}
-	
+
 	private boolean hasSchemaChanged(ISchemaDescriptor desc, URL url) {
 		if (!desc.getSchemaURL().equals(url))
 			return true;
 		File file = new File(url.getFile());
 		return (desc.getLastModified() != file.lastModified());
 	}
-	
+
 	public void shutdown() {
 		fRegistry.clear();
 	}
@@ -178,7 +175,7 @@ public class SchemaRegistry {
 		String id = null;
 		if (point instanceof PluginExtensionPointNode) {
 			if (base instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel)base).getFragment();
+				IFragment fragment = ((IFragmentModel) base).getFragment();
 				if (fragment != null) {
 					id = fragment.getPluginId();
 				}
@@ -188,6 +185,6 @@ public class SchemaRegistry {
 			}
 		}
 		return id;
-	}	
-	
+	}
+
 }

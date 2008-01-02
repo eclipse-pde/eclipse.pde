@@ -15,5 +15,6 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 
 public interface IStateDeltaListener {
 	public void stateResolved(StateDelta delta);
+
 	public void stateChanged(State newState);
 }

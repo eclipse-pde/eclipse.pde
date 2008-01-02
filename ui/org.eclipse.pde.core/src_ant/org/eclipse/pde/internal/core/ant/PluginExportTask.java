@@ -35,12 +35,11 @@ public class PluginExportTask extends BaseExportTask {
 		if (!new File(fDestination).isAbsolute()) {
 			File home = new File(getLocation().getFileName()).getParentFile();
 			info.destinationDirectory = new File(home, fDestination).toString();
-		}
-		else
+		} else
 			info.destinationDirectory = fDestination;
 		return new PluginExportOperation(info);
 	}
-	
+
 	public void setPlugins(String plugins) {
 		StringTokenizer tok = new StringTokenizer(plugins, ","); //$NON-NLS-1$
 		ArrayList models = new ArrayList();
@@ -50,7 +49,7 @@ public class PluginExportTask extends BaseExportTask {
 			if (model != null)
 				models.add(model);
 		}
-		fPlugins = (IPluginModelBase[])models.toArray(new IPluginModelBase[models.size()]);
+		fPlugins = (IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
 	}
-	
+
 }

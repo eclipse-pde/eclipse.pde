@@ -17,8 +17,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-public abstract class SchemaObject extends PlatformObject implements
-		ISchemaObject, Serializable {
+public abstract class SchemaObject extends PlatformObject implements ISchemaObject, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,8 +60,7 @@ public abstract class SchemaObject extends PlatformObject implements
 	public String getWritableDescription() {
 		String lineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
 		String description = PDEXMLHelper.getWritableString(getDescription());
-		String platformDescription = description.replaceAll(
-				"\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
+		String platformDescription = description.replaceAll("\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 
 		return platformDescription;
 	}
@@ -70,8 +68,7 @@ public abstract class SchemaObject extends PlatformObject implements
 	public void setDescription(String newDescription) {
 		String oldValue = fDescription;
 		fDescription = newDescription;
-		getSchema().fireModelObjectChanged(this, P_DESCRIPTION, oldValue,
-				fDescription);
+		getSchema().fireModelObjectChanged(this, P_DESCRIPTION, oldValue, fDescription);
 	}
 
 	public void setName(String newName) {

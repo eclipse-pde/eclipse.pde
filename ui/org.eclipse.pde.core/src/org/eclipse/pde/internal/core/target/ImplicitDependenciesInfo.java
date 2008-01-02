@@ -22,11 +22,10 @@ import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class ImplicitDependenciesInfo extends TargetObject implements
-		IImplicitDependenciesInfo {
-	
+public class ImplicitDependenciesInfo extends TargetObject implements IImplicitDependenciesInfo {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	Map fPlugins = new HashMap();
 
 	public ImplicitDependenciesInfo(ITargetModel model) {
@@ -43,7 +42,7 @@ public class ImplicitDependenciesInfo extends TargetObject implements
 
 	public void addPlugins(ITargetPlugin[] plugins) {
 		ArrayList addedPlugins = new ArrayList();
-		for (int i = 0; i < plugins.length; i ++ ) {
+		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
 			if (fPlugins.containsKey(id))
 				continue;
@@ -52,8 +51,7 @@ public class ImplicitDependenciesInfo extends TargetObject implements
 			addedPlugins.add(plugins[i]);
 		}
 		if (isEditable() && (addedPlugins.size() > 0)) {
-			firePropertyChanged(P_IMPLICIT_PLUGINS, new ITargetPlugin[0], 
-					(ITargetPlugin[])addedPlugins.toArray(new ITargetPlugin[addedPlugins.size()]));
+			firePropertyChanged(P_IMPLICIT_PLUGINS, new ITargetPlugin[0], (ITargetPlugin[]) addedPlugins.toArray(new ITargetPlugin[addedPlugins.size()]));
 		}
 
 	}
@@ -64,12 +62,11 @@ public class ImplicitDependenciesInfo extends TargetObject implements
 
 	public void removePlugins(ITargetPlugin[] plugins) {
 		ArrayList removedPlugins = new ArrayList();
-		for (int i =0; i < plugins.length; i++) 
+		for (int i = 0; i < plugins.length; i++)
 			if (fPlugins.remove(plugins[i].getId()) != null)
 				removedPlugins.add(plugins[i]);
 		if (isEditable() && (removedPlugins.size() > 0))
-			firePropertyChanged(P_IMPLICIT_PLUGINS, (ITargetPlugin[])removedPlugins.toArray(new ITargetPlugin[removedPlugins.size()]), 
-					new ITargetPlugin[0]);
+			firePropertyChanged(P_IMPLICIT_PLUGINS, (ITargetPlugin[]) removedPlugins.toArray(new ITargetPlugin[removedPlugins.size()]), new ITargetPlugin[0]);
 	}
 
 	public void parse(Node node) {

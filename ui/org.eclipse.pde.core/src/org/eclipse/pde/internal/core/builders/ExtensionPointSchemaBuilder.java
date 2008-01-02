@@ -45,18 +45,20 @@ import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
+
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
+
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
 			if (resource instanceof IProject)
-				return isInterestingProject((IProject)resource);
-			
+				return isInterestingProject((IProject) resource);
+
 			if (resource instanceof IFolder)
 				return true;
-			
+
 			if (resource instanceof IFile) {
 				// see if this is it
 				IFile candidate = (IFile) resource;
@@ -73,8 +75,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-		throws CoreException {
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
 			delta = getDelta(getProject());
@@ -87,16 +88,16 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 		return new IProject[0];
 	}
-	
+
 	private boolean isInterestingProject(IProject project) {
 		return PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryProject(project);
 	}
 
 	private void compileFile(IFile file, IProgressMonitor monitor) {
-		
+
 		String message = NLS.bind(PDECoreMessages.Builders_Schema_compiling, file.getFullPath().toString());
 		monitor.subTask(message);
-		
+
 		SchemaErrorReporter reporter = new SchemaErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
 		reporter.validateContent(monitor);
@@ -112,11 +113,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				Path outputPath = new Path(outputFileName);
 
 				SchemaDescriptor desc = new SchemaDescriptor(file, false);
-				Schema schema = (Schema)desc.getSchema(false);
-				
+				Schema schema = (Schema) desc.getSchema(false);
+
 				SchemaTransformer transformer = new SchemaTransformer();
 				transformer.transform(schema, writer);
-				
+
 				ByteArrayInputStream target = new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				if (!workspace.getRoot().exists(outputPath)) {
@@ -139,11 +140,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();
 	}
-	
+
 	private void ensureFoldersExist(IProject project, String pathName) throws CoreException {
 		IPath path = new Path(pathName);
-		IContainer parent=project;
-		
+		IContainer parent = project;
+
 		for (int i = 0; i < path.segmentCount(); i++) {
 			String segment = path.segment(i);
 			IFolder folder = parent.getFolder(new Path(segment));
@@ -167,11 +168,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 		monitor.done();
 	}
-	
+
 	private String getDocLocation(IFile file) {
 		return CompilerFlags.getString(file.getProject(), CompilerFlags.S_DOC_FOLDER);
 	}
-	
+
 	private String getOutputFileName(IFile file) {
 		String fileName = file.getName();
 		int dot = fileName.lastIndexOf('.');
@@ -179,11 +180,10 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		String mangledPluginId = getMangledPluginId(file);
 		if (mangledPluginId != null)
 			pageName = mangledPluginId + "_" + pageName; //$NON-NLS-1$
-		IPath path = file.getProject().getFullPath().append(
-				getDocLocation(file)).append(pageName);
+		IPath path = file.getProject().getFullPath().append(getDocLocation(file)).append(pageName);
 		return path.toString();
 	}
-	
+
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
 		IModel model = PluginRegistry.findModel(project);
@@ -195,11 +195,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	
+
 	private boolean isSchemaFile(IFile file) {
 		return "exsd".equals(file.getFileExtension()); //$NON-NLS-1$
 	}
-	
+
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 		String outputFileName = getOutputFileName(file);
 		monitor.subTask(NLS.bind(PDECoreMessages.Builders_Schema_removing, outputFileName));

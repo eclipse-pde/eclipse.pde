@@ -26,9 +26,11 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 	public BundleTextChangeListener(IDocument document) {
 		super(document, false);
 	}
+
 	public BundleTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document, generateReadableNames);
 	}
+
 	public TextEdit[] getTextOperations() {
 		TextEdit[] ops = super.getTextOperations();
 		try {
@@ -36,7 +38,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 				return ops;
 		} catch (BadLocationException e) {
 		}
-		
+
 		TextEdit[] result = new TextEdit[ops.length + 1];
 		result[ops.length] = new InsertEdit(PropertiesUtil.getInsertOffset(fDocument), fSep);
 		if (fReadableNames != null)
@@ -78,24 +80,22 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
-            if (object instanceof PDEManifestElement)
-                object = ((PDEManifestElement)object).getHeader();
-            else if (object instanceof PackageFriend)
-                object = ((PackageFriend)object).getHeader();
-            
+			if (object instanceof PDEManifestElement)
+				object = ((PDEManifestElement) object).getHeader();
+			else if (object instanceof PackageFriend)
+				object = ((PackageFriend) object).getHeader();
+
 			if (object instanceof ManifestHeader) {
-				ManifestHeader header = (ManifestHeader)object;
+				ManifestHeader header = (ManifestHeader) object;
 				Object op = fOperationTable.remove(header);
 				if (fReadableNames != null)
 					fReadableNames.remove(op);
-				
+
 				if (header.getValue() == null || header.getValue().trim().length() == 0) {
-					String name = fReadableNames == null ? null :
-						NLS.bind(PDECoreMessages.BundleTextChangeListener_editNames_remove, header.fName);
+					String name = fReadableNames == null ? null : NLS.bind(PDECoreMessages.BundleTextChangeListener_editNames_remove, header.fName);
 					deleteKey(header, name);
 				} else {
-					String name = fReadableNames == null ? null :
-						NLS.bind(header.getOffset() == -1 ? PDECoreMessages.BundleTextChangeListener_editNames_insert : PDECoreMessages.BundleTextChangeListener_editNames_modify, header.fName);
+					String name = fReadableNames == null ? null : NLS.bind(header.getOffset() == -1 ? PDECoreMessages.BundleTextChangeListener_editNames_insert : PDECoreMessages.BundleTextChangeListener_editNames_modify, header.fName);
 					modifyKey(header, name);
 				}
 			}

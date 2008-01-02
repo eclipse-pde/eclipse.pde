@@ -23,6 +23,7 @@ public interface ISharedExtensionsModel extends ISharedPluginModel {
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 */
 	IExtensions getExtensions();
+
 	/**
 	 * Returns a top-level model object.
 	 * @param createIfMissing if true, root model object will

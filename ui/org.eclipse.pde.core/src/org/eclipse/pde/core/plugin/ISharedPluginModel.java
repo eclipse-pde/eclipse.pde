@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
+
 /**
  * This type of model is created by parsing the manifest file.
  * It serves as a base interface for both plug-in and
@@ -40,6 +41,7 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	 * to create new instances of the model objects.
 	 */
 	IExtensionsModelFactory getFactory();
+
 	/**
 	 * Returns a location of the file that was used
 	 * to create this model.  The location can be that 
@@ -50,5 +52,5 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	 * from a resource or a file in the file system.
 	 */
 	String getInstallLocation();
-	
+
 }

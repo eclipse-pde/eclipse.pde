@@ -37,7 +37,7 @@ public class TargetPlugin extends TargetObject implements ITargetPlugin {
 
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element element = (Element)node;
+			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fOptional = element.getAttribute("optional").equalsIgnoreCase("true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

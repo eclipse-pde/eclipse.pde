@@ -28,15 +28,15 @@ public class AbbreviatedPluginModel extends WorkspacePluginModel {
 	private static final long serialVersionUID = 1L;
 
 	private String[] fExtensionPointIDs;
-	
+
 	/**
 	 * @param file
 	 * @param abbreviated
 	 */
 	public AbbreviatedPluginModel(IFile file, String[] extensionPointIDs) {
 		super(file, true);
-		
-		fExtensionPointIDs = extensionPointIDs;		
+
+		fExtensionPointIDs = extensionPointIDs;
 	}
 
 	/**
@@ -45,16 +45,15 @@ public class AbbreviatedPluginModel extends WorkspacePluginModel {
 	 */
 	public AbbreviatedPluginModel(IFile file, String extensionPointID) {
 		super(file, true);
-		
-		fExtensionPointIDs = new String[] {extensionPointID};		
-	}	
-	
+
+		fExtensionPointIDs = new String[] {extensionPointID};
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase#load(java.io.InputStream, boolean)
 	 */
-	public void load(InputStream stream, boolean outOfSync)
-			throws CoreException {
+	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync, new AbbreviatedPluginHandler(fExtensionPointIDs));
 	}
-	
+
 }

@@ -35,21 +35,21 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	public PluginExtension() {
 	}
-	
+
 	public PluginExtension(IExtension extension) {
 		fExtension = extension;
 	}
-	
+
 	public String getPoint() {
 		if (fPoint == null && fExtension != null)
-			fPoint = fExtension.getExtensionPointUniqueIdentifier(); 
+			fPoint = fExtension.getExtensionPointUniqueIdentifier();
 		return fPoint;
 	}
-	
+
 	public boolean isValid() {
 		return getPoint() != null;
 	}
-		
+
 	public Object getSchema() {
 		if (schema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -59,7 +59,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		return schema;
 	}
-	
+
 	/*
 	 * If this function is used to load the model, the extension registry cache will not be used when querying model.
 	 */
@@ -67,7 +67,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		this.fID = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
-		
+
 		if (fChildren == null)
 			fChildren = new ArrayList();
 		NodeList children = node.getChildNodes();
@@ -92,7 +92,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			return false;
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension target = (IPluginExtension) obj;
-			
+
 			// comparing the model is a little complicated since we need to allow text and non-text models representing the same file
 			if (target.getModel().getClass() == getModel().getClass()) {
 				if (!target.getModel().equals(getModel()))
@@ -104,7 +104,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 					// model is external model
 					if (!(target.getModel().getInstallLocation().equals(getModel().getInstallLocation())))
 						return false;
-				// model is a workspace model.  Need to compare underlyingResource because text and non-text model return differently formatted strings
+					// model is a workspace model.  Need to compare underlyingResource because text and non-text model return differently formatted strings
 				} else if (!(res.equals(target.getModel().getUnderlyingResource())))
 					return false;
 			}
@@ -119,7 +119,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		return false;
 	}
-	
+
 	private boolean nameEqual(String targetName) {
 		// Since extension registry returns "" when an extension's name == null, we have to do the same when comparing the name of the target.
 		// Note, we only do this if the PluginExtension has an fExtension element which means it's name comes from the extension registry.
@@ -135,8 +135,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		firePropertyChanged(P_POINT, oldValue, point);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_POINT)) {
 			setPoint(newValue != null ? newValue.toString() : null);
 			return;
@@ -149,6 +148,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 			return getName();
 		return getPoint();
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<extension"); //$NON-NLS-1$
@@ -159,8 +159,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		if (getName() != null) {
 			writer.println();
-			writer.print(
-				attIndent + "name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(attIndent + "name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getPoint() != null) {
 			writer.println();
@@ -174,14 +173,14 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		writer.println(indent + "</extension>"); //$NON-NLS-1$
 	}
-	
+
 	public String getName() {
 		if (fName == null && fExtension != null) {
 			fName = fExtension.getLabel();
 		}
 		return fName;
 	}
-	
+
 	public String getId() {
 		if (fID == null && fExtension != null) {
 			fID = fExtension.getUniqueIdentifier();
@@ -196,14 +195,14 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		return fID;
 	}
-	
+
 	protected ArrayList getChildrenList() {
 		if (fChildren == null) {
 			fChildren = new ArrayList();
 			if (fExtension != null) {
 				if (fExtension != null) {
 					IConfigurationElement[] elements = fExtension.getConfigurationElements();
-					for (int i = 0; i < elements.length;i++) {
+					for (int i = 0; i < elements.length; i++) {
 						PluginElement element = new PluginElement(elements[i]);
 						element.setModel(getModel());
 						element.setParent(this);

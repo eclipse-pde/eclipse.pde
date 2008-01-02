@@ -14,7 +14,7 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.text.edits.TextEdit;
 
 public interface IModelTextChangeListener extends IModelChangedListener {
-	
+
 	TextEdit[] getTextOperations();
 
 	/**

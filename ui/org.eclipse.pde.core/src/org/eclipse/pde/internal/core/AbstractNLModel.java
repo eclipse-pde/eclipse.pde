@@ -41,14 +41,14 @@ public abstract class AbstractNLModel extends AbstractModel {
 
 		if (fNLHelper == null)
 			fNLHelper = createNLResourceHelper();
-		
+
 		return fNLHelper != null ? fNLHelper.getResourceString(key) : key;
 	}
-	
+
 	protected abstract NLResourceHelper createNLResourceHelper();
-	
+
 	public Object getAdapter(Class adapter) {
-		if(adapter == IResource.class) {
+		if (adapter == IResource.class) {
 			IResource resource = getUnderlyingResource();
 			return resource == null ? null : resource.getProject();
 		}

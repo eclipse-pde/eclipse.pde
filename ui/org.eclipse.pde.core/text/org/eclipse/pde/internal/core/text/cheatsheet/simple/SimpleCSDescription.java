@@ -21,8 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
  * SimpleCSDescription
  *
  */
-public class SimpleCSDescription extends SimpleCSObject implements
-		ISimpleCSDescription {
+public class SimpleCSDescription extends SimpleCSObject implements ISimpleCSDescription {
 
 	private static final long serialVersionUID = 1L;
 
@@ -74,5 +73,5 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	public boolean isContentCollapsed() {
 		return true;
 	}
-	
+
 }

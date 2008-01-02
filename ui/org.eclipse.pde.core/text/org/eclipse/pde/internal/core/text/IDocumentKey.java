@@ -14,11 +14,13 @@ import org.eclipse.pde.core.IWritable;
 
 public interface IDocumentKey extends IWritable, IDocumentRange {
 	void setName(String name);
+
 	String getName();
-	
-	void setOffset(int offset);	
+
+	void setOffset(int offset);
+
 	void setLength(int length);
-	
+
 	String write();
-	
+
 }

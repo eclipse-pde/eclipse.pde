@@ -28,8 +28,8 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class JarManifestErrorReporter extends ErrorReporter {
 
-	protected static final String[] BOOLEAN_VALUES = new String[] { "true", //$NON-NLS-1$
-			"false" }; //$NON-NLS-1$
+	protected static final String[] BOOLEAN_VALUES = new String[] {"true", //$NON-NLS-1$
+			"false"}; //$NON-NLS-1$
 
 	/**
 	 * Map of IHeader by name
@@ -40,9 +40,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 	public JarManifestErrorReporter(IFile file) {
 		super(file);
-		fTextDocument = createDocument(file); 
+		fTextDocument = createDocument(file);
 	}
-
 
 	private String getHeaderName(String line) {
 		for (int i = 0; i < line.length(); i++) {
@@ -50,8 +49,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			if (c == ':') {
 				return line.substring(0, i);
 			}
-			if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c)
-					&& (c < '0' || '9' < c)) {
+			if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c) && (c < '0' || '9' < c)) {
 				if (i == 0) {
 					return null;
 				}
@@ -70,11 +68,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 		// check for this exact package on the last line
 		try {
-			IRegion lineRegion = fTextDocument.getLineInformation(header
-					.getLineNumber()
-					+ header.getLinesSpan() - 1);
-			String lineStr = fTextDocument.get(lineRegion.getOffset(),
-					lineRegion.getLength());
+			IRegion lineRegion = fTextDocument.getLineInformation(header.getLineNumber() + header.getLinesSpan() - 1);
+			String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 			if (lineStr.endsWith(packageName)) {
 				return header.getLineNumber() + header.getLinesSpan();
 			}
@@ -90,8 +85,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		for (int l = header.getLineNumber(); l < header.getLineNumber() + header.getLinesSpan(); l++) {
 			try {
 				IRegion lineRegion = fTextDocument.getLineInformation(l);
-				String lineStr = fTextDocument.get(lineRegion.getOffset(),
-						lineRegion.getLength());
+				String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 				if (lineStr.indexOf(valueSubstring) >= 0) {
 					return l + 1;
 				}
@@ -103,12 +97,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		try {
 			IRegion lineRegion = fTextDocument.getLineInformation(header.getLineNumber());
 			String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
-			for (int l = header.getLineNumber() + 1; l < header.getLineNumber()
-					+ header.getLinesSpan(); l++) {
+			for (int l = header.getLineNumber() + 1; l < header.getLineNumber() + header.getLinesSpan(); l++) {
 				lineRegion = fTextDocument.getLineInformation(l);
-				lineStr += fTextDocument.get(
-						lineRegion.getOffset() + 1/* the space */, lineRegion
-								.getLength());
+				lineStr += fTextDocument.get(lineRegion.getOffset() + 1/* the space */, lineRegion.getLength());
 				if (lineStr.indexOf(valueSubstring) >= 0) {
 					return l;
 				}
@@ -129,11 +120,10 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			JarManifestHeader header = null;
 			int l = 0;
 			for (; l < document.getNumberOfLines(); l++) {
-				if(l % 100 ==0)
+				if (l % 100 == 0)
 					checkCanceled(monitor);
 				IRegion lineInfo = document.getLineInformation(l);
-				String line = document.get(lineInfo.getOffset(), lineInfo
-						.getLength());
+				String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
 				// test lines' length
 				Charset charset = Charset.forName("UTF-8"); //$NON-NLS-1$
 				String lineDelimiter = document.getLineDelimiter(l);
@@ -142,20 +132,14 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				}
 				ByteBuffer byteBuf = charset.encode(line);
 				if (byteBuf.limit() + lineDelimiter.length() > 512) {
-					report(
-							PDECoreMessages.BundleErrorReporter_lineTooLong, 
-							l + 1, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_lineTooLong, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				// parse
 				if (line.length() == 0) {
 					// Empty Line
 					if (l == 0) {
-						report(
-								PDECoreMessages.BundleErrorReporter_noMainSection, 
-								1, CompilerFlags.ERROR,
-								PDEMarkerFactory.CAT_FATAL);
+						report(PDECoreMessages.BundleErrorReporter_noMainSection, 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 						return;
 					}
 					/* flush last line */
@@ -168,10 +152,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				if (line.charAt(0) == ' ') {
 					// Continuation Line
 					if (l == 0) { /* if no previous line */
-						report(
-								PDECoreMessages.BundleErrorReporter_noMainSection, 
-								1, CompilerFlags.ERROR,
-								PDEMarkerFactory.CAT_FATAL);
+						report(PDECoreMessages.BundleErrorReporter_noMainSection, 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 						return;
 					}
 					if (header != null) {
@@ -188,67 +169,44 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 				int colon = line.indexOf(':');
 				if (colon == -1) { /* no colon */
-					report(
-							PDECoreMessages.BundleErrorReporter_noColon, 
-							l + 1, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_noColon, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				String headerName = getHeaderName(line);
 				if (headerName == null) {
-					report(
-							PDECoreMessages.BundleErrorReporter_invalidHeaderName, 
-							l + 1, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if (line.length() < colon + 2 || line.charAt(colon + 1) != ' ') {
-					report(
-							PDECoreMessages.BundleErrorReporter_noSpaceValue, 
-							l + 1, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_noSpaceValue, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if ("Name".equals(headerName)) { //$NON-NLS-1$
-					report(
-							PDECoreMessages.BundleErrorReporter_nameHeaderInMain, 
-							l + 1, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_nameHeaderInMain, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
-				header = new JarManifestHeader(headerName, line
-						.substring(colon + 2), l, this);
+				header = new JarManifestHeader(headerName, line.substring(colon + 2), l, this);
 				if (fHeaders.containsKey(header.getName().toLowerCase())) {
-					report(
-							PDECoreMessages.BundleErrorReporter_duplicateHeader, 
-							l + 1, CompilerFlags.WARNING,
-							PDEMarkerFactory.CAT_OTHER);
+					report(PDECoreMessages.BundleErrorReporter_duplicateHeader, l + 1, CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 				}
 
 			}
 			if (header != null) {
 				// lingering header, line not terminated
-				report(
-						PDECoreMessages.BundleErrorReporter_noLineTermination, 
-						l, CompilerFlags.ERROR,
-						PDEMarkerFactory.CAT_FATAL);
+				report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 				return;
 			}
 			// If there is any more headers, not starting with a Name header
 			// the empty lines are a mistake, report it.
 			for (; l < document.getNumberOfLines(); l++) {
 				IRegion lineInfo = document.getLineInformation(l);
-				String line = document.get(lineInfo.getOffset(), lineInfo
-						.getLength());
+				String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
 				if (line.length() == 0) {
 					continue;
 				}
 				if (!line.startsWith("Name:")) { //$NON-NLS-1$
-					report(
-							PDECoreMessages.BundleErrorReporter_noNameHeader, 
-							l, CompilerFlags.ERROR,
-							PDEMarkerFactory.CAT_FATAL);
-				} 
+					report(PDECoreMessages.BundleErrorReporter_noNameHeader, l, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+				}
 				break;
 			}
 
@@ -258,27 +216,23 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		}
 	}
 
-	protected void reportIllegalAttributeValue(IHeader header, String key,
-			String value) {
-		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_att_value, (new String[] { value, key })); 
-		report(msg, getLine(header, key + "="), CompilerFlags.ERROR,  //$NON-NLS-1$
+	protected void reportIllegalAttributeValue(IHeader header, String key, String value) {
+		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_att_value, (new String[] {value, key}));
+		report(msg, getLine(header, key + "="), CompilerFlags.ERROR, //$NON-NLS-1$
 				PDEMarkerFactory.CAT_FATAL);
 	}
 
 	protected void reportIllegalValue(IHeader header, String value) {
-		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_illegal_value, value); 
-		report(msg, getLine(header, value), CompilerFlags.ERROR,
-				PDEMarkerFactory.CAT_FATAL); 
+		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_illegal_value, value);
+		report(msg, getLine(header, value), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 	}
 
-	protected void reportIllegalDirectiveValue(IHeader header, String key,
-			String value) {
-		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_dir_value, (new String[] { value, key })); 
+	protected void reportIllegalDirectiveValue(IHeader header, String key, String value) {
+		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_dir_value, (new String[] {value, key}));
 		report(msg, getLine(header, key + ":="), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL); //$NON-NLS-1$
 	}
 
-	protected void validateAttributeValue(IHeader header,
-			ManifestElement element, String key, String[] allowedValues) {
+	protected void validateAttributeValue(IHeader header, ManifestElement element, String key, String[] allowedValues) {
 		String value = element.getAttribute(key);
 		if (value == null) {
 			return;
@@ -298,8 +252,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	protected void validateBooleanDirectiveValue(IHeader header, ManifestElement element, String key) {
 		validateDirectiveValue(header, element, key, BOOLEAN_VALUES);
 	}
-	
-	protected void validateBooleanValue(IHeader header){
+
+	protected void validateBooleanValue(IHeader header) {
 		validateHeaderValue(header, BOOLEAN_VALUES);
 	}
 
@@ -320,7 +274,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		}
 		reportIllegalDirectiveValue(header, key, value);
 	}
-	
+
 	protected void validateHeaderValue(IHeader header, String[] allowedValues) {
 		ManifestElement[] elements = header.getElements();
 		if (elements.length > 0) {
@@ -332,23 +286,20 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			reportIllegalValue(header, elements[0].getValue());
 		}
 	}
-	
+
 	protected IHeader validateRequiredHeader(String name) {
 		IHeader header = (IHeader) fHeaders.get(name.toLowerCase());
 		if (header == null) {
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, 
-					CompilerFlags.ERROR,
-					PDEMarkerFactory.CAT_FATAL);		
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
 		return header;
 	}
-	
+
 	protected IHeader getHeader(String key) {
 		return (IHeader) fHeaders.get(key.toLowerCase());
 	}
-	
-	protected void checkCanceled(IProgressMonitor monitor)
-			throws OperationCanceledException {
+
+	protected void checkCanceled(IProgressMonitor monitor) throws OperationCanceledException {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}

@@ -23,7 +23,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public class XMLPrintHandler {
 	//	used to print XML file
 	public static final String XML_COMMENT_END_TAG = "-->"; //$NON-NLS-1$
@@ -38,7 +37,6 @@ public class XMLPrintHandler {
 	public static final String XML_SLASH = "/"; //$NON-NLS-1$
 	public static final String XML_INDENT = "   "; //$NON-NLS-1$
 
-	
 	/**
 	 * @param level
 	 * @return
@@ -50,8 +48,8 @@ public class XMLPrintHandler {
 		}
 		return buffer.toString();
 	}
-	
-	public static void printBeginElement(Writer xmlWriter, String elementString, String indent, boolean terminate) throws IOException{
+
+	public static void printBeginElement(Writer xmlWriter, String elementString, String indent, boolean terminate) throws IOException {
 		StringBuffer temp = new StringBuffer(indent);
 		temp.append(XML_BEGIN_TAG);
 		temp.append(elementString);
@@ -63,7 +61,7 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printEndElement(Writer xmlWriter, String elementString, String indent) throws IOException{
+	public static void printEndElement(Writer xmlWriter, String elementString, String indent) throws IOException {
 		StringBuffer temp = new StringBuffer(indent);
 		temp.append(XML_BEGIN_TAG);
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
@@ -71,14 +69,14 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printText(Writer xmlWriter, String text, String indent) throws IOException{
+	public static void printText(Writer xmlWriter, String text, String indent) throws IOException {
 		StringBuffer temp = new StringBuffer(indent);
 		temp.append(encode(text).toString());
 		temp.append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
-	public static void printComment(Writer xmlWriter, String comment, String indent)throws IOException {
+	public static void printComment(Writer xmlWriter, String comment, String indent) throws IOException {
 		StringBuffer temp = new StringBuffer("\n"); //$NON-NLS-1$
 		temp.append(indent);
 		temp.append(XML_COMMENT_BEGIN_TAG);
@@ -94,8 +92,7 @@ public class XMLPrintHandler {
 
 	public static String wrapAttributeForPrint(String attribute, String value) throws IOException {
 		StringBuffer temp = new StringBuffer(XML_SPACE);
-		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES)
-				.append(encode(value).toString()).append(XML_DBL_QUOTES);
+		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES).append(encode(value).toString()).append(XML_DBL_QUOTES);
 		return temp.toString();
 	}
 
@@ -107,51 +104,51 @@ public class XMLPrintHandler {
 		buffer.append(value);
 		buffer.append(XML_DBL_QUOTES);
 		return buffer.toString();
-	}	
-	
-	public static void printNode(Writer xmlWriter, Node node,String encoding, String indent) throws IOException {
+	}
+
+	public static void printNode(Writer xmlWriter, Node node, String encoding, String indent) throws IOException {
 		if (node == null) {
 			return;
 		}
 
 		switch (node.getNodeType()) {
-		case Node.DOCUMENT_NODE: {
-			printHead(xmlWriter,encoding);
-			printNode(xmlWriter, ((Document) node).getDocumentElement(),encoding, indent);
-			break;
-		}
-		case Node.ELEMENT_NODE: {
-			//get the attribute list for this node.
-			StringBuffer tempElementString = new StringBuffer(node.getNodeName());
-			NamedNodeMap attributeList = node.getAttributes();
-			if ( attributeList != null ) {
-				for(int i= 0; i <attributeList.getLength();i++){
-					Node attribute = attributeList.item(i);
-					tempElementString.append(wrapAttributeForPrint(attribute.getNodeName(),attribute.getNodeValue()));
+			case Node.DOCUMENT_NODE : {
+				printHead(xmlWriter, encoding);
+				printNode(xmlWriter, ((Document) node).getDocumentElement(), encoding, indent);
+				break;
+			}
+			case Node.ELEMENT_NODE : {
+				//get the attribute list for this node.
+				StringBuffer tempElementString = new StringBuffer(node.getNodeName());
+				NamedNodeMap attributeList = node.getAttributes();
+				if (attributeList != null) {
+					for (int i = 0; i < attributeList.getLength(); i++) {
+						Node attribute = attributeList.item(i);
+						tempElementString.append(wrapAttributeForPrint(attribute.getNodeName(), attribute.getNodeValue()));
+					}
 				}
+
+				// do this recursively for the child nodes.
+				NodeList childNodes = node.getChildNodes();
+				int length = childNodes.getLength();
+				printBeginElement(xmlWriter, tempElementString.toString(), indent, length == 0);
+
+				for (int i = 0; i < length; i++)
+					printNode(xmlWriter, childNodes.item(i), encoding, indent + "\t"); //$NON-NLS-1$
+
+				if (length > 0)
+					printEndElement(xmlWriter, node.getNodeName(), indent);
+				break;
 			}
 
-			// do this recursively for the child nodes.
-			NodeList childNodes = node.getChildNodes();
-			int length = childNodes.getLength();
-			printBeginElement(xmlWriter,tempElementString.toString(), indent, length == 0);
-
-			for (int i = 0; i < length; i++)
-				printNode(xmlWriter, childNodes.item(i),encoding, indent + "\t"); //$NON-NLS-1$
-		
-			if (length > 0)
-				printEndElement(xmlWriter,node.getNodeName(), indent);
-			break;
+			case Node.TEXT_NODE : {
+				xmlWriter.write(encode(node.getNodeValue()).toString());
+				break;
+			}
+			default : {
+				throw new UnsupportedOperationException("Unsupported XML Node Type."); //$NON-NLS-1$		
+			}
 		}
-		
-		case Node.TEXT_NODE: {
-			xmlWriter.write(encode(node.getNodeValue()).toString());
-			break;
-		}
-		default: {
-			throw new UnsupportedOperationException("Unsupported XML Node Type."); //$NON-NLS-1$		
-		}
-	}
 
 	}
 
@@ -182,7 +179,7 @@ public class XMLPrintHandler {
 		}
 		return buf;
 	}
-	
+
 	public static void writeFile(Document doc, File file) throws IOException {
 		Writer writer = null;
 		OutputStream out = null;

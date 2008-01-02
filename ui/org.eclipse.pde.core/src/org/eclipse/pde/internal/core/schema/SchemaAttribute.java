@@ -98,22 +98,19 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	public void setKind(int newKind) {
 		Integer oldValue = new Integer(kind);
 		kind = newKind;
-		getSchema().fireModelObjectChanged(this, P_KIND, oldValue,
-				new Integer(kind));
+		getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
 	}
-	
+
 	public void setTranslatableProperty(boolean translatable) {
 		boolean oldValue = fTranslatable;
 		fTranslatable = translatable;
-		getSchema().fireModelObjectChanged(this, P_TRANSLATABLE,
-				Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
+		getSchema().fireModelObjectChanged(this, P_TRANSLATABLE, Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
 	}
-	
+
 	public void setDeprecatedProperty(boolean deprecated) {
 		boolean oldValue = fDeprecated;
 		fDeprecated = deprecated;
-		getSchema().fireModelObjectChanged(this, P_DEPRECATED,
-				Boolean.valueOf(oldValue), Boolean.valueOf(deprecated));		
+		getSchema().fireModelObjectChanged(this, P_DEPRECATED, Boolean.valueOf(oldValue), Boolean.valueOf(deprecated));
 	}
 
 	public void setType(ISchemaSimpleType newType) {
@@ -131,8 +128,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	public void setUse(int newUse) {
 		Integer oldValue = new Integer(use);
 		use = newUse;
-		getSchema().fireModelObjectChanged(this, P_USE, oldValue,
-				new Integer(use));
+		getSchema().fireModelObjectChanged(this, P_USE, oldValue, new Integer(use));
 	}
 
 	public void setValue(String value) {
@@ -144,8 +140,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	public void setValueFilter(String valueFilter) {
 		String oldValue = this.valueFilter;
 		this.valueFilter = valueFilter;
-		getSchema().fireModelObjectChanged(this, P_VALUE_FILTER, oldValue,
-				valueFilter);
+		getSchema().fireModelObjectChanged(this, P_VALUE_FILTER, oldValue, valueFilter);
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -158,16 +153,16 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 			writer.print(" type=\"" + typeName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		String useString = null;
 		switch (getUse()) {
-		case OPTIONAL:
-			// don't write default setting
-			// useString="optional";
-			break;
-		case DEFAULT:
-			useString = "default"; //$NON-NLS-1$
-			break;
-		case REQUIRED:
-			useString = "required"; //$NON-NLS-1$
-			break;
+			case OPTIONAL :
+				// don't write default setting
+				// useString="optional";
+				break;
+			case DEFAULT :
+				useString = "default"; //$NON-NLS-1$
+				break;
+			case REQUIRED :
+				useString = "required"; //$NON-NLS-1$
+				break;
 		}
 		if (useString != null) {
 			writer.print(" use=\"" + useString + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -176,8 +171,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 			writer.print(" value=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		String documentation = getWritableDescription();
-		if (documentation != null || this.getBasedOn() != null
-				|| getKind() != STRING) {
+		if (documentation != null || this.getBasedOn() != null || getKind() != STRING) {
 			// Add annotation
 			annotation = true;
 			writer.println(">"); //$NON-NLS-1$
@@ -196,12 +190,12 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				writer.print(indent3 + "<meta.attribute"); //$NON-NLS-1$
 				String kindValue = null;
 				switch (getKind()) {
-				case JAVA:
-					kindValue = "java"; //$NON-NLS-1$
-					break;
-				case RESOURCE:
-					kindValue = "resource"; //$NON-NLS-1$
-					break;
+					case JAVA :
+						kindValue = "java"; //$NON-NLS-1$
+						break;
+					case RESOURCE :
+						kindValue = "resource"; //$NON-NLS-1$
+						break;
 				}
 				if (kindValue != null)
 					writer.print(" kind=\"" + kindValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -245,37 +239,32 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	public boolean isDeprecated() {
 		return fDeprecated;
 	}
-	
+
 	public String getDescription() {
 		if (super.getDescription() != null) {
 			return super.getDescription();
 		}
 		ISchema schema = getSchema();
-		if ((schema == null) ||
-				(schema.getURL() == null)) {
+		if ((schema == null) || (schema.getURL() == null)) {
 			return null;
 		}
 		String elementName = null;
 		if (getParent() instanceof ISchemaElement) {
-			elementName = ((ISchemaElement)getParent()).getName();
+			elementName = ((ISchemaElement) getParent()).getName();
 			if (elementName == null) {
 				return null;
 			}
 		}
 		String hashkey = schema.getURL().hashCode() + "_" + elementName + "_" + getName(); //$NON-NLS-1$ //$NON-NLS-2$
-		String description = 
-			XMLComponentRegistry.Instance().getDescription(
-				hashkey, XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
+		String description = XMLComponentRegistry.Instance().getDescription(hashkey, XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
 		if (description == null) {
-			SchemaAttributeHandler handler = 
-				new SchemaAttributeHandler(elementName, getName());
+			SchemaAttributeHandler handler = new SchemaAttributeHandler(elementName, getName());
 			SchemaUtil.parseURL(schema.getURL(), handler);
 			description = handler.getDescription();
-			XMLComponentRegistry.Instance().putDescription(hashkey, description,
-					XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
+			XMLComponentRegistry.Instance().putDescription(hashkey, description, XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
 		}
-		
+
 		return description;
 	}
-	
+
 }

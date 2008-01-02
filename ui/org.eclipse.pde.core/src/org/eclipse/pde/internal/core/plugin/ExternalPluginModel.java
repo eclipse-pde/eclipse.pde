@@ -14,8 +14,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 
-public class ExternalPluginModel extends ExternalPluginModelBase implements
-		IPluginModel {
+public class ExternalPluginModel extends ExternalPluginModelBase implements IPluginModel {
 
 	private static final long serialVersionUID = 1L;
 

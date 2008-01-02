@@ -30,18 +30,14 @@ import org.eclipse.team.core.RepositoryProvider;
 public class BinaryRepositoryProvider extends RepositoryProvider {
 	private IMoveDeleteHook moveDeleteHook;
 	private FileModificationValidator fileModificationValidator;
-	
+
 	public static final String EXTERNAL_PROJECT_VALUE = "external"; //$NON-NLS-1$
-	
+
 	class BinaryMoveDeleteHook implements IMoveDeleteHook {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean deleteFile(
-			IResourceTree tree,
-			IFile file,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(file, true))
 				tree.failed(createProblemStatus());
 			else
@@ -52,11 +48,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteFolder(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFolder, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean deleteFolder(
-			IResourceTree tree,
-			IFolder folder,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(folder, true))
 				tree.failed(createProblemStatus());
 			else
@@ -67,23 +59,14 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteProject(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IProject, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean deleteProject(
-			IResourceTree tree,
-			IProject project,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor) {
 			return false;
 		}
 
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean moveFile(
-			IResourceTree tree,
-			IFile source,
-			IFile destination,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
 			else
@@ -94,12 +77,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveFolder(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFolder, org.eclipse.core.resources.IFolder, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean moveFolder(
-			IResourceTree tree,
-			IFolder source,
-			IFolder destination,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
 			if (isBinaryResource(source, false))
 				tree.failed(createProblemStatus());
 			else
@@ -110,18 +88,12 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#moveProject(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IProject, org.eclipse.core.resources.IProjectDescription, int, org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public boolean moveProject(
-			IResourceTree tree,
-			IProject source,
-			IProjectDescription description,
-			int updateFlags,
-			IProgressMonitor monitor) {
+		public boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
 			return false;
 		}
 	}
 
-	class BinaryFileModificationValidator
-		extends FileModificationValidator {
+	class BinaryFileModificationValidator extends FileModificationValidator {
 		/**
 		 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile, java.lang.Object)
 		 */
@@ -165,10 +137,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		IProject project = getProject();
 		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, null);
 	}
-	
+
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
-	 */	
+	 */
 	public FileModificationValidator getFileModificationValidator2() {
 		return fileModificationValidator;
 	}
@@ -189,13 +161,13 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 
 	private boolean isBinaryResource(IResource resource, boolean excludeProjectChildren) {
 		IContainer parent = resource.getParent();
-		
+
 		// Test for resource links
 		if (!excludeProjectChildren || !(parent instanceof IProject)) {
 			if (resource.isLinked())
-			return true;
+				return true;
 		}
-		
+
 		// Test for resources that are in linked folders
 
 		while (parent instanceof IFolder) {
@@ -208,20 +180,15 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	private IStatus createProblemStatus() {
-		String message = PDECoreMessages.BinaryRepositoryProvider_veto; 
-		return new Status(
-			IStatus.ERROR,
-			PDECore.PLUGIN_ID,
-			IStatus.OK,
-			message,
-			null);
+		String message = PDECoreMessages.BinaryRepositoryProvider_veto;
+		return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 	}
 
 	private IStatus createOKStatus() {
 		return new Status(IStatus.OK, PDECore.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-		null);
+				null);
 	}
-	
+
 	public boolean canHandleLinkedResources() {
 		return true;
 	}

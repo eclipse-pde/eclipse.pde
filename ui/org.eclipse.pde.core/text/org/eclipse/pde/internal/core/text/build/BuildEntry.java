@@ -33,20 +33,20 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	private String fName;
 	private ArrayList fTokens = new ArrayList();
 	private String fLineDelimiter;
-	
+
 	public BuildEntry(String name, IBuildModel model) {
 		fName = name;
 		fModel = model;
 		setLineDelimiter();
 	}
-	
+
 	private void setLineDelimiter() {
 		if (fModel instanceof IEditingModel) {
-			IDocument document = ((IEditingModel)fModel).getDocument();
+			IDocument document = ((IEditingModel) fModel).getDocument();
 			fLineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
 		} else {
 			fLineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -58,24 +58,28 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		if (fTokens.add(token))
 			getModel().fireModelObjectChanged(this, getName(), null, token);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
 	 */
 	public String getName() {
 		return fName;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#getTokens()
 	 */
 	public String[] getTokens() {
-		return (String[])fTokens.toArray(new String[fTokens.size()]);
+		return (String[]) fTokens.toArray(new String[fTokens.size()]);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#contains(java.lang.String)
 	 */
 	public boolean contains(String token) {
 		return fTokens.contains(token);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#removeToken(java.lang.String)
 	 */
@@ -83,23 +87,24 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		if (fTokens.remove(token))
 			getModel().fireModelObjectChanged(this, getName(), token, null);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#renameToken(java.lang.String, java.lang.String)
 	 */
-	public void renameToken(String oldToken, String newToken)
-			throws CoreException {
+	public void renameToken(String oldToken, String newToken) throws CoreException {
 		int index = fTokens.indexOf(oldToken);
 		if (index != -1) {
 			fTokens.set(index, newToken);
 			getModel().fireModelObjectChanged(this, getName(), oldToken, newToken);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
 	 */
 	public void setName(String name) {
 		String oldName = fName;
-		if (getModel() != null){
+		if (getModel() != null) {
 			try {
 				IBuild build = getModel().getBuild();
 				build.remove(this);
@@ -112,48 +117,52 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		} else
 			fName = name;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setOffset(int)
 	 */
 	public void setOffset(int offset) {
 		fOffset = offset;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getLength()
 	 */
 	public int getLength() {
 		return fLength;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setLength(int)
 	 */
 	public void setLength(int length) {
 		fLength = length;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
-	
+
 	public IBuildModel getModel() {
 		return fModel;
 	}
-	
+
 	public void processEntry(String value) {
 		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			fTokens.add(stok.nextToken().trim());
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
 	 */
@@ -171,7 +180,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 					buffer.append(" "); //$NON-NLS-1$
 				}
 			}
-		}	
+		}
 		buffer.append(fLineDelimiter); //$NON-NLS-1$
 		return buffer.toString();
 	}
@@ -180,8 +189,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		Object obj1 = fTokens.get(index1);
 		Object obj2 = fTokens.set(index2, obj1);
 		fTokens.set(index1, obj2);
-		getModel().fireModelObjectChanged(this, getName(), 
-				new Object[] {obj1, obj2}, new Object[] {obj2, obj1});
+		getModel().fireModelObjectChanged(this, getName(), new Object[] {obj1, obj2}, new Object[] {obj2, obj1});
 	}
 
 	/**
@@ -205,12 +213,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		}
 		// 1 <= index < size()
 		// Get the previous token
-		String previousToken = 
-			(String)fTokens.get(targetIndex - 1);
+		String previousToken = (String) fTokens.get(targetIndex - 1);
 
-		return previousToken;		
+		return previousToken;
 	}
-	
+
 	/**
 	 * @param targetToken
 	 * @return
@@ -234,19 +241,18 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		}
 		// 0 <= index < last token < size()
 		// Get the next token
-		String nextToken = 
-			(String)fTokens.get(targetIndex + 1);		
+		String nextToken = (String) fTokens.get(targetIndex + 1);
 
 		return nextToken;
 	}
-	
+
 	/**
 	 * @param targetToken
 	 * @return
 	 */
 	public int getIndexOf(String targetToken) {
 		return fTokens.indexOf(targetToken);
-	}	
+	}
 
 	/**
 	 * @param token
@@ -268,5 +274,5 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		// Fire event
 		getModel().fireModelObjectChanged(this, getName(), null, token);
 	}
-	
+
 }

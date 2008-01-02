@@ -21,9 +21,8 @@ import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 
-
 public class BuildModel extends AbstractEditingModel implements IBuildModel {
-	
+
 	//private Properties fProperties;
 	private BuildModelFactory fFactory;
 	private Build fBuild;
@@ -35,6 +34,7 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	public BuildModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
 	 */
@@ -48,19 +48,19 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
 			fLoaded = true;
-			((Build)getBuild()).load(source);
+			((Build) getBuild()).load(source);
 		} catch (IOException e) {
 			fLoaded = false;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
 	 */
 	public void adjustOffsets(IDocument document) {
-		((Build)getBuild()).adjustOffsets(document);
+		((Build) getBuild()).adjustOffsets(document);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModel#getBuild()
 	 */
@@ -69,6 +69,7 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 			fBuild = new Build(this);
 		return fBuild;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModel#getFactory()
 	 */

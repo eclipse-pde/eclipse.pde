@@ -15,16 +15,14 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 
-public class TargetHomeDynamicVariableResolver implements
-		IDynamicVariableResolver {
+public class TargetHomeDynamicVariableResolver implements IDynamicVariableResolver {
 
 	/**
 	 * Resolver for ${target_home}
 	 * 
 	 * @since 3.2
 	 */
-	public String resolveValue(IDynamicVariable variable, String argument)
-			throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		return TargetPlatform.getLocation();
 	}
 

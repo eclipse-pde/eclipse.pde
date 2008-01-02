@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 public class TargetModel extends AbstractModel implements ITargetModel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private ITargetModelFactory fFactory;
 	private ITarget fTarget;
 
@@ -82,17 +82,13 @@ public class TargetModel extends AbstractModel implements ITargetModel {
 
 	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
-		fireModelChanged(
-				new ModelChangedEvent(this,
-					IModelChangedEvent.WORLD_CHANGED,
-					new Object[] { fTarget },
-					null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {fTarget}, null));
 	}
 
 	public boolean isEditable() {
 		return false;
 	}
-	
+
 	private void processDocument(Document doc) {
 		Node rootNode = doc.getDocumentElement();
 		if (fTarget == null) {
@@ -102,6 +98,5 @@ public class TargetModel extends AbstractModel implements ITargetModel {
 		}
 		fTarget.parse(rootNode);
 	}
-
 
 }

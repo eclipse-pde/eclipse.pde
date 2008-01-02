@@ -19,7 +19,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 public class ProductPlugin extends ProductObject implements IProductPlugin {
 
 	private static final long serialVersionUID = 1L;
@@ -48,9 +47,9 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE)
-			fId = ((Element)node).getAttribute("id"); //$NON-NLS-1$
+			fId = ((Element) node).getAttribute("id"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -60,5 +59,5 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			writer.print(" fragment=\"true\""); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 	}
-	
+
 }

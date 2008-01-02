@@ -12,5 +12,6 @@ package org.eclipse.pde.internal.core.text;
 
 public interface IDocumentRange {
 	int getOffset();
+
 	int getLength();
 }

@@ -43,9 +43,9 @@ import org.w3c.dom.NodeList;
  * this information in separate xml file.  Accessed through PDEState.
  */
 public class PDEAuxiliaryState {
-	
+
 	private static String CACHE_EXTENSION = ".pluginInfo"; //$NON-NLS-1$
-	
+
 	private static String ATTR_BUNDLE_ID = "bundleID"; //$NON-NLS-1$
 	private static String ATTR_BUNDLE_STRUCTURE = "isBundle"; //$NON-NLS-1$
 	private static String ATTR_CLASS = "class"; //$NON-NLS-1$
@@ -57,20 +57,20 @@ public class PDEAuxiliaryState {
 	private static String ATTR_PROJECT = "project"; //$NON-NLS-1$
 	private static String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
 	private static String ATTR_BUNDLE_SOURCE = "bundleSource"; //$NON-NLS-1$
-	
+
 	private static String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
 	private static String ELEMENT_LIB = "library"; //$NON-NLS-1$
 	private static String ELEMENT_ROOT = "map"; //$NON-NLS-1$
-	
-	protected Map fPluginInfos; 
-	
+
+	protected Map fPluginInfos;
+
 	/**
 	 * Constructor
 	 */
 	protected PDEAuxiliaryState() {
 		fPluginInfos = new HashMap();
 	}
-	
+
 	/**
 	 * Constructor, gets the plugin info objects stored in the passed state
 	 * and adds them to this state.
@@ -95,7 +95,7 @@ public class PDEAuxiliaryState {
 		String localization;
 		String bundleSourceEntry;
 	}
-	
+
 	/**
 	 * Helper method to create a plugin info object for the given
 	 * element.  The plugin info object is added to the map.
@@ -106,80 +106,81 @@ public class PDEAuxiliaryState {
 		if (element.hasAttribute(ATTR_NAME))
 			info.name = element.getAttribute(ATTR_NAME);
 		if (element.hasAttribute(ATTR_PROVIDER))
-			info.providerName = element.getAttribute(ATTR_PROVIDER); 
+			info.providerName = element.getAttribute(ATTR_PROVIDER);
 		if (element.hasAttribute(ATTR_CLASS))
-			info.className	= element.getAttribute(ATTR_CLASS); 
+			info.className = element.getAttribute(ATTR_CLASS);
 		info.hasExtensibleAPI = "true".equals(element.getAttribute(ATTR_EXTENSIBLE_API)); //$NON-NLS-1$ 
 		info.isPatchFragment = "true".equals(element.getAttribute(ATTR_PATCH)); //$NON-NLS-1$
 		info.hasBundleStructure = !"false".equals(element.getAttribute(ATTR_BUNDLE_STRUCTURE)); //$NON-NLS-1$ 
 		if (element.hasAttribute(ATTR_PROJECT))
 			info.project = element.getAttribute(ATTR_PROJECT);
 		if (element.hasAttribute(ATTR_LOCALIZATION))
-			info.localization = element.getAttribute(ATTR_LOCALIZATION); 
+			info.localization = element.getAttribute(ATTR_LOCALIZATION);
 		if (element.hasAttribute(ATTR_BUNDLE_SOURCE))
-			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE); 
-		
-		NodeList libs = element.getChildNodes(); 
+			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE);
+
+		NodeList libs = element.getChildNodes();
 		ArrayList list = new ArrayList(libs.getLength());
 		for (int i = 0; i < libs.getLength(); i++) {
 			if (libs.item(i).getNodeType() == Node.ELEMENT_NODE) {
-				Element lib = (Element)libs.item(i);
-				list.add(lib.getAttribute(ATTR_NAME)); 
+				Element lib = (Element) libs.item(i);
+				list.add(lib.getAttribute(ATTR_NAME));
 			}
 		}
-		info.libraries = (String[])list.toArray(new String[list.size()]);
-		fPluginInfos.put(element.getAttribute(ATTR_BUNDLE_ID), info); 
+		info.libraries = (String[]) list.toArray(new String[list.size()]);
+		fPluginInfos.put(element.getAttribute(ATTR_BUNDLE_ID), info);
 	}
-	
+
 	public String getClassName(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.className;
 	}
-	
+
 	public boolean hasExtensibleAPI(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? false : info.hasExtensibleAPI;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.hasExtensibleAPI;
 	}
 
 	public boolean isPatchFragment(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? false : info.isPatchFragment;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.isPatchFragment;
 	}
+
 	public boolean hasBundleStructure(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? false : info.hasBundleStructure;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.hasBundleStructure;
 	}
-	
+
 	public String getPluginName(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.name;
 	}
-	
+
 	public String getProviderName(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.providerName;
 	}
-	
+
 	public String[] getLibraryNames(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? new String[0] : info.libraries;
 	}
-	
+
 	public String getBundleLocalization(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? null : info.localization;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? null : info.localization;
 	}
-	
+
 	public String getProject(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? null : info.project;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? null : info.project;
 	}
-	
+
 	public String getBundleSourceEntry(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? null : info.bundleSourceEntry;		
+		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? null : info.bundleSourceEntry;
 	}
-	
+
 	/**
 	 * Builds an xml document storing the auxiliary plugin info.
 	 * @param dir directory location to create the file
@@ -188,20 +189,20 @@ public class PDEAuxiliaryState {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
-			Element root = doc.createElement(ELEMENT_ROOT); 
-			
+			Element root = doc.createElement(ELEMENT_ROOT);
+
 			Iterator iter = fPluginInfos.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next().toString();
 				Element element = doc.createElement(ELEMENT_BUNDLE);
-				element.setAttribute(ATTR_BUNDLE_ID, key); 
-				PluginInfo info = (PluginInfo)fPluginInfos.get(key);
+				element.setAttribute(ATTR_BUNDLE_ID, key);
+				PluginInfo info = (PluginInfo) fPluginInfos.get(key);
 				if (info.className != null)
-					element.setAttribute(ATTR_CLASS, info.className); 
+					element.setAttribute(ATTR_CLASS, info.className);
 				if (info.providerName != null)
-					element.setAttribute(ATTR_PROVIDER, info.providerName); 
+					element.setAttribute(ATTR_PROVIDER, info.providerName);
 				if (info.name != null)
-					element.setAttribute(ATTR_NAME, info.name); 
+					element.setAttribute(ATTR_NAME, info.name);
 				if (info.hasExtensibleAPI)
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$ 
 				if (info.isPatchFragment)
@@ -209,25 +210,25 @@ public class PDEAuxiliaryState {
 				if (!info.hasBundleStructure)
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
 				if (info.localization != null)
-					element.setAttribute(ATTR_LOCALIZATION, info.localization); 
+					element.setAttribute(ATTR_LOCALIZATION, info.localization);
 				if (info.bundleSourceEntry != null)
-					element.setAttribute(ATTR_BUNDLE_SOURCE, info.bundleSourceEntry); 
+					element.setAttribute(ATTR_BUNDLE_SOURCE, info.bundleSourceEntry);
 				if (info.libraries != null) {
 					for (int i = 0; i < info.libraries.length; i++) {
-						Element lib = doc.createElement(ELEMENT_LIB); 
-						lib.setAttribute(ATTR_NAME, info.libraries[i]); 
+						Element lib = doc.createElement(ELEMENT_LIB);
+						lib.setAttribute(ATTR_NAME, info.libraries[i]);
 						element.appendChild(lib);
 					}
 				}
 				root.appendChild(element);
 			}
 			doc.appendChild(root);
-			XMLPrintHandler.writeFile(doc, new File(dir, CACHE_EXTENSION)); 
+			XMLPrintHandler.writeFile(doc, new File(dir, CACHE_EXTENSION));
 		} catch (Exception e) {
 			PDECore.log(e);
-		} 
+		}
 	}
-	
+
 	/**
 	 * Loads plugin info objects from the pluginInfo xml file stored in the
 	 * given directory.
@@ -235,7 +236,7 @@ public class PDEAuxiliaryState {
 	 * @return true if the file was read successfully, false otherwise
 	 */
 	protected boolean readPluginInfoCache(File dir) {
-		File file = new File(dir, CACHE_EXTENSION); 
+		File file = new File(dir, CACHE_EXTENSION);
 		if (file.exists() && file.isFile()) {
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -245,7 +246,7 @@ public class PDEAuxiliaryState {
 					NodeList list = root.getChildNodes();
 					for (int i = 0; i < list.getLength(); i++) {
 						if (list.item(i).getNodeType() == Node.ELEMENT_NODE)
-							createPluginInfo((Element)list.item(i));
+							createPluginInfo((Element) list.item(i));
 					}
 				}
 				return true;
@@ -256,7 +257,7 @@ public class PDEAuxiliaryState {
 			} catch (ParserConfigurationException e) {
 				PDECore.log(e);
 			}
-		} 
+		}
 		return false;
 	}
 
@@ -270,23 +271,23 @@ public class PDEAuxiliaryState {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
-		
-			Element root = doc.createElement(ELEMENT_ROOT); 
+
+			Element root = doc.createElement(ELEMENT_ROOT);
 			doc.appendChild(root);
 			for (int i = 0; i < models.length; i++) {
 				IPluginBase plugin = models[i].getPluginBase();
 				BundleDescription desc = models[i].getBundleDescription();
 				if (desc == null)
 					continue;
-				Element element = doc.createElement(ELEMENT_BUNDLE); 
-				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId())); 
-				element.setAttribute(ATTR_PROJECT, models[i].getUnderlyingResource().getProject().getName()); 
-				if (plugin instanceof IPlugin && ((IPlugin)plugin).getClassName() != null)
-					element.setAttribute(ATTR_CLASS, ((IPlugin)plugin).getClassName()); 
+				Element element = doc.createElement(ELEMENT_BUNDLE);
+				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId()));
+				element.setAttribute(ATTR_PROJECT, models[i].getUnderlyingResource().getProject().getName());
+				if (plugin instanceof IPlugin && ((IPlugin) plugin).getClassName() != null)
+					element.setAttribute(ATTR_CLASS, ((IPlugin) plugin).getClassName());
 				if (plugin.getProviderName() != null)
-					element.setAttribute(ATTR_PROVIDER, plugin.getProviderName()); 
+					element.setAttribute(ATTR_PROVIDER, plugin.getProviderName());
 				if (plugin.getName() != null)
-					element.setAttribute(ATTR_NAME, plugin.getName()); 
+					element.setAttribute(ATTR_NAME, plugin.getName());
 				if (ClasspathUtilCore.hasExtensibleAPI(models[i]))
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$ 
 				else if (ClasspathUtilCore.isPatchFragment(models[i]))
@@ -294,36 +295,36 @@ public class PDEAuxiliaryState {
 				if (!(models[i] instanceof IBundlePluginModelBase))
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
 				if (models[i] instanceof IBundlePluginModelBase) {
-					String localization = ((IBundlePluginModelBase)models[i]).getBundleLocalization();
+					String localization = ((IBundlePluginModelBase) models[i]).getBundleLocalization();
 					if (localization != null)
-						element.setAttribute(ATTR_LOCALIZATION, localization); 
+						element.setAttribute(ATTR_LOCALIZATION, localization);
 				}
 				if (models[i] instanceof IBundlePluginModelBase) {
-					IBundleModel bundleModel = ((IBundlePluginModelBase)models[i]).getBundleModel();
-					if (bundleModel != null){
+					IBundleModel bundleModel = ((IBundlePluginModelBase) models[i]).getBundleModel();
+					if (bundleModel != null) {
 						String bundleSourceEntry = bundleModel.getBundle().getHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
-						if (bundleSourceEntry != null){
+						if (bundleSourceEntry != null) {
 							element.setAttribute(ATTR_BUNDLE_SOURCE, bundleSourceEntry);
 						}
 					}
 				}
 				IPluginLibrary[] libraries = plugin.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
-						Element lib = doc.createElement(ELEMENT_LIB); 
-						lib.setAttribute(ATTR_NAME, libraries[j].getName()); 
-						if (!libraries[j].isExported())
-							lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$ 
-						element.appendChild(lib);
+					Element lib = doc.createElement(ELEMENT_LIB);
+					lib.setAttribute(ATTR_NAME, libraries[j].getName());
+					if (!libraries[j].isExported())
+						lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$ 
+					element.appendChild(lib);
 				}
 				root.appendChild(element);
 			}
-			XMLPrintHandler.writeFile(doc, new File(destination, CACHE_EXTENSION)); 
+			XMLPrintHandler.writeFile(doc, new File(destination, CACHE_EXTENSION));
 		} catch (ParserConfigurationException e) {
 		} catch (FactoryConfigurationError e) {
 		} catch (IOException e) {
 		}
 	}
-	
+
 	/**
 	 * Collects auxiliary information from the manifest and stores it in this state.
 	 * @param desc bundle description for the given manifest
@@ -332,20 +333,20 @@ public class PDEAuxiliaryState {
 	 */
 	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
 		PluginInfo info = new PluginInfo();
-		info.name = (String)manifest.get(Constants.BUNDLE_NAME);
-		info.providerName = (String)manifest.get(Constants.BUNDLE_VENDOR);
-		
-		String className = (String)manifest.get(ICoreConstants.PLUGIN_CLASS);
-		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
+		info.name = (String) manifest.get(Constants.BUNDLE_NAME);
+		info.providerName = (String) manifest.get(Constants.BUNDLE_VENDOR);
+
+		String className = (String) manifest.get(ICoreConstants.PLUGIN_CLASS);
+		info.className = className != null ? className : (String) manifest.get(Constants.BUNDLE_ACTIVATOR);
 		info.libraries = getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
-		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
+		info.localization = (String) manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
-		info.bundleSourceEntry = (String)manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
+		info.bundleSourceEntry = (String) manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
-	
+
 	/**
 	 * Retrieves the classpath entries from the manifest dictionary
 	 * @param manifest dictionary containing manifest headers
@@ -366,13 +367,12 @@ public class PDEAuxiliaryState {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Clears the plugin info object map.
 	 */
 	protected void clear() {
 		fPluginInfos.clear();
 	}
-
 
 }

@@ -27,15 +27,16 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 
 public class ManifestUtils {
 
-	private ManifestUtils() {}
+	private ManifestUtils() {
+	}
 
 	public static IPackageFragmentRoot[] findPackageFragmentRoots(IManifestHeader header, IProject project) {
 		IJavaProject javaProject = JavaCore.create(project);
 
 		String[] libs;
-		if (header == null || header.getValue() == null) 
+		if (header == null || header.getValue() == null)
 			libs = new String[] {"."}; //$NON-NLS-1$
-		else 
+		else
 			libs = header.getValue().split(","); //$NON-NLS-1$
 
 		IBuild build = getBuild(project);
@@ -61,7 +62,8 @@ public class ManifestUtils {
 				String[] tokens = entry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
 					IResource resource = project.findMember(tokens[i]);
-					if (resource == null) continue;
+					if (resource == null)
+						continue;
 					root = javaProject.getPackageFragmentRoot(resource);
 					if (root != null && root.exists())
 						pkgFragRoots.add(root);
@@ -71,11 +73,11 @@ public class ManifestUtils {
 		return (IPackageFragmentRoot[]) pkgFragRoots.toArray(new IPackageFragmentRoot[pkgFragRoots.size()]);
 	}
 
-	public final static IBuild getBuild(IProject project){
+	public final static IBuild getBuild(IProject project) {
 		IFile buildProps = project.getFile("build.properties"); //$NON-NLS-1$
 		if (buildProps.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
-			if (model != null) 
+			if (model != null)
 				return model.getBuild();
 		}
 		return null;
@@ -83,8 +85,7 @@ public class ManifestUtils {
 
 	public static boolean isImmediateRoot(IPackageFragmentRoot root) throws JavaModelException {
 		int kind = root.getKind();
-		return kind == IPackageFragmentRoot.K_SOURCE
-		|| (kind == IPackageFragmentRoot.K_BINARY && !root.isExternal());
+		return kind == IPackageFragmentRoot.K_SOURCE || (kind == IPackageFragmentRoot.K_BINARY && !root.isExternal());
 	}
 
 }

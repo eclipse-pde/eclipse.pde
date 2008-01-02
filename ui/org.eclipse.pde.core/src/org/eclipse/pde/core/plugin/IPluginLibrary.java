@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * The class that implements this interface represents a
  * reference to the library that is defined in the plug-in
@@ -27,7 +28,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * notify about changes in the content filters.
 	 */
 	String P_PACKAGES = "packages"; //$NON-NLS-1$
-	
+
 	/**
 	 * A name of the property that will be used to
 	 * notify about changes in the content filters.
@@ -46,6 +47,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * A library type indicating the library contains resource files.
 	 */
 	String RESOURCE = "resource"; //$NON-NLS-1$
+
 	/**
 	 * Returns optional context filters that
 	 * should be applied to calculate what classes
@@ -54,7 +56,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @return an array of content filter strings
 	 */
 	String[] getContentFilters();
-	
+
 	/**
 	 * Returns optional package prefixes that can be used
 	 * to make library lookup faster..
@@ -62,6 +64,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @return an array of package prefixes
 	 */
 	String[] getPackages();
+
 	/**
 	 * Returns true if this library contains types
 	 * that will be visible to other plug-ins.
@@ -69,6 +72,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @return true if there are exported types in the library
 	 */
 	boolean isExported();
+
 	/**
 	 * Returns true if all the types in this library
 	 * will be visible to other plug-ins.
@@ -82,6 +86,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * Returns a type of this library (CODE or RESOURCE)
 	 */
 	String getType();
+
 	/**
 	 * Sets the optional content filters for
 	 * this library. This method may throw
@@ -91,7 +96,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @param filters an array of filter strings
 	 */
 	void setContentFilters(String[] filters) throws CoreException;
-	
+
 	/**
 	 * Export a particular package in a library. 
 	 * This method may throw a CoreException if 
@@ -109,8 +114,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @param filter a package name
 	 */
 	void removeContentFilter(String filter) throws CoreException;
-	
-	
+
 	/**
 	 * Sets the optional package prefixes for this library.
 	 * This method may throw a CoreException if the model is not 
@@ -119,6 +123,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * @param packages an array of package prefixes
 	 */
 	void setPackages(String[] packages) throws CoreException;
+
 	/**
 	 * Sets whether types in this library will be
 	 * visible to other plug-ins. This method
@@ -126,6 +131,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * not editable.
 	 */
 	void setExported(boolean value) throws CoreException;
+
 	/**
 	 * Sets the library type. Must be either CODE or RESOURCE.
 	 * @throws CoreException if the model is not editable.

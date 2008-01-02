@@ -19,12 +19,11 @@ public interface ICSConstants {
 
 	// Attribute Values
 	// TODO: MP: TEO: LOW: Delete all contstants once migration is complete
-	
+
 	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
 
 	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
-	
+
 	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$
-	
-	
+
 }

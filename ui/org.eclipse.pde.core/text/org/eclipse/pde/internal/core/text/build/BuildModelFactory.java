@@ -15,12 +15,13 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 
 public class BuildModelFactory implements IBuildModelFactory {
-	
+
 	private IBuildModel fModel;
-	
+
 	public BuildModelFactory(IBuildModel model) {
 		fModel = model;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModelFactory#createEntry(java.lang.String)
 	 */

@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * An attribute of XML elements found in the plug-in.
  */
@@ -20,12 +21,14 @@ public interface IPluginAttribute extends IPluginObject {
 	 * of the attribute has changed.
 	 */
 	String P_VALUE = "value"; //$NON-NLS-1$
+
 	/**
 	 * Returns the value of this attribute.
 	 *
 	 * @return the string value of the attribute
 	 */
 	String getValue();
+
 	/**
 	 * Sets the value of this attribute.
 	 * This method will throw a CoreExeption

@@ -31,12 +31,11 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.DocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-public class PluginObjectNode extends DocumentElementNode implements
-		IPluginObject, IWritableDelimiter {
+public class PluginObjectNode extends DocumentElementNode implements IPluginObject, IWritableDelimiter {
 
 	private transient boolean fInTheModel;
 	private transient ISharedPluginModel fModel;
-	
+
 	private static final long serialVersionUID = 1L;
 	private String fName;
 
@@ -46,7 +45,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public PluginObjectNode() {
 		super();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,6 +54,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public ISharedPluginModel getModel() {
 		return fModel;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,6 +63,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public IPluginModelBase getPluginModel() {
 		return (IPluginModelBase) fModel;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,6 +72,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public String getName() {
 		return fName;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,6 +81,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,6 +90,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public String getTranslatedName() {
 		return getResourceString(getName());
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -95,16 +99,16 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public IPluginObject getParent() {
 		return (IPluginObject) getParentNode();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginBase()
 	 */
 	public IPluginBase getPluginBase() {
-		return fModel != null
-				? ((IPluginModelBase) fModel).getPluginBase()
-				: null;
+		return fModel != null ? ((IPluginModelBase) fModel).getPluginBase() : null;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,6 +117,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public String getResourceString(String key) {
 		return fModel != null ? fModel.getResourceString(key) : key;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,6 +126,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public void setName(String name) throws CoreException {
 		fName = name;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -129,6 +135,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public boolean isValid() {
 		return false;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -137,6 +144,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -145,6 +153,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -157,6 +166,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	public void setModel(ISharedPluginModel model) {
 		fModel = model;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -172,23 +182,21 @@ public class PluginObjectNode extends DocumentElementNode implements
 		try {
 			if (value == null)
 				value = ""; //$NON-NLS-1$
-				if (attr == null) {
-					attr = new PluginAttribute();
-					attr.setName(name);
-					attr.setEnclosingElement(this);
-					getNodeAttributesMap().put(name, attr);
-				}
-				attr.setValue(value == null ? "" : value); //$NON-NLS-1$
+			if (attr == null) {
+				attr = new PluginAttribute();
+				attr.setName(name);
+				attr.setEnclosingElement(this);
+				getNodeAttributesMap().put(name, attr);
+			}
+			attr.setValue(value == null ? "" : value); //$NON-NLS-1$
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)
-			firePropertyChanged(attr.getEnclosingElement(), attr
-					.getAttributeName(), oldValue, value);
+			firePropertyChanged(attr.getEnclosingElement(), attr.getAttributeName(), oldValue, value);
 		return true;
 	}
 
-	protected void firePropertyChanged(IDocumentRange node, String property,
-			Object oldValue, Object newValue) {
+	protected void firePropertyChanged(IDocumentRange node, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			fModel.fireModelObjectChanged(node, property, oldValue, newValue);
 		}
@@ -197,17 +205,15 @@ public class PluginObjectNode extends DocumentElementNode implements
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType,
-					new Object[]{child}, null);
+			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType, new Object[] {child}, null);
 			fireModelChanged(e);
 		}
 	}
-	
+
 	protected void fireStructureChanged(IPluginObject[] children, int changeType) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType,
-					children, null);
+			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType, children, null);
 			fireModelChanged(e);
 		}
 	}
@@ -227,7 +233,7 @@ public class PluginObjectNode extends DocumentElementNode implements
 	protected void appendAttribute(StringBuffer buffer, String attrName) {
 		appendAttribute(buffer, attrName, ""); //$NON-NLS-1$
 	}
-	
+
 	protected void appendAttribute(StringBuffer buffer, String attrName, String defaultValue) {
 		IDocumentAttributeNode attr = getDocumentAttribute(attrName);
 		if (attr != null) {
@@ -236,25 +242,25 @@ public class PluginObjectNode extends DocumentElementNode implements
 				buffer.append(" " + attr.write()); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public String getLineDelimiter() {
 		ISharedPluginModel model = getModel();
-		IDocument document = ((IEditingModel)model).getDocument();
+		IDocument document = ((IEditingModel) model).getDocument();
 		return TextUtilities.getDefaultLineDelimiter(document);
 	}
-	
+
 	public void addChildNode(IDocumentElementNode child, int position) {
 		super.addChildNode(child, position);
-		((IPluginObject)child).setInTheModel(true);
+		((IPluginObject) child).setInTheModel(true);
 	}
-	
+
 	public String toString() {
 		return write(false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
@@ -268,10 +274,10 @@ public class PluginObjectNode extends DocumentElementNode implements
 		fInTheModel = true;
 		// Transient field:  Model
 		if (model instanceof ISharedPluginModel) {
-			fModel = (ISharedPluginModel)model;
+			fModel = (ISharedPluginModel) model;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.IWritableDelimeter#writeDelimeter(java.io.PrintWriter)
 	 */
@@ -279,16 +285,16 @@ public class PluginObjectNode extends DocumentElementNode implements
 		// NO-OP
 		// Child classes to override
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getXMLAttributeValue(java.lang.String)
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Overrided by necessity - dealing with different objects
-		PluginAttribute attr = (PluginAttribute)getNodeAttributesMap().get(name);
+		PluginAttribute attr = (PluginAttribute) getNodeAttributesMap().get(name);
 		return attr == null ? null : attr.getValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#write(boolean)
 	 */
@@ -296,8 +302,8 @@ public class PluginObjectNode extends DocumentElementNode implements
 		// Used by text edit operations
 		// Subclasses to override
 		return ""; //$NON-NLS-1$
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#writeShallow(boolean)
 	 */
@@ -311,11 +317,10 @@ public class PluginObjectNode extends DocumentElementNode implements
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
 	 */
 	protected String getFileEncoding() {
-		if ((fModel != null) &&
-				(fModel instanceof IEditingModel)) {
-			return ((IEditingModel)fModel).getCharset();
+		if ((fModel != null) && (fModel instanceof IEditingModel)) {
+			return ((IEditingModel) fModel).getCharset();
 		}
 		return super.getFileEncoding();
-	}	
-	
+	}
+
 }

@@ -45,17 +45,16 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
-
 public class PDEState extends MinimalState {
-	
+
 	private PDEAuxiliaryState fAuxiliaryState;
-	
+
 	private ArrayList fTargetModels = new ArrayList();
 	private ArrayList fWorkspaceModels = new ArrayList();
 	private boolean fCombined;
 	private long fTargetTimestamp;
 	private boolean fNewState;
-	
+
 	/**
 	 * Creates a deep copy of the PDEState and its external models.  None of the workspace models are included in the copy.
 	 * @param state
@@ -65,17 +64,17 @@ public class PDEState extends MinimalState {
 		fCombined = false;
 		fTargetTimestamp = state.fTargetTimestamp;
 		// make sure to copy auxiliary state before trying to copy models, otherwise you will get NPEs.  Need auxiliary data to accurate create new models.
-		copyAuxiliaryState(); 
+		copyAuxiliaryState();
 		copyModels(state);
 	}
-	
+
 	private void copyAuxiliaryState() {
 		// always read the state instead of copying over contents of current state.  If current state has not been reloaded, it will
 		// not contain any data from the target plug-ins.
 		fAuxiliaryState = new PDEAuxiliaryState();
 		fAuxiliaryState.readPluginInfoCache(new File(DIR, Long.toString(fTargetTimestamp) + ".target")); //$NON-NLS-1$
 	}
-	
+
 	private void copyModels(PDEState state) {
 		IPluginModelBase[] bases = state.getTargetModels();
 		fTargetModels = new ArrayList(bases.length);
@@ -83,7 +82,7 @@ public class PDEState extends MinimalState {
 			BundleDescription oldBD = bases[i].getBundleDescription();
 			if (oldBD == null)
 				continue;
-			
+
 			// do a deep copy of the model and accurately set the copied BundleDescription
 			BundleDescription newBD = getState().getBundle(oldBD.getBundleId());
 			// newDesc will be null if a workspace plug-in has the same Bundle-SymbolicName as the target plug-in.
@@ -104,31 +103,31 @@ public class PDEState extends MinimalState {
 			removeBundleDescription(bases[i].getBundleDescription());
 		}
 	}
-	
+
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
 		this(new URL[0], urls, resolve, monitor);
 	}
-	
+
 	public PDEState(URL[] workspace, URL[] target, boolean resolve, IProgressMonitor monitor) {
-		long start = System.currentTimeMillis();	
+		long start = System.currentTimeMillis();
 		fAuxiliaryState = new PDEAuxiliaryState();
-		
+
 		if (resolve) {
 			readTargetState(target, monitor);
 		} else {
-			createNewTargetState(resolve, target, monitor);	
+			createNewTargetState(resolve, target, monitor);
 		}
 		createTargetModels(fState.getBundles());
-		
+
 		if (resolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) //$NON-NLS-1$ //$NON-NLS-2$
 			readWorkspaceState(workspace);
-		
+
 		fAuxiliaryState.clear();
-		
+
 		if (DEBUG)
 			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private void readTargetState(URL[] urls, IProgressMonitor monitor) {
 		fTargetTimestamp = computeTimestamp(urls);
 		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
@@ -147,7 +146,7 @@ public class PDEState extends MinimalState {
 			fId = fState.getHighestBundleId();
 		}
 	}
-	
+
 	private void createNewTargetState(boolean resolve, URL[] urls, IProgressMonitor monitor) {
 		fState = stateObjectFactory.createState(resolve);
 		monitor.beginTask("", urls.length); //$NON-NLS-1$
@@ -162,22 +161,21 @@ public class PDEState extends MinimalState {
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
 			} catch (IOException e) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
-						"Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
-						null)); 
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
+						null));
 			} finally {
 				monitor.worked(1);
 			}
 		}
 		fNewState = true;
 	}
-	
+
 	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
 		fAuxiliaryState.addAuxiliaryData(desc, manifest, hasBundleStructure);
 	}
 
 	public IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
-		HashMap models = new HashMap((4/3) * bundleDescriptions.length + 1); 
+		HashMap models = new HashMap((4 / 3) * bundleDescriptions.length + 1);
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
 			IPluginModelBase base = createExternalModel(desc);
@@ -188,13 +186,12 @@ public class PDEState extends MinimalState {
 			return new IPluginModelBase[0];
 		return (IPluginModelBase[]) models.values().toArray(new IPluginModelBase[models.size()]);
 	}
- 	
+
 	private void readWorkspaceState(URL[] urls) {
 		long workspace = computeTimestamp(urls);
 		File dir = new File(DIR, Long.toString(workspace) + ".workspace"); //$NON-NLS-1$
 		State localState = readStateCache(dir);
-		fCombined = localState != null 
-						&& fAuxiliaryState.readPluginInfoCache(dir);
+		fCombined = localState != null && fAuxiliaryState.readPluginInfoCache(dir);
 		if (fCombined) {
 			long targetCount = fId;
 			BundleDescription[] bundles = localState.getBundles();
@@ -202,7 +199,7 @@ public class PDEState extends MinimalState {
 				BundleDescription desc = bundles[i];
 				String id = desc.getSymbolicName();
 				BundleDescription[] conflicts = fState.getBundles(id);
-				
+
 				for (int j = 0; j < conflicts.length; j++) {
 					// only remove bundles with a conflicting symblic name
 					// if the conflicting bundles come from the target.
@@ -210,7 +207,7 @@ public class PDEState extends MinimalState {
 					if (conflicts[j].getBundleId() <= targetCount)
 						fState.removeBundle(conflicts[j]);
 				}
-				
+
 				BundleDescription newbundle = stateObjectFactory.createBundleDescription(desc);
 				IPluginModelBase model = createWorkspaceModel(newbundle);
 				if (model != null && fState.addBundle(newbundle)) {
@@ -222,15 +219,15 @@ public class PDEState extends MinimalState {
 			fState.resolve(false);
 		}
 	}
-	
+
 	public boolean isCombined() {
 		return fCombined;
-	}	
+	}
 
 	private State readStateCache(File dir) {
 		if (dir.exists() && dir.isDirectory()) {
 			try {
-				return stateObjectFactory.readState(dir);	
+				return stateObjectFactory.readState(dir);
 			} catch (IllegalStateException e) {
 				PDECore.log(e);
 			} catch (FileNotFoundException e) {
@@ -239,16 +236,16 @@ public class PDEState extends MinimalState {
 				PDECore.log(e);
 			} finally {
 			}
-		} 
+		}
 		return null;
 	}
-	
- 	private long computeTimestamp(URL[] urls) {
+
+	private long computeTimestamp(URL[] urls) {
 		return computeTimestamp(urls, 0);
 	}
- 	
- 	private long computeTimestamp(URL[] urls, long timestamp) {
- 		for (int i = 0; i < urls.length; i++) {
+
+	private long computeTimestamp(URL[] urls, long timestamp) {
+		for (int i = 0; i < urls.length; i++) {
 			File file = new File(urls[i].getFile());
 			if (file.exists()) {
 				if (file.isFile()) {
@@ -267,42 +264,41 @@ public class PDEState extends MinimalState {
 				timestamp ^= file.getAbsolutePath().hashCode();
 			}
 		}
-		return timestamp;  
+		return timestamp;
 	}
- 	
- 	private IPluginModelBase createWorkspaceModel(BundleDescription desc) {
- 		String projectName = fAuxiliaryState.getProject(desc.getBundleId());
- 		if (projectName == null)
- 			return null;
- 		IProject project = PDECore.getWorkspace().getRoot().getProject(projectName);
- 		if (!project.exists())
- 			return null;
- 		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
- 			BundlePluginModelBase model = null;
- 			if (desc.getHost() == null)
- 				model = new BundlePluginModel();
- 			else
- 				model = new BundleFragmentModel();
- 			model.setEnabled(true);
- 			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
- 			bundle.load(desc, this);
-  			model.setBundleDescription(desc);
- 			model.setBundleModel(bundle);
- 			bundle.setEditable(false);
- 			
- 			String filename = (desc.getHost() == null) ? ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR 
- 					: ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR;
- 			IFile file = project.getFile(filename);
- 			if (file.exists()) {
- 				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
- 				extensions.setEditable(false);
- 				extensions.setBundleModel(model);
- 				extensions.load(desc, this);
- 				model.setExtensionsModel(extensions);
- 			}
- 			return model;
- 		}
- 		
+
+	private IPluginModelBase createWorkspaceModel(BundleDescription desc) {
+		String projectName = fAuxiliaryState.getProject(desc.getBundleId());
+		if (projectName == null)
+			return null;
+		IProject project = PDECore.getWorkspace().getRoot().getProject(projectName);
+		if (!project.exists())
+			return null;
+		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
+			BundlePluginModelBase model = null;
+			if (desc.getHost() == null)
+				model = new BundlePluginModel();
+			else
+				model = new BundleFragmentModel();
+			model.setEnabled(true);
+			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			bundle.load(desc, this);
+			model.setBundleDescription(desc);
+			model.setBundleModel(bundle);
+			bundle.setEditable(false);
+
+			String filename = (desc.getHost() == null) ? ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR : ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR;
+			IFile file = project.getFile(filename);
+			if (file.exists()) {
+				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
+				extensions.setEditable(false);
+				extensions.setBundleModel(model);
+				extensions.load(desc, this);
+				model.setExtensionsModel(extensions);
+			}
+			return model;
+		}
+
 		WorkspacePluginModelBase model = null;
 		if (desc.getHost() == null)
 			model = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), true);
@@ -314,24 +310,24 @@ public class PDEState extends MinimalState {
 	}
 
 	private IPluginModelBase createExternalModel(BundleDescription desc) {
- 		ExternalPluginModelBase model = null;
- 		if (desc.getHost() == null)
+		ExternalPluginModelBase model = null;
+		if (desc.getHost() == null)
 			model = new ExternalPluginModel();
 		else
 			model = new ExternalFragmentModel();
 		model.load(desc, this);
 		model.setBundleDescription(desc);
 		return model;
- 	}
- 	
- 	public IPluginModelBase[] getTargetModels() {
- 		return (IPluginModelBase[])fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
- 	}
- 	
- 	public IPluginModelBase[] getWorkspaceModels() {
- 		return (IPluginModelBase[])fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);		
- 	}
- 	
+	}
+
+	public IPluginModelBase[] getTargetModels() {
+		return (IPluginModelBase[]) fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
+	}
+
+	public IPluginModelBase[] getWorkspaceModels() {
+		return (IPluginModelBase[]) fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);
+	}
+
 	public void shutdown() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		long timestamp = 0;
@@ -351,7 +347,7 @@ public class PDEState extends MinimalState {
 		clearStaleStates(".workspace", timestamp); //$NON-NLS-1$
 		clearStaleStates(".cache", 0); //$NON-NLS-1$
 	}
-	
+
 	private long computeTimestamp(IPluginModelBase[] models) {
 		URL[] urls = new URL[models.length];
 		for (int i = 0; i < models.length; i++) {
@@ -363,7 +359,7 @@ public class PDEState extends MinimalState {
 		}
 		return computeTimestamp(urls);
 	}
-	
+
 	private boolean shouldSaveState(IPluginModelBase[] models) {
 		int nonOSGiModels = 0;
 		for (int i = 0; i < models.length; i++) {
@@ -373,15 +369,12 @@ public class PDEState extends MinimalState {
 				++nonOSGiModels;
 				continue;
 			}
-			if (id.trim().length() == 0
-					|| !models[i].isLoaded()
-					|| !models[i].isInSync() 
-					|| models[i].getBundleDescription() == null)
+			if (id.trim().length() == 0 || !models[i].isLoaded() || !models[i].isInSync() || models[i].getBundleDescription() == null)
 				return false;
 		}
 		return models.length - nonOSGiModels > 0;
 	}
-	
+
 	private void clearStaleStates(String extension, long latest) {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
 		File[] children = dir.listFiles();
@@ -390,28 +383,26 @@ public class PDEState extends MinimalState {
 				File child = children[i];
 				if (child.isDirectory()) {
 					String name = child.getName();
-					if (name.endsWith(extension)
-							&& name.length() > extension.length()
-							&& !name.equals(Long.toString(latest) + extension)) { 
+					if (name.endsWith(extension) && name.length() > extension.length() && !name.equals(Long.toString(latest) + extension)) {
 						CoreUtility.deleteContent(child);
 					}
 				}
 			}
 		}
 	}
-	
+
 	public String getClassName(long bundleID) {
 		return fAuxiliaryState.getClassName(bundleID);
 	}
-	
+
 	public boolean hasExtensibleAPI(long bundleID) {
-		return fAuxiliaryState.hasExtensibleAPI(bundleID);		
+		return fAuxiliaryState.hasExtensibleAPI(bundleID);
 	}
 
 	public boolean isPatchFragment(long bundleID) {
 		return fAuxiliaryState.isPatchFragment(bundleID);
 	}
-	
+
 	public boolean hasBundleStructure(long bundleID) {
 		return fAuxiliaryState.hasBundleStructure(bundleID);
 	}
@@ -419,27 +410,27 @@ public class PDEState extends MinimalState {
 	public String getPluginName(long bundleID) {
 		return fAuxiliaryState.getPluginName(bundleID);
 	}
-	
+
 	public String getProviderName(long bundleID) {
 		return fAuxiliaryState.getProviderName(bundleID);
 	}
-	
+
 	public String[] getLibraryNames(long bundleID) {
 		return fAuxiliaryState.getLibraryNames(bundleID);
 	}
-	
+
 	public String getBundleLocalization(long bundleID) {
 		return fAuxiliaryState.getBundleLocalization(bundleID);
 	}
-	
+
 	public String getProject(long bundleID) {
-		return fAuxiliaryState.getProject(bundleID);	
+		return fAuxiliaryState.getProject(bundleID);
 	}
-	
+
 	public String getBundleSourceEntry(long bundleID) {
 		return fAuxiliaryState.getBundleSourceEntry(bundleID);
 	}
-	
+
 	public BundleDescription[] addAdditionalBundles(URL[] newBundleURLs) {
 		// add new Bundles to the State
 		ArrayList descriptions = new ArrayList(newBundleURLs.length);
@@ -452,9 +443,8 @@ public class PDEState extends MinimalState {
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
 			} catch (IOException e) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
-						"Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
-						null)); 
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Invalid manifest format at " + file.getAbsolutePath(), //$NON-NLS-1$
+						null));
 			}
 		}
 		// compute Timestamp and save all new information
@@ -464,13 +454,13 @@ public class PDEState extends MinimalState {
 			dir.mkdirs();
 		fAuxiliaryState.savePluginInfo(dir);
 		saveState(dir);
-		
+
 		// resolve state - same steps as when populating a new State
 		resolveState(false);
-		
+
 		return (BundleDescription[]) descriptions.toArray(new BundleDescription[descriptions.size()]);
 	}
-	
+
 	public File getTargetDirectory() {
 		return new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 	}

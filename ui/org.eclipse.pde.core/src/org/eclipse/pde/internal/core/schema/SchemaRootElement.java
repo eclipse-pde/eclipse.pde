@@ -13,13 +13,12 @@ package org.eclipse.pde.internal.core.schema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 
-public class SchemaRootElement extends SchemaElement implements
-		ISchemaRootElement {
+public class SchemaRootElement extends SchemaElement implements ISchemaRootElement {
 
 	private static final long serialVersionUID = 1L;
 	public static final String P_DEP_REPLACEMENT = "replacement"; //$NON-NLS-1$
 	private String fDeperecatedReplacement;
-	
+
 	public SchemaRootElement(ISchemaObject parent, String name) {
 		super(parent, name);
 	}

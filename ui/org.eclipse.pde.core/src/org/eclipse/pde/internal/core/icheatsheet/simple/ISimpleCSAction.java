@@ -22,24 +22,24 @@ public interface ISimpleCSAction extends ISimpleCSRunObject {
 	 * @return
 	 */
 	public String getClazz();
-	
+
 	/**
 	 * Attribute: class
 	 * @param clazz
 	 */
-	public void setClazz(String clazz);		
-	
+	public void setClazz(String clazz);
+
 	/**
 	 * Attribute: pluginId
 	 * @return
 	 */
 	public String getPluginId();
-	
+
 	/**
 	 * Attribute: pluginId
 	 * @param pluginId
 	 */
-	public void setPluginId(String pluginId);	
+	public void setPluginId(String pluginId);
 
 	/**
 	 * Attributes:  param1, param2, ..., param9
@@ -52,12 +52,12 @@ public interface ISimpleCSAction extends ISimpleCSRunObject {
 	 * @return
 	 */
 	public String getParam(int index);
-	
+
 	/**
 	 * Attributes:  param1, param2, ..., param9
 	 * @param param
 	 * @param index
 	 */
 	public void setParam(String param, int index);
-	
+
 }

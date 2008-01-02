@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+
 /**
  * Objects that implement this interface represent references
  * to required plug-ins.
@@ -26,6 +27,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * about changes in the "optional" field.
 	 */
 	String P_OPTIONAL = "optional"; //$NON-NLS-1$
+
 	/**
 	 * Tests whether the imported plug-in is reexported for
 	 * plug-ins that will use this plug-in.
@@ -33,6 +35,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * @return true if the required plug-in libraries are reexported
 	 */
 	boolean isReexported();
+
 	/**
 	 * Tests whether this import is optional. Optional imports will
 	 * not create an error condition when they cannot be resolved.
@@ -40,6 +43,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * @return true if this import is optional
 	 */
 	boolean isOptional();
+
 	/**
 	 * Sets whether the libraries of the required plug-in will
 	 * be reexported.
@@ -49,6 +53,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * @param value true if reexporting is desired
 	 */
 	void setReexported(boolean value) throws CoreException;
+
 	/**
 	 * Sets whether this import is optional. Optional imports will
 	 * not create an error condition when they cannot be resolved.

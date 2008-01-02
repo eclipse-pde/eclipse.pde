@@ -22,11 +22,11 @@ public interface ICompCSDependency extends ICompCSObject {
 	 * @param task
 	 */
 	public void setFieldTask(String task);
-	
+
 	/**
 	 * Attribute: task
 	 * @return
 	 */
 	public String getFieldTask();
-	
+
 }

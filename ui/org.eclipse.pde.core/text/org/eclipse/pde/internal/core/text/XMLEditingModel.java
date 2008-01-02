@@ -32,11 +32,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLEditingModel extends AbstractEditingModel {
-	
+
 	public XMLEditingModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
@@ -52,9 +52,9 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		} catch (FactoryConfigurationError e) {
 		}
 	}
-	
+
 	protected abstract DefaultHandler createDocumentHandler(IModel model, boolean reconciling);
-	
+
 	public void adjustOffsets(IDocument document) {
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
@@ -64,7 +64,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		} catch (ParserConfigurationException e) {
 		} catch (FactoryConfigurationError e) {
 		}
-	}	
+	}
 
 	/**
 	 * @return
@@ -77,16 +77,15 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		}
 		return true;
 	}
-	
+
 	public void save() {
 		if (isResourceFile() == false) {
 			return;
 		}
 		try {
-			IFile file = (IFile)getUnderlyingResource();
+			IFile file = (IFile) getUnderlyingResource();
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -106,7 +105,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		if (isResourceFile() == false) {
 			return;
 		}
-		IFile file = (IFile)getUnderlyingResource();		
+		IFile file = (IFile) getUnderlyingResource();
 		// Underlying file has to exist in order to reload the model
 		if (file.exists()) {
 			InputStream stream = null;
@@ -119,10 +118,10 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 				setDirty(false);
 			} catch (CoreException e) {
 				// Ignore
-			} 
-		} 		
-	}	
-	
+			}
+		}
+	}
+
 	public void reload(IDocument document) {
 		// Get the document's text
 		String text = document.get();
@@ -140,8 +139,8 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		} catch (CoreException e) {
 			// Ignore
 		}
-	}	
-	
+	}
+
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);

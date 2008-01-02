@@ -52,16 +52,16 @@ public class BundleManifestSourceLocationManager {
 	 * @param pluginVersion version of the plugin
 	 * @return a source location or <code>null</code> if no location exists for this plugin
 	 */
-	public SourceLocation getSourceLocation(String pluginName, Version pluginVersion){
-		IPluginModelBase plugin = (IPluginModelBase)fPluginToSourceBundle.get(new SourceLocationKey(pluginName, pluginVersion));
-		if (plugin != null){
+	public SourceLocation getSourceLocation(String pluginName, Version pluginVersion) {
+		IPluginModelBase plugin = (IPluginModelBase) fPluginToSourceBundle.get(new SourceLocationKey(pluginName, pluginVersion));
+		if (plugin != null) {
 			SourceLocation location = new SourceLocation(new Path(plugin.getInstallLocation()));
 			location.setUserDefined(false);
 			return location;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the collection of source locations found when searching
 	 * @return set of source locations, possibly empty
@@ -76,7 +76,7 @@ public class BundleManifestSourceLocationManager {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns whether this manager has a source bundle location for the given
 	 * plugin name and version.  
@@ -85,10 +85,10 @@ public class BundleManifestSourceLocationManager {
 	 * @param pluginVersion version of the plugin to search for
 	 * @return whether this manager has a source location for the the given plugin
 	 */
-	public boolean hasValidSourceLocation(String pluginName, Version pluginVersion){
+	public boolean hasValidSourceLocation(String pluginName, Version pluginVersion) {
 		return fPluginToSourceBundle.containsKey(new SourceLocationKey(pluginName, pluginVersion));
 	}
-	
+
 	/**
 	 * Returns the source roots associated with a specific plugin name and version.
 	 * The manager will look for a source location for the given plugin name/version, 
@@ -101,24 +101,24 @@ public class BundleManifestSourceLocationManager {
 	 * @param pluginVersion version of the plugin to search for
 	 * @return set of String paths representing the source roots for the given plugin in the source bundle, possibly empty
 	 */
-	public Set getSourceRoots(String pluginName, Version pluginVersion){
+	public Set getSourceRoots(String pluginName, Version pluginVersion) {
 		Set pluginSourceRoots = new HashSet();
 		ManifestElement[] manifestElements = getSourceEntries(pluginName, pluginVersion);
-		if (manifestElements != null){
+		if (manifestElements != null) {
 			for (int j = 0; j < manifestElements.length; j++) {
 				ManifestElement currentElement = manifestElements[j];
 				String binaryPluginName = currentElement.getValue();
 				String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
 				// Currently the version attribute is required
-				if (binaryPluginName != null && binaryPluginName.equals(pluginName)){
-					if (versionEntry != null && versionEntry.length() > 0){
+				if (binaryPluginName != null && binaryPluginName.equals(pluginName)) {
+					if (versionEntry != null && versionEntry.length() > 0) {
 						Version version = null;
-						try{
+						try {
 							version = new Version(versionEntry);
-						} catch (IllegalArgumentException e){
-							PDECore.log(new Status(IStatus.ERROR,PDECore.PLUGIN_ID,PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader,e));										
+						} catch (IllegalArgumentException e) {
+							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
 						}
-						if (pluginVersion.equals(version)){
+						if (pluginVersion.equals(version)) {
 							addSourceRoots(currentElement.getDirective("roots"), pluginSourceRoots); //$NON-NLS-1$
 							return pluginSourceRoots;
 						}
@@ -126,10 +126,10 @@ public class BundleManifestSourceLocationManager {
 				}
 			}
 		}
-		
+
 		return pluginSourceRoots;
 	}
-	
+
 	/**
 	 * Returns all of the source roots specified in the source bundle providing
 	 * source for the given plugin name and version.
@@ -143,10 +143,10 @@ public class BundleManifestSourceLocationManager {
 	 * @param pluginVersion version of the plugin to search for
 	 * @return set of String paths representing the source roots in the associated source bundle, possibly empty
 	 */
-	public Set getAllSourceRoots(String pluginName, Version pluginVersion){
+	public Set getAllSourceRoots(String pluginName, Version pluginVersion) {
 		Set pluginSourceRoots = new HashSet();
 		ManifestElement[] manifestElements = getSourceEntries(pluginName, pluginVersion);
-		if (manifestElements != null){
+		if (manifestElements != null) {
 			for (int j = 0; j < manifestElements.length; j++) {
 				ManifestElement currentElement = manifestElements[j];
 				addSourceRoots(currentElement.getDirective("roots"), pluginSourceRoots); //$NON-NLS-1$
@@ -154,36 +154,36 @@ public class BundleManifestSourceLocationManager {
 		}
 		return pluginSourceRoots;
 	}
-	
+
 	/**
 	 * Returns an array containing ManifestElements for the SourceBundle header of the source bundle for the
 	 * name and version specified.  If no source bundle was found or the header was incorrectly formatted, 
 	 * null will be returned.
 	 */
 	private ManifestElement[] getSourceEntries(String pluginName, Version pluginVersion) {
-		IPluginModelBase sourceBundle = (IPluginModelBase)fPluginToSourceBundle.get(new SourceLocationKey(pluginName, pluginVersion));
-		if (sourceBundle != null){
-			if (sourceBundle.getPluginBase() instanceof PluginBase){
-				String bundleSourceEntry = ((PluginBase)sourceBundle.getPluginBase()).getBundleSourceEntry();
-				if (bundleSourceEntry != null){
-					try{
+		IPluginModelBase sourceBundle = (IPluginModelBase) fPluginToSourceBundle.get(new SourceLocationKey(pluginName, pluginVersion));
+		if (sourceBundle != null) {
+			if (sourceBundle.getPluginBase() instanceof PluginBase) {
+				String bundleSourceEntry = ((PluginBase) sourceBundle.getPluginBase()).getBundleSourceEntry();
+				if (bundleSourceEntry != null) {
+					try {
 						return ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
-					} catch (BundleException e){
-						PDECore.log(new Status(IStatus.ERROR,PDECore.PLUGIN_ID,PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader,e));
+					} catch (BundleException e) {
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
 					}
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Parses and adds the values of rootEntryDirective to the pluginSourceRoots set.  
 	 * @param rootEntryDirective - value of the "roots" directive of a SourceBundle header.
 	 * @param pluginSourceRoots - set of pluginSourceRoots
 	 */
 	private void addSourceRoots(String rootEntryDirective, Set pluginSourceRoots) {
-		if (rootEntryDirective != null){
+		if (rootEntryDirective != null) {
 			String[] roots = rootEntryDirective.split(","); //$NON-NLS-1$
 			for (int k = 0; k < roots.length; k++) {
 				pluginSourceRoots.add(roots[k]);
@@ -192,27 +192,27 @@ public class BundleManifestSourceLocationManager {
 			pluginSourceRoots.add("."); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Searches through the specified bundles for source bundles.  Source bundles are determined by
 	 * looking for a specific entry in the plugin manifest.
 	 * @param externalModels bundles to search through
 	 */
-	public void setPlugins(IPluginModelBase[] externalModels){
+	public void setPlugins(IPluginModelBase[] externalModels) {
 		fPluginToSourceBundle = new HashMap();
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginBase currentPlugin = externalModels[i].getPluginBase();
-			if (currentPlugin instanceof PluginBase){
-				String bundleSourceEntry = ((PluginBase)currentPlugin).getBundleSourceEntry();
-				if (bundleSourceEntry != null){
+			if (currentPlugin instanceof PluginBase) {
+				String bundleSourceEntry = ((PluginBase) currentPlugin).getBundleSourceEntry();
+				if (bundleSourceEntry != null) {
 					ManifestElement[] manifestElements = null;
-					try{
+					try {
 						manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
-					} catch (BundleException e){
-						PDECore.log(new Status(IStatus.ERROR,PDECore.PLUGIN_ID,PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader,e));
+					} catch (BundleException e) {
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
 						manifestElements = null;
 					}
-					if (manifestElements != null){
+					if (manifestElements != null) {
 						IPath path = new Path(externalModels[i].getInstallLocation());
 						if (path.toFile().exists()) {
 							for (int j = 0; j < manifestElements.length; j++) {
@@ -220,16 +220,16 @@ public class BundleManifestSourceLocationManager {
 								String binaryPluginName = currentElement.getValue();
 								String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
 								// Currently the version attribute is required
-								if (binaryPluginName != null && binaryPluginName.length() > 0 && versionEntry != null && versionEntry.length() > 0){
+								if (binaryPluginName != null && binaryPluginName.length() > 0 && versionEntry != null && versionEntry.length() > 0) {
 									Version version = null;
-									try{
+									try {
 										version = new Version(versionEntry);
-									} catch (IllegalArgumentException e){
-										PDECore.log(new Status(IStatus.ERROR,PDECore.PLUGIN_ID,PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader,e));										
+									} catch (IllegalArgumentException e) {
+										PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
 									}
-									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName,version), externalModels[i]);
+									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), externalModels[i]);
 								} else {
-									PDECore.log(new Status(IStatus.WARNING,PDECore.PLUGIN_ID,NLS.bind(PDECoreMessages.BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing, currentPlugin.getName())));
+									PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing, currentPlugin.getName())));
 								}
 							}
 						}
@@ -238,7 +238,7 @@ public class BundleManifestSourceLocationManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Used as the key for the bundle manifest location map.  Contains
 	 * both the bundle name and the version.  The version attribute can
@@ -248,30 +248,30 @@ public class BundleManifestSourceLocationManager {
 	class SourceLocationKey {
 		private String fBundleName;
 		private Version fVersion;
-		
-		public SourceLocationKey(String bundleName, Version version){
+
+		public SourceLocationKey(String bundleName, Version version) {
 			fBundleName = bundleName;
 			fVersion = version;
 		}
-		
-		public SourceLocationKey(String bundleName){
-			this(bundleName,null);
+
+		public SourceLocationKey(String bundleName) {
+			this(bundleName, null);
 		}
-		
+
 		public boolean equals(Object obj) {
-			if (obj instanceof SourceLocationKey){
-				SourceLocationKey key = (SourceLocationKey)obj;
-				if (fVersion != null && key.fVersion != null){
+			if (obj instanceof SourceLocationKey) {
+				SourceLocationKey key = (SourceLocationKey) obj;
+				if (fVersion != null && key.fVersion != null) {
 					return fBundleName.equals(((SourceLocationKey) obj).fBundleName) && fVersion.equals(((SourceLocationKey) obj).fVersion);
-				} else if (fVersion == null && key.fVersion == null){
+				} else if (fVersion == null && key.fVersion == null) {
 					return fBundleName.equals(((SourceLocationKey) obj).fBundleName);
 				}
 			}
 			return false;
 		}
-		
-		public int hashCode(){
-			if (fVersion == null){
+
+		public int hashCode() {
+			if (fVersion == null) {
 				return fBundleName.hashCode();
 			}
 			int result = 1;

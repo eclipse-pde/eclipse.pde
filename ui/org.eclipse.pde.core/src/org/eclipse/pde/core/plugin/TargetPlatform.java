@@ -39,15 +39,15 @@ import org.eclipse.pde.internal.core.UpdateManagerHelper;
  * </p>
  */
 public class TargetPlatform {
-	
+
 	private static String PRODUCT_PROPERTY = "eclipse.product"; //$NON-NLS-1$
 	private static String APPLICATION_PROPERTY = "eclipse.application"; //$NON-NLS-1$
-	
+
 	private static String SDK_PRODUCT = "org.eclipse.sdk.ide"; //$NON-NLS-1$
 	private static String PLATFORM_PRODUCT = "org.eclipse.platform.ide"; //$NON-NLS-1$
-	
+
 	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the target platform's main location as specified on the <b>Environment</b>
 	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
@@ -58,7 +58,7 @@ public class TargetPlatform {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
-	
+
 	/**
 	 * Returns the location of the default target platform, namely the location 
 	 * of the host (running) instance of Eclipse.
@@ -69,7 +69,7 @@ public class TargetPlatform {
 		URL installURL = Platform.getInstallLocation().getURL();
 		IPath path = new Path(installURL.getFile()).removeTrailingSeparator();
 		return path.toOSString();
-		
+
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class TargetPlatform {
 		String value = preferences.getString(key);
 		return value.equals("") ? defaultValue : value; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a list of identifiers for all available applications 
 	 * (i.e. <code>org.eclipse.core.runtime.applications</code> extensions) declared in the workspace
@@ -132,7 +132,7 @@ public class TargetPlatform {
 	public static String[] getApplications() {
 		return TargetPlatformHelper.getApplicationNames();
 	}
-	
+
 	/**
 	 * Returns a list of identifiers for all available products 
 	 * (i.e. <code>org.eclipse.core.runtime.products</code> extensions) declared in the workspace
@@ -147,7 +147,7 @@ public class TargetPlatform {
 	public static String[] getProducts() {
 		return TargetPlatformHelper.getProductNames();
 	}
-	
+
 	/**
 	 * Returns the ID for the default product 
 	 * (<code>org.eclipse.core.runtime.products</code> extension) for the current target platform,
@@ -168,7 +168,7 @@ public class TargetPlatform {
 
 		if (set.contains(SDK_PRODUCT))
 			return SDK_PRODUCT;
-		
+
 		return set.contains(PLATFORM_PRODUCT) ? PLATFORM_PRODUCT : null;
 	}
 
@@ -192,7 +192,7 @@ public class TargetPlatform {
 		}
 		return IDE_APPLICATION;
 	}
-	
+
 	/**
 	 * Creates a platform configuration to be used when launching an Eclipse
 	 * application that uses Update Manager as a configurator
@@ -205,12 +205,10 @@ public class TargetPlatform {
 	 * @throws CoreException an exception is thrown if there was a problem writing the platform
 	 * 			configuration file
 	 */
-	public static void createPlatformConfiguration(
-			File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin)
-			throws CoreException {
+	public static void createPlatformConfiguration(File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin) throws CoreException {
 		UpdateManagerHelper.createPlatformConfiguration(location, plugins, brandingPlugin);
 	}
-	
+
 	/**
 	* The comma-separated list of bundles which are automatically installed 
 	* and optionally started.
@@ -231,5 +229,5 @@ public class TargetPlatform {
 	public static String getBundleList() {
 		return TargetPlatformHelper.getBundleList();
 	}
-		
+
 }

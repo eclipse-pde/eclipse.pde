@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 
 public class TargetModelFactory implements ITargetModelFactory {
-	
+
 	private ITargetModel fModel;
 
 	public TargetModelFactory(ITargetModel model) {
@@ -49,7 +49,7 @@ public class TargetModelFactory implements ITargetModelFactory {
 	public ILocationInfo createLocation() {
 		return new LocationInfo(fModel);
 	}
-	
+
 	public IImplicitDependenciesInfo createImplicitPluginInfo() {
 		return new ImplicitDependenciesInfo(fModel);
 	}
@@ -61,7 +61,7 @@ public class TargetModelFactory implements ITargetModelFactory {
 	public ITargetFeature createFeature() {
 		return new TargetFeature(fModel);
 	}
-	
+
 	public IAdditionalLocation createAdditionalLocation() {
 		return new AdditionalDirectory(fModel);
 	}

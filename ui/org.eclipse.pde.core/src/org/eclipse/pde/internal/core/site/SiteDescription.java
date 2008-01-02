@@ -64,19 +64,18 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
-		for (int i=0; i<children.getLength(); i++) {
+		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType()==Node.TEXT_NODE) {
+			if (child.getNodeType() == Node.TEXT_NODE) {
 				Node firstChild = node.getFirstChild();
-				if (firstChild!=null)
+				if (firstChild != null)
 					text = getNormalizedText(firstChild.getNodeValue());
 				break;
 			}
 		}
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_TEXT)) {
@@ -84,23 +83,22 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
-	
+
 	public void write(String indent, PrintWriter writer) {
-		if ((url == null || url.length() <= 0)
-				&& (text == null || text.trim().length() <= 0))
+		if ((url == null || url.length() <= 0) && (text == null || text.trim().length() <= 0))
 			return;
 		writer.print(indent);
 		writer.print("<description"); //$NON-NLS-1$
 		if (url != null && url.length() > 0)
 			writer.print(" url=\"" + //$NON-NLS-1$
-					SiteObject.getWritableString(url) + "\"");  //$NON-NLS-1$
+					SiteObject.getWritableString(url) + "\""); //$NON-NLS-1$
 		writer.println(">"); //$NON-NLS-1$
-		if (text!=null) {
-			writer.println(indent + Site.INDENT +
-					SiteObject.getWritableString(getNormalizedText(text)));
+		if (text != null) {
+			writer.println(indent + Site.INDENT + SiteObject.getWritableString(getNormalizedText(text)));
 		}
-		writer.println(indent+"</description>"); //$NON-NLS-1$
+		writer.println(indent + "</description>"); //$NON-NLS-1$
 	}
+
 	public boolean isValid() {
 		return true;
 	}

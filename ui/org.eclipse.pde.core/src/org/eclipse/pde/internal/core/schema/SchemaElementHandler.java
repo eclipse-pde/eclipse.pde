@@ -21,16 +21,16 @@ import org.xml.sax.SAXException;
 public class SchemaElementHandler extends BaseSchemaHandler {
 
 	private String fElementName;
-	
-	private String fTargetElementName;
-	
-	private StringBuffer fDescription;
-	
-	private final static String[] DESC_NESTED_ELEM = { "documentation", //$NON-NLS-1$
-			"annotation", "element" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private final static String NAME_ATTR = "name";	 //$NON-NLS-1$	
-	
+	private String fTargetElementName;
+
+	private StringBuffer fDescription;
+
+	private final static String[] DESC_NESTED_ELEM = {"documentation", //$NON-NLS-1$
+			"annotation", "element"}; //$NON-NLS-1$ //$NON-NLS-2$
+
+	private final static String NAME_ATTR = "name"; //$NON-NLS-1$	
+
 	/**
 	 * 
 	 */
@@ -42,13 +42,13 @@ public class SchemaElementHandler extends BaseSchemaHandler {
 	public void setTargetElementName(String targetElement) {
 		fTargetElementName = targetElement;
 	}
-	
+
 	protected void reset() {
 		super.reset();
-		fDescription = new StringBuffer();		
+		fDescription = new StringBuffer();
 		fElementName = null;
 	}
-	
+
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 
@@ -62,32 +62,31 @@ public class SchemaElementHandler extends BaseSchemaHandler {
 	}
 
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		
+
 		if (onTarget()) {
 			for (int i = 0; i < length; i++) {
 				fDescription.append(ch[start + i]);
 			}
 		}
-	}		
-	
+	}
+
 	protected boolean onTarget() {
 		if (fElementList.size() >= DESC_NESTED_ELEM.length) {
 			for (int i = 0; i < DESC_NESTED_ELEM.length; i++) {
-				String currentElement = (String)fElementList.get(i);
+				String currentElement = (String) fElementList.get(i);
 				if (currentElement.compareTo(DESC_NESTED_ELEM[i]) != 0) {
 					return false;
 				}
 			}
-			if ((fElementName == null) || 
-					(fElementName.compareTo(fTargetElementName) != 0)) {
+			if ((fElementName == null) || (fElementName.compareTo(fTargetElementName) != 0)) {
 				return false;
 			}
 			return true;
 		}
 		return false;
-	}	
-	
+	}
+
 	public String getDescription() {
 		return fDescription.toString();
-	}	
+	}
 }

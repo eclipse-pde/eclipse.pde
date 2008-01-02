@@ -36,8 +36,8 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 
 	private boolean fDirty;
 
-	private boolean fEditable;		
-	
+	private boolean fEditable;
+
 	/**
 	 * 
 	 */
@@ -57,8 +57,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 	public void save() {
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
@@ -87,8 +86,8 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 			// Ignore
 		}
 		return swriter.toString();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IEditable#isDirty()
 	 */
@@ -119,7 +118,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(true);
 		super.fireModelChanged(event);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#isEditable()
@@ -127,21 +126,21 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 	public boolean isEditable() {
 		return fEditable;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public String getInstallLocation() {
 		return fFile.getLocation().toOSString();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.AbstractModel#getUnderlyingResource()
 	 */
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#isInSync()
 	 */
@@ -151,8 +150,8 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 			return false;
 		}
 		return isInSync(path.toFile());
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel#load()
 	 */
@@ -163,10 +162,9 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 				stream = new BufferedInputStream(fFile.getContents(true));
 				load(stream, false);
 			} catch (CoreException e) {
-			} 
-		} 
-	}	
-	
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
@@ -184,7 +182,7 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 				setDirty(false);
 			} catch (CoreException e) {
 				// Ignore
-			} 
-		} 		
-	}	
+			}
+		}
+	}
 }

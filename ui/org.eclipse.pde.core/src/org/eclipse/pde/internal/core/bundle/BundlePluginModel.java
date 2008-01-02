@@ -14,10 +14,8 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 
-public class BundlePluginModel
-	extends BundlePluginModelBase
-	implements IBundlePluginModel {
-	
+public class BundlePluginModel extends BundlePluginModelBase implements IBundlePluginModel {
+
 	private static final long serialVersionUID = 1L;
 
 	public IPluginBase createPluginBase() {
@@ -30,7 +28,7 @@ public class BundlePluginModel
 	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
 	 */
 	public IPlugin getPlugin() {
-		return (IPlugin)getPluginBase();
+		return (IPlugin) getPluginBase();
 	}
 
 	/* (non-Javadoc)

@@ -35,5 +35,5 @@ public abstract class DocumentXMLNode implements IDocumentXMLNode {
 	 * @return
 	 */
 	public abstract String write();
-	
+
 }

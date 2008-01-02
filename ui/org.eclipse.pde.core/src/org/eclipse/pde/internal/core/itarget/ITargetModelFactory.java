@@ -11,23 +11,23 @@
 package org.eclipse.pde.internal.core.itarget;
 
 public interface ITargetModelFactory {
-	
+
 	ITarget createTarget();
-	
+
 	IArgumentsInfo createArguments();
-	
+
 	IEnvironmentInfo createEnvironment();
-	
+
 	ITargetJRE createJREInfo();
-	
+
 	ILocationInfo createLocation();
-	
+
 	IImplicitDependenciesInfo createImplicitPluginInfo();
-	
+
 	ITargetPlugin createPlugin();
-	
+
 	ITargetFeature createFeature();
-	
+
 	IAdditionalLocation createAdditionalLocation();
 
 }

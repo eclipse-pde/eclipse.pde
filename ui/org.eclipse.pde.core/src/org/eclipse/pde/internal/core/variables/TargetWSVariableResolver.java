@@ -17,8 +17,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 
 public class TargetWSVariableResolver implements IDynamicVariableResolver {
 
-	public String resolveValue(IDynamicVariable variable, String argument)
-			throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		return TargetPlatform.getWS();
 	}
 

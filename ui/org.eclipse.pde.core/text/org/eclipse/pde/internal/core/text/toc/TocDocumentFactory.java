@@ -21,9 +21,9 @@ import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
  * TocDocumentFactory
  *
  */
-public class TocDocumentFactory extends DocumentNodeFactory implements IDocumentNodeFactory
-{	private TocModel fModel;
-	
+public class TocDocumentFactory extends DocumentNodeFactory implements IDocumentNodeFactory {
+	private TocModel fModel;
+
 	/**
 	 * @param model
 	 */
@@ -39,24 +39,20 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 		// Semantics:
 		// org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_help_toc.html
 
-		if (isToc(name))
-		{	// Root
-			return (IDocumentElementNode)createToc();
+		if (isToc(name)) { // Root
+			return (IDocumentElementNode) createToc();
 		}
 
-		if (isTopic(name))
-		{	// Topic
-			return (IDocumentElementNode)createTocTopic();
+		if (isTopic(name)) { // Topic
+			return (IDocumentElementNode) createTocTopic();
 		}
 
-		if (isLink(name))
-		{	// Link
-			return (IDocumentElementNode)createTocLink();
-		}			
+		if (isLink(name)) { // Link
+			return (IDocumentElementNode) createTocLink();
+		}
 
-		if (isAnchor(name))
-		{	// Anchor
-			return (IDocumentElementNode)createTocAnchor();
+		if (isAnchor(name)) { // Anchor
+			return (IDocumentElementNode) createTocAnchor();
 		}
 
 		return super.createDocumentNode(name, parent);
@@ -73,7 +69,7 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
@@ -81,7 +77,7 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 	private boolean isToc(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_TOC);
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
@@ -89,23 +85,23 @@ public class TocDocumentFactory extends DocumentNodeFactory implements IDocument
 	private boolean isAnchor(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_ANCHOR);
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
 	 */
 	private boolean isTopic(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_TOPIC);
-	}	
-	
+	}
+
 	/**
 	 * @param name
 	 * @return
 	 */
 	private boolean isLink(String name) {
 		return isTocElement(name, ITocConstants.ELEMENT_LINK);
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */

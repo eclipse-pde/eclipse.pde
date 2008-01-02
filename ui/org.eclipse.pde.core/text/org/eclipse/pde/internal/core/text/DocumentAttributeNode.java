@@ -11,13 +11,8 @@
 
 package org.eclipse.pde.internal.core.text;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
-/**
- * DocumentAttributeNode
- *
- */
 public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentAttributeNode {
 
 	private static final long serialVersionUID = 1L;
@@ -28,9 +23,9 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	private transient int fValueOffset;
 	private transient int fValueLength;
 
-	private String fValue;	
+	private String fValue;
 	private String fName;
-	
+
 	/**
 	 * 
 	 */
@@ -96,14 +91,14 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeName(java.lang.String)
 	 */
-	public void setAttributeName(String name) throws CoreException {
+	public void setAttributeName(String name) {
 		fName = name;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#setAttributeValue(java.lang.String)
 	 */
-	public void setAttributeValue(String value) throws CoreException {
+	public void setAttributeValue(String value) {
 		fValue = value;
 	}
 
@@ -146,10 +141,8 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	 * @see org.eclipse.pde.internal.core.text.IDocumentAttributeNode#write()
 	 */
 	public String write() {
-		return fName + 
-				"=\"" +  //$NON-NLS-1$
-				PDEXMLHelper.getWritableAttributeString(fValue) + 
-				"\"";  //$NON-NLS-1$
+		return fName + "=\"" + //$NON-NLS-1$
+				PDEXMLHelper.getWritableAttributeString(fValue) + "\""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -179,7 +172,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 		// assume that an attribute is a document range.
 		// Stems from the problem that attributes are considered as elements
 		// in the hierarchy in the manifest model
-		
+
 		// Includes:  name length + equal + start quote
 		int len1 = getValueOffset() - getNameOffset();
 		// Includes:  value length
@@ -188,7 +181,7 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 		int len3 = 1;
 		// Total
 		int length = len1 + len2 + len3;
-		
+
 		return length;
 	}
 

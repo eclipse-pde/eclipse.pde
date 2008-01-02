@@ -28,12 +28,11 @@ import org.w3c.dom.Text;
  * CompCSDataObject
  *
  */
-public abstract class CompCSDataObject extends CompCSObject implements
-		ICompCSDataObject {
+public abstract class CompCSDataObject extends CompCSObject implements ICompCSDataObject {
 
 	private static final long serialVersionUID = 1L;
 	private String fFieldContent;
-	
+
 	/**
 	 * @param model
 	 * @param parent
@@ -75,7 +74,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		// Trim leading and trailing whitespace		
 		fFieldContent = CheatSheetUtil.parseElementText(element).trim();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes(org.w3c.dom.Element)
 	 */
@@ -96,7 +95,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	protected void parseText(Text text) {
 		// NO-OP
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
 	 */
@@ -115,16 +114,13 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeElements(java.lang.String, java.io.PrintWriter)
 	 */
 	protected void writeElements(String indent, PrintWriter writer) {
-		String newIndent = indent + XMLPrintHandler.XML_INDENT;		
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		// Print contents
-		if ((fFieldContent != null) &&
-				(fFieldContent.length() > 0)) {
+		if ((fFieldContent != null) && (fFieldContent.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
 			// Preserve tag exceptions
-			writer.write(newIndent
-					+ PDETextHelper.translateWriteText(fFieldContent.trim(),
-							DEFAULT_TAG_EXCEPTIONS, DEFAULT_SUBSTITUTE_CHARS) + "\n"); //$NON-NLS-1$
+			writer.write(newIndent + PDETextHelper.translateWriteText(fFieldContent.trim(), DEFAULT_TAG_EXCEPTIONS, DEFAULT_SUBSTITUTE_CHARS) + "\n"); //$NON-NLS-1$
 		}
 	}
 
@@ -143,7 +139,7 @@ public abstract class CompCSDataObject extends CompCSObject implements
 		fFieldContent = content;
 		if (isEditable()) {
 			firePropertyChanged(getElement(), old, fFieldContent);
-		}	
+		}
 	}
 
 }

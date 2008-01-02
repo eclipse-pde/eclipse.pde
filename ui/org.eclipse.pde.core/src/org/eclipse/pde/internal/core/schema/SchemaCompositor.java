@@ -22,9 +22,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
-public class SchemaCompositor
-	extends RepeatableSchemaObject
-	implements ISchemaCompositor {
+public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaCompositor {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,33 +36,31 @@ public class SchemaCompositor
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
-				fName = PDECoreMessages.SchemaCompositor_all; 
+				fName = PDECoreMessages.SchemaCompositor_all;
 				break;
 			case CHOICE :
-				fName = PDECoreMessages.SchemaCompositor_choice; 
+				fName = PDECoreMessages.SchemaCompositor_choice;
 				break;
 			case GROUP :
-				fName = PDECoreMessages.SchemaCompositor_group; 
+				fName = PDECoreMessages.SchemaCompositor_group;
 				break;
 			case SEQUENCE :
-				fName = PDECoreMessages.SchemaCompositor_sequence; 
+				fName = PDECoreMessages.SchemaCompositor_sequence;
 				break;
 		}
 	}
+
 	public SchemaCompositor(ISchemaObject parent, String id, int kind) {
 		super(parent, id);
 		this.kind = kind;
 	}
+
 	public void addChild(ISchemaObject child) {
 		children.addElement(child);
 		child.setParent(this);
-		getSchema().fireModelChanged(
-			new ModelChangedEvent(getSchema(),
-				IModelChangedEvent.INSERT,
-				new Object[] { child },
-				null));
+		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.INSERT, new Object[] {child}, null));
 	}
-	
+
 	public void moveChildToSibling(ISchemaObject element, ISchemaObject sibling) {
 		int index = children.indexOf(element);
 		int newIndex;
@@ -72,7 +68,7 @@ public class SchemaCompositor
 			newIndex = children.indexOf(sibling);
 		else
 			newIndex = children.size() - 1;
-		
+
 		if (index > newIndex) {
 			for (int i = index; i > newIndex; i--) {
 				children.set(i, children.elementAt(i - 1));
@@ -81,14 +77,13 @@ public class SchemaCompositor
 			for (int i = index; i < newIndex; i++) {
 				children.set(i, children.elementAt(i + 1));
 			}
-		} else // don't need to move
+		} else
+			// don't need to move
 			return;
 		children.set(newIndex, element);
-		getSchema().fireModelChanged(new ModelChangedEvent(
-				getSchema(), IModelChangedEvent.CHANGE,
-				new Object[] { this }, null));
+		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.CHANGE, new Object[] {this}, null));
 	}
-	
+
 	public void addChild(ISchemaObject newChild, ISchemaObject afterSibling) {
 		int index = -1;
 		if (afterSibling != null) {
@@ -98,14 +93,13 @@ public class SchemaCompositor
 			children.add(index + 1, newChild);
 		else
 			children.addElement(newChild);
-		getSchema().fireModelChanged(new ModelChangedEvent(
-				getSchema(), IModelChangedEvent.INSERT,
-				new Object[] { newChild }, null));
+		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.INSERT, new Object[] {newChild}, null));
 	}
-	
+
 	public int getChildCount() {
 		return children.size();
 	}
+
 	public ISchemaObject[] getChildren() {
 		ISchemaObject[] result = new ISchemaObject[children.size()];
 		children.copyInto(result);
@@ -119,42 +113,38 @@ public class SchemaCompositor
 			child.setParent(this);
 		}
 	}
+
 	public int getKind() {
 		return kind;
 	}
+
 	public void removeChild(ISchemaObject child) {
 		children.removeElement(child);
-		getSchema().fireModelChanged(
-			new ModelChangedEvent(getSchema(),
-				IModelChangedEvent.REMOVE,
-				new Object[] { child },
-				null));
+		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.REMOVE, new Object[] {child}, null));
 	}
+
 	public void setKind(int kind) {
 		if (this.kind != kind) {
 			Integer oldValue = new Integer(this.kind);
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
-					fName = PDECoreMessages.SchemaCompositor_all; 
+					fName = PDECoreMessages.SchemaCompositor_all;
 					break;
 				case CHOICE :
-					fName = PDECoreMessages.SchemaCompositor_choice; 
+					fName = PDECoreMessages.SchemaCompositor_choice;
 					break;
 				case GROUP :
-					fName = PDECoreMessages.SchemaCompositor_group; 
+					fName = PDECoreMessages.SchemaCompositor_group;
 					break;
 				case SEQUENCE :
-					fName = PDECoreMessages.SchemaCompositor_sequence; 
+					fName = PDECoreMessages.SchemaCompositor_sequence;
 					break;
 			}
-			getSchema().fireModelObjectChanged(
-				this,
-				P_KIND,
-				oldValue,
-				new Integer(kind));
+			getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
 		}
 	}
+
 	public void updateReferencesFor(ISchemaElement element, int kind) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Object child = children.elementAt(i);
@@ -171,7 +161,7 @@ public class SchemaCompositor
 					case ISchema.REFRESH_DELETE :
 						if (element.getName().equals(refName)) {
 							removeChild(ref);
-							getSchema().fireModelObjectChanged(this, null, ref,	null);
+							getSchema().fireModelObjectChanged(this, null, ref, null);
 						}
 						break;
 					case ISchema.REFRESH_RENAME :
@@ -187,7 +177,7 @@ public class SchemaCompositor
 						// reference.
 						else if (element.getName().equals(refName)) {
 							ref.setReferencedObject(element);
-							getSchema().fireModelObjectChanged(ref, null, null,	null);
+							getSchema().fireModelObjectChanged(ref, null, null, null);
 						}
 						break;
 				}
@@ -197,13 +187,14 @@ public class SchemaCompositor
 			}
 		}
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		String tag = null;
 
 		switch (kind) {
 			case CHOICE :
 				tag = "choice"; //$NON-NLS-1$
-				break;	
+				break;
 			case ALL :
 			case GROUP :
 			case SEQUENCE :
@@ -215,12 +206,9 @@ public class SchemaCompositor
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
 		if (getMinOccurs() != 1 || getMaxOccurs() != 1) {
 			String min = "" + getMinOccurs(); //$NON-NLS-1$
-			String max =
-				getMaxOccurs() == Integer.MAX_VALUE
-					? "unbounded" //$NON-NLS-1$
+			String max = getMaxOccurs() == Integer.MAX_VALUE ? "unbounded" //$NON-NLS-1$
 					: ("" + getMaxOccurs()); //$NON-NLS-1$
-			writer.print(
-				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		writer.println(">"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;

@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.xml.sax.SAXException;
 
 public class DefaultSAXParser {
-	
+
 	public static void parse(IFile file, XMLErrorReporter reporter) {
 		InputStream stream = null;
 		SAXParserWrapper parser = null;
@@ -42,5 +42,5 @@ public class DefaultSAXParser {
 			}
 		}
 	}
-	
+
 }

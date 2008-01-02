@@ -20,22 +20,23 @@ import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
-    private static final long serialVersionUID = 1L;
-    private Map fProperties;
+	private static final long serialVersionUID = 1L;
+	private Map fProperties;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
 	 */
 	public void setHeader(String key, String value) {
-        if (fProperties == null)
-            fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
+		if (fProperties == null)
+			fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
 		Object oldValue = fProperties.get(key);
 		if (value == null || value.trim().length() == 0)
 			fProperties.remove(key);
-		else 
+		else
 			fProperties.put(key, value);
 		getModel().fireModelObjectChanged(this, key, oldValue, value);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
 	 */
@@ -43,9 +44,9 @@ public class Bundle extends BundleObject implements IBundle {
 		if (fProperties == null) {
 			return null;
 		}
-		return (String)fProperties.get(key);
+		return (String) fProperties.get(key);
 	}
-	
+
 	public void load(Map properties) {
 		// Passed dictionary is read-only
 		fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
@@ -55,15 +56,15 @@ public class Bundle extends BundleObject implements IBundle {
 			fProperties.put(o, properties.get(o));
 		}
 	}
-	
+
 	public String getLocalization() {
 		return getHeader(Constants.BUNDLE_LOCALIZATION);
 	}
-	
+
 	public void setLocalization(String localization) {
 		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
-	
+
 	public void renameHeader(String key, String newKey) {
 		if (fProperties == null)
 			fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
@@ -71,11 +72,11 @@ public class Bundle extends BundleObject implements IBundle {
 			fProperties.put(newKey, fProperties.remove(key));
 		}
 	}
-	
+
 	public IManifestHeader getManifestHeader(String key) {
 		return new ManifestHeader(key, getHeader(key), this, System.getProperty("line.separator")); //$NON-NLS-1$
 	}
-	
+
 	protected Map getHeaders() {
 		return fProperties;
 	}

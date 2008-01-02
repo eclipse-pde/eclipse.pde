@@ -36,11 +36,12 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	private PluginDocumentHandler fHandler;
 	private IPluginModelFactory fFactory;
 	private String fLocalization;
-	
+
 	public PluginModelBase(IDocument document, boolean isReconciling) {
-		super(document, isReconciling);	
+		super(document, isReconciling);
 		fFactory = new PluginDocumentNodeFactory(this);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
 	 */
@@ -78,7 +79,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
-	
+
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
@@ -96,7 +97,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		}
 		return fPluginBase;
 	}
-	
+
 	public IExtensions getExtensions(boolean createIfMissing) {
 		return getPluginBase(createIfMissing);
 	}
@@ -114,7 +115,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public void setEnabled(boolean enabled) {
 		fIsEnabled = enabled;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
@@ -146,12 +147,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
 		URL[] locations = PDEManager.getNLLookupLocations(this);
-		return (locations.length == 0)
-				? null 
-				: new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, //$NON-NLS-1$
-						locations);
+		return (locations.length == 0) ? null : new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, //$NON-NLS-1$
+				locations);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel)
 	 */
@@ -160,13 +159,13 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 			fHandler = new PluginDocumentHandler(this, reconciling);
 		return fHandler;
 	}
-		
+
 	public IDocumentElementNode getLastErrorNode() {
 		if (fHandler != null)
 			return fHandler.getLastErrorNode();
 		return null;
 	}
-	
+
 	public void setLocalization(String localization) {
 		fLocalization = localization;
 	}

@@ -33,25 +33,24 @@ import org.w3c.dom.Text;
  * CompCSTaskObject
  *
  */
-public abstract class CompCSTaskObject extends CompCSObject implements
-		ICompCSTaskObject {
+public abstract class CompCSTaskObject extends CompCSObject implements ICompCSTaskObject {
 
 	private static final long serialVersionUID = 1L;
 
 	protected String fFieldId;
-	
+
 	protected String fFieldKind;
-	
+
 	protected ICompCSIntro fFieldIntro;
-	
+
 	protected ICompCSOnCompletion fFieldOnCompletion;
-	
+
 	protected String fFieldName;
-	
+
 	protected boolean fFieldSkip;
-	
+
 	protected ArrayList fFieldDependencies;
-	
+
 	/**
 	 * @param model
 	 * @param parent
@@ -148,7 +147,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		fFieldDependencies.remove(dependency);
 		if (isEditable()) {
 			fireStructureChanged(dependency, IModelChangedEvent.REMOVE);
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
@@ -166,7 +165,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject#setFieldIntro(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro)
 	 */
 	public void setFieldIntro(ICompCSIntro intro) {
-		ICompCSObject old = fFieldIntro;		
+		ICompCSObject old = fFieldIntro;
 		fFieldIntro = intro;
 		if (isEditable()) {
 			fireStructureChanged(intro, old);
@@ -199,7 +198,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject#setFieldOnCompletion(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion)
 	 */
 	public void setFieldOnCompletion(ICompCSOnCompletion onCompletion) {
-		ICompCSObject old = fFieldOnCompletion;		
+		ICompCSObject old = fFieldOnCompletion;
 		fFieldOnCompletion = onCompletion;
 		if (isEditable()) {
 			fireStructureChanged(onCompletion, old);
@@ -214,15 +213,14 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		fFieldSkip = skip;
 		if (isEditable()) {
 			firePropertyChanged(ATTRIBUTE_SKIP, old, Boolean.valueOf(fFieldSkip));
-		}	
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject#getFieldDependencies()
 	 */
 	public ICompCSDependency[] getFieldDependencies() {
-		return (ICompCSDependency[]) fFieldDependencies
-		.toArray(new ICompCSDependency[fFieldDependencies.size()]);
+		return (ICompCSDependency[]) fFieldDependencies.toArray(new ICompCSDependency[fFieldDependencies.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -231,7 +229,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 	protected void parseText(Text text) {
 		// NO-OP
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes(org.w3c.dom.Element)
 	 */
@@ -246,72 +244,60 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		// Trim leading and trailing whitespace
 		fFieldName = element.getAttribute(ATTRIBUTE_NAME).trim();
 		// Process skip attribute
-		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(
-				ATTRIBUTE_VALUE_TRUE) == 0) {
+		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(ATTRIBUTE_VALUE_TRUE) == 0) {
 			fFieldSkip = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeAttributes(java.lang.StringBuffer)
 	 */
 	protected void writeAttributes(StringBuffer buffer) {
 		// Print id attribute
-		if ((fFieldId != null) && 
-				(fFieldId.length() > 0)) {
+		if ((fFieldId != null) && (fFieldId.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_ID, 
-					PDETextHelper.translateWriteText(
-							fFieldId.trim(), DEFAULT_SUBSTITUTE_CHARS)));
-		}		
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_ID, PDETextHelper.translateWriteText(fFieldId.trim(), DEFAULT_SUBSTITUTE_CHARS)));
+		}
 		// Print kind attribute
-		if ((fFieldKind != null) && 
-				(fFieldKind.length() > 0)) {
+		if ((fFieldKind != null) && (fFieldKind.length() > 0)) {
 			// No trim required
 			// No encode required
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_KIND, fFieldKind));
-		}		
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_KIND, fFieldKind));
+		}
 		// Print name attribute
-		if ((fFieldName != null) && 
-				(fFieldName.length() > 0)) {
+		if ((fFieldName != null) && (fFieldName.length() > 0)) {
 			// Trim leading and trailing whitespace
 			// Encode characters
-			buffer.append(XMLPrintHandler.wrapAttribute(
-					ATTRIBUTE_NAME, 
-					PDETextHelper.translateWriteText(
-							fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
-		}		
+			buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_NAME, PDETextHelper.translateWriteText(fFieldName.trim(), DEFAULT_SUBSTITUTE_CHARS)));
+		}
 		// Print skip attribute
-		buffer.append(XMLPrintHandler.wrapAttribute(
-				ATTRIBUTE_SKIP, new Boolean(fFieldSkip).toString()));		
+		buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_SKIP, new Boolean(fFieldSkip).toString()));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement(org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
-		
+
 		if (name.equals(ELEMENT_INTRO)) {
 			// Process intro element
 			fFieldIntro = factory.createCompCSIntro(this);
-			fFieldIntro.parse(element);			
-		} else if (name.equals(ELEMENT_ONCOMPLETION)) { 
+			fFieldIntro.parse(element);
+		} else if (name.equals(ELEMENT_ONCOMPLETION)) {
 			// Process onCompletion element
 			fFieldOnCompletion = factory.createCompCSOnCompletion(this);
-			fFieldOnCompletion.parse(element);			
-		} else if (name.equals(ELEMENT_DEPENDENCY)) { 
+			fFieldOnCompletion.parse(element);
+		} else if (name.equals(ELEMENT_DEPENDENCY)) {
 			// Process dependency element
 			ICompCSDependency dependency = factory.createCompCSDependency(this);
 			fFieldDependencies.add(dependency);
 			dependency.parse(element);
-		}			
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#writeElements(java.lang.String, java.io.PrintWriter)
 	 */
@@ -320,22 +306,22 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		// Print intro element
 		if (fFieldIntro != null) {
 			fFieldIntro.write(newIndent, writer);
-		}			
+		}
 		// Print onCompletion element
 		if (fFieldOnCompletion != null) {
 			fFieldOnCompletion.write(newIndent, writer);
-		}			
+		}
 		// Print dependency elements
 		Iterator iterator = fFieldDependencies.iterator();
 		while (iterator.hasNext()) {
-			ICompCSDependency dependency = (ICompCSDependency)iterator.next();
+			ICompCSDependency dependency = (ICompCSDependency) iterator.next();
 			dependency.write(newIndent, writer);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#getElement()
 	 */
 	public abstract String getElement();
-	
+
 }

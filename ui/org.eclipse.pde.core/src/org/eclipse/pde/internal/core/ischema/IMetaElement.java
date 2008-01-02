@@ -42,7 +42,7 @@ public interface IMetaElement {
 	 * will be used in the UI instead of "wizard".
 	 */
 	public String getLabelProperty();
-	
+
 	/**
 	 * Returns <samp>true</samp> if the element content is translatable; <samp>false</samp> otherwise.
 	 */

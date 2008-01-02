@@ -21,9 +21,8 @@ import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
-public class PluginExtensionNode extends PluginParentNode implements
-		IPluginExtension {
-	
+public class PluginExtensionNode extends PluginParentNode implements IPluginExtension {
+
 	private static final long serialVersionUID = 1L;
 	private transient ISchema fSchema;
 
@@ -33,27 +32,28 @@ public class PluginExtensionNode extends PluginParentNode implements
 	public String getPoint() {
 		return getXMLAttributeValue(P_POINT);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#setPoint(java.lang.String)
 	 */
 	public void setPoint(String point) throws CoreException {
 		setXMLAttribute(P_POINT, point);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
@@ -65,19 +65,21 @@ public class PluginExtensionNode extends PluginParentNode implements
 		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(point);
 		return schema == null ? "" : schema.getName(); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
 		return getXMLAttributeValue(P_ID);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
 		setXMLAttribute(P_ID, id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
@@ -86,7 +88,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());
-		buffer.append(writeShallow(false));		
+		buffer.append(writeShallow(false));
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			children[i].setLineIndent(getLineIndent() + 3);
@@ -95,7 +97,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		buffer.append(sep + getIndent() + "</extension>"); //$NON-NLS-1$
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -103,7 +105,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		// Used for text transfers for copy, cut, paste operations
 		writer.write(write(true));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
@@ -125,7 +127,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getSchema()
 	 */
@@ -138,7 +140,7 @@ public class PluginExtensionNode extends PluginParentNode implements
 		}
 		return fSchema;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginObjectNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */

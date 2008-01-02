@@ -31,8 +31,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 
 	private boolean fAbbreviated;
 
-	public SchemaInclude(ISchemaObject parent, String location,
-			boolean abbreviated) {
+	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated) {
 		super(parent, location);
 		fLocation = location;
 		fAbbreviated = abbreviated;
@@ -52,8 +51,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		String oldValue = this.fLocation;
 		this.fLocation = location;
 		fIncludedSchema = null;
-		getSchema()
-				.fireModelObjectChanged(this, P_LOCATION, oldValue, location);
+		getSchema().fireModelObjectChanged(this, P_LOCATION, oldValue, location);
 	}
 
 	/**
@@ -70,7 +68,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		if (fAbbreviated) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			fIncludedSchema = registry.getIncludedSchema(descriptor, fLocation);
-		} else if (fIncludedSchema == null){
+		} else if (fIncludedSchema == null) {
 			fIncludedSchema = createInternalSchema(descriptor, fLocation);
 		}
 		return fIncludedSchema;
@@ -95,10 +93,10 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 			fIncludedSchema = null;
 		}
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj instanceof ISchemaInclude) {
-			ISchemaInclude other = (ISchemaInclude)obj;
+			ISchemaInclude other = (ISchemaInclude) obj;
 			if (fLocation != null)
 				return fLocation.equals(other.getLocation());
 			return other.getLocation() == null;

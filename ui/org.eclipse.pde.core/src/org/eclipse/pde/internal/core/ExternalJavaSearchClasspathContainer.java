@@ -27,8 +27,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 			try {
 				SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 				fEntries = manager.computeContainerClasspathEntries();
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				PDECore.logException(e);
 			}
 		}
@@ -40,7 +39,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description; 
+		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description;
 	}
 
 	/*
@@ -58,5 +57,5 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	public IPath getPath() {
 		return PDECore.JAVA_SEARCH_CONTAINER_PATH;
 	}
-	
+
 }

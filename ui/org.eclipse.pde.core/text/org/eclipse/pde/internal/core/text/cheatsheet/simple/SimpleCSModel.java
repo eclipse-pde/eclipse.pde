@@ -28,18 +28,18 @@ import org.xml.sax.helpers.DefaultHandler;
 public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	private SimpleCSDocumentHandler fHandler;
-	
+
 	private SimpleCSDocumentFactory fFactory;
-	
-	private ISimpleCS fSimpleCS;	
-	
+
+	private ISimpleCS fSimpleCS;
+
 	/**
 	 * @param document
 	 * @param isReconciling
 	 */
 	public SimpleCSModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
-		
+
 		fHandler = null;
 		fFactory = new SimpleCSDocumentFactory(this);
 		fSimpleCS = null;
@@ -48,9 +48,8 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel, boolean)
 	 */
-	protected DefaultHandler createDocumentHandler(IModel model,
-			boolean reconciling) {
-		
+	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
+
 		if (fHandler == null) {
 			fHandler = new SimpleCSDocumentHandler(this, reconciling);
 		}
@@ -80,7 +79,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 			fSimpleCS = getFactory().createSimpleCS();
 		}
 		// TODO: MP: TEO: LOW: Remove cast once interface method created
-		((SimpleCSObject)fSimpleCS).setInTheModel(true);
+		((SimpleCSObject) fSimpleCS).setInTheModel(true);
 		return fSimpleCS;
 	}
 

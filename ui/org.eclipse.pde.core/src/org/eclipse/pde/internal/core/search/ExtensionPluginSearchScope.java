@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 
 public class ExtensionPluginSearchScope extends PluginSearchScope {
-	
+
 	PluginSearchInput fInput = null;
 
 	public ExtensionPluginSearchScope(PluginSearchInput input) {
@@ -25,8 +25,7 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		fInput = input;
 	}
 
-	public ExtensionPluginSearchScope(int workspaceScope, int externalScope,
-			HashSet selectedResources, PluginSearchInput input) {
+	public ExtensionPluginSearchScope(int workspaceScope, int externalScope, HashSet selectedResources, PluginSearchInput input) {
 		super(workspaceScope, externalScope, selectedResources);
 		fInput = input;
 	}
@@ -38,10 +37,10 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IPluginModelBase[] models = null;
 		if (fInput.getSearchLimit() == PluginSearchInput.LIMIT_REFERENCES) {
-			models =registry.findExtensionPlugins(pointId, false); 
+			models = registry.findExtensionPlugins(pointId, false);
 		} else {
 			IPluginModelBase base = registry.findExtensionPointPlugin(pointId);
-			models = (base == null) ? new IPluginModelBase[0] : new IPluginModelBase[] { base };
+			models = (base == null) ? new IPluginModelBase[0] : new IPluginModelBase[] {base};
 		}
 		return addRelevantModels(models);
 	}

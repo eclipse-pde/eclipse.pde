@@ -16,16 +16,16 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  *
  */
 public interface ISimpleCSOnCompletion extends ISimpleCSObject {
-	
+
 	/**
 	 * Content (element)
 	 * @return
 	 */
 	public String getContent();
-	
+
 	/**
 	 * Content (element)
 	 * @param content
 	 */
-	public void setContent(String content);	
+	public void setContent(String content);
 }

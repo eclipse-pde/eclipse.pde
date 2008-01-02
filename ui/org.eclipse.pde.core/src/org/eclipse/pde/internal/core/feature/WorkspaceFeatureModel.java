@@ -28,9 +28,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 
-public class WorkspaceFeatureModel extends AbstractFeatureModel
-		implements
-			IEditableModel {
+public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 	private boolean dirty;
 	private IFile file;
@@ -39,9 +37,11 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 	public WorkspaceFeatureModel() {
 		super();
 	}
+
 	public WorkspaceFeatureModel(IFile file) {
 		setFile(file);
 	}
+
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
@@ -58,7 +58,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 				installLocation = "file:" + installLocation; //$NON-NLS-1$
 			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			String name = "feature"; //$NON-NLS-1$
-			NLResourceHelper helper = new NLResourceHelper(name, new URL[]{url});
+			NLResourceHelper helper = new NLResourceHelper(name, new URL[] {url});
 			//helper.setFile(file);
 			return helper;
 		} catch (MalformedURLException e) {
@@ -78,19 +78,24 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		}
 		return swriter.toString();
 	}
+
 	public IFile getFile() {
 		return file;
 	}
+
 	public String getInstallLocation() {
 		IPath path = file.getParent().getLocation();
 		return path == null ? null : path.toOSString();
 	}
+
 	public IResource getUnderlyingResource() {
 		return file;
 	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
+
 	public boolean isEditable() {
 		return editable;
 	}
@@ -102,6 +107,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 	protected void updateTimeStamp() {
 		updateTimeStamp(file.getLocation().toFile());
 	}
+
 	public void load() {
 		if (file == null)
 			return;
@@ -120,13 +126,13 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 			setLoaded(true);
 		}
 	}
+
 	public void save() {
 		if (file == null)
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -138,6 +144,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		} catch (IOException e) {
 		}
 	}
+
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
@@ -146,12 +153,15 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		}
 		setDirty(false);
 	}
+
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
+
 	public void setEditable(boolean newEditable) {
 		editable = newEditable;
 	}
+
 	public void setFile(IFile newFile) {
 		file = newFile;
 		//setEditable(newFile.isReadOnly()==false);

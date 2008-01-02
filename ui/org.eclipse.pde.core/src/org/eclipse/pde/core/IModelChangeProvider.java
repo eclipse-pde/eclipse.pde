@@ -27,6 +27,7 @@ public interface IModelChangeProvider {
 	 *            a model change listener to be added
 	 */
 	public void addModelChangedListener(IModelChangedListener listener);
+
 	/**
 	 * Delivers change event to all the registered listeners.
 	 * 
@@ -34,6 +35,7 @@ public interface IModelChangeProvider {
 	 *            a change event that will be passed to all the listeners
 	 */
 	public void fireModelChanged(IModelChangedEvent event);
+
 	/**
 	 * Notifies listeners that a property of a model object changed. This is a
 	 * utility method that will create a model event and fire it.
@@ -47,8 +49,8 @@ public interface IModelChangeProvider {
 	 * @param newValue
 	 *            the new value of the property
 	 */
-	public void fireModelObjectChanged(Object object, String property,
-			Object oldValue, Object newValue);
+	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue);
+
 	/**
 	 * Takes the listener off the list of registered change listeners.
 	 * 

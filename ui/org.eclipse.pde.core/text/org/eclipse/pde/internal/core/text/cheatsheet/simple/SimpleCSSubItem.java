@@ -80,14 +80,14 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#getExecutable()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
-		return (ISimpleCSRunContainerObject)getChildNode(ISimpleCSRunContainerObject.class);
+		return (ISimpleCSRunContainerObject) getChildNode(ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		setChildNode((IDocumentElementNode)executable, ISimpleCSRunContainerObject.class);
+		setChildNode((IDocumentElementNode) executable, ISimpleCSRunContainerObject.class);
 	}
 
 	/* (non-Javadoc)

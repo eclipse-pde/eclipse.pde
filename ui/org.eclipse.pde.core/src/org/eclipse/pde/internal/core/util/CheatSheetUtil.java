@@ -44,16 +44,15 @@ public class CheatSheetUtil {
 				Node node = children.item(i);
 				if (node.getNodeType() == Node.TEXT_NODE) {
 					// Accumulate the text children
-					buffer.append(((Text)node).getData());
+					buffer.append(((Text) node).getData());
 				} else if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element subElement = (Element)node;
+					Element subElement = (Element) node;
 					// Append the open bracket
 					buffer.append('<');
 					// Append the element name
 					buffer.append(subElement.getNodeName());
 					// Parse element attributes
-					String elementAttributeText = 
-						parseElementAttributes(subElement);
+					String elementAttributeText = parseElementAttributes(subElement);
 					// Append the attributes (if any)
 					if (elementAttributeText != null) {
 						buffer.append(elementAttributeText);
@@ -87,7 +86,7 @@ public class CheatSheetUtil {
 		}
 		return ""; //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Aggregates all attributes from the given element, formats then into
 	 * the proper key="value" XML format and returns them as one String
@@ -107,7 +106,7 @@ public class CheatSheetUtil {
 		for (int i = 0; i < attributeMap.getLength(); i++) {
 			Node node = attributeMap.item(i);
 			if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
-				Attr attribute = (Attr)node;
+				Attr attribute = (Attr) node;
 				// Append space before attribute
 				buffer.append(' ');
 				// Append attribute name
@@ -122,8 +121,8 @@ public class CheatSheetUtil {
 				buffer.append('"');
 			}
 		}
-		
+
 		return buffer.toString();
 	}
-	
+
 }

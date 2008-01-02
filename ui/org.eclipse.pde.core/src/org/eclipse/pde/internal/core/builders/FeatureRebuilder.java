@@ -47,14 +47,12 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 	}
 
 	public void modelsChanged(IFeatureModelDelta delta) {
-		if ((IFeatureModelDelta.ADDED & delta.getKind()) != 0
-				|| (IFeatureModelDelta.REMOVED & delta.getKind()) != 0)
+		if ((IFeatureModelDelta.ADDED & delta.getKind()) != 0 || (IFeatureModelDelta.REMOVED & delta.getKind()) != 0)
 			fTouchFeatures = true;
 	}
 
 	public void modelsChanged(PluginModelDelta delta) {
-		if ((PluginModelDelta.ADDED & delta.getKind()) != 0
-				|| (PluginModelDelta.REMOVED & delta.getKind()) != 0) {
+		if ((PluginModelDelta.ADDED & delta.getKind()) != 0 || (PluginModelDelta.REMOVED & delta.getKind()) != 0) {
 			fTouchFeatures = true;
 		} else {
 			// listen for changes in checked/unchecked state
@@ -74,7 +72,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 			touchFeatures();
 		}
 	}
-	
+
 	private void touchFeatures() {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] workspaceFeatures = manager.getWorkspaceModels();
@@ -91,7 +89,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 					}
 				} catch (CoreException e) {
 				}
-			}	
+			}
 		}
 		fTouchFeatures = false;
 	}

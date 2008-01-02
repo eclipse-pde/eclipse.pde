@@ -20,6 +20,7 @@ public interface IPluginModelFactory extends IExtensionsModelFactory {
 	 * @return a new plug-in import instance
 	 */
 	IPluginImport createImport();
+
 	/**
 	 * Creates a new library instance
 	 *

@@ -47,7 +47,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	private String fVersion;
 	private boolean fHasBundleStructure;
 	private String fBundleSourceEntry;
-	
+
 	public PluginBase(boolean readOnly) {
 		super(readOnly);
 	}
@@ -59,6 +59,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		((PluginLibrary) library).setParent(this);
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
 	}
+
 	public void add(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		((PluginImport) iimport).setInTheModel(true);
@@ -66,6 +67,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fImports.add(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
+
 	public void add(IPluginImport[] iimports) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < iimports.length; i++) {
@@ -75,21 +77,27 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
+
 	public IPluginLibrary[] getLibraries() {
-		return (IPluginLibrary[])fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
+		return (IPluginLibrary[]) fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
+
 	public IPluginImport[] getImports() {
-		return (IPluginImport[])fImports.toArray(new IPluginImport[fImports.size()]);
+		return (IPluginImport[]) fImports.toArray(new IPluginImport[fImports.size()]);
 	}
+
 	public IPluginBase getPluginBase() {
 		return this;
 	}
+
 	public String getProviderName() {
 		return fProviderName;
 	}
+
 	public String getVersion() {
 		return fVersion;
 	}
+
 	public String getId() {
 		return fId;
 	}
@@ -102,11 +110,10 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
 		fBundleSourceEntry = state.getBundleSourceEntry(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
-		loadImports(bundleDesc);		
+		loadImports(bundleDesc);
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
 			setId(newValue != null ? newValue.toString() : null);
 			return;
@@ -160,8 +167,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase(Locale.ENGLISH).equals("library")) { //$NON-NLS-1$
+			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().toLowerCase(Locale.ENGLISH).equals("library")) { //$NON-NLS-1$
 				PluginLibrary library = new PluginLibrary();
 				library.setModel(getModel());
 				library.setInTheModel(true);
@@ -190,15 +196,14 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			importElement.setParent(this);
 			fImports.add(importElement);
 			importElement.load(imported[i]);
-		}		
+		}
 	}
-	
+
 	void loadImports(Node node) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase(Locale.ENGLISH).equals("import")) { //$NON-NLS-1$
+			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().toLowerCase(Locale.ENGLISH).equals("import")) { //$NON-NLS-1$
 				PluginImport importElement = new PluginImport();
 				importElement.setModel(getModel());
 				importElement.setInTheModel(true);
@@ -208,16 +213,17 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			}
 		}
 	}
+
 	protected void processChild(Node child) {
 		String name = child.getNodeName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("runtime")) { //$NON-NLS-1$
 			loadRuntime(child);
 		} else if (name.equals("requires")) { //$NON-NLS-1$
 			loadImports(child);
-			
-		// check to see if this model is a workspace model.  If so, don't load extensions/extension points through Node.
-		// Instead, the extensions/extension points will be control by the extension registry.
-		// One instance of where we want to load an external model's extensions/extension points from a Node is the convertSchemaToHTML ANT task.
+
+			// check to see if this model is a workspace model.  If so, don't load extensions/extension points through Node.
+			// Instead, the extensions/extension points will be control by the extension registry.
+			// One instance of where we want to load an external model's extensions/extension points from a Node is the convertSchemaToHTML ANT task.
 		} else if (getModel().getUnderlyingResource() == null) {
 			super.processChild(child);
 		}
@@ -229,20 +235,23 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		((PluginLibrary) library).setInTheModel(false);
 		fireStructureChanged(library, IModelChangedEvent.REMOVE);
 	}
+
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		fImports.remove(iimport);
 		((PluginImport) iimport).setInTheModel(false);
 		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
 	}
+
 	public void remove(IPluginImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < iimports.length; i++){
+		for (int i = 0; i < iimports.length; i++) {
 			fImports.remove(iimports[i]);
 			((PluginImport) iimports[i]).setInTheModel(false);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
+
 	public void reset() {
 		fLibraries = new ArrayList();
 		fImports = new ArrayList();
@@ -258,21 +267,21 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 		super.reset();
 	}
-	
+
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fProviderName;
 		fProviderName = providerName;
 		firePropertyChanged(P_PROVIDER, oldValue, fProviderName);
 	}
-	
+
 	public void setVersion(String newVersion) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fVersion;
 		fVersion = newVersion;
 		firePropertyChanged(P_VERSION, oldValue, fVersion);
 	}
-	
+
 	public void setId(String newId) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fId;
@@ -284,28 +293,26 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fVersion = newVersion;
 	}
 
-	public void swap(IPluginLibrary l1, IPluginLibrary l2)
-		throws CoreException {
+	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 		ensureModelEditable();
 		int index1 = fLibraries.indexOf(l1);
 		int index2 = fLibraries.indexOf(l2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException); 
+			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException);
 		fLibraries.set(index2, l1);
 		fLibraries.set(index1, l2);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
 	 */
-	public void swap(IPluginImport import1, IPluginImport import2)
-			throws CoreException {
+	public void swap(IPluginImport import1, IPluginImport import2) throws CoreException {
 		ensureModelEditable();
 		int index1 = fImports.indexOf(import1);
 		int index2 = fImports.indexOf(import2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException); 
+			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException);
 		fImports.set(index2, import1);
 		fImports.set(index1, import2);
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
@@ -314,25 +321,31 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	public boolean isValid() {
 		return hasRequiredAttributes();
 	}
-	protected boolean hasRequiredAttributes(){
-		if (fName==null) return false;
-		if (fId==null) return false;
-		if (fVersion==null) return false;
+
+	protected boolean hasRequiredAttributes() {
+		if (fName == null)
+			return false;
+		if (fId == null)
+			return false;
+		if (fVersion == null)
+			return false;
 
 		// validate libraries
 		for (int i = 0; i < fLibraries.size(); i++) {
-			IPluginLibrary library = (IPluginLibrary)fLibraries.get(i);
-			if (!library.isValid()) return false;
+			IPluginLibrary library = (IPluginLibrary) fLibraries.get(i);
+			if (!library.isValid())
+				return false;
 		}
 		// validate imports
 		for (int i = 0; i < fImports.size(); i++) {
-			IPluginImport iimport = (IPluginImport)fImports.get(i);
-			if (!iimport.isValid()) return false;
+			IPluginImport iimport = (IPluginImport) fImports.get(i);
+			if (!iimport.isValid())
+				return false;
 		}
 		return super.hasRequiredAttributes();
 	}
-	
-	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
+
+	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
 		return SAXParserFactory.newInstance().newSAXParser();
 	}
 
@@ -360,18 +373,18 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		else if (minimum.getMicro() == maximum.getMicro() - 1)
 			return IMatchRules.PERFECT; // this is as close as we got
 
-		return IMatchRules.NONE;  // no real match rule for this
+		return IMatchRules.NONE; // no real match rule for this
 	}
-	
+
 	public boolean hasBundleStructure() {
 		return fHasBundleStructure;
 	}
-	
+
 	/**
 	 * @return The bundle source entry from the manifest for this plugin or <code>null</code> if no entry exists.
 	 */
 	public String getBundleSourceEntry() {
 		return fBundleSourceEntry;
 	}
-	
+
 }

@@ -28,9 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractFeatureModel
-	extends AbstractNLModel
-	implements IFeatureModel {
+public abstract class AbstractFeatureModel extends AbstractNLModel implements IFeatureModel {
 
 	private static final long serialVersionUID = 1L;
 	protected transient Feature feature;
@@ -40,6 +38,7 @@ public abstract class AbstractFeatureModel
 	public AbstractFeatureModel() {
 		super();
 	}
+
 	public IFeature getFeature() {
 		if (feature == null) {
 			Feature f = new Feature();
@@ -48,20 +47,25 @@ public abstract class AbstractFeatureModel
 		}
 		return feature;
 	}
+
 	public IFeatureModelFactory getFactory() {
 		if (factory == null)
 			factory = new FeatureFactory(this);
 		return factory;
 	}
+
 	public String getInstallLocation() {
 		return null;
 	}
+
 	public boolean isEditable() {
 		return true;
 	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
+
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
@@ -83,11 +87,12 @@ public abstract class AbstractFeatureModel
 			PDECore.logException(e);
 		}
 	}
-	
+
 	public boolean isValid() {
-		if (!isLoaded()) return false;
+		if (!isLoaded())
+			return false;
 		IFeature feature = getFeature();
-		return feature!=null && feature.isValid();
+		return feature != null && feature.isValid();
 	}
 
 	private void processDocument(Document doc) {
@@ -100,17 +105,14 @@ public abstract class AbstractFeatureModel
 		}
 		feature.parse(rootNode);
 	}
-	public void reload(InputStream stream, boolean outOfSync)
-		throws CoreException {
+
+	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 		if (feature != null)
 			feature.reset();
 		load(stream, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this,
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] { feature },
-				null));
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {feature}, null));
 	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}

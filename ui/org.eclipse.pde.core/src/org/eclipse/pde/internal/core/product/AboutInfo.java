@@ -19,7 +19,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-
 public class AboutInfo extends ProductObject implements IAboutInfo {
 
 	private static final long serialVersionUID = 1L;
@@ -63,7 +62,7 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	public String getImagePath() {
 		return fImagePath;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
@@ -80,15 +79,15 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 			writer.println(indent + "</aboutInfo>"); //$NON-NLS-1$
 		}
 	}
-	
+
 	private boolean isAboutTextDefined() {
 		return fAboutText != null && fAboutText.length() > 0;
 	}
-	
+
 	private boolean isAboutImageDefined() {
 		return fImagePath != null && fImagePath.length() > 0;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
@@ -98,17 +97,17 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("image")) { //$NON-NLS-1$
-					fImagePath = ((Element)child).getAttribute("path"); //$NON-NLS-1$
+					fImagePath = ((Element) child).getAttribute("path"); //$NON-NLS-1$
 				} else if (child.getNodeName().equals("text")) { //$NON-NLS-1$
 					child.normalize();
 					if (child.getChildNodes().getLength() > 0) {
 						Node text = child.getFirstChild();
 						if (text.getNodeType() == Node.TEXT_NODE)
-							fAboutText = ((Text)text).getData().trim();
+							fAboutText = ((Text) text).getData().trim();
 					}
 				}
 			}
 		}
 	}
-	
+
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
+
 public abstract class FeatureBasedExportOperation extends FeatureExportOperation {
 
 	protected String fFeatureLocation;
@@ -33,17 +34,16 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 	public void run(IProgressMonitor monitor) throws CoreException {
 		try {
 			createDestination();
-            monitor.beginTask("", 10); //$NON-NLS-1$
+			monitor.beginTask("", 10); //$NON-NLS-1$
 			// create a feature to contain all plug-ins
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
-			String[] config = new String[] {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() };
+			String[] config = new String[] {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()};
 			createFeature(featureID, fFeatureLocation, config, false);
 			createBuildPropertiesFile(fFeatureLocation);
 			if (fInfo.useJarFormat)
 				createPostProcessingFiles();
-			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), 
-                    new SubProgressMonitor(monitor, 7));
+			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), new SubProgressMonitor(monitor, 7));
 		} catch (IOException e) {
 		} catch (InvocationTargetException e) {
 			throwCoreException(e);
@@ -56,7 +56,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			monitor.done();
 		}
 	}
-	
+
 	protected abstract void createPostProcessingFiles();
 
 	protected String[] getPaths() {
@@ -66,16 +66,16 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 		System.arraycopy(paths, 0, all, 1, paths.length);
 		return all;
 	}
-	
+
 	private void createBuildPropertiesFile(String featureLocation) {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 		Properties prop = new Properties();
 		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
-		save(new File(file, "build.properties"),prop, "Marker File");  //$NON-NLS-1$ //$NON-NLS-2$
+		save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private void save(File file, Properties properties, String header) {
 		try {
 			FileOutputStream stream = new FileOutputStream(file);

@@ -31,9 +31,9 @@ public class Fragment extends PluginBase implements IFragment {
 	private String fPluginVersion = ""; //$NON-NLS-1$
 
 	private int fMatchRule = IMatchRules.NONE;
-	
+
 	private boolean fPatch;
-	
+
 	public Fragment(boolean readOnly) {
 		super(readOnly);
 	}
@@ -61,9 +61,7 @@ public class Fragment extends PluginBase implements IFragment {
 		fPluginId = host.getName();
 		VersionRange versionRange = host.getVersionRange();
 		if (versionRange != null) {
-			fPluginVersion = versionRange.getMinimum() != null ? versionRange
-					.getMinimum().toString()
-					: null;
+			fPluginVersion = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
 			fMatchRule = PluginBase.getMatchRule(versionRange);
 		}
 		fPatch = state.isPatchFragment(bundleDescription.getBundleId());
@@ -114,8 +112,7 @@ public class Fragment extends PluginBase implements IFragment {
 		firePropertyChanged(P_RULE, oldValue, new Integer(rule));
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-			throws CoreException {
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_PLUGIN_ID)) {
 			setPluginId(newValue != null ? newValue.toString() : null);
 			return;
@@ -158,7 +155,7 @@ public class Fragment extends PluginBase implements IFragment {
 			writer.println();
 			writer.print("   plugin-id=\"" + getPluginId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		String pver = getPluginVersion(); 
+		String pver = getPluginVersion();
 		if (pver != null && pver.length() > 0) {
 			writer.println();
 			writer.print("   plugin-version=\"" + getPluginVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -201,7 +198,7 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		writer.println("</fragment>"); //$NON-NLS-1$
 	}
-	
+
 	public boolean isPatch() {
 		return fPatch;
 	}

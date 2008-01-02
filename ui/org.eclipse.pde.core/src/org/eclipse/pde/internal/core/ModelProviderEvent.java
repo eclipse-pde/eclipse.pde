@@ -16,35 +16,35 @@ import org.eclipse.pde.core.IModelProviderEvent;
 public class ModelProviderEvent implements IModelProviderEvent {
 	private int types;
 	private Object source;
-	private IModel [] added;
-	private IModel [] removed;
-	private IModel [] changed;
+	private IModel[] added;
+	private IModel[] removed;
+	private IModel[] changed;
 
-public ModelProviderEvent(Object source, int types, IModel [] added, IModel [] removed, IModel [] changed) {
-	this.source = source;
-	this.types = types;
-	this.added = added;
-	this.removed = removed;
-	this.changed = changed;
-}
+	public ModelProviderEvent(Object source, int types, IModel[] added, IModel[] removed, IModel[] changed) {
+		this.source = source;
+		this.types = types;
+		this.added = added;
+		this.removed = removed;
+		this.changed = changed;
+	}
 
-public IModel [] getAddedModels() {
-	return (added == null) ? new IModel[0] : added ;
-}
+	public IModel[] getAddedModels() {
+		return (added == null) ? new IModel[0] : added;
+	}
 
-public IModel [] getRemovedModels() {
-	return (removed == null) ? new IModel[0] : removed;
-}
+	public IModel[] getRemovedModels() {
+		return (removed == null) ? new IModel[0] : removed;
+	}
 
-public IModel [] getChangedModels() {
-	return (changed == null) ? new IModel[0] : changed;
-}
+	public IModel[] getChangedModels() {
+		return (changed == null) ? new IModel[0] : changed;
+	}
 
-public int getEventTypes() {
-	return types;
-}
+	public int getEventTypes() {
+		return types;
+	}
 
-public Object getEventSource() {
-	return source;
-}
+	public Object getEventSource() {
+		return source;
+	}
 }

@@ -31,9 +31,11 @@ import org.osgi.framework.Bundle;
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
+
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
+
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
@@ -61,15 +63,14 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			return false;
 		}
 	}
-	
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-		throws CoreException {
+
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
 			return new IProject[0];
 
 		if (WorkspaceModelManager.isBinaryProject(getProject()))
 			return new IProject[0];
-		
+
 		IResourceDelta delta = null;
 
 		if (kind != FULL_BUILD)
@@ -90,10 +91,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			checkFile(file, monitor);
 		}
 	}
-	
+
 	private void checkFile(IFile file, IProgressMonitor monitor) {
-		String message =
-			NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
+		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		FeatureErrorReporter reporter = new FeatureErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
@@ -103,12 +103,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();
 	}
-	
-	private boolean isManifestFile(IFile file) {
-		return file.getParent().equals(file.getProject())
-				&& file.getName().toLowerCase(Locale.ENGLISH).equals("feature.xml"); //$NON-NLS-1$
-	}
-	
 
-	
+	private boolean isManifestFile(IFile file) {
+		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase(Locale.ENGLISH).equals("feature.xml"); //$NON-NLS-1$
+	}
+
 }

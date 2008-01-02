@@ -21,19 +21,19 @@ public class FragmentHostHeader extends SingleManifestHeader {
 	public FragmentHostHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setHostId(String id) {
 		setMainComponent(id);
 	}
-	
+
 	public String getHostId() {
 		return getMainComponent();
 	}
-	
+
 	public void setHostRange(String range) {
 		setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, range);
 	}
-	
+
 	public VersionRange getHostRange() {
 		return new VersionRange(getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
 	}

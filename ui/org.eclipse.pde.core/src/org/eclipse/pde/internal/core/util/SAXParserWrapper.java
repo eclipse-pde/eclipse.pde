@@ -31,7 +31,7 @@ public class SAXParserWrapper {
 
 	protected SAXParser fParser;
 	protected boolean isdisposed;
-	
+
 	/**
 	 * 
 	 */
@@ -39,7 +39,7 @@ public class SAXParserWrapper {
 		fParser = PDEXMLHelper.Instance().getDefaultSAXParser();
 		isdisposed = false;
 	}
-	
+
 	// Explicit disposal
 	public void dispose() {
 		if (isdisposed == false) {
@@ -47,26 +47,26 @@ public class SAXParserWrapper {
 			isdisposed = true;
 		}
 	}
-	
+
 	public void parse(File f, DefaultHandler dh) throws SAXException, IOException {
 		fParser.parse(f, dh);
 	}
-	
-	public void	parse(InputStream is, DefaultHandler dh) throws SAXException, IOException {
+
+	public void parse(InputStream is, DefaultHandler dh) throws SAXException, IOException {
 		fParser.parse(is, dh);
 	}
-	
+
 	public void parse(InputSource is, DefaultHandler dh) throws SAXException, IOException {
 		fParser.parse(is, dh);
 	}
-	
+
 	// NOTE:  If other parser method calls are required, the corresponding
 	// wrapper method needs to be added here
-	
+
 	// Implicit disposal
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dispose();
 	}
-	
+
 }

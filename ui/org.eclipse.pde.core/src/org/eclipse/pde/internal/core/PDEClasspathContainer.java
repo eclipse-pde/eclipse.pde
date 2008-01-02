@@ -29,38 +29,33 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PDEClasspathContainer {
-	
+
 	public class Rule {
 		IPath path;
 		boolean discouraged;
+
 		public boolean equals(Object other) {
 			if (!(other instanceof Rule))
 				return false;
-			return discouraged == ((Rule)other).discouraged && path.equals(((Rule)other).path);
+			return discouraged == ((Rule) other).discouraged && path.equals(((Rule) other).path);
 		}
-		
+
 		public String toString() {
 			return discouraged ? path.toString() + " [discouraged]" : path.toString(); //$NON-NLS-1$
 		}
 	}
-	
+
 	private static HashMap ACCESSIBLE_RULES = new HashMap();
 	private static HashMap DISCOURAGED_RULES = new HashMap();
-	
-	private static final IAccessRule EXCLUDE_ALL_RULE = 
-		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE|IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
+
+	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
 	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (rules != null) {
 				IAccessRule[] accessRules = getAccessRules(rules);
-				entry = JavaCore.newProjectEntry(
-							project.getFullPath(), 
-							accessRules, 
-							true, 
-							new IClasspathAttribute[0],
-							false);
+				entry = JavaCore.newProjectEntry(project.getFullPath(), accessRules, true, new IClasspathAttribute[0], false);
 			} else {
 				entry = JavaCore.newProjectEntry(project.getFullPath());
 			}
@@ -68,25 +63,25 @@ public class PDEClasspathContainer {
 				entries.add(entry);
 		}
 	}
-	
+
 	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) throws CoreException {
 		ArrayList entries = new ArrayList();
 		addExternalPlugin(model, new Rule[0], entries);
-		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
+		return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
 	}
-	
+
 	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
-				srcPath = new Path(model.getInstallLocation());			
-			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);			
+				srcPath = new Path(model.getInstallLocation());
+			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
 				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
 					continue;
-				model = (IPluginModelBase)libraries[i].getModel();
+				model = (IPluginModelBase) libraries[i].getModel();
 				String name = libraries[i].getName();
 				String expandedName = ClasspathUtilCore.expandLibraryName(name);
 				IPath path = getPath(model, expandedName);
@@ -97,20 +92,14 @@ public class PDEClasspathContainer {
 				}
 				if (path != null && !path.toFile().isDirectory())
 					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
-			}		
+			}
 		}
 	}
-	
+
 	protected static void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList entries) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
-			entry = JavaCore.newLibraryEntry(
-						path, 
-						srcPath, 
-						null,
-						getAccessRules(rules),
-						attributes,
-						false);
+			entry = JavaCore.newLibraryEntry(path, srcPath, null, getAccessRules(rules), attributes, false);
 		} else {
 			entry = JavaCore.newLibraryEntry(path, srcPath, null, new IAccessRule[0], attributes, false);
 		}
@@ -118,7 +107,7 @@ public class PDEClasspathContainer {
 			entries.add(entry);
 		}
 	}
-	
+
 	protected static IAccessRule[] getAccessRules(Rule[] rules) {
 		IAccessRule[] accessRules = new IAccessRule[rules.length + 1];
 		for (int i = 0; i < rules.length; i++) {
@@ -128,16 +117,16 @@ public class PDEClasspathContainer {
 		accessRules[rules.length] = EXCLUDE_ALL_RULE;
 		return accessRules;
 	}
-	
+
 	private static synchronized IAccessRule getAccessibleRule(IPath path) {
-		IAccessRule rule = (IAccessRule)ACCESSIBLE_RULES.get(path);
+		IAccessRule rule = (IAccessRule) ACCESSIBLE_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_ACCESSIBLE);
 			ACCESSIBLE_RULES.put(path, rule);
 		}
 		return rule;
 	}
-	
+
 	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
@@ -145,26 +134,26 @@ public class PDEClasspathContainer {
 			return new IClasspathAttribute[0];
 		return new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location)};
 	}
-	
+
 	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
-		IAccessRule rule = (IAccessRule)DISCOURAGED_RULES.get(path);
+		IAccessRule rule = (IAccessRule) DISCOURAGED_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
 			DISCOURAGED_RULES.put(path, rule);
 		}
-		return rule;		
+		return rule;
 	}
-	
+
 	protected static IPath getPath(IPluginModelBase model, String libraryName) {
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
 			IResource jarFile = resource.getProject().findMember(libraryName);
 			return (jarFile != null) ? jarFile.getFullPath() : null;
-		} 
+		}
 		File file = new File(model.getInstallLocation(), libraryName);
 		return file.exists() ? new Path(file.getAbsolutePath()) : null;
 	}
-	
+
 	protected static IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
@@ -176,5 +165,5 @@ public class PDEClasspathContainer {
 		}
 		return null;
 	}
-	
+
 }

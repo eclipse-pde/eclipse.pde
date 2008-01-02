@@ -19,8 +19,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
-public abstract class PluginParent extends IdentifiablePluginObject implements
-		IPluginParent {
+public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	private static final long serialVersionUID = 1L;
 	protected ArrayList fChildren = null;
 
@@ -65,7 +64,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 			IPluginObject[] tchildren = target.getChildren();
 			for (int i = 0; i < tchildren.length; i++) {
 				IPluginObject tchild = tchildren[i];
-				IPluginObject child = (IPluginObject)getChildrenList().get(i);
+				IPluginObject child = (IPluginObject) getChildrenList().get(i);
 				if (child == null || child.equals(tchild) == false)
 					return false;
 			}
@@ -78,20 +77,19 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 		return getChildrenList().indexOf(child);
 	}
 
-	public void swap(IPluginObject child1, IPluginObject child2)
-			throws CoreException {
+	public void swap(IPluginObject child1, IPluginObject child2) throws CoreException {
 		ensureModelEditable();
 		int index1 = getChildrenList().indexOf(child1);
 		int index2 = getChildrenList().indexOf(child2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException); 
+			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException);
 		getChildrenList().set(index2, child1);
 		getChildrenList().set(index1, child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
 	}
 
 	public IPluginObject[] getChildren() {
-		return (IPluginObject[])getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
+		return (IPluginObject[]) getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
 	}
 
 	public void remove(IPluginObject child) throws CoreException {
@@ -100,7 +98,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 		((PluginObject) child).setInTheModel(false);
 		fireStructureChanged(child, IModelChangedEvent.REMOVE);
 	}
-	
+
 	protected ArrayList getChildrenList() {
 		if (fChildren == null)
 			fChildren = new ArrayList(1);

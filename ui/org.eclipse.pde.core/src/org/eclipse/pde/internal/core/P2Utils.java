@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Path;
  * @since 3.4
  */
 public class P2Utils {
-	
+
 	/**
 	 * Returns bundles defined by the 'bundles.txt' file in the
 	 * specified location, or <code>null</code> if none. The "bundles.txt" file
@@ -39,10 +39,10 @@ public class P2Utils {
 	 * 	to locate a bundles.txt
 	 */
 	public static URL[] readBundlesTxt(String platformHome) {
-		
+
 		File home = new File(platformHome);
-		File bundlesTxt = new File(home, "configuration" + File.separator +  //$NON-NLS-1$
-				"org.eclipse.equinox.simpleconfigurator" + File.separator +  //$NON-NLS-1$
+		File bundlesTxt = new File(home, "configuration" + File.separator + //$NON-NLS-1$
+				"org.eclipse.equinox.simpleconfigurator" + File.separator + //$NON-NLS-1$
 				"bundles.txt"); //$NON-NLS-1$
 		if (!bundlesTxt.exists()) {
 			return null;
@@ -53,7 +53,7 @@ public class P2Utils {
 		} catch (MalformedURLException e) {
 			return null;
 		}
-		
+
 		Path basePath = new Path(platformHome);
 		List bundles = new ArrayList();
 		try {
@@ -128,7 +128,7 @@ public class P2Utils {
 		}
 		return (URL[]) bundles.toArray(new URL[bundles.size()]);
 	}
-	
+
 	/**
 	 * Returns default osgi.bundles config.ini property for launching without
 	 * the simple configurator.

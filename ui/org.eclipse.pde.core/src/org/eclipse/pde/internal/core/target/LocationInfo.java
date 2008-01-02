@@ -17,10 +17,10 @@ import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class LocationInfo extends TargetObject implements ILocationInfo{
+public class LocationInfo extends TargetObject implements ILocationInfo {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String fPath = ""; //$NON-NLS-1$
 	private boolean fUseDefault = true;
 
@@ -29,8 +29,8 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 	}
 
 	public void parse(Node node) {
-		Element element = (Element)node; 
-		fPath = element.getAttribute("path");  //$NON-NLS-1$
+		Element element = (Element) node;
+		fPath = element.getAttribute("path"); //$NON-NLS-1$
 		fUseDefault = "true".equalsIgnoreCase(element.getAttribute("useDefault")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -41,7 +41,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 			writer.print(" useDefault=\"true\""); //$NON-NLS-1$
 		else if (fPath != null && fPath.trim().length() > 0)
 			writer.print(" path=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("/>");  //$NON-NLS-1$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 
 	public boolean useDefault() {
@@ -50,7 +50,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 
 	public void setDefault(boolean value) {
 		fUseDefault = value;
-		if (value) 
+		if (value)
 			firePropertyChanged(P_LOC, fPath, ""); //$NON-NLS-1$
 		else
 			firePropertyChanged(P_LOC, "", fPath); //$NON-NLS-1$

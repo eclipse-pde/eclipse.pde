@@ -19,11 +19,11 @@ public class BundleActivatorHeader extends SingleManifestHeader {
 	public BundleActivatorHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		super(name, value, bundle, lineDelimiter);
 	}
-	
+
 	public void setClassName(String className) {
 		setMainComponent(className);
 	}
-	
+
 	public String getClassName() {
 		return getMainComponent();
 	}

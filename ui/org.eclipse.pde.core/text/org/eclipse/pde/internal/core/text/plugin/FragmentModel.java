@@ -15,8 +15,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 
-public class FragmentModel extends PluginModelBase implements IFragmentModel{
-	
+public class FragmentModel extends PluginModelBase implements IFragmentModel {
+
 	public FragmentModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 	}
@@ -25,9 +25,9 @@ public class FragmentModel extends PluginModelBase implements IFragmentModel{
 	 * @see org.eclipse.pde.core.plugin.IFragmentModel#getFragment()
 	 */
 	public IFragment getFragment() {
-		return (IFragment)getPluginBase();
+		return (IFragment) getPluginBase();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
 	 */

@@ -51,9 +51,9 @@ public class PluginConverter {
 	static public final byte MANIFEST_TYPE_FRAGMENT = 0x04;
 	/** bundle manifest type jared bundle */
 	static public final byte MANIFEST_TYPE_JAR = 0x08;
-	
+
 	public static final String OSGI_BUNDLE_MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
-	
+
 	private static final String SEMICOLON = "; "; //$NON-NLS-1$
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	public static final String LIST_SEPARATOR = ",\n "; //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class PluginConverter {
 	private static final String SOURCE_PREFIX = "source."; //$NON-NLS-1$
 
 	public static PluginConverter getDefault() {
-		if (instance == null) 
+		if (instance == null)
 			instance = new PluginConverter(PDECore.getDefault().getBundleContext());
 		return instance;
 	}
@@ -106,7 +106,7 @@ public class PluginConverter {
 			throw new IllegalArgumentException();
 		URL pluginFile = findPluginManifest(pluginBaseLocation);
 		if (pluginFile == null) {
- 			throw new PluginConversionException(NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterFileNotFound, pluginBaseLocation.getAbsolutePath()));
+			throw new PluginConversionException(NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterFileNotFound, pluginBaseLocation.getAbsolutePath()));
 		}
 		pluginInfo = parsePluginInfo(pluginFile);
 		String validation = pluginInfo.validateForm();
@@ -190,14 +190,14 @@ public class PluginConverter {
 			parentFile.mkdirs();
 			generationLocation.createNewFile();
 			if (!generationLocation.isFile()) {
- 				String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation);
+				String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation);
 				throw new PluginConversionException(message);
 			}
 			// MANIFEST.MF files must be written using UTF-8
 			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(generationLocation), UTF_8));
 			writeManifest(manifestToWrite, out);
 		} catch (IOException e) {
-			String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation); 
+			String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation);
 			throw new PluginConversionException(message, e);
 		} finally {
 			if (out != null)
@@ -208,13 +208,13 @@ public class PluginConverter {
 				}
 		}
 		if (DEBUG)
-			System.out.println("Time to write out converted manifest to: " + generationLocation + ": "+ (System.currentTimeMillis() - start) + "ms.");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to write out converted manifest to: " + generationLocation + ": " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public void writeManifest(Map manifestToWrite, Writer out) throws IOException {
 		// replaces any eventual existing file
 		manifestToWrite = new Hashtable(manifestToWrite);
-		
+
 		writeEntry(out, MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
 		writeEntry(out, GENERATED_FROM, (String) manifestToWrite.remove(GENERATED_FROM)); //Need to do this first uptoDate check expect the generated-from tag to be in the first line
 		// always attempt to write the Bundle-ManifestVersion header if it exists (bug 109863)
@@ -303,7 +303,7 @@ public class PluginConverter {
 		if (!pluginInfo.isSingleton())
 			return pluginInfo.getUniqueId();
 		StringBuffer result = new StringBuffer(pluginInfo.getUniqueId());
-		result.append(SEMICOLON); 
+		result.append(SEMICOLON);
 		result.append(Constants.SINGLETON_DIRECTIVE);
 		String assignment = TARGET31.compareTo(target) <= 0 ? ":=" : "="; //$NON-NLS-1$ //$NON-NLS-2$
 		result.append(assignment).append("true"); //$NON-NLS-1$
@@ -363,7 +363,7 @@ public class PluginConverter {
 	private void generateEclipseHeaders() {
 		if (pluginInfo.isFragment())
 			return;
-		
+
 		String pluginClass = pluginInfo.getPluginClass();
 		if (pluginInfo.hasExtensionExtensionPoints() || (pluginClass != null && !pluginClass.trim().equals(""))) //$NON-NLS-1$
 			generatedManifest.put(TARGET32.compareTo(target) <= 0 ? ICoreConstants.ECLIPSE_LAZYSTART : ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
@@ -373,32 +373,32 @@ public class PluginConverter {
 		Map libs = pluginInfo.getLibraries();
 		if (libs == null)
 			return null;
-		
+
 		String projName = pluginManifestLocation.getName();
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(projName);
 		if (proj == null)
 			return null;
-		
+
 		return getExports(proj, libs);
 	}
-	
+
 	public Set getExports(IProject proj, Map libs) {
 		IFile buildProperties = proj.getFile("build.properties"); //$NON-NLS-1$
 		IBuild build = null;
 		if (buildProperties != null) {
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
 			build = buildModel.getBuild();
-		} else 
+		} else
 			build = new Build();
 		return findPackages(proj, libs, build);
 	}
-	
+
 	private Set findPackages(IProject proj, Map libs, IBuild build) {
 		TreeSet result = new TreeSet();
 		IJavaProject jp = JavaCore.create(proj);
 		Iterator it = libs.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
+			Map.Entry entry = (Map.Entry) it.next();
 			String libName = entry.getKey().toString();
 			List filter = (List) entry.getValue();
 			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);
@@ -408,7 +408,7 @@ public class PluginConverter {
 					IResource folder = null;
 					if (tokens[i].equals(".")) //$NON-NLS-1$
 						folder = proj;
-					else 
+					else
 						folder = proj.getFolder(tokens[i]);
 					if (folder != null)
 						addPackagesFromFragRoot(jp.getPackageFragmentRoot(folder), result, filter);
@@ -421,8 +421,8 @@ public class PluginConverter {
 		}
 		return result;
 	}
-			
-	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection result, List  filter) {
+
+	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection result, List filter) {
 		if (root == null)
 			return;
 		try {
@@ -432,16 +432,16 @@ public class PluginConverter {
 					String pkgName = li.next().toString();
 					if (pkgName.endsWith(".*")) //$NON-NLS-1$
 						pkgName = pkgName.substring(0, pkgName.length() - 2);
-					
+
 					IPackageFragment frag = root.getPackageFragment(pkgName);
 					if (frag != null)
 						result.add(pkgName);
 				}
 				return;
-			} 
+			}
 			IJavaElement[] children = root.getChildren();
 			for (int j = 0; j < children.length; j++) {
-				IPackageFragment fragment = (IPackageFragment)children[j];
+				IPackageFragment fragment = (IPackageFragment) children[j];
 				String name = fragment.getElementName();
 				if (fragment.hasChildren() && !result.contains(name)) {
 					result.add(name);
@@ -542,7 +542,7 @@ public class PluginConverter {
 		StringBuffer sb = new StringBuffer(value.length() + ((values.length - 1) * LIST_SEPARATOR.length()));
 		for (int i = 0; i < values.length - 1; i++)
 			sb.append(values[i]).append(LIST_SEPARATOR);
-		sb.append(values[values.length -1]);
+		sb.append(values[values.length - 1]);
 		return sb.toString();
 	}
 
@@ -590,7 +590,7 @@ public class PluginConverter {
 		convertManifest(pluginBaseLocation, compatibilityManifest, target, analyseJars, devProperties);
 		if (upToDate(bundleManifestLocation, pluginManifestLocation, manifestType))
 			return bundleManifestLocation;
-		writeManifest(bundleManifestLocation, (Map)generatedManifest, compatibilityManifest);
+		writeManifest(bundleManifestLocation, (Map) generatedManifest, compatibilityManifest);
 		return bundleManifestLocation;
 	}
 

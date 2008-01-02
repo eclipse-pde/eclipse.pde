@@ -24,49 +24,49 @@ public interface ITocConstants {
 	public static final String ELEMENT_TOPIC = "topic"; //$NON-NLS-1$
 
 	public static final String ELEMENT_ANCHOR = "anchor"; //$NON-NLS-1$
-	
+
 	public static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
 
 	// Attributes
-	
+
 	public static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
-	
+
 	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$		
-	
+
 	public static final String ATTRIBUTE_TOPIC = ELEMENT_TOPIC; //$NON-NLS-1$
-	
+
 	public static final String ATTRIBUTE_HREF = "href"; //$NON-NLS-1$		
-	
+
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
+
 	public static final String ATTRIBUTE_TOC = ELEMENT_TOC; //$NON-NLS-1$		
 
 	// Types
-	
+
 	public static final int TYPE_TOC = 0;
 
-	public static final int TYPE_TOPIC = 1;	
+	public static final int TYPE_TOPIC = 1;
 
 	public static final int TYPE_ANCHOR = 2;
-	
-	public static final int TYPE_LINK = 3;	
-	
+
+	public static final int TYPE_LINK = 3;
+
 	// Enablement Elements
-	
+
 	public static final String ELEMENT_ENABLEMENT = "enablement"; //$NON-NLS-1$
-	
+
 	public static final String ELEMENT_TEST = "test"; //$NON-NLS-1$
 
 	// Enablement Attributes
 
 	public static final String ATTRIBUTE_PROPERTY = "property"; //$NON-NLS-1$		
-	
+
 	public static final String ATTRIBUTE_ARGS = "args"; //$NON-NLS-1$
-	
+
 	// Enablement Types
-	
-	public static final int TYPE_ENABLEMENT = 4;	
-	
+
+	public static final int TYPE_ENABLEMENT = 4;
+
 	public static final int TYPE_TEST = 5;
-	
+
 }

@@ -18,8 +18,7 @@ public class AttributeChangedEvent extends ModelChangedEvent {
 
 	private Object attribute;
 
-	public AttributeChangedEvent(IModelChangeProvider provider, Object element,
-			Object attribute, String oldValue, String newValue) {
+	public AttributeChangedEvent(IModelChangeProvider provider, Object element, Object attribute, String oldValue, String newValue) {
 		super(provider, element, P_ATTRIBUTE_VALUE, oldValue, newValue);
 		this.attribute = attribute;
 	}

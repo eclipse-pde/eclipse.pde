@@ -161,7 +161,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 		public boolean hasExtensionExtensionPoints() {
 			return hasExtensionExtensionPoints;
 		}
-		
+
 		public String getRoot() {
 			return isFragment() ? FRAGMENT : PLUGIN;
 		}
@@ -433,8 +433,8 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 	synchronized public PluginInfo parsePlugin(InputStream in) throws Exception {
 		SAXParserFactory factory = acquireXMLParsing(context);
 		if (factory == null) {
-//			commented out to not fill up log
-//			PDECore.logErrorMessage("No SAX factory parser has been found.");
+			//			commented out to not fill up log
+			//			PDECore.logErrorMessage("No SAX factory parser has been found.");
 			return null;
 		}
 
@@ -575,7 +575,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 		String plugin = attributes.getValue("", PLUGIN_REQUIRES_PLUGIN); //$NON-NLS-1$ 
 		if (plugin == null)
 			return;
-		if (plugin.equals(PluginConverter.PI_BOOT)) 
+		if (plugin.equals(PluginConverter.PI_BOOT))
 			return;
 		if (plugin.equals(PluginConverter.PI_RUNTIME_COMPATIBILITY))
 			manifestInfo.compatibilityFound = true;
@@ -642,9 +642,9 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 	}
 
 	private void internalError(String elementName) {
-//		commented out to not fill up log
-//		String message = NLS.bind("Unknown element \"{0}\", found at the top level, ignored.", elementName);
-//		PDECore.logErrorMessage(message);
+		//		commented out to not fill up log
+		//		String message = NLS.bind("Unknown element \"{0}\", found at the top level, ignored.", elementName);
+		//		PDECore.logErrorMessage(message);
 	}
 
 	public void processingInstruction(String target, String data) throws SAXException {

@@ -30,8 +30,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createAttribute(java.lang.String, java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentAttributeNode createAttribute(String name, String value,
-			IDocumentElementNode enclosingElement) {
+	public IDocumentAttributeNode createAttribute(String name, String value, IDocumentElementNode enclosingElement) {
 
 		IDocumentAttributeNode attribute = new DocumentAttributeNode();
 		try {
@@ -47,15 +46,14 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentTextNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
-	public IDocumentTextNode createDocumentTextNode(String content, 
-			IDocumentElementNode parent) {
+	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
 		IDocumentTextNode textNode = new DocumentTextNode();
 		textNode.setEnclosingElement(parent);
 		parent.addTextNode(textNode);
 		textNode.setText(content);
 		return textNode;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentNodeFactory#createDocumentNode(java.lang.String, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
@@ -70,6 +68,6 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 	 */
 	protected IDocumentElementNode createGeneric(String name) {
 		return new DocumentGenericNode(name);
-	}	
-	
+	}
+
 }

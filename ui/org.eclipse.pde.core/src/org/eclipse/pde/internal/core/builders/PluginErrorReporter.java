@@ -14,13 +14,12 @@ import org.eclipse.core.resources.IFile;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
-
 public class PluginErrorReporter extends PluginBaseErrorReporter {
 
 	public PluginErrorReporter(IFile file) {
 		super(file);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.builders.PluginBaseErrorReporter#validateTopLevelAttributes(org.w3c.dom.Element)
 	 */
@@ -30,7 +29,7 @@ public class PluginErrorReporter extends PluginBaseErrorReporter {
 		if (attr != null)
 			validateJavaAttribute(element, attr);
 	}
-	
+
 	protected String getRootElementName() {
 		return "plugin"; //$NON-NLS-1$
 	}

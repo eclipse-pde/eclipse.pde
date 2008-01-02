@@ -23,6 +23,7 @@ import org.osgi.framework.Constants;
 public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	private static final long serialVersionUID = 1L;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,24 +45,24 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 			String classHeader = getClassHeader();
 			IManifestHeader header = bundle.getManifestHeader(classHeader);
 			if (header instanceof BundleActivatorHeader)
-				((BundleActivatorHeader)header).setClassName(className);
+				((BundleActivatorHeader) header).setClassName(className);
 			else
 				bundle.setHeader(getClassHeader(), className);
 			model.fireModelObjectChanged(this, P_CLASS_NAME, old, className);
 		}
 	}
-	
+
 	private String getClassHeader() {
 		IPluginImport[] imports = getImports();
 		for (int i = 0; i < imports.length; i++) {
 			if ("org.eclipse.core.runtime.compatibility".equals(imports[i].getId()))//$NON-NLS-1$
 				return ICoreConstants.PLUGIN_CLASS;
 		}
-		return Constants.BUNDLE_ACTIVATOR; 
+		return Constants.BUNDLE_ACTIVATOR;
 	}
 
 	public boolean hasExtensibleAPI() {
 		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$ 
 	}
-	
+
 }

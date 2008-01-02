@@ -27,11 +27,10 @@ import org.w3c.dom.Element;
  * SimpleCSObject
  *
  */
-public abstract class SimpleCSObject extends DocumentObject implements
-		ISimpleCSObject, IWritableDelimiter {
+public abstract class SimpleCSObject extends DocumentObject implements ISimpleCSObject, IWritableDelimiter {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * @param model
 	 * @param tagName
@@ -51,7 +50,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getModel()
 	 */
 	public ISimpleCSModel getModel() {
-		return (ISimpleCSModel)getSharedModel();
+		return (ISimpleCSModel) getSharedModel();
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +62,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getParent()
 	 */
 	public ISimpleCSObject getParent() {
-		return (ISimpleCSObject)getParentNode();
+		return (ISimpleCSObject) getParentNode();
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +100,7 @@ public abstract class SimpleCSObject extends DocumentObject implements
 		// NO-OP
 		// Child classes to override
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#createDocumentTextNode()
 	 */

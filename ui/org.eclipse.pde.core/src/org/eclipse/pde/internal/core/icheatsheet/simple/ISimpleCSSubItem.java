@@ -22,35 +22,35 @@ public interface ISimpleCSSubItem extends ISimpleCSSubItemObject, ISimpleCSRun {
 	 * @return
 	 */
 	public String getLabel();
-	
+
 	/**
 	 * Attribute: label
 	 * @param label
 	 */
-	public void setLabel(String label);	
+	public void setLabel(String label);
 
 	/**
 	 * Attribute: skip
 	 * @return
 	 */
 	public boolean getSkip();
-	
+
 	/**
 	 * Attribute: skip
 	 * @param skip
 	 */
-	public void setSkip(boolean skip);	
+	public void setSkip(boolean skip);
 
 	/**
 	 * Attribute: when
 	 * @return
 	 */
 	public String getWhen();
-	
+
 	/**
 	 * Attribute: when
 	 * @param when
 	 */
-	public void setWhen(String when);		
-	
+	public void setWhen(String when);
+
 }

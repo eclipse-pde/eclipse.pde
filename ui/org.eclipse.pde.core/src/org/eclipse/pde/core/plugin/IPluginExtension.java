@@ -23,11 +23,13 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * notify about the "point" change
 	 */
 	String P_POINT = "point"; //$NON-NLS-1$
+
 	/**
 	 * Returns the full Id of the extension point that this extension
 	 * is plugged into.
 	 */
 	String getPoint();
+
 	/**
 	 * Returns the schema for the extension point that this extension
 	 * is plugged into or <samp>null</samp> if not found.
@@ -35,6 +37,7 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * is not needed for clients outside PDE and should not be used.
 	 */
 	Object getSchema();
+
 	/**
 	 * Sets the value of the extension point Id
 	 * This method will throw a CoreException if

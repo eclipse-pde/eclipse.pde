@@ -37,15 +37,15 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractExtensions extends PluginObject implements IExtensions {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	protected String fSchemaVersion;
-	
+
 	protected List fExtensions = null;
 	protected List fExtensionPoints = null;
 	boolean fCache = false;
-	
+
 	public AbstractExtensions(boolean readOnly) {
 		fCache = !readOnly;
 	}
@@ -57,9 +57,8 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		((PluginExtension) extension).setParent(this);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
-	
-	public void add(IPluginExtensionPoint extensionPoint)
-		throws CoreException {
+
+	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		getExtensionPointsList().add(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(true);
@@ -69,16 +68,15 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		List extPoints = getExtensionPointsList();
-		return (IPluginExtensionPoint[])extPoints.toArray(new IPluginExtensionPoint[extPoints.size()]);
-	}
-	
-	public IPluginExtension[] getExtensions() {
-		List extensions = getExtensionsList();
-		return (IPluginExtension[])extensions.toArray(new IPluginExtension[extensions.size()]);
+		return (IPluginExtensionPoint[]) extPoints.toArray(new IPluginExtensionPoint[extPoints.size()]);
 	}
 
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+	public IPluginExtension[] getExtensions() {
+		List extensions = getExtensionsList();
+		return (IPluginExtension[]) extensions.toArray(new IPluginExtension[extensions.size()]);
+	}
+
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_EXTENSION_ORDER)) {
 			swap((IPluginExtension) oldValue, (IPluginExtension) newValue);
 			return;
@@ -93,22 +91,21 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	protected void addArrayToVector(List vector, Object[] array) {
 		for (int i = 0; i < array.length; i++) {
-			Object obj= array[i];
+			Object obj = array[i];
 			if (obj instanceof PluginObject)
 				((PluginObject) obj).setParent(this);
 			vector.add(obj);
 		}
 	}
-	
+
 	public void remove(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		getExtensionsList().remove(extension);
 		((PluginExtension) extension).setInTheModel(false);
 		fireStructureChanged(extension, IModelChangedEvent.REMOVE);
 	}
-	
-	public void remove(IPluginExtensionPoint extensionPoint)
-		throws CoreException {
+
+	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		getExtensionPointsList().remove(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(false);
@@ -118,7 +115,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	public void reset() {
 		resetExtensions();
 	}
-	
+
 	public void resetExtensions() {
 		fExtensions = null;
 		fExtensionPoints = null;
@@ -131,25 +128,20 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	public int getIndexOf(IPluginExtension e) {
 		return getExtensionsList().indexOf(e);
 	}
-	
-	public void swap(IPluginExtension e1, IPluginExtension e2)
-		throws CoreException {
+
+	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
 		ensureModelEditable();
 		List extensions = getExtensionsList();
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException); 
+			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException);
 		extensions.set(index2, e1);
 		extensions.set(index2, e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
-	
-	protected void writeChildren(
-		String indent,
-		String tag,
-		Object[] children,
-		PrintWriter writer) {
+
+	protected void writeChildren(String indent, String tag, Object[] children, PrintWriter writer) {
 		writer.println(indent + "<" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.length; i++) {
 			IPluginObject obj = (IPluginObject) children[i];
@@ -158,24 +150,26 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		writer.println(indent + "</" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	protected boolean hasRequiredAttributes(){
+	protected boolean hasRequiredAttributes() {
 		// validate extensions
 		List extensions = getExtensionsList();
 		int size = extensions.size();
 		for (int i = 0; i < size; i++) {
-			IPluginExtension extension = (IPluginExtension)extensions.get(i);
-			if (!extension.isValid()) return false;
+			IPluginExtension extension = (IPluginExtension) extensions.get(i);
+			if (!extension.isValid())
+				return false;
 		}
 		// validate extension points
 		List extPoints = getExtensionPointsList();
 		size = extPoints.size();
 		for (int i = 0; i < size; i++) {
-			IPluginExtensionPoint expoint = (IPluginExtensionPoint)extPoints.get(i);
-			if (!expoint.isValid()) return false;
+			IPluginExtensionPoint expoint = (IPluginExtensionPoint) extPoints.get(i);
+			if (!expoint.isValid())
+				return false;
 		}
 		return true;
 	}
-	
+
 	public String getSchemaVersion() {
 		if (fSchemaVersion == null) {
 			// since schema version is only needed on workspace models in very few situations, reading information from the file should suffice
@@ -184,7 +178,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 				org.eclipse.core.resources.IResource res = model.getUnderlyingResource();
 				if (res != null && res instanceof IFile) {
 					try {
-						InputStream stream = new BufferedInputStream(((IFile)res).getContents(true));
+						InputStream stream = new BufferedInputStream(((IFile) res).getContents(true));
 						PluginHandler handler = new PluginHandler(true);
 						SAXParserFactory.newInstance().newSAXParser().parse(stream, handler);
 						return handler.getSchemaVersion();
@@ -198,14 +192,14 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		}
 		return fSchemaVersion;
 	}
-	
+
 	public void setSchemaVersion(String schemaVersion) throws CoreException {
 		ensureModelEditable();
 		String oldValue = fSchemaVersion;
 		fSchemaVersion = schemaVersion;
 		firePropertyChanged(IPluginBase.P_SCHEMA_VERSION, oldValue, schemaVersion);
 	}
-	
+
 	protected List getExtensionsList() {
 		if (fExtensions == null) {
 			IPluginBase base = getPluginBase();
@@ -220,7 +214,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		}
 		return fExtensions;
 	}
-	
+
 	protected List getExtensionPointsList() {
 		if (fExtensionPoints == null) {
 			IPluginBase base = getPluginBase();
@@ -235,7 +229,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		}
 		return fExtensionPoints;
 	}
-	
+
 	/*
 	 * If this function is used to load the model, the extension registry cache will not be used when querying model.
 	 */
@@ -245,7 +239,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 			fExtensions = new ArrayList();
 		if (fExtensionPoints == null)
 			fExtensionPoints = new ArrayList();
-		
+
 		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();
 			extension.setModel(getModel());

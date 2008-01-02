@@ -17,13 +17,13 @@ import org.eclipse.jface.text.TextUtilities;
 
 public abstract class AbstractTextChangeListener implements IModelTextChangeListener {
 
-	protected HashMap fOperationTable = new HashMap();	
+	protected HashMap fOperationTable = new HashMap();
 	protected IDocument fDocument;
 	protected String fSep;
-	
+
 	public AbstractTextChangeListener(IDocument document) {
 		fDocument = document;
 		fSep = TextUtilities.getDefaultLineDelimiter(fDocument);
 	}
-	
+
 }

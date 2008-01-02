@@ -28,12 +28,12 @@ import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class Build implements IBuild {
-	
+
 	private BuildModel fModel;
 	private HashMap fEntries = new HashMap();
 
 	public Build(BuildModel model) {
-		fModel = model;	
+		fModel = model;
 	}
 
 	/* (non-Javadoc)
@@ -41,29 +41,31 @@ public class Build implements IBuild {
 	 */
 	public void add(IBuildEntry entry) throws CoreException {
 		fEntries.put(entry.getName(), entry);
-		fModel.fireModelChanged(new ModelChangedEvent(fModel,
-				IModelChangedEvent.INSERT, new Object[]{entry}, null));
+		fModel.fireModelChanged(new ModelChangedEvent(fModel, IModelChangedEvent.INSERT, new Object[] {entry}, null));
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#getBuildEntries()
 	 */
 	public IBuildEntry[] getBuildEntries() {
-		return (IBuildEntry[])fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
+		return (IBuildEntry[]) fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#getEntry(java.lang.String)
 	 */
 	public IBuildEntry getEntry(String name) {
-		return (IBuildEntry)fEntries.get(name);
+		return (IBuildEntry) fEntries.get(name);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#remove(org.eclipse.pde.core.build.IBuildEntry)
 	 */
 	public void remove(IBuildEntry entry) throws CoreException {
 		if (fEntries.remove(entry.getName()) != null)
-			fModel.fireModelChanged(new ModelChangedEvent(fModel,
-					IModelChangedEvent.REMOVE, new Object[]{entry}, null));
+			fModel.fireModelChanged(new ModelChangedEvent(fModel, IModelChangedEvent.REMOVE, new Object[] {entry}, null));
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,7 +74,7 @@ public class Build implements IBuild {
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
-	
+
 	public void load(InputStream source) throws IOException {
 		fEntries.clear();
 		Properties properties = new Properties();
@@ -80,14 +82,14 @@ public class Build implements IBuild {
 		Enumeration keys = properties.keys();
 		while (keys.hasMoreElements()) {
 			String name = keys.nextElement().toString();
-			BuildEntry entry = (BuildEntry)fModel.getFactory().createEntry(name);
+			BuildEntry entry = (BuildEntry) fModel.getFactory().createEntry(name);
 			entry.processEntry(properties.get(name).toString());
 			fEntries.put(name, entry);
 		}
 		adjustOffsets(fModel.getDocument());
 	}
-	
-	public void adjustOffsets(IDocument document) {	
+
+	public void adjustOffsets(IDocument document) {
 		int lines = document.getNumberOfLines();
 		try {
 			IDocumentKey currentKey = null;
@@ -102,7 +104,7 @@ public class Build implements IBuild {
 					}
 					continue;
 				}
-				
+
 				line = line.trim();
 				if (line.length() == 0) {
 					// we are at last line, set the length of the last key.
@@ -113,7 +115,7 @@ public class Build implements IBuild {
 					}
 					continue;
 				}
-				
+
 				if (currentKey != null) {
 					if (!line.endsWith("\\")) { //$NON-NLS-1$
 						currentKey.setLength(offset + document.getLineLength(i) - currentKey.getOffset());
@@ -121,7 +123,7 @@ public class Build implements IBuild {
 					}
 				} else {
 					int index = line.indexOf('=');
-					if (index == -1) 
+					if (index == -1)
 						index = line.indexOf(':');
 					if (index == -1)
 						index = line.indexOf(' ');
@@ -129,12 +131,12 @@ public class Build implements IBuild {
 						index = line.indexOf('\t');
 					String name = (index != -1) ? line.substring(0, index).trim() : line;
 					String propertyKey;
-					try{
-						propertyKey=PropertiesUtil.windEscapeChars(name);
-					}catch(IllegalArgumentException iae){
+					try {
+						propertyKey = PropertiesUtil.windEscapeChars(name);
+					} catch (IllegalArgumentException iae) {
 						propertyKey = name;
 					}
-					currentKey = (IDocumentKey)getEntry(propertyKey);
+					currentKey = (IDocumentKey) getEntry(propertyKey);
 					if (currentKey != null) {
 						while (Character.isSpaceChar(document.getChar(offset))) {
 							offset += 1;

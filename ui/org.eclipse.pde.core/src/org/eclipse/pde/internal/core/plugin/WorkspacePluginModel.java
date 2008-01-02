@@ -15,8 +15,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 
-public class WorkspacePluginModel extends WorkspacePluginModelBase implements
-		IPluginModel {
+public class WorkspacePluginModel extends WorkspacePluginModelBase implements IPluginModel {
 
 	private static final long serialVersionUID = 1L;
 

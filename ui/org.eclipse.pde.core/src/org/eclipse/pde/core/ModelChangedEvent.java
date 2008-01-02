@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
+
 /**
  * @see IModelChangedEvent
  * 
@@ -20,6 +21,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	private Object[] changedObjects;
 	private Object oldValue, newValue;
 	private String changedProperty;
+
 	/**
 	 * The constructor of the event.
 	 * 
@@ -32,13 +34,13 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * @param changedProperty
 	 *            or <samp>null </samp> if not applicable
 	 */
-	public ModelChangedEvent(IModelChangeProvider provider, int type,
-			Object[] objects, String changedProperty) {
+	public ModelChangedEvent(IModelChangeProvider provider, int type, Object[] objects, String changedProperty) {
 		this.type = type;
 		this.provider = provider;
 		this.changedObjects = objects;
 		this.changedProperty = changedProperty;
 	}
+
 	/**
 	 * A costructor that should be used for changes of object properties.
 	 * 
@@ -53,33 +55,36 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * @param newValue
 	 *            the value after the change
 	 */
-	public ModelChangedEvent(IModelChangeProvider provider, Object object,
-			String changedProperty, Object oldValue, Object newValue) {
+	public ModelChangedEvent(IModelChangeProvider provider, Object object, String changedProperty, Object oldValue, Object newValue) {
 		this.type = CHANGE;
 		this.provider = provider;
-		this.changedObjects = new Object[]{object};
+		this.changedObjects = new Object[] {object};
 		this.changedProperty = changedProperty;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
+
 	/**
 	 * @see IModelChangedEvent#getChangeProvider
 	 */
 	public IModelChangeProvider getChangeProvider() {
 		return provider;
 	}
+
 	/**
 	 * @see IModelChangedEvent#getChangedObjects
 	 */
 	public Object[] getChangedObjects() {
 		return (changedObjects == null) ? new Object[0] : changedObjects;
 	}
+
 	/**
 	 * @see IModelChangedEvent#getChangedProperty
 	 */
 	public String getChangedProperty() {
 		return changedProperty;
 	}
+
 	/**
 	 *  Returns the old property value.
 	 * 
@@ -88,6 +93,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	public Object getOldValue() {
 		return oldValue;
 	}
+
 	/**
 	 *  Returns the new property value.
 	 * 
@@ -96,6 +102,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	public Object getNewValue() {
 		return newValue;
 	}
+
 	/**
 	 *  Returns the event change type
 	 *  
