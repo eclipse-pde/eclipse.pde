@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
- *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 209432
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 209432, 214156
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -92,7 +92,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fModel instanceof IBundlePluginModelBase) {
 			IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) fModel;
 			IBundle bundle = bundleModel.getBundleModel().getBundle();
-			IManifestHeader bundleClasspathheader = (IManifestHeader) bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			IManifestHeader bundleClasspathheader = bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
 
 			IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, fProject);
 			// Running list of packages in the project
@@ -945,7 +945,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header != null) {
 			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
 			if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
-				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
 			}
 			if (TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
 				report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);

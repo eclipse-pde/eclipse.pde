@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 169373
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
+ *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 214156
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -44,6 +45,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_DEPRECATED_PROVIDE_PACKAGE = 0x1019; // deprecation
 	public static final int M_EXECUTION_ENVIRONMENT_NOT_SET = 0x1020; // other problem
 	public static final int M_MISSING_BUNDLE_CLASSPATH_ENTRY = 0x1021; // fatal problem
+	public static final int M_LAZYLOADING_HAS_NO_EFFECT = 0x1022; //other problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
