@@ -1,4 +1,4 @@
-#Wed Jan 02 21:17:01 CST 2008
+#Thu Jan 03 09:04:25 CST 2008
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -74,7 +74,7 @@ org.eclipse.jdt.core.compiler.problem.unqualifiedFieldAccess=ignore
 org.eclipse.jdt.core.compiler.problem.unsafeTypeOperation=warning
 org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownException=warning
 org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionIncludeDocCommentReference=enabled
-org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionWhenOverriding=enabled
+org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionWhenOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.unusedImport=error
 org.eclipse.jdt.core.compiler.problem.unusedLabel=warning
 org.eclipse.jdt.core.compiler.problem.unusedLocal=warning

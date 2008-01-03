@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -21,15 +21,9 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.iproduct.IJREInfo;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
@@ -40,12 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -64,7 +53,7 @@ public class JRESection extends PDESection {
 
 	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static final String[] TAB_OS = {Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
-	
+
 	private CTabFolder fTabFolder;
 	private int fLastTab;
 
@@ -74,19 +63,18 @@ public class JRESection extends PDESection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
-		section.setLayoutData(data);		
-		
-		section.setText(PDEUIMessages.ProductJRESection_title); 
-		section.setDescription(PDEUIMessages.ProductJRESection_desc); 
+		section.setLayoutData(data);
+
+		section.setText(PDEUIMessages.ProductJRESection_title);
+		section.setDescription(PDEUIMessages.ProductJRESection_desc);
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
 
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
@@ -97,12 +85,10 @@ public class JRESection extends PDESection {
 		gd.grabExcessHorizontalSpace = true;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
-				toolkit.getColors().getBackground() },
-				new int[] { 100 }, true);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {	
+			public void widgetSelected(SelectionEvent e) {
 				refresh();
 			}
 		});
@@ -122,9 +108,9 @@ public class JRESection extends PDESection {
 		String[] installs = VMHelper.getVMInstallNames();
 		fJREsCombo.setItems(installs);
 		fJREsCombo.add("", 0); //$NON-NLS-1$
-		fJREsCombo.addSelectionListener(new SelectionAdapter(){
+		fJREsCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(!fBlockChanges)
+				if (!fBlockChanges)
 					setJRE(fJREsCombo.getSelection());
 			}
 		});
@@ -133,10 +119,8 @@ public class JRESection extends PDESection {
 		GridDataFactory.fillDefaults().applyTo(fInstalledJREsButton);
 		fInstalledJREsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(
-						getSection().getShell(), 
-						"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", //$NON-NLS-1$
-						new String[] { "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage" }, null).open(); //$NON-NLS-1$ 
+				PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", //$NON-NLS-1$
+						new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}, null).open(); //$NON-NLS-1$ 
 			}
 		});
 
@@ -152,62 +136,77 @@ public class JRESection extends PDESection {
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		initializeExecutionEnvironments();
-		fEEsCombo.addSelectionListener(new SelectionAdapter(){
+		fEEsCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(!fBlockChanges)
+				if (!fBlockChanges)
 					setEE(fEEsCombo.getSelectionIndex());
 			}
 		});
-		
+
 		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
 		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
 		fExecutionEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(
-						getSection().getShell(), 
-						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
+				PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
 			}
 		});
 
 		createTabs();
 		toolkit.paintBordersFor(client);
-		section.setClient(client);	
+		section.setClient(client);
 		// Register to be notified when the model changes
-		getProductModel().addModelChangedListener(this);		
+		getProductModel().addModelChangedListener(this);
 	}
-	
-	private void setEE(int selectionIndex){
-		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()){
-			IExecutionEnvironment ee = (IExecutionEnvironment)fEEChoices.get(selectionIndex);
-			if (ee != null){
+
+	private void setEE(int selectionIndex) {
+		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()) {
+			IExecutionEnvironment ee = (IExecutionEnvironment) fEEChoices.get(selectionIndex);
+			if (ee != null) {
 				IPath eePath = JavaRuntime.newJREContainerPath(ee);
 				getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
 			}
 		}
 	}
-	
-	private void setJRE(String vmName){
+
+	private void setJRE(String vmName) {
 		IVMInstall install = VMHelper.getVMInstall(vmName);
-		if (install != null){
+		if (install != null) {
 			IPath jrePath = JavaRuntime.newJREContainerPath(install);
 			getJVMLocations().setJREContainerPath(getOS(fLastTab), jrePath);
 		}
 	}
-	
-	private void initializeExecutionEnvironments(){
+
+	private void initializeExecutionEnvironments() {
 		fEEChoices = new ArrayList();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++)
-			fEEChoices.add(envs[i].getId());
-		fEEsCombo.setItems((String[])fEEChoices.toArray(new String[fEEChoices.size()]));
+		for (int i = 0; i < envs.length; i++) {
+			addToEECombo(envs[i]);
+		}
 	}
-	
+
+	/**
+	 * Adds the given execution environment to the list of known EEs and
+	 * adds an entry to the combo box "EE_ID (Associated_VM)".  The entries
+	 * will always be added to the end of the list/combo.
+	 * @param env environment to add
+	 */
+	private void addToEECombo(IExecutionEnvironment env) {
+		IPath path = JavaRuntime.newJREContainerPath(env);
+		IVMInstall install = JavaRuntime.getVMInstall(path);
+		fEEChoices.add(env);
+		if (install != null) {
+			fEEsCombo.add(MessageFormat.format(PDEUIMessages.JRESection_eeBoundJRE, new String[] {env.getId(), install.getName()}));
+		} else {
+			fEEsCombo.add(MessageFormat.format(PDEUIMessages.JRESection_eeUnboundJRE, new String[] {env.getId()}));
+		}
+	}
+
 	private IProductModel getProductModel() {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -217,14 +216,13 @@ public class JRESection extends PDESection {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}	
-	
+	}
+
 	private void createTabs() {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 			item.setText(TAB_LABELS[i]);
-			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
@@ -237,24 +235,25 @@ public class JRESection extends PDESection {
 			fTabFolder.setSelection(1);
 		} else if (Platform.OS_SOLARIS.equals(currentTarget)) {
 			fTabFolder.setSelection(2);
-		} 
+		}
 	}
 
 	public void refresh() {
 		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
 		IPath jrePath = getJVMLocations().getJREContainerPath(getOS(fLastTab));
-		if (jrePath != null){
+		if (jrePath != null) {
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
-			if (eeID != null){
-				if (fEEsCombo.indexOf(eeID) < 0)
-					fEEsCombo.add(eeID);
-				fEEsCombo.setText(eeID);
+			IExecutionEnvironment env = VMHelper.getExecutionEnvironment(eeID);
+			if (env != null) {
+				if (!fEEChoices.contains(env))
+					addToEECombo(env);
+				fEEsCombo.select(fEEsCombo.getItemCount() - 1);
 				fEERadioButton.setSelection(true);
 				fJRERadioButton.setSelection(false);
 			} else {
-				IVMInstall install =  JavaRuntime.getVMInstall(jrePath);
-				if (install != null){
+				IVMInstall install = JavaRuntime.getVMInstall(jrePath);
+				if (install != null) {
 					if (fJREsCombo.indexOf(install.getName()) < 0)
 						fJREsCombo.add(install.getName());
 					fJREsCombo.setText(install.getName());
@@ -276,9 +275,9 @@ public class JRESection extends PDESection {
 		}
 		return info;
 	}
-	
-	private String getOS(int tab){
-		if (tab >= 0 && tab < TAB_OS.length){
+
+	private String getOS(int tab) {
+		if (tab >= 0 && tab < TAB_OS.length) {
 			return TAB_OS[tab];
 		}
 		return null;
@@ -289,7 +288,7 @@ public class JRESection extends PDESection {
 	}
 
 	private IProductModel getModel() {
-		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
@@ -307,9 +306,9 @@ public class JRESection extends PDESection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 		}
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+		}
 	}
 
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
@@ -322,6 +321,6 @@ public class JRESection extends PDESection {
 		// the page, an event will be fired when entering the page again.
 		// An event is not fired if the radio button does not have focus.
 		// The solution is to redirect focus to a stable widget.
-		getPage().setLastFocusControl(fJREsCombo.getControl());			
-	}		
+		getPage().setLastFocusControl(fJREsCombo.getControl());
+	}
 }

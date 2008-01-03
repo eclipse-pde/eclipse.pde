@@ -265,7 +265,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExtensionsSection_sectionDescExtensionsMaster;
 
+	public static String JRESection_eeBoundJRE;
+
+	public static String JRESection_eeJre;
+
+	public static String JRESection_eeJreUnbound;
+
 	public static String JRESection_eePreference;
+
+	public static String JRESection_eeUnboundJRE;
 
 	public static String JRESection_jrePreference;
 
