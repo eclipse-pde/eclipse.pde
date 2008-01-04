@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				}
 				if (schemaElement.hasTranslatableContent())
 					validateTranslatableElementContent(element);
+				// Bug 213457 - look up elements based on the schema in which the parent is found
+				schema = schemaElement.getSchema();
 			}
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {

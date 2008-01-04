@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.Hashtable;
-import java.util.Locale;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
@@ -81,8 +80,26 @@ public abstract class XMLUtil {
 		if (schema == null)
 			return null;
 
-		ISchemaElement sElement = schema.findElement(node.getXMLTagName());
-		return sElement;
+		// Bug 213457 - look up elements based on the schema in which the parent is found
+		if (schema.getIncludes().length == 0 || "extension".equals(node.getXMLTagName())) //$NON-NLS-1$
+			return schema.findElement(node.getXMLTagName());
+		
+		// if element is not "extension" & has multiple sub-schemas,
+		// Then search for the element in the same schema in which the parent element if found.
+		Stack stack = new Stack();
+		while (node != null) {
+			String tagName = node.getXMLTagName();
+			if ("extension".equals(tagName)) //$NON-NLS-1$
+				break;
+			stack.push(node.getXMLTagName());
+			node = node.getParentNode();
+		}
+		ISchemaElement element = null;
+		while (!stack.isEmpty()) {
+			element = schema.findElement((String) stack.pop());
+			schema = element.getSchema();
+		}
+		return element;
 	}
 
 	/**
@@ -103,7 +120,6 @@ public abstract class XMLUtil {
 	 * @param project
 	 * @param attInfo
 	 * @param counter
-	 * @return
 	 */
 	public static String createDefaultClassName(IProject project, ISchemaAttribute attInfo, int counter) {
 		String tag = attInfo.getParent().getName();
@@ -131,7 +147,6 @@ public abstract class XMLUtil {
 	/**
 	 * @param id
 	 * @param className
-	 * @return
 	 */
 	public static String createDefaultPackageName(IProject project, String className) {
 		String id = project.getName();
@@ -165,7 +180,6 @@ public abstract class XMLUtil {
 	 * @param project
 	 * @param attInfo
 	 * @param counter
-	 * @return
 	 */
 	public static String createDefaultName(IProject project, ISchemaAttribute attInfo, int counter) {
 		if (attInfo.getType().getName().equals("boolean")) //$NON-NLS-1$
@@ -177,7 +191,6 @@ public abstract class XMLUtil {
 
 	/**
 	 * @param elementInfo
-	 * @return
 	 */
 	public static int getCounterValue(ISchemaElement elementInfo) {
 		Hashtable counters = PDEPlugin.getDefault().getDefaultNameCounters();

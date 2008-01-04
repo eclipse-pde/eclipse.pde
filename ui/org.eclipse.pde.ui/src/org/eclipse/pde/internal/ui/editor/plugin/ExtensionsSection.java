@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,8 +126,23 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	private static void addItemsForExtensionWithSchema(MenuManager menu, IPluginExtension extension, IPluginParent parent) {
 		ISchema schema = getSchema(extension);
-		String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
-		ISchemaElement elementInfo = schema.findElement(tagName);
+		// Bug 213457 - look up elements based on the schema in which the parent is found
+		ISchemaElement elementInfo = null;
+		if (schema.getIncludes().length == 0 || parent == extension) {
+			String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
+			elementInfo = schema.findElement(tagName);
+		} else {
+			Stack stack = new Stack();
+			IPluginParent parentParent = parent;
+			while (parentParent != extension && parentParent != null) {
+				stack.push(parentParent.getName());
+				parentParent = (IPluginParent) parentParent.getParent();
+			}
+			while (!stack.isEmpty()) {
+				elementInfo = schema.findElement((String) stack.pop());
+				schema = elementInfo.getSchema();
+			}
+		}
 
 		if ((elementInfo != null) && (elementInfo.getType() instanceof ISchemaComplexType) && (parent instanceof IDocumentElementNode)) {
 			// We have a schema complex type.  Either the element has attributes
@@ -146,7 +161,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	/**
 	 * @param parent
-	 * @return
 	 */
 	private static ISchema getSchema(IPluginParent parent) {
 		if (parent instanceof IPluginExtension) {
@@ -166,7 +180,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	/**
 	 * @param element
-	 * @return
 	 */
 	static ISchemaElement getSchemaElement(IPluginElement element) {
 		ISchema schema = getSchema(element);
@@ -178,7 +191,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	/**
 	 * @param element
-	 * @return
 	 */
 	private static ISchema getSchema(IPluginElement element) {
 		IPluginObject parent = element.getParent();
@@ -892,7 +904,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param sourceElements
 	 * @param targetElementSet
-	 * @return
 	 */
 	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet targetElementSet) {
 		// Performance optimization
@@ -926,7 +937,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param sourceElement
 	 * @param targetElementSet
-	 * @return
 	 */
 	private boolean canPasteSourceElement(IPluginElement sourceElement, TreeSet targetElementSet) {
 		boolean canPaste = false;
@@ -947,9 +957,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return canPaste;
 	}
 
-	/**
-	 * @return
-	 */
 	private IPluginModelBase getPluginModelBase() {
 		// Note:  This method will work with fragments as long as a fragment.xml
 		// is defined first.  Otherwise, paste will not work out of the box.
@@ -1147,7 +1154,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
@@ -1165,7 +1171,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	/**
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
@@ -1188,7 +1193,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param sourcePluginObject
 	 * @param targetPluginObject
-	 * @return
 	 */
 	private boolean validateDropMoveModel(IPluginParent sourcePluginObject, IPluginParent targetPluginObject) {
 		// Objects have to be from the same model
@@ -1249,7 +1253,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param targetElementObject
 	 * @param sourceElementObject
 	 * @param targetLocation
-	 * @return
 	 */
 	private boolean canDropMove(IPluginElement targetElementObject, IPluginElement sourceElementObject, int targetLocation) {
 
@@ -1298,7 +1301,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param targetElementObject
 	 * @param sourceElementObject
-	 * @return
 	 */
 	private boolean validateDropMoveParent(IPluginElement targetElementObject, IPluginElement sourceElementObject) {
 
@@ -1319,7 +1321,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param targetExtensionObject
 	 * @param sourceElementObject
 	 * @param targetLocation
-	 * @return
 	 */
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) {
 
@@ -1345,7 +1346,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/**
 	 * @param targetPluginObject
 	 * @param sourcePluginObject
-	 * @return
 	 */
 	private boolean validateDropMoveSchema(IPluginParent targetPluginObject, IPluginParent sourcePluginObject) {
 		IDocumentElementNode targetPluginNode = (IDocumentElementNode) targetPluginObject;
@@ -1396,7 +1396,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param targetExtensionObject
 	 * @param sourceExtensionObject
 	 * @param targetLocation
-	 * @return
 	 */
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) {
 
@@ -1657,9 +1656,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isTreeViewerSorted() {
 		if (fSortAction == null) {
 			return false;
