@@ -24,6 +24,6 @@ public class WizardCommandTarget extends WindowCommandTarget {
 	}
 
 	public WizardDialog getWizardDialog() {
-		return (WizardDialog)getWindow();
+		return (WizardDialog) getWindow();
 	}
 }

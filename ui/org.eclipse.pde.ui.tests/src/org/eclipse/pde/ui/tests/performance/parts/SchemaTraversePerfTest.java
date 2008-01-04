@@ -27,13 +27,13 @@ import org.eclipse.test.performance.Dimension;
  *
  */
 public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
-	
+
 	/**
 	 * @return
 	 */
 	public static Test suite() {
 		return new TestSuite(SchemaTraversePerfTest.class);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#setUpIterations()
@@ -41,17 +41,17 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	protected void setUpIterations() {
 		fTestIterations = 5;
 		fWarmupIterations = 50;
-		fRuns = 3000;		
+		fRuns = 3000;
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
 	public void testSchemaTraverse() throws Exception {
 		tagAsSummary("Show hover info in manifest editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#executeTest()
 	 */
@@ -63,9 +63,9 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		parser.parse(input, handler);
 		if (input != null) {
 			input.close();
-		}		
+		}
 		EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
 		schema.traverseDocumentTree(handler.getDocumentElement());
 	}
-	
+
 }

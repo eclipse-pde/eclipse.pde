@@ -51,9 +51,9 @@ public class ModifyCommand extends MacroCommand {
 		super.load(node, lineTable);
 
 		NodeList children = node.getChildNodes();
-		for (int i=0; i<children.getLength(); i++) {
+		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType()==Node.TEXT_NODE) {
+			if (child.getNodeType() == Node.TEXT_NODE) {
 				text = MacroUtil.getNormalizedText(child.getNodeValue());
 				break;
 			}
@@ -100,9 +100,9 @@ public class ModifyCommand extends MacroCommand {
 	}
 
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
-		if (parent.isDisposed()) return false;
-		CommandTarget target = MacroUtil.locateCommandTarget(parent,
-				getWidgetId(), getStartLine());
+		if (parent.isDisposed())
+			return false;
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 		if (target != null) {
 			target.setFocus();
 			Widget widget = target.getWidget();
@@ -113,7 +113,7 @@ public class ModifyCommand extends MacroCommand {
 			else if (widget instanceof CCombo)
 				((CCombo) widget).setText(text);
 			else if (widget instanceof StyledText)
-				((StyledText)widget).setText(text);
+				((StyledText) widget).setText(text);
 		}
 		return true;
 	}

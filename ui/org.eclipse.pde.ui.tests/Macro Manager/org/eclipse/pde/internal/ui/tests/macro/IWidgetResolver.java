@@ -22,11 +22,11 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.1
  */
 public interface IWidgetResolver {
-/**
- * Returns a unique identifier for the provided widget.
- * @param widget the widget to identify
- * @return unique identifier that can be used to locate the
- * widget or <code>null</code> if none can be found.
- */
+	/**
+	 * Returns a unique identifier for the provided widget.
+	 * @param widget the widget to identify
+	 * @return unique identifier that can be used to locate the
+	 * widget or <code>null</code> if none can be found.
+	 */
 	String getUniqueId(Widget widget);
 }

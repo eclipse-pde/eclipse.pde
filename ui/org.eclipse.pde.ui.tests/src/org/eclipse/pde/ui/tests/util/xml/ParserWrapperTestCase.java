@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.ui.tests.util.xml;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -42,11 +41,11 @@ public class ParserWrapperTestCase extends TestCase {
 	protected static final int FDOM = 1;
 	protected static File fXMLFile;
 	protected static final String FFILENAME = "/plugin.xml"; //$NON-NLS-1$
-	
+
 	public static Test suite() {
 		return new TestSuite(ParserWrapperTestCase.class);
-	}	
-	
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		MacroPlugin plugin = MacroPlugin.getDefault();
@@ -63,9 +62,9 @@ public class ParserWrapperTestCase extends TestCase {
 			throw new Exception("ERROR:  URL unresolved:  " + FFILENAME); //$NON-NLS-1$
 		fXMLFile = new File(path);
 	}
-	
+
 	public void testSAXParserWrapperConcurrency() throws Exception {
-		
+
 		ParserThread[] threads = new ParserThread[FTHREADCOUNT];
 
 		for (int x = 0; x < FTHREADCOUNT; x++) {
@@ -75,15 +74,15 @@ public class ParserWrapperTestCase extends TestCase {
 
 		for (int x = 0; x < FTHREADCOUNT; x++) {
 			threads[x].join();
-		    assertFalse(threads[x].getError());
+			assertFalse(threads[x].getError());
 		}
-		
+
 	}
-	
+
 	public void testDOMParserWrapperConcurrency() throws Exception {
-		
+
 		ParserThread[] threads = new ParserThread[FTHREADCOUNT];
-		
+
 		for (int x = 0; x < FTHREADCOUNT; x++) {
 			threads[x] = new ParserThread(FDOM, fXMLFile); //$NON-NLS-1$
 			threads[x].start();
@@ -91,41 +90,40 @@ public class ParserWrapperTestCase extends TestCase {
 
 		for (int x = 0; x < FTHREADCOUNT; x++) {
 			threads[x].join();
-		    assertFalse(threads[x].getError());
+			assertFalse(threads[x].getError());
 		}
-		
+
 	}
 
-	
 	public class ParserThread extends Thread {
 
 		protected final int FITERATIONS = 100;
 		protected File fXMLFile;
 		protected boolean fError;
 		protected int fParserType;
-		
+
 		public ParserThread(int parserType, File file) {
 			fError = false;
 			fParserType = parserType;
 			fXMLFile = file;
 		}
-		
-        public void run() {
-        	
-        	if (fParserType == ParserWrapperTestCase.FSAX) {
-        		runSAX();
-        	} else {
-        		runDOM();
-        	}
 
-       	}		
-		
-        public void runSAX() {
+		public void run() {
 
-        	for (int x = 0; x < FITERATIONS; x++) {
-            	
-	        	try {
-	        		XMLDefaultHandler handler = new XMLDefaultHandler();
+			if (fParserType == ParserWrapperTestCase.FSAX) {
+				runSAX();
+			} else {
+				runDOM();
+			}
+
+		}
+
+		public void runSAX() {
+
+			for (int x = 0; x < FITERATIONS; x++) {
+
+				try {
+					XMLDefaultHandler handler = new XMLDefaultHandler();
 					SAXParserWrapper parser = new SAXParserWrapper();
 					parser.parse(fXMLFile, handler);
 					parser.dispose();
@@ -146,16 +144,16 @@ public class ParserWrapperTestCase extends TestCase {
 				// Any type of exception experienced is bad
 				if (fError)
 					return;
-				
-        	}        	
-        	
-        }
-        
-        public void runDOM() {
-        	
-        	for (int x = 0; x < FITERATIONS; x++) {
-            	
-	        	try {
+
+			}
+
+		}
+
+		public void runDOM() {
+
+			for (int x = 0; x < FITERATIONS; x++) {
+
+				try {
 					DOMParserWrapper parser = new DOMParserWrapper();
 					parser.parse(fXMLFile);
 					parser.dispose();
@@ -176,15 +174,14 @@ public class ParserWrapperTestCase extends TestCase {
 				// Any type of exception experienced is bad
 				if (fError)
 					return;
-				
-        	}                	
-        }
-        
+
+			}
+		}
+
 		public boolean getError() {
 			return fError;
 		}
-		
+
 	}
-	
-	
+
 }

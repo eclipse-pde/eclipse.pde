@@ -23,21 +23,21 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	public BundleSymbolicNameTestCase() {
 		super(Constants.BUNDLE_SYMBOLICNAME);
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(BundleSymbolicNameTestCase.class);
 	}
-	
+
 	public void testAbsentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		fDocument.set(buffer.toString());
 		load();
-		
-		assertNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));		
+
+		assertNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));
 	}
-	
+
 	public void testPresentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -45,10 +45,10 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
-		assertNotNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));				
+
+		assertNotNull(fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME));
 	}
-	
+
 	public void testHeaderOffset1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -56,11 +56,11 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		assertEquals(fDocument.getLineOffset(2), header.getOffset());		
+		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
-	
+
 	public void testHeaderOffset2() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -69,12 +69,11 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Require-Bundle: com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		assertEquals(fDocument.getLineOffset(2), header.getOffset());		
+		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
-	
-	
+
 	public void testHeaderLength() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -82,11 +81,11 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Bundle-SymbolicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		assertEquals(fDocument.getLineLength(2), header.getLength());	
+		assertEquals(fDocument.getLineLength(2), header.getLength());
 	}
-	
+
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -94,11 +93,11 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Bundle-SymbolicName: com.example.xyz\r\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		assertEquals(fDocument.getLineLength(2), header.getLength());	
+		assertEquals(fDocument.getLineLength(2), header.getLength());
 	}
-	
+
 	public void testAddBundleSymbolicName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -107,18 +106,18 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		fModel.getBundle().setHeader(Constants.BUNDLE_SYMBOLICNAME, "com.example.abc");
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		assertNotNull(header);	
+		assertNotNull(header);
 		assertEquals("Bundle-SymbolicName: com.example.abc\n", header.write());
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
-	
+
 	public void testRemoveBundleSymbolicName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -129,16 +128,16 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		assertNotNull(header);
-		
-		((BundleSymbolicNameHeader)header).setId("");
-		
+
+		((BundleSymbolicNameHeader) header).setId("");
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
-		assertEquals(4, fDocument.getNumberOfLines());	
+		assertEquals(4, fDocument.getNumberOfLines());
 	}
-	
+
 	public void testChangeBundleSymbolicName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -147,22 +146,22 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Require-Bundle: com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		((BundleSymbolicNameHeader)header).setId("com.example.core");
+		((BundleSymbolicNameHeader) header).setId("com.example.core");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(2);
 		int length = fDocument.getLineLength(2);
-		
+
 		assertEquals("Bundle-SymbolicName: com.example.core\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testReadSingletonDirective() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -171,12 +170,12 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		buffer.append("Require-Bundle: com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		assertNotNull(header);
-		assertTrue(((BundleSymbolicNameHeader)header).isSingleton());
+		assertTrue(((BundleSymbolicNameHeader) header).isSingleton());
 	}
-	
+
 	public void testAddSingletonDirective() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -187,20 +186,20 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		assertNotNull(header);
-		((BundleSymbolicNameHeader)header).setSingleton(true);
-		
+		((BundleSymbolicNameHeader) header).setSingleton(true);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(2);
-		int length = fDocument.getLineLength(2);		
-		assertEquals("Bundle-SymbolicName: com.example.xyz;singleton:=true\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(2);
+		assertEquals("Bundle-SymbolicName: com.example.xyz;singleton:=true\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveSingletonDirective() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -211,18 +210,18 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		assertNotNull(header);
-		((BundleSymbolicNameHeader)header).setSingleton(false);
-		
+		((BundleSymbolicNameHeader) header).setSingleton(false);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(2);
-		int length = fDocument.getLineLength(2);		
-		assertEquals("Bundle-SymbolicName: com.example.xyz\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(2);
+		assertEquals("Bundle-SymbolicName: com.example.xyz\n", fDocument.get(pos, length));
 	}
 
 }

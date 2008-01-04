@@ -23,23 +23,23 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 
 public abstract class XMLModelTestCase extends TestCase {
-	
+
 	protected static final String LF = "\n";
 	protected static final String CR = "\r";
 	protected static final String CRLF = CR + LF;
-	
+
 	protected Document fDocument;
 	protected PluginModel fModel;
 	protected IModelTextChangeListener fListener;
-	
+
 	protected void setUp() throws Exception {
 		fDocument = new Document();
 	}
-	
+
 	protected void load() {
 		load(false);
 	}
-	
+
 	protected void load(boolean addListener) {
 		try {
 			fModel = new PluginModel(fDocument, true);
@@ -54,7 +54,7 @@ public abstract class XMLModelTestCase extends TestCase {
 			fail("model cannot be loaded");
 		}
 	}
-	
+
 	protected void setXMLContents(StringBuffer body, String newline) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -70,7 +70,7 @@ public abstract class XMLModelTestCase extends TestCase {
 		sb.append(newline);
 		fDocument.set(sb.toString());
 	}
-	
+
 	protected void reload() {
 		TextEdit[] ops = fListener.getTextOperations();
 		if (ops.length == 0)
@@ -86,5 +86,5 @@ public abstract class XMLModelTestCase extends TestCase {
 		}
 		load();
 	}
-	
+
 }

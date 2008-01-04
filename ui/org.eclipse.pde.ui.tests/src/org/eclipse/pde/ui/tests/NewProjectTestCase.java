@@ -10,23 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class NewProjectTestCase extends PDETestCase {
-	
+
 	protected void verifyProjectExistence() {
 		assertTrue("Project does not exist", getProject().exists()); //$NON-NLS-1$
 	}
-	
+
 	protected IProject getProject() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		return root.getProject(getProjectName());	
+		return root.getProject(getProjectName());
 	}
-	
+
 	protected boolean hasNature(String nature) {
 		boolean hasNature = false;
 		try {
@@ -35,8 +34,7 @@ public abstract class NewProjectTestCase extends PDETestCase {
 		}
 		return hasNature;
 	}
-	
-	protected abstract String getProjectName();
 
+	protected abstract String getProjectName();
 
 }

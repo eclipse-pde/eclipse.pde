@@ -22,9 +22,9 @@ public class EditorCommandTarget extends CommandTarget {
 	public EditorCommandTarget(Widget widget, IEditorPart editor) {
 		super(widget, editor);
 	}
-	
+
 	public IEditorPart getEditor() {
-		return (IEditorPart)getContext();
+		return (IEditorPart) getContext();
 	}
 
 	/* (non-Javadoc)

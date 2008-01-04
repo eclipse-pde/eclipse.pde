@@ -27,8 +27,9 @@ import org.osgi.framework.BundleContext;
 public class MacroPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static MacroPlugin plugin;
-	
+
 	private MacroManager recorder;
+
 	/**
 	 * The constructor.
 	 */
@@ -37,6 +38,7 @@ public class MacroPlugin extends AbstractUIPlugin {
 		plugin = this;
 		recorder = new MacroManager();
 	}
+
 	public MacroManager getMacroManager() {
 		return recorder;
 	}
@@ -66,32 +68,30 @@ public class MacroPlugin extends AbstractUIPlugin {
 	public static void logException(Throwable e) {
 		logException(e, null, null);
 	}
-	public static void logException(
-			Throwable e,
-			final String title,
-			String message) {
-			if (e instanceof InvocationTargetException) {
-				e = ((InvocationTargetException) e).getTargetException();
-			}
-			IStatus status = null;
-			if (e instanceof CoreException)
-				status = ((CoreException) e).getStatus();
-			else {
-				if (message == null)
-					message = e.getMessage();
-				if (message == null)
-					message = e.toString();
-				status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK, message, e);
-			}
-			ResourcesPlugin.getPlugin().getLog().log(status);
-			Display display = Display.getCurrent();
-			if (display==null)
-				display = Display.getDefault();
-			final IStatus fstatus = status;
-			display.asyncExec(new Runnable() {
-				public void run() {
-					ErrorDialog.openError(null, title, null, fstatus);
-				}
-			});
+
+	public static void logException(Throwable e, final String title, String message) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException) e).getTargetException();
 		}
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else {
+			if (message == null)
+				message = e.getMessage();
+			if (message == null)
+				message = e.toString();
+			status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK, message, e);
+		}
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		final IStatus fstatus = status;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(null, title, null, fstatus);
+			}
+		});
+	}
 }

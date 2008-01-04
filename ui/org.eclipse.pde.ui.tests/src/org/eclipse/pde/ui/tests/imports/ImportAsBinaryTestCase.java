@@ -24,44 +24,43 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 
 public class ImportAsBinaryTestCase extends BaseImportTestCase {
-	
+
 	private static int TYPE = PluginImportOperation.IMPORT_BINARY;
 
 	public static Test suite() {
 		return new TestSuite(ImportAsBinaryTestCase.class);
 	}
-	
+
 	public void testImportBinaryJAR() {
 		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
 		verifyBinaryProject("org.eclipse.pde.core", true);
 	}
-	
+
 	public void testImportBinaryFlat() {
 		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
 		verifyBinaryProject("org.eclipse.jdt.debug", true);
 	}
-	
+
 	public void testImportBinaryNotJavaFlat() {
 		runOperation(new String[] {"org.eclipse.pde.source"}, TYPE);
 		verifyBinaryProject("org.eclipse.pde.source", false);
 	}
-	
+
 	public void testImportBinaryNotJavaJARd() {
 		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
 		verifyBinaryProject("org.eclipse.jdt.doc.user", false);
 	}
-	
+
 	public void testImportBinaryMultiple() {
-		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"},
-					TYPE);
+		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"}, TYPE);
 		verifyBinaryProject("org.eclipse.core.filebuffers", true);
 		verifyBinaryProject("org.eclipse.jdt.doc.user", false);
-		verifyBinaryProject("org.eclipse.pde.build", true);		
+		verifyBinaryProject("org.eclipse.pde.build", true);
 	}
 
 	private void verifyBinaryProject(String projectName, boolean isJava) {
 		try {
-			IProject project =  verifyProject(projectName);
+			IProject project = verifyProject(projectName);
 			assertEquals(PDECore.BINARY_PROJECT_VALUE, project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY));
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
@@ -70,9 +69,9 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 				assertTrue(checkSourceAttached(jProject));
 				assertTrue(checkLibraryEntry(jProject));
 			}
-		} catch (CoreException e) {	
+		} catch (CoreException e) {
 			fail(e.getMessage());
-		}	
+		}
 	}
 
 	private boolean checkLibraryEntry(IJavaProject jProject) throws JavaModelException {

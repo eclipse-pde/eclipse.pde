@@ -73,7 +73,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		IProject project1 = createProject(PROJECT_NAME_1);
 		IProject project2 = createProject(PROJECT_NAME_2);
 
-		IProject[] projects = new IProject[] { project1, project2 };
+		IProject[] projects = new IProject[] {project1, project2};
 
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
@@ -99,7 +99,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	 *            The project to convert
 	 */
 	private void convertProject(IProject project) {
-		convertProjects(new IProject[] { project });
+		convertProjects(new IProject[] {project});
 	}
 
 	/**
@@ -112,8 +112,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		IRunnableWithProgress convertOperation;
 		convertOperation = new ConvertProjectToPluginOperation(projects);
 
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
 			progressService.runInUI(progressService, convertOperation, null);
 		} catch (InvocationTargetException e) {

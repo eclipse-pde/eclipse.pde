@@ -24,7 +24,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 
 public class KeyCommand extends MacroCommand {
-	public static final String TYPE="key-binding";
+	public static final String TYPE = "key-binding";
 	private String commandId;
 
 	/**
@@ -67,21 +67,19 @@ public class KeyCommand extends MacroCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.macro.IPlayable#playback(org.eclipse.swt.widgets.Display, org.eclipse.swt.widgets.Composite, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean playback(Display display, Composite parent,
-			IProgressMonitor monitor) throws CoreException {
+	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
-		if (target==null) return false;
+		if (target == null)
+			return false;
 		IWorkbenchCommandSupport csupport = PlatformUI.getWorkbench().getCommandSupport();
 		ICommand command = csupport.getCommandManager().getCommand(commandId);
-		if (command!=null) {
+		if (command != null) {
 			try {
 				command.execute(null);
 				return true;
-			}
-			catch (ExecutionException e) {
+			} catch (ExecutionException e) {
 				MacroPlugin.logException(e);
-			}
-			catch (NotHandledException e) {
+			} catch (NotHandledException e) {
 				MacroPlugin.logException(e);
 			}
 		}

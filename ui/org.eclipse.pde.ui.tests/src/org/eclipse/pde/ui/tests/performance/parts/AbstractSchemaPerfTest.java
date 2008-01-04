@@ -29,14 +29,13 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 	protected int fTestIterations;
 
 	protected int fWarmupIterations;
-	
-	protected int fRuns;	
-	
-	protected static final String F_FILENAME = 
-		"/tests/performance/schema/navigatorContent.exsd"; //$NON-NLS-1$	
-	
+
+	protected int fRuns;
+
+	protected static final String F_FILENAME = "/tests/performance/schema/navigatorContent.exsd"; //$NON-NLS-1$	
+
 	protected static File fXSDFile;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
 	 */
@@ -52,7 +51,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 	protected void setUpIterations() {
 		fTestIterations = 5;
 		fWarmupIterations = 50;
-		fRuns = 200;		
+		fRuns = 200;
 	}
 
 	/**
@@ -73,8 +72,8 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		if ("".equals(path)) //$NON-NLS-1$
 			throw new Exception("ERROR:  URL unresolved:  " + F_FILENAME); //$NON-NLS-1$
 		fXSDFile = new File(path);
-	}		
-	
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -82,7 +81,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		// Warm-up Iterations
 		for (int i = 0; i < fWarmupIterations; i++) {
 			executeTest();
-		}		
+		}
 		// Test Iterations
 		for (int j = 0; j < fRuns; j++) {
 			startMeasuring();
@@ -93,11 +92,11 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		}
 		commitMeasurements();
 		assertPerformance();
-	}	
-	
+	}
+
 	/**
 	 * @throws Exception
 	 */
 	protected abstract void executeTest() throws Exception;
-	
+
 }

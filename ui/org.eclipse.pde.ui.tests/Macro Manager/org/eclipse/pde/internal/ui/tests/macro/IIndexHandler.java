@@ -24,17 +24,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 
 public interface IIndexHandler {
-/**
- * Evaluates the state of the platform at the provided script
- * index. Error status returned from the method will cause
- * the script manager to stop the script execution and
- * throw a <code>CoreException</code>.
- * 
- * @param shell the active shell when the index was reached
- * @param indexId the unique identifier of the index
- * inserted in the script
- * @return <code>Status.OK_STATUS</code> if the script can proceed, or 
- * an error status otherwise.
- */
+	/**
+	 * Evaluates the state of the platform at the provided script
+	 * index. Error status returned from the method will cause
+	 * the script manager to stop the script execution and
+	 * throw a <code>CoreException</code>.
+	 * 
+	 * @param shell the active shell when the index was reached
+	 * @param indexId the unique identifier of the index
+	 * inserted in the script
+	 * @return <code>Status.OK_STATUS</code> if the script can proceed, or 
+	 * an error status otherwise.
+	 */
 	IStatus processIndex(Shell shell, String indexId);
 }

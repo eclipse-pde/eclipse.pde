@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllBundleModelTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the bundle model"); //$NON-NLS-1$
 		suite.addTest(ImportPackageTestCase.suite());

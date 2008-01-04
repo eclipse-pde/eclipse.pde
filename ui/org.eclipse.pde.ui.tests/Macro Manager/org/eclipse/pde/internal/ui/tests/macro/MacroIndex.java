@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.ui.tests.macro;
 import java.io.PrintWriter;
 
 public class MacroIndex extends MacroInstruction {
-    
-    public MacroIndex() {
-        super(null);
-    }
+
+	public MacroIndex() {
+		super(null);
+	}
 
 	public MacroIndex(String id) {
 		super(id);

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.junit.runtime;
 
 import org.eclipse.core.runtime.IPlatformRunnable;
 
-
 public class CoreTestApplication implements IPlatformRunnable {
 
 	/**
@@ -21,7 +20,7 @@ public class CoreTestApplication implements IPlatformRunnable {
 	 * @see IPlatformRunnable
 	 */
 	public Object run(Object arguments) throws Exception {
-		RemotePluginTestRunner.main((String[])arguments);
+		RemotePluginTestRunner.main((String[]) arguments);
 		return null;
 	}
 

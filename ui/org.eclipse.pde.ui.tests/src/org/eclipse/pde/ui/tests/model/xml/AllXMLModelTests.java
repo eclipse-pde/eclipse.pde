@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllXMLModelTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the xml model"); //$NON-NLS-1$
 		suite.addTest(BasicXMLTestCase.suite());
@@ -23,7 +22,7 @@ public class AllXMLModelTests {
 		 * Commented out till XMLTextChangeListener#getTextOperations() 
 		 * gets fixed / updated (see what InputContext does)
 		 */
-//		suite.addTest(SwapXMLModelTestCase.suite());
+		//		suite.addTest(SwapXMLModelTestCase.suite());
 		suite.addTest(StructureXMLModelTestCase.suite());
 		suite.addTest(ExtensionAttributeTestCase.suite());
 		suite.addTest(ExtensionElementTestCase.suite());

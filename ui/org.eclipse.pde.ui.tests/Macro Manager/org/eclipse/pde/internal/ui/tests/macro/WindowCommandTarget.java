@@ -21,9 +21,9 @@ public class WindowCommandTarget extends CommandTarget {
 	public WindowCommandTarget(Widget widget, Window window) {
 		super(widget, window);
 	}
-	
+
 	Window getWindow() {
-		return (Window)getContext();
+		return (Window) getContext();
 	}
 
 	/* (non-Javadoc)

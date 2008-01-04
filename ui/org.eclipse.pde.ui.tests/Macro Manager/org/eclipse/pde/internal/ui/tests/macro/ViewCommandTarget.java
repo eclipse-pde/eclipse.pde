@@ -18,9 +18,9 @@ public class ViewCommandTarget extends CommandTarget {
 	public ViewCommandTarget(Widget widget, IViewPart view) {
 		super(widget, view);
 	}
-	
+
 	public IViewPart getView() {
-		return (IViewPart)getContext();
+		return (IViewPart) getContext();
 	}
 
 	/* (non-Javadoc)

@@ -38,29 +38,27 @@ import org.osgi.framework.Bundle;
  */
 public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 
-	private static final String F_PLUGIN_FILE = 
-		"/tests/performance/plugin/org.eclipse.jdt.ui/plugin.xml"; //$NON-NLS-1$
+	private static final String F_PLUGIN_FILE = "/tests/performance/plugin/org.eclipse.jdt.ui/plugin.xml"; //$NON-NLS-1$
 
-	private static final String F_MANIFEST_FILE = 
-		"/tests/performance/manifest/org.eclipse.jdt.ui/MANIFEST.MF"; //$NON-NLS-1$
-	
+	private static final String F_MANIFEST_FILE = "/tests/performance/manifest/org.eclipse.jdt.ui/MANIFEST.MF"; //$NON-NLS-1$
+
 	private static final int F_TEST_ITERATIONS = 25;
 
 	private static final int F_WARMUP_ITERATIONS = 10;
-	
+
 	private static File fPluginFile;
-	
+
 	private static File fManifestFile;
-	
+
 	private static IWorkbenchPage fActivePage;
-	
+
 	/**
 	 * @return
 	 */
 	public static Test suite() {
 		return new TestSuite(OpenManifestEditorPerfTest.class);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
 	 */
@@ -75,8 +73,8 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		fActivePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		// Disable code folding feature
 		disableCodeFoldingFeature();
-	}		
-	
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -85,9 +83,9 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		if (store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED)) {
 			store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 			PDEPlugin.getDefault().savePluginPreferences();
-		}		
+		}
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -103,7 +101,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		}
 		return bundle;
 	}
-	
+
 	/**
 	 * @param bundle
 	 * @param filename
@@ -121,7 +119,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		}
 		return new File(path);
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -129,15 +127,15 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
 	public void testEditorOpenMF() throws Exception {
 		tagAsSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fManifestFile);
-	}	
-	
+	}
+
 	/**
 	 * @param file
 	 * @throws Exception
@@ -149,7 +147,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		for (int i = 0; i < F_WARMUP_ITERATIONS; i++) {
 			IEditorPart editorPart = openEditor(editorInput);
 			closeEditor(editorPart);
-		}		
+		}
 		// Test Iterations
 		for (int i = 0; i < F_TEST_ITERATIONS; i++) {
 			startMeasuring();
@@ -159,7 +157,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		}
 		commitMeasurements();
 		assertPerformance();
-	}	
+	}
 
 	/**
 	 * @param file
@@ -169,14 +167,14 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		// Open the editor
 		return IDE.openEditor(fActivePage, editorInput, IPDEUIConstants.MANIFEST_EDITOR_ID, true);
 	}
-	
+
 	/**
 	 * @param editorPart
 	 * @throws Exception
 	 */
 	private void closeEditor(IEditorPart editorPart) throws Exception {
 		// Close the editor
-		fActivePage.closeEditor(editorPart, false);	
+		fActivePage.closeEditor(editorPart, false);
 	}
-	
+
 }

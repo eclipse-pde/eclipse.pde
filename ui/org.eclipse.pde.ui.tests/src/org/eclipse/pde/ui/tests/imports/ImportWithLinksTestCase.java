@@ -25,46 +25,45 @@ import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class ImportWithLinksTestCase extends BaseImportTestCase {
-	
+
 	private static int TYPE = PluginImportOperation.IMPORT_BINARY_WITH_LINKS;
 
 	public static Test suite() {
 		return new TestSuite(ImportWithLinksTestCase.class);
 	}
-	
+
 	public void testImportLinksJAR() {
 		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
 		verifyLinkedProject("org.eclipse.pde.core", true);
 	}
-	
+
 	public void testImportLinksFlat() {
 		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
 		verifyLinkedProject("org.eclipse.jdt.debug", true);
 	}
-	
+
 	public void testImportLinksNotJavaFlat() {
 		runOperation(new String[] {"org.eclipse.pde.source"}, TYPE);
 		verifyLinkedProject("org.eclipse.pde.source", false);
 	}
-	
+
 	public void testImportLinksNotJavaJARd() {
 		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
 		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
 	}
-	
+
 	public void testImportLinksMultiple() {
-		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"},
-					TYPE);
+		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"}, TYPE);
 		verifyLinkedProject("org.eclipse.core.filebuffers", true);
 		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
-		verifyLinkedProject("org.eclipse.pde.build", true);		
+		verifyLinkedProject("org.eclipse.pde.build", true);
 	}
 
 	private void verifyLinkedProject(String projectName, boolean isJava) {
 		try {
-			IProject project =  verifyProject(projectName);
+			IProject project = verifyProject(projectName);
 			RepositoryProvider provider = RepositoryProvider.getProvider(project);
-			assertTrue(provider instanceof BinaryRepositoryProvider);			
+			assertTrue(provider instanceof BinaryRepositoryProvider);
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
 			if (isJava) {
@@ -72,11 +71,11 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 				assertTrue(checkSourceAttached(jProject));
 				assertTrue(checkLibraryEntry(jProject));
 			}
-		} catch (CoreException e) {	
+		} catch (CoreException e) {
 			fail(e.getMessage());
-		}	
+		}
 	}
-	
+
 	private boolean checkLibraryEntry(IJavaProject jProject) throws JavaModelException {
 		IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {

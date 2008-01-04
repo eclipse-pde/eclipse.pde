@@ -30,13 +30,13 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	public static Test suite() {
 		return new TestSuite(InitializeModelsPerfTest.class);
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
 		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 	}
-	
+
 	public void testModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		URL[] paths = getURLs();
@@ -46,7 +46,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	public void testCachedModels() throws Exception {
 		tagAsSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		URL[] paths = getURLs();
@@ -57,11 +57,11 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	protected void tearDown() throws Exception {
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
 	}
-	
+
 	private void deleteContent(File curr) {
 		if (curr.exists()) {
 			if (curr.isDirectory()) {
@@ -75,7 +75,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 			curr.delete();
 		}
 	}
-	
+
 	private URL[] getURLs() {
 		URL[] paths = PluginPathFinder.getPluginPaths(TargetPlatform.getLocation());
 		// FAIR ANALYSIS: this is the number of plug-ins in 3.1.x
@@ -84,5 +84,4 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		return result;
 	}
 
-	
 }

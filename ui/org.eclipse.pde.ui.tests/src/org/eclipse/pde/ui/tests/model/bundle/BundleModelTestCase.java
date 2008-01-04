@@ -24,19 +24,19 @@ public abstract class BundleModelTestCase extends TestCase {
 	protected BundleModel fModel;
 	protected BundleTextChangeListener fListener;
 	protected String fHeaderName;
-	
+
 	public BundleModelTestCase(String headerName) {
 		fHeaderName = headerName;
 	}
-	
+
 	protected void setUp() throws Exception {
 		fDocument = new Document();
 	}
-	
+
 	protected void load() {
 		load(false);
 	}
-	
+
 	protected void load(boolean addListener) {
 		try {
 			fModel = new BundleModel(fDocument, false);
@@ -51,7 +51,7 @@ public abstract class BundleModelTestCase extends TestCase {
 			fail("model cannot be loaded");
 		}
 	}
-	
+
 	public void testAbsentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -59,10 +59,10 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
-		assertNull(fModel.getBundle().getManifestHeader(fHeaderName));		
+
+		assertNull(fModel.getBundle().getManifestHeader(fHeaderName));
 	}
-	
+
 	public void testPresentHeader() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -72,10 +72,10 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load();
-		
-		assertNotNull(fModel.getBundle().getManifestHeader(fHeaderName));				
+
+		assertNotNull(fModel.getBundle().getManifestHeader(fHeaderName));
 	}
-	
+
 	public void testHeaderOffset1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -85,11 +85,11 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertEquals(fDocument.getLineOffset(3), header.getOffset());		
+		assertEquals(fDocument.getLineOffset(3), header.getOffset());
 	}
-	
+
 	public void testHeaderOffset2() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -99,12 +99,11 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertEquals(fDocument.getLineOffset(2), header.getOffset());		
+		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
-	
-	
+
 	public void testHeaderLength() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -114,11 +113,11 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertEquals(fDocument.getLineLength(3), header.getLength());	
+		assertEquals(fDocument.getLineLength(3), header.getLength());
 	}
-	
+
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -128,8 +127,8 @@ public abstract class BundleModelTestCase extends TestCase {
 		buffer.append(": com.example.abc\r\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertEquals(fDocument.getLineLength(3), header.getLength());	
+		assertEquals(fDocument.getLineLength(3), header.getLength());
 	}
 }

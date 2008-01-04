@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllImportTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite to test the plug-in and feature import wizards."); //$NON-NLS-1$
 		suite.addTest(ImportWithLinksTestCase.suite());

@@ -23,15 +23,15 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
-	
+
 	public ExecutionEnvironmentTestCase() {
 		super(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(ExecutionEnvironmentTestCase.class);
 	}
-	
+
 	public void testAddExecutionEnvironmentHeader() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -40,18 +40,18 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		fModel.getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, "J2SE-1.4");
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		assertNotNull(header);	
+		assertNotNull(header);
 		assertEquals("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n", header.write());
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
-	
+
 	public void testRemoveExistingExecutionEnvironment() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -62,18 +62,18 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		assertNotNull(header);
-		
-		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader)header).getEnvironments()[0];
-		((RequiredExecutionEnvironmentHeader)header).removeExecutionEnvironment(env);
-		
+
+		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader) header).getEnvironments()[0];
+		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(env);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
-		assertEquals(4, fDocument.getNumberOfLines());	
+		assertEquals(4, fDocument.getNumberOfLines());
 	}
-	
-	public void testAddExecutionEnvironment() throws Exception{
+
+	public void testAddExecutionEnvironment() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
@@ -84,7 +84,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.5");
-		((RequiredExecutionEnvironmentHeader)header).addExecutionEnvironment(env);
+		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env);
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
 
@@ -99,7 +99,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		expected.append(" J2SE-1.5\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testAddMulitplieExecutionEnvironmnets() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -113,26 +113,26 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		IExecutionEnvironment env1 = manager.getEnvironment("CDC-1.1/Foundation-1.1");
 		IExecutionEnvironment env2 = manager.getEnvironment("J2SE-1.5");
 		IExecutionEnvironment env3 = manager.getEnvironment("OSGi/Minimum-1.1");
-		((RequiredExecutionEnvironmentHeader)header).addExecutionEnvironment(env1);
-		((RequiredExecutionEnvironmentHeader)header).addExecutionEnvironment(env2);
-		((RequiredExecutionEnvironmentHeader)header).addExecutionEnvironment(env3);
-		
+		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env1);
+		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env2);
+		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env3);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(8, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(7));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
 		StringBuffer expected = new StringBuffer("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
 		expected.append(" CDC-1.1/Foundation-1.1,\n");
 		expected.append(" J2SE-1.5,\n");
 		expected.append(" OSGi/Minimum-1.1\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));		
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveExecutionEnvironment() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -144,23 +144,23 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader)header).getEnvironments()[1];
-		((RequiredExecutionEnvironmentHeader)header).removeExecutionEnvironment(env);
-		
+		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader) header).getEnvironments()[1];
+		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(env);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(6, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(5));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
 		StringBuffer expected = new StringBuffer("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
 		expected.append(" OSGi/Minimum-1.1\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));			
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveMultipleExecutionEnvironments() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -172,22 +172,22 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		ExecutionEnvironment[] envs = ((RequiredExecutionEnvironmentHeader)header).getEnvironments();
-		((RequiredExecutionEnvironmentHeader)header).removeExecutionEnvironment(envs[1]);
-		((RequiredExecutionEnvironmentHeader)header).removeExecutionEnvironment(envs[0]);
-		
+		ExecutionEnvironment[] envs = ((RequiredExecutionEnvironmentHeader) header).getEnvironments();
+		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(envs[1]);
+		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(envs[0]);
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals("Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals("Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testPreserveSpacing() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -197,25 +197,25 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		buffer.append(" J2SE-1.4\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("OSGi/Minimum-1.1");
-		((RequiredExecutionEnvironmentHeader)header).addExecutionEnvironment(env);
+		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env);
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(7, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(6));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
-		
+
 		StringBuffer expected = new StringBuffer("Bundle-RequiredExecutionEnvironment: \n");
 		expected.append(" J2SE-1.4,\n");
 		expected.append(" OSGi/Minimum-1.1\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
-		
+
 	}
 
 }

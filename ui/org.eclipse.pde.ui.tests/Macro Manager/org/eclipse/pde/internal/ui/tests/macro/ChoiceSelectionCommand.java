@@ -54,8 +54,7 @@ public class ChoiceSelectionCommand extends MacroCommand {
 			CCombo combo = (CCombo) widget;
 			index = combo.getSelectionIndex();
 		} else {
-			String id = MacroPlugin.getDefault().getMacroManager()
-					.resolveWidget(item);
+			String id = MacroPlugin.getDefault().getMacroManager().resolveWidget(item);
 			if (id != null)
 				return id;
 			if (widget instanceof TabFolder) {
@@ -97,10 +96,8 @@ public class ChoiceSelectionCommand extends MacroCommand {
 		writer.println("/>");
 	}
 
-	public boolean playback(Display display, Composite parent, IProgressMonitor monitor)
-			throws CoreException {
-		CommandTarget target = MacroUtil.locateCommandTarget(parent,
-				getWidgetId(), getStartLine());
+	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
+		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
 		if (target == null)
 			return false;
 		target.setFocus();

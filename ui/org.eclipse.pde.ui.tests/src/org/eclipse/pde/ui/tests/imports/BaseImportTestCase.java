@@ -31,8 +31,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	protected void runOperation(String[] symbolicNames, int type) {
 		PluginImportOperation.IImportQuery query = new ImportQuery(getShell());
 		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(getShell());
-		final PluginImportOperation op =
-			new PluginImportOperation(getModels(symbolicNames), type, query, executionQuery, false);
+		final PluginImportOperation op = new PluginImportOperation(getModels(symbolicNames), type, query, executionQuery, false);
 
 		try {
 			op.run(new NullProgressMonitor());
@@ -64,16 +63,12 @@ public abstract class BaseImportTestCase extends PDETestCase {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IClasspathEntry entry = roots[i].getRawClasspathEntry();
-			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY 
-					|| entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
-					|| !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH))
+			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY || entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER || !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH))
 				continue;
 			if (roots[i].getSourceAttachmentPath() == null)
 				return false;
 		}
 		return true;
 	}
-
-
 
 }

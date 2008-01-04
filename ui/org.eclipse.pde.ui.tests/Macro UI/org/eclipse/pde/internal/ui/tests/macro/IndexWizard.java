@@ -12,24 +12,23 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.jface.wizard.Wizard;
 
-
 public class IndexWizard extends Wizard {
 	private IndexPage page;
 	private MacroManager macroManager;
-	
+
 	public IndexWizard(MacroManager manager) {
 		this.macroManager = manager;
 		setWindowTitle("Macro Recorder");
 	}
-	
+
 	public void addPages() {
 		page = new IndexPage(macroManager.getExistingIndices());
 		addPage(page);
 	}
-	
+
 	public boolean performFinish() {
 		String indexId = page.getIndexId();
-		if (indexId!=null) {
+		if (indexId != null) {
 			macroManager.addIndex(indexId);
 		}
 		return true;

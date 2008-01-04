@@ -20,16 +20,16 @@ import org.eclipse.swt.widgets.Event;
 
 public class FocusCommand extends MacroCommand {
 	public static final String TYPE = "focus";
-	
+
 	public FocusCommand(WidgetIdentifier wid) {
 		super(wid);
 	}
-	
+
 	public boolean mergeEvent(Event e) {
 		// we can directly merge repeated focus requests
 		// on the same widget
 		return true;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.macro.MacroCommand#getType()
@@ -63,9 +63,10 @@ public class FocusCommand extends MacroCommand {
 	 * @see org.eclipse.ui.macro.IPlayable#playback(org.eclipse.swt.widgets.Composite)
 	 */
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
-		if (parent.isDisposed()) return false;
+		if (parent.isDisposed())
+			return false;
 		CommandTarget target = MacroUtil.locateCommandTarget(parent, getWidgetId(), getStartLine());
-		if (target!=null)
+		if (target != null)
 			target.setFocus();
 		return true;
 	}

@@ -24,27 +24,27 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		return new TestSuite(ExtensionElementTestCase.class);
 	}
 
-	public void testAddNewExtensionElement1LF() throws Exception{
+	public void testAddNewExtensionElement1LF() throws Exception {
 		testAddNewExtensionElement1(LF);
 	}
 
 	public void testAddNewExtensionElement2LF() throws Exception {
-		testAddNewExtensionElement2(LF);		
+		testAddNewExtensionElement2(LF);
 	}
 
 	public void testAddNewExtensionElement3LF() throws Exception {
 		testAddNewExtensionElement3(LF);
 	}
 
-	public void testAddNewExtensionElement1CRLF()throws Exception {
+	public void testAddNewExtensionElement1CRLF() throws Exception {
 		testAddNewExtensionElement1(CRLF);
 	}
 
-	public void testAddNewExtensionElement2CRLF()throws Exception {
+	public void testAddNewExtensionElement2CRLF() throws Exception {
 		testAddNewExtensionElement2(CRLF);
 	}
 
-	public void testAddNewExtensionElement3CRLF()throws Exception {
+	public void testAddNewExtensionElement3CRLF() throws Exception {
 		testAddNewExtensionElement3(CRLF);
 	}
 
@@ -114,7 +114,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		buffer.append(newLine);
 		buffer.append("\t\t<sample />");
 		buffer.append(newLine);
-		return buffer.append("\t</extension>"); 
+		return buffer.append("\t</extension>");
 	}
 
 	public void testAddNewMultipleExtensionElements1LF() throws Exception {
@@ -246,7 +246,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 	private void testRemoveMultipleExtensionElements1(String newLine) throws Exception {
 		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\"><sample />");
-		buffer.append("<sample1/><sample2 /></extension>"); 
+		buffer.append("<sample1/><sample2 /></extension>");
 		testRemoveMulitpleExtensionElements(buffer, newLine);
 	}
 
@@ -259,7 +259,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		buffer.append(newLine);
 		buffer.append("\t<sample2 />");
 		buffer.append(newLine);
-		buffer.append("</extension>"); 
+		buffer.append("</extension>");
 		testRemoveMulitpleExtensionElements(buffer, newLine);
 	}
 
@@ -270,7 +270,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		buffer.append("<sample1/>");
 		buffer.append("<sample2 />");
 		buffer.append(newLine);
-		buffer.append("\t</extension>"); 
+		buffer.append("\t</extension>");
 		testRemoveMulitpleExtensionElements(buffer, newLine);
 	}
 
@@ -305,7 +305,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 2);
-		assertEquals(ext.getChildren()[0].getName(), "sample");	
+		assertEquals(ext.getChildren()[0].getName(), "sample");
 	}
 
 	private void testAddNewMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
@@ -361,7 +361,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMulitpleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
-		setXMLContents(buffer, newLine);	
+		setXMLContents(buffer, newLine);
 		load(true);
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();

@@ -32,14 +32,14 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 	}
 
 	protected void addPackage(IManifestHeader header, String packageName) {
-		PackageObject packageObject = new PackageObject((ExportPackageHeader)header, packageName, null, null);
-		((ExportPackageHeader)header).addPackage(packageObject);
+		PackageObject packageObject = new PackageObject((ExportPackageHeader) header, packageName, null, null);
+		((ExportPackageHeader) header).addPackage(packageObject);
 	}
 
 	protected PackageObject getPackage(IManifestHeader header, String packageName) {
-		return ((ExportPackageHeader)header).getPackage(packageName);
+		return ((ExportPackageHeader) header).getPackage(packageName);
 	}
-	
+
 	public void testReadInternalPackage() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -48,16 +48,16 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		buffer.append(fHeaderName + ": com.example.abc;x-internal:=true\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "com.example.abc");
+
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "com.example.abc");
 		assertNotNull(object);
 		assertEquals(object.getFriends().length, 0);
 		assertTrue(object.isInternal());
 	}
-	
+
 	public void testReadOneFriend() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -66,18 +66,18 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		buffer.append(fHeaderName + ": com.example.abc;x-friends:=com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "com.example.abc");
+
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "com.example.abc");
 		assertNotNull(object);
 		assertTrue(object.isInternal());
 		PackageFriend[] friends = object.getFriends();
 		assertEquals(friends.length, 1);
 		assertTrue(friends[0].getName().equals("com.example.xyz"));
 	}
-	
+
 	public void testReadMultipleFriend() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -86,11 +86,11 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		buffer.append(fHeaderName + ": com.example.abc;x-friends:=\"com.example.xxx,com.example.yyy,com.example.zzz\"\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "com.example.abc");
+
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "com.example.abc");
 		assertNotNull(object);
 		assertTrue(object.isInternal());
 		PackageFriend[] friends = object.getFriends();
@@ -99,7 +99,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(friends[1].getName().equals("com.example.yyy"));
 		assertTrue(friends[2].getName().equals("com.example.zzz"));
 	}
-	
+
 	public void testSetPackageInternal() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -111,22 +111,22 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "org.osgi.framework");
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.setInternal(true);
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework;x-internal:=true\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework;x-internal:=true\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testAddPackageFriend() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -138,21 +138,21 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "org.osgi.framework");
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
-		object.addFriend(new PackageFriend(object, "org.eclipse.pde.ui"));	
+		object.addFriend(new PackageFriend(object, "org.eclipse.pde.ui"));
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.ui\"\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.ui\"\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testAddPackageFriends() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -164,19 +164,19 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 
-		ExportPackageObject object = (ExportPackageObject)getPackage(header, "org.osgi.framework");
+		ExportPackageObject object = (ExportPackageObject) getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.addFriend(new PackageFriend(object, "org.eclipse.pde.core"));
 		object.addFriend(new PackageFriend(object, "org.eclipse.pde.ui"));
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.core,org.eclipse.pde.ui\"\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.core,org.eclipse.pde.ui\"\n", fDocument.get(pos, length));
 	}
 }

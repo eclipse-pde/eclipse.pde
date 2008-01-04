@@ -41,11 +41,11 @@ public class DefaultWidgetResolver implements IWidgetResolver {
 			if (data instanceof IClasspathContainer)
 				return ((IClasspathContainer) data).getPath().toString();
 			if (data instanceof IPluginModelBase)
-				return ((IPluginModelBase)data).getPluginBase().getId();
+				return ((IPluginModelBase) data).getPluginBase().getId();
 			if (data instanceof IFeatureModel)
-				return ((IFeatureModel)data).getFeature().getId();
+				return ((IFeatureModel) data).getFeature().getId();
 			if (data instanceof IIdentifiable)
-				return ((IIdentifiable)data).getId();
+				return ((IIdentifiable) data).getId();
 		}
 		if (widget instanceof Button) {
 			if (data instanceof Integer)

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -28,28 +29,28 @@ import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Node;
 
 public class Macro implements IWritable, IPlayable {
-	private static final String SYNTAX_VERSION="0.1";
+	private static final String SYNTAX_VERSION = "0.1";
 	private transient IIndexHandler indexHandler;
 	ArrayList shells;
 	private String name;
 	private Stack shellStack;
-	
+
 	public Macro() {
 		shells = new ArrayList();
 	}
-	
+
 	public Macro(String name) {
 		this();
 		this.name = name;
 	}
-	
+
 	void addShell(Node node, Hashtable lineTable) {
 		String sid = MacroUtil.getAttribute(node, "id");
 		MacroCommandShell shell = new MacroCommandShell(null, sid);
 		shell.load(node, lineTable);
 		shells.add(shell);
 	}
-	
+
 	public void initializeForRecording(Display display) {
 		shellStack = new Stack();
 		shells.clear();
@@ -58,71 +59,73 @@ public class Macro implements IWritable, IPlayable {
 		shellStack.push(commandShell);
 		shells.add(commandShell);
 	}
-	
+
 	private MacroCommandShell createCommandShell(Shell shell) {
 		WidgetIdentifier wi = MacroUtil.getWidgetIdentifier(shell);
-		if (wi==null) return null;
-		return new MacroCommandShell(shell, wi.getWidgetId());		
+		if (wi == null)
+			return null;
+		return new MacroCommandShell(shell, wi.getWidgetId());
 	}
-	
+
 	private boolean isCurrent(Shell shell) {
-		if (shellStack.isEmpty()) return false;
-		MacroCommandShell cshell = (MacroCommandShell)shellStack.peek();
+		if (shellStack.isEmpty())
+			return false;
+		MacroCommandShell cshell = (MacroCommandShell) shellStack.peek();
 		return cshell.tracks(shell);
 	}
-	
+
 	public void stopRecording() {
 		reset();
 	}
-	
+
 	public boolean addEvent(Event event) throws Exception {
 		if (isIgnorableEvent(event))
 			return false;
 		try {
 			if (event.widget instanceof Shell) {
 				switch (event.type) {
-					case SWT.Activate:
-						activateShell((Shell)event.widget);
+					case SWT.Activate :
+						activateShell((Shell) event.widget);
 						break;
-					case SWT.Close:
-						boolean stop = closeShell((Shell)event.widget);
+					case SWT.Close :
+						boolean stop = closeShell((Shell) event.widget);
 						if (stop)
 							return true;
 						break;
 				}
-			}
-			else if (getTopShell()!=null) {
+			} else if (getTopShell() != null) {
 				getTopShell().addEvent(event);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw e;
 		}
 		return false;
 	}
-	
+
 	private boolean isIgnorableEvent(Event e) {
 		Shell shell = e.display.getActiveShell();
-		if (shell!=null) {
-			Boolean ivalue = (Boolean)shell.getData(MacroManager.IGNORE);
-			if (ivalue!=null && ivalue.equals(Boolean.TRUE))
+		if (shell != null) {
+			Boolean ivalue = (Boolean) shell.getData(MacroManager.IGNORE);
+			if (ivalue != null && ivalue.equals(Boolean.TRUE))
 				return true;
 		}
 		return false;
 	}
-	
+
 	public void addPause() {
 		getTopShell().addPause();
 	}
-	
+
 	public void addIndex(String id) {
 		getTopShell().addIndex(id);
 	}
+
 	public MacroCommandShell getTopShell() {
 		if (shellStack.isEmpty())
 			return null;
-		return (MacroCommandShell)shellStack.peek();		
+		return (MacroCommandShell) shellStack.peek();
 	}
+
 	private void activateShell(Shell shell) {
 		Object data = shell.getData();
 		if (data instanceof Dialog) {
@@ -131,13 +134,12 @@ public class Macro implements IWritable, IPlayable {
 				getTopShell().addCommandShell(commandShell);
 				shellStack.push(commandShell);
 			}
-		}
-		else if (data instanceof Window) {
+		} else if (data instanceof Window) {
 			updateStack();
 			if (!isCurrent(shell)) {
 				// pop the current
-				popStack();		
-				MacroCommandShell commandShell = createCommandShell(shell);				
+				popStack();
+				MacroCommandShell commandShell = createCommandShell(shell);
 				shellStack.push(commandShell);
 				shells.add(commandShell);
 			}
@@ -145,21 +147,23 @@ public class Macro implements IWritable, IPlayable {
 	}
 
 	private void popStack() {
-		if (shellStack.isEmpty()) return;
-		MacroCommandShell top = (MacroCommandShell)shellStack.pop();
+		if (shellStack.isEmpty())
+			return;
+		MacroCommandShell top = (MacroCommandShell) shellStack.pop();
 		top.extractExpectedReturnCode();
 	}
 
 	private boolean closeShell(Shell shell) {
-		if (shellStack.isEmpty()) return false;
-		MacroCommandShell top = (MacroCommandShell)shellStack.peek();
+		if (shellStack.isEmpty())
+			return false;
+		MacroCommandShell top = (MacroCommandShell) shellStack.peek();
 		if (top.tracks(shell))
 			popStack();
 		return shellStack.isEmpty();
 	}
-	
+
 	private void updateStack() {
-		while (shellStack.size()>0) {
+		while (shellStack.size() > 0) {
 			MacroCommandShell top = getTopShell();
 			if (top.isDisposed())
 				popStack();
@@ -167,27 +171,27 @@ public class Macro implements IWritable, IPlayable {
 				break;
 		}
 	}
-	
+
 	private void closeSecondaryShells() {
 	}
-	
-	public String [] getExistingIndices() {
+
+	public String[] getExistingIndices() {
 		ArrayList list = new ArrayList();
-		for (int i=0; i<shells.size(); i++) {
-			MacroCommandShell shell = (MacroCommandShell)shells.get(i);
+		for (int i = 0; i < shells.size(); i++) {
+			MacroCommandShell shell = (MacroCommandShell) shells.get(i);
 			shell.addExistingIndices(list);
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
+
 	public boolean playback(Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		reset();
-		String mname = name!=null?name:"macro";
-		monitor.beginTask("Executing "+mname+" ...", shells.size());
-		for (int i=0; i<shells.size(); i++) {
-			MacroCommandShell shell = (MacroCommandShell)shells.get(i);
+		String mname = name != null ? name : "macro";
+		monitor.beginTask("Executing " + mname + " ...", shells.size());
+		for (int i = 0; i < shells.size(); i++) {
+			MacroCommandShell shell = (MacroCommandShell) shells.get(i);
 			shell.setIndexHandler(getIndexHandler());
-			final Shell [] sh = new Shell[1];
+			final Shell[] sh = new Shell[1];
 			display.syncExec(new Runnable() {
 				public void run() {
 					sh[0] = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -197,25 +201,26 @@ public class Macro implements IWritable, IPlayable {
 				boolean result = shell.playback(display, sh[0], new SubProgressMonitor(monitor, 1));
 				if (!result)
 					return false;
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				closeSecondaryShells();
 				throw e;
 			}
 		}
 		return true;
 	}
+
 	private void reset() {
 		shellStack = null;
 	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		writer.print("<macro version=\"");
 		writer.print(SYNTAX_VERSION);
 		writer.println("\">");
 		String cindent = "   ";
-		for (int i=0; i<shells.size(); i++) {
-			MacroCommandShell cshell = (MacroCommandShell)shells.get(i);
+		for (int i = 0; i < shells.size(); i++) {
+			MacroCommandShell cshell = (MacroCommandShell) shells.get(i);
 			cshell.write(cindent, writer);
 		}
 		writer.println("</macro>");
@@ -224,7 +229,6 @@ public class Macro implements IWritable, IPlayable {
 	public IIndexHandler getIndexHandler() {
 		return indexHandler;
 	}
-	
 
 	public void setIndexHandler(IIndexHandler indexHandler) {
 		this.indexHandler = indexHandler;
@@ -233,5 +237,5 @@ public class Macro implements IWritable, IPlayable {
 	public String getName() {
 		return name;
 	}
-	
+
 }

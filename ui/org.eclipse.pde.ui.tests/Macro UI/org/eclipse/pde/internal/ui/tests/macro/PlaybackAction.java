@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public class PlaybackAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
+
 	/**
 	 * The constructor.
 	 */
@@ -45,11 +46,11 @@ public class PlaybackAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		ISelection selection = window.getSelectionService().getSelection();
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection)selection;
+			IStructuredSelection ssel = (IStructuredSelection) selection;
 			Object el = ssel.getFirstElement();
 			if (el instanceof IFile) {
 				action.setEnabled(false);
-				runFile((IFile)el);
+				runFile((IFile) el);
 				action.setEnabled(true);
 			}
 		}
@@ -62,8 +63,7 @@ public class PlaybackAction implements IWorkbenchWindowActionDelegate {
 			mng.setIndexHandler(new DefaultIndexHandler());
 			mng.play(window.getShell().getDisplay(), window, file.getName(), is);
 			mng.setIndexHandler(null);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			MacroPlugin.logException(e);
 		}
 	}

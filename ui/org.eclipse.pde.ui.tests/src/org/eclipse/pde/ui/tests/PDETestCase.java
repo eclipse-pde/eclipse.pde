@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class PDETestCase extends TestCase {
-	
+
 	protected Shell getShell() {
 		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
 	}
-	
+
 	protected void tearDown() {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();

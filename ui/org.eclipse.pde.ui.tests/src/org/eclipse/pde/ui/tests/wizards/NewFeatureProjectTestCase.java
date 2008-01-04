@@ -41,6 +41,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		DEFAULT_FEATURE_DATA.name = PROJECT_NAME;
 		DEFAULT_FEATURE_DATA.version = "1.0.0";
 	}
+
 	private static FeatureData createDefaultFeatureData() {
 		FeatureData fd = new FeatureData();
 		fd.id = DEFAULT_FEATURE_DATA.id;
@@ -48,32 +49,28 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		fd.version = DEFAULT_FEATURE_DATA.version;
 		return fd;
 	}
+
 	public static Test suite() {
 		return new TestSuite(NewFeatureProjectTestCase.class);
 	}
-	
+
 	protected String getProjectName() {
 		return PROJECT_NAME;
 	}
-	
+
 	private void createFeature(FeatureData fd, boolean patch, Object modelObject) {
 		if (fd == null)
 			fd = DEFAULT_FEATURE_DATA;
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		IPath path = Platform.getLocation();
 		IRunnableWithProgress op;
-		if ((patch && !(modelObject instanceof IFeatureModel))
-				|| (!patch && modelObject != null && !(modelObject instanceof IPluginBase[])))
+		if ((patch && !(modelObject instanceof IFeatureModel)) || (!patch && modelObject != null && !(modelObject instanceof IPluginBase[])))
 			fail("Unaccepted model object passed...");
-		
+
 		if (patch)
-			op = new CreateFeaturePatchOperation(
-					project, path, fd, (IFeatureModel) modelObject,
-					getShell());
+			op = new CreateFeaturePatchOperation(project, path, fd, (IFeatureModel) modelObject, getShell());
 		else
-			op = new CreateFeatureProjectOperation(
-					project, path, fd, (IPluginBase[]) modelObject,
-					getShell());
+			op = new CreateFeatureProjectOperation(project, path, fd, (IPluginBase[]) modelObject, getShell());
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
 			progressService.runInUI(progressService, op, null);
@@ -83,11 +80,11 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 			fail("Feature creation failed...");
 		}
 	}
-	
+
 	private void verifyFeatureNature() {
 		assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
 	}
-	
+
 	public void testCreationFeatureProject() {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
@@ -103,7 +100,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		verifyProjectExistence();
 		verifyFeatureNature();
 	}
-	
+
 	public void testFeatureProjectData() {
 		/*FeatureData fd = createDefaultFeatureData();
 		String library = "testLibrary";
@@ -119,13 +116,13 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		assertTrue(feature.getProviderName().equals(provider));
 		assertTrue(feature.getInstallHandler().getLibrary().equals(library));*/
 	}
-	
+
 	public void testSimpleFeature() {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
 		assertFalse("Testing simple project for no java nature...", hasNature(JavaCore.NATURE_ID));
 	}
-	
+
 	public void testJavaFeature() {
 		FeatureData fd = createDefaultFeatureData();
 		String library = "testLibrary";
@@ -134,7 +131,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		verifyProjectExistence();
 		assertTrue("Testing for existing java nature...", hasNature(JavaCore.NATURE_ID));
 	}
-	
+
 	public void testPluginFeature() {
 		/*PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel("org.eclipse.pde.ui");
@@ -147,7 +144,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		assertTrue("Testing number of feature plugins...", fplugins.length == 1);
 		assertTrue("Testing feature plugin id...", fplugins[0].getId().equals("org.eclipse.pde.ui"));*/
 	}
-	
+
 	public void testModelCount() {
 		/*FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		int numModels = manager.getModels().length;
@@ -156,7 +153,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		int numModelsNew = manager.getModels().length;
 		assertTrue(numModels + 1 == numModelsNew);*/
 	}
-	
+
 	public void testMaskingFeature() {
 		/*FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		int numModels = manager.getModels().length;

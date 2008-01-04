@@ -25,14 +25,14 @@ import org.eclipse.test.performance.Dimension;
 public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 
 	private boolean fAbbreviated;
-	
+
 	/**
 	 * @return
 	 */
 	public static Test suite() {
 		return new TestSuite(SchemaLoaderPerfTest.class);
-	}	
-	
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -40,10 +40,10 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 		fAbbreviated = false;
 		fTestIterations = 5;
 		fWarmupIterations = 50;
-		fRuns = 600;		
+		fRuns = 600;
 		executeTestRun();
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -51,20 +51,20 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 		fAbbreviated = true;
 		fTestIterations = 5;
 		fWarmupIterations = 50;
-		fRuns = 3000;		
+		fRuns = 3000;
 		tagAsSummary("Loading " + fTestIterations + " large schemas", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#executeTest()
 	 */
 	protected void executeTest() throws Exception {
 		SchemaDescriptor descriptor = new SchemaDescriptor(fXSDFile);
-		Schema schema = (Schema)descriptor.getSchema(fAbbreviated);
+		Schema schema = (Schema) descriptor.getSchema(fAbbreviated);
 		if (schema.getName() == null) {
 			throw new Exception("ERROR: Extension point schema name missing"); //$NON-NLS-1$
 		}
 	}
-	
+
 }

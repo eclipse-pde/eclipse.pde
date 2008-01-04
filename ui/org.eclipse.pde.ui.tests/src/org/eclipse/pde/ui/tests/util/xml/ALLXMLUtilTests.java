@@ -19,6 +19,6 @@ public class ALLXMLUtilTests {
 		TestSuite suite = new TestSuite("XML Utilities Test Suite"); //$NON-NLS-1$
 		suite.addTest(ParserWrapperTestCase.suite());
 		return suite;
-	}	
-	
+	}
+
 }

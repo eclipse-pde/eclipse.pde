@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -25,9 +24,9 @@ import org.eclipse.swt.widgets.Widget;
 
 public class StructuredSelectionCommand extends AbstractStructuredCommand {
 	private String type;
-	public static final String DEFAULT_SELECT="default-select";
-	public static final String ITEM_SELECT="item-select";
-	
+	public static final String DEFAULT_SELECT = "default-select";
+	public static final String ITEM_SELECT = "item-select";
+
 	public StructuredSelectionCommand(WidgetIdentifier wid, String type) {
 		super(wid);
 		items = new ArrayList();
@@ -35,25 +34,23 @@ public class StructuredSelectionCommand extends AbstractStructuredCommand {
 	}
 
 	public boolean mergeEvent(Event e) {
-		if (e.type==SWT.DefaultSelection) {
+		if (e.type == SWT.DefaultSelection) {
 			this.type = DEFAULT_SELECT;
 		}
 		return super.mergeEvent(e);
 	}
-	
+
 	public String getType() {
 		return type;
 	}
 
 	protected Widget[] getItemsForEvent(Event event) {
 		if (event.widget instanceof Tree) {
-			return ((Tree)event.widget).getSelection();
-		}
-		else if (event.widget instanceof Table) {
-			return ((Table)event.widget).getSelection();
-		}
-		else if (event.widget instanceof TableTree) {
-			return ((TableTree)event.widget).getSelection();
+			return ((Tree) event.widget).getSelection();
+		} else if (event.widget instanceof Table) {
+			return ((Table) event.widget).getSelection();
+		} else if (event.widget instanceof TableTree) {
+			return ((TableTree) event.widget).getSelection();
 		}
 		return super.getItemsForEvent(event);
 	}
@@ -62,12 +59,12 @@ public class StructuredSelectionCommand extends AbstractStructuredCommand {
 		tree.setSelection(matches);
 		fireEvent(tree, matches);
 	}
-	
-	private void fireEvent(Widget widget, Widget [] items) {
+
+	private void fireEvent(Widget widget, Widget[] items) {
 		Event e = new Event();
 		e.widget = widget;
-		e.type = type.equals(ITEM_SELECT)?SWT.Selection:SWT.DefaultSelection;
-		e.item = items.length>0?items[0]:null;
+		e.type = type.equals(ITEM_SELECT) ? SWT.Selection : SWT.DefaultSelection;
+		e.item = items.length > 0 ? items[0] : null;
 		widget.notifyListeners(e.type, e);
 	}
 
@@ -75,8 +72,8 @@ public class StructuredSelectionCommand extends AbstractStructuredCommand {
 		table.setSelection(matches);
 		fireEvent(table, matches);
 	}
-	
-	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem [] matches) {
+
+	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem[] matches) {
 		tableTree.setSelection(matches);
 		fireEvent(tableTree, matches);
 	}

@@ -16,11 +16,11 @@ import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
 
 public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
-	
+
 	public PackageHeaderTestCase(String headerName) {
 		super(headerName);
 	}
-	
+
 	public void testAddExportPackageHeader() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -29,18 +29,18 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		fModel.getBundle().setHeader(fHeaderName, "com.example.abc");
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNotNull(header);	
+		assertNotNull(header);
 		assertEquals(fHeaderName + ": com.example.abc\n", header.write());
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
-	
+
 	public void testRemoveExistingExportPackageHeader() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -52,16 +52,16 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
-		((BasePackageHeader)header).removePackage("com.example.abc");
-		
+
+		((BasePackageHeader) header).removePackage("com.example.abc");
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
-		assertEquals(4, fDocument.getNumberOfLines());	
+		assertEquals(4, fDocument.getNumberOfLines());
 	}
-	
+
 	public void testAddPackage() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -71,24 +71,24 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		addPackage(header, "com.example.abc.actions");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(6, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(5));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
-		
+
 		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.actions\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testAddImportPackageHeader() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -97,18 +97,18 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		fModel.getBundle().setHeader(fHeaderName, "com.example.abc");
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNotNull(header);	
+		assertNotNull(header);
 		assertEquals(fHeaderName + ": com.example.abc\n", header.write());
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
-	
+
 	public void testAddMultiplePackages() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -122,23 +122,23 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		addPackage(header, "com.example.abc.views");
 		addPackage(header, "com.example.abc.imports");
 		addPackage(header, "com.example.abc.exports");
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(8, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(7));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
 		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.exports,\n");
 		expected.append(" com.example.abc.imports,\n");
 		expected.append(" com.example.abc.views\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));		
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testRemovePackage() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -151,22 +151,22 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BasePackageHeader)header).removePackage("com.example.abc.actions");
-		
+		((BasePackageHeader) header).removePackage("com.example.abc.actions");
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(6, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(5));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
 		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\n");
 		expected.append(" com.example.abc.refactoring\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));			
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveMultiplePackages() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -179,22 +179,21 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BasePackageHeader)header).removePackage("com.example.abc.actions");
-		((BasePackageHeader)header).removePackage("com.example.abc");
-		
+		((BasePackageHeader) header).removePackage("com.example.abc.actions");
+		((BasePackageHeader) header).removePackage("com.example.abc");
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": com.example.abc.refactoring\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": com.example.abc.refactoring\n", fDocument.get(pos, length));
 	}
-	
-	
+
 	public void testReadPackageWithVersion() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -204,15 +203,15 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		buffer.append(": org.osgi.framework;version=\"1.3.0\"\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
+
 		PackageObject object = getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
-		assertEquals("1.3.0", object.getVersion());		
+		assertEquals("1.3.0", object.getVersion());
 	}
-	
+
 	public void testAddVersionToPackage() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -228,19 +227,19 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		PackageObject object = getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.setVersion("1.3.0");
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework;version=\"1.3.0\"\n", fDocument.get(pos, length));					
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework;version=\"1.3.0\"\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveVersionFromPackage() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -256,19 +255,19 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		PackageObject object = getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.setVersion(null);
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));					
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testAddPackageWithWindowsDelimiter() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -278,24 +277,24 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		buffer.append(": com.example.abc\r\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		addPackage(header, "com.example.abc.actions");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(6, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(5));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
-		
+
 		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\r\n");
 		expected.append(" com.example.abc.actions\r\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));		
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testRemovePackageWithWindowsDelimiter() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -308,22 +307,22 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BasePackageHeader)header).removePackage("com.example.abc.actions");
-		
+		((BasePackageHeader) header).removePackage("com.example.abc.actions");
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(6, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(5));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
 		StringBuffer expected = new StringBuffer(fHeaderName + ": com.example.abc,\r\n");
 		expected.append(" com.example.abc.refactoring\r\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));					
+		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
-	
+
 	public void testPreserveSpacing() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -334,26 +333,27 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		buffer.append(" com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		addPackage(header, "com.example.abc.actions");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(7, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(6));
-		
+
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
-		
+
 		StringBuffer expected = new StringBuffer(fHeaderName + ": \n");
 		expected.append(" com.example.abc,\n");
 		expected.append(" com.example.abc.actions\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
-		
+
 	}
-	
+
 	protected abstract void addPackage(IManifestHeader header, String packageName);
+
 	protected abstract PackageObject getPackage(IManifestHeader header, String packageName);
 }

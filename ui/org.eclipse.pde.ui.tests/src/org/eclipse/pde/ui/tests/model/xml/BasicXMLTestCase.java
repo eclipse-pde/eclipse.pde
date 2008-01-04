@@ -22,20 +22,20 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	public static Test suite() {
 		return new TestSuite(BasicXMLTestCase.class);
 	}
-	
+
 	public void testReadSimpleExtension() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, LF);
 		load();
-		
+
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
 		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
 		assertEquals(extensions[0].getChildCount(), 1);
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
-	
+
 	public void testReadMultilineSimpleExtension() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<extension ");
@@ -44,21 +44,21 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		sb.append(LF);
 		sb.append("<sample />");
 		sb.append(LF);
-		sb.append("</extension>");				
+		sb.append("</extension>");
 		setXMLContents(sb, LF);
 		load();
-		
+
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
 		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
 		assertEquals(extensions[0].getChildCount(), 1);
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
-	
+
 	public void testAddSimpleExtension() throws Exception {
 		setXMLContents(null, LF);
 		load(true);
-		
+
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 0);
 
@@ -71,27 +71,27 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		fModel.getPluginBase().add(ext);
 
 		reload();
-		
+
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
 		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
 		assertEquals(extensions[0].getChildCount(), 1);
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
-	
+
 	public void testRemoveSimpleExtension() throws Exception {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
 		setXMLContents(sb, LF);
 		load(true);
-		
+
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		
+
 		fModel.getPluginBase().remove(extensions[0]);
 
 		reload();
-		
+
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 0);
 	}

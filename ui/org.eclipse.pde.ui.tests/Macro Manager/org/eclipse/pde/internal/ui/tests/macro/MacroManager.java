@@ -49,7 +49,7 @@ public class MacroManager {
 	public static final int DONE = 2;
 
 	private Macro currentMacro;
-	
+
 	private IIndexHandler indexHandler;
 
 	class DisplayListener implements Listener {
@@ -99,9 +99,9 @@ public class MacroManager {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
-	
+
 	public void addIndex(String indexId) {
-		if (currentMacro!=null) {
+		if (currentMacro != null) {
 			currentMacro.addIndex(indexId);
 		}
 	}
@@ -120,18 +120,17 @@ public class MacroManager {
 		hookListeners(display);
 		currentMacro = new Macro();
 		currentMacro.initializeForRecording(display);
-		IRecorderListener[] array = (IRecorderListener[]) listeners
-				.toArray(new IRecorderListener[listeners.size()]);
+		IRecorderListener[] array = (IRecorderListener[]) listeners.toArray(new IRecorderListener[listeners.size()]);
 		for (int i = 0; i < array.length; i++) {
 			array[i].recordingStarted();
 		}
 	}
-	
-	public String [] getExistingIndices() {
-		if (currentMacro!=null) {
+
+	public String[] getExistingIndices() {
+		if (currentMacro != null) {
 			return currentMacro.getExistingIndices();
 		}
-		return new String [0];
+		return new String[0];
 	}
 
 	public Macro stopRecording() {
@@ -140,8 +139,7 @@ public class MacroManager {
 		currentMacro.stopRecording();
 		Macro newMacro = currentMacro;
 		currentMacro = null;
-		IRecorderListener[] array = (IRecorderListener[]) listeners
-				.toArray(new IRecorderListener[listeners.size()]);
+		IRecorderListener[] array = (IRecorderListener[]) listeners.toArray(new IRecorderListener[listeners.size()]);
 		for (int i = 0; i < array.length; i++) {
 			array[i].recordingStopped();
 		}
@@ -192,8 +190,7 @@ public class MacroManager {
 	 * @param is
 	 * @throws CoreException
 	 */
-	public boolean play(final Display display, IRunnableContext context,
-			String scriptName, InputStream is) throws CoreException {
+	public boolean play(final Display display, IRunnableContext context, String scriptName, InputStream is) throws CoreException {
 		XMLDefaultHandler handler = createMacroDocument(is);
 		Node root = handler.getDocumentElement();
 		NodeList children = root.getChildNodes();
@@ -207,14 +204,13 @@ public class MacroManager {
 		}
 		// discard the DOM
 		handler = null;
-		
+
 		macro.setIndexHandler(getIndexHandler());
 
 		final boolean[] result = new boolean[1];
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					//System.out.println("Start macro: "+macro.getName());
 					result[0] = macro.playback(display, null, monitor);
@@ -239,11 +235,11 @@ public class MacroManager {
 	}
 
 	private XMLDefaultHandler createMacroDocument(InputStream is) throws CoreException {
-        XMLDefaultHandler handler=null;
+		XMLDefaultHandler handler = null;
 		try {
 			SAXParser parser = getParser();
-            handler = new XMLDefaultHandler();
-            parser.parse(is, handler);            
+			handler = new XMLDefaultHandler();
+			parser.parse(is, handler);
 		} catch (SAXException e) {
 			MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
 		} catch (IOException e) {
@@ -256,38 +252,35 @@ public class MacroManager {
 		}
 		return handler;
 	}
-	
+
 	private SAXParser getParser() throws CoreException {
-		if (parser==null) {
+		if (parser == null) {
 			try {
-                return SAXParserFactory.newInstance().newSAXParser();
+				return SAXParserFactory.newInstance().newSAXParser();
 			} catch (ParserConfigurationException e) {
 				MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
 			} catch (SAXException e) {
-                MacroUtil.throwCoreException("Error parsing the macro file", 0, e);                
-            }
+				MacroUtil.throwCoreException("Error parsing the macro file", 0, e);
+			}
 		}
 		return parser;
 	}
 
 	private void onEvent(Event event) {
 		try {
-			if (event.type==SWT.KeyDown) {
-				if ((event.stateMask & SWT.SHIFT)!=0 &&
-						(event.stateMask & SWT.CTRL)!=0) {	
+			if (event.type == SWT.KeyDown) {
+				if ((event.stateMask & SWT.SHIFT) != 0 && (event.stateMask & SWT.CTRL) != 0) {
 					int key = event.keyCode & SWT.KEY_MASK;
-					if (key==SWT.F11)
+					if (key == SWT.F11)
 						notifyInterrupt(IRecorderListener.STOP);
-					else if (key==SWT.F10)
+					else if (key == SWT.F10)
 						notifyInterrupt(IRecorderListener.INDEX);
 				}
 				return;
 			}
-			if ((event.type == SWT.Close || event.type == SWT.Activate)
-					&& !(event.widget instanceof Shell))
+			if ((event.type == SWT.Close || event.type == SWT.Activate) && !(event.widget instanceof Shell))
 				return;
-			if (jobListener.getState() == RUNNING
-					|| jobListener.getState() == DONE)
+			if (jobListener.getState() == RUNNING || jobListener.getState() == DONE)
 				currentMacro.addPause();
 			jobListener.reset();
 			boolean stop = currentMacro.addEvent(event);
@@ -299,13 +292,12 @@ public class MacroManager {
 			stopRecording();
 		}
 	}
-	
+
 	private void notifyInterrupt(int type) {
-		IRecorderListener[] array = (IRecorderListener[]) listeners
-		.toArray(new IRecorderListener[listeners.size()]);
-			for (int i = 0; i < array.length; i++) {
-				array[i].recordingInterrupted(type);
-			}
+		IRecorderListener[] array = (IRecorderListener[]) listeners.toArray(new IRecorderListener[listeners.size()]);
+		for (int i = 0; i < array.length; i++) {
+			array[i].recordingInterrupted(type);
+		}
 	}
 
 	public String resolveWidget(Widget widget) {
@@ -322,9 +314,7 @@ public class MacroManager {
 
 	private void loadWidgetResolvers() {
 		widgetResolvers = new ArrayList();
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(
-						"org.eclipse.pde.ui.tests.macroSupport");
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.tests.macroSupport");
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].getName().equals("widgetResolver")) {
 				try {
@@ -341,10 +331,9 @@ public class MacroManager {
 	public IIndexHandler getIndexHandler() {
 		return indexHandler;
 	}
-	
 
 	public void setIndexHandler(IIndexHandler indexHandler) {
 		this.indexHandler = indexHandler;
 	}
-	
+
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -21,5 +20,5 @@ public class AllTargetTests {
 		suite.addTest(TargetEnvironmentTestCase.suite());
 		return suite;
 	}
-	
+
 }

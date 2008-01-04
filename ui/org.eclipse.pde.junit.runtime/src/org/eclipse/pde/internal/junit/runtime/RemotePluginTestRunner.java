@@ -26,38 +26,42 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	private String fTestPluginName;
 	private ClassLoader fLoaderClassLoader;
-	
+
 	class BundleClassLoader extends ClassLoader {
-		  private Bundle bundle;
-		  public BundleClassLoader(Bundle target) {
-		    this.bundle = target;
-		  }
-		  protected Class findClass(String name) throws ClassNotFoundException {
-		    return bundle.loadClass(name);
-		  }
-		  protected URL findResource(String name) {
-		    return bundle.getResource(name);
-		  }
-		  protected Enumeration findResources(String name) throws IOException {
-			   return bundle.getResources(name);
-		  }
+		private Bundle bundle;
+
+		public BundleClassLoader(Bundle target) {
+			this.bundle = target;
+		}
+
+		protected Class findClass(String name) throws ClassNotFoundException {
+			return bundle.loadClass(name);
+		}
+
+		protected URL findResource(String name) {
+			return bundle.getResource(name);
+		}
+
+		protected Enumeration findResources(String name) throws IOException {
+			return bundle.getResources(name);
+		}
 	}
-	
+
 	/** 
 	 * The main entry point. Supported arguments in addition
 	 * to the ones supported by RemoteTestRunner:
 	 * <pre>
 	 * -testpluginname: the name of the plugin containing the tests.
-      * </pre>
-     * @see RemoteTestRunner
-     */
+	  * </pre>
+	 * @see RemoteTestRunner
+	 */
 
 	public static void main(String[] args) {
-		RemotePluginTestRunner testRunner= new RemotePluginTestRunner();
+		RemotePluginTestRunner testRunner = new RemotePluginTestRunner();
 		testRunner.init(args);
 		testRunner.run();
 	}
-	
+
 	/**
 	 * Returns the Plugin class loader of the plugin containing the test.
 	 * @see RemoteTestRunner#getTestClassLoader()
@@ -83,14 +87,14 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args, i, "-testpluginname")) //$NON-NLS-1$
 				fTestPluginName = args[i + 1];
-			
+
 			if (isFlag(args, i, "-loaderpluginname")) //$NON-NLS-1$
 				fLoaderClassLoader = getClassLoader(args[i + 1]);
 		}
 
 		if (fTestPluginName == null)
 			throw new IllegalArgumentException("Parameter -testpluginnname not specified."); //$NON-NLS-1$
-		
+
 		if (fLoaderClassLoader == null)
 			fLoaderClassLoader = getClass().getClassLoader();
 	}
@@ -98,9 +102,9 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	protected Class loadTestLoaderClass(String className) throws ClassNotFoundException {
 		return fLoaderClassLoader.loadClass(className);
 	}
-	
+
 	private boolean isFlag(String[] args, int i, final String wantedFlag) {
 		String lowerCase = args[i].toLowerCase(Locale.ENGLISH);
-		return lowerCase.equals(wantedFlag)  && i < args.length - 1;
+		return lowerCase.equals(wantedFlag) && i < args.length - 1;
 	}
-}	
+}

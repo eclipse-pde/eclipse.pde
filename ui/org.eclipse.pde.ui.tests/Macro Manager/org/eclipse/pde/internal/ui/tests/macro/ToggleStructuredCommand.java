@@ -25,23 +25,23 @@ public abstract class ToggleStructuredCommand extends AbstractStructuredCommand 
 	public ToggleStructuredCommand(WidgetIdentifier wid) {
 		super(wid);
 	}
-	
+
 	public boolean mergeEvent(Event e) {
 		return false;
 	}
-	
+
 	protected void load(Node node, Hashtable lineTable) {
 		super.load(node, lineTable);
 		String att = MacroUtil.getAttribute(node, "value");
-		this.value = att!=null && att.equals("true");
+		this.value = att != null && att.equals("true");
 	}
-	
+
 	protected void writeAdditionalAttributes(PrintWriter writer) {
 		writer.print(" value=\"");
-		writer.print(value?"true":"false");
+		writer.print(value ? "true" : "false");
 		writer.print("\"");
 	}
-	
+
 	public boolean getValue() {
 		return value;
 	}

@@ -11,10 +11,10 @@ public class DefaultIndexHandler implements IIndexHandler {
 	}
 
 	public IStatus processIndex(final Shell shell, String indexId) {
-		final String message = "Index reached: "+indexId;
-		
-		final IStatus [] result = new IStatus[1];
-		
+		final String message = "Index reached: " + indexId;
+
+		final IStatus[] result = new IStatus[1];
+
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(shell, "Macro Playback", message);

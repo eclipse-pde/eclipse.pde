@@ -79,8 +79,7 @@ public class MacroCommandShell extends MacroInstruction {
 
 		private IProgressMonitor monitor;
 
-		public NestedShell(Display display, MacroCommandShell cshell,
-				IProgressMonitor monitor) {
+		public NestedShell(Display display, MacroCommandShell cshell, IProgressMonitor monitor) {
 			this.display = display;
 			this.cshell = cshell;
 			this.monitor = monitor;
@@ -186,15 +185,12 @@ public class MacroCommandShell extends MacroInstruction {
 		if (type == null)
 			return;
 		MacroCommand command = null;
-		WidgetIdentifier wi = (wid != null && cid != null) ? new WidgetIdentifier(
-				new Path(wid), new Path(cid))
-				: null;
+		WidgetIdentifier wi = (wid != null && cid != null) ? new WidgetIdentifier(new Path(wid), new Path(cid)) : null;
 		if (type.equals(ModifyCommand.TYPE))
 			command = new ModifyCommand(wi);
 		else if (type.equals(BooleanSelectionCommand.TYPE))
 			command = new BooleanSelectionCommand(wi);
-		else if (type.equals(StructuredSelectionCommand.ITEM_SELECT)
-				|| type.equals(StructuredSelectionCommand.DEFAULT_SELECT))
+		else if (type.equals(StructuredSelectionCommand.ITEM_SELECT) || type.equals(StructuredSelectionCommand.DEFAULT_SELECT))
 			command = new StructuredSelectionCommand(wi, type);
 		else if (type.equals(ExpansionCommand.TYPE))
 			command = new ExpansionCommand(wi);
@@ -254,10 +250,7 @@ public class MacroCommandShell extends MacroInstruction {
 		if (command != null) {
 			command.processEvent(event);
 			MacroCommand lastCommand = getLastCommand();
-			if (lastCommand != null
-					&& lastCommand.getWidgetId().equals(command.getWidgetId())
-					&& lastCommand.getType().equals(FocusCommand.TYPE)
-					&& isFocusCommand(command.getType())) {
+			if (lastCommand != null && lastCommand.getWidgetId().equals(command.getWidgetId()) && lastCommand.getType().equals(FocusCommand.TYPE) && isFocusCommand(command.getType())) {
 				// focus followed by select or modify - focus implied
 				commands.remove(lastCommand);
 			}
@@ -290,19 +283,13 @@ public class MacroCommandShell extends MacroInstruction {
 	}
 
 	private boolean isFocusCommand(String type) {
-		return type.equals(BooleanSelectionCommand.TYPE)
-				|| type.equals(StructuredSelectionCommand.ITEM_SELECT)
-				|| type.equals(StructuredSelectionCommand.DEFAULT_SELECT)
-				|| type.equals(ExpansionCommand.TYPE)
-				|| type.equals(CheckCommand.TYPE)
-				|| type.equals(ModifyCommand.TYPE);
+		return type.equals(BooleanSelectionCommand.TYPE) || type.equals(StructuredSelectionCommand.ITEM_SELECT) || type.equals(StructuredSelectionCommand.DEFAULT_SELECT) || type.equals(ExpansionCommand.TYPE) || type.equals(CheckCommand.TYPE) || type.equals(ModifyCommand.TYPE);
 	}
 
 	protected MacroCommand createCommand(Event event) {
 		MacroCommand lastCommand = getLastCommand();
 		if (lastEvent != null && lastEvent.widget.equals(event.widget)) {
-			if (lastEvent.type == event.type
-					|| (lastEvent.type == SWT.Selection && event.type == SWT.DefaultSelection)) {
+			if (lastEvent.type == event.type || (lastEvent.type == SWT.Selection && event.type == SWT.DefaultSelection)) {
 				if (lastCommand != null && lastCommand.mergeEvent(event))
 					return null;
 			}
@@ -313,25 +300,25 @@ public class MacroCommandShell extends MacroInstruction {
 			return null;
 
 		switch (event.type) {
-		case SWT.Modify:
-			if (!isEditable(event.widget))
-				return null;
-			command = new ModifyCommand(wi);
-			break;
-		case SWT.Selection:
-		case SWT.DefaultSelection:
-			command = createSelectionCommand(wi, event);
-			break;
-		case SWT.FocusIn:
-			command = new FocusCommand(wi);
-			break;
-		case SWT.Expand:
-		case SWT.Collapse:
-			command = new ExpansionCommand(wi);
-			break;
-		/*
-		 * case SWT.KeyUp: command = findKeyBinding(wi, event); break;
-		 */
+			case SWT.Modify :
+				if (!isEditable(event.widget))
+					return null;
+				command = new ModifyCommand(wi);
+				break;
+			case SWT.Selection :
+			case SWT.DefaultSelection :
+				command = createSelectionCommand(wi, event);
+				break;
+			case SWT.FocusIn :
+				command = new FocusCommand(wi);
+				break;
+			case SWT.Expand :
+			case SWT.Collapse :
+				command = new ExpansionCommand(wi);
+				break;
+			/*
+			 * case SWT.KeyUp: command = findKeyBinding(wi, event); break;
+			 */
 		}
 		return command;
 	}
@@ -351,11 +338,8 @@ public class MacroCommandShell extends MacroInstruction {
 		return true;
 	}
 
-	private MacroCommand createSelectionCommand(WidgetIdentifier wid,
-			Event event) {
-		if (event.widget instanceof MenuItem
-				|| event.widget instanceof ToolItem
-				|| event.widget instanceof Button) {
+	private MacroCommand createSelectionCommand(WidgetIdentifier wid, Event event) {
+		if (event.widget instanceof MenuItem || event.widget instanceof ToolItem || event.widget instanceof Button) {
 			String wId = wid.getWidgetId();
 			if (wId.endsWith("org.eclipse.pde.ui.tests.StopAction"))
 				return null;
@@ -363,16 +347,13 @@ public class MacroCommandShell extends MacroInstruction {
 				return null;
 			return new BooleanSelectionCommand(wid);
 		}
-		if (event.widget instanceof Tree || event.widget instanceof Table
-				|| event.widget instanceof TableTree) {
+		if (event.widget instanceof Tree || event.widget instanceof Table || event.widget instanceof TableTree) {
 			if (event.detail == SWT.CHECK)
 				return new CheckCommand(wid);
-			String type = event.type == SWT.DefaultSelection ? StructuredSelectionCommand.DEFAULT_SELECT
-						: StructuredSelectionCommand.ITEM_SELECT;
+			String type = event.type == SWT.DefaultSelection ? StructuredSelectionCommand.DEFAULT_SELECT : StructuredSelectionCommand.ITEM_SELECT;
 			return new StructuredSelectionCommand(wid, type);
 		}
-		if (event.widget instanceof TabFolder
-				|| event.widget instanceof CTabFolder)
+		if (event.widget instanceof TabFolder || event.widget instanceof CTabFolder)
 			return new ChoiceSelectionCommand(wid);
 		if (event.widget instanceof Combo || event.widget instanceof CCombo)
 			return new ChoiceSelectionCommand(wid);
@@ -389,12 +370,10 @@ public class MacroCommandShell extends MacroInstruction {
 				return null;
 		}
 		System.out.println("keyStrokes=" + keyStrokes);
-		IWorkbenchCommandSupport csupport = PlatformUI.getWorkbench()
-				.getCommandSupport();
+		IWorkbenchCommandSupport csupport = PlatformUI.getWorkbench().getCommandSupport();
 		KeySequence keySequence = KeySequence.getInstance(keyStrokes);
 		System.out.println("keySequence=" + keySequence);
-		String commandId = csupport.getCommandManager().getPerfectMatch(
-				keySequence);
+		String commandId = csupport.getCommandManager().getPerfectMatch(keySequence);
 		System.out.println("Command id=" + commandId);
 		if (commandId == null)
 			return null;
@@ -413,9 +392,9 @@ public class MacroCommandShell extends MacroInstruction {
 	public boolean isDisposed() {
 		return this.shell != null && this.shell.isDisposed();
 	}
-	
+
 	public void close() {
-		if (this.shell!=null && !this.shell.isDisposed())
+		if (this.shell != null && !this.shell.isDisposed())
 			this.shell.close();
 	}
 
@@ -425,8 +404,7 @@ public class MacroCommandShell extends MacroInstruction {
 		return false;
 	}
 
-	public boolean playback(final Display display, Composite parent,
-			IProgressMonitor monitor) throws CoreException {
+	public boolean playback(final Display display, Composite parent, IProgressMonitor monitor) throws CoreException {
 		if (parent instanceof Shell) {
 			this.shell = (Shell) parent;
 			this.display = display;
@@ -458,8 +436,7 @@ public class MacroCommandShell extends MacroInstruction {
 					// this command will open a new shell
 					// add a listener before it is too late
 					MacroCommandShell nestedCommand = (MacroCommandShell) next;
-					nestedShell = new NestedShell(display, nestedCommand,
-							new SubProgressMonitor(monitor, 1));
+					nestedShell = new NestedShell(display, nestedCommand, new SubProgressMonitor(monitor, 1));
 					final NestedShell fnestedShell = nestedShell;
 					display.syncExec(new Runnable() {
 						public void run() {
@@ -506,17 +483,14 @@ public class MacroCommandShell extends MacroInstruction {
 		}
 	}
 
-	private void playInGUIThread(final Display display,
-			final IPlayable playable, boolean last,
-			final IProgressMonitor monitor) throws CoreException {
+	private void playInGUIThread(final Display display, final IPlayable playable, boolean last, final IProgressMonitor monitor) throws CoreException {
 		final CoreException[] ex = new CoreException[1];
 
 		Runnable runnable = new Runnable() {
 			public void run() {
 				try {
 					//System.out.println("Executing: "+playable.toString());
-					playable.playback(display, MacroCommandShell.this.shell,
-							monitor);
+					playable.playback(display, MacroCommandShell.this.shell, monitor);
 					MacroUtil.processDisplayEvents(display);
 				} catch (ClassCastException e) {
 					ex[0] = createPlaybackException(playable, e);
@@ -566,10 +540,9 @@ public class MacroCommandShell extends MacroInstruction {
 			}
 		}
 	}
-	
+
 	private CoreException createPlaybackException(IPlayable playable, Throwable th) {
-		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK,
-				"Error while executing a macro command: "+playable.toString(), th);
-		return new CoreException(status);		
+		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui.tests", IStatus.OK, "Error while executing a macro command: " + playable.toString(), th);
+		return new CoreException(status);
 	}
 }

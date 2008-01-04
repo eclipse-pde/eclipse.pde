@@ -23,40 +23,38 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 
 public class ImportAsSourceTestCase extends BaseImportTestCase {
-	
 
 	private static int TYPE = PluginImportOperation.IMPORT_WITH_SOURCE;
 
 	public static Test suite() {
 		return new TestSuite(ImportAsSourceTestCase.class);
 	}
-	
+
 	public void testImportSourceJAR() {
 		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
 		verifySourceProject("org.eclipse.pde.core", true);
 	}
-	
+
 	public void testImportSourceFlat() {
 		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
 		verifySourceProject("org.eclipse.jdt.debug", true);
 	}
-	
+
 	public void testImportSourceNotJavaJARd() {
 		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
 		verifySourceProject("org.eclipse.jdt.doc.user", false);
 	}
-	
+
 	public void testImportSourceMultiple() {
-		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"},
-					TYPE);
+		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"}, TYPE);
 		verifySourceProject("org.eclipse.core.filebuffers", true);
 		verifySourceProject("org.eclipse.jdt.doc.user", false);
-		verifySourceProject("org.eclipse.pde.build", true);		
+		verifySourceProject("org.eclipse.pde.build", true);
 	}
 
 	private void verifySourceProject(String projectName, boolean isJava) {
 		try {
-			IProject project =  verifyProject(projectName);
+			IProject project = verifyProject(projectName);
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
 			if (isJava) {
@@ -64,11 +62,11 @@ public class ImportAsSourceTestCase extends BaseImportTestCase {
 				assertTrue(checkSourceAttached(jProject));
 				assertTrue(checkSourceFolder(jProject));
 			}
-		} catch (CoreException e) {	
+		} catch (CoreException e) {
 			fail(e.getMessage());
-		}	
+		}
 	}
-	
+
 	private boolean checkSourceFolder(IJavaProject jProject) throws JavaModelException {
 		IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {

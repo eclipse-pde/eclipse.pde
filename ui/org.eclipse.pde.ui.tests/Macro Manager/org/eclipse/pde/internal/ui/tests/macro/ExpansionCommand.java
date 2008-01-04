@@ -22,43 +22,44 @@ import org.eclipse.swt.widgets.Widget;
 
 public class ExpansionCommand extends ToggleStructuredCommand {
 	public static final String TYPE = "item-expand";
+
 	/**
 	 * @param wid
 	 */
 	public ExpansionCommand(WidgetIdentifier wid) {
 		super(wid);
 	}
-	
+
 	public void processEvent(Event event) {
 		super.processEvent(event);
 		Widget item = event.item;
 
 		if (item instanceof TreeItem)
-			value = !((TreeItem)item).getExpanded();
+			value = !((TreeItem) item).getExpanded();
 		else if (item instanceof TableTreeItem)
-			value = !((TableTreeItem)item).getExpanded();
+			value = !((TableTreeItem) item).getExpanded();
 	}
 
 	protected void playTreeCommand(Tree tree, TreeItem[] matches) {
-		for (int i=0; i<matches.length; i++) {
+		for (int i = 0; i < matches.length; i++) {
 			matches[i].setExpanded(getValue());
 			fireEvent(tree, matches[i]);
 		}
 	}
-	
+
 	private void fireEvent(Widget widget, Widget item) {
 		Event event = new Event();
-		event.type = getValue()?SWT.Expand:SWT.Collapse;
+		event.type = getValue() ? SWT.Expand : SWT.Collapse;
 		event.widget = widget;
-		event.item= item;
+		event.item = item;
 		widget.notifyListeners(event.type, event);
 	}
 
 	protected void playTableCommand(Table table, TableItem[] matches) {
 	}
-	
-	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem [] matches) {
-		for (int i=0; i<matches.length; i++) {
+
+	protected void playTableTreeCommand(TableTree tableTree, TableTreeItem[] matches) {
+		for (int i = 0; i < matches.length; i++) {
 			matches[i].setExpanded(getValue());
 			fireEvent(tableTree, matches[i]);
 		}

@@ -29,7 +29,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 	public static Test suite() {
 		return new TestSuite(ImportPackageTestCase.class);
 	}
-	
+
 	public void testReadOptionalPackage() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -38,15 +38,15 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		buffer.append(fHeaderName + ": com.example.abc;resolution:=optional\n");
 		fDocument.set(buffer.toString());
 		load();
-		
+
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		
-		ImportPackageObject object = (ImportPackageObject)getPackage(header, "com.example.abc");
+
+		ImportPackageObject object = (ImportPackageObject) getPackage(header, "com.example.abc");
 		assertNotNull(object);
-		assertTrue(object.isOptional());	
+		assertTrue(object.isOptional());
 	}
-	
+
 	public void testMakePackageOptional() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -58,22 +58,22 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 
-		ImportPackageObject object = (ImportPackageObject)getPackage(header, "org.osgi.framework");
+		ImportPackageObject object = (ImportPackageObject) getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.setOptional(true);
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework;resolution:=optional\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework;resolution:=optional\n", fDocument.get(pos, length));
 	}
-	
+
 	public void testRemoveOptionalDirective() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -85,28 +85,28 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 
-		ImportPackageObject object = (ImportPackageObject)getPackage(header, "org.osgi.framework");
+		ImportPackageObject object = (ImportPackageObject) getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
 		object.setOptional(false);
-		
+
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
-		
+
 		ops[0].apply(fDocument);
 		assertEquals(5, fDocument.getNumberOfLines());
 		assertEquals(0, fDocument.getLineLength(4));
-		
+
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));			
+		int length = fDocument.getLineLength(3);
+		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
 	}
 
 	protected void addPackage(IManifestHeader header, String packageName) {
-		((ImportPackageHeader)header).addPackage(packageName);
-		
+		((ImportPackageHeader) header).addPackage(packageName);
+
 	}
 
 	protected PackageObject getPackage(IManifestHeader header, String packageName) {
-		return ((ImportPackageHeader)header).getPackage(packageName);
+		return ((ImportPackageHeader) header).getPackage(packageName);
 	}
 }

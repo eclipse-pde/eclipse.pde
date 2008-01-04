@@ -20,36 +20,36 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class RecordBlock implements IRecorderListener {
 	private IWorkbenchWindow window;
 	private static RecordBlock instance;
-	
+
 	private RecordBlock() {
 	}
 
 	public static RecordBlock getInstance() {
-		if (instance==null) {
+		if (instance == null) {
 			instance = new RecordBlock();
 		}
 		return instance;
 	}
-	
+
 	public static void init(IWorkbenchWindow window) {
-		if (instance==null) {
+		if (instance == null) {
 			getInstance().internalInit(window);
 		}
 	}
-	
+
 	private void internalInit(IWorkbenchWindow window) {
 		this.window = window;
 		MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
 		recorder.addRecorderListener(this);
 	}
-	
+
 	public static void dispose() {
-		if (instance!=null) {
+		if (instance != null) {
 			instance.internalDispose();
-			instance=null;
+			instance = null;
 		}
 	}
-	
+
 	private void internalDispose() {
 		MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
 		recorder.removeRecorderListener(this);
@@ -69,8 +69,7 @@ public class RecordBlock implements IRecorderListener {
 		pwriter.close();
 		try {
 			swriter.close();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println(e);
 		}
 		String contents = swriter.toString();
@@ -87,9 +86,9 @@ public class RecordBlock implements IRecorderListener {
 	}
 
 	public void recordingInterrupted(int interruptType) {
-		if (interruptType==STOP)
+		if (interruptType == STOP)
 			stopRecording();
-		else if (interruptType==INDEX)
+		else if (interruptType == INDEX)
 			insertIndex();
 	}
 

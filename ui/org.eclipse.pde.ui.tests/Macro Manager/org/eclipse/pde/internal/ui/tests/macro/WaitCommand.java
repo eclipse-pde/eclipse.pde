@@ -27,34 +27,37 @@ import org.eclipse.swt.widgets.Event;
 public class WaitCommand extends MacroCommand {
 	public static final String TYPE = "wait";
 	private static final WidgetIdentifier nullIdentifier = new WidgetIdentifier(new Path(""), new Path(""));
-	
+
 	private static class JobListener extends JobChangeAdapter {
-		private int counter=0;
+		private int counter = 0;
 		private IProgressMonitor monitor;
 		private Thread t;
-		
+
 		public JobListener(IProgressMonitor monitor, Thread t, int number) {
 			this.counter = number;
 			this.monitor = monitor;
 			this.t = t;
 		}
+
 		private synchronized void change(int increment) {
 			this.counter += increment;
-			if (counter==0) { 
+			if (counter == 0) {
 				monitor.subTask("");
 				synchronized (t) {
 					t.interrupt();
 				}
 			}
 		}
+
 		public void running(IJobChangeEvent event) {
 			Job job = event.getJob();
-			if (!job.isSystem()) 
+			if (!job.isSystem())
 				change(1);
 		}
+
 		public void done(IJobChangeEvent event) {
 			Job job = event.getJob();
-			if (!job.isSystem()) 
+			if (!job.isSystem())
 				change(-1);
 		}
 	}
@@ -104,24 +107,25 @@ public class WaitCommand extends MacroCommand {
 			return false;
 		IJobManager jobManager = Platform.getJobManager();
 		int nrunning = getNumberOfRunningJobs(jobManager);
-		if (nrunning==0) return true;
+		if (nrunning == 0)
+			return true;
 		String message = "Waiting for the background jobs...";
 		JobListener listener = new JobListener(monitor, Thread.currentThread(), nrunning);
 		jobManager.addJobChangeListener(listener);
 		monitor.subTask(message);
 		try {
 			Thread.sleep(30000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 		jobManager.removeJobChangeListener(listener);
 		return true;
 	}
+
 	private int getNumberOfRunningJobs(IJobManager manager) {
 		int count = 0;
 		Job[] jobs = manager.find(null);
-		for (int i=0; i<jobs.length; i++) {
-			if (!jobs[i].isSystem() && jobs[i].getState()==Job.RUNNING)
+		for (int i = 0; i < jobs.length; i++) {
+			if (!jobs[i].isSystem() && jobs[i].getState() == Job.RUNNING)
 				count++;
 		}
 		return count;

@@ -27,7 +27,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddNewExtensionAttribute1(LF);
 	}
 
-	public void testAddNewExtensionAttribute2LF() throws Exception{
+	public void testAddNewExtensionAttribute2LF() throws Exception {
 		testAddNewExtensionAttribute2(LF);
 	}
 
@@ -39,7 +39,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddNewExtensionAttribute1(CRLF);
 	}
 
-	public void testAddNewExtensionAttribute2CRLF() throws Exception{
+	public void testAddNewExtensionAttribute2CRLF() throws Exception {
 		testAddNewExtensionAttribute2(CRLF);
 	}
 
@@ -52,7 +52,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddNewExtensionAttribute(sb, newLine);
 	}
 
-	private void testAddNewExtensionAttribute2(String newLine) throws Exception{
+	private void testAddNewExtensionAttribute2(String newLine) throws Exception {
 		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("<sample />");
@@ -182,11 +182,11 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	public void testRemoveExtensionAttribute2CRLF() throws Exception {
-		testRemoveExtensionAttribute2(CRLF);		
+		testRemoveExtensionAttribute2(CRLF);
 	}
 
 	public void testRemoveExtensionAttribute3CRLF() throws Exception {
-		testRemoveExtensionAttribute3(CRLF);	
+		testRemoveExtensionAttribute3(CRLF);
 	}
 
 	private void testRemoveExtensionAttribute1(String newLine) throws Exception {
@@ -230,11 +230,11 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	public void testRemoveMultipleExtensionAttributes2CRLF() throws Exception {
-		testRemoveMultipleExtensionAttributes2(CRLF);		
+		testRemoveMultipleExtensionAttributes2(CRLF);
 	}
 
 	public void testRemoveMultipleExtensionAttributes3CRLF() throws Exception {
-		testRemoveMultipleExtensionAttributes3(CRLF);	
+		testRemoveMultipleExtensionAttributes3(CRLF);
 	}
 
 	private void testRemoveMultipleExtensionAttributes1(String newLine) throws Exception {
@@ -261,7 +261,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testRemoveMultipleExtensionAttributes(buffer, newLine);
 	}
 
-	public void testChangeExtensionAttribute1LF() throws Exception{
+	public void testChangeExtensionAttribute1LF() throws Exception {
 		testChangeExtensionAttribute1(LF);
 	}
 
@@ -273,7 +273,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testChangeExtensionAttribute3(LF);
 	}
 
-	public void testChangeExtensionAttribute1CRLF() throws Exception{
+	public void testChangeExtensionAttribute1CRLF() throws Exception {
 		testChangeExtensionAttribute1(CRLF);
 	}
 
@@ -330,7 +330,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
 	}
 
-	private void testAddExtensionAttribute(StringBuffer buffer, String newLine) throws Exception { 
+	private void testAddExtensionAttribute(StringBuffer buffer, String newLine) throws Exception {
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -407,7 +407,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(extensions[0].getChildCount(), 1);
 		IPluginObject child = extensions[0].getChildren()[0];
 		assertTrue(child instanceof IPluginElement);
-		assertEquals(((IPluginElement)child).getAttributeCount(), 3);
+		assertEquals(((IPluginElement) child).getAttributeCount(), 3);
 
 		assertTrue(child instanceof IPluginElement);
 		IPluginElement elem = (IPluginElement) child;

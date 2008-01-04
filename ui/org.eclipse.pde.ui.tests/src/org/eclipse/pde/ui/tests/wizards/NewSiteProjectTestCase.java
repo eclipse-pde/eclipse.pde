@@ -49,8 +49,7 @@ public class NewSiteProjectTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		if ("testExistingSiteProject".equalsIgnoreCase(getName())) { //$NON-NLS-1$
-			IProject project = ResourcesPlugin.getWorkspace().getRoot()
-					.getProject(EXISTING_PROJECT_NAME);
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
 			IFile file = project.getFile(new Path("site.xml")); //$NON-NLS-1$
@@ -58,12 +57,9 @@ public class NewSiteProjectTestCase extends TestCase {
 					+ "<site>" //$NON-NLS-1$
 					+ "<category-def name=\"new_category_1\" label=\"New Category 1\"/>" //$NON-NLS-1$
 					+ "</site>"; //$NON-NLS-1$
-			ByteArrayInputStream source = new ByteArrayInputStream(content
-					.getBytes("ASCII")); //$NON-NLS-1$
+			ByteArrayInputStream source = new ByteArrayInputStream(content.getBytes("ASCII")); //$NON-NLS-1$
 			if (file.exists())
-				file
-						.setContents(source, true, false,
-								new NullProgressMonitor());
+				file.setContents(source, true, false, new NullProgressMonitor());
 			else
 				file.create(source, true, new NullProgressMonitor());
 			project.delete(false, true, new NullProgressMonitor());
@@ -88,12 +84,9 @@ public class NewSiteProjectTestCase extends TestCase {
 		super.tearDown();
 	}
 
-	private void createSite(IProject project, IPath path, String webLocation)
-			throws InvocationTargetException, InterruptedException {
-		NewSiteProjectCreationOperation createOperation = new NewSiteProjectCreationOperation(
-				Display.getDefault(), project, path, webLocation);
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
+	private void createSite(IProject project, IPath path, String webLocation) throws InvocationTargetException, InterruptedException {
+		NewSiteProjectCreationOperation createOperation = new NewSiteProjectCreationOperation(Display.getDefault(), project, path, webLocation);
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		progressService.runInUI(progressService, createOperation, null);
 	}
 
@@ -110,8 +103,7 @@ public class NewSiteProjectTestCase extends TestCase {
 		}
 		assertTrue("site.xml not created.", project //$NON-NLS-1$
 				.exists(new Path("site.xml"))); //$NON-NLS-1$
-		WorkspaceSiteModel model = new WorkspaceSiteModel(project
-				.getFile(new Path("site.xml"))); //$NON-NLS-1$
+		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(new Path("site.xml"))); //$NON-NLS-1$
 		model.load();
 		assertTrue("Model cannot be loaded.", model.isLoaded()); //$NON-NLS-1$
 		assertTrue("Model is not valid.", model.isValid()); //$NON-NLS-1$
@@ -120,18 +112,16 @@ public class NewSiteProjectTestCase extends TestCase {
 	}
 
 	public void testExistingSiteProject() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				EXISTING_PROJECT_NAME);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 		IPath path = Platform.getLocation();
 		try {
-			createSite(project, path, null); 
+			createSite(project, path, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testExistingSiteProject: " + e); //$NON-NLS-1$
 		}
 		ensureCreated(project);
-		WorkspaceSiteModel model = new WorkspaceSiteModel(project
-				.getFile(new Path("site.xml"))); //$NON-NLS-1$
+		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(new Path("site.xml"))); //$NON-NLS-1$
 		model.load();
 		assertTrue("Existig site overwritten.", model.getSite() //$NON-NLS-1$
 				.getCategoryDefinitions().length > 0);
@@ -141,11 +131,10 @@ public class NewSiteProjectTestCase extends TestCase {
 
 	public void testSiteProject() {
 		String projectName = "SiteProject"; //$NON-NLS-1$
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				projectName);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IPath path = Platform.getLocation();
 		try {
-			createSite(project, path, null); 
+			createSite(project, path, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testSiteProject: " + e); //$NON-NLS-1$
@@ -157,8 +146,7 @@ public class NewSiteProjectTestCase extends TestCase {
 
 	public void testSiteProjectWithWeb() {
 		String projectName = "SiteProjectWithWeb"; //$NON-NLS-1$
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				projectName);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IPath path = Platform.getLocation();
 		try {
 			createSite(project, path, "testWeb"); //$NON-NLS-1$

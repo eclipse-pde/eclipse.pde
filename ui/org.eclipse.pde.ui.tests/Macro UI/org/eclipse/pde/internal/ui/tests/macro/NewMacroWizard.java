@@ -26,19 +26,19 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 public class NewMacroWizard extends Wizard {
 	private String contents;
 	private NewMacroPage page;
-	
+
 	class NewMacroPage extends WizardNewFileCreationPage {
 		public NewMacroPage(IStructuredSelection ssel) {
 			super("newFile", ssel);
 			setTitle("Macro script name");
 			setDescription("Select the target location and the name of the new script (extension *.emc).");
-		} 
+		}
+
 		public InputStream getInitialContents() {
-			InputStream is=null;
+			InputStream is = null;
 			try {
 				is = new ByteArrayInputStream(contents.getBytes("UTF8"));
-			}
-			catch (UnsupportedEncodingException e) {
+			} catch (UnsupportedEncodingException e) {
 			}
 			return is;
 		}
@@ -48,7 +48,7 @@ public class NewMacroWizard extends Wizard {
 		this.contents = contents;
 		setWindowTitle("Macro Recorder");
 	}
-	
+
 	public void addPages() {
 		ISelectionService sservice = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 		ISelection selection = sservice.getSelection();
@@ -56,13 +56,14 @@ public class NewMacroWizard extends Wizard {
 		if (!(selection instanceof IStructuredSelection))
 			ssel = new StructuredSelection();
 		else
-			ssel = (IStructuredSelection)selection;
-			
+			ssel = (IStructuredSelection) selection;
+
 		page = new NewMacroPage(ssel);
 		addPage(page);
 	}
+
 	public boolean performFinish() {
 		IFile file = page.createNewFile();
-		return file!=null;
+		return file != null;
 	}
 }

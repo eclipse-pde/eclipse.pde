@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllNewProjectTests {
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite to test project creation wizards."); //$NON-NLS-1$
 		suite.addTest(NewFeatureProjectTestCase.suite());
