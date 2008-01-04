@@ -65,7 +65,7 @@ public class PluginContentPage extends ContentPage {
     private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
     private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
     
-    private final static String NO_EXECUTION_ENVIRONMENT = "<No Execution Environment>";
+    private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
     
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {

@@ -1840,6 +1840,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginSection_removeAll;
 	public static String PluginsView_disabled;
 	public static String PluginContentPage_no;
+	public static String PluginContentPage_noEE;
 	public static String PluginSection_remove;
 	public static String RequiredPluginsContainerPage_title;
 	public static String RequiredPluginsContainerPage_desc;
