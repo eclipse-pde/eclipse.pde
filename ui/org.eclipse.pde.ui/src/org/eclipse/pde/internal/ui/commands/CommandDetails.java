@@ -10,20 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.core.commands.AbstractParameterValueConverter;
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.core.commands.IParameterValues;
-import org.eclipse.core.commands.ParameterType;
-import org.eclipse.core.commands.ParameterValueConversionException;
-import org.eclipse.core.commands.ParameterValuesException;
-import org.eclipse.core.commands.Parameterization;
-import org.eclipse.core.commands.ParameterizedCommand;
+import java.util.*;
+import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -33,46 +21,31 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerService;
 
 public class CommandDetails {
-	
+
 	private final HashMap fParameterToValue = new HashMap();
 	private final ArrayList fObjectParamList = new ArrayList();
 	private final ArrayList fValueParamList = new ArrayList();
 	private final ArrayList fTextParamList = new ArrayList();
-	
+
 	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
 	private Command fSelectedCommand;
 	private ParameterizedCommand fPreSel;
-	
+
 	private Text fComIDT;
 	private Text fComPrev;
 	private Button fSurroundCopyText;
@@ -88,27 +61,27 @@ public class CommandDetails {
 		fToolkit = cv.getToolkit();
 		createCommandDetails(parent);
 	}
-	
+
 	private void createCommandDetails(Composite parent) {
 		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
-		
+
 		Section section = fToolkit.createSection(c, ExpandableComposite.TITLE_BAR);
 		section.setText(PDEUIMessages.CommandDetails_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Composite comp = fCCP.createComposite(section);
-		
+
 		createBasicInfo(comp);
-		
+
 		if (fCCP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
 			createPreviewLabelComp(comp);
 		createParameters(comp);
-		
+
 		section.setClient(comp);
-		
+
 		createLinks(c);
 	}
-	
+
 	private void createBasicInfo(Composite parent) {
 		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false, 0);
 		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_id);
@@ -116,22 +89,20 @@ public class CommandDetails {
 		fComIDT.setEditable(false);
 		fComIDT.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
+
 	private void createParameters(Composite parent) {
 		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false, 0);
-		
+
 		fParamLabel = fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_noParameters);
 		fParamLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fParamParent = parent;
 		createBlankParamComp();
 	}
-	
+
 	private void createLinks(Composite parent) {
-		Composite comp = fCCP.createComposite(parent,
-				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END,
-				1, false, 0);
-		
+		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END, 1, false, 0);
+
 		fExecLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image execImage = PDEPluginImages.DESC_RUN_EXC.createImage();
 		fExecLink.setImage(execImage);
@@ -140,9 +111,12 @@ public class CommandDetails {
 		fExecLink.addHyperlinkListener(new ExecCommand());
 		fExecLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fExecLink.setVisible(false);
-		fExecLink.addDisposeListener(new DisposeListener()
-			{ public void widgetDisposed(DisposeEvent e) { execImage.dispose(); } });
-		
+		fExecLink.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				execImage.dispose();
+			}
+		});
+
 		fCopyLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image clipImage = PDEPluginImages.DESC_CLIPBOARD.createImage();
 		fCopyLink.setImage(clipImage);
@@ -151,14 +125,17 @@ public class CommandDetails {
 		fCopyLink.addHyperlinkListener(new CopyToClipboard());
 		fCopyLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fCopyLink.setVisible(false);
-		fCopyLink.addDisposeListener(new DisposeListener()
-			{ public void widgetDisposed(DisposeEvent e) { clipImage.dispose(); }} );
+		fCopyLink.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				clipImage.dispose();
+			}
+		});
 	}
-	
+
 	private void createPreviewLabelComp(Composite parent) {
 		Composite preLabelComp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false, 0);
 		fToolkit.createLabel(preLabelComp, PDEUIMessages.CommandDetails_preview, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fSurroundCopyText = fToolkit.createButton(preLabelComp, PDEUIMessages.CommandDetails_includeMarkup, SWT.CHECK);
 		fSurroundCopyText.setToolTipText(PDEUIMessages.CommandDetails_markupTooltip);
 		fSurroundCopyText.addSelectionListener(new SelectionAdapter() {
@@ -166,7 +143,7 @@ public class CommandDetails {
 				updatePreviewText();
 			}
 		});
-		
+
 		fFilterCombo = new Combo(preLabelComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		CommandCopyFilter[] filters = CommandCopyFilter.getFilters();
 		for (int i = 0; i < filters.length; i++)
@@ -178,28 +155,28 @@ public class CommandDetails {
 			}
 		});
 		fToolkit.adapt(fFilterCombo, true, true);
-		
+
 		fComPrev = fToolkit.createText(parent, "", SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 60;
 		fComPrev.setLayoutData(gd);
 		fComPrev.setEditable(false);
 	}
-	
+
 	protected ParameterizedCommand buildParameterizedCommand() {
-		
+
 		ArrayList list = new ArrayList();
-		for (Iterator i = fParameterToValue.keySet().iterator(); i.hasNext(); ) {
-			IParameter parameter = (IParameter)i.next();
-			String value = (String)fParameterToValue.get(parameter);
+		for (Iterator i = fParameterToValue.keySet().iterator(); i.hasNext();) {
+			IParameter parameter = (IParameter) i.next();
+			String value = (String) fParameterToValue.get(parameter);
 			list.add(new Parameterization(parameter, value));
 		}
 		Parameterization[] parameterizations = (Parameterization[]) list.toArray(new Parameterization[list.size()]);
-		
+
 		ParameterizedCommand pCommand = new ParameterizedCommand(fSelectedCommand, parameterizations);
 		return pCommand;
 	}
-	
+
 	private class ExecCommand extends HyperlinkAdapter {
 		public void linkActivated(HyperlinkEvent e) {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
@@ -208,10 +185,8 @@ public class CommandDetails {
 				IHandlerService service = getGlobalHandlerService();
 				IEvaluationContext context = fCCP.getSnapshotContext();
 				// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
-				if ((service instanceof HandlerService) && 
-						(context != null)) {
-					obj = ((HandlerService) service).executeCommandInContext(
-							pCommand, null, context);
+				if ((service instanceof HandlerService) && (context != null)) {
+					obj = ((HandlerService) service).executeCommandInContext(pCommand, null, context);
 				} else {
 					// the default is just to execute within the global application
 					// context
@@ -219,27 +194,21 @@ public class CommandDetails {
 				}
 				String resultString = null;
 				if (obj instanceof String) {
-					resultString = (String)obj;
+					resultString = (String) obj;
 				} else {
 					ParameterType returnType = pCommand.getCommand().getReturnType();
 					if (returnType != null && returnType.getValueConverter() != null)
 						resultString = returnType.getValueConverter().convertToString(obj);
 				}
 				if (resultString != null) {
-					MessageDialog.openInformation(
-							fComIDT.getShell(),
-							PDEUIMessages.CommandDetails_commandResult,
-							resultString);
+					MessageDialog.openInformation(fComIDT.getShell(), PDEUIMessages.CommandDetails_commandResult, resultString);
 				}
 			} catch (CommandException ex) {
-				MessageDialog.openError(
-						fComIDT.getShell(),
-						PDEUIMessages.CommandDetails_execError,
-						ex.toString());
+				MessageDialog.openError(fComIDT.getShell(), PDEUIMessages.CommandDetails_execError, ex.toString());
 			}
 		}
 	}
-	
+
 	private String getFilteredCommand() {
 		ParameterizedCommand pCommand = buildParameterizedCommand();
 		String serializedCommand = pCommand.serialize();
@@ -260,29 +229,30 @@ public class CommandDetails {
 		CommandCopyFilter ccf = CommandCopyFilter.getFilter(index);
 		return ccf.filter(serializedCommand, surroundWithMarkup, markupLabel);
 	}
-	
+
 	private class CopyToClipboard extends HyperlinkAdapter {
 		public void linkActivated(HyperlinkEvent e) {
 			String filteredCommand = getFilteredCommand();
-			
-			Object[] data = new Object[] { filteredCommand, /* htmlBuffer.toString() */ };
-			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),/* HTMLTransfer.getInstance() */ };
-			
+
+			Object[] data = new Object[] {filteredCommand, /* htmlBuffer.toString() */};
+			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(),/* HTMLTransfer.getInstance() */};
+
 			Clipboard clipboard = new Clipboard(null);
 			clipboard.setContents(data, transfers, DND.CLIPBOARD);
 			clipboard.dispose();
 		}
 	}
-	
+
 	private class ValuesParameterControl extends SelectionAdapter implements ModifyListener {
 		private final IParameter fParameter;
 		private final Map fValues;
 		private final Combo fValuesCombo;
 		private final Button fClearButton;
+
 		public ValuesParameterControl(IParameter parameter, Map values, Combo valuesCombo, Button clearButton) {
 			fParameter = parameter;
 			fValues = values;
-			
+
 			fValuesCombo = valuesCombo;
 			fValuesCombo.addModifyListener(this);
 			if (fPreSel != null && fValues != null) {
@@ -297,28 +267,28 @@ public class CommandDetails {
 					}
 				}
 			}
-			
+
 			fClearButton = clearButton;
 			fClearButton.addSelectionListener(this);
 		}
-		
+
 		// clear button pressed
 		public void widgetSelected(SelectionEvent e) {
 			fValuesCombo.deselectAll();
 			fParameterToValue.remove(fParameter);
 		}
-		
+
 		// values combo changed
 		public void modifyText(ModifyEvent e) {
 			String key = fValuesCombo.getText();
-			String value = (String)fValues.get(key);
+			String value = (String) fValues.get(key);
 			if (value == null)
 				fParameterToValue.remove(fParameter);
 			else
 				fParameterToValue.put(fParameter, value);
 			updatePreviewText();
 		}
-		
+
 		protected void dispose() {
 			if (!fValuesCombo.isDisposed())
 				fValuesCombo.removeModifyListener(this);
@@ -326,28 +296,29 @@ public class CommandDetails {
 				fClearButton.removeSelectionListener(this);
 		}
 	}
-	
+
 	private class ObjectParameterControl implements ModifyListener {
 		private final IParameter fParameter;
 		private final AbstractParameterValueConverter fValueConverter;
 		private final Text fParameterText;
+
 		public ObjectParameterControl(IParameter parameter, AbstractParameterValueConverter valueConverter, Text parameterText, Object selectedObject) {
 			fParameter = parameter;
 			fValueConverter = valueConverter;
-			
+
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
-			
+
 			if (selectedObject != null)
 				setParameterText(selectedObject);
-			
+
 			if (fPreSel != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null)
 					fParameterText.setText(obj.toString());
 			}
 		}
-		
+
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
 			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$
@@ -357,7 +328,7 @@ public class CommandDetails {
 			updatePreviewText();
 			validate();
 		}
-		
+
 		private void setParameterText(Object selectedObject) {
 			try {
 				String converted = fValueConverter.convertToString(selectedObject);
@@ -367,7 +338,7 @@ public class CommandDetails {
 				//
 			}
 		}
-		
+
 		protected void dispose() {
 			if (!fParameterText.isDisposed())
 				fParameterText.removeModifyListener(this);
@@ -386,26 +357,26 @@ public class CommandDetails {
 			if (error == null)
 				fCCP.setMessage(null, IMessageProvider.NONE);
 			else
-				fCCP.setMessage(
-						NLS.bind(PDEUIMessages.CommandDetails_paramValueMessage, fParameter.getName(), error),
-						IMessageProvider.WARNING);
+				fCCP.setMessage(NLS.bind(PDEUIMessages.CommandDetails_paramValueMessage, fParameter.getName(), error), IMessageProvider.WARNING);
 		}
 	}
-	
+
 	private class TextParameterControl implements ModifyListener {
 		private final IParameter fParameter;
 		private final Text fParameterText;
+
 		public TextParameterControl(IParameter parameter, Text parameterText) {
 			fParameter = parameter;
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
-			
+
 			if (fPreSel != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null)
 					fParameterText.setText(obj.toString());
 			}
 		}
+
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
 			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$
@@ -414,32 +385,33 @@ public class CommandDetails {
 				fParameterToValue.put(fParameter, text);
 			updatePreviewText();
 		}
+
 		public void dispose() {
 			if (!fParameterText.isDisposed())
 				fParameterText.removeModifyListener(this);
 		}
 	}
-	
+
 	protected void dispose() {
 		for (int i = 0; i < fObjectParamList.size(); i++)
-			((ObjectParameterControl)fObjectParamList.get(i)).dispose();
+			((ObjectParameterControl) fObjectParamList.get(i)).dispose();
 		for (int i = 0; i < fValueParamList.size(); i++)
-			((ValuesParameterControl)fValueParamList.get(i)).dispose();
+			((ValuesParameterControl) fValueParamList.get(i)).dispose();
 		for (int i = 0; i < fTextParamList.size(); i++)
-			((TextParameterControl)fTextParamList.get(i)).dispose();
+			((TextParameterControl) fTextParamList.get(i)).dispose();
 	}
-	
+
 	private void populateParams(Command command, Object selectedObject) throws NotDefinedException {
-		
+
 		createBlankParamComp();
-		
+
 		IParameter[] parameters = command.getParameters();
 		if (parameters == null || parameters.length == 0) {
 			fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
 		} else {
 			fParamLabel.setText(PDEUIMessages.CommandDetails_numParams);
 			Composite paramLine = fToolkit.createComposite(fParamComposite);
-			
+
 			GridLayout paramLineLayout = new GridLayout();
 			paramLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			paramLineLayout.numColumns = 3;
@@ -447,28 +419,29 @@ public class CommandDetails {
 			paramLine.setLayout(paramLineLayout);
 			for (int i = 0; i < parameters.length; i++) {
 				IParameter parameter = parameters[i];
-				
+
 				String nameText = parameter.getName();
-				if (!parameter.isOptional()) nameText += '*';
+				if (!parameter.isOptional())
+					nameText += '*';
 				fToolkit.createLabel(paramLine, NLS.bind(PDEUIMessages.CommandDetails_param, nameText));
-			
+
 				IParameterValues parameterValues = getParameterValues(parameter);
 				if (parameterValues != null) {
-					Combo parameterValuesCombo = new Combo(paramLine, SWT.READ_ONLY	| SWT.DROP_DOWN);
+					Combo parameterValuesCombo = new Combo(paramLine, SWT.READ_ONLY | SWT.DROP_DOWN);
 					parameterValuesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					fToolkit.adapt(parameterValuesCombo, true, true);
-			
+
 					Map values = parameterValues.getParameterValues();
 					for (Iterator keys = values.keySet().iterator(); keys.hasNext();)
 						parameterValuesCombo.add((String) keys.next());
-					
+
 					Button clearButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_clear, SWT.PUSH);
-					
+
 					fValueParamList.add(new ValuesParameterControl(parameter, values, parameterValuesCombo, clearButton));
-			
+
 					continue;
 				}
-			
+
 				ParameterType parameterType = command.getParameterType(parameter.getId());
 				if ((parameterType != null) && (parameterType.getValueConverter() != null)) {
 					Text parameterText = fToolkit.createText(paramLine, "", SWT.SINGLE | SWT.BORDER); //$NON-NLS-1$
@@ -476,10 +449,10 @@ public class CommandDetails {
 					gd.horizontalSpan = 2;
 					parameterText.setLayoutData(gd);
 					fObjectParamList.add(new ObjectParameterControl(parameter, parameterType.getValueConverter(), parameterText, selectedObject));
-			
+
 					continue;
 				}
-			
+
 				Text parameterText = fToolkit.createText(paramLine, "", SWT.SINGLE | SWT.BORDER); //$NON-NLS-1$
 				GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 				gd.horizontalSpan = 2;
@@ -491,8 +464,7 @@ public class CommandDetails {
 		fPreSel = null;
 		fParamParent.layout();
 	}
-	
-	
+
 	private IParameterValues getParameterValues(IParameter parameter) {
 		try {
 			return parameter.getValues();
@@ -503,19 +475,19 @@ public class CommandDetails {
 
 	public void showDetailsFor(Object object) {
 		if (object instanceof ParameterizedCommand)
-			object = (fPreSel = (ParameterizedCommand)object).getCommand();
-		
+			object = (fPreSel = (ParameterizedCommand) object).getCommand();
+
 		if (!(object instanceof Command)) {
 			resetAllFields();
 			return;
 		}
-		fSelectedCommand = (Command)object;
+		fSelectedCommand = (Command) object;
 		fComIDT.setText(fSelectedCommand.getId());
-		
+
 		fParameterToValue.clear();
 		fObjectParamList.clear();
 		fValueParamList.clear();
-		
+
 		fExecLink.setVisible(fSelectedCommand.isEnabled());
 		fCopyLink.setVisible(true);
 		try {
@@ -525,36 +497,36 @@ public class CommandDetails {
 		}
 		updatePreviewText();
 	}
-	
+
 	private void resetAllFields() {
 		fSelectedCommand = null;
 		fComIDT.setText(PDEUIMessages.CommandDetails_noComSelected);
 		fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
-		
+
 		if (fComPrev != null)
 			fComPrev.setText(""); //$NON-NLS-1$
-		
+
 		fExecLink.setVisible(false);
 		fCopyLink.setVisible(false);
-		
+
 		fParameterToValue.clear();
 		fObjectParamList.clear();
 		fValueParamList.clear();
-		
+
 		createNoParamComp();
 	}
-	
+
 	private void createNoParamComp() {
 		createBlankParamComp();
 		fParamParent.layout();
 	}
-	
+
 	private void createBlankParamComp() {
 		if (fParamComposite != null)
 			fParamComposite.dispose();
 		fParamComposite = fCCP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true, 0);
 	}
-	
+
 	private void updatePreviewText() {
 		if (fComPrev != null)
 			fComPrev.setText(getFilteredCommand());
@@ -563,7 +535,7 @@ public class CommandDetails {
 	protected Command getCommand() {
 		return fSelectedCommand;
 	}
-	
+
 	public String getCommandName() {
 		if (fSelectedCommand != null)
 			try {
@@ -583,15 +555,11 @@ public class CommandDetails {
 	public HashMap getParameters() {
 		if (fSelectedCommand != null)
 			return fParameterToValue;
-		
+
 		return null;
 	}
-	
-	/**
-	 * @return
-	 */
+
 	private IHandlerService getGlobalHandlerService() {
-		return (IHandlerService) PlatformUI.getWorkbench().getService(
-				IHandlerService.class);
+		return (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
 }

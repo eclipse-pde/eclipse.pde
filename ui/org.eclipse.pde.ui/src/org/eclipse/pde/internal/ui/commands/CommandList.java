@@ -14,56 +14,34 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.forms.widgets.*;
 
 public class CommandList {
 
 	protected class CommandTreeLabelProvider extends LabelProvider {
 		private HashMap fImgMap = new HashMap();
 		private Image fDefaultImage;
+
 		public String getText(Object element) {
 			if (element instanceof Category)
 				return CommandList.getText(element);
@@ -71,15 +49,16 @@ public class CommandList {
 				return CommandList.getText(element);
 			return null;
 		}
+
 		public Image getImage(Object element) {
-			Image img = (Image)fImgMap.get(element);
+			Image img = (Image) fImgMap.get(element);
 			if (img != null)
 				return img;
-			
+
 			if (element instanceof Category)
 				img = PDEPluginImages.DESC_COMGROUP_OBJ.createImage();
 			else if (element instanceof Command) {
-				ImageDescriptor desc = fComImgServ.getImageDescriptor(((Command)element).getId());
+				ImageDescriptor desc = fComImgServ.getImageDescriptor(((Command) element).getId());
 				if (desc == null) {
 					if (fDefaultImage == null)
 						fDefaultImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
@@ -87,27 +66,28 @@ public class CommandList {
 				}
 				img = desc.createImage();
 			}
-		
+
 			if (img != null)
 				fImgMap.put(element, img);
-			
+
 			return img;
 		}
+
 		public void dispose() {
 			for (Iterator i = fImgMap.keySet().iterator(); i.hasNext();)
-				((Image)fImgMap.get(i.next())).dispose();
+				((Image) fImgMap.get(i.next())).dispose();
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();
 			super.dispose();
 		}
 	}
-	
+
 	protected class CommandTreeComparator extends ViewerComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getText(e1).compareTo(getText(e2));
 		}
 	}
-	
+
 	protected class WildcardFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			String filterText = fFilterText.getText();
@@ -121,8 +101,8 @@ public class CommandList {
 				return false;
 			}
 			if (element instanceof Category) {
-				ITreeContentProvider prov = (ITreeContentProvider)fTreeViewer.getContentProvider();
-				Command[] commands = (Command[])prov.getChildren(element);
+				ITreeContentProvider prov = (ITreeContentProvider) fTreeViewer.getContentProvider();
+				Command[] commands = (Command[]) prov.getChildren(element);
 				for (int i = 0; i < commands.length; i++) {
 					String text = getText(commands[i]);
 					if (pattern.matcher(text.subSequence(0, text.length())).matches())
@@ -134,17 +114,17 @@ public class CommandList {
 			return pattern.matcher(text.subSequence(0, text.length())).matches();
 		}
 	}
-	
+
 	protected static String getText(Object obj) {
 		if (obj instanceof Command) {
-			Command com = (Command)obj;
+			Command com = (Command) obj;
 			try {
 				return com.getName();
 			} catch (NotDefinedException e) {
 				return com.getId();
 			}
 		} else if (obj instanceof Category) {
-			Category cat = (Category)obj;
+			Category cat = (Category) obj;
 			try {
 				return cat.getName();
 			} catch (NotDefinedException e) {
@@ -153,16 +133,16 @@ public class CommandList {
 		}
 		return new String();
 	}
-	
+
 	private class CollapseAction extends Action {
 		public CollapseAction() {
 			super(PDEUIMessages.CommandList_collapseAll0, IAction.AS_PUSH_BUTTON);
 			setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			setToolTipText(PDEUIMessages.CommandList_collapseAll0);
 		}
-		
+
 	}
-	
+
 	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
 	private Text fFilterText;
@@ -176,15 +156,16 @@ public class CommandList {
 		createTree(parent);
 		fComImgServ = (ICommandImageService) PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
 	}
+
 	private void createTree(Composite parent) {
 		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
-		
+
 		Section section = fToolkit.createSection(c, ExpandableComposite.TITLE_BAR);
 		section.setText(PDEUIMessages.CommandList_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Composite comp = fCCP.createComposite(section);
-		
+
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
@@ -203,9 +184,9 @@ public class CommandList {
 		toolbar.setBackground(null);
 		section.setTextClient(toolbar);
 		toolBarManager.update(true);
-		
+
 		createFilterText(comp);
-		
+
 		Tree tree = fToolkit.createTree(comp, SWT.V_SCROLL | SWT.H_SCROLL);
 		tree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -219,25 +200,26 @@ public class CommandList {
 		fTreeViewer.addFilter(new WildcardFilter());
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCCP);
-		
+
 		section.setClient(comp);
 	}
-	
+
 	protected void addTreeSelectionListener(ISelectionChangedListener listener) {
 		if (listener != null)
 			fTreeViewer.addSelectionChangedListener(listener);
 	}
-	
+
 	private void createFilterText(Composite parent) {
 		Composite c = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false, 0);
 		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.keyCode == SWT.ARROW_DOWN) fTreeViewer.getControl().setFocus();
-            }
-        });
-		
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN)
+					fTreeViewer.getControl().setFocus();
+			}
+		});
+
 		final ImageHyperlink clearButton = fToolkit.createImageHyperlink(c, SWT.NONE);
 		final Image hoverImg = PDEPluginImages.DESC_CLEAR.createImage();
 		clearButton.setImage(hoverImg);
@@ -253,29 +235,26 @@ public class CommandList {
 			}
 		});
 		clearButton.setVisible(false);
-		
-        fFilterText.addModifyListener(new ModifyListener() {
+
+		fFilterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fTreeViewer.refresh();
 				clearButton.setVisible(fFilterText.getText().length() > 0);
 			}
-        });
+		});
 	}
-	
+
 	public void setFocus() {
 		fFilterText.setFocus();
 	}
-	
+
 	protected void setSelection(Object object) {
 		if (fTreeViewer != null && object != null)
 			fTreeViewer.setSelection(new StructuredSelection(object));
 	}
-	
-	/**
-	 * @return
-	 */
+
 	public ISelection getSelection() {
 		return fTreeViewer.getSelection();
 	}
-	
+
 }
