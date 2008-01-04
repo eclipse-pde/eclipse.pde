@@ -10,61 +10,26 @@
  *     Peter Friese <peter.friese@gentleware.com> - bug 194529, bug 196867
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.TreeSet;
 
+import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLElementProposalComputer;
@@ -78,18 +43,11 @@ import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.internal.BidiUtil;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -111,19 +69,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private CollapseAction fCollapseAction;
 
 	private static final int BUTTON_ADD = 0;
-	
-	private static final String[] COMMON_LABEL_PROPERTIES = {
-		"label", //$NON-NLS-1$
-		"name", //$NON-NLS-1$
-		"id"}; //$NON-NLS-1$
-	
-	private static final String[] VALID_IMAGE_TYPES = {
-		"png", "bmp", "ico", "gif", "jpg", "tiff" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-	
 
-	class ExtensionContentProvider extends DefaultContentProvider
-	implements
-	ITreeContentProvider {
+	private static final String[] COMMON_LABEL_PROPERTIES = {"label", //$NON-NLS-1$
+			"name", //$NON-NLS-1$
+			"id"}; //$NON-NLS-1$
+
+	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+
+	class ExtensionContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parent) {
 			Object[] children = null;
 			if (parent instanceof IPluginBase)
@@ -137,60 +90,57 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				children = new Object[0];
 			return children;
 		}
+
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
+
 		public Object getParent(Object child) {
 			if (child instanceof IPluginExtension) {
-				return ((IPluginModelBase)getPage().getModel()).getPluginBase();
+				return ((IPluginModelBase) getPage().getModel()).getPluginBase();
 			}
 			if (child instanceof IPluginObject)
 				return ((IPluginObject) child).getParent();
 			return null;
 		}
+
 		public Object[] getElements(Object parent) {
 			return getChildren(parent);
 		}
 	}
+
 	class ExtensionLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			return resolveObjectName(obj);
 		}
+
 		public Image getImage(Object obj) {
 			return resolveObjectImage(obj);
 		}
 	}
+
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[]{
-				PDEUIMessages.ManifestEditor_DetailExtension_new,
-				PDEUIMessages.ManifestEditor_DetailExtension_remove,
-				PDEUIMessages.ManifestEditor_DetailExtension_edit,
-				PDEUIMessages.ManifestEditor_DetailExtension_up,
-				PDEUIMessages.ManifestEditor_DetailExtension_down});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.ManifestEditor_DetailExtension_new, PDEUIMessages.ManifestEditor_DetailExtension_remove, PDEUIMessages.ManifestEditor_DetailExtension_edit, PDEUIMessages.ManifestEditor_DetailExtension_up, PDEUIMessages.ManifestEditor_DetailExtension_down});
 		fHandleDefaultButton = false;
 	}
-	private static void addItemsForExtensionWithSchema(MenuManager menu,
-			IPluginExtension extension, IPluginParent parent) {
+
+	private static void addItemsForExtensionWithSchema(MenuManager menu, IPluginExtension extension, IPluginParent parent) {
 		ISchema schema = getSchema(extension);
 		String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 		ISchemaElement elementInfo = schema.findElement(tagName);
-		
-		if ((elementInfo != null) &&
-				(elementInfo.getType() instanceof ISchemaComplexType) &&
-				(parent instanceof IDocumentElementNode)) {
+
+		if ((elementInfo != null) && (elementInfo.getType() instanceof ISchemaComplexType) && (parent instanceof IDocumentElementNode)) {
 			// We have a schema complex type.  Either the element has attributes
 			// or the element has children.
 			// Generate the list of element proposals
-			TreeSet elementSet = XMLElementProposalComputer
-					.computeElementProposal(elementInfo, (IDocumentElementNode)parent);
-			
+			TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(elementInfo, (IDocumentElementNode) parent);
+
 			// Create a corresponding menu entry for each element proposal
 			Iterator iterator = elementSet.iterator();
 			while (iterator.hasNext()) {
-				Action action = new NewElementAction((ISchemaElement) iterator
-						.next(), parent);
-				menu.add(action);	
-			}			
+				Action action = new NewElementAction((ISchemaElement) iterator.next(), parent);
+				menu.add(action);
+			}
 		}
 	}
 
@@ -200,20 +150,20 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 */
 	private static ISchema getSchema(IPluginParent parent) {
 		if (parent instanceof IPluginExtension) {
-			return getSchema((IPluginExtension)parent);
+			return getSchema((IPluginExtension) parent);
 		} else if (parent instanceof IPluginElement) {
-			return getSchema((IPluginElement)parent);
+			return getSchema((IPluginElement) parent);
 		} else {
 			return null;
 		}
 	}
-	
+
 	private static ISchema getSchema(IPluginExtension extension) {
 		String point = extension.getPoint();
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		return registry.getSchema(point);
 	}
-	
+
 	/**
 	 * @param element
 	 * @return
@@ -225,7 +175,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param element
 	 * @return
@@ -238,9 +188,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (parent != null) {
 			return getSchema((IPluginExtension) parent);
 		}
-		return null;		
+		return null;
 	}
-	
+
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -261,12 +211,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fFilteredTree.getFilterControl().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				StructuredViewer viewer = getStructuredViewerPart().getViewer();
-				IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+				IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 				updateButtons(ssel.size() != 1 ? null : ssel);
 			}
 		});
 	}
-	
+
 	/**
 	 * @param section
 	 * @param toolkit
@@ -279,52 +229,49 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});			
+		});
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(fExtensionTree, 
-				PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this);
+		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this);
 		toolBarManager.add(fSortAction);
 		// Add collapse action to the tool bar
-		fCollapseAction = new CollapseAction(fExtensionTree, 
-				PDEUIMessages.ExtensionsPage_collapseAll);
+		fCollapseAction = new CollapseAction(fExtensionTree, PDEUIMessages.ExtensionsPage_collapseAll);
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons(selection);
 		getTreePart().getButton(BUTTON_EDIT).setVisible(isSelectionEditable(selection));
 	}
-	
+
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case BUTTON_ADD :
-			handleNew();
-			break;
-		case BUTTON_REMOVE :
-			handleDelete();
-			break;
-		case BUTTON_EDIT :
-			handleEdit();
-			break;
-		case BUTTON_MOVE_UP :
-			handleMove(true);
-			break;
-		case BUTTON_MOVE_DOWN :
-			handleMove(false);
-			break;
+			case BUTTON_ADD :
+				handleNew();
+				break;
+			case BUTTON_REMOVE :
+				handleDelete();
+				break;
+			case BUTTON_EDIT :
+				handleEdit();
+				break;
+			case BUTTON_MOVE_UP :
+				handleMove(true);
+				break;
+			case BUTTON_MOVE_DOWN :
+				handleMove(false);
+				break;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -334,52 +281,53 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			fFilteredTree.dispose();
 		}
 		fEditorWizards = null;
-		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
-		.getAggregateModel();
-		if (model!=null)
+		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		
-		if (!isEditable()) { return false; }
-		
+
+		if (!isEditable()) {
+			return false;
+		}
+
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
-			if(isSingleSelection()) {
-				handleDelete();				
+			if (isSingleSelection()) {
+				handleDelete();
 			}
 			return true;
 		}
 		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			if(isSingleSelection()) {
+			if (isSingleSelection()) {
 				doPaste();
 			}
 			return true;
 		}
-		if(actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			handleSelectAll();
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean setFormInput(Object object) {
-		if (object instanceof IPluginExtension
-				|| object instanceof IPluginElement) {
+		if (object instanceof IPluginExtension || object instanceof IPluginElement) {
 			fExtensionTree.setSelection(new StructuredSelection(object), true);
 			return true;
 		}
 		return false;
 	}
+
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fExtensionTree.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -412,25 +360,22 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			delAction.setEnabled(isEditable());
 		}
 		manager.add(new Separator());
-		if(ssel.size() < 2) { // only cut things when the selection is one
+		if (ssel.size() < 2) { // only cut things when the selection is one
 			getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		}
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager, false);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
 
 	}
-	static IMenuManager fillContextMenu(PDEFormPage page,
-			final IPluginParent parent, IMenuManager manager) {
+
+	static IMenuManager fillContextMenu(PDEFormPage page, final IPluginParent parent, IMenuManager manager) {
 		return fillContextMenu(page, parent, manager, false);
 	}
-	static IMenuManager fillContextMenu(PDEFormPage page,
-			final IPluginParent parent, IMenuManager manager,
-			boolean addSiblingItems) {
+
+	static IMenuManager fillContextMenu(PDEFormPage page, final IPluginParent parent, IMenuManager manager, boolean addSiblingItems) {
 		return fillContextMenu(page, parent, manager, addSiblingItems, true);
 	}
-	static IMenuManager fillContextMenu(PDEFormPage page,
-			final IPluginParent parent, IMenuManager manager,
-			boolean addSiblingItems, boolean fullMenu) {
+
+	static IMenuManager fillContextMenu(PDEFormPage page, final IPluginParent parent, IMenuManager manager, boolean addSiblingItems, boolean fullMenu) {
 		MenuManager menu = new MenuManager(PDEUIMessages.Menus_new_label);
 		IPluginExtension extension = getExtension(parent);
 		ISchema schema = getSchema(extension);
@@ -458,8 +403,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 							IPluginBase plugin = (IPluginBase) parentsParent;
 							plugin.remove((IPluginExtension) parent);
 						} else {
-							IPluginParent parentElement = (IPluginParent) parent
-							.getParent();
+							IPluginParent parentElement = (IPluginParent) parent.getParent();
 							parentElement.remove(parent);
 						}
 					} catch (CoreException e) {
@@ -471,15 +415,16 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return menu;
 	}
+
 	static IPluginExtension getExtension(IPluginParent parent) {
 		while (parent != null && !(parent instanceof IPluginExtension)) {
 			parent = (IPluginParent) parent.getParent();
 		}
 		return (IPluginExtension) parent;
 	}
+
 	private void handleDelete() {
-		IStructuredSelection sel = (IStructuredSelection) fExtensionTree
-		.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
 		if (sel.isEmpty())
 			return;
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
@@ -491,23 +436,23 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					IPluginElement ee = (IPluginElement) object;
 					IPluginParent parent = (IPluginParent) ee.getParent();
 					if (!sorted) {
-						int index = getNewSelectionIndex(parent.getIndexOf(ee),parent.getChildCount());
-						newSelection =  index == -1 ? new StructuredSelection(parent) : new StructuredSelection(parent.getChildren()[index]);
+						int index = getNewSelectionIndex(parent.getIndexOf(ee), parent.getChildCount());
+						newSelection = index == -1 ? new StructuredSelection(parent) : new StructuredSelection(parent.getChildren()[index]);
 					} else {
 						IPluginObject original[] = parent.getChildren();
 						IPluginObject objects[] = new IPluginObject[original.length];
 						for (int i = 0; i < original.length; i++)
 							objects[i] = original[i];
 						fExtensionTree.getComparator().sort(fExtensionTree, objects);
-						int index = getNewSelectionIndex(getArrayIndex(objects, ee),objects.length);
-						newSelection =  index == -1 ? new StructuredSelection(parent) : new StructuredSelection(objects[index]);
+						int index = getNewSelectionIndex(getArrayIndex(objects, ee), objects.length);
+						newSelection = index == -1 ? new StructuredSelection(parent) : new StructuredSelection(objects[index]);
 					}
 					parent.remove(ee);
 				} else if (object instanceof IPluginExtension) {
 					IPluginExtension extension = (IPluginExtension) object;
 					IPluginBase plugin = extension.getPluginBase();
 					if (!sorted) {
-						int index = getNewSelectionIndex(plugin.getIndexOf(extension),plugin.getExtensions().length);
+						int index = getNewSelectionIndex(plugin.getIndexOf(extension), plugin.getExtensions().length);
 						if (index != -1)
 							newSelection = new StructuredSelection(plugin.getExtensions()[index]);
 					} else {
@@ -516,7 +461,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 						for (int i = 0; i < original.length; i++)
 							extensions[i] = original[i];
 						fExtensionTree.getComparator().sort(fExtensionTree, extensions);
-						int index = getNewSelectionIndex(getArrayIndex(extensions, extension),extensions.length);
+						int index = getNewSelectionIndex(getArrayIndex(extensions, extension), extensions.length);
 						if (index != -1)
 							newSelection = new StructuredSelection(extensions[index]);
 					}
@@ -529,66 +474,59 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}
 		}
 	}
+
 	private void handleNew() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
-				new Runnable() {
+		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
 			public void run() {
-				((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
-				NewExtensionWizard wizard = new NewExtensionWizard(
-						project, (IPluginModelBase) getPage()
-						.getModel(), (ManifestEditor) getPage()
-						.getPDEEditor()) {
+				((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
+				NewExtensionWizard wizard = new NewExtensionWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor()) {
 					public boolean performFinish() {
 						return super.performFinish();
 					}
 				};
-				WizardDialog dialog = new WizardDialog(PDEPlugin
-						.getActiveWorkbenchShell(), wizard);
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 500, 500);
 				dialog.open();
 			}
 		});
 	}
+
 	private void handleEdit(IConfigurationElement element, IStructuredSelection selection) {
 		IProject project = getPage().getPDEEditor().getCommonProject();
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		try {
-			final IExtensionEditorWizard wizard = (IExtensionEditorWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
+			final IExtensionEditorWizard wizard = (IExtensionEditorWizard) element.createExecutableExtension("class"); //$NON-NLS-1$
 			wizard.init(project, model, selection);
-			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
-					new Runnable() {
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
 				public void run() {
-					WizardDialog dialog = new WizardDialog(PDEPlugin
-							.getActiveWorkbenchShell(), wizard);
+					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 500, 500);
 					dialog.open();
 				}
 			});
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
+
 	private void handleEdit() {
-		final IStructuredSelection selection = (IStructuredSelection)fExtensionTree.getSelection();
+		final IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
 		ArrayList editorWizards = getEditorWizards(selection);
-		if (editorWizards==null) return;
-		if (editorWizards.size()==1) {
+		if (editorWizards == null)
+			return;
+		if (editorWizards.size() == 1) {
 			// open the wizard directly			
-			handleEdit((IConfigurationElement)editorWizards.get(0), selection);
-		}
-		else {
+			handleEdit((IConfigurationElement) editorWizards.get(0), selection);
+		} else {
 			IProject project = getPage().getPDEEditor().getCommonProject();
-			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			final ExtensionEditorWizard wizard = new ExtensionEditorWizard(project, model, selection);
-			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
-					new Runnable() {
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
 				public void run() {
-					WizardDialog dialog = new WizardDialog(PDEPlugin
-							.getActiveWorkbenchShell(), wizard);
+					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 500, 500);
 					dialog.open();
@@ -596,44 +534,46 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			});
 		}
 	}
-	
+
 	private void handleSelectAll() {
 		fExtensionTree.getTree().selectAll();
 	}
-	
+
 	private ArrayList getEditorWizards(IStructuredSelection selection) {
-		if (selection.size()!=1) return null;
+		if (selection.size() != 1)
+			return null;
 		Object obj = selection.getFirstElement();
 		String pointId = null;
 		if (obj instanceof IPluginExtension) {
-			pointId = ((IPluginExtension)obj).getPoint();
-		}
-		else if (obj instanceof IPluginElement) {
-			IPluginObject parent = ((IPluginElement)obj).getParent();
-			while (parent!=null) {
+			pointId = ((IPluginExtension) obj).getPoint();
+		} else if (obj instanceof IPluginElement) {
+			IPluginObject parent = ((IPluginElement) obj).getParent();
+			while (parent != null) {
 				if (parent instanceof IPluginExtension) {
-					pointId = ((IPluginExtension)parent).getPoint();
+					pointId = ((IPluginExtension) parent).getPoint();
 					break;
 				}
 				parent = parent.getParent();
 			}
 		}
-		if (pointId==null) return null;
-		if (fEditorWizards==null)
+		if (pointId == null)
+			return null;
+		if (fEditorWizards == null)
 			loadExtensionWizards();
-		return (ArrayList)fEditorWizards.get(pointId);
+		return (ArrayList) fEditorWizards.get(pointId);
 	}
 
 	private void loadExtensionWizards() {
 		fEditorWizards = new Hashtable();
-		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
-		for (int i=0; i<elements.length; i++) {
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
+		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("editorWizard")) { //$NON-NLS-1$
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
-				if (pointId==null) continue;
-				ArrayList list = (ArrayList)fEditorWizards.get(pointId);
-				if (list==null) {
+				if (pointId == null)
+					continue;
+				ArrayList list = (ArrayList) fEditorWizards.get(pointId);
+				if (list == null) {
 					list = new ArrayList();
 					fEditorWizards.put(pointId, list);
 				}
@@ -641,10 +581,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}
 		}
 	}
+
 	private boolean isSelectionEditable(IStructuredSelection selection) {
 		if (!getPage().getModel().isEditable())
 			return false;
-		return getEditorWizards(selection)!=null;
+		return getEditorWizards(selection) != null;
 	}
 
 	public void initialize(IPluginModelBase model) {
@@ -659,29 +600,32 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		treePart.setButtonEnabled(BUTTON_MOVE_DOWN, false);
 		model.addModelChangedListener(this);
 	}
+
 	private void selectFirstExtension() {
 		Tree tree = fExtensionTree.getTree();
-		TreeItem [] items = tree.getItems();
-		if (items.length==0) return;
+		TreeItem[] items = tree.getItems();
+		if (items.length == 0)
+			return;
 		TreeItem firstItem = items[0];
 		Object obj = firstItem.getData();
 		fExtensionTree.setSelection(new StructuredSelection(obj));
 	}
+
 	void fireSelection() {
 		fExtensionTree.setSelection(fExtensionTree.getSelection());
 	}
+
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		fExtensionImage = provider.get(PDEPluginImages.DESC_EXTENSION_OBJ);
-		fGenericElementImage = provider
-		.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
+		fGenericElementImage = provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
+
 	public void refresh() {
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		fExtensionTree.setInput(model.getPluginBase());
 		selectFirstExtension();
-		getManagedForm().fireSelectionChanged(ExtensionsSection.this,
-				fExtensionTree.getSelection());
+		getManagedForm().fireSelectionChanged(ExtensionsSection.this, fExtensionTree.getSelection());
 		super.refresh();
 	}
 
@@ -691,36 +635,25 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		}
 		Object changeObject = event.getChangedObjects()[0];
-		if (changeObject instanceof IPluginBase
-				&& event.getChangeType() == IModelChangedEvent.CHANGE
-				&& event.getChangedProperty().equals(
-						IExtensions.P_EXTENSION_ORDER)) {
-			IStructuredSelection sel = (IStructuredSelection) fExtensionTree
-			.getSelection();
-			IPluginExtension extension = (IPluginExtension) sel
-			.getFirstElement();
+		if (changeObject instanceof IPluginBase && event.getChangeType() == IModelChangedEvent.CHANGE && event.getChangedProperty().equals(IExtensions.P_EXTENSION_ORDER)) {
+			IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
+			IPluginExtension extension = (IPluginExtension) sel.getFirstElement();
 			fExtensionTree.refresh();
 			fExtensionTree.setSelection(new StructuredSelection(extension));
 			return;
 		}
-		if (changeObject instanceof IPluginExtension
-				|| (changeObject instanceof IPluginElement && ((IPluginElement)changeObject).getParent() instanceof IPluginParent)) {
+		if (changeObject instanceof IPluginExtension || (changeObject instanceof IPluginElement && ((IPluginElement) changeObject).getParent() instanceof IPluginParent)) {
 			IPluginObject pobj = (IPluginObject) changeObject;
-			IPluginObject parent = changeObject instanceof IPluginExtension
-			? ((IPluginModelBase) getPage().getModel()).getPluginBase()
-					: pobj.getParent();
+			IPluginObject parent = changeObject instanceof IPluginExtension ? ((IPluginModelBase) getPage().getModel()).getPluginBase() : pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				fExtensionTree.refresh(parent);
-				fExtensionTree.setSelection(
-						new StructuredSelection(changeObject), true);
+				fExtensionTree.setSelection(new StructuredSelection(changeObject), true);
 				fExtensionTree.getTree().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				fExtensionTree.remove(pobj);
 			} else {
-				if (event.getChangedProperty().equals(
-						IPluginParent.P_SIBLING_ORDER)) {
-					IStructuredSelection sel = (IStructuredSelection) fExtensionTree
-					.getSelection();
+				if (event.getChangedProperty().equals(IPluginParent.P_SIBLING_ORDER)) {
+					IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
 					IPluginObject child = (IPluginObject) sel.getFirstElement();
 					fExtensionTree.refresh(child.getParent());
 					fExtensionTree.setSelection(new StructuredSelection(child));
@@ -744,8 +677,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			String bodyText = element.getText();
 			boolean hasBodyText = bodyText != null && bodyText.length() > 0;
 			if (hasBodyText) {
-				elementImage = PDEPlugin.getDefault().getLabelProvider().get(
-						elementImage, SharedLabelProvider.F_EDIT);
+				elementImage = PDEPlugin.getDefault().getLabelProvider().get(elementImage, SharedLabelProvider.F_EDIT);
 			}
 		}
 		return elementImage;
@@ -753,11 +685,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	private static boolean isStorageModel(IPluginObject object) {
 		IPluginModelBase modelBase = object.getPluginModel();
-		return modelBase.getInstallLocation()==null;
+		return modelBase.getInstallLocation() == null;
 	}
 
 	static Image getCustomImage(IPluginElement element) {
-		if (isStorageModel(element))return null;
+		if (isStorageModel(element))
+			return null;
 		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
@@ -787,8 +720,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return null;
 	}
 
-	private static Image getImageFromPlugin(IPluginElement element,
-			String iconPathName) {
+	private static Image getImageFromPlugin(IPluginElement element, String iconPathName) {
 		// 39283 - ignore icon paths that
 		// point at plugin.properties
 		if (iconPathName.startsWith("%")) //$NON-NLS-1$
@@ -800,6 +732,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 		return PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(model, iconPathName);
 	}
+
 	private String resolveObjectName(Object obj) {
 		return resolveObjectName(getSchemaRegistry(), obj);
 	}
@@ -825,10 +758,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				// exists
 				return schema.getName();
 			}
-			return extension.getPoint();		
+			return extension.getPoint();
 		} else if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
-			String baseName = element.getName();			
+			String baseName = element.getName();
 			String fullName = null;
 			ISchemaElement elementInfo = getSchemaElement(element);
 			IPluginAttribute labelAtt = null;
@@ -867,10 +800,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return obj.toString();
 	}
+
 	public void setFocus() {
 		if (fExtensionTree != null)
 			fExtensionTree.getTree().setFocus();
 	}
+
 	public static String stripShortcuts(String input) {
 		StringBuffer output = new StringBuffer();
 		for (int i = 0; i < input.length(); i++) {
@@ -883,7 +818,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return output.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -923,7 +858,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return false;
 		}
 		// Retrieve the schema corresponding to the target object		
-		IPluginParent targetParent = (IPluginParent)targetObject;
+		IPluginParent targetParent = (IPluginParent) targetObject;
 		ISchema schema = getSchema(targetParent);
 		// If there is no schema, then a source object can be pasted as a 
 		// child of any target object
@@ -931,7 +866,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return true;
 		}
 		// Determine the element name of the target object
-		String tagName = ((IDocumentElementNode)targetParent).getXMLTagName();
+		String tagName = ((IDocumentElementNode) targetParent).getXMLTagName();
 		// Retrieve the element schema for the target object
 		ISchemaElement schemaElement = schema.findElement(tagName);
 		// Ensure we found a schema element and it is a schema complex type
@@ -945,15 +880,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// We have a schema complex type.  Either the target object has 
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet elementSet = 
-			XMLElementProposalComputer.computeElementProposal(
-					schemaElement, (IDocumentElementNode)targetObject);
+		TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, (IDocumentElementNode) targetObject);
 		// Determine whether we can paste the source elements as children of
 		// the target object
 		if (sourceObjects.length > 1) {
-			return canPasteSourceElements((IPluginElement[])sourceObjects, elementSet);
+			return canPasteSourceElements((IPluginElement[]) sourceObjects, elementSet);
 		}
-		return canPasteSourceElement((IPluginElement)sourceObjects[0], elementSet);
+		return canPasteSourceElement((IPluginElement) sourceObjects[0], elementSet);
 	}
 
 	/**
@@ -961,8 +894,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param targetElementSet
 	 * @return
 	 */
-	private boolean canPasteSourceElements(IPluginElement[] sourceElements,
-			TreeSet targetElementSet) {
+	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet targetElementSet) {
 		// Performance optimization
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
@@ -970,7 +902,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		HashSet targetElementNameSet = new HashSet();
 		Iterator iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
-			targetElementNameSet.add(((ISchemaElement)iterator.next()).getName());
+			targetElementNameSet.add(((ISchemaElement) iterator.next()).getName());
 		}
 		// Paste will be enabled only if all source objects can be pasted 
 		// as children into the target element
@@ -987,17 +919,16 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			if (targetElementNameSet.contains(sourceTagName) == false) {
 				return false;
 			}
-		}		
+		}
 		return true;
 	}
-	
+
 	/**
 	 * @param sourceElement
 	 * @param targetElementSet
 	 * @return
 	 */
-	private boolean canPasteSourceElement(IPluginElement sourceElement, 
-			TreeSet targetElementSet) {
+	private boolean canPasteSourceElement(IPluginElement sourceElement, TreeSet targetElementSet) {
 		boolean canPaste = false;
 		// Get the source element tag name
 		String sourceTagName = sourceElement.getName();
@@ -1005,17 +936,17 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		Iterator iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
-			String targetTagName = ((ISchemaElement)iterator.next()).getName();
+			String targetTagName = ((ISchemaElement) iterator.next()).getName();
 			// Only a source element that is found ithin the set of element 
 			// proposals can be pasted
 			if (sourceTagName.equals(targetTagName)) {
 				canPaste = true;
 				break;
 			}
-		}			
+		}
 		return canPaste;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -1029,16 +960,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return null;
 		}
 		// Get the extension model
-		ISharedExtensionsModel extensionModel = 
-			((IBundlePluginModelBase)model).getExtensionsModel();
+		ISharedExtensionsModel extensionModel = ((IBundlePluginModelBase) model).getExtensionsModel();
 		// Ensure the extension model is defined
-		if ((extensionModel == null) || 
-				((extensionModel instanceof IPluginModelBase) == false)) {
+		if ((extensionModel == null) || ((extensionModel instanceof IPluginModelBase) == false)) {
 			return null;
 		}
-		return ((IPluginModelBase)extensionModel);
-	}	
-	
+		return ((IPluginModelBase) extensionModel);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -1047,7 +976,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// or extension point is created.  
 		// Ensure the file exists before pasting because the model will be 
 		// null and the paste will fail if it does not exist
-		((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
+		((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
 		// Note:  Multi-select in tree viewer is disabled; but, this function
 		// can support multiple source objects
 		// Get the model
@@ -1061,38 +990,34 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// Paste all source objects into the target object
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
-				
-				if ((sourceObject instanceof IPluginExtension) &&
-						(pluginBase instanceof IDocumentElementNode)) {
-					// Extension object
-					IDocumentElementNode extension = (IDocumentElementNode)sourceObject;
-					// Adjust all the source object transient field values to
-					// acceptable values
-					extension.reconnect((IDocumentElementNode)pluginBase, model);
-					// Add the extension to the plugin parent (plugin)
-					pluginBase.add((IPluginExtension)extension);
 
-				} else if ((sourceObject instanceof IPluginElement) &&
-						(targetObject instanceof IPluginParent) &&
-						(targetObject instanceof IDocumentElementNode)) {
-					// Element object
-					IDocumentElementNode element = (IDocumentElementNode)sourceObject;
+				if ((sourceObject instanceof IPluginExtension) && (pluginBase instanceof IDocumentElementNode)) {
+					// Extension object
+					IDocumentElementNode extension = (IDocumentElementNode) sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					element.reconnect((IDocumentElementNode)targetObject, model);
+					extension.reconnect((IDocumentElementNode) pluginBase, model);
+					// Add the extension to the plugin parent (plugin)
+					pluginBase.add((IPluginExtension) extension);
+
+				} else if ((sourceObject instanceof IPluginElement) && (targetObject instanceof IPluginParent) && (targetObject instanceof IDocumentElementNode)) {
+					// Element object
+					IDocumentElementNode element = (IDocumentElementNode) sourceObject;
+					// Adjust all the source object transient field values to
+					// acceptable values
+					element.reconnect((IDocumentElementNode) targetObject, model);
 					// Add the element to the plugin parent (extension or
 					// element)
-					((IPluginParent)targetObject).add((IPluginElement)element);
+					((IPluginParent) targetObject).add((IPluginElement) element);
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	private void handleMove(boolean up) {
-		IStructuredSelection sel = (IStructuredSelection) fExtensionTree
-		.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
 		IPluginObject object = (IPluginObject) sel.getFirstElement();
 		if (object instanceof IPluginElement) {
 			IPluginParent parent = (IPluginParent) object.getParent();
@@ -1119,7 +1044,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			}
 		}
 	}
-	
+
 	private void updateButtons(Object item) {
 		if (getPage().getModel().isEditable() == false)
 			return;
@@ -1129,13 +1054,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, false);
 			return;
 		}
-		
+
 		boolean filtered = fFilteredTree.isFiltered();
 		boolean addEnabled = true;
 		boolean removeEnabled = false;
 		boolean upEnabled = false;
 		boolean downEnabled = false;
-		
+
 		if (item != null) {
 			removeEnabled = true;
 		}
@@ -1144,11 +1069,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			addEnabled = false;
 			upEnabled = false;
 			downEnabled = false;
-		}
-		else {
-			if(item instanceof IStructuredSelection) {
-				if(((IStructuredSelection)item).size() == 1) {
-					Object selected = ((IStructuredSelection)item).getFirstElement();
+		} else {
+			if (item instanceof IStructuredSelection) {
+				if (((IStructuredSelection) item).size() == 1) {
+					Object selected = ((IStructuredSelection) item).getFirstElement();
 					if (selected instanceof IPluginElement) {
 						IPluginElement element = (IPluginElement) selected;
 						IPluginParent parent = (IPluginParent) element.getParent();
@@ -1185,11 +1109,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return fFilteredTree.getViewer();
 	}
-	
+
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			StructuredViewer viewer = getStructuredViewerPart().getViewer();
-			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 			updateButtons(ssel);
 		}
 	}
@@ -1197,14 +1121,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	protected void selectExtensionElement(ISelection selection) {
 		fExtensionTree.setSelection(selection, true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
@@ -1219,7 +1143,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -1231,20 +1155,20 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return false;
 		} else if ((targetObject instanceof IDocumentElementNode) == false) {
 			return false;
-		}	
+		}
 		// Validate source objects
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
 		}
 		return true;
 	}
-	
-    /**
-     * @param sourceObjects
-     * @return
-     */
-    private boolean validateDragMoveSanity(Object[] sourceObjects) {
-    	// Validate source
+
+	/**
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDragMoveSanity(Object[] sourceObjects) {
+		// Validate source
 		if (sourceObjects == null) {
 			// No objects
 			return false;
@@ -1259,8 +1183,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return false;
 		}
 		return true;
-    }
-	
+	}
+
 	/**
 	 * @param sourcePluginObject
 	 * @param targetPluginObject
@@ -1269,36 +1193,35 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private boolean validateDropMoveModel(IPluginParent sourcePluginObject, IPluginParent targetPluginObject) {
 		// Objects have to be from the same model
 		ISharedPluginModel sourceModel = sourcePluginObject.getModel();
-		ISharedPluginModel targetModel = targetPluginObject.getModel();		
+		ISharedPluginModel targetModel = targetPluginObject.getModel();
 		if (sourceModel.equals(targetModel)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
-	public boolean canDropMove(Object targetObject, Object[] sourceObjects,
-			int targetLocation) {
+	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			return false;
 		}
 		// Multiple selection not supported
-		IPluginParent sourcePluginObject = (IPluginParent)sourceObjects[0];
-		IPluginParent targetPluginObject = (IPluginParent)targetObject;
+		IPluginParent sourcePluginObject = (IPluginParent) sourceObjects[0];
+		IPluginParent targetPluginObject = (IPluginParent) targetObject;
 		// Validate model
 		if (validateDropMoveModel(sourcePluginObject, targetPluginObject) == false) {
 			return false;
 		}
 		// Validate move
 		if (sourcePluginObject instanceof IPluginExtension) {
-			IPluginExtension sourceExtensionObject = (IPluginExtension)sourcePluginObject;
+			IPluginExtension sourceExtensionObject = (IPluginExtension) sourcePluginObject;
 			if (targetPluginObject instanceof IPluginExtension) {
 				// Source:  Extension
 				// Target:  Extension
-				IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+				IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
 				return canDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
 			} else if (targetPluginObject instanceof IPluginElement) {
 				// Source:  Extension
@@ -1306,39 +1229,37 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return false;
 			}
 		} else if (sourcePluginObject instanceof IPluginElement) {
-			IPluginElement sourceElementObject = (IPluginElement)sourcePluginObject;
+			IPluginElement sourceElementObject = (IPluginElement) sourcePluginObject;
 			if (targetPluginObject instanceof IPluginExtension) {
 				// Source:  Element
 				// Target:  Extension
-				IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+				IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
 				return canDropMove(targetExtensionObject, sourceElementObject, targetLocation);
 			} else if (targetPluginObject instanceof IPluginElement) {
 				// Source:  Element
 				// Target:  Element
-				IPluginElement targetElementObject = (IPluginElement)targetPluginObject;
+				IPluginElement targetElementObject = (IPluginElement) targetPluginObject;
 				return canDropMove(targetElementObject, sourceElementObject, targetLocation);
-			}			
+			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetElementObject
 	 * @param sourceElementObject
 	 * @param targetLocation
 	 * @return
 	 */
-	private boolean canDropMove(IPluginElement targetElementObject,
-			IPluginElement sourceElementObject, int targetLocation) {
-		
+	private boolean canDropMove(IPluginElement targetElementObject, IPluginElement sourceElementObject, int targetLocation) {
+
 		// Verify that the source is not the parent of the target
 		if (validateDropMoveParent(targetElementObject, sourceElementObject) == false) {
 			return false;
 		}
-		
+
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				((IDocumentElementNode)targetElementObject).getPreviousSibling();
+			IDocumentElementNode previousNode = ((IDocumentElementNode) targetElementObject).getPreviousSibling();
 			if (sourceElementObject.equals(previousNode)) {
 				return false;
 			}
@@ -1347,10 +1268,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return false;
 			}
 			// Paste element as a sibling of the other element (before)
-			return validateDropMoveSchema((IPluginParent)targetParentObject, sourceElementObject);
+			return validateDropMoveSchema((IPluginParent) targetParentObject, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = 
-				((IDocumentElementNode)sourceElementObject).getPreviousSibling();	
+			IDocumentElementNode nextNode = ((IDocumentElementNode) sourceElementObject).getPreviousSibling();
 			if (targetElementObject.equals(nextNode)) {
 				return false;
 			}
@@ -1359,14 +1279,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return false;
 			}
 			// Paste element as a sibling of the other element (after)
-			return validateDropMoveSchema((IPluginParent)targetParentObject, sourceElementObject);		
+			return validateDropMoveSchema((IPluginParent) targetParentObject, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode targetExtensionNode = 
-				(IDocumentElementNode)targetElementObject;
+			IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetElementObject;
 			int childCount = targetExtensionNode.getChildCount();
 			if (childCount != 0) {
-				IDocumentElementNode lastNode = 
-					targetExtensionNode.getChildAt(childCount - 1);					
+				IDocumentElementNode lastNode = targetExtensionNode.getChildAt(childCount - 1);
 				if (sourceElementObject.equals(lastNode)) {
 					return false;
 				}
@@ -1376,15 +1294,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetElementObject
 	 * @param sourceElementObject
 	 * @return
 	 */
-	private boolean validateDropMoveParent(IPluginElement targetElementObject,
-			IPluginElement sourceElementObject) {
-		
+	private boolean validateDropMoveParent(IPluginElement targetElementObject, IPluginElement sourceElementObject) {
+
 		IPluginObject currentParent = targetElementObject.getParent();
 		while (true) {
 			if (currentParent == null) {
@@ -1397,27 +1314,24 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			currentParent = currentParent.getParent();
 		}
 	}
-	
+
 	/**
 	 * @param targetExtensionObject
 	 * @param sourceElementObject
 	 * @param targetLocation
 	 * @return
 	 */
-	private boolean canDropMove(IPluginExtension targetExtensionObject,
-			IPluginElement sourceElementObject, int targetLocation) {
-		
+	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) {
+
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			return false;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			return false;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode targetExtensionNode = 
-				(IDocumentElementNode)targetExtensionObject;
+			IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetExtensionObject;
 			int childCount = targetExtensionNode.getChildCount();
 			if (childCount != 0) {
-				IDocumentElementNode lastNode = 
-					targetExtensionNode.getChildAt(childCount - 1);					
+				IDocumentElementNode lastNode = targetExtensionNode.getChildAt(childCount - 1);
 				if (sourceElementObject.equals(lastNode)) {
 					return false;
 				}
@@ -1427,15 +1341,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetPluginObject
 	 * @param sourcePluginObject
 	 * @return
 	 */
 	private boolean validateDropMoveSchema(IPluginParent targetPluginObject, IPluginParent sourcePluginObject) {
-		IDocumentElementNode targetPluginNode = 
-			(IDocumentElementNode)targetPluginObject;
+		IDocumentElementNode targetPluginNode = (IDocumentElementNode) targetPluginObject;
 		// If the target is the source's parent, then the move is always 
 		// valid.  No need to check the schema.  Order does not matter
 		if (targetPluginObject.equals(sourcePluginObject.getParent())) {
@@ -1463,44 +1376,39 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// We have a schema complex type.  Either the target object has 
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet elementSet = 
-			XMLElementProposalComputer.computeElementProposal(
-					schemaElement, targetPluginNode);		
+		TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
 		// Iterate over set of valid element proposals
 		Iterator iterator = elementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
-			String targetTagName = ((ISchemaElement)iterator.next()).getName();
+			String targetTagName = ((ISchemaElement) iterator.next()).getName();
 			// Only a source element that is found ithin the set of element 
 			// proposals can be pasted
-			String sourceNodeTagName = ((IDocumentElementNode)sourcePluginObject).getXMLTagName();
+			String sourceNodeTagName = ((IDocumentElementNode) sourcePluginObject).getXMLTagName();
 			if (sourceNodeTagName.equals(targetTagName)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetExtensionObject
 	 * @param sourceExtensionObject
 	 * @param targetLocation
 	 * @return
 	 */
-	private boolean canDropMove(IPluginExtension targetExtensionObject,
-			IPluginExtension sourceExtensionObject, int targetLocation) {
-		
+	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) {
+
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				((IDocumentElementNode)targetExtensionObject).getPreviousSibling();
+			IDocumentElementNode previousNode = ((IDocumentElementNode) targetExtensionObject).getPreviousSibling();
 			if (sourceExtensionObject.equals(previousNode)) {
 				return false;
 			}
 			// Paste extension as sibling of extension (before)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = 
-				((IDocumentElementNode)sourceExtensionObject).getPreviousSibling();	
+			IDocumentElementNode nextNode = ((IDocumentElementNode) sourceExtensionObject).getPreviousSibling();
 			if (targetExtensionObject.equals(nextNode)) {
 				return false;
 			}
@@ -1511,8 +1419,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return false;
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
 	 */
@@ -1521,20 +1428,20 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return;
 		}
-		IPluginParent pluginParentObject = (IPluginParent)sourceObjects[0];
+		IPluginParent pluginParentObject = (IPluginParent) sourceObjects[0];
 		// Remove the object from the model
 		try {
 			if (pluginParentObject instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension)pluginParentObject;
+				IPluginExtension extension = (IPluginExtension) pluginParentObject;
 				IPluginBase pluginBase = pluginParentObject.getPluginBase();
 				if (pluginBase != null) {
 					pluginBase.remove(extension);
 				}
 			} else if (pluginParentObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement)pluginParentObject;
+				IPluginElement element = (IPluginElement) pluginParentObject;
 				IPluginObject object = element.getParent();
 				if (object instanceof IPluginParent) {
-					((IPluginParent)object).remove(element);
+					((IPluginParent) object).remove(element);
 				}
 			}
 			// Applicable for move operations
@@ -1546,33 +1453,32 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// text edit operations to get completely screwed up (e.g. mark-up
 			// in wrong position or getting lost)
 			// TODO: MP: Undo: What are the implications of this?
-			((PDEFormEditor)getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
+			((PDEFormEditor) getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
-	public void doDropMove(Object targetObject, Object[] sourceObjects,
-			int targetLocation) {
+	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			Display.getDefault().beep();
 			return;
 		}
 		// Multiple selection not supported
-		IPluginParent sourcePluginObject = (IPluginParent)sourceObjects[0];
-		IPluginParent targetPluginObject = (IPluginParent)targetObject;
+		IPluginParent sourcePluginObject = (IPluginParent) sourceObjects[0];
+		IPluginParent targetPluginObject = (IPluginParent) targetObject;
 		// Validate move
 		try {
 			if (sourcePluginObject instanceof IPluginExtension) {
-				IPluginExtension sourceExtensionObject = (IPluginExtension)sourcePluginObject;
+				IPluginExtension sourceExtensionObject = (IPluginExtension) sourcePluginObject;
 				if (targetPluginObject instanceof IPluginExtension) {
 					// Source:  Extension
 					// Target:  Extension
-					IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+					IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
 					doDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
 				} else if (targetPluginObject instanceof IPluginElement) {
 					// Source:  Extension
@@ -1580,31 +1486,30 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					return;
 				}
 			} else if (sourcePluginObject instanceof IPluginElement) {
-				IPluginElement sourceElementObject = (IPluginElement)sourcePluginObject;
+				IPluginElement sourceElementObject = (IPluginElement) sourcePluginObject;
 				if (targetPluginObject instanceof IPluginExtension) {
 					// Source:  Element
 					// Target:  Extension
-					IPluginExtension targetExtensionObject = (IPluginExtension)targetPluginObject;
+					IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
 					doDropMove(targetExtensionObject, sourceElementObject, targetLocation);
 				} else if (targetPluginObject instanceof IPluginElement) {
 					// Source:  Element
 					// Target:  Element
-					IPluginElement targetElementObject = (IPluginElement)targetPluginObject;
+					IPluginElement targetElementObject = (IPluginElement) targetPluginObject;
 					doDropMove(targetElementObject, sourceElementObject, targetLocation);
-				}			
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	/**
 	 * @param targetExtensionObject
 	 * @param sourceExtensionObject
 	 * @param targetLocation
 	 */
-	private void doDropMove(IPluginExtension targetExtensionObject,
-			IPluginExtension sourceExtensionObject, int targetLocation) throws CoreException {
+	private void doDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure the model is defined
@@ -1620,14 +1525,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		}
 		// Plug-in base node
-		IDocumentElementNode pluginBaseNode = 
-			(IDocumentElementNode) pluginBase;
+		IDocumentElementNode pluginBaseNode = (IDocumentElementNode) pluginBase;
 		// Source extension node
-		IDocumentElementNode sourceExtensionNode = 
-			(IDocumentElementNode) sourceExtensionObject;
+		IDocumentElementNode sourceExtensionNode = (IDocumentElementNode) sourceExtensionObject;
 		// Target extension node
-		IDocumentElementNode targetExtensionNode = 
-			(IDocumentElementNode) targetExtensionObject;		
+		IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetExtensionObject;
 		// Do drop move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Adjust all the source object transient field values to
@@ -1640,8 +1542,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return;
 			}
 			// Paste extension as sibling of extension (before)
-			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject,
-					index);
+			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject, index);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			// Adjust all the source object transient field values to
 			// acceptable values
@@ -1653,20 +1554,18 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return;
 			}
 			// Paste extension as sibling of extension (after)
-			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject,
-					index + 1);
+			((PluginBaseNode) pluginBaseNode).add(sourceExtensionObject, index + 1);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			// NO-OP
 		}
 	}
-	
+
 	/**
 	 * @param targetExtensionObject
 	 * @param sourceElementObject
 	 * @param targetLocation
 	 */
-	private void doDropMove(IPluginExtension targetExtensionObject,
-			IPluginElement sourceElementObject, int targetLocation) throws CoreException {
+	private void doDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure the model is defined
@@ -1674,11 +1573,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		}
 		// Target extension node
-		IDocumentElementNode targetExtensionNode = 
-			(IDocumentElementNode)targetExtensionObject;
+		IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetExtensionObject;
 		// Source extension node
-		IDocumentElementNode sourceElementNode = 
-			(IDocumentElementNode)sourceElementObject;
+		IDocumentElementNode sourceElementNode = (IDocumentElementNode) sourceElementObject;
 		// Do drop move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// NO-OP
@@ -1687,19 +1584,18 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			// Adjust all the source object transient field values to
 			// acceptable values
-			sourceElementNode.reconnect(targetExtensionNode, model);			
+			sourceElementNode.reconnect(targetExtensionNode, model);
 			// Paste element as the last child of the extension
 			targetExtensionObject.add(sourceElementObject);
 		}
 	}
-	
+
 	/**
 	 * @param targetElementObject
 	 * @param sourceElementObject
 	 * @param targetLocation
 	 */
-	private void doDropMove(IPluginElement targetElementObject,
-			IPluginElement sourceElementObject, int targetLocation) throws CoreException {
+	private void doDropMove(IPluginElement targetElementObject, IPluginElement sourceElementObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure the model is defined
@@ -1707,11 +1603,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return;
 		}
 		// Target extension node
-		IDocumentElementNode targetElementNode = 
-			(IDocumentElementNode)targetElementObject;
+		IDocumentElementNode targetElementNode = (IDocumentElementNode) targetElementObject;
 		// Source extension node
-		IDocumentElementNode sourceElementNode = 
-			(IDocumentElementNode)sourceElementObject;
+		IDocumentElementNode sourceElementNode = (IDocumentElementNode) sourceElementObject;
 		// Do drop move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Get the target's parent
@@ -1721,7 +1615,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			} else if ((targetParentObject instanceof IDocumentElementNode) == false) {
 				return;
 			}
-			IDocumentElementNode targetParentNode = (IDocumentElementNode)targetParentObject;
+			IDocumentElementNode targetParentNode = (IDocumentElementNode) targetParentObject;
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceElementNode.reconnect(targetParentNode, model);
@@ -1732,7 +1626,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return;
 			}
 			// Paste element as a sibling of the other element (before)
-			((IPluginParent)targetParentObject).add(index, sourceElementObject);
+			((IPluginParent) targetParentObject).add(index, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			// Get the target's parent
 			IPluginObject targetParentObject = targetElementObject.getParent();
@@ -1741,7 +1635,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			} else if ((targetParentObject instanceof IDocumentElementNode) == false) {
 				return;
 			}
-			IDocumentElementNode targetParentNode = (IDocumentElementNode)targetParentObject;
+			IDocumentElementNode targetParentNode = (IDocumentElementNode) targetParentObject;
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceElementNode.reconnect(targetParentNode, model);
@@ -1752,17 +1646,17 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return;
 			}
 			// Paste element as a sibling of the other element (after)
-			((IPluginParent)targetParentObject).add(index + 1, sourceElementObject);
+			((IPluginParent) targetParentObject).add(index + 1, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceElementNode.reconnect(targetElementNode, model);
 			// Paste element as the last child of the element
 			targetElementObject.add(sourceElementObject);
-		}		
+		}
 
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -1772,10 +1666,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 		return fSortAction.isChecked();
 	}
-	
+
 	private boolean isSingleSelection() {
 		IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
 		return selection.size() == 1;
 	}
-	
+
 }
