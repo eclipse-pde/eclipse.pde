@@ -11,25 +11,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -52,8 +43,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	private TablePart tablePart;
 	private LibraryPluginFieldData fData;
 
-	public class BuildpathContentProvider extends DefaultContentProvider
-			implements IStructuredContentProvider {
+	public class BuildpathContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (fUnmigrated != null)
 				return fUnmigrated;
@@ -71,17 +61,15 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 			dialogChanged();
 		}
 
-		protected StructuredViewer createStructuredViewer(Composite parent,
-				int style, FormToolkit toolkit) {
-			StructuredViewer viewer = super.createStructuredViewer(parent,
-					style, toolkit);
+		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
+			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 			return viewer;
 		}
 	}
 
 	public NewLibraryPluginCreationUpdateRefPage(LibraryPluginFieldData data, Collection initialJarPaths, Collection selection) {
-		super("update references");
+		super("UpdateReferences"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.UpdateBuildpathWizard_title);
 		setDescription(PDEUIMessages.UpdateBuildpathWizard_desc);
 		computeUnmigrated();
@@ -92,20 +80,21 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	}
 
 	private void computeSelected(Collection initialSelection) {
-		if(initialSelection == null || initialSelection.size() == 0) return;
+		if (initialSelection == null || initialSelection.size() == 0)
+			return;
 		Set selected = new HashSet();
 		Iterator iter = initialSelection.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			Object obj = iter.next();
-			if(obj instanceof IProject) {				
-				IPluginModelBase model = PluginRegistry.findModel((IProject)obj);
-				if(model != null) {
+			if (obj instanceof IProject) {
+				IPluginModelBase model = PluginRegistry.findModel((IProject) obj);
+				if (model != null) {
 					selected.add(model);
 				}
 			}
 		}
 		fSelected = (IPluginModelBase[]) selected.toArray(new IPluginModelBase[selected.size()]);
-		
+
 	}
 
 	public void createControl(Composite parent) {
@@ -120,23 +109,21 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new BuildpathContentProvider());
-		pluginListViewer.setLabelProvider(PDEPlugin.getDefault()
-				.getLabelProvider());
+		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 
 		pluginListViewer.setInput(PDEPlugin.getDefault());
-		if(fSelected != null && fSelected.length > 0) {
+		if (fSelected != null && fSelected.length > 0) {
 			tablePart.setSelection(fSelected);
 		}
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
-				IHelpContextIds.UPDATE_CLASSPATH);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
 	}
-	
+
 	private void computeUnmigrated() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList modelArray = new ArrayList();
@@ -148,29 +135,28 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		fUnmigrated = (IPluginModelBase[])modelArray.toArray(new IPluginModelBase[modelArray.size()]);
+		fUnmigrated = (IPluginModelBase[]) modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
-	
+
 	private void dialogChanged() {
 		setPageComplete(tablePart.getSelectionCount() > 0);
 	}
 
 	public boolean isPageComplete() {
-		if(tablePart.isEnabled()) {
+		if (tablePart.isEnabled()) {
 			return tablePart.getSelectionCount() > 0;
 		}
 		return true;
 	}
-	
-	
+
 	public void setEnable(boolean enabled) {
 		tablePart.setEnabled(enabled);
 		setPageComplete(isPageComplete());
 	}
-	
+
 	public void updateData() {
 		IPluginModelBase[] modelBase = new IPluginModelBase[tablePart.getSelectionCount()];
-		for(int i = 0; i < modelBase.length; ++i) {
+		for (int i = 0; i < modelBase.length; ++i) {
 			modelBase[i] = (IPluginModelBase) tablePart.getSelection()[i];
 		}
 		fData.setPluginsToUpdate(modelBase);
