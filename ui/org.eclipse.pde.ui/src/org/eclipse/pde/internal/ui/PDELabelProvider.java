@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui;
 
 import java.util.Locale;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -21,60 +20,23 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.feature.FeatureImport;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
-import org.eclipse.pde.internal.core.ischema.IDocumentSection;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
-import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
-import org.eclipse.pde.internal.core.itarget.ITargetFeature;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
-import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -87,6 +49,7 @@ import org.osgi.framework.Version;
 public class PDELabelProvider extends SharedLabelProvider {
 	public PDELabelProvider() {
 	}
+
 	public String getText(Object obj) {
 		if (obj instanceof IPluginModelBase) {
 			return getObjectText(((IPluginModelBase) obj).getPluginBase());
@@ -98,19 +61,19 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectText((ImportObject) obj);
 		}
 		if (obj instanceof IProductPlugin) {
-			return getObjectText((IProductPlugin)obj);
+			return getObjectText((IProductPlugin) obj);
 		}
 		if (obj instanceof BundleDescription) {
-			return getObjectText((BundleDescription)obj);
+			return getObjectText((BundleDescription) obj);
 		}
 		if (obj instanceof IPluginImport) {
-			return getObjectText((IPluginImport)obj);
+			return getObjectText((IPluginImport) obj);
 		}
 		if (obj instanceof IPluginLibrary) {
 			return getObjectText((IPluginLibrary) obj);
 		}
 		if (obj instanceof IPluginExtension) {
-			return getObjectText((IPluginExtension)obj);
+			return getObjectText((IPluginExtension) obj);
 		}
 		if (obj instanceof IPluginExtensionPoint) {
 			return getObjectText((IPluginExtensionPoint) obj);
@@ -126,7 +89,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ICompCSObject) {
 			return getObjectText((ICompCSObject) obj);
-		}		
+		}
 		if (obj instanceof TocObject) {
 			return getObjectText((TocObject) obj);
 		}
@@ -143,7 +106,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectText((FeatureChild) obj);
 		}
 		if (obj instanceof IProductFeature) {
-			return getObjectText((IProductFeature)obj);
+			return getObjectText((IProductFeature) obj);
 		}
 		if (obj instanceof ISiteFeature) {
 			return getObjectText((ISiteFeature) obj);
@@ -158,22 +121,22 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectText((ISiteCategory) obj);
 		}
 		if (obj instanceof IBuildEntry) {
-			return getObjectText((IBuildEntry)obj);
+			return getObjectText((IBuildEntry) obj);
 		}
 		if (obj instanceof PackageObject) {
-			return getObjectText((PackageObject)obj);
+			return getObjectText((PackageObject) obj);
 		}
 		if (obj instanceof ITargetPlugin) {
-			return getObjectText((ITargetPlugin)obj);
+			return getObjectText((ITargetPlugin) obj);
 		}
 		if (obj instanceof ITargetFeature) {
-			return getObjectText((ITargetFeature)obj);
+			return getObjectText((ITargetFeature) obj);
 		}
 		if (obj instanceof IAdditionalLocation) {
-			return getObjectText((IAdditionalLocation)obj);
+			return getObjectText((IAdditionalLocation) obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
-			return getObjectText((ExecutionEnvironment)obj);
+			return getObjectText((ExecutionEnvironment) obj);
 		}
 		return super.getText(obj);
 	}
@@ -181,12 +144,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private String getObjectText(ExecutionEnvironment environment) {
 		return preventNull(environment.getName());
 	}
-	
+
 	public String getObjectText(IPluginBase pluginBase) {
-		String name =
-			isFullNameModeEnabled()
-				? pluginBase.getTranslatedName()
-				: pluginBase.getId();
+		String name = isFullNameModeEnabled() ? pluginBase.getTranslatedName() : pluginBase.getId();
 		name = preventNull(name);
 		String version = pluginBase.getVersion();
 
@@ -200,32 +160,28 @@ public class PDELabelProvider extends SharedLabelProvider {
 			text += " " + PDEUIMessages.PluginModelManager_outOfSync; //$NON-NLS-1$
 		return text;
 	}
-	
+
 	private String preventNull(String text) {
-		return text!=null?text:""; //$NON-NLS-1$
+		return text != null ? text : ""; //$NON-NLS-1$
 	}
 
 	public String getObjectText(IPluginExtension extension) {
-		return preventNull(isFullNameModeEnabled()
-			? extension.getTranslatedName()
-			: extension.getPoint());
+		return preventNull(isFullNameModeEnabled() ? extension.getTranslatedName() : extension.getPoint());
 	}
 
 	public String getObjectText(IPluginExtensionPoint point) {
-		return preventNull(isFullNameModeEnabled()
-			? point.getTranslatedName()
-			: point.getId());
+		return preventNull(isFullNameModeEnabled() ? point.getTranslatedName() : point.getId());
 	}
 
 	public String getObjectText(ImportObject obj) {
-        String version = obj.getImport().getVersion();
-        if (version != null && version.length() > 0) 
-        	version = formatVersion(version);
+		String version = obj.getImport().getVersion();
+		if (version != null && version.length() > 0)
+			version = formatVersion(version);
 
-        String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
-        return version == null || version.length() == 0 ? text : text + " " + version; //$NON-NLS-1$
-    }
-	
+		String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
+		return version == null || version.length() == 0 ? text : text + " " + version; //$NON-NLS-1$
+	}
+
 	public String getObjectText(IProductPlugin obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
@@ -237,7 +193,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return preventNull(obj.getId());
 	}
-	
+
 	public String getObjectText(BundleDescription bundle) {
 		String id = bundle.getSymbolicName();
 		if (isFullNameModeEnabled()) {
@@ -249,7 +205,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return preventNull(id);
 	}
-	
+
 	public String getObjectText(IPluginImport obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
@@ -261,6 +217,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return preventNull(obj.getId());
 	}
+
 	public String getObjectText(IBuildEntry obj) {
 		return obj.getName();
 	}
@@ -281,25 +238,24 @@ public class PDELabelProvider extends SharedLabelProvider {
 					text.append('\u200f');
 				text.append(" ("); //$NON-NLS-1$
 				text.append(minOccurs);
-				text.append(" - "); //$NON-NLS-1$ //$NON-NLS-2$
-				if (unbounded) 
+				text.append(" - "); //$NON-NLS-1$
+				if (unbounded)
 					text.append('*');
 				else
 					text.append(maxOccurs);
 				text.append(')');
 			}
 		}
-		
+
 		return text.toString();
 	}
-	
+
 	/**
 	 * @param obj
-	 * @return
 	 */
 	public String getObjectText(ISimpleCSObject obj) {
 		int limit = 50;
-		
+
 		if (obj.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 			limit = 40;
 		} else if (obj.getType() == ISimpleCSConstants.TYPE_ITEM) {
@@ -309,36 +265,31 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else if (obj.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			limit = 32;
 		}
-		return PDETextHelper.truncateAndTrailOffText(
-				PDETextHelper.translateReadText(obj.getName()), limit);
+		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
 	/**
 	 * @param obj
-	 * @return
 	 */
 	public String getObjectText(ICompCSObject obj) {
 		int limit = 40;
 		ICompCSObject parent = obj.getParent();
-		while(parent != null) {
+		while (parent != null) {
 			limit = limit - 4;
 			parent = parent.getParent();
 		}
-		return PDETextHelper.truncateAndTrailOffText(
-				PDETextHelper.translateReadText(obj.getName()), limit);
-	}	
+		return PDETextHelper.truncateAndTrailOffText(PDETextHelper.translateReadText(obj.getName()), limit);
+	}
 
 	/**
 	 * @param obj
-	 * @return
 	 */
 	public String getObjectText(TocObject obj) {
 		return PDETextHelper.translateReadText(obj.getName());
 	}
-	
+
 	public String getObjectText(FeaturePlugin obj) {
-		String name =
-			isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
+		String name = isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
 		String version = obj.getVersion();
 
 		String text;
@@ -368,10 +319,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(IFeatureModel obj, boolean showVersion) {
 		IFeature feature = obj.getFeature();
-		String name =
-			(isFullNameModeEnabled())
-				? feature.getTranslatableLabel()
-				: feature.getId();
+		String name = (isFullNameModeEnabled()) ? feature.getTranslatableLabel() : feature.getId();
 		if (!showVersion)
 			return preventNull(name);
 		return preventNull(name) + ' ' + formatVersion(feature.getVersion());
@@ -385,17 +333,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(FeatureChild obj) {
 		return preventNull(obj.getId()) + ' ' + formatVersion(obj.getVersion());
 	}
-	
+
 	public String getObjectText(IProductFeature obj) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
 		return (model != null) ? getObjectText(model, false) : preventNull(obj.getId());
 	}
 
 	public String getObjectText(ISiteFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(
-				obj.getId(),
-				obj.getVersion() != null ? obj.getVersion() : "0.0.0"); //$NON-NLS-1$
-		if (model != null) 
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : "0.0.0"); //$NON-NLS-1$
+		if (model != null)
 			return getObjectText(model);
 		return preventNull(obj.getURL());
 	}
@@ -403,26 +349,29 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ISiteArchive obj) {
 		return preventNull(obj.getPath());
 	}
+
 	public String getObjectText(ISiteCategoryDefinition obj) {
 		return preventNull(obj.getLabel());
 	}
+
 	public String getObjectText(PackageObject obj) {
 		StringBuffer buffer = new StringBuffer(obj.getName());
-        String version = obj.getVersion();
-        if (version != null && !version.equals(Version.emptyVersion.toString())) {
-        	// Format version range for ImportPackageObject.  ExportPackageObject is handled correctly in this function
-        	version = formatVersion(version);
-        	buffer.append(' ').append(version);
-        }
+		String version = obj.getVersion();
+		if (version != null && !version.equals(Version.emptyVersion.toString())) {
+			// Format version range for ImportPackageObject.  ExportPackageObject is handled correctly in this function
+			version = formatVersion(version);
+			buffer.append(' ').append(version);
+		}
 		return buffer.toString();
 	}
+
 	public String getObjectText(ISiteCategory obj) {
 		ISiteCategoryDefinition def = obj.getDefinition();
 		if (def != null)
 			return preventNull(def.getLabel());
 		return preventNull(obj.getName());
 	}
-	
+
 	public String getObjectText(ITargetPlugin obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
@@ -434,12 +383,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return preventNull(obj.getId());
 	}
-	
+
 	public String getObjectText(ITargetFeature obj) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
-		return (model != null)  ? getObjectText(model, false) : preventNull(obj.getId());
+		return (model != null) ? getObjectText(model, false) : preventNull(obj.getId());
 	}
-	
+
 	public String getObjectText(IAdditionalLocation obj) {
 		return preventNull(obj.getPath());
 	}
@@ -464,10 +413,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((IPluginImport) obj);
 		}
 		if (obj instanceof IProductPlugin) {
-			return getObjectImage((IProductPlugin)obj);
+			return getObjectImage((IProductPlugin) obj);
 		}
 		if (obj instanceof BundleDescription) {
-			return getObjectImage((BundleDescription)obj);
+			return getObjectImage((BundleDescription) obj);
 		}
 		if (obj instanceof IPluginLibrary) {
 			return getObjectImage((IPluginLibrary) obj);
@@ -485,19 +434,19 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((ISchemaElement) obj);
 		}
 		if (obj instanceof ISimpleCSObject) {
-			return getObjectImage((ISimpleCSObject)obj);
-		}		
+			return getObjectImage((ISimpleCSObject) obj);
+		}
 		if (obj instanceof ICompCSObject) {
-			return getObjectImage((ICompCSObject)obj);
+			return getObjectImage((ICompCSObject) obj);
 		}
 		if (obj instanceof TocObject) {
-			return getObjectImage((TocObject)obj);
+			return getObjectImage((TocObject) obj);
 		}
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
 		}
 		if (obj instanceof ISchemaInclude) {
-			ISchema schema = ((ISchemaInclude)obj).getIncludedSchema();
+			ISchema schema = ((ISchemaInclude) obj).getIncludedSchema();
 			return get(PDEPluginImages.DESC_PAGE_OBJ, schema == null || !schema.isValid() ? F_ERROR : 0);
 		}
 		if (obj instanceof IDocumentSection || obj instanceof ISchema) {
@@ -511,7 +460,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IFeatureModel) {
 			int flags = 0;
-			if (((IFeatureModel)obj).getUnderlyingResource() == null) 
+			if (((IFeatureModel) obj).getUnderlyingResource() == null)
 				flags |= F_EXTERNAL;
 			return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 		}
@@ -519,7 +468,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((IFeatureChild) obj);
 		}
 		if (obj instanceof IProductFeature) {
-			return getObjectImage((IProductFeature)obj);
+			return getObjectImage((IProductFeature) obj);
 		}
 		if (obj instanceof IFeaturePlugin) {
 			return getObjectImage((IFeaturePlugin) obj);
@@ -561,13 +510,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((ITargetFeature) obj);
 		}
 		if (obj instanceof IAdditionalLocation) {
-			return getObjectImage((IAdditionalLocation)obj);
+			return getObjectImage((IAdditionalLocation) obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
-			return getObjectImage((ExecutionEnvironment)obj);
+			return getObjectImage((ExecutionEnvironment) obj);
 		}
 		if (obj instanceof ResolverError) {
-			return getObjectImage((ResolverError)obj);
+			return getObjectImage((ResolverError) obj);
 		}
 		return super.getImage(obj);
 	}
@@ -575,41 +524,37 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(ResolverError obj) {
 		int type = obj.getType();
 		switch (type) {
-		case ResolverError.MISSING_IMPORT_PACKAGE:
-		case ResolverError.EXPORT_PACKAGE_PERMISSION:
-		case ResolverError.IMPORT_PACKAGE_PERMISSION:
-		case ResolverError.IMPORT_PACKAGE_USES_CONFLICT:
-			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-		case ResolverError.MISSING_EXECUTION_ENVIRONMENT:
-			return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
-		case ResolverError.MISSING_FRAGMENT_HOST:
-		case ResolverError.MISSING_REQUIRE_BUNDLE:
-		case ResolverError.PROVIDE_BUNDLE_PERMISSION:
-		case ResolverError.REQUIRE_BUNDLE_PERMISSION:
-		case ResolverError.REQUIRE_BUNDLE_USES_CONFLICT:
-		case ResolverError.HOST_BUNDLE_PERMISSION:
-			return get(PDEPluginImages.DESC_PLUGIN_OBJ);	
+			case ResolverError.MISSING_IMPORT_PACKAGE :
+			case ResolverError.EXPORT_PACKAGE_PERMISSION :
+			case ResolverError.IMPORT_PACKAGE_PERMISSION :
+			case ResolverError.IMPORT_PACKAGE_USES_CONFLICT :
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+			case ResolverError.MISSING_EXECUTION_ENVIRONMENT :
+				return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
+			case ResolverError.MISSING_FRAGMENT_HOST :
+			case ResolverError.MISSING_REQUIRE_BUNDLE :
+			case ResolverError.PROVIDE_BUNDLE_PERMISSION :
+			case ResolverError.REQUIRE_BUNDLE_PERMISSION :
+			case ResolverError.REQUIRE_BUNDLE_USES_CONFLICT :
+			case ResolverError.HOST_BUNDLE_PERMISSION :
+				return get(PDEPluginImages.DESC_PLUGIN_OBJ);
 		}
 		return null;
 	}
+
 	private Image getObjectImage(ExecutionEnvironment environment) {
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 	}
-	
+
 	private Image getObjectImage(IPlugin plugin) {
 		return getObjectImage(plugin, false, false);
 	}
-	
+
 	private Image getObjectImage(BundleDescription bundle) {
-		return bundle.getHost() == null 
-			? get(PDEPluginImages.DESC_PLUGIN_OBJ)
-			: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+		return bundle.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 	}
 
-	public Image getObjectImage(
-		IPlugin plugin,
-		boolean checkEnabled,
-		boolean javaSearch) {
+	public Image getObjectImage(IPlugin plugin, boolean checkEnabled, boolean javaSearch) {
 		IPluginModelBase model = plugin.getPluginModel();
 		int flags = getModelFlags(model);
 
@@ -632,9 +577,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			IProject project = resource.getProject();
 			try {
 				if (WorkspaceModelManager.isBinaryProject(project)) {
-					String property =
-						project.getPersistentProperty(
-							PDECore.EXTERNAL_PROJECT_PROPERTY);
+					String property = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
 					if (property != null) {
 						/*
 						if (property.equals(PDECore.EXTERNAL_PROJECT_VALUE))
@@ -654,10 +597,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return getObjectImage(fragment, false, false);
 	}
 
-	public Image getObjectImage(
-		IFragment fragment,
-		boolean checkEnabled,
-		boolean javaSearch) {
+	public Image getObjectImage(IFragment fragment, boolean checkEnabled, boolean javaSearch) {
 		IPluginModelBase model = fragment.getPluginModel();
 		int flags = getModelFlags(model);
 		if (javaSearch)
@@ -684,7 +624,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return get(getRequiredPluginImageDescriptor(iimport), flags);
 	}
-	
+
 	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginImport iobj) {
 		return PDEPluginImages.DESC_REQ_PLUGIN_OBJ;
 	}
@@ -695,13 +635,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags |= F_EXPORT;
 		return get(getRequiredPluginImageDescriptor(obj), flags);
 	}
-	
+
 	private Image getObjectImage(IProductPlugin obj) {
 		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
 		if (desc != null) {
-			return desc.getHost() == null 
-				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
-				: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 		}
 		return get(PDEPluginImages.DESC_PLUGIN_OBJ, F_ERROR);
 	}
@@ -709,9 +647,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IPluginLibrary library) {
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 	}
+
 	private Image getObjectImage(IPluginExtension point) {
 		return get(PDEPluginImages.DESC_EXTENSION_OBJ);
 	}
+
 	private Image getObjectImage(IPluginExtensionPoint point) {
 		return get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 	}
@@ -734,11 +674,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-	}	
+	}
 
 	/**
 	 * @param object
-	 * @return
 	 */
 	private Image getObjectImage(ICompCSObject object) {
 
@@ -750,47 +689,42 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_COMPCS_OBJ);
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
-	}		
+	}
 
 	/**
 	 * @param object
-	 * @return
 	 */
 	private Image getObjectImage(TocObject object) {
-		switch(object.getType())
-		{	case ITocConstants.TYPE_TOC:
-			{	return get(PDEPluginImages.DESC_TOC_OBJ);
+		switch (object.getType()) {
+			case ITocConstants.TYPE_TOC : {
+				return get(PDEPluginImages.DESC_TOC_OBJ);
 			}
-			case ITocConstants.TYPE_TOPIC:
-			{	//Return the leaf topic icon for a topic with no children
-				if(object.getChildren().isEmpty())
-				{	return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
+			case ITocConstants.TYPE_TOPIC : { //Return the leaf topic icon for a topic with no children
+				if (object.getChildren().isEmpty()) {
+					return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
 				}
 				//Return the regular topic icon for a topic with children
 				return get(PDEPluginImages.DESC_TOC_TOPIC_OBJ);
 			}
-			case ITocConstants.TYPE_LINK:
-			{	return get(PDEPluginImages.DESC_TOC_LINK_OBJ);
+			case ITocConstants.TYPE_LINK : {
+				return get(PDEPluginImages.DESC_TOC_LINK_OBJ);
 			}
-			case ITocConstants.TYPE_ANCHOR:
-			{	return get(PDEPluginImages.DESC_TOC_ANCHOR_OBJ);
+			case ITocConstants.TYPE_ANCHOR : {
+				return get(PDEPluginImages.DESC_TOC_ANCHOR_OBJ);
 			}
-			default:
+			default :
 				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 		}
 	}
-	
+
 	private Image getObjectImage(ISchemaElement element) {
 		int flags = 0;
-		if (element instanceof ISchemaObjectReference &&
-				((ISchemaObjectReference)element).getReferencedObject() == null)
+		if (element instanceof ISchemaObjectReference && ((ISchemaObjectReference) element).getReferencedObject() == null)
 			flags |= F_ERROR;
-		ImageDescriptor desc = element instanceof ISchemaObjectReference 
-								? PDEPluginImages.DESC_XML_ELEMENT_REF_OBJ
-								: PDEPluginImages.DESC_GEL_SC_OBJ;
+		ImageDescriptor desc = element instanceof ISchemaObjectReference ? PDEPluginImages.DESC_XML_ELEMENT_REF_OBJ : PDEPluginImages.DESC_GEL_SC_OBJ;
 		return get(desc, flags);
 	}
-	
+
 	private Image getObjectImage(ISchemaAttribute att) {
 		if (att.getKind() == IMetaAttribute.JAVA)
 			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
@@ -823,9 +757,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int flags = 0;
 		if (((FeaturePlugin) plugin).getPluginBase() == null) {
 			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_PLUGINS);
-			if (cflag==CompilerFlags.ERROR)
+			if (cflag == CompilerFlags.ERROR)
 				flags = F_ERROR;
-			else if (cflag==CompilerFlags.WARNING)
+			else if (cflag == CompilerFlags.WARNING)
 				flags = F_WARNING;
 		}
 		if (plugin.isFragment())
@@ -837,14 +771,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int flags = 0;
 		if (((FeatureChild) feature).getReferencedFeature() == null) {
 			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_FEATURES);
-			if (cflag==CompilerFlags.ERROR)
+			if (cflag == CompilerFlags.ERROR)
 				flags = F_ERROR;
-			else if (cflag==CompilerFlags.WARNING)
+			else if (cflag == CompilerFlags.WARNING)
 				flags = F_WARNING;
 		}
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 	}
-	
+
 	private Image getObjectImage(IProductFeature feature) {
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
@@ -853,9 +787,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int flags = 0;
 		if (!data.exists())
 			flags = F_ERROR;
-		ImageDescriptor desc =
-			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
-				data.getId());
+		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(data.getId());
 		return get(desc, flags);
 	}
 
@@ -864,14 +796,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int type = iimport.getType();
 		ImageDescriptor base;
 		int flags = 0;
-		
-		if (type==IFeatureImport.FEATURE) {
+
+		if (type == IFeatureImport.FEATURE) {
 			base = PDEPluginImages.DESC_FEATURE_OBJ;
 			IFeature feature = iimport.getFeature();
 			if (feature == null)
 				flags = F_ERROR;
-		}
-		else {
+		} else {
 			base = PDEPluginImages.DESC_REQ_PLUGIN_OBJ;
 			IPlugin plugin = iimport.getPlugin();
 			if (plugin == null)
@@ -880,6 +811,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 		return get(base, flags);
 	}
+
 	private Image getObjectImage(IFeatureInfo info) {
 		int flags = 0;
 		String text = info.getDescription();
@@ -903,6 +835,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteArchive obj) {
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ, 0);
 	}
+
 	public Image getObjectImage(ISiteCategoryDefinition obj) {
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ);
 	}
@@ -911,44 +844,41 @@ public class PDELabelProvider extends SharedLabelProvider {
 		int flags = obj.getDefinition() == null ? F_ERROR : 0;
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
 	}
-	
+
 	public Image getObjectImage(ExportPackageObject obj) {
 		int flags = 0;
-		if(obj.isInternal())
+		if (obj.isInternal())
 			flags = F_INTERNAL;
-		if(obj.getFriends().length > 0)
+		if (obj.getFriends().length > 0)
 			flags = F_FRIEND;
-		ImageDescriptor desc = 
-			JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
+		ImageDescriptor desc = JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
 		return get(desc, flags);
 	}
-	
+
 	public Image getObjectImage(PackageObject obj) {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 	}
-	
+
 	public Image getObjectImage(ITargetPlugin obj) {
 		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
 		if (desc != null) {
-			return desc.getHost() == null 
-				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
-				: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 		}
 		return get(PDEPluginImages.DESC_PLUGIN_OBJ, 0);
 	}
-	
+
 	public Image getObjectImage(ITargetFeature obj) {
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
-	
+
 	public Image getObjectImage(IAdditionalLocation obj) {
 		return get(PDEPluginImages.DESC_SITE_OBJ);
 	}
-	
+
 	public boolean isFullNameModeEnabled() {
 		return PDEPlugin.isFullNameModeEnabled();
 	}
-	
+
 	/*
 	 * BIDI support (bug 183417)
 	 * Any time we display a bracketed version, we should preface it with /u200f (zero width arabic character).
@@ -965,9 +895,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		Locale locale = Locale.getDefault();
 		String localeString = locale.toString();
 		return (localeString.startsWith("ar") || //$NON-NLS-1$
-			localeString.startsWith("he")); //$NON-NLS-1$
+		localeString.startsWith("he")); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * Returns a String containing the unicode to properly display the version ranging when running bidi. 
 	 */
@@ -1005,9 +935,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 				// add trailing separator
 				buffer.append(versionRange.charAt(versionRange.length() - 1));
 				return buffer.toString();
-			}	
-//			} else {
-//			    since the version is LTR and we are running LTR, do nothing.  This is the case for version ranges when run in LTR
+			}
+			//			} else {
+			//			    since the version is LTR and we are running LTR, do nothing.  This is the case for version ranges when run in LTR
 		}
 		return versionRange;
 	}
