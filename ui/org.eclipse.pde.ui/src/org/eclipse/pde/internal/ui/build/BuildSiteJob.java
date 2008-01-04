@@ -12,19 +12,11 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
 import java.util.regex.Pattern;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
-import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
-import org.eclipse.pde.internal.core.exports.SiteBuildOperation;
+import org.eclipse.pde.internal.core.exports.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -59,7 +51,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		fSiteContainer = site.getUnderlyingResource().getParent();
 		setRule(MultiRule.combine(fSiteContainer.getProject(), getRule()));
 	}
-	
+
 	protected IStatus run(IProgressMonitor monitor) {
 		fBuildTime = System.currentTimeMillis();
 		IStatus status = super.run(monitor);
@@ -71,8 +63,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		}
 		return status;
 	}
-	
-	
+
 	protected FeatureExportOperation createOperation() {
 		return new SiteBuildOperation(fInfo);
 	}
@@ -84,21 +75,19 @@ public class BuildSiteJob extends FeatureExportJob {
 				Version pvi = Version.parseVersion(feature.getVersion());
 
 				if ("qualifier".equals(pvi.getQualifier())) { //$NON-NLS-1$
-					String newVersion = findBuiltVersion(feature.getId(), pvi
-							.getMajor(), pvi.getMinor(), pvi.getMicro());
+					String newVersion = findBuiltVersion(feature.getId(), pvi.getMajor(), pvi.getMinor(), pvi.getMicro());
 					if (newVersion == null) {
 						continue;
 					}
-					ISiteFeature reVersionCandidate = findSiteFeature(feature,pvi);
+					ISiteFeature reVersionCandidate = findSiteFeature(feature, pvi);
 					if (reVersionCandidate != null) {
 						reVersionCandidate.setVersion(newVersion);
-						reVersionCandidate
-								.setURL("features/" + feature.getId() + "_" //$NON-NLS-1$ //$NON-NLS-2$
-										+ newVersion + ".jar"); //$NON-NLS-1$
+						reVersionCandidate.setURL("features/" + feature.getId() + "_" //$NON-NLS-1$ //$NON-NLS-2$
+								+ newVersion + ".jar"); //$NON-NLS-1$
 					}
 				}
 			}
-			((WorkspaceSiteModel)fSiteModel).save();
+			((WorkspaceSiteModel) fSiteModel).save();
 		} catch (CoreException ce) {
 			PDEPlugin.logException(ce);
 		}
@@ -110,9 +99,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		// site features
 		ISiteFeature[] siteFeatures = fSiteModel.getSite().getFeatures();
 		for (int s = 0; s < siteFeatures.length; s++) {
-			if (siteFeatures[s].getId().equals(feature.getId())
-					&& siteFeatures[s].getVersion()
-							.equals(feature.getVersion())) {
+			if (siteFeatures[s].getId().equals(feature.getId()) && siteFeatures[s].getVersion().equals(feature.getVersion())) {
 				return siteFeatures[s];
 			}
 		}
@@ -121,11 +108,8 @@ public class BuildSiteJob extends FeatureExportJob {
 		for (int s = 0; s < siteFeatures.length; s++) {
 			if (siteFeatures[s].getId().equals(feature.getId())) {
 				Version candidatePvi = Version.parseVersion(siteFeatures[s].getVersion());
-				if (pvi.getMajor() == candidatePvi.getMajor()
-						&& pvi.getMinor() == candidatePvi.getMinor()
-						&& pvi.getMicro() == candidatePvi.getMicro()) {
-					if (reversionCandidate == null
-							|| candidatePvi.getQualifier().compareTo(highestQualifier) > 0) {
+				if (pvi.getMajor() == candidatePvi.getMajor() && pvi.getMinor() == candidatePvi.getMinor() && pvi.getMicro() == candidatePvi.getMicro()) {
+					if (reversionCandidate == null || candidatePvi.getQualifier().compareTo(highestQualifier) > 0) {
 						reversionCandidate = siteFeatures[s];
 						highestQualifier = candidatePvi.getQualifier();
 					}
@@ -145,7 +129,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @param major
 	 * @param minor
 	 * @param service
-	 * @return
 	 */
 	private String findBuiltVersion(String id, int major, int minor, int service) {
 		IFolder featuresFolder = fSiteContainer.getFolder(new Path("features")); //$NON-NLS-1$
@@ -169,7 +152,7 @@ public class BuildSiteJob extends FeatureExportJob {
 			File file = new File(featureJars[i].getLocation().toOSString());
 			long jarTime = file.lastModified();
 			String jarName = featureJars[i].getName();
-			
+
 			if (jarTime < fBuildTime) {
 				continue;
 			}
@@ -194,6 +177,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getLogFoundMessage()
 	 */
 	protected String getLogFoundMessage() {
-		return PDEUIMessages.BuildSiteJob_message; 
+		return PDEUIMessages.BuildSiteJob_message;
 	}
 }
