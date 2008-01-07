@@ -1564,6 +1564,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginSelectionDialog_title;
 	public static String PluginSelectionDialog_message;
+	public static String PluginImportInfoDialog_message;
+
+	public static String PluginImportInfoDialog_title;
+
 	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
 

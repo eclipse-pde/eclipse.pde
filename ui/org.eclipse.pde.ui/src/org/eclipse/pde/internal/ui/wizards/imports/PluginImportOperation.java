@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,42 +12,14 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.environment.Constants;
@@ -57,14 +29,8 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -73,6 +39,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -96,8 +63,9 @@ public class PluginImportOperation extends JarImportOperation {
 	private Hashtable fProjectClasspaths = new Hashtable();
 	private boolean fForceAutobuild;
 	private IImportQuery fExecutionQuery;
-	
+
 	private boolean fLaunchedConfigurations = false;
+	private ArrayList fAffectedPlugins;
 
 	public interface IImportQuery {
 		public static final int CANCEL = 0;
@@ -119,6 +87,7 @@ public class PluginImportOperation extends JarImportOperation {
 		fImportType = importType;
 		fReplaceQuery = replaceQuery;
 		fExecutionQuery = executionQuery;
+		fAffectedPlugins = new ArrayList(models.length);
 	}
 
 	/**
@@ -137,16 +106,13 @@ public class PluginImportOperation extends JarImportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor) throws CoreException,	OperationCanceledException{
+	public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
 		try {
-			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(),
-					IStatus.OK,
-					PDEUIMessages.ImportWizard_operation_multiProblem, 
-					null);
+			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.ImportWizard_operation_multiProblem, null);
 
 			for (int i = 0; i < fModels.length; i++) {
 				try {
@@ -166,14 +132,27 @@ public class PluginImportOperation extends JarImportOperation {
 				throw new CoreException(multiStatus);
 		} finally {
 			monitor.done();
+			if (!fAffectedPlugins.isEmpty()) {
+				final Display display = Display.getDefault();
+				display.syncExec(new Runnable() {
+					public void run() {
+						PluginImportFinishDialog dialog = new PluginImportFinishDialog(display.getActiveShell());
+						dialog.setTitle(PDEUIMessages.PluginImportInfoDialog_title);
+						dialog.setMessage(PDEUIMessages.PluginImportInfoDialog_message);
+						dialog.setInput(fAffectedPlugins);
+						dialog.open();
+					}
+
+				});
+			}
 		}
 	}
-	
+
 	/**
 	 * Starts a job that will build the workspace
 	 */
 	private void runBuildJob() {
-		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { 
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) {
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_AUTO_BUILD == family;
 			}
@@ -189,7 +168,7 @@ public class PluginImportOperation extends JarImportOperation {
 		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
 		buildJob.schedule();
 	}
-	
+
 	/**
 	 * Sets the raw classpath of projects that need to be updated
 	 * @param monitor
@@ -199,11 +178,11 @@ public class PluginImportOperation extends JarImportOperation {
 		monitor.beginTask("", fProjectClasspaths.size()); //$NON-NLS-1$
 		Enumeration keys = fProjectClasspaths.keys();
 		while (keys.hasMoreElements()) {
-			IProject project = (IProject)keys.nextElement();
-			IClasspathEntry[] classpath = (IClasspathEntry[])fProjectClasspaths.get(project);
+			IProject project = (IProject) keys.nextElement();
+			IClasspathEntry[] classpath = (IClasspathEntry[]) fProjectClasspaths.get(project);
 			monitor.subTask(project.getName());
 			JavaCore.create(project).setRawClasspath(classpath, new SubProgressMonitor(monitor, 1));
-		}		
+		}
 	}
 
 	/**
@@ -214,7 +193,7 @@ public class PluginImportOperation extends JarImportOperation {
 	 * @param monitor progress monitor
 	 * @throws CoreException if a problem occurs while importing a plugin
 	 */
-	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor)	throws CoreException {
+	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		String id = model.getPluginBase().getId();
 		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
@@ -222,7 +201,7 @@ public class PluginImportOperation extends JarImportOperation {
 			if (desc != null) {
 				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 				String[] envs = desc.getExecutionEnvironments();
-				boolean found = false; 
+				boolean found = false;
 				for (int i = 0; i < envs.length; i++) {
 					if (manager.getEnvironment(envs[i]) != null) {
 						found = true;
@@ -232,10 +211,10 @@ public class PluginImportOperation extends JarImportOperation {
 				if (envs.length > 0 && !found) {
 					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, envs[0]);
 					if (!queryExecutionEnvironment(message))
-						return;					
+						return;
 				}
 			}
-			
+
 			IProject project = findProject(id);
 
 			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
@@ -245,29 +224,30 @@ public class PluginImportOperation extends JarImportOperation {
 					RepositoryProvider.unmap(project);
 				if (!project.exists())
 					project.create(new SubProgressMonitor(monitor, 1));
-				if(!safeDeleteCheck(project, monitor)) {
+				if (!safeDeleteCheck(project, monitor)) {
+					fAffectedPlugins.add(model);
 					return;
-				} 
+				}
 				project.delete(true, true, monitor);
 			}
 
 			project.create(monitor);
 			if (!project.isOpen())
-				project.open(monitor);			
+				project.open(monitor);
 			monitor.worked(1);
 
 			switch (fImportType) {
-				case IMPORT_BINARY:
+				case IMPORT_BINARY :
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					break;
-				case IMPORT_BINARY_WITH_LINKS:
+				case IMPORT_BINARY_WITH_LINKS :
 					if (id.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
 						importAsBinary(project, model, true, monitor);
 					} else {
 						importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
 					}
 					break;
-				case IMPORT_WITH_SOURCE:
+				case IMPORT_WITH_SOURCE :
 					if (isExempt(model)) {
 						importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					} else {
@@ -278,28 +258,27 @@ public class PluginImportOperation extends JarImportOperation {
 			setProjectDescription(project, model);
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
-				fProjectClasspaths .put(project, ClasspathComputer.getClasspath(project, model, true));
+				fProjectClasspaths.put(project, ClasspathComputer.getClasspath(project, model, true));
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		} finally {
 			monitor.done();
 		}
 	}
-	
+
 	// returns true if it is safe to delete the project.  It is not safe to delete if
 	// one of its libraries is locked by a running launch configuration.
 	private boolean safeDeleteCheck(IProject project, IProgressMonitor monitor) {
-		if (!fLaunchedConfigurations) 
+		if (!fLaunchedConfigurations)
 			return true;
 		IPluginModelBase base = PluginRegistry.findModel(project);
 		if (base != null) {
-			IPluginLibrary [] libraries = base.getPluginBase().getLibraries();
+			IPluginLibrary[] libraries = base.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
 				IResource res = project.findMember(libraries[i].getName());
 				if (res != null)
 					try {
-						if (!(ResourcesPlugin.getWorkspace().delete(
-								new IResource[] { res }, true, monitor).isOK()))
+						if (!(ResourcesPlugin.getWorkspace().delete(new IResource[] {res}, true, monitor).isOK()))
 							return false;
 					} catch (CoreException e) {
 						return false;
@@ -308,7 +287,7 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Imports the contents of the plugin and adds links to the source location(s).
 	 * @param project destination project of the import
@@ -318,35 +297,25 @@ public class PluginImportOperation extends JarImportOperation {
 	 */
 	private void importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
-			extractJARdPlugin(
-					project,
-					model,
-					monitor);
+			extractJARdPlugin(project, model, monitor);
 		} else {
 			File installLocation = new File(model.getInstallLocation());
 			File[] items = installLocation.listFiles();
 			if (items != null) {
-				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1); 
+				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1);
 				for (int i = 0; i < items.length; i++) {
 					File sourceFile = items[i];
 					String name = sourceFile.getName();
 					if (sourceFile.isDirectory()) {
-						project.getFolder(name).createLink(
-							new Path(sourceFile.getPath()),
-							IResource.NONE,
-							new SubProgressMonitor(monitor, 1));
+						project.getFolder(name).createLink(new Path(sourceFile.getPath()), IResource.NONE, new SubProgressMonitor(monitor, 1));
 					} else {
 						if (!name.equals(".project")) { //$NON-NLS-1$ 
-							project.getFile(name).createLink(
-								new Path(sourceFile.getPath()),
-								IResource.NONE,
-								new SubProgressMonitor(monitor, 1));
+							project.getFile(name).createLink(new Path(sourceFile.getPath()), IResource.NONE, new SubProgressMonitor(monitor, 1));
 						} else {
 							// if the binary project with links has a .project file, copy it instead of linking (allows us to edit it)
 							ArrayList filesToImport = new ArrayList(1);
 							filesToImport.add(sourceFile);
-							importContent(installLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, 
-									filesToImport, new SubProgressMonitor(monitor, 1));
+							importContent(installLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, filesToImport, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				}
@@ -370,33 +339,21 @@ public class PluginImportOperation extends JarImportOperation {
 	private void importAsBinary(IProject project, IPluginModelBase model, boolean markAsBinary, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 4); //$NON-NLS-1$
 		if (isJARd(model)) {
-			extractJARdPlugin(
-					project,
-					model,
-					new SubProgressMonitor(monitor, 3));
+			extractJARdPlugin(project, model, new SubProgressMonitor(monitor, 3));
 		} else {
-			importContent(
-					new File(model.getInstallLocation()),
-					project.getFullPath(),
-					FileSystemStructureProvider.INSTANCE,
-					null,
-					new SubProgressMonitor(monitor, 1));
-			importSourceArchives(
-					project,
-					model,
-					new SubProgressMonitor(monitor, 1));	
-			
+			importContent(new File(model.getInstallLocation()), project.getFullPath(), FileSystemStructureProvider.INSTANCE, null, new SubProgressMonitor(monitor, 1));
+			importSourceArchives(project, model, new SubProgressMonitor(monitor, 1));
+
 			// make sure all libraries have been imported
 			// if any are missing, check in fragments		
 			IFragment[] fragments = getFragmentsFor(model);
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			
+
 			IProgressMonitor fragmentMonitor = new SubProgressMonitor(monitor, 1);
 			fragmentMonitor.beginTask("", libraries.length); //$NON-NLS-1$
 			for (int i = 0; i < libraries.length; i++) {
 				String libraryName = libraries[i].getName();
-				if (ClasspathUtilCore.containsVariables(libraryName) &&
-						!project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
+				if (ClasspathUtilCore.containsVariables(libraryName) && !project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
 					for (int j = 0; j < fragments.length; j++) {
 						importJarFromFragment(project, fragments[j], libraryName);
 						importSourceFromFragment(project, fragments[j], libraryName, new SubProgressMonitor(monitor, 1));
@@ -407,14 +364,13 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 		}
 		if (markAsBinary) {
-			project.setPersistentProperty(
-					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					PDECore.BINARY_PROJECT_VALUE);	
+			project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
 			importAdditionalResources(project, model, new SubProgressMonitor(monitor, 1));
 		} else {
 			monitor.done();
 		}
 	}
+
 	/**
 	 * Imports the contents of the plugin and imports source files to source folders that will be compiled.
 	 * @param project destination project of the import
@@ -425,51 +381,51 @@ public class PluginImportOperation extends JarImportOperation {
 	private void importAsSource(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 4); //$NON-NLS-1$
 		importAsBinary(project, model, false, new SubProgressMonitor(monitor, 2));
-		List list = importAdditionalResources(project, model, new SubProgressMonitor(monitor, 1));	
+		List list = importAdditionalResources(project, model, new SubProgressMonitor(monitor, 1));
 		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 		if (!isJARd(model) || containsCode(new File(model.getInstallLocation()))) {
 			String[] libraries = getLibraryNames(model, false);
-			if (libraries.length == 0) 
-				libraries = new String[]{"."}; //$NON-NLS-1$
+			if (libraries.length == 0)
+				libraries = new String[] {"."}; //$NON-NLS-1$
 			for (int i = 0; i < libraries.length; i++) {
 				if (ClasspathUtilCore.containsVariables(libraries[i]))
 					continue;
 				String name = ClasspathUtilCore.expandLibraryName(libraries[i]);
 				IPath libraryPath = (name.equals(".") && isJARd(model)) //$NON-NLS-1$
-										? new Path(new File(model.getInstallLocation()).getName())
-										: new Path(name);
+				? new Path(new File(model.getInstallLocation()).getName())
+						: new Path(name);
 				IResource jarFile = project.findMember(libraryPath);
 				if (jarFile != null) {
 					String srcName = ClasspathUtilCore.getSourceZipName(libraryPath.lastSegment());
 					IResource srcZip = jarFile.getProject().findMember(srcName);
-					if (srcZip == null){
+					if (srcZip == null) {
 						int extIndex = srcName.lastIndexOf('.');
-						if (extIndex != -1){
+						if (extIndex != -1) {
 							srcZip = jarFile.getProject().findMember(srcName.substring(0, extIndex));
 						}
 					}
 					// srcZip == null if plug-in has embedded source
 					// if it jarred, all necessary files already in src folder
-					if (srcZip == null && libraries[i].equals(".")  && !isJARd(model)) //$NON-NLS-1$
+					if (srcZip == null && libraries[i].equals(".") && !isJARd(model)) //$NON-NLS-1$
 						// if src does not exist (and returns null), then must not be plug-in with embedded source
 						srcZip = jarFile.getProject().findMember("src"); //$NON-NLS-1$
 					if (srcZip != null) {
 						String jarName = libraries[i].equals(".") ? "" : libraryPath.removeFileExtension().lastSegment(); //$NON-NLS-1$ //$NON-NLS-2$
 						String folder = addBuildEntry(buildModel, "source." + libraries[i], "src" + (jarName.length() == 0 ? "/" : "-" + jarName + "/")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						IFolder dest = jarFile.getProject().getFolder(folder);
-						
-						if (srcZip instanceof IFolder){
-							if (dest.exists()){
+
+						if (srcZip instanceof IFolder) {
+							if (dest.exists()) {
 								dest.delete(true, null);
 							}
-							((IFolder)srcZip).move(dest.getFullPath(), true, new SubProgressMonitor(monitor, 1));
+							((IFolder) srcZip).move(dest.getFullPath(), true, new SubProgressMonitor(monitor, 1));
 						} else if (srcZip instanceof IFile) {
 							if (!dest.exists()) {
 								dest.create(true, true, null);
 							}
 							extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), new SubProgressMonitor(monitor, 1));
 							srcZip.delete(true, null);
-						} else 
+						} else
 							monitor.worked(1);
 
 						if (jarFile instanceof IFile) {
@@ -480,20 +436,20 @@ public class PluginImportOperation extends JarImportOperation {
 							}
 							jarFile.delete(true, null);
 						} else {
-							moveBinaryContents((IContainer)jarFile, dest, new SubProgressMonitor(monitor, 1));
+							moveBinaryContents((IContainer) jarFile, dest, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				} else if (name.equals(".") && project.getFolder("src").exists()) { //$NON-NLS-1$ //$NON-NLS-2$
 					addBuildEntry(buildModel, "source..", "src/"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}	
+			}
 		}
 		configureBinIncludes(buildModel, model, project);
 		if (list.size() > 0)
 			configureSrcIncludes(buildModel, list);
 		buildModel.save();
 	}
-	
+
 	/**
 	 * Moves the binary files from the source container to the folder destination.
 	 * Moves any file that isn't a .class file
@@ -506,33 +462,33 @@ public class PluginImportOperation extends JarImportOperation {
 			// get all the folders for which we want to search
 			IResource[] children = dest.members();
 			ArrayList validFolders = new ArrayList();
-			for (int i = 0; i < children.length; i++) 
+			for (int i = 0; i < children.length; i++)
 				if (children[i] instanceof IFolder) {
 					String folderName = children[i].getName();
 					IResource folder = srcFolder.findMember(folderName);
 					if (folder != null && folder instanceof IFolder)
 						validFolders.add(folder);
 				}
-			
+
 			monitor.beginTask(new String(), validFolders.size());
-			
+
 			ListIterator li = validFolders.listIterator();
 			while (li.hasNext()) {
-				IFolder folder = (IFolder)li.next();
+				IFolder folder = (IFolder) li.next();
 				int pathSegments = folder.getProjectRelativePath().segmentCount() - 1;
 				Stack stack = new Stack();
 				IResource[] resources = folder.members();
-				for (int i = 0; i < resources.length; i++) 
+				for (int i = 0; i < resources.length; i++)
 					stack.push(resources[i]);
-				
+
 				while (!stack.isEmpty()) {
 					IResource res = (IResource) stack.pop();
 					if (res instanceof IFile) {
 						if (!res.getName().endsWith(".class")) { //$NON-NLS-1$
 							String pathName = res.getProjectRelativePath().removeFirstSegments(pathSegments).toString();
- 							IFile destFile = dest.getFile(pathName);
-							if(!destFile.getParent().exists()) {
-								CoreUtility.createFolder((IFolder)destFile.getParent());
+							IFile destFile = dest.getFile(pathName);
+							if (!destFile.getParent().exists()) {
+								CoreUtility.createFolder((IFolder) destFile.getParent());
 							}
 							// file might exist if previous project was deleted without removing underlying resources
 							if (destFile.exists())
@@ -540,8 +496,8 @@ public class PluginImportOperation extends JarImportOperation {
 							res.move(destFile.getFullPath(), true, null);
 						}
 					} else {
-						resources = ((IFolder)res).members();
-						for (int i = 0; i < resources.length; i++) 
+						resources = ((IFolder) res).members();
+						for (int i = 0; i < resources.length; i++)
 							stack.push(resources[i]);
 					}
 				}
@@ -561,13 +517,12 @@ public class PluginImportOperation extends JarImportOperation {
 	 * @return list of imported files
 	 * @throws CoreException if there is a problem completing the import
 	 */
-	private List importAdditionalResources(IProject project, IPluginModelBase model,
-			SubProgressMonitor monitor) throws CoreException {
+	private List importAdditionalResources(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		File location = manager.findSourcePlugin(model.getPluginBase());
-		if (location != null){
+		if (location != null) {
 			ArrayList list = new ArrayList();
-			if (location.isDirectory()){
+			if (location.isDirectory()) {
 				Object root = location;
 				File[] children = location.listFiles();
 				if (children != null) {
@@ -577,39 +532,29 @@ public class PluginImportOperation extends JarImportOperation {
 							list.add(children[i]);
 						}
 					}
-					importContent(
-							root,
-							project.getFullPath(),
-							FileSystemStructureProvider.INSTANCE,
-							list,
-							monitor);
+					importContent(root, project.getFullPath(), FileSystemStructureProvider.INSTANCE, list, monitor);
 					ArrayList srcEntryList = new ArrayList(list.size());
 					for (ListIterator iterator = list.listIterator(); iterator.hasNext();) {
-						File current = (File)iterator.next();
+						File current = (File) iterator.next();
 						String entry = current.getName();
-						if (current.isDirectory()){
+						if (current.isDirectory()) {
 							entry += "/"; //$NON-NLS-1$
 						}
 						srcEntryList.add(entry);
 					}
 					return srcEntryList;
 				}
-			} else if (location.isFile()){
+			} else if (location.isFile()) {
 				ZipFile zipFile = null;
-				try{
+				try {
 					zipFile = new ZipFile(location);
 					ZipFileStructureProvider zipProvider = new ZipFileStructureProvider(zipFile);
 					Object root = zipProvider.getRoot();
 					collectAdditionalResources(zipProvider, root, list, project);
-					importContent(
-							root,
-							project.getFullPath(),
-							zipProvider,
-							list,
-							monitor);
+					importContent(root, project.getFullPath(), zipProvider, list, monitor);
 					ArrayList srcEntryList = new ArrayList(list.size());
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-						ZipEntry current = (ZipEntry)iterator.next();
+						ZipEntry current = (ZipEntry) iterator.next();
 						String entry = current.getName();
 						srcEntryList.add(entry);
 					}
@@ -629,7 +574,7 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 		return new ArrayList(0);
 	}
-	
+
 	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model, IProject project) throws CoreException {
 		IBuild build = buildModel.getBuild(true);
 		IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
@@ -642,7 +587,7 @@ public class PluginImportOperation extends JarImportOperation {
 				for (int i = 0; i < files.length; i++) {
 					String token = files[i].getName();
 					if ((project.findMember(token) == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
-							continue;
+						continue;
 					if (files[i].isDirectory()) {
 						token = token + "/"; //$NON-NLS-1$
 						if (libraryDirs.containsKey(token))
@@ -664,7 +609,7 @@ public class PluginImportOperation extends JarImportOperation {
 			buildModel.getBuild().add(entry);
 		}
 	}
-	
+
 	private HashMap getSourceDirectories(IBuild build) {
 		HashMap set = new HashMap();
 		IBuildEntry[] entries = build.getBuildEntries();
@@ -714,21 +659,17 @@ public class PluginImportOperation extends JarImportOperation {
 	 */
 	private void linkSourceArchives(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		String[] libraries = getLibraryNames(model, true);
-		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource,
-				libraries.length);
+		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource, libraries.length);
 
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		if (manager.hasBundleManifestLocation(model.getPluginBase())){
+		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
 			IPath srcPath = manager.findSourcePath(model.getPluginBase(), null);
 			if (srcPath != null) {
 				// Source for all libraries is in the same bundle, just create one link to the source bundle
 				IPath path = new Path(project.getName() + "src.zip"); //$NON-NLS-1$
 				IFile srcFile = project.getFile(path.lastSegment());
 				if (!srcFile.exists()) {
-					srcFile.createLink(
-							srcPath,
-							IResource.NONE,
-							new SubProgressMonitor(monitor, 1));
+					srcFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
 				}
 			}
 			monitor.worked(libraries.length);
@@ -740,15 +681,11 @@ public class PluginImportOperation extends JarImportOperation {
 					IPath srcPath = manager.findSourcePath(model.getPluginBase(), path);
 					if (srcPath != null) {
 						if ("src.zip".equals(zipName) && isJARd(model)) { //$NON-NLS-1$
-							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model
-									.getInstallLocation()).getName()));
+							path = new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
 						}
 						IFile zipFile = project.getFile(path.lastSegment());
 						if (!zipFile.exists()) {
-							zipFile.createLink(
-									srcPath,
-									IResource.NONE,
-									new SubProgressMonitor(monitor, 1));
+							zipFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
 						}
 					}
 				}
@@ -763,7 +700,7 @@ public class PluginImportOperation extends JarImportOperation {
 		monitor.beginTask(PDEUIMessages.ImportWizard_operation_copyingSource, libraries.length);
 
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-		
+
 		Set roots = null;
 		if (manager.hasBundleManifestLocation(model.getPluginBase()))
 			roots = manager.findSourceRoots(model.getPluginBase());
@@ -777,7 +714,7 @@ public class PluginImportOperation extends JarImportOperation {
 					IPath sourceLocation = manager.findSourcePath(model.getPluginBase(), null);
 					String currentRoot = ".".equals(libraries[i]) ? "." : path.removeFileExtension().toString(); //$NON-NLS-1$ //$NON-NLS-2$
 					if (roots.contains(currentRoot)) {
-						if (".".equals(currentRoot)){ //$NON-NLS-1$
+						if (".".equals(currentRoot)) { //$NON-NLS-1$
 							// Save to a special folder name based on the install location
 							IPath sourceName = getDefaultSourceNameForProject(model);
 							sourceName = sourceName.removeFileExtension();
@@ -788,10 +725,10 @@ public class PluginImportOperation extends JarImportOperation {
 
 							// List all of the other source roots so they are not included when importing source from the root, ".", of the jar
 							Set allBundleRoots = manager.findAllSourceRootsInSourceLocation(model.getPluginBase());
-							List rootsToExclude = new ArrayList(allBundleRoots.size()-1);
+							List rootsToExclude = new ArrayList(allBundleRoots.size() - 1);
 							for (Iterator iterator2 = allBundleRoots.iterator(); iterator2.hasNext();) {
 								String rootString = (String) iterator2.next();
-								if (!".".equals(rootString)){ //$NON-NLS-1$
+								if (!".".equals(rootString)) { //$NON-NLS-1$
 									rootsToExclude.add(new Path(rootString));
 								}
 							}
@@ -827,7 +764,7 @@ public class PluginImportOperation extends JarImportOperation {
 	private IPath getDefaultSourceNameForProject(IPluginModelBase model) {
 		return new Path(ClasspathUtilCore.getSourceZipName(new File(model.getInstallLocation()).getName()));
 	}
-	
+
 	private String[] getLibraryNames(IPluginModelBase model, boolean expand) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		ArrayList list = new ArrayList();
@@ -839,9 +776,9 @@ public class PluginImportOperation extends JarImportOperation {
 		}
 		if (libraries.length == 0 && isJARd(model))
 			list.add("."); //$NON-NLS-1$
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
+
 	private void extractJARdPlugin(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
@@ -865,24 +802,15 @@ public class PluginImportOperation extends JarImportOperation {
 				importContent(provider.getRoot(), project.getFullPath().append("src"), provider, collected, monitor); //$NON-NLS-1$
 			} else {
 				if (fImportType == IMPORT_BINARY_WITH_LINKS) {
-					 project.getFile(file.getName()).createLink(
-						new Path(file.getAbsolutePath()),
-						IResource.NONE,
-					 	null);
+					project.getFile(file.getName()).createLink(new Path(file.getAbsolutePath()), IResource.NONE, null);
 				} else {
-					importArchive(project, file, new Path(file.getName()));				
+					importArchive(project, file, new Path(file.getName()));
 				}
 				if (!hasEmbeddedSource(provider)) {
 					if (fImportType == IMPORT_BINARY_WITH_LINKS) {
-						linkSourceArchives(
-								project, 
-								model, 
-								new SubProgressMonitor(monitor, 1));
+						linkSourceArchives(project, model, new SubProgressMonitor(monitor, 1));
 					} else {
-						importSourceArchives(
-								project,
-								model,
-								new SubProgressMonitor(monitor, 1));
+						importSourceArchives(project, model, new SubProgressMonitor(monitor, 1));
 					}
 				}
 			}
@@ -893,8 +821,7 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 			setPermissions(model, project);
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
-					IStatus.ERROR, e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);
 		} finally {
 			if (zipFile != null) {
@@ -905,7 +832,7 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 		}
 	}
-	
+
 	private void modifyBundleClasspathHeader(IProject project, IPluginModelBase base) {
 		IFile file = project.getFile(JarFile.MANIFEST_NAME);
 		if (file.exists()) {
@@ -913,8 +840,7 @@ public class PluginImportOperation extends JarImportOperation {
 			IBundle bundle = bmodel.getBundle();
 			String classpath = bundle.getHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH);
 			if (classpath == null) {
-				bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, 
-						ClasspathUtilCore.getFilename(base));
+				bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, ClasspathUtilCore.getFilename(base));
 			} else {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, classpath);
@@ -937,7 +863,7 @@ public class PluginImportOperation extends JarImportOperation {
 			bmodel.save();
 		}
 	}
-	
+
 	private void removeSignedHeaders(IProject project) {
 		IFile file = project.getFile(JarFile.MANIFEST_NAME);
 		if (!file.exists())
@@ -952,33 +878,31 @@ public class PluginImportOperation extends JarImportOperation {
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null)
 				return resource.getProject();
-		}		
+		}
 		return PDEPlugin.getWorkspace().getRoot().getProject(id);
 	}
 
 	private boolean queryReplace(IProject project) throws OperationCanceledException {
-		switch (fReplaceQuery.doQuery(
-				NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()))) {
-			case IImportQuery.CANCEL:
+		switch (fReplaceQuery.doQuery(NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()))) {
+			case IImportQuery.CANCEL :
 				throw new OperationCanceledException();
-			case IImportQuery.NO:
+			case IImportQuery.NO :
 				return false;
 		}
 		return true;
 	}
-	
+
 	private boolean queryExecutionEnvironment(String message) throws OperationCanceledException {
 		switch (fExecutionQuery.doQuery(message)) {
-			case IImportQuery.CANCEL:
+			case IImportQuery.CANCEL :
 				throw new OperationCanceledException();
-			case IImportQuery.NO:
+			case IImportQuery.NO :
 				return false;
 		}
 		return true;
 	}
-	
-	private void setProjectDescription(IProject project, IPluginModelBase model)
-			throws CoreException {
+
+	private void setProjectDescription(IProject project, IPluginModelBase model) throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		if (!desc.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
@@ -989,7 +913,7 @@ public class PluginImportOperation extends JarImportOperation {
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
 		if (model.getPluginBase().getLibraries().length > 0)
 			return true;
-		
+
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			if (desc.getExportPackages().length > 0)
@@ -998,18 +922,18 @@ public class PluginImportOperation extends JarImportOperation {
 				return true;
 			if (desc.getImportPackages().length > 0)
 				return true;
-		}		
+		}
 		return false;
 	}
-	
+
 	private boolean isExempt(IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		if ("org.apache.ant".equals(id) //$NON-NLS-1$
-			|| "org.eclipse.osgi.util".equals(id) //$NON-NLS-1$
-			|| "org.eclipse.osgi.services".equals(id) //$NON-NLS-1$
-			|| "org.eclipse.core.runtime.compatibility.registry".equals(id)) //$NON-NLS-1$
+				|| "org.eclipse.osgi.util".equals(id) //$NON-NLS-1$
+				|| "org.eclipse.osgi.services".equals(id) //$NON-NLS-1$
+				|| "org.eclipse.core.runtime.compatibility.registry".equals(id)) //$NON-NLS-1$
 			return true;
-		
+
 		if ("org.eclipse.swt".equals(id) && !isJARd(model)) //$NON-NLS-1$
 			return true;
 		return false;
@@ -1018,57 +942,55 @@ public class PluginImportOperation extends JarImportOperation {
 	private boolean isJARd(IPluginModelBase model) {
 		return new File(model.getInstallLocation()).isFile();
 	}
-	
+
 	private void setPermissions(IPluginModelBase model, IProject project) {
 		try {
 			if (!Platform.getOS().equals(Constants.OS_WIN32) && model instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel)model).getFragment();
+				IFragment fragment = ((IFragmentModel) model).getFragment();
 				if ("org.eclipse.swt".equals(fragment.getPluginId())) { //$NON-NLS-1$
 					IResource[] children = project.members();
 					for (int i = 0; i < children.length; i++) {
 						if (children[i] instanceof IFile && isInterestingResource(children[i].getName())) {
-							Runtime.getRuntime().exec(new String[] {"chmod", "755", children[i].getLocation().toOSString()}).waitFor();						 //$NON-NLS-1$ //$NON-NLS-2$
+							Runtime.getRuntime().exec(new String[] {"chmod", "755", children[i].getLocation().toOSString()}).waitFor(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
-				}			
+				}
 			}
 		} catch (CoreException e) {
 		} catch (InterruptedException e) {
 		} catch (IOException e) {
 		}
 	}
-	
+
 	private boolean isInterestingResource(String name) {
 		return name.endsWith(".jnilib") //$NON-NLS-1$
-		|| name.endsWith(".sl") //$NON-NLS-1$
-		|| name.endsWith(".a") //$NON-NLS-1$
-		|| name.indexOf(".so") != -1; //$NON-NLS-1$
+				|| name.endsWith(".sl") //$NON-NLS-1$
+				|| name.endsWith(".a") //$NON-NLS-1$
+				|| name.indexOf(".so") != -1; //$NON-NLS-1$
 	}
-	
+
 	private IFragment[] getFragmentsFor(IPluginModelBase model) {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				HostSpecification spec = fModels[i].getBundleDescription().getHost();
-				BundleDescription host = spec == null ? null : (BundleDescription)spec.getSupplier();
+				BundleDescription host = spec == null ? null : (BundleDescription) spec.getSupplier();
 				if (model.getBundleDescription().equals(host)) {
-					result.add(((IFragmentModel)fModels[i]).getFragment());
+					result.add(((IFragmentModel) fModels[i]).getFragment());
 				}
 			}
 		}
-		return (IFragment[])result.toArray(new IFragment[result.size()]);
+		return (IFragment[]) result.toArray(new IFragment[result.size()]);
 	}
-	
-	private void importJarFromFragment(IProject project, IFragment fragment, String name)
-		throws CoreException {
+
+	private void importJarFromFragment(IProject project, IFragment fragment, String name) throws CoreException {
 		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
-		File jar =
-			new File(fragment.getModel().getInstallLocation(), jarPath.toString());
+		File jar = new File(fragment.getModel().getInstallLocation(), jarPath.toString());
 		if (jar.exists()) {
 			importArchive(project, jar, jarPath);
 		}
 	}
-	
+
 	/**
 	 * Imports the source for a library from a fragment.
 	 * @param project destination project of the import
@@ -1077,8 +999,7 @@ public class PluginImportOperation extends JarImportOperation {
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem completing the import
 	 */
-	private void importSourceFromFragment(IProject project, IFragment fragment, String libraryName, IProgressMonitor monitor)
-		throws CoreException {
+	private void importSourceFromFragment(IProject project, IFragment fragment, String libraryName, IProgressMonitor monitor) throws CoreException {
 		try {
 			IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(libraryName));
 			String zipName = ClasspathUtilCore.getSourceZipName(jarPath.toString());
@@ -1087,7 +1008,7 @@ public class PluginImportOperation extends JarImportOperation {
 				SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 				IPath srcPath = manager.findSourcePath(fragment, path);
 				if (srcPath != null) {
-					if (manager.hasBundleManifestLocation(fragment)){
+					if (manager.hasBundleManifestLocation(fragment)) {
 						// Extract the specific library from it's folder
 						extractResourcesFromFolder(new File(srcPath.toOSString()), path.removeFileExtension(), project, monitor);
 					} else {
@@ -1099,20 +1020,20 @@ public class PluginImportOperation extends JarImportOperation {
 			monitor.done();
 		}
 	}
-	
+
 	protected void collectAdditionalResources(ZipFileStructureProvider provider, Object element, ArrayList collected, IProject project) {
 		collectAdditionalResources(provider, element, collected);
 		ListIterator li = collected.listIterator();
 		while (li.hasNext()) {
-			ZipEntry ze = (ZipEntry)li.next();
+			ZipEntry ze = (ZipEntry) li.next();
 			String name = ze.getName();
 			// only import the entries that don't already exist
 			if (project.findMember(name) != null) {
-				li.remove(); 
+				li.remove();
 			}
 		}
 	}
-	
+
 	protected void collectNonJavaResources(ZipFileStructureProvider provider, Object element, ArrayList collected) {
 		super.collectNonJavaResources(provider, element, collected);
 		if (fImportType != IMPORT_WITH_SOURCE)
@@ -1120,16 +1041,16 @@ public class PluginImportOperation extends JarImportOperation {
 		// filter the resources we get back to include only relevant resource files
 		ListIterator li = collected.listIterator();
 		while (li.hasNext()) {
-			ZipEntry ze = (ZipEntry)li.next();
+			ZipEntry ze = (ZipEntry) li.next();
 			String name = ze.getName();
 			// filter out signature files - bug 175756
 			if (name.startsWith("META-INF/") && (name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".SF"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				li.remove(); 
+				li.remove();
 		}
 	}
 
 	public void setLaunchedConfiguration(boolean launchedConfiguration) {
 		fLaunchedConfigurations = launchedConfiguration;
 	}
-	
+
 }
