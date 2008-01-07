@@ -151,7 +151,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		boolean comboInitialized = false;
 		if (settings != null && !osgiProject) {
 			String text = settings.get(S_TARGET_NAME);
@@ -163,7 +163,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			if (PDECore.getDefault().areModelsInitialized())
 				fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
 			else
-				fTargetCombo.setText(ICoreConstants.TARGET33);
+				fTargetCombo.setText(ICoreConstants.TARGET34);
 		}
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);

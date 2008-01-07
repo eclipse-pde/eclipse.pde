@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 109440
+ *     Les Jones <lesojones@gmail.com> - Bug 214457
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -23,19 +24,10 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
@@ -83,8 +75,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		super(pageName);
 		fData = data;
 		fSelection = selection;
-		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); 
-		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); 
+		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title);
+		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc);
 	}
 
 	public void createControl(Composite parent) {
@@ -97,17 +89,15 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		createPluginPropertiesGroup(control);
 
 		createFormatGroup(control);
-		
-		createWorkingSetGroup(control, fSelection, new String[] {
-						"org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
-						"org.eclipse.pde.ui.pluginWorkingSet", //$NON-NLS-1$
-						"org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
-		
+
+		createWorkingSetGroup(control, fSelection, new String[] {"org.eclipse.jdt.ui.JavaWorkingSetPage", //$NON-NLS-1$
+				"org.eclipse.pde.ui.pluginWorkingSet", //$NON-NLS-1$
+				"org.eclipse.ui.resourceWorkingSetPage"}); //$NON-NLS-1$
+
 		updateRuntimeDependency();
 
 		Dialog.applyDialogFont(control);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
-				IHelpContextIds.NEW_LIBRARY_PROJECT_STRUCTURE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.NEW_LIBRARY_PROJECT_STRUCTURE_PAGE);
 		setControl(control);
 	}
 
@@ -116,36 +106,36 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		group.setText(PDEUIMessages.NewProjectCreationPage_target);
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.NewProjectCreationPage_ptarget);			
+		label.setText(PDEUIMessages.NewProjectCreationPage_ptarget);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		    
+
 		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
-    	fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);	    
-	    fEclipseButton.setSelection(fData.getOSGiFramework() == null);
-	    fEclipseButton.addSelectionListener(new SelectionAdapter(){
+		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
+		fEclipseButton.setSelection(fData.getOSGiFramework() == null);
+		fEclipseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
 			}
 		});
-		
-		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
+
+		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
-		
-	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
-    	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   
-	    fOSGIButton.setSelection(fData.getOSGiFramework() != null);
-	    
-		fOSGiCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard}); 
-		fOSGiCombo.setText(ICoreConstants.EQUINOX);	
-		
+
+		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
+		fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
+		fOSGIButton.setSelection(fData.getOSGiFramework() != null);
+
+		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
+		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
+		fOSGiCombo.setText(ICoreConstants.EQUINOX);
+
 		fJarredCheck = new Button(group, SWT.CHECK);
-		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred); 
+		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJarredCheck.setLayoutData(gd);
@@ -159,40 +149,40 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fUpdateRefsCheck.setSelection(true);
 		fUpdateRefsCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
-					((NewLibraryPluginCreationUpdateRefPage)getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
+				if (getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
+					((NewLibraryPluginCreationUpdateRefPage) getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
 				}
 				getContainer().updateButtons();
 			}
-			
+
 		});
 	}
-	
+
 	private void createPluginPropertiesGroup(Composite container) {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup); 
+		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid); 
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid);
 		fIdText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion); 
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion);
 		fVersionText = createText(propertiesGroup, fPropertiesListener);
 		fPropertiesListener.setBlocked(true);
 		fVersionText.setText("1.0.0"); //$NON-NLS-1$
 		fPropertiesListener.setBlocked(false);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname); 
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname);
 		fNameText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider); 
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider);
 		fProviderText = createText(propertiesGroup, fPropertiesListener);
-		
+
 		fFindDependencies = new Button(propertiesGroup, SWT.CHECK);
 		fFindDependencies.setText(PDEUIMessages.NewLibraryPluginCreationPage_pdependencies);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -208,7 +198,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.NewLibraryPluginCreationPage_plugin; 
+		return PDEUIMessages.NewLibraryPluginCreationPage_plugin;
 	}
 
 	/*
@@ -237,14 +227,13 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setName(fNameText.getText().trim());
 		fData.setProvider(fProviderText.getText().trim());
 		fData.setLibraryName(null);
-		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
+		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
-		fData.setUnzipLibraries(fJarredCheck.isEnabled()
-				&& fJarredCheck.getSelection());
+		fData.setUnzipLibraries(fJarredCheck.isEnabled() && fJarredCheck.getSelection());
 		fData.setFindDependencies(fFindDependencies.getSelection());
 		fData.setUpdateReferences(fUpdateRefsCheck.getSelection());
 		fData.setWorkingSets(getSelectedWorkingSets());
-		
+
 		PluginFieldData data = fData;
 		data.setClassname(null);
 		data.setUIPlugin(false);
@@ -255,10 +244,10 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)
-			return PDEUIMessages.NewLibraryPluginCreationPage_noid; 
+			return PDEUIMessages.NewLibraryPluginCreationPage_noid;
 
-		if (!IdUtil.isValidCompositeID(id)) { 
-			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId; 
+		if (!IdUtil.isValidCompositeID(id)) {
+			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId;
 		}
 		return null;
 	}
@@ -287,11 +276,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			return errorMessage;
 
 		if (fVersionText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion; 
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion;
 		} else if (!isVersionValid(fVersionText.getText().trim())) {
-			errorMessage = PDEUIMessages.ContentPage_badversion; 
+			errorMessage = PDEUIMessages.ContentPage_badversion;
 		} else if (fNameText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname; 
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname;
 		}
 
 		if (errorMessage != null)
@@ -299,30 +288,30 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 		return errorMessage;
 	}
-	
+
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
 		fTargetCombo.setEnabled(depends);
 		fOSGiCombo.setEnabled(!depends);
 	}
-	
+
 	private Button createButton(Composite container, int style, int span, int indent) {
 		Button button = new Button(container, style);
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;
 		button.setLayoutData(gd);
-		return button;		
+		return button;
 	}
-	
+
 	public void addSelectionListener(SelectionListener listener) {
-		if(fUpdateRefsCheck != null) {
+		if (fUpdateRefsCheck != null) {
 			fUpdateRefsCheck.addSelectionListener(listener);
 		}
 	}
-	
+
 	public void removeSelectionListener(SelectionListener listener) {
-		if(fUpdateRefsCheck != null) {
+		if (fUpdateRefsCheck != null) {
 			fUpdateRefsCheck.removeSelectionListener(listener);
 		}
 	}

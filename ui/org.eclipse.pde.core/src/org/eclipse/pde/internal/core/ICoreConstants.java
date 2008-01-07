@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214457
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -73,6 +74,7 @@ public interface ICoreConstants {
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
 	public final static String TARGET32 = "3.2"; //$NON-NLS-1$
 	public final static String TARGET33 = "3.3"; //$NON-NLS-1$
+	public final static String TARGET34 = "3.4"; //$NON-NLS-1$
 
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 

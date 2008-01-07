@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,46 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214457
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.Version;
+import org.osgi.framework.*;
 
 public class TargetPlatformHelper {
 
@@ -311,7 +288,7 @@ public class TargetPlatformHelper {
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
 		if (model == null)
-			return ICoreConstants.TARGET33;
+			return ICoreConstants.TARGET34;
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
@@ -324,8 +301,10 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET31;
 			if (major == 3 && minor == 2)
 				return ICoreConstants.TARGET32;
+			if (major == 3 && minor == 3)
+				return ICoreConstants.TARGET33;
 		}
-		return ICoreConstants.TARGET33;
+		return ICoreConstants.TARGET34;
 	}
 
 	public static double getTargetVersion() {
