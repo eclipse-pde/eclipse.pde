@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,29 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 211698
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
 /**
  * PDESourceInfoProvider
- *
  */
-public class PDESourceInfoProvider implements IInformationProvider,
-		IInformationProviderExtension {
+public class PDESourceInfoProvider implements IInformationProvider, IInformationProviderExtension {
 
 	private PDESourcePage fSourcePage;
-	
-	/**
-	 * 
-	 */
+
 	public PDESourceInfoProvider(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
 	}
@@ -47,8 +42,7 @@ public class PDESourceInfoProvider implements IInformationProvider,
 	 */
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		// Subject used in getInformation2
-		if ((textViewer == null) ||
-				(fSourcePage == null)) {
+		if ((textViewer == null) || (fSourcePage == null)) {
 			return null;
 		}
 		// Get the selected region
@@ -65,12 +59,23 @@ public class PDESourceInfoProvider implements IInformationProvider,
 	 */
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		// Calls setInput on the quick outline popup dialog
-		if ((textViewer == null) ||
-				(fSourcePage == null)) {
+		if ((textViewer == null) || (fSourcePage == null)) {
 			return null;
 		}
-		// Get the current selection, if any
-		Object selection = fSourcePage.getSelection();
+
+		// First try to get the selection from the offset within the source page
+		int offset = subject.getOffset();
+		IDocumentRange rangeElement;
+		rangeElement = fSourcePage.getRangeElement(offset, false);
+
+		Object selection = rangeElement;
+
+		if (selection == null) {
+			// now try to get the selection in the old way
+			// (prior to fixing bug 211698)
+			selection = fSourcePage.getSelection();
+		}
+
 		// If the input is null, then the dialog does not open
 		// Define an empty object for no selection instead of null
 		if (selection == null) {
