@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gaetano Santoro <gaetano.santoro@st.com> - Bug 211754
  *******************************************************************************/
 
 package org.eclipse.pde.internal.core.icheatsheet.comp;
@@ -31,7 +32,7 @@ public interface ICompCSConstants extends ICSConstants {
 
 	public static final String ELEMENT_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
 
-	public static final String ELEMENT_DEPENDENCY = "dependency"; //$NON-NLS-1$	
+	public static final String ELEMENT_DEPENDENCY = "dependsOn"; //$NON-NLS-1$	
 
 	public static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$	
 
