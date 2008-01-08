@@ -207,35 +207,35 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setProduct(product);
 		}
 
-		try {
-			if (generator != null) {
+		if (generator != null) {
+			try {
 				for (Iterator i = features.iterator(); i.hasNext();) {
 					String[] featureInfo = getNameAndVersion((String) i.next());
 					BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
 					generator.generate(feature);
 				}
-	
+
 				if (generateAssembleScript == true) {
 					String[] featureInfo = null;
 					if (features.size() == 1)
 						featureInfo = getNameAndVersion((String) features.get(0));
 					else
 						featureInfo = new String[] {"all"}; //$NON-NLS-1$
-	
+
 					generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
-	
+
 					if (features.size() == 1)
 						featureInfo = getNameAndVersion((String) features.get(0));
 					else
 						featureInfo = new String[] {""}; //$NON-NLS-1$
-	
+
 					generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 				}
 				if (generateVersionsList)
 					generateVersionsLists(assemblageInformation);
+			} finally {
+				getSite(false).getRegistry().cleanupOriginalState();
 			}
-		} finally {
-			getSite(false).getRegistry().cleanupOriginalState();
 		}
 	}
 
@@ -495,7 +495,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			Config aConfig = new Config(configElements[0], configElements[1], archAndFormat[0]);
-			if (getConfigInfos().contains(aConfig) || (groupConfigs== true && configElements[0].equals("group"))) { //$NON-NLS-1$
+			if (getConfigInfos().contains(aConfig) || (groupConfigs == true && configElements[0].equals("group"))) { //$NON-NLS-1$
 				archivesFormat.put(aConfig, archAndFormat[1]);
 			}
 		}

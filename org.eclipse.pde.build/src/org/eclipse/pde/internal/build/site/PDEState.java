@@ -625,12 +625,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleDescription added = (BundleDescription) iter.next();
 			state.removeBundle(added);
 		}
+		addedBundle.clear();
 
 		for (Iterator iter = unqualifiedBundles.iterator(); iter.hasNext();) {
 			BundleDescription toAddBack = (BundleDescription) iter.next();
 			state.removeBundle(toAddBack.getBundleId());
 			addBundleDescription(toAddBack);
 		}
+		unqualifiedBundles.clear();
 
 		BundleDescription[] allBundles = state.getBundles();
 		for (int i = 0; i < allBundles.length; i++) {
