@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,15 @@ public class Messages extends NLS {
 	public static String EventDetailsDialog_previous;
 	public static String EventDetailsDialog_next;
 	public static String EventDetailsDialog_copy;
+	public static String EventDetailsDialog_FilterDialog;
+	public static String EventDetailsDialog_ShowFilterDialog;
 
+	public static String FilterDialog_Add;
+	public static String FilterDialog_AddFilterTitle;
+	public static String FilterDialog_AddFliterLabel;
+	public static String FilterDialog_EnableFiltersCheckbox;
+	public static String FilterDialog_FilterShouldntContainSemicolon;
+	public static String FilterDialog_Remove;
 	public static String OpenLogDialog_title;
 	public static String OpenLogDialog_message;
 	public static String OpenLogDialog_cannotDisplay;

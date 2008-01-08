@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import java.util.StringTokenizer;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -21,14 +23,27 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IMemento;
 
 public class FilterDialog extends TrayDialog {
+
+	Button okButton;
+
+	// entries count limit
 	private Button limit;
 	Text limitText;
 
-	Button okButton;
+	// entry types filter
 	private Button errorButton;
 	private Button warningButton;
 	private Button infoButton;
+
+	// show all sessions
 	private Button showAllButton;
+
+	// filter stack trace elements in EventDetailsDialog
+	private Button filterEnabled;
+	private Button addFilter;
+	private Button removeFilter;
+	private List filterList;
+
 	private IMemento memento;
 
 	public FilterDialog(Shell parentShell, IMemento memento) {
@@ -41,6 +56,7 @@ public class FilterDialog extends TrayDialog {
 		createEventTypesGroup(container);
 		createLimitSection(container);
 		createSessionSection(container);
+		createFilterSection(container);
 
 		Dialog.applyDialogFont(container);
 		return container;
@@ -129,6 +145,106 @@ public class FilterDialog extends TrayDialog {
 		}
 	}
 
+	private void createFilterSection(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		filterEnabled = new Button(comp, SWT.CHECK);
+		filterEnabled.setText(Messages.FilterDialog_EnableFiltersCheckbox);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		filterEnabled.setLayoutData(gd);
+		filterEnabled.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setStackTraceFilterEnabled(filterEnabled.getSelection());
+			}
+
+		});
+
+		filterList = new List(comp, SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		gd.verticalSpan = 3;
+		gd.widthHint = 280;
+		gd.horizontalIndent = 20;
+		filterList.setLayoutData(gd);
+		filterList.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				removeFilter.setEnabled(true);
+			}
+		});
+
+		addFilter = new Button(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		addFilter.setLayoutData(gd);
+		addFilter.setText(Messages.FilterDialog_Add);
+		addFilter.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addFilter();
+			}
+		});
+
+		removeFilter = new Button(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		removeFilter.setLayoutData(gd);
+		removeFilter.setText(Messages.FilterDialog_Remove);
+		removeFilter.setEnabled(false);
+		removeFilter.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				removeFilter();
+			}
+		});
+
+		// load preferences
+		Boolean enable = memento.getBoolean(EventDetailsDialog.FILTER_ENABLED);
+		enable = enable == null ? Boolean.FALSE : enable;
+
+		filterEnabled.setSelection(enable.booleanValue());
+		setStackTraceFilterEnabled(enable.booleanValue());
+
+		String filters = memento.getString(EventDetailsDialog.FILTER_LIST);
+		if (filters != null) {
+			StringTokenizer st = new StringTokenizer(filters, ";"); //$NON-NLS-1$
+			while (st.hasMoreElements()) {
+				filterList.add(st.nextToken());
+			}
+		}
+	}
+
+	private void addFilter() {
+		IInputValidator validator = new IInputValidator() {
+
+			public String isValid(String newText) {
+				return newText.indexOf(';') >= 0 ? Messages.FilterDialog_FilterShouldntContainSemicolon : null;
+			}
+
+		};
+		InputDialog dialog = new InputDialog(getShell(), Messages.FilterDialog_AddFilterTitle, Messages.FilterDialog_AddFliterLabel, null, validator);
+		if (dialog.open() == Window.OK) {
+			String value = dialog.getValue().trim();
+
+			if (value.length() > 0) {
+				filterList.add(value);
+			}
+		}
+	}
+
+	private void removeFilter() {
+		int index = filterList.getSelectionIndex();
+		if (index != -1) {
+			filterList.remove(index);
+		}
+
+		removeFilter.setEnabled(false);
+	}
+
+	private void setStackTraceFilterEnabled(boolean enabled) {
+		filterList.setEnabled(enabled);
+		addFilter.setEnabled(enabled);
+		removeFilter.setEnabled(enabled && filterList.getSelectionIndex() != -1);
+	}
+
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -141,6 +257,20 @@ public class FilterDialog extends TrayDialog {
 		memento.putString(LogView.P_LOG_LIMIT, limitText.getText());
 		memento.putString(LogView.P_USE_LIMIT, limit.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_SHOW_ALL_SESSIONS, showAllButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// store Event Dialog stack trace filter preferences
+		memento.putBoolean(EventDetailsDialog.FILTER_ENABLED, filterEnabled.getSelection());
+
+		StringBuffer sb = new StringBuffer();
+		String[] items = filterList.getItems();
+		for (int i = 0; i < items.length; i++) {
+			sb.append(items[i]);
+			if (i < items.length - 1) {
+				sb.append(";"); //$NON-NLS-1$
+			}
+		}
+		memento.putString(EventDetailsDialog.FILTER_LIST, sb.toString());
+
 		super.okPressed();
 	}
 

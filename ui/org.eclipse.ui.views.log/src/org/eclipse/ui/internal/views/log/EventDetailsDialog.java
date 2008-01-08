@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,17 +19,31 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
+/**
+ * Displays details about Log Entry.
+ * Event information is split in three sections: details, stack trace and session. Details
+ * contain event date, message and severity. Stack trace is displayed if an exception is bound
+ * to event. Stack trace entries can be filtered.
+ */
 public class EventDetailsDialog extends TrayDialog {
+
+	public static final String FILTER_ENABLED = "detailsStackFilterEnabled"; //$NON-NLS-1$
+	public static final String FILTER_LIST = "detailsStackFilterList"; //$NON-NLS-1$
+
+	private IMemento memento;
+
 	private AbstractEntry entry;
 	private AbstractEntry parentEntry; // parent of the entry
 	private AbstractEntry[] entryChildren; // children of the entry
@@ -60,6 +74,9 @@ public class EventDetailsDialog extends TrayDialog {
 	private Comparator comparator = null;
 	Collator collator;
 
+	// patterns for filtering stack traces
+	private String[] stackFilterPatterns = null;
+
 	// location configuration
 	private Point dialogLocation;
 	private Point dialogSize;
@@ -72,13 +89,14 @@ public class EventDetailsDialog extends TrayDialog {
 	 * @param provider viewer
 	 * @param comparator comparator used to order all entries
 	 */
-	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider, Comparator comparator) {
+	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider, Comparator comparator, IMemento memento) {
 		super(parentShell);
 		this.provider = (TreeViewer) provider;
 		labelProvider = (LogViewLabelProvider) this.provider.getLabelProvider();
 		labelProvider.connect(this);
 		this.entry = (AbstractEntry) selection;
 		this.comparator = comparator;
+		this.memento = memento;
 		setShellStyle(SWT.MODELESS | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
 		clipboard = new Clipboard(parentShell.getDisplay());
 		initialize();
@@ -86,6 +104,7 @@ public class EventDetailsDialog extends TrayDialog {
 		readConfiguration();
 		isLastChild = false;
 		isAtEndOfLog = false;
+		stackFilterPatterns = getFilters();
 	}
 
 	private void initialize() {
@@ -101,10 +120,6 @@ public class EventDetailsDialog extends TrayDialog {
 	}
 
 	private void resetChildIndex() {
-		if (!(entry instanceof AbstractEntry)) {
-			return;
-		}
-
 		if (entryChildren == null)
 			return;
 
@@ -318,7 +333,9 @@ public class EventDetailsDialog extends TrayDialog {
 			severityLabel.setText(logEntry.getSeverityText());
 			msgText.setText(logEntry.getMessage() != null ? logEntry.getMessage() : ""); //$NON-NLS-1$
 			String stack = logEntry.getStack();
+
 			if (stack != null) {
+				stack = filterStack(stack);
 				stackTraceText.setText(stack);
 			} else {
 				stackTraceText.setText(Messages.EventDetailsDialog_noStack);
@@ -491,41 +508,56 @@ public class EventDetailsDialog extends TrayDialog {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
-		layout.numColumns = 1;
+		//layout.numColumns = 1;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		((GridData) comp.getLayoutData()).verticalAlignment = SWT.BOTTOM;
 
 		Composite container = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
-		layout.marginHeight = 10;
-		layout.numColumns = 1;
+		layout.marginHeight = 0;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		backButton = createButton(container, IDialogConstants.BACK_ID, "", false); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.verticalSpan = 1;
 		backButton.setLayoutData(gd);
 		backButton.setToolTipText(Messages.EventDetailsDialog_previous);
 		backButton.setImage(SharedImages.getImage(SharedImages.DESC_PREV_EVENT));
 
+		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
+		gd = new GridData();
+		copyButton.setLayoutData(gd);
+		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+		copyButton.setToolTipText(Messages.EventDetailsDialog_copy);
+
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false); //$NON-NLS-1$
 		gd = new GridData();
-		gd.horizontalSpan = 3;
-		gd.verticalSpan = 1;
 		nextButton.setLayoutData(gd);
 		nextButton.setToolTipText(Messages.EventDetailsDialog_next);
 		nextButton.setImage(SharedImages.getImage(SharedImages.DESC_NEXT_EVENT));
 
-		copyButton = createButton(container, COPY_ID, "", false); //$NON-NLS-1$
+		Button button = new Button(container, SWT.NONE);
+		button.setToolTipText(Messages.EventDetailsDialog_ShowFilterDialog);
+		button.setImage(SharedImages.getImage(SharedImages.DESC_FILTER));
 		gd = new GridData();
-		gd.horizontalSpan = 3;
-		gd.verticalSpan = 1;
-		copyButton.setLayoutData(gd);
-		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
-		copyButton.setToolTipText(Messages.EventDetailsDialog_copy);
+		gd.horizontalAlignment = SWT.RIGHT;
+		button.setLayoutData(gd);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				FilterDialog dialog = new FilterDialog(getShell(), memento);
+				dialog.create();
+				dialog.getShell().setText(Messages.EventDetailsDialog_FilterDialog);
+				if (dialog.open() == Window.OK)
+					// update filters and currently displayed stack trace
+					stackFilterPatterns = getFilters();
+				updateProperties();
+			}
+		});
+
+		// set numColumns at the end, after all createButton() calls, which change this value
+		layout.numColumns = 2;
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -536,6 +568,7 @@ public class EventDetailsDialog extends TrayDialog {
 	private void createDetailsSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -581,7 +614,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 	private void createStackSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 6;
 		container.setLayout(layout);
@@ -589,15 +622,16 @@ public class EventDetailsDialog extends TrayDialog {
 		gd.heightHint = 100;
 		container.setLayoutData(gd);
 
-		Label label = new Label(container, SWT.NULL);
+		Label label = new Label(container, SWT.NONE);
 		label.setText(Messages.EventDetailsDialog_exception);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		gd = new GridData();
+		gd.verticalAlignment = SWT.BOTTOM;
 		label.setLayoutData(gd);
 
 		stackTraceText = new Text(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 2;
 		stackTraceText.setLayoutData(gd);
 		stackTraceText.setEditable(false);
 	}
@@ -626,6 +660,65 @@ public class EventDetailsDialog extends TrayDialog {
 		gd.grabExcessHorizontalSpace = true;
 		sessionDataText.setLayoutData(gd);
 		sessionDataText.setEditable(false);
+	}
+
+	/**
+	 * Loads filters from preferences.
+	 * @return filters from preferences or empty array
+	 * 
+	 * @since 3.4
+	 */
+	private String[] getFilters() {
+
+		Boolean filterEnabled = memento.getBoolean(FILTER_ENABLED);
+
+		String filtersString = memento.getString(FILTER_LIST);
+
+		if ((filterEnabled == null) || (filterEnabled.booleanValue() == false) || filtersString == null) {
+			return new String[0];
+		}
+
+		StringTokenizer st = new StringTokenizer(filtersString, ";"); //$NON-NLS-1$
+		List filters = new ArrayList();
+		while (st.hasMoreElements()) {
+			String filter = st.nextToken();
+			filters.add(filter);
+		}
+
+		return (String[]) filters.toArray(new String[filters.size()]);
+	}
+
+	/**
+	 * Filters stack trace.
+	 * Every stack trace line is compared against all patterns.
+	 * If line contains any of pattern strings, it's excluded from output.
+	 * 
+	 * @returns filtered stack trace
+	 * @since 3.4
+	 */
+	private String filterStack(String stack) {
+		if (stackFilterPatterns.length == 0) {
+			return stack;
+		}
+
+		StringTokenizer st = new StringTokenizer(stack, "\n"); //$NON-NLS-1$
+		StringBuffer result = new StringBuffer();
+		while (st.hasMoreTokens()) {
+			String stackElement = st.nextToken();
+
+			boolean filtered = false;
+			int i = 0;
+			while ((!filtered) && (i < stackFilterPatterns.length)) {
+				filtered = stackElement.indexOf(stackFilterPatterns[i]) >= 0;
+				i++;
+			}
+
+			if (!filtered) {
+				result.append(stackElement).append("\n"); //$NON-NLS-1$
+			}
+		}
+
+		return result.toString();
 	}
 
 	//--------------- configuration handling --------------
