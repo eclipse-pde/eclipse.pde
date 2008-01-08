@@ -11,13 +11,7 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.comp;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.io.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -160,7 +154,16 @@ public class CompCSWorkspaceModel extends CompCSModel implements IWorkspaceModel
 			InputStream stream = null;
 			try {
 				stream = new BufferedInputStream(fFile.getContents(true));
-				load(stream, false);
+				try {
+					if (stream.available() > 0)
+						load(stream, false);
+					else {
+						// if we have an empty file, then mark as loaded so users changes will be saved
+						setLoaded(true);
+						stream.close();
+					}
+				} catch (IOException e) {
+				}
 			} catch (CoreException e) {
 			}
 		}

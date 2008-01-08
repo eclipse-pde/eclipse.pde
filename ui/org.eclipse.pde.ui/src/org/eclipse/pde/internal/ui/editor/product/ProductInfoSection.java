@@ -364,9 +364,15 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	 */
 	public void refresh() {
 		IProduct product = getProduct();
-		fNameEntry.setValue(product.getName(), true);
-		refreshProductCombo(product.getId());
-		fAppCombo.setText(product.getApplication());
+		if (product.getName() != null){
+			fNameEntry.setValue(product.getName(), true);
+		}
+		if (product.getId() != null){
+			refreshProductCombo(product.getId());
+		}
+		if (product.getApplication() != null){
+			fAppCombo.setText(product.getApplication());
+		}
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
