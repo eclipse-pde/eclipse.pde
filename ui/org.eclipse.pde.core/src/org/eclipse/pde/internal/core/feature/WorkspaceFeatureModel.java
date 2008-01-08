@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -112,13 +106,24 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		if (file == null)
 			return;
 		if (file.exists()) {
+			InputStream stream = null;
 			try {
-				InputStream stream = new BufferedInputStream(file.getContents(true));
-				load(stream, false);
-				stream.close();
+				stream = new BufferedInputStream(file.getContents(true));
+				if (stream.available() > 0)
+					load(stream, false);
+				else {
+					// if we have an empty file, then mark as loaded so users changes will be saved
+					setLoaded(true);
+				}
 			} catch (CoreException e) {
 			} catch (IOException e) {
 				PDECore.logException(e);
+			} finally {
+				try {
+					if (stream != null)
+						stream.close();
+				} catch (IOException e) {
+				}
 			}
 		} else {
 			this.feature = new Feature();
