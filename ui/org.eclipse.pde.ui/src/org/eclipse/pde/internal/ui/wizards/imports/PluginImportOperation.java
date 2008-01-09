@@ -228,7 +228,13 @@ public class PluginImportOperation extends JarImportOperation {
 					fAffectedPlugins.add(model);
 					return;
 				}
-				project.delete(true, true, monitor);
+				//bug 212755
+				try {
+					project.delete(true, true, monitor);
+				} catch (CoreException e) {
+					fAffectedPlugins.add(model);
+					return;
+				}
 			}
 
 			project.create(monitor);
