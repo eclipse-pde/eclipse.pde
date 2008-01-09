@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,30 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
@@ -46,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionContext;
 
 public class ManifestSourcePage extends XMLSourcePage {
-	
+
 	private Object fLibraries = new Object();
 	private Object fImports = new Object();
 	private Object fExtensionPoints = new Object();
@@ -54,30 +44,30 @@ public class ManifestSourcePage extends XMLSourcePage {
 	private ExtensionAttributePointDectector fDetector;
 	private PluginSearchActionGroup fActionGroup;
 	private PDERefactoringAction fRenameAction;
-	
-	class OutlineLabelProvider extends LabelProvider {		
+
+	class OutlineLabelProvider extends LabelProvider {
 		private PDELabelProvider fProvider;
-		
+
 		public OutlineLabelProvider() {
 			fProvider = PDEPlugin.getDefault().getLabelProvider();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
-		
+
 		public String getText(Object obj) {
 			if (obj == fLibraries)
-				return PDEUIMessages.ManifestSourcePage_libraries; 
+				return PDEUIMessages.ManifestSourcePage_libraries;
 			if (obj == fImports)
-				return PDEUIMessages.ManifestSourcePage_dependencies; 
+				return PDEUIMessages.ManifestSourcePage_dependencies;
 			if (obj == fExtensionPoints)
-				return PDEUIMessages.ManifestSourcePage_extensionPoints; 
+				return PDEUIMessages.ManifestSourcePage_extensionPoints;
 			if (obj == fExtensions)
-				return PDEUIMessages.ManifestSourcePage_extensions; 
+				return PDEUIMessages.ManifestSourcePage_extensions;
 			String text = fProvider.getText(obj);
 			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentElementNode)
-				text = ((IDocumentElementNode)obj).getXMLTagName();
+				text = ((IDocumentElementNode) obj).getXMLTagName();
 			return text;
 		}
 
@@ -90,24 +80,24 @@ public class ManifestSourcePage extends XMLSourcePage {
 				return fProvider.get(PDEPluginImages.DESC_EXT_POINTS_OBJ);
 			if (obj == fExtensions)
 				return fProvider.get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
-			
+
 			Image image = fProvider.getImage(obj);
-			int flags = ((IDocumentElementNode)obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
+			int flags = ((IDocumentElementNode) obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
 			return (flags == 0) ? image : fProvider.get(image, flags);
 		}
 	}
-	
+
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			PluginModelBase model = (PluginModelBase)getInputContext().getModel();
+			PluginModelBase model = (PluginModelBase) getInputContext().getModel();
 
-			ArrayList result = new ArrayList();			
+			ArrayList result = new ArrayList();
 			if (parent instanceof IPluginBase) {
-				IPluginBase pluginBase = (IPluginBase)parent;
+				IPluginBase pluginBase = (IPluginBase) parent;
 				if (pluginBase.getLibraries().length > 0)
 					result.add(fLibraries);
 				if (pluginBase.getImports().length > 0)
@@ -117,19 +107,19 @@ public class ManifestSourcePage extends XMLSourcePage {
 				if (pluginBase.getExtensions().length > 0)
 					result.add(fExtensions);
 				return result.toArray();
-			} 
+			}
 			if (parent == fLibraries)
 				return model.getPluginBase().getLibraries();
-			
+
 			if (parent == fImports)
 				return model.getPluginBase().getImports();
-			
+
 			if (parent == fExtensionPoints)
 				return model.getPluginBase().getExtensionPoints();
-			
+
 			if (parent == fExtensions)
 				return model.getPluginBase().getExtensions();
-			
+
 			return new Object[0];
 		}
 
@@ -138,7 +128,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		 */
 		public Object getParent(Object element) {
 			if (element instanceof IDocumentElementNode)
-				return ((IDocumentElementNode)element).getParentNode();
+				return ((IDocumentElementNode) element).getParentNode();
 			return null;
 		}
 
@@ -149,8 +139,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 			if (element instanceof IPluginBase) {
 				return ((IDocumentElementNode) element).getChildNodes().length > 0;
 			}
-			return element == fLibraries || element == fImports
-			|| element == fExtensionPoints || element == fExtensions;
+			return element == fLibraries || element == fImports || element == fExtensionPoints || element == fExtensions;
 		}
 
 		/* (non-Javadoc)
@@ -158,13 +147,13 @@ public class ManifestSourcePage extends XMLSourcePage {
 		 */
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginModelBase) {
-				return new Object[] {((IPluginModelBase)inputElement).getPluginBase()};
+				return new Object[] {((IPluginModelBase) inputElement).getPluginBase()};
 			}
 			return new Object[0];
 		}
 	}
-		
-	class OutlineComparator extends ViewerComparator{
+
+	class OutlineComparator extends ViewerComparator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
@@ -180,7 +169,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return 4;
 		}
 	}
-	
+
 	public ManifestSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fDetector = new ExtensionAttributePointDectector();
@@ -190,35 +179,34 @@ public class ManifestSourcePage extends XMLSourcePage {
 	public ILabelProvider createOutlineLabelProvider() {
 		return new OutlineLabelProvider();
 	}
+
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new ContentProvider();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
-		if ((object instanceof IDocumentElementNode) && 
-				!((IDocumentElementNode)object).isErrorNode()) {
-			fSelection = object;
-			setHighlightRange((IDocumentElementNode)object, true);
-			setSelectedRange((IDocumentElementNode)object, false);
+		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
+			setSelectedObject(object);
+			setHighlightRange((IDocumentElementNode) object, true);
+			setSelectedRange((IDocumentElementNode) object, false);
 		} else {
 			//resetHighlightRange();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
 	public ViewerComparator createOutlineComparator() {
 		return new OutlineComparator();
 	}
-	
+
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
-		IPluginBase base = ((IPluginModelBase)getInputContext().getModel()).getPluginBase();
-		IDocumentRange 
-			node = findNode(base.getLibraries(), offset, searchChildren);
+		IPluginBase base = ((IPluginModelBase) getInputContext().getModel()).getPluginBase();
+		IDocumentRange node = findNode(base.getLibraries(), offset, searchChildren);
 		if (node == null)
 			node = findNode(base.getImports(), offset, searchChildren);
 		if (node == null)
@@ -226,48 +214,55 @@ public class ManifestSourcePage extends XMLSourcePage {
 		if (node == null)
 			node = findNode(base.getExtensions(), offset, searchChildren);
 		if (node == null)
-			node = findNode(new IPluginObject[] { base }, offset, searchChildren);
-		
+			node = findNode(new IPluginObject[] {base}, offset, searchChildren);
+
 		return node;
 	}
-	
+
 	public IDocumentRange findRange() {
-		if (fSelection instanceof ImportObject)
-			fSelection = ((ImportObject)fSelection).getImport();
-		if (fSelection instanceof IDocumentElementNode)
-			return (IDocumentElementNode)fSelection;
+
+		Object selectedObject = getSelection();
+
+		if (selectedObject instanceof ImportObject) {
+			selectedObject = ((ImportObject) selectedObject).getImport();
+			setSelectedObject(selectedObject);
+		}
+
+		if (selectedObject instanceof IDocumentElementNode)
+			return (IDocumentElementNode) selectedObject;
+
 		return null;
 	}
-	
+
 	protected boolean isSelectionListener() {
 		return true;
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new ManifestHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		
+
 		ISelection selection = fDetector.getSelection();
 		if (selection != null) {
 			fActionGroup.setContext(new ActionContext(selection));
 			fActionGroup.fillContextMenu(menu);
 		}
 		super.editorContextMenuAboutToShow(menu);
-		
+
 		StyledText text = getViewer().getTextWidget();
 		Point p = text.getSelection();
 		IDocumentRange element = getRangeElement(p.x, false);
-		
-		if (!(element instanceof IPluginExtensionPoint)) 
+
+		if (!(element instanceof IPluginExtensionPoint))
 			return;
-		
+
 		if (isEditable()) {
 			if (fRenameAction == null)
 				fRenameAction = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ManifestSourcePage_renameActionText);
@@ -278,7 +273,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -288,7 +283,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		// underlying text viewer
 		fDetector.setTextEditor(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
@@ -306,5 +301,5 @@ public class ManifestSourcePage extends XMLSourcePage {
 			updateTextSelection();
 		}
 	}
-	
+
 }

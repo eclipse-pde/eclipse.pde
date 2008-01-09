@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
@@ -14,23 +15,11 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
@@ -49,7 +38,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	public SimpleCSSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
@@ -84,16 +73,15 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	protected boolean isSelectionListener() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
-		if ((object instanceof IDocumentElementNode) &&
-				(((IDocumentElementNode)object).isErrorNode() == false)) {
-			fSelection = object;
-			setHighlightRange((IDocumentElementNode)object, true);
-			setSelectedRange((IDocumentElementNode)object, false);
+		if ((object instanceof IDocumentElementNode) && (((IDocumentElementNode) object).isErrorNode() == false)) {
+			setSelectedObject(object);
+			setHighlightRange((IDocumentElementNode) object, true);
+			setSelectedRange((IDocumentElementNode) object, false);
 		}
 	}
 
@@ -101,20 +89,23 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
 	 */
 	protected IDocumentRange findRange() {
-		if (fSelection instanceof IDocumentElementNode) {
-			return (IDocumentElementNode)fSelection;
+
+		Object selectedObject = getSelection();
+
+		if (selectedObject instanceof IDocumentElementNode) {
+			return (IDocumentElementNode) selectedObject;
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
 	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
-		IDocumentElementNode rootNode = ((SimpleCSModel)getInputContext().getModel()).getSimpleCS();
+		IDocumentElementNode rootNode = ((SimpleCSModel) getInputContext().getModel()).getSimpleCS();
 		return findNode(rootNode, offset, searchChildren);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
 	 */
@@ -123,20 +114,19 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		updateHighlightRange(range);
 		range = adaptRange(range);
 		updateOutlinePageSelection(range);
-	}	
-	
+	}
+
 	/**
 	 * @param range
-	 * @return
 	 */
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Adapt the range to node that is viewable in the outline view
 		if (range instanceof IDocumentAttributeNode) {
 			// Attribute
-			return adaptRange(((IDocumentAttributeNode)range).getEnclosingElement());
+			return adaptRange(((IDocumentAttributeNode) range).getEnclosingElement());
 		} else if (range instanceof IDocumentTextNode) {
 			// Content
-			return adaptRange(((IDocumentTextNode)range).getEnclosingElement());
+			return adaptRange(((IDocumentTextNode) range).getEnclosingElement());
 		} else if (range instanceof IDocumentElementNode) {
 			// Element
 			if (range instanceof ISimpleCS) {
@@ -150,25 +140,24 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 			} else if (range instanceof ISimpleCSPerformWhen) {
 				return range;
 			} else {
-				return adaptRange(((IDocumentElementNode)range).getParentNode());
+				return adaptRange(((IDocumentElementNode) range).getParentNode());
 			}
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// Get the editor
-		PDEFormEditor editor = (PDEFormEditor)getEditor();
+		PDEFormEditor editor = (PDEFormEditor) getEditor();
 		// Get the form editor contributor
-		SimpleCSEditorContributor contributor = 
-			(SimpleCSEditorContributor)editor.getContributor();
+		SimpleCSEditorContributor contributor = (SimpleCSEditorContributor) editor.getContributor();
 		// Get the model
 		// TODO: MP: SimpleCS:  Preview does not show unsaved changes made to source page, 
 		// check if fixed after implementing text edit operations
-		ISimpleCSModel model = (ISimpleCSModel)editor.getAggregateModel();
+		ISimpleCSModel model = (ISimpleCSModel) editor.getAggregateModel();
 		// Get the preview action
 		SimpleCSPreviewAction previewAction = contributor.getPreviewAction();
 		// Set the cheat sheet object
@@ -180,22 +169,22 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 		menu.add(new Separator());
 		super.editorContextMenuAboutToShow(menu);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
 	 */
 	protected void setPartName(String partName) {
 		super.setPartName(PDEUIMessages.EditorSourcePage_name);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setHelpContextId(IHelpContextIds.SIMPLE_CS_EDITOR);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#getAdapter(java.lang.Class)
 	 */
@@ -204,6 +193,6 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 			return new SimpleCSHyperlinkDetector(this);
 		}
 		return super.getAdapter(adapter);
-	}	
-	
+	}
+
 }

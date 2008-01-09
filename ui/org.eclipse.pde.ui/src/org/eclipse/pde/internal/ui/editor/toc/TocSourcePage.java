@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.toc;
 
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 
@@ -75,7 +70,6 @@ public class TocSourcePage extends XMLSourcePage {
 		super.setPartName(PDEUIMessages.EditorSourcePage_name);
 	}
 
-	
 	protected boolean isSelectionListener() {
 		return true;
 	}
@@ -89,38 +83,39 @@ public class TocSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
-	public void updateSelection(Object object)
-	{	if ((object instanceof IDocumentElementNode) && 
-				!((IDocumentElementNode)object).isErrorNode()) {
-			fSelection = object;
-			setHighlightRange((IDocumentElementNode)object, true);
-			setSelectedRange((IDocumentElementNode)object, false);
+	public void updateSelection(Object object) {
+		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
+			setSelectedObject(object);
+			setHighlightRange((IDocumentElementNode) object, true);
+			setSelectedRange((IDocumentElementNode) object, false);
 		}
 	}
-	
+
 	protected IDocumentRange findRange() {
-		if (fSelection instanceof IDocumentElementNode)
-		{	return (IDocumentElementNode)fSelection;
-		}
+
+		Object selectedObject = getSelection();
+
+		if (selectedObject instanceof IDocumentElementNode)
+			return (IDocumentElementNode) selectedObject;
 
 		return null;
 	}
-	
+
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
-		TocObject toc = ((TocModel)getInputContext().getModel()).getToc();
+		TocObject toc = ((TocModel) getInputContext().getModel()).getToc();
 		return findNode(toc, offset, searchChildren);
 	}
-	
+
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange rangeElement = getRangeElement(offset, true);
 		updateHighlightRange(rangeElement);
 		// TODO: MP: TEO: LOW: Generalize for parent - search children = true and handle attributes
-		if(rangeElement instanceof IDocumentAttributeNode)
-		{	rangeElement = ((IDocumentAttributeNode)rangeElement).getEnclosingElement();
+		if (rangeElement instanceof IDocumentAttributeNode) {
+			rangeElement = ((IDocumentAttributeNode) rangeElement).getEnclosingElement();
 		}
 		updateOutlinePageSelection(rangeElement);
 	}
-	
+
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setHelpContextId(IHelpContextIds.TOC_EDITOR);
