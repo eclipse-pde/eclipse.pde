@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - STAR - bug 213255
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
@@ -40,7 +41,7 @@ public interface IDocumentSection extends ISchemaObject {
 	/**
 	 * Section Id for the "API Information" section of the target reference document
 	 */
-	String API_INFO = "apiInfo"; //$NON-NLS-1$
+	String API_INFO = "apiinfo"; //$NON-NLS-1$
 	/**
 	 * Section Id for the copyright statement section of the target reference document
 	 */

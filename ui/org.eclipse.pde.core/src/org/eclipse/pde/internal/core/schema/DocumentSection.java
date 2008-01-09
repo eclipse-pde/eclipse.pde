@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - Standards for Technology in Automotive Retail - bug 213255
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -39,9 +40,9 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		String indent2 = indent + Schema.INDENT;
 		String indent3 = indent2 + Schema.INDENT;
 		writer.println(indent + "<annotation>"); //$NON-NLS-1$
-		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
+		writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
 		writer.println(indent3 + "<meta.section type=\"" + sectionId + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
+		writer.println(indent2 + "</appinfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3 + description);
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$

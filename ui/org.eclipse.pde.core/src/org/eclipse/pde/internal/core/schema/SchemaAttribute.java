@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - STAR - bug 213255
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -186,7 +187,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 			}
 			if (getBasedOn() != null || getKind() != STRING || isDeprecated() || isTranslatable()) {
-				writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
+				writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
 				writer.print(indent3 + "<meta.attribute"); //$NON-NLS-1$
 				String kindValue = null;
 				switch (getKind()) {
@@ -206,7 +207,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				if (isDeprecated())
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
 				writer.println("/>"); //$NON-NLS-1$
-				writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
+				writer.println(indent2 + "</appinfo>"); //$NON-NLS-1$
 			}
 			writer.println(annIndent + "</annotation>"); //$NON-NLS-1$
 		}

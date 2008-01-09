@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - STAR - bug 213255
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -255,7 +256,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			String indent4 = indent3 + Schema.INDENT;
 			writer.println(indent2 + "<annotation>"); //$NON-NLS-1$
 			if (iconName != null || labelProperty != null || isDeprecated() || hasTranslatableContent()) {
-				writer.println(indent3 + "<appInfo>"); //$NON-NLS-1$
+				writer.println(indent3 + "<appinfo>"); //$NON-NLS-1$
 				writer.print(indent4 + "<meta.element"); //$NON-NLS-1$
 				if (labelProperty != null)
 					writer.print(" labelAttribute=\"" + labelProperty + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -269,7 +270,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 				if (extendedProperties != null)
 					writer.print(extendedProperties);
 				writer.println("/>"); //$NON-NLS-1$
-				writer.println(indent3 + "</appInfo>"); //$NON-NLS-1$
+				writer.println(indent3 + "</appinfo>"); //$NON-NLS-1$
 			}
 			if (realDescription != null) {
 				writer.println(indent3 + "<documentation>"); //$NON-NLS-1$

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - STAR - bug 213255
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -448,7 +449,7 @@ public class Schema extends PlatformObject implements ISchema {
 					Node doc = child.getFirstChild();
 					if (doc != null)
 						element.setDescription(getNormalizedText(doc.getNodeValue()));
-				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
+				} else if (child.getNodeName().equals("appInfo") || child.getNodeName().equals("appinfo")) { //$NON-NLS-1$ //$NON-NLS-2$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
@@ -737,7 +738,7 @@ public class Schema extends PlatformObject implements ISchema {
 							fDocSections.addElement(sec);
 						}
 					}
-				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
+				} else if (child.getNodeName().equals("appInfo") || child.getNodeName().equals("appinfo")) { //$NON-NLS-1$ //$NON-NLS-2$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
 						Node meta = infos.item(j);
@@ -969,15 +970,15 @@ public class Schema extends PlatformObject implements ISchema {
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version='1.0' encoding='UTF-8'?>"); //$NON-NLS-1$
 		writer.println("<!-- Schema file written by PDE -->"); //$NON-NLS-1$
-		writer.println("<schema targetNamespace=\"" + fPluginID + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<schema targetNamespace=\"" + fPluginID + "\" xmlns=\"http://www.w3.org/2001/XMLSchema\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String indent2 = INDENT + INDENT;
 		String indent3 = indent2 + INDENT;
 		writer.println(indent + "<annotation>"); //$NON-NLS-1$
-		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
+		writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
 		writer.print(indent3 + "<meta.schema plugin=\"" + fPluginID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" id=\"" + fPointID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
+		writer.println(indent2 + "</appinfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3 + getWritableDescription());
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$

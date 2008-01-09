@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Carver - STAR - bug 212355
  *******************************************************************************/
 
 package org.eclipse.pde.internal.core.schema;
@@ -25,7 +26,9 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 
 	private final static String META_SCHEMA_ELEM = "meta.schema"; //$NON-NLS-1$
 
-	private final static String APP_INFO_ELEM = "appInfo"; //$NON-NLS-1$
+	private final static String APP_INFO_ELEM = "appinfo"; //$NON-NLS-1$
+
+	private final static String APP_INFO_ELEM_OLD = "appInfo"; //$NON-NLS-1$
 
 	private final static String NAME_ATTR = "name"; //$NON-NLS-1$	
 
@@ -55,7 +58,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 
-		if ((fElementList.size() >= 2) && (((String) fElementList.get(1)).compareTo(APP_INFO_ELEM) == 0)) {
+		if ((fElementList.size() >= 2) && ((((String) fElementList.get(1)).compareTo(APP_INFO_ELEM) == 0) || (((String) fElementList.get(1)).compareTo(APP_INFO_ELEM_OLD) == 0))) {
 			fAppInfoElemFlag = true;
 			if (qName.compareTo(META_SCHEMA_ELEM) == 0) {
 				// Case:  <appInfo><meta.schema>
@@ -70,8 +73,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 		}
 	}
 
-	public void characters(char[] ch, int start, int length) throws SAXException {
-
+	public void characters(char[] ch, int start, int length) {
 		if (onTarget()) {
 			for (int i = 0; i < length; i++) {
 				fDescription.append(ch[start + i]);
