@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -189,7 +188,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	 */
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
-			setSelectedObject(object);
+			fSelection = object;
 			setHighlightRange((IDocumentElementNode) object, true);
 			setSelectedRange((IDocumentElementNode) object, false);
 		} else {
@@ -220,17 +219,10 @@ public class ManifestSourcePage extends XMLSourcePage {
 	}
 
 	public IDocumentRange findRange() {
-
-		Object selectedObject = getSelection();
-
-		if (selectedObject instanceof ImportObject) {
-			selectedObject = ((ImportObject) selectedObject).getImport();
-			setSelectedObject(selectedObject);
-		}
-
-		if (selectedObject instanceof IDocumentElementNode)
-			return (IDocumentElementNode) selectedObject;
-
+		if (fSelection instanceof ImportObject)
+			fSelection = ((ImportObject) fSelection).getImport();
+		if (fSelection instanceof IDocumentElementNode)
+			return (IDocumentElementNode) fSelection;
 		return null;
 	}
 
