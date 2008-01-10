@@ -9,6 +9,8 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class $actionClass$ implements IObjectActionDelegate {
 
+	private Shell shell;
+	
 	/**
 	 * Constructor for Action1.
 	 */
@@ -20,13 +22,13 @@ public class $actionClass$ implements IObjectActionDelegate {
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		shell = targetPart.getSite().getShell();
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Shell shell = new Shell();
 		MessageDialog.openInformation(
 			shell,
 			"$pluginName$",
