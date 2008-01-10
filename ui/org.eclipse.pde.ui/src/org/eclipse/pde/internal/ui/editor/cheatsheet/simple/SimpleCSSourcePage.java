@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
@@ -79,7 +78,7 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 */
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && (((IDocumentElementNode) object).isErrorNode() == false)) {
-			setSelectedObject(object);
+			fSelection = object;
 			setHighlightRange((IDocumentElementNode) object, true);
 			setSelectedRange((IDocumentElementNode) object, false);
 		}
@@ -89,11 +88,8 @@ public class SimpleCSSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findRange()
 	 */
 	protected IDocumentRange findRange() {
-
-		Object selectedObject = getSelection();
-
-		if (selectedObject instanceof IDocumentElementNode) {
-			return (IDocumentElementNode) selectedObject;
+		if (fSelection instanceof IDocumentElementNode) {
+			return (IDocumentElementNode) fSelection;
 		}
 		return null;
 	}
