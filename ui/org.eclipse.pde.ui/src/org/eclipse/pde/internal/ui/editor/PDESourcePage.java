@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -54,9 +53,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return fgBundleForConstructedKeys;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
 	 */
 	protected void initializeKeyBindingScopes() {
@@ -128,7 +125,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private InputContext fInputContext;
 	private ISortableContentOutlinePage fOutlinePage;
 	private ISelectionChangedListener fOutlineSelectionChangedListener;
-	private Object fSelection;
+	protected Object fSelection;
 	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
 
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
@@ -143,9 +140,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			getEditor().getSite().getSelectionProvider().addSelectionChangedListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
 	 */
 	public void initialize(FormEditor editor) {
@@ -172,30 +167,22 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineLabelProvider()
 	 */
 	public abstract ILabelProvider createOutlineLabelProvider();
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineContentProvider()
 	 */
 	public abstract ITreeContentProvider createOutlineContentProvider();
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineComparator()
 	 */
 	public abstract ViewerComparator createOutlineComparator();
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void updateSelection(SelectionChangedEvent event) {
@@ -206,16 +193,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(java.lang.Object)
 	 */
 	public abstract void updateSelection(Object object);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createDefaultOutlineComparator()
 	 */
 	public ViewerComparator createDefaultOutlineComparator() {
@@ -237,9 +220,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return fOutlinePage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#getContentOutline()
 	 */
 	public ISortableContentOutlinePage getContentOutline() {
@@ -248,18 +229,14 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return fOutlinePage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
 	 */
 	public FormEditor getEditor() {
 		return fEditor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getManagedForm()
 	 */
 	public IManagedForm getManagedForm() {
@@ -274,9 +251,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			super.firePropertyChange(type);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
@@ -291,9 +266,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()
 	 */
 	public boolean isActive() {
@@ -308,45 +281,35 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, IHelpContextIds.MANIFEST_SOURCE_PAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()
 	 */
 	public Control getPartControl() {
 		return fControl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getId()
 	 */
 	public String getId() {
 		return fId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getIndex()
 	 */
 	public int getIndex() {
 		return fIndex;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setIndex(int)
 	 */
 	public void setIndex(int index) {
 		fIndex = index;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isSource()
 	 */
 	public boolean isEditor() {
@@ -361,17 +324,14 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * @param inputContext
-	 *            The inputContext to set.
+	 * @param inputContext The inputContext to set.
 	 */
 	public void setInputContext(InputContext inputContext) {
 		fInputContext = inputContext;
 		setDocumentProvider(inputContext.getDocumentProvider());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
 	public boolean selectReveal(Object object) {
@@ -478,26 +438,18 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (event.getSource() == getSelectionProvider())
 			return;
 		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-
-			IStructuredSelection structuredSel = (IStructuredSelection) sel;
-
-			// Store the selected object to save us having to do this again.
-			setSelectedObject(structuredSel.getFirstElement());
-
-		} else if (sel instanceof ITextSelection) {
-
-			ITextSelection textSel = (ITextSelection) sel;
-
-			setSelectedObject(getRangeElement(textSel.getOffset(), false));
-
-		} else
+		if (sel instanceof ITextSelection)
+			return;
+		if (sel instanceof IStructuredSelection)
+			fSelection = ((IStructuredSelection) sel).getFirstElement();
+		else
 			fSelection = null;
 	}
 
 	/*
-	 * Locate an IDocumentRange, subclasses that want to highlight text
-	 * components based on site selection should override this method.
+	 * Locate an IDocumentRange, subclasses that want to 
+	 * highlight text components based on site selection
+	 * should override this method.
 	 */
 	protected IDocumentRange findRange() {
 		return null;
@@ -523,8 +475,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/*
-	 * Subclasses that wish to provide PDEFormPage -> PDESourcePage selection
-	 * persistence should override this and return true.
+	 * Subclasses that wish to provide PDEFormPage -> PDESourcePage
+	 * selection persistence should override this and return true.
 	 */
 	protected boolean isSelectionListener() {
 		return false;
@@ -542,9 +494,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			if ((action != null) && action.isEnabled() && ((action.getHyperLink() instanceof ExtensionHyperLink) == false)) {
 				// Another detector handles this the extension hyperlink case
 				// org.eclipse.pde.internal.ui.editor.plugin.ExtensionAttributePointDectector.java
-				// Implemented at a higher level. As a result, need to disable
-				// the action here to prevent duplicate entries in the context
-				// menu
+				// Implemented at a higher level.  As a result, need to disable
+				// the action here to prevent duplicate entries in the context menu
 				menu.add(action);
 			}
 			FormatAction formatManifestAction = textContributor.getFormatAction();
@@ -554,21 +505,16 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		super.editorContextMenuAboutToShow(menu);
 	}
 
+	/**
+	 * @return
+	 */
 	public Object getSelection() {
 		return fSelection;
 	}
 
-	/**
-	 * Allow for programmatic selection of the currently selected object by
-	 * subclasses
-	 */
-	protected void setSelectedObject(Object selectedObject) {
-		fSelection = selectedObject;
-	}
+	// TODO: MP: QO: LOW:  Create method to set selection and make fSelection private
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#getOutlineInput()
 	 */
 	public Object getOutlineInput() {
@@ -579,7 +525,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @param rangeElement
 	 */
 	protected void updateOutlinePageSelection(Object rangeElement) {
-		// Set selection in source outline page if the 'Link with Editor'
+		// Set selection in source outline page if the 'Link with Editor' 
 		// feature is on
 		if (PDEPlugin.getDefault().getPreferenceStore().getBoolean("ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
 			// Ensure we have a source outline page
@@ -587,9 +533,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 				return;
 			}
 			SourceOutlinePage outlinePage = (SourceOutlinePage) fOutlinePage;
-			// Temporarily remove the listener to prevent a selection event
-			// being fired
-			// back at this page
+			// Temporarily remove the listener to prevent a selection event being fired 
+			// back at this page			
 			outlinePage.removeAllSelectionChangedListeners();
 			if (rangeElement != null) {
 				outlinePage.setSelection(new StructuredSelection(rangeElement));
@@ -631,8 +576,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * Triggered by toggling the 'Link with Editor' button in the outline view
-	 * 
+	 * Triggered by toggling the 'Link with Editor' button in the outline
+	 * view
 	 * @param offset
 	 */
 	public void synchronizeOutlinePage() {
@@ -643,12 +588,11 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Utility method for getRangeElement(int, boolean)
-	 * 
 	 * @param node
 	 * @param offset
 	 * @param searchChildren
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[],
-	 *      int, boolean)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[], int, boolean)
+	 * @return
 	 */
 	protected IDocumentRange findNode(IDocumentElementNode node, int offset, boolean searchChildren) {
 		return findNode(new Object[] {node}, offset, searchChildren);
@@ -656,14 +600,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Utility method for getRangeElement(int, boolean)
-	 * 
-	 * @param nodes
-	 *            All entries should be instances of IDocumentElementNode
-	 * @param offset
-	 *            The offset the cursor is currently on in the document
-	 * @param searchChildren
-	 *            <code>true</code> to search child nodes; <code>false</code>
-	 *            otherwise.
+	 * @param nodes All entries should be instances of IDocumentElementNode
+	 * @param offset The offset the cursor is currently on in the document
+	 * @param searchChildren <code>true</code> to search child nodes; <code>false</code> otherwise.
 	 * @return Node the offset is in
 	 */
 	protected IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
@@ -701,14 +640,14 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * Override the getAdapter function to return a list of targets for the
-	 * "Show In >" action in the context menu.
-	 * 
+	 * Override the getAdapter function to return a list of targets
+	 * for the "Show In >" action in the context menu.
+	 *  
 	 * @param adapter
-	 * @return A list of targets (IShowInTargetList) for the "Show In >" submenu
-	 *         if the appropriate adapter is passed in and the editor is not
-	 *         read-only. Returns <code>super.getAdapter(adapter)</code>
-	 *         otherwise.
+	 * @return A list of targets (IShowInTargetList) for the "Show In >"
+	 * submenu if the appropriate adapter is passed in and the editor
+	 * is not read-only. Returns <code>super.getAdapter(adapter)</code>
+	 * otherwise.
 	 */
 	public Object getAdapter(Class adapter) {
 		if ((adapter == IShowInTargetList.class) && (fEditor != null) && (fEditor.getEditorInput() instanceof IFileEditorInput)) {
@@ -719,8 +658,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * Returns the <code>IShowInTargetList</code> for this view.
-	 * 
-	 * @return the <code>IShowInTargetList</code>
+	 * @return the <code>IShowInTargetList</code> 
 	 */
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
@@ -732,6 +670,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * @param range
+	 * @return
 	 */
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Subclasses to override
