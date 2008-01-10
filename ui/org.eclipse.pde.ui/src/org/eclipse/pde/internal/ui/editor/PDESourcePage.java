@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
@@ -125,7 +126,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private InputContext fInputContext;
 	private ISortableContentOutlinePage fOutlinePage;
 	private ISelectionChangedListener fOutlineSelectionChangedListener;
-	protected Object fSelection;
+	private Object fSelection;
 	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
 
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
@@ -438,11 +439,20 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (event.getSource() == getSelectionProvider())
 			return;
 		ISelection sel = event.getSelection();
-		if (sel instanceof ITextSelection)
-			return;
-		if (sel instanceof IStructuredSelection)
-			fSelection = ((IStructuredSelection) sel).getFirstElement();
-		else
+		if (sel instanceof IStructuredSelection) {
+
+			IStructuredSelection structuredSel = (IStructuredSelection) sel;
+
+			// Store the selected object to save us having to do this again.
+			setSelectedObject(structuredSel.getFirstElement());
+
+		} else if (sel instanceof ITextSelection) {
+
+			ITextSelection textSel = (ITextSelection) sel;
+
+			setSelectedObject(getRangeElement(textSel.getOffset(), false));
+
+		} else
 			fSelection = null;
 	}
 
@@ -505,14 +515,17 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		super.editorContextMenuAboutToShow(menu);
 	}
 
-	/**
-	 * @return
-	 */
 	public Object getSelection() {
 		return fSelection;
 	}
 
-	// TODO: MP: QO: LOW:  Create method to set selection and make fSelection private
+	/**
+	 * Allow for programmatic selection of the currently selected object by
+	 * subclasses
+	 */
+	protected void setSelectedObject(Object selectedObject) {
+		fSelection = selectedObject;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#getOutlineInput()
@@ -592,7 +605,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @param offset
 	 * @param searchChildren
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[], int, boolean)
-	 * @return
 	 */
 	protected IDocumentRange findNode(IDocumentElementNode node, int offset, boolean searchChildren) {
 		return findNode(new Object[] {node}, offset, searchChildren);
@@ -670,7 +682,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 
 	/**
 	 * @param range
-	 * @return
 	 */
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Subclasses to override

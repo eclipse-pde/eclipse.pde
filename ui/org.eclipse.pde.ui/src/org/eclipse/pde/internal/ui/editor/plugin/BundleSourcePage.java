@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - Bug 214511
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -480,22 +481,25 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	public IDocumentRange findRange() {
-		if (fSelection instanceof ImportObject) {
-			IPluginModelBase base = ((ImportObject) fSelection).getImport().getPluginModel();
+
+		Object selection = getSelection();
+
+		if (selection instanceof ImportObject) {
+			IPluginModelBase base = ((ImportObject) selection).getImport().getPluginModel();
 			if (base instanceof IBundlePluginModelBase)
-				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.REQUIRE_BUNDLE, ((ImportObject) fSelection).getId());
-		} else if (fSelection instanceof ImportPackageObject) {
-			return getSpecificRange(((ImportPackageObject) fSelection).getModel(), Constants.IMPORT_PACKAGE, ((ImportPackageObject) fSelection).getValue());
-		} else if (fSelection instanceof ExportPackageObject) {
-			return getSpecificRange(((ExportPackageObject) fSelection).getModel(), Constants.EXPORT_PACKAGE, ((ExportPackageObject) fSelection).getValue());
-		} else if (fSelection instanceof IPluginLibrary) {
-			IPluginModelBase base = ((IPluginLibrary) fSelection).getPluginModel();
+				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.REQUIRE_BUNDLE, ((ImportObject) selection).getId());
+		} else if (selection instanceof ImportPackageObject) {
+			return getSpecificRange(((ImportPackageObject) selection).getModel(), Constants.IMPORT_PACKAGE, ((ImportPackageObject) selection).getValue());
+		} else if (selection instanceof ExportPackageObject) {
+			return getSpecificRange(((ExportPackageObject) selection).getModel(), Constants.EXPORT_PACKAGE, ((ExportPackageObject) selection).getValue());
+		} else if (selection instanceof IPluginLibrary) {
+			IPluginModelBase base = ((IPluginLibrary) selection).getPluginModel();
 			if (base instanceof IBundlePluginModelBase)
-				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.BUNDLE_CLASSPATH, ((IPluginLibrary) fSelection).getName());
-		} else if (fSelection instanceof ExecutionEnvironment) {
-			return getSpecificRange(((ExecutionEnvironment) fSelection).getModel(), Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ((ExecutionEnvironment) fSelection).getValue());
-		} else if (fSelection instanceof RequireBundleObject) {
-			return getSpecificRange(((RequireBundleObject) fSelection).getModel(), Constants.REQUIRE_BUNDLE, ((RequireBundleObject) fSelection).getId());
+				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.BUNDLE_CLASSPATH, ((IPluginLibrary) selection).getName());
+		} else if (selection instanceof ExecutionEnvironment) {
+			return getSpecificRange(((ExecutionEnvironment) selection).getModel(), Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ((ExecutionEnvironment) selection).getValue());
+		} else if (selection instanceof RequireBundleObject) {
+			return getSpecificRange(((RequireBundleObject) selection).getModel(), Constants.REQUIRE_BUNDLE, ((RequireBundleObject) selection).getId());
 		}
 		return null;
 	}
@@ -586,8 +590,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
 	public void updateSelection(Object object) {
+
 		// Update the global selection
-		fSelection = object;
+		setSelectedObject(object);
+
 		// Highlight the selection if it is a manifest header
 		if (object instanceof IDocumentKey) {
 			setHighlightRange((IDocumentKey) object);
