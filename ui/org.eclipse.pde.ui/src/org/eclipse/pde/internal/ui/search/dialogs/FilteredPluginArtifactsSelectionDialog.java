@@ -10,91 +10,66 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
+import com.ibm.icu.text.Collator;
 import java.util.Comparator;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
-
-import com.ibm.icu.text.Collator;
 
 public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelectionDialog {
 
-	private static final String DIALOG_SETTINGS = 
-		"org.eclipse.pde.ui.dialogs.FilteredPluginArtifactsSelectionDialog"; //$NON-NLS-1$
-	private static final String S_EXTENSIONS = 
-		"showExtensions"; //$NON-NLS-1$
-	private static final String S_EXTENSION_POINTS =
-		"showExtensionPoints"; //$NON-NLS-1$
-	
+	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FilteredPluginArtifactsSelectionDialog"; //$NON-NLS-1$
+	private static final String S_EXTENSIONS = "showExtensions"; //$NON-NLS-1$
+	private static final String S_EXTENSION_POINTS = "showExtensionPoints"; //$NON-NLS-1$
+
 	private static final int TYPE_PLUGIN = 0;
 	private static final int TYPE_EXTENSION = 1;
 	private static final int TYPE_EXTENSION_POINT = 2;
-	
+
 	private Action extensionsAction = new ExtensionsAction();
 	private Action extensionPointsAction = new ExtensionPointsAction();
 	private ExtensionsFilter extensionsFilter = new ExtensionsFilter();
 	private ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
-	
+
 	// TODO implement ILabelDecorator?
 	private class SearchLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
-		
+
 		public String getText(Object object) {
 			if (object instanceof IPluginBase)
-				return ((IPluginBase)object).getId();
-			
+				return ((IPluginBase) object).getId();
+
 			if (object instanceof IPluginImport) {
-				IPluginImport dep = (IPluginImport)object;
-				return dep.getId() 
-					+ " - " //$NON-NLS-1$
-					+ dep.getPluginBase().getId();
-			} 
-			
+				IPluginImport dep = (IPluginImport) object;
+				return dep.getId() + " - " //$NON-NLS-1$
+						+ dep.getPluginBase().getId();
+			}
+
 			if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension)object;
+				IPluginExtension extension = (IPluginExtension) object;
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
-			
+
 			if (object instanceof IPluginExtensionPoint)
-				return ((IPluginExtensionPoint)object).getFullId();
+				return ((IPluginExtensionPoint) object).getFullId();
 
 			return PDEPlugin.getDefault().getLabelProvider().getText(object);
 		}
 	}
-	
+
 	private class DetailedLabelProvider extends LabelProvider {
 
 		public Image getImage(Object element) {
@@ -124,96 +99,89 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			}
 			return null;
 		}
-		
+
 		private Image getImage(String location) {
 			if (location.endsWith(".jar")) //$NON-NLS-1$
-				return JavaUI.getSharedImages().getImage(
-						org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+				return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
-		
+
 	}
-	
+
 	private class ExtensionsFilter extends ViewerFilter {
-		
+
 		private boolean enabled = true;
 
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-			if(enabled) // select everything
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (enabled) // select everything
 				return true;
-			
+
 			if (element instanceof IPluginExtension) {
 				return false;
 			}
 			return true;
 		}
-		
+
 		public void setEnabled(boolean value) {
 			this.enabled = value;
 		}
 	}
-	
-	private class ExtensionPointsFilter extends ViewerFilter  {
+
+	private class ExtensionPointsFilter extends ViewerFilter {
 
 		private boolean enabled = true;
-		
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-			if(enabled) // select everything
+
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (enabled) // select everything
 				return true;
-			
+
 			if (element instanceof IPluginExtensionPoint) {
 				return false;
 			}
 			return true;
 		}
-		
+
 		public void setEnabled(boolean value) {
 			this.enabled = value;
 		}
-		
+
 	}
-	
+
 	private class ExtensionsAction extends Action {
 
 		public ExtensionsAction() {
-			super(
-					PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensions,
-					IAction.AS_CHECK_BOX);
+			super(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensions, IAction.AS_CHECK_BOX);
 			setChecked(true);
 		}
+
 		public void run() {
 			extensionsFilter.setEnabled(isChecked());
 			scheduleRefresh();
 		}
-		
+
 	}
-	
+
 	private class ExtensionPointsAction extends Action {
 
 		public ExtensionPointsAction() {
-			super(
-					PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensionPoints,
-					IAction.AS_CHECK_BOX);
+			super(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExtensionPoints, IAction.AS_CHECK_BOX);
 			setChecked(true);
 		}
+
 		public void run() {
 			extensionPointsFilter.setEnabled(isChecked());
 			scheduleRefresh();
 		}
-		
+
 	}
-	
+
 	public FilteredPluginArtifactsSelectionDialog(Shell shell) {
 		super(shell, false);
-		
+
 		setTitle(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_title);
 		setMessage(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_message);
 		setSelectionHistory(new PluginSearchSelectionHistory());
 
-		
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		setListLabelProvider(new SearchLabelProvider());
 		setDetailsLabelProvider(new DetailedLabelProvider());
@@ -236,15 +204,13 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void fillContentProvider(AbstractContentProvider contentProvider,
-			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
-			throws CoreException {
-		
+	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
+
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase[] models = manager.getActiveModels(true);
-		
+
 		progressMonitor.beginTask(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_searching, models.length);
-		
+
 		// cycle through all the containers and grab entries 
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
@@ -271,16 +237,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
 	 */
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = 
-			PDEPlugin.getDefault().getDialogSettings().getSection(
-					DIALOG_SETTINGS);
+		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
 
 		if (settings == null) {
-			settings = 
-				PDEPlugin.getDefault().getDialogSettings().addNewSection(
-						DIALOG_SETTINGS);
+			settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS);
 		}
-		
+
 		return settings;
 	}
 
@@ -315,7 +277,6 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		return new Status(IStatus.OK, "org.eclipse.pde.ui", 0, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	
 	protected void fillViewMenu(IMenuManager menuManager) {
 		super.fillViewMenu(menuManager);
 		menuManager.add(new Separator());
@@ -330,7 +291,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			boolean state = settings.getBoolean(S_EXTENSIONS);
 			extensionsAction.setChecked(state);
 		}
-		
+
 		if (settings.get(S_EXTENSION_POINTS) != null) {
 			boolean state = settings.getBoolean(S_EXTENSION_POINTS);
 			extensionPointsAction.setChecked(state);
@@ -357,31 +318,33 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		protected Object restoreItemFromMemento(IMemento memento) {
 			int type = memento.getInteger(M_TYPE).intValue();
 			IPluginModelBase model = getModel(memento);
-			switch(type) {
-			case TYPE_PLUGIN:
-				return model;
-			case TYPE_EXTENSION_POINT:
-				IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
-				String epid = memento.getString(M_ID);
-				for (int i = 0; i < points.length; i++) {
-					IPluginExtensionPoint point = points[i];
-					if(epid.equals(point.getFullId()))
-						return point;
-				}
-				break;
-			case TYPE_EXTENSION:
-				IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-				String eid = memento.getString(M_ID);
-				for (int i = 0; i < extensions.length; i++) {
-					IPluginExtension extension = extensions[i];
-					if(eid.equals(extension.getPoint()))
-						return extension;
-				}
-				break;
+			if (model == null)
+				return null;
+			switch (type) {
+				case TYPE_PLUGIN :
+					return model;
+				case TYPE_EXTENSION_POINT :
+					IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
+					String epid = memento.getString(M_ID);
+					for (int i = 0; i < points.length; i++) {
+						IPluginExtensionPoint point = points[i];
+						if (epid.equals(point.getFullId()))
+							return point;
+					}
+					break;
+				case TYPE_EXTENSION :
+					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+					String eid = memento.getString(M_ID);
+					for (int i = 0; i < extensions.length; i++) {
+						IPluginExtension extension = extensions[i];
+						if (eid.equals(extension.getPoint()))
+							return extension;
+					}
+					break;
 			}
 			return null;
 		}
-		
+
 		protected IPluginModelBase getModel(IMemento memento) {
 			String id = memento.getString(M_PLUGIN_ID);
 			String version = memento.getString(M_PLUGIN_VERSION);
@@ -389,7 +352,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
-				if(version.equals(model.getPluginBase().getVersion()))
+				if (version.equals(model.getPluginBase().getVersion()))
 					return model;
 			}
 			return null;
@@ -415,9 +378,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
 			}
 		}
-		
+
 	}
-	
+
 	private class PluginSearchItemsFilter extends ItemsFilter {
 
 		// TODO probably have to make this realistic
@@ -439,40 +402,40 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return false;
 		}
 	}
-	
+
 	private class PluginSearchComparator implements Comparator {
 
 		public int compare(Object o1, Object o2) {
 			Collator collator = Collator.getInstance();
 			String s1 = ""; //$NON-NLS-1$
 			String s2 = ""; //$NON-NLS-1$
-			if(o1 instanceof IPluginModelBase) {
+			if (o1 instanceof IPluginModelBase) {
 				IPluginModelBase item = (IPluginModelBase) o1;
 				s1 = item.getPluginBase().getId();
 			}
-			if(o2 instanceof IPluginModelBase) {
+			if (o2 instanceof IPluginModelBase) {
 				IPluginModelBase item = (IPluginModelBase) o2;
 				s2 = item.getPluginBase().getId();
 			}
-			if(o1 instanceof IPluginExtensionPoint) {
+			if (o1 instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint item = (IPluginExtensionPoint) o1;
 				s1 = item.getFullId();
 			}
-			if(o2 instanceof IPluginExtensionPoint) {
+			if (o2 instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint item = (IPluginExtensionPoint) o2;
 				s2 = item.getFullId();
 			}
-			if(o1 instanceof IPluginExtension) {
+			if (o1 instanceof IPluginExtension) {
 				IPluginExtension item = (IPluginExtension) o1;
 				s1 = item.getPoint();
 			}
-			if(o2 instanceof IPluginExtension) {
+			if (o2 instanceof IPluginExtension) {
 				IPluginExtension item = (IPluginExtension) o2;
 				s2 = item.getPoint();
 			}
 			return collator.compare(s1, s2);
 		}
-		
+
 	}
 
 	public boolean close() {
