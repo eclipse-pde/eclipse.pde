@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.util.*;
@@ -48,7 +46,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 	public Collection getBinaryPlugins(Config config) {
 		Collection allPlugins = getPlugins(config);
-		Set result = new HashSet(allPlugins.size()); 
+		Set result = new LinkedHashSet(allPlugins.size());
 		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
@@ -57,10 +55,10 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 		return result;
 	}
-	
+
 	public Collection getCompiledPlugins(Config config) {
 		Collection allPlugins = getPlugins(config);
-		Set result = new HashSet(allPlugins.size()); 
+		Set result = new LinkedHashSet(allPlugins.size());
 		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
@@ -69,10 +67,10 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 		return result;
 	}
-	
+
 	public Collection getAllCompiledPlugins() {
 		Collection pluginsByConfig = assembleInformation.values();
-		Set result = new HashSet(); 
+		Set result = new LinkedHashSet();
 		for (Iterator iter2 = pluginsByConfig.iterator(); iter2.hasNext();) {
 			Collection allPlugins = ((AssemblyLevelConfigInfo) iter2.next()).getPlugins();
 			for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
@@ -84,23 +82,23 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 		return result;
 	}
-	
+
 	public Collection getCompiledFeatures(Config config) {
-		Collection allFeatures= getFeatures(config);
-		ArrayList result = new ArrayList(allFeatures.size()); 
+		Collection allFeatures = getFeatures(config);
+		ArrayList result = new ArrayList(allFeatures.size());
 		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
 			Object tmp = iter.next();
 			if (tmp instanceof BuildTimeFeature) {
-				if (! ((BuildTimeFeature) tmp).isBinary())
+				if (!((BuildTimeFeature) tmp).isBinary())
 					result.add(tmp);
 			}
 		}
 		return result;
 	}
-	
+
 	public Collection getBinaryFeatures(Config config) {
-		Collection allFeatures= getFeatures(config);
-		ArrayList result = new ArrayList(allFeatures.size()); 
+		Collection allFeatures = getFeatures(config);
+		ArrayList result = new ArrayList(allFeatures.size());
 		for (Iterator iter = allFeatures.iterator(); iter.hasNext();) {
 			Object tmp = iter.next();
 			if (tmp instanceof BuildTimeFeature) {
@@ -112,7 +110,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 		return result;
 	}
-	
+
 	public ArrayList getFeatures(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}
@@ -130,9 +128,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	}
 
 	// All the information that will go into the assemble file for a specific info
-	private class AssemblyLevelConfigInfo {
+	protected class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
-		private Collection plugins = new HashSet(20);
+		private Collection plugins = new LinkedHashSet(20);
 		// the features that are contained into this config
 		private ArrayList features = new ArrayList(7);
 		// indicate whether root files needs to be copied and where they are coming from
@@ -170,7 +168,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		public void addFeature(BuildTimeFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
-				if (((BuildTimeFeature) feature).getId().equals(featureDescriptor.getId()) && ((BuildTimeFeature) feature).getVersion().equals(featureDescriptor.getVersion()))
+				if (feature.getId().equals(featureDescriptor.getId()) && (feature).getVersion().equals(featureDescriptor.getVersion()))
 					return;
 			}
 			features.add(feature);
@@ -183,7 +181,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		public void removeFeature(BuildTimeFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
-				if (((BuildTimeFeature) feature).getId().equals(featureDescriptor.getId()) && ((BuildTimeFeature) feature).getVersion().equals(featureDescriptor.getVersion())) {
+				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion())) {
 					features.remove(featureDescriptor);
 					return;
 				}

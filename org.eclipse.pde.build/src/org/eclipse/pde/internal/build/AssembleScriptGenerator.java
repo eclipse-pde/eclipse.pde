@@ -77,10 +77,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
 		if (groupConfigs) {
-			Collection allPlugins = new HashSet();
-			Collection allFeatures = new HashSet();
-			Collection features = new HashSet();
-			Collection rootFiles = new HashSet();
+			Collection allPlugins = new LinkedHashSet();
+			Collection allFeatures = new LinkedHashSet();
+			Collection features = new LinkedHashSet();
+			Collection rootFiles = new LinkedHashSet();
 			for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
 				Collection[] configInfo = getConfigInfos((Config) allConfigs.next());
 				allPlugins.addAll(configInfo[0]);
