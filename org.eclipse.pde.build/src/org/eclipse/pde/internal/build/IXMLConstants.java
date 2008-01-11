@@ -138,6 +138,9 @@ public interface IXMLConstants {
 	public static final String PROPERTY_RUN_PACKAGER = "runPackager"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
 	public static final String PROPERTY_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
+	public static final String PROPERTY_CUSTOM_GATHER = "customGather"; //$NON-NLS-1$
+	public static final String PROPERTY_PROJECT_LOCATION = "projectLocation"; //$NON-NLS-1$
+	public static final String PROPERTY_PROJECT_NAME = "projectName"; //$NON-NLS-1$
 	public static final String PROPERTY_CUSTOM_TARGET = "customTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_ROOT_FOLDER = "rootFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_JARING_MANIFEST = "jaringManifest"; //$NON-NLS-1$

@@ -162,7 +162,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateBrandingCalls() {
 		script.printBrandTask(rootFolder, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
 	}
-	
+
 	private void generateP2Steps() {
 		if (haveP2Bundles())
 			script.printAntCallTask(TARGET_P2_METADATA, true, null);
@@ -329,11 +329,40 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 
+		generateCustomGatherMacro();
+
 		if (productFile != null && productFile.getLauncherName() != null)
 			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName());
 		script.printProperty(PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
 		generatePackagingTargets();
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
+	}
+
+	private void generateCustomGatherMacro() {
+		script.println();
+		List attributes = new ArrayList(2);
+		attributes.add("dir"); //$NON-NLS-1$
+		attributes.add("propertyName"); //$NON-NLS-1$
+		attributes.add("propertyValue"); //$NON-NLS-1$
+		attributes.add("subFolder"); //$NON-NLS-1$
+		attributes.add(PROPERTY_PROJECT_NAME);
+		script.printMacroDef(PROPERTY_CUSTOM_GATHER, attributes);
+
+		Map params = new HashMap();
+		params.put("@{propertyName}", "@{propertyValue}"); //$NON-NLS-1$//$NON-NLS-2$
+		script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, "@{dir}", TARGET_GATHER_BIN_PARTS, null, null, params); //$NON-NLS-1$
+
+		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/@{dir}"); //$NON-NLS-1$
+		params.put(PROPERTY_PROJECT_NAME, "@{projectName}"); //$NON-NLS-1$
+		params.put(PROPERTY_TARGET_FOLDER, "@{propertyValue}@{subFolder}"); //$NON-NLS-1$
+		printCustomAssemblyAntCall(TARGET_GATHER_BIN_PARTS, params);
+
+		script.printEndMacroDef();
+		script.println();
+	}
+
+	private void printCustomGatherCall(String fullName, String dir, String propertyName, String propertyValue, String subFolder) {
+		script.println("<" + PROPERTY_CUSTOM_GATHER + " dir=\"" + dir + "\" projectName=\"" + fullName + "\" propertyName=\"" + propertyName + "\" propertyValue=\"" + propertyValue + "\" subFolder=\"" + (subFolder != null ? subFolder : "") + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	}
 
 	private void generateInitializationSteps() {
@@ -379,35 +408,31 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateGatherBinPartsCalls() {
-		Map properties = new HashMap(1);
-		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			String placeToGather = getLocation(plugin);
-			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
+			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
-		properties = new HashMap(1);
-		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
 				placeToGather = placeToGather.substring(0, j);
-			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
+			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
+			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
-		properties = new HashMap(1);
-		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
 				placeToGather = placeToGather.substring(0, j);
-			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
+			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
+			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 		}
 	}
 
@@ -568,7 +593,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private boolean haveP2Bundles() {
 		if (p2Bundles != null)
 			return p2Bundles.booleanValue();
-		
+
 		try {
 			this.getClass().getClassLoader().loadClass("org.eclipse.equinox.p2.metadata.generator.Generator"); //$NON-NLS-1$
 			p2Bundles = Boolean.TRUE;

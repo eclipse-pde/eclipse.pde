@@ -10,6 +10,20 @@
 		 
 		 ===================================================================== -->
 		 
+	<!-- =====================================================================  -->
+	<!-- Called after each invocation of the gather.bin.parts target on the     -->
+	<!-- individual plugins and features.                                       -->
+	<!-- Available properties are:                                              -->
+	<!--   projectLocation: location of the project being gathered              -->
+	<!--   projectName: symbolic name with version (org.eclipse.foo_1.0.0.v123) -->
+	<!--   target.folder: the destination, eclipse/plugins or eclipse/features  -->
+	<!--                                                                        -->
+	<!-- The generated pattern is that plugins/features are gathered into the   -->
+	<!-- folder ${target.folder}/${projectName}                                 -->
+	<!-- =====================================================================  -->
+	<target name="gather.bin.parts">
+	</target>
+	
 	<!-- ===================================================================== -->
 	<!-- Called after invoking the gather.bin.parts targets for all plugins    -->
 	<!-- and features. Results exist as folders and have not yet been jarred.  -->
