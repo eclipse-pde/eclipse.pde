@@ -559,12 +559,26 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * @param event
+	 * Handles selection events generated from the source page
+	 * @param event The selection changed event
 	 */
 	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
+
 		ISelection selection = event.getSelection();
 		if (!selection.isEmpty() && selection instanceof ITextSelection) {
-			synchronizeOutlinePage(((ITextSelection) selection).getOffset());
+
+			ITextSelection textSel = (ITextSelection) selection;
+
+			// Get the current element from the offset
+			int offset = textSel.getOffset();
+			IDocumentRange rangeElement;
+			rangeElement = this.getRangeElement(offset, false);
+
+			// store this as the current selection
+			setSelectedObject(rangeElement);
+
+			// Synchronize the outline page
+			synchronizeOutlinePage(rangeElement);
 		}
 	}
 
@@ -580,10 +594,22 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	/**
-	 * @param offset
+	 * Synchronize the outline page to show a relevant element given the 
+	 * current offset.
+	 * 
+	 * @param offset The current offset within the source page
 	 */
 	protected void synchronizeOutlinePage(int offset) {
 		IDocumentRange rangeElement = getRangeElement(offset, false);
+
+		synchronizeOutlinePage(rangeElement);
+	}
+
+	/**
+	 * Synchronize the outline page to show the specified element
+	 * @param rangeElement The element to show in the outline page 
+	 */
+	private void synchronizeOutlinePage(IDocumentRange rangeElement) {
 		updateHighlightRange(rangeElement);
 		updateOutlinePageSelection(rangeElement);
 	}

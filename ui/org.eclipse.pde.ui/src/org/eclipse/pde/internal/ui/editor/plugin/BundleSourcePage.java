@@ -635,6 +635,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#handleSelectionChangedSourcePage(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
+		super.handleSelectionChangedSourcePage(event);
 		ISelection selection = event.getSelection();
 		// Ensure we have a selection
 		if (selection.isEmpty() || ((selection instanceof ITextSelection) == false)) {
