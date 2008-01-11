@@ -83,7 +83,7 @@ public abstract class XMLUtil {
 		// Bug 213457 - look up elements based on the schema in which the parent is found
 		if (schema.getIncludes().length == 0 || "extension".equals(node.getXMLTagName())) //$NON-NLS-1$
 			return schema.findElement(node.getXMLTagName());
-		
+
 		// if element is not "extension" & has multiple sub-schemas,
 		// Then search for the element in the same schema in which the parent element if found.
 		Stack stack = new Stack();
@@ -97,6 +97,8 @@ public abstract class XMLUtil {
 		ISchemaElement element = null;
 		while (!stack.isEmpty()) {
 			element = schema.findElement((String) stack.pop());
+			if (element == null)
+				return null;
 			schema = element.getSchema();
 		}
 		return element;
