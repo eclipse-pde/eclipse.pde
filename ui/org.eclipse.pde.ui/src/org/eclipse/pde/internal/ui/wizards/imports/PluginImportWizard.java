@@ -76,22 +76,24 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		page1.storeSettings();
 		((BaseImportWizardSecondPage) page1.getNextPage()).storeSettings();
 		final IPluginModelBase[] models = getModelsToImport();
-		boolean launchedConfiguration = areConflictingConfigurations(models);
-		if (launchedConfiguration) {
-			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle, null, PDEUIMessages.PluginImportWizard_runningConfigsDesc, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+		int launchedConfiguration = getConflictingConfigurationsCount(models);
+		if (launchedConfiguration > 0) {
+			String message = launchedConfiguration == 1 ? PDEUIMessages.PluginImportWizard_runningConfigDesc : PDEUIMessages.PluginImportWizard_runningConfigsDesc;
+			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle, null, message, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
 			if (dialog.open() != IDialogConstants.OK_ID)
 				return false;
 
 		}
-		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration);
+		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0);
 		return true;
 	}
 
 	/**
-	 * @return <code>true</code> if there is a possible import conflict with a running launch configuration
+	 * @return the number of conflicting running launch configurations
 	 */
-	private boolean areConflictingConfigurations(IPluginModelBase[] modelsToImport) {
+	private int getConflictingConfigurationsCount(IPluginModelBase[] modelsToImport) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		int count = 0;
 		ILaunch[] launches = launchManager.getLaunches();
 		HashSet imported = new HashSet((4 * modelsToImport.length) / 3 + 1);
 		for (int j = 0; j < modelsToImport.length; ++j) {
@@ -111,16 +113,19 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 						IPluginModelBase bm = (IPluginModelBase) iter.next();
 						BundleDescription description = bm.getBundleDescription();
 						if (description != null) {
-							if (imported.contains(description.getSymbolicName()))
-								return true;
+							if (imported.contains(description.getSymbolicName())) {
+								++count;
+								break;
+							}
 						}
+
 					}
 				} catch (CoreException e) {
-					return true;
+					++count;
 				}
 			}
 		}
-		return false;
+		return count;
 	}
 
 	public static void doImportOperation(final Shell shell, final int importType, final IPluginModelBase[] models, final boolean forceAutobuild) {
