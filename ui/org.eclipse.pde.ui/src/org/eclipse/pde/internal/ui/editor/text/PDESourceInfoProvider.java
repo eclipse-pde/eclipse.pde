@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.editor.text;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
 /**
@@ -31,6 +30,9 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+	/**
+	 * @deprecated
 	 */
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		// This method is deprecated.  Call the non-deprecated method
@@ -63,18 +65,8 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 			return null;
 		}
 
-		// First try to get the selection from the offset within the source page
-		int offset = subject.getOffset();
-		IDocumentRange rangeElement;
-		rangeElement = fSourcePage.getRangeElement(offset, false);
-
-		Object selection = rangeElement;
-
-		if (selection == null) {
-			// now try to get the selection in the old way
-			// (prior to fixing bug 211698)
-			selection = fSourcePage.getSelection();
-		}
+		Object selection;
+		selection = fSourcePage.getSelection();
 
 		// If the input is null, then the dialog does not open
 		// Define an empty object for no selection instead of null
