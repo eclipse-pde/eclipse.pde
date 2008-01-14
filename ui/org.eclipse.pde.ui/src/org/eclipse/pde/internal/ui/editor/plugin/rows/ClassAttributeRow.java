@@ -28,15 +28,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ClassAttributeRow extends ButtonAttributeRow {
-	
+
 	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
-	
+
 	public ClassAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
+
 	protected boolean isReferenceModel() {
 		return !part.getPage().getModel().isEditable();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,13 +46,11 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	 */
 	protected void openReference() {
 		String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
-		name = PDEJavaHelperUI.createClass(
-				name, getProject(),
-				createJavaAttributeValue(name), true);
+		name = PDEJavaHelperUI.createClass(name, getProject(), createJavaAttributeValue(name), true);
 		if (name != null)
 			text.setText(name);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -60,13 +60,10 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		super.createContents(parent, toolkit, span);
 
 		if (part.isEditable()) {
-			fTypeFieldAssistDisposer = 
-				PDEJavaHelperUI.addTypeFieldAssistToText(text, 
-						getProject(),
-						IJavaSearchConstants.CLASS_AND_INTERFACE);			
+			fTypeFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(text, getProject(), IJavaSearchConstants.CLASS_AND_INTERFACE);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,26 +76,26 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 			}
 		});
 	}
+
 	private JavaAttributeValue createJavaAttributeValue(String name) {
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = (IPluginModelBase) part.getPage().getModel();
 		return new JavaAttributeValue(project, model, getAttribute(), name);
 	}
+
 	private void doOpenSelectionDialog() {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelperUI.selectType(
-				resource, 
-				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, 
-				text.getText());
+		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, text.getText());
 		if (type != null)
 			text.setText(type);
 
 	}
+
 	private IPluginBase getPluginBase() {
 		IBaseModel model = part.getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow#dispose()
 	 */
@@ -106,6 +103,6 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		super.dispose();
 		if (fTypeFieldAssistDisposer != null) {
 			fTypeFieldAssistDisposer.dispose();
-		}		
+		}
 	}
 }
