@@ -729,7 +729,6 @@
                id="org.eclipse.pde.ui.BuildPluginAction3">
          </action>
       </objectContribution>
-      <!--
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -768,7 +767,6 @@
             id="org.eclipse.pde.ui.ConvertedProjectWizard">
       	</action>
       </objectContribution>
-      -->
       <objectContribution
             adaptable="false"
             id="org.eclipse.pde.ui.pluginJarfileToolSet"
