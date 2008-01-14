@@ -14,7 +14,8 @@
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
-import com.ibm.icu.text.DateFormat;
+
+import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +45,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.ViewPart;
-
 
 public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
@@ -952,7 +952,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void handleSelectionChanged(ISelection selection) {
 		updateStatus(selection);
-		fCopyAction.setEnabled(!selection.isEmpty());
+		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() instanceof LogEntry);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
 	}
 
@@ -970,8 +970,6 @@ public class LogView extends ViewPart implements ILogListener {
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
 		if (selection.isEmpty())
-			return;
-		if (!(selection instanceof LogEntry))
 			return;
 		LogEntry entry = (LogEntry) ((IStructuredSelection) selection).getFirstElement();
 		entry.write(pwriter);
