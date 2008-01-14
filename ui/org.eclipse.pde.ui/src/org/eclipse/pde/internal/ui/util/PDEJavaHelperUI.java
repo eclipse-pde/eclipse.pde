@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Herrmann <stephan@cs.tu-berlin.de> - bug 61185
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
@@ -17,6 +18,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -58,12 +61,22 @@ public class PDEJavaHelperUI {
 		return null;
 	}
 
-	public static String selectType(IResource resource, int scope, String filter) {
+	public static String selectType(IResource resource, int scope, String filter, String superTypeName) {
 		if (resource == null)
 			return null;
 		IProject project = resource.getProject();
 		try {
-			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), PDEJavaHelper.getSearchScope(project), scope, false, filter); //$NON-NLS-1$
+			IJavaSearchScope searchScope = null;
+			if (superTypeName != null) {
+				IJavaProject javaProject = JavaCore.create(project);
+				IType superType = javaProject.findType(superTypeName);
+				if (superType != null)
+					searchScope = SearchEngine.createHierarchyScope(superType);
+			}
+			if (searchScope == null)
+				searchScope = PDEJavaHelper.getSearchScope(project);
+
+			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), searchScope, scope, false, filter);
 			dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle);
 			if (dialog.open() == Window.OK) {
 				IType type = (IType) dialog.getResult()[0];
@@ -199,7 +212,6 @@ public class PDEJavaHelperUI {
 	 * widget is being disposed
 	 * @param text
 	 * @param project
-	 * @return
 	 */
 	public static TypeFieldAssistDisposer addTypeFieldAssistToText(Text text, IProject project, int searchScope) {
 		// Decorate the text widget with the light-bulb image denoting content

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 191769, 199431
+ *     Stephan Herrmann <stephan@cs.tu-berlin.de> - bug 61185
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -134,7 +135,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private void doOpenSelectionDialog(String className) {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className);
+		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className, null);
 		if (type != null)
 			fClassEntry.setValue(type);
 	}

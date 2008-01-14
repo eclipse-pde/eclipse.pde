@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Herrmann <stephan@cs.tu-berlin.de> - bug 61185
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
@@ -85,7 +86,16 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 
 	private void doOpenSelectionDialog() {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, text.getText());
+		ISchemaAttribute attr = getAttribute();
+		String superName = attr != null ? attr.getBasedOn() : null;
+		int index = superName != null ? superName.indexOf(':') : -1;
+		if (index > 0)
+			// if the schema specifies a class and interface, then show only types that extend the class (currently can't search on both).
+			superName = superName.substring(0, index);
+		String filter = text.getText();
+		if (filter.length() == 0 && superName != null)
+			filter = "**"; //$NON-NLS-1$
+		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, filter, superName);
 		if (type != null)
 			text.setText(type);
 
