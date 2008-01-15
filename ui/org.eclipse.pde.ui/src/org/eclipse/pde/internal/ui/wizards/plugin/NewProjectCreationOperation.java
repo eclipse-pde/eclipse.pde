@@ -13,66 +13,28 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.bundle.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
-import org.eclipse.pde.ui.IBundleContentWizard;
-import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.IFragmentFieldData;
-import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.pde.ui.IPluginFieldData;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.pde.ui.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -92,16 +54,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	private boolean fResult;
 
-	public NewProjectCreationOperation(IFieldData data,
-			IProjectProvider provider, IPluginContentWizard contentWizard) {
+	public NewProjectCreationOperation(IFieldData data, IProjectProvider provider, IPluginContentWizard contentWizard) {
 		fData = data;
 		fProjectProvider = provider;
 		fContentWizard = contentWizard;
 	}
 
 	// function used to modify Manifest just before it is written out (after all project artifacts have been created.
-	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle)
-			throws CoreException {
+	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
 		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
 		Set packages = new TreeSet();
@@ -111,20 +71,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (filters.length == 1 && filters[0].equals("**")) { //$NON-NLS-1$
 				addAllSourcePackages(project, packages);
 				break;
-			} 
+			}
 			for (int j = 0; j < filters.length; j++) {
 				if (filters[j].endsWith(".*")) //$NON-NLS-1$
 					packages.add(filters[j].substring(0, filters[j].length() - 2));
 			}
 		}
 		if (!packages.isEmpty()) {
-			IBundle iBundle = ((WorkspaceBundlePluginModelBase)fModel).getBundleModel().getBundle();
+			IBundle iBundle = ((WorkspaceBundlePluginModelBase) fModel).getBundleModel().getBundle();
 			iBundle.setHeader(Constants.EXPORT_PACKAGE, getCommaValueFromSet(packages));
 		}
 	}
-	
-	private void createBuildPropertiesFile(IProject project)
-			throws CoreException {
+
+	private void createBuildPropertiesFile(IProject project) throws CoreException {
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
@@ -139,16 +98,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model,
-			IBuildModelFactory factory) throws CoreException {
+	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model, IBuildModelFactory factory) throws CoreException {
 		String srcFolder = fData.getSourceFolderName();
 		if (!fData.isSimple() && srcFolder != null) {
 			String libraryName = fData.getLibraryName();
 			if (libraryName == null)
 				libraryName = "."; //$NON-NLS-1$
 			// SOURCE.<LIBRARY_NAME>
-			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX
-					+ libraryName);
+			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
 			if (srcFolder.length() > 0)
 				entry.addToken(new Path(srcFolder).addTrailingSeparator().toString());
 			else
@@ -166,19 +123,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void createContents(IProgressMonitor monitor, IProject project)
-			throws CoreException, JavaModelException,
-			InvocationTargetException, InterruptedException {
+	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
 
 	private void createManifest(IProject project) throws CoreException {
 		if (fData.hasBundleStructure()) {
 			if (fData instanceof IFragmentFieldData) {
-				fModel = new WorkspaceBundleFragmentModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
-						project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
+				fModel = new WorkspaceBundleFragmentModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
 			} else {
-				fModel = new WorkspaceBundlePluginModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
-						project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
+				fModel = new WorkspaceBundlePluginModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
 			}
 		} else {
 			if (fData instanceof IFragmentFieldData) {
@@ -195,8 +148,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		pluginBase.setName(fData.getName());
 		pluginBase.setProviderName(fData.getProvider());
 		if (fModel instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase)fModel);
-			((IBundlePluginBase)bmodel.getPluginBase()).setTargetVersion(targetVersion);
+			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase) fModel);
+			((IBundlePluginBase) bmodel.getPluginBase()).setTargetVersion(targetVersion);
 			bmodel.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		}
 		if (pluginBase instanceof IFragment) {
@@ -224,16 +177,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		// add Bundle Specific fields if applicable
 		if (pluginBase instanceof BundlePluginBase) {
-			IBundle bundle = ((BundlePluginBase)pluginBase).getBundle();
+			IBundle bundle = ((BundlePluginBase) pluginBase).getBundle();
 			if (fData instanceof AbstractFieldData) {
-				
+
 				// Set required EE
-				String exeEnvironment = ((AbstractFieldData)fData).getExecutionEnvironment();
-				if(exeEnvironment != null) {
+				String exeEnvironment = ((AbstractFieldData) fData).getExecutionEnvironment();
+				if (exeEnvironment != null) {
 					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, exeEnvironment);
 				}
 
-				String framework = ((AbstractFieldData)fData).getOSGiFramework();
+				String framework = ((AbstractFieldData) fData).getOSGiFramework();
 				if (framework != null) {
 					String value = getCommaValueFromSet(getImportPackagesSet());
 					if (value.length() > 0)
@@ -242,15 +195,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					if (!framework.equals(ICoreConstants.EQUINOX))
 						return;
 				}
-			} 
-			if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).doGenerateClass()) {
+			}
+			if (fData instanceof IPluginFieldData && ((IPluginFieldData) fData).doGenerateClass()) {
 				if (targetVersion.equals("3.1")) //$NON-NLS-1$
 					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-				else 
+				else
 					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
 			}
 			if (fContentWizard != null) {
-				String [] newFiles = fContentWizard.getNewFiles();
+				String[] newFiles = fContentWizard.getNewFiles();
 				if (newFiles != null)
 					for (int i = 0; i < newFiles.length; i++) {
 						if ("plugin.properties".equals(newFiles[i])) { //$NON-NLS-1$
@@ -259,22 +212,20 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 						}
 					}
 			}
-		} 
+		}
 	}
 
 	private IProject createProject() throws CoreException {
 		IProject project = fProjectProvider.getProject();
 		if (!project.exists()) {
-			CoreUtility.createProject(project, fProjectProvider
-					.getLocationPath(), null);
+			CoreUtility.createProject(project, fProjectProvider.getLocationPath(), null);
 			project.open(null);
 		}
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
 		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
-		if (!fData.isSimple() && fData.getSourceFolderName() != null
-				&& fData.getSourceFolderName().trim().length() > 0) {
+		if (!fData.isSimple() && fData.getSourceFolderName() != null && fData.getSourceFolderName().trim().length() > 0) {
 			IFolder folder = project.getFolder(fData.getSourceFolderName());
 			if (!folder.exists())
 				CoreUtility.createFolder(folder);
@@ -287,13 +238,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * 
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		// start task
-		monitor.beginTask(PDEUIMessages.NewProjectCreationOperation_creating,
-				getNumberOfWorkUnits()); 
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project); 
+		monitor.beginTask(PDEUIMessages.NewProjectCreationOperation_creating, getNumberOfWorkUnits());
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project);
 
 		// create project
 		IProject project = createProject();
@@ -301,7 +250,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		createContents(monitor, project);
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath); 
+			monitor.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath);
 			setClasspath(project, fData);
 			monitor.worked(1);
 		}
@@ -311,29 +260,27 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 			// generate top-level Java class if that option is selected
 			if (data.doGenerateClass()) {
-				generateTopLevelPluginClass(project, new SubProgressMonitor(
-						monitor, 1));
+				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 			}
 		}
 		// generate the manifest file
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile); 
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
 		createManifest(project);
 		monitor.worked(1);
 
 		// generate the build.properties file
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile); 
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile);
 		createBuildPropertiesFile(project);
 		monitor.worked(1);
 
 		// generate content contributed by template wizards
 		boolean contentWizardResult = true;
 		if (fContentWizard != null) {
-			contentWizardResult = fContentWizard.performFinish(project, fModel,
-					new SubProgressMonitor(monitor, 1));
+			contentWizardResult = fContentWizard.performFinish(project, fModel, new SubProgressMonitor(monitor, 1));
 		}
 
 		if (fData instanceof AbstractFieldData) {
-			String framework = ((AbstractFieldData)fData).getOSGiFramework();
+			String framework = ((AbstractFieldData) fData).getOSGiFramework();
 			if (framework != null) {
 				IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 				if (pref != null) {
@@ -345,23 +292,22 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 						pref.flush();
 					} catch (BackingStoreException e) {
 						PDEPlugin.logException(e);
-					}	
-				}				
+					}
+				}
 			}
 		}
-		
+
 		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
-			adjustManifests(new SubProgressMonitor(monitor, 1), project,
-					fModel.getPluginBase());
+			adjustManifests(new SubProgressMonitor(monitor, 1), project, fModel.getPluginBase());
 		}
-		
+
 		fModel.save();
 		openFile((IFile) fModel.getUnderlyingResource());
 		monitor.worked(1);
 
 		fResult = contentWizardResult;
 	}
-	
+
 	private Set getImportPackagesSet() {
 		TreeSet set = new TreeSet();
 		if (fGenerator != null) {
@@ -371,7 +317,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		if (fContentWizard instanceof IBundleContentWizard) {
-			String[] packages = ((IBundleContentWizard)fContentWizard).getImportPackages();
+			String[] packages = ((IBundleContentWizard) fContentWizard).getImportPackages();
 			for (int i = 0; i < packages.length; i++) {
 				set.add(packages[i]);
 			}
@@ -379,12 +325,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		return set;
 	}
 
-	protected void fillBinIncludes(IProject project, IBuildEntry binEntry)
-			throws CoreException {
-		if ((!fData.hasBundleStructure() || fContentWizard != null)
-			 && ((AbstractFieldData)fData).getOSGiFramework() == null)
-			binEntry.addToken(fData instanceof IFragmentFieldData ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
-							: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+	protected void fillBinIncludes(IProject project, IBuildEntry binEntry) throws CoreException {
+		if ((!fData.hasBundleStructure() || fContentWizard != null) && ((AbstractFieldData) fData).getOSGiFramework() == null)
+			binEntry.addToken(fData instanceof IFragmentFieldData ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		if (fData.hasBundleStructure())
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
 		if (!fData.isSimple()) {
@@ -400,8 +343,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void generateTopLevelPluginClass(IProject project,
-			IProgressMonitor monitor) throws CoreException {
+	private void generateTopLevelPluginClass(IProject project, IProgressMonitor monitor) throws CoreException {
 		PluginFieldData data = (PluginFieldData) fData;
 		fGenerator = new PluginClassCodeGenerator(project, data.getClassname(), data, fContentWizard != null);
 		fGenerator.generate(monitor);
@@ -414,14 +356,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
 
 		// Set EE of new project
-		String executionEnvironment = null; //$NON-NLS-1$
-		if(data instanceof AbstractFieldData) {
+		String executionEnvironment = null;
+		if (data instanceof AbstractFieldData) {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}
 		ClasspathComputer.setComplianceOptions(project, ExecutionEnvironmentAnalyzer.getCompliance(executionEnvironment));
 		entries[entries.length - 2] = ClasspathComputer.createJREEntry(executionEnvironment);
 		entries[entries.length - 1] = ClasspathComputer.createContainerEntry();
-		
+
 		return entries;
 	}
 
@@ -435,25 +377,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 
 		if (fContentWizard != null) {
-			IPluginReference[] refs = fContentWizard.getDependencies(fData
-					.isLegacy() ? null : "3.0"); //$NON-NLS-1$
+			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0"); //$NON-NLS-1$
 			for (int j = 0; j < refs.length; j++) {
 				if (!result.contains(refs[j]))
 					result.add(refs[j]);
 			}
 		}
-		return (IPluginReference[]) result.toArray(new IPluginReference[result
-				.size()]);
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
-	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project,
-			IFieldData data) {
+	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project, IFieldData data) {
 		if (data.getSourceFolderName() == null) {
 			return new IClasspathEntry[0];
 		}
 		IClasspathEntry[] entries = new IClasspathEntry[1];
-		IPath path = 
-			project.getProject().getFullPath().append(data.getSourceFolderName());
+		IPath path = project.getProject().getFullPath().append(data.getSourceFolderName());
 		entries[0] = JavaCore.newSourceEntry(path);
 		return entries;
 	}
@@ -496,21 +434,18 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		});
 	}
 
-	private void setClasspath(IProject project, IFieldData data)
-			throws JavaModelException, CoreException {
+	private void setClasspath(IProject project, IFieldData data) throws JavaModelException, CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
 		// Set output folder
 		if (data.getOutputFolderName() != null) {
-			IPath path = project.getFullPath().append(
-					data.getOutputFolderName());
+			IPath path = project.getFullPath().append(data.getOutputFolderName());
 			javaProject.setOutputLocation(path, null);
 		}
 		IClasspathEntry[] entries = getClassPathEntries(javaProject, data);
 		javaProject.setRawClasspath(entries, null);
 	}
 
-	protected void setPluginLibraries(WorkspacePluginModelBase model)
-			throws CoreException {
+	protected void setPluginLibraries(WorkspacePluginModelBase model) throws CoreException {
 		String libraryName = fData.getLibraryName();
 		if (libraryName == null && !fData.hasBundleStructure()) {
 			libraryName = "."; //$NON-NLS-1$
@@ -534,7 +469,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		return buffer.toString();
 	}
-	
+
 	private void addAllSourcePackages(IProject project, Set list) {
 		try {
 			IJavaProject javaProject = JavaCore.create(project);
@@ -547,8 +482,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 						IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(project.getFolder(path));
 						IJavaElement[] children = root.getChildren();
 						for (int j = 0; j < children.length; j++) {
-							IPackageFragment frag = (IPackageFragment)children[j];
-							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0) 
+							IPackageFragment frag = (IPackageFragment) children[j];
+							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0)
 								list.add(children[j].getElementName());
 						}
 					}
