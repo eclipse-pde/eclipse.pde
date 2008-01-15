@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
@@ -29,18 +30,28 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 	protected void createChange(BundleModel model) {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			boolean lazy = false;
-			String header = model.getBundle().getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
+			// store the packages we need to exclude as defined by Eclipse-AutoStart and Eclipse-LazyStart
+			String excludes = null;
+
+			LazyStartHeader header = (LazyStartHeader) model.getBundle().getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 			if (header != null) {
-				lazy = "true".equals(header.trim()); //$NON-NLS-1$
-				model.getBundle().setHeader(ICoreConstants.ECLIPSE_AUTOSTART, null);
+				lazy = header.isLazyStart();
+				excludes = header.getAttribute("exceptions"); //$NON-NLS-1$
+				header.setValue(null);
 			}
-			header = model.getBundle().getHeader(ICoreConstants.ECLIPSE_LAZYSTART);
+			header = (LazyStartHeader) model.getBundle().getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 			if (header != null) {
-				lazy = "true".equals(header.trim()); //$NON-NLS-1$
+				lazy = header.isLazyStart();
+				excludes = header.getAttribute("exceptions"); //$NON-NLS-1$
 				model.getBundle().setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);
 			}
-			if (lazy)
+			if (lazy) {
 				model.getBundle().setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+				if (excludes != null) {
+					header = (LazyStartHeader) model.getBundle().getManifestHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
+					header.setDirective(Constants.EXCLUDE_DIRECTIVE, excludes);
+				}
+			}
 		} else {
 			// if we should not use the Bundle-ActivationPolicy header, then we know we are renaming the Eclipse-AutoStart header to Eclipse-LazyStart
 			model.getBundle().renameHeader(ICoreConstants.ECLIPSE_AUTOSTART, ICoreConstants.ECLIPSE_LAZYSTART);
