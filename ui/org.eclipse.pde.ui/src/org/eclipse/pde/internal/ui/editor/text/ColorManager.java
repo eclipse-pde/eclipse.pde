@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import java.util.*;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
@@ -25,6 +21,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+
 public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	private static ColorManager fColorManager;
@@ -34,8 +31,8 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	public ColorManager() {
 		initialize();
 	}
-	
-	public static IColorManager getDefault(){
+
+	public static IColorManager getDefault() {
 		if (fColorManager == null)
 			fColorManager = new ColorManager();
 
@@ -72,7 +69,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		putColor(pstore, P_HEADER_VALUE);
 		putColor(pstore, P_HEADER_ATTRIBUTES);
 		putColor(pstore, P_HEADER_ASSIGNMENT);
-		pstore = JavaPlugin.getDefault().getCombinedPreferenceStore();
+		pstore = PreferenceConstants.getPreferenceStore();
 		for (int i = 0; i < IColorManager.PROPERTIES_COLORS.length; i++) {
 			putColor(pstore, IColorManager.PROPERTIES_COLORS[i]);
 		}
@@ -81,24 +78,25 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	public void disposeColors(boolean resetSingleton) {
 		Iterator e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			((Color) e.next()).dispose();
 		if (resetSingleton)
 			fColorManager = null;
-		
+
 	}
+
 	public void dispose() {
 		counter--;
 		if (counter == 0)
 			disposeColors(true);
 	}
-	
+
 	private void putColor(IPreferenceStore pstore, String property) {
 		putColor(property, PreferenceConverter.getColor(pstore, property));
 	}
-	
+
 	private void putColor(String property, RGB setting) {
 		Color oldColor = (Color) fColorTable.get(property);
-		if (oldColor != null){
+		if (oldColor != null) {
 			if (oldColor.getRGB().equals(setting))
 				return;
 			oldColor.dispose();
@@ -108,15 +106,15 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	public Color getColor(String key) {
 		Color color = (Color) fColorTable.get(key);
-		if (color == null) 
-			color = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);	
+		if (color == null)
+			color = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		return color;
 	}
 
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		Object color = event.getNewValue();
 		if (color instanceof RGB) {
-			putColor(event.getProperty(), (RGB)color);
+			putColor(event.getProperty(), (RGB) color);
 		} else {
 			putColor(event.getProperty(), StringConverter.asRGB(color.toString()));
 		}

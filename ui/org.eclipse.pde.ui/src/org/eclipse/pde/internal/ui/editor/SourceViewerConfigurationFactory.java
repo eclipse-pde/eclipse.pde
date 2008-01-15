@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.plugin.BundleSourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.PluginXMLConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class SourceViewerConfigurationFactory {
 
@@ -33,11 +29,10 @@ public class SourceViewerConfigurationFactory {
 		if (page instanceof BundleSourcePage)
 			return new ManifestConfiguration(manager, page);
 		if (page instanceof BuildSourcePage) {
-			IPreferenceStore store = JavaPlugin.getDefault().getCombinedPreferenceStore();
-			((BuildSourcePage)page).setPreferenceStore(store);
+			IPreferenceStore store = PreferenceConstants.getPreferenceStore();
+			((BuildSourcePage) page).setPreferenceStore(store);
 			return new BuildSourceViewerConfiguration(manager, store, page);
 		}
 		return null;
 	}
-	
 }
