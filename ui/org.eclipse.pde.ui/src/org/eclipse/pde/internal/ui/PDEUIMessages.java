@@ -491,6 +491,9 @@ public class PDEUIMessages extends NLS {
 	public static String RegisterTocWizardPage_wizardPageDescription;
 	public static String RegisterTocWizardPage_labelPrimary;
 
+	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
+	public static String UpdateActivationResolution_bundleActivationPolicy_label;
+
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
 	public static String UpdateSiteWizardPage_description;
@@ -2445,9 +2448,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String CreateJREBundleHeaderResolution_label;
 
-	public static String RenameAutostartResolution_desc;
+	public static String UpdateActivationResolution_lazyStart_desc;
 
-	public static String RenameAutostartResolution_label;
+	public static String UpdateActivationResolution_lazyStart_label;
 
 	public static String AddSingleon_dir_label;
 

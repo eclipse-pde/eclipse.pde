@@ -67,6 +67,7 @@ public class PluginConverter {
 	private Version target;
 	static final Version TARGET31 = new Version(3, 1, 0);
 	static final Version TARGET32 = new Version(3, 2, 0);
+	static final Version TARGET34 = new Version(3, 4, 0);
 	private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
 	private static final String PLUGIN_PROPERTIES_FILENAME = "plugin"; //$NON-NLS-1$
 	private static PluginConverter instance;
@@ -365,8 +366,12 @@ public class PluginConverter {
 			return;
 
 		String pluginClass = pluginInfo.getPluginClass();
-		if (pluginInfo.hasExtensionExtensionPoints() || (pluginClass != null && !pluginClass.trim().equals(""))) //$NON-NLS-1$
-			generatedManifest.put(TARGET32.compareTo(target) <= 0 ? ICoreConstants.ECLIPSE_LAZYSTART : ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
+		if (pluginInfo.hasExtensionExtensionPoints() || (pluginClass != null && !pluginClass.trim().equals(""))) { //$NON-NLS-1$
+			if (TARGET34.compareTo(target) <= 0)
+				generatedManifest.put(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+			else
+				generatedManifest.put(TARGET32.compareTo(target) <= 0 ? ICoreConstants.ECLIPSE_LAZYSTART : ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
+		}
 	}
 
 	private Set getExports() {

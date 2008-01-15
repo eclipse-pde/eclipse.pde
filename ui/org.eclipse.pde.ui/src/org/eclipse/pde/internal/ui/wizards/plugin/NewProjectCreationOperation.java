@@ -199,8 +199,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (fData instanceof IPluginFieldData && ((IPluginFieldData) fData).doGenerateClass()) {
 				if (targetVersion.equals("3.1")) //$NON-NLS-1$
 					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-				else
-					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
+				else {
+					double version = Double.parseDouble(targetVersion);
+					if (version >= 3.4) {
+						bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+					} else {
+						bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
+					}
+				}
+
 			}
 			if (fContentWizard != null) {
 				String[] newFiles = fContentWizard.getNewFiles();

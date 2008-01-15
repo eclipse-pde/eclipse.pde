@@ -42,6 +42,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.osgi.framework.Constants;
 
 public class PluginGeneralInfoSection extends GeneralInfoSection {
 
@@ -96,7 +97,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				if (header instanceof LazyStartHeader)
 					((LazyStartHeader) header).setLazyStart(fLazyStart.getSelection());
 				else
-					getBundle().setHeader(getLazyStartHeaderName(), Boolean.toString(fLazyStart.getSelection()));
+					getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
 			}
 		});
 	}
@@ -181,15 +182,27 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 			if (header == null)
 				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
+			if (header == null)
+				header = bundle.getManifestHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
 			return header;
 		}
 		return null;
 	}
 
 	private String getLazyStartHeaderName() {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.2 && BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2)
-			return ICoreConstants.ECLIPSE_LAZYSTART;
+		if (BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2) {
+			if (TargetPlatformHelper.getTargetVersion() >= 3.4)
+				return Constants.BUNDLE_ACTIVATIONPOLICY;
+			else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+				return ICoreConstants.ECLIPSE_LAZYSTART;
+		}
 		return ICoreConstants.ECLIPSE_AUTOSTART;
+	}
+
+	private String getLazyStateHeaderValue(boolean lazyStart) {
+		if (BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2 && TargetPlatformHelper.getTargetVersion() >= 3.4)
+			return lazyStart ? Constants.ACTIVATION_LAZY : null;
+		return Boolean.toString(lazyStart);
 	}
 
 	/* (non-Javadoc)

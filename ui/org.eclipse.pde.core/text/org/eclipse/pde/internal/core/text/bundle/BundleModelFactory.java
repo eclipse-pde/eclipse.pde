@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.osgi.framework.Constants;
 
 public class BundleModelFactory implements IBundleModelFactory {
@@ -65,6 +62,8 @@ public class BundleModelFactory implements IBundleModelFactory {
 			header = new ImportPackageHeader(key, value, bundle, newLine);
 		} else if (key.equalsIgnoreCase(Constants.REQUIRE_BUNDLE)) {
 			header = new RequireBundleHeader(key, value, bundle, newLine);
+		} else if (key.equalsIgnoreCase(Constants.BUNDLE_ACTIVATIONPOLICY)) {
+			header = new BundleActivationPolicyHeader(key, value, bundle, newLine);
 		} else {
 			header = new ManifestHeader(key, value, bundle, newLine);
 		}

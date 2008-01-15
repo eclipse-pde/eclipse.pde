@@ -66,6 +66,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateExportPackages();
 		validateAutoStart();
 		validateLazyStart();
+		validateBundleActivatorPolicy();
 		validateExtensibleAPI();
 		validateTranslatableHeaders();
 		validateImportExportServices();
@@ -927,14 +928,36 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
+	private void validateBundleActivatorPolicy() {
+		IHeader header = getHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+		if (header == null)
+			return;
+		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
+			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
+			if (activator == null && Constants.ACTIVATION_LAZY.equalsIgnoreCase(header.getValue())) {
+				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+			}
+			validateHeaderValue(header, new String[] {Constants.ACTIVATION_LAZY});
+		} else if (severity != CompilerFlags.IGNORE && !containsValidActivationHeader()) {
+			report(PDECoreMessages.BundleErrorReporter_bundleActivationPolicy_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+		}
+	}
+
 	private void validateAutoStart() {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 		if (!validateStartHeader(header))
 			return; // valid start header problems already reported
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2) {
+		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2 && !containsValidActivationHeader()) {
 			int line = header.getLineNumber();
-			report(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
+			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, new Object[] {ICoreConstants.ECLIPSE_AUTOSTART, getCurrentActivationHeader()});
+			IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
+			try {
+				if (marker != null)
+					marker.setAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -947,10 +970,44 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
 				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
 			}
-			if (TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
+			if (severity == CompilerFlags.IGNORE || containsValidActivationHeader())
+				return;
+			double targetVersion = TargetPlatformHelper.getTargetVersion();
+			if (targetVersion < 3.2) {
 				report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+			} else if (targetVersion > 3.3) {
+				int line = header.getLineNumber();
+				String message = NLS.bind(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, new Object[] {ICoreConstants.ECLIPSE_LAZYSTART, getCurrentActivationHeader()});
+				IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
+				try {
+					if (marker != null)
+						marker.setAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
 			}
 		}
+	}
+
+	private boolean containsValidActivationHeader() {
+		String header;
+		double targetVersion = TargetPlatformHelper.getTargetVersion();
+		if (targetVersion < 3.2)
+			header = ICoreConstants.ECLIPSE_AUTOSTART;
+		else if (targetVersion < 3.4)
+			header = ICoreConstants.ECLIPSE_LAZYSTART;
+		else
+			header = Constants.BUNDLE_ACTIVATIONPOLICY;
+
+		return getHeader(header) != null;
+	}
+
+	private String getCurrentActivationHeader() {
+		double targetVersion = TargetPlatformHelper.getTargetVersion();
+		if (targetVersion < 3.2)
+			return ICoreConstants.ECLIPSE_AUTOSTART;
+		else if (targetVersion < 3.4)
+			return ICoreConstants.ECLIPSE_LAZYSTART;
+		return Constants.BUNDLE_ACTIVATIONPOLICY;
 	}
 
 	private boolean validateStartHeader(IHeader header) {
