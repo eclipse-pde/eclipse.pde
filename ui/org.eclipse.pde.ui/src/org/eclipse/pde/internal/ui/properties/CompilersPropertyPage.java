@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,43 +13,38 @@ package org.eclipse.pde.internal.ui.properties;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationTab;
-import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+/**
+ * The PDE manifest compiler options property page for plugin projects
+ */
 public class CompilersPropertyPage extends PropertyPage {
 
 	private ControlEnableState blockEnableState;
-
-	private Button changeWorkspaceSettingsButton;
-
 	private CompilersConfigurationTab configurationBlock;
-
 	private Control configurationBlockControl;
 
-	private Button useProjectButton;
+	/**
+	 * If project specific settings are being used or not
+	 */
+	private Button fProjectSpecific = null;
 
-	private Button useWorkspaceButton;
+	/**
+	 * A link to configure workspace settings
+	 */
+	private Link fWorkspaceLink = null;
 
 	/*
 	 * (non-Javadoc)
@@ -58,21 +53,6 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	protected Control createContents(Composite parent) {
 		configurationBlock = new CompilersConfigurationTab(getProject());
-
-		SelectionListener listener = new SelectionAdapter() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				if (e.getSource() instanceof Button) {
-					doDialogFieldChanged((Button) e.getSource());
-				}
-			}
-		};
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -80,58 +60,34 @@ public class CompilersPropertyPage extends PropertyPage {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 
-		// Use Workspace Settings radio button
-		useWorkspaceButton = new Button(composite, SWT.RADIO);
-		useWorkspaceButton.addSelectionListener(listener);
-		useWorkspaceButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_label); 
-		GridData gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.horizontalAlignment = GridData.FILL;
-		// if (fButtonStyle == SWT.PUSH) {
-		// gd.heightHint = SWTUtil.getButtonHeightHint(button);
-		// gd.widthHint = SWTUtil.getButtonWidthHint(button);
-		// }
-		gd.grabExcessHorizontalSpace = true;
-		useWorkspaceButton.setLayoutData(gd);
+		fProjectSpecific = new Button(composite, SWT.CHECK);
+		fProjectSpecific.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
+		fProjectSpecific.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label);
+		fProjectSpecific.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateEnableState();
+			}
+		});
 
-		// Change Workspace Settings push button
-		changeWorkspaceSettingsButton = new Button(composite, SWT.PUSH);
-		changeWorkspaceSettingsButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change); 
-		changeWorkspaceSettingsButton.addSelectionListener(listener);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.horizontalAlignment = GridData.FILL;
-		useWorkspaceButton.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(changeWorkspaceSettingsButton);
+		fWorkspaceLink = new Link(composite, SWT.NONE);
+		fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
+		fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String id = "org.eclipse.pde.ui.CompilersPreferencePage"; //$NON-NLS-1$
+				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] {id}, null).open();
+			}
+		});
 
-		// Use Project Settings radio button
-		useProjectButton = new Button(composite, SWT.RADIO);
-		useProjectButton.addSelectionListener(listener);
-		useProjectButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label); 
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		useProjectButton.setLayoutData(gd);
-
-		//
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 
-		configurationBlockControl = configurationBlock
-				.createContents(composite);
+		configurationBlockControl = configurationBlock.createContents(composite);
 		configurationBlockControl.setLayoutData(data);
 
-		boolean useProjectSettings = CompilerFlags.getBoolean(getProject(),
-				CompilerFlags.USE_PROJECT_PREF);
+		boolean useProjectSettings = CompilerFlags.getBoolean(getProject(), CompilerFlags.USE_PROJECT_PREF);
 
-		useProjectButton.setSelection(useProjectSettings);
-		useWorkspaceButton.setSelection(!useProjectSettings);
-		changeWorkspaceSettingsButton.setEnabled(!useProjectSettings);
+		fProjectSpecific.setEnabled(useProjectSettings);
+		fWorkspaceLink.setEnabled(!useProjectSettings);
 
 		updateEnableState();
 		Dialog.applyDialogFont(composite);
@@ -143,18 +99,12 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-				IHelpContextIds.COMPILERS_PROPERTY_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.COMPILERS_PROPERTY_PAGE);
 	}
 
-	private void doDialogFieldChanged(Button button) {
-		if (button == changeWorkspaceSettingsButton) {
-			showPreferencePage();
-		} else {
-			updateEnableState();
-		}
-	}
-
+	/**
+	 * @return the backing project for this property page
+	 */
 	private IProject getProject() {
 		return (IProject) getElement().getAdapter(IProject.class);
 	}
@@ -164,8 +114,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 		if (useProjectSettings()) {
-			useProjectButton.setSelection(false);
-			useWorkspaceButton.setSelection(true);
+			fProjectSpecific.setEnabled(false);
 			updateEnableState();
 			configurationBlock.performDefaults();
 		}
@@ -183,43 +132,28 @@ public class CompilersPropertyPage extends PropertyPage {
 		return super.performOk();
 	}
 
-	private boolean showPreferencePage() {
-		final IPreferenceNode targetNode = new PreferenceNode(
-				"org.eclipse.pde.ui.CompilersPreferencePage", //$NON-NLS-1$
-				new CompilersPreferencePage());
-
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(getShell(),
-				manager);
-		final boolean[] result = new boolean[] { false };
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0] = (dialog.open() == Window.OK);
-			}
-		});
-		return result[0];
-	}
-
+	/**
+	 * Updates the enabled state of the controls based on the project specific settings
+	 */
 	private void updateEnableState() {
 		if (useProjectSettings()) {
 			if (blockEnableState != null) {
-				changeWorkspaceSettingsButton.setEnabled(false);
+				fWorkspaceLink.setEnabled(false);
 				blockEnableState.restore();
 				blockEnableState = null;
 			}
 		} else {
 			if (blockEnableState == null) {
-				changeWorkspaceSettingsButton.setEnabled(true);
-				blockEnableState = ControlEnableState
-						.disable(configurationBlockControl);
+				fWorkspaceLink.setEnabled(true);
+				blockEnableState = ControlEnableState.disable(configurationBlockControl);
 			}
 		}
 	}
 
+	/**
+	 * @return if project specific settings are being configured
+	 */
 	private boolean useProjectSettings() {
-		return useProjectButton.getSelection();
+		return fProjectSpecific.getSelection();
 	}
 }

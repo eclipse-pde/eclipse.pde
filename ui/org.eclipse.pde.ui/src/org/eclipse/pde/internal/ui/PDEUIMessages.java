@@ -1879,7 +1879,6 @@ public class PDEUIMessages extends NLS {
 	public static String CompilersPreferencePage_desc;
 	public static String CompilersPreferencePage_title;
 
-	public static String CompilersPropertyPage_useworkspacesettings_label;
 	public static String CompilersPropertyPage_useworkspacesettings_change;
 	public static String CompilersPropertyPage_useprojectsettings_label;
 
