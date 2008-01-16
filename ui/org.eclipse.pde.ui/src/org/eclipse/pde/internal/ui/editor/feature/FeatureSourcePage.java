@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.editor.*;
 
 public class FeatureSourcePage extends XMLSourcePage {
 
@@ -53,7 +48,7 @@ public class FeatureSourcePage extends XMLSourcePage {
 		// are implemented
 		return new FeatureOutlinePage((PDEFormEditor) getEditor());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */

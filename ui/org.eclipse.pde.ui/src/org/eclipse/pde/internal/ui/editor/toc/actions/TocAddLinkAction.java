@@ -24,16 +24,14 @@ public class TocAddLinkAction extends TocAddObjectAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (fParentObject != null)
-		{	//Create a new link
-			TocLink link = 
-				fParentObject.getModel().getFactory().createTocLink(); 
+		if (fParentObject != null) { //Create a new link
+			TocLink link = fParentObject.getModel().getFactory().createTocLink();
 
 			//Generate the name of the link
 			String name = PDELabelUtility.generateName(getChildNames(), PDEUIMessages.TocPage_TocLink);
 			link.setFieldTocPath(name);
 			//Add the new link to the parent TOC object
-			addChild(link); 
+			addChild(link);
 		}
 	}
 }

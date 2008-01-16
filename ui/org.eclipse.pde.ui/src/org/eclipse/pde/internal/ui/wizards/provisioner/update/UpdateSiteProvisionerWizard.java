@@ -16,29 +16,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.IProvisionerWizard;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.operations.IInstallFeatureOperation;
-import org.eclipse.update.operations.IOperation;
-import org.eclipse.update.operations.IOperationListener;
-import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
-public class UpdateSiteProvisionerWizard extends Wizard implements
-IProvisionerWizard {
+public class UpdateSiteProvisionerWizard extends Wizard implements IProvisionerWizard {
 
 	class UpdateSiteDownloader implements IRunnableWithProgress, IOperationListener {
 
@@ -48,19 +36,18 @@ IProvisionerWizard {
 			this.entries = entries;
 		}
 
-		public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 			try {
 				monitor.beginTask(PDEUIMessages.UpdateSiteDownloader_message, entries.length);
-				for(int i = 0; i < entries.length; i++) {
+				for (int i = 0; i < entries.length; i++) {
 					IUpdateSiteProvisionerEntry entry = entries[i];
 					File sitePath = new File(entry.getInstallLocation());
 					URL remoteSiteURL = new URL(entry.getSiteLocation());
 					ISite site = SiteManager.getSite(sitePath.toURL(), null);
 					IConfiguredSite csite = site.getCurrentConfiguredSite();
 
-					if(csite == null) {
+					if (csite == null) {
 						ILocalSite localSite = SiteManager.getLocalSite();
 						IInstallConfiguration config = localSite.getCurrentConfiguration();
 						csite = config.createConfiguredSite(sitePath);
@@ -72,13 +59,11 @@ IProvisionerWizard {
 
 					ISite remoteSite = SiteManager.getSite(remoteSiteURL, null);
 
-					IFeatureReference[] references = 
-						remoteSite.getFeatureReferences();
-					for(int j = 0; j < references.length; j++) {
+					IFeatureReference[] references = remoteSite.getFeatureReferences();
+					for (int j = 0; j < references.length; j++) {
 						IFeatureReference reference = references[j];
 						IFeature feature = reference.getFeature(null);
-						IInstallFeatureOperation operation = 
-							OperationsManager.getOperationFactory().createInstallOperation(csite, feature, null, null, null);
+						IInstallFeatureOperation operation = OperationsManager.getOperationFactory().createInstallOperation(csite, feature, null, null, null);
 						operation.execute(monitor, this);
 					}
 					monitor.worked(1);
@@ -107,7 +92,7 @@ IProvisionerWizard {
 
 	public UpdateSiteProvisionerWizard() {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.UpdateSiteProvisionerWizard_title); 
+		setWindowTitle(PDEUIMessages.UpdateSiteProvisionerWizard_title);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWSITEPRJ_WIZ);
 	}
@@ -123,10 +108,10 @@ IProvisionerWizard {
 			IUpdateSiteProvisionerEntry[] entries = fPage.getEntries();
 			getContainer().run(false, false, new UpdateSiteDownloader(entries));
 
-			for(int i = 0; i < entries.length; i++) {
+			for (int i = 0; i < entries.length; i++) {
 				IUpdateSiteProvisionerEntry entry = entries[i];
 				File file = new File(entry.getInstallLocation(), "eclipse"); //$NON-NLS-1$
-				if(file.exists())
+				if (file.exists())
 					dirs.add(file);
 			}
 			fDirs = (File[]) dirs.toArray(new File[dirs.size()]);

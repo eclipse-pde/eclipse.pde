@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
+import java.util.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
@@ -33,17 +28,15 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 		super(editor, model);
 	}
 
-	public void addFoldingRegions(Set currentRegions, IEditingModel model)
-	throws BadLocationException {
+	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
 		IExtensions extensions = ((PluginModel) model).getExtensions();
 		IPluginExtension[] pluginExtensions = extensions.getExtensions();
-
 
 		addFoldingRegions(currentRegions, pluginExtensions, model.getDocument());
 	}
 
-	private void addFoldingRegions(Set regions, IPluginExtension[] nodes, IDocument document) throws BadLocationException  {
-		for(int i = 0; i < nodes.length; i++) {
+	private void addFoldingRegions(Set regions, IPluginExtension[] nodes, IDocument document) throws BadLocationException {
+		for (int i = 0; i < nodes.length; i++) {
 			IDocumentElementNode element = (IDocumentElementNode) nodes[i];
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());
@@ -61,8 +54,8 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 		}
 	}
 
-	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException  {
-		for(int i = 0; i < nodes.length; i++) {
+	private void addFoldingRegions(Set regions, IDocumentElementNode[] nodes, IDocument document) throws BadLocationException {
+		for (int i = 0; i < nodes.length; i++) {
 			IDocumentElementNode element = nodes[i];
 			int startLine = document.getLineOfOffset(element.getOffset());
 			int endLine = document.getLineOfOffset(element.getOffset() + element.getLength());

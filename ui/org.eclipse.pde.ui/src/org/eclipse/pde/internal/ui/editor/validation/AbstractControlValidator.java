@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IMessageManager;
 
-
 /**
  * AbstractControlValidator
  *
@@ -28,34 +27,33 @@ import org.eclipse.ui.forms.IMessageManager;
 public abstract class AbstractControlValidator implements IControlValidator, IValidatorMessageHandler {
 
 	public static final Object F_DEFAULT_MESSAGE_KEY = "k"; //$NON-NLS-1$
-	
+
 	private boolean fEnabled;
-	
+
 	private IManagedForm fManagedForm;
-	
+
 	private Control fControl;
-	
+
 	private String fMessagePrefix;
-	
+
 	private boolean fIsValid;
-	
+
 	private IProject fProject;
-	
+
 	/**
 	 * @param managedForm
 	 * @param control
 	 * @param project
 	 */
-	public AbstractControlValidator(IManagedForm managedForm, Control control, 
-			IProject project) {
+	public AbstractControlValidator(IManagedForm managedForm, Control control, IProject project) {
 		fProject = project;
 		fManagedForm = managedForm;
 		fControl = control;
 		fMessagePrefix = null;
 		fEnabled = autoEnable();
 		reset();
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
@@ -63,14 +61,12 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		boolean isBinaryProject = WorkspaceModelManager.isBinaryProject(fProject);
 		// Enable validator if this is a source projec, the control is enabled 
 		// and the control is not disposed  
-		if ((isBinaryProject == false) &&
-				fControl.getEnabled() &&
-				(fControl.isDisposed() == false)) {
+		if ((isBinaryProject == false) && fControl.getEnabled() && (fControl.isDisposed() == false)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#getEnabled()
 	 */
@@ -121,7 +117,7 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 	 * @return
 	 */
 	protected abstract boolean validateControl();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#addMessage(java.lang.Object, java.lang.String, int)
 	 */
@@ -131,9 +127,8 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 			messageText = fMessagePrefix + ' ' + messageText;
 		}
 		// Delegate to message manager
-		fManagedForm.getMessageManager().addMessage(key, messageText, null, 
-				messageType, fControl);
-	} 
+		fManagedForm.getMessageManager().addMessage(key, messageText, null, messageType, fControl);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#addMessage(java.lang.String, int)
@@ -144,11 +139,9 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 			messageText = fMessagePrefix + ' ' + messageText;
 		}
 		// Delegate to message manager
-		fManagedForm.getMessageManager().addMessage(
-				F_DEFAULT_MESSAGE_KEY, messageText, null, 
-				messageType, fControl);
-	} 	
-	
+		fManagedForm.getMessageManager().addMessage(F_DEFAULT_MESSAGE_KEY, messageText, null, messageType, fControl);
+	}
+
 	/**
 	 * @param status
 	 * @return
@@ -168,7 +161,7 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		// IStatus.CANCEL
 		return IMessageProvider.NONE;
 	}
-	
+
 	/**
 	 * @param project
 	 * @param compilerFlagId
@@ -184,58 +177,58 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		} else {
 			// CompilerFlags.WARNING
 			return IMessageProvider.WARNING;
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#removeMessage(java.lang.Object)
 	 */
 	public void removeMessage(Object key) {
 		fManagedForm.getMessageManager().removeMessage(key, fControl);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#setMessagePrefix(java.lang.String)
 	 */
 	public void setMessagePrefix(String prefix) {
 		fMessagePrefix = prefix;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getMessagePrefix()
 	 */
 	public String getMessagePrefix() {
 		return fMessagePrefix;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getManagedForm()
 	 */
 	public IManagedForm getManagedForm() {
 		return fManagedForm;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getMessageManager()
 	 */
 	public IMessageManager getMessageManager() {
 		return fManagedForm.getMessageManager();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#setRefresh(boolean)
 	 */
 	public void setRefresh(boolean refresh) {
 		getMessageManager().setAutoUpdate(refresh);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValdiator#getControl()
 	 */
 	public Control getControl() {
 		return fControl;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#isValid()
 	 */

@@ -10,35 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.search.ExtensionPluginSearchScope;
-import org.eclipse.pde.internal.core.search.PluginSearchInput;
-import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 
-
 public class FindReferencesAction extends BaseSearchAction {
-	
+
 	private Object fSelectedObject;
 	private String fPluginID;
-	
+
 	public FindReferencesAction(Object object) {
 		this(object, null);
 	}
-	
+
 	public FindReferencesAction(Object object, String pluginID) {
 		super(PDEUIMessages.SearchAction_references);
 		fSelectedObject = object;
 		fPluginID = pluginID;
 		initialize();
 	}
-	
+
 	private void initialize() {
 		setImageDescriptor(PDEPluginImages.DESC_PSEARCH_OBJ);
 	}
@@ -57,10 +50,8 @@ public class FindReferencesAction extends BaseSearchAction {
 				id = fPluginID;
 			if (id == null || id.trim().length() == 0)
 				id = "*"; //$NON-NLS-1$
-			input.setSearchString(
-						id
-						+ "." //$NON-NLS-1$
-						+ ((IPluginExtensionPoint) fSelectedObject).getId());
+			input.setSearchString(id + "." //$NON-NLS-1$
+					+ ((IPluginExtensionPoint) fSelectedObject).getId());
 			scope = new ExtensionPluginSearchScope(input);
 		} else if (fSelectedObject instanceof IPluginImport) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);

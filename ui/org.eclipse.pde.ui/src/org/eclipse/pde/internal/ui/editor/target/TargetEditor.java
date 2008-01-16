@@ -13,50 +13,33 @@ package org.eclipse.pde.internal.ui.editor.target;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.internal.core.LoadTargetOperation;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.progress.IProgressService;
 
-
 public class TargetEditor extends PDEFormEditor {
-	
+
 	protected static String LAST_PATH;
-	
+
 	static {
 		Location installLoc = Platform.getInstallLocation();
 		if (installLoc == null) {
@@ -76,21 +59,21 @@ public class TargetEditor extends PDEFormEditor {
 	protected String getEditorID() {
 		return IPDEUIConstants.TARGET_EDITOR_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
 	public String getContextIDForSaveAs() {
 		return TargetInputContext.CONTEXT_ID;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
@@ -109,12 +92,11 @@ public class TargetEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
-			if (name.endsWith(".target")) {  //$NON-NLS-1$
+			if (name.endsWith(".target")) { //$NON-NLS-1$
 				IEditorInput in = new SystemFileEditorInput(file);
 				manager.putContext(in, new TargetInputContext(this, in, true));
 			}
@@ -124,8 +106,7 @@ public class TargetEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
 	 */
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		if (input.getName().endsWith(".target")) { //$NON-NLS-1$
 			manager.putContext(input, new TargetInputContext(this, input, true));
 		}
@@ -158,15 +139,14 @@ public class TargetEditor extends PDEFormEditor {
 				public void pageChanged(PageChangedEvent event) {
 					Object o = event.getSelectedPage();
 					if (o instanceof EnvironmentPage)
-						((EnvironmentPage)o).updateChoices();
+						((EnvironmentPage) o).updateChoices();
 				}
-				
+
 			});
 		} catch (PartInitException e) {
 			PDEPlugin.log(e);
 		}
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
@@ -193,6 +173,7 @@ public class TargetEditor extends PDEFormEditor {
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
+
 	public void contributeToToolbar(IToolBarManager manager) {
 		ControlContribution save = new ControlContribution("Set") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
@@ -218,7 +199,7 @@ public class TargetEditor extends PDEFormEditor {
 		};
 		manager.add(save);
 	}
-	
+
 	private void doLoadTarget() {
 		IRunnableWithProgress run = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -251,19 +232,19 @@ public class TargetEditor extends PDEFormEditor {
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	private ITarget getTarget() {
 		return getTargetModel().getTarget();
 	}
-	
+
 	private ITargetModel getTargetModel() {
 		return ((ITargetModel) getAggregateModel());
 	}
-	
+
 	private IPath getFilePath() {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)input).getFile();
+			IFile file = ((IFileEditorInput) input).getFile();
 			if (file != null)
 				return file.getFullPath();
 		}

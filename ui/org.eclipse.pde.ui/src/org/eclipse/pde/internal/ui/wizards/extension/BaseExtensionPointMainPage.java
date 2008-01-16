@@ -9,22 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import java.io.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
@@ -37,36 +25,18 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.schema.DocumentSection;
-import org.eclipse.pde.internal.core.schema.EditableSchema;
-import org.eclipse.pde.internal.core.schema.SchemaAttribute;
-import org.eclipse.pde.internal.core.schema.SchemaComplexType;
-import org.eclipse.pde.internal.core.schema.SchemaElement;
-import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.ide.IDE;
@@ -74,6 +44,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.navigator.ResourceComparator;
+
 public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
@@ -93,6 +64,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		super("newExtensionPoint"); //$NON-NLS-1$
 		fContainer = container;
 	}
+
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -107,7 +79,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			label.setText(PDEUIMessages.BaseExtensionPoint_pluginId);
 			fPluginIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=1;
+			gd.horizontalSpan = 1;
 			gd.widthHint = 275;
 			fPluginIdText.setLayoutData(gd);
 			fPluginIdText.addModifyListener(new ModifyListener() {
@@ -117,12 +89,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			});
 			fPluginBrowseButton = new Button(container, SWT.PUSH);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-			gd.horizontalSpan =1;
+			gd.horizontalSpan = 1;
 			gd.widthHint = 50;
 			fPluginBrowseButton.setLayoutData(gd);
-			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse); 
-			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip); 
-			fPluginBrowseButton.addSelectionListener(new SelectionAdapter(){
+			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse);
+			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip);
+			fPluginBrowseButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
 				}
@@ -153,7 +125,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				validatePage();
 			}
 		});
-		if (isPluginIdNeeded() && !isPluginIdFinal()){
+		if (isPluginIdNeeded() && !isPluginIdFinal()) {
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEUIMessages.BaseExtensionPoint_schemaLocation);
 			fSchemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -161,8 +133,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.widthHint = 150;
 			gd.grabExcessHorizontalSpace = true;
 			fSchemaLocationText.setLayoutData(gd);
-			fSchemaLocationText.addModifyListener(new ModifyListener(){
-				public void modifyText(ModifyEvent e){
+			fSchemaLocationText.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
 					validatePage();
 				}
 			});
@@ -170,9 +142,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
 			fFindLocationButton.setLayoutData(gd);
-			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse); 
-			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip); 
-			fFindLocationButton.addSelectionListener(new SelectionAdapter(){
+			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse);
+			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip);
+			fFindLocationButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
 				}
@@ -185,8 +157,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSchemaText.setLayoutData(gd);
-		fSchemaText.addModifyListener(new ModifyListener(){
-			public void modifyText(ModifyEvent e){
+		fSchemaText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
 				validatePage();
 			}
 		});
@@ -219,14 +191,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
-	private InputStream createSchemaStream(String pluginId, String pointId,
-			String name, boolean shared) {
+
+	private InputStream createSchemaStream(String pluginId, String pointId, String name, boolean shared) {
 		if (name.length() == 0)
 			name = pointId;
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
 		schema.setDescription(PDEUIMessages.BaseExtensionPoint_sections_overview);
 		DocumentSection section;
-		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEUIMessages.BaseExtensionPointMainPage_since); 
+		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEUIMessages.BaseExtensionPointMainPage_since);
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_since);
 		schema.addDocumentSection(section);
 		SchemaElement element;
@@ -247,20 +219,16 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			complexType.addAttribute(attribute);
 			schema.addElement(element);
 		}
-		section = new DocumentSection(schema, IDocumentSection.EXAMPLES,
-		"Examples"); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.EXAMPLES, "Examples"); //$NON-NLS-1$
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_usage);
 		schema.addDocumentSection(section);
-		section = new DocumentSection(schema, IDocumentSection.API_INFO,
-		"API Information"); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.API_INFO, "API Information"); //$NON-NLS-1$
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_api);
 		schema.addDocumentSection(section);
-		section = new DocumentSection(schema, IDocumentSection.IMPLEMENTATION,
-		"Supplied Implementation"); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.IMPLEMENTATION, "Supplied Implementation"); //$NON-NLS-1$
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_supplied);
 		schema.addDocumentSection(section);
-		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT,
-		"Copyright"); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright"); //$NON-NLS-1$
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_copyright);
 		schema.addDocumentSection(section);
 		StringWriter swriter = new StringWriter();
@@ -277,9 +245,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			return new ByteArrayInputStream(new byte[0]);
 		}
 	}
-	private IFile generateSchemaFile(String pluginId, String id, String name,
-			boolean shared, String schema, IProgressMonitor monitor)
-	throws CoreException {
+
+	private IFile generateSchemaFile(String pluginId, String id, String name, boolean shared, String schema, IProgressMonitor monitor) throws CoreException {
 		IFile schemaFile = null;
 
 		IWorkspace workspace = fContainer.getWorkspace();
@@ -302,66 +269,65 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		IDE.setDefaultEditor(schemaFile, IPDEUIConstants.SCHEMA_EDITOR_ID);
 		return schemaFile;
 	}
+
 	public IRunnableWithProgress getOperation() {
 		final boolean openFile = fOpenSchemaButton.getSelection();
 		final String id = fIdText.getText();
 		final String name = fNameText.getText();
 		final String schema = fSchemaText.getText();
-		final boolean shared = fSharedSchemaButton != null ? fSharedSchemaButton
-				.getSelection() : false;
-				IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-					public void execute(final IProgressMonitor monitor) {
-						try {
-							Display.getDefault().asyncExec(new Runnable() {
+		final boolean shared = fSharedSchemaButton != null ? fSharedSchemaButton.getSelection() : false;
+		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
+			public void execute(final IProgressMonitor monitor) {
+				try {
+					Display.getDefault().asyncExec(new Runnable() {
 
-								public void run() {
-									String schemaName = schema;
-									if (!schema.endsWith(".exsd")) //$NON-NLS-1$
-										schemaName = schema + ".exsd"; //$NON-NLS-1$
+						public void run() {
+							String schemaName = schema;
+							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
+								schemaName = schema + ".exsd"; //$NON-NLS-1$
 
-									IFile file = fContainer.getFile(new Path(schema));
-									// do not overwrite if schema already exists
-									if (!file.exists())
-										try {
-											file = generateSchemaFile(getPluginId(), id, name,
-													shared, schemaName, monitor);
-										} catch (CoreException e) {
-											PDEPlugin.logException(e);
-										}
-
-										if (file != null && openFile){ 
-											fSchemaText.setText(file.getProjectRelativePath().toString());
-											openSchemaFile(file);
-										}
+							IFile file = fContainer.getFile(new Path(schema));
+							// do not overwrite if schema already exists
+							if (!file.exists())
+								try {
+									file = generateSchemaFile(getPluginId(), id, name, shared, schemaName, monitor);
+								} catch (CoreException e) {
+									PDEPlugin.logException(e);
 								}
 
-							});
-
-						} finally {
-							monitor.done();
+							if (file != null && openFile) {
+								fSchemaText.setText(file.getProjectRelativePath().toString());
+								openSchemaFile(file);
+							}
 						}
-					}
-				};
-				return operation;
+
+					});
+
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		return operation;
 	}
+
 	public String getSchemaLocation() {
-		if (fSchemaText!=null){
+		if (fSchemaText != null) {
 			String schema = fSchemaText.getText();
 			if (schema.length() == 0) {
-				if (fSchemaLocationText != null
-						&& SCHEMA_DIR.equals(new Path(fSchemaLocationText
-								.getText()).lastSegment())) {
+				if (fSchemaLocationText != null && SCHEMA_DIR.equals(new Path(fSchemaLocationText.getText()).lastSegment())) {
 					return ""; //$NON-NLS-1$
 				}
 				return SCHEMA_DIR;
 			}
 
 			int loc = schema.lastIndexOf("/"); //$NON-NLS-1$
-			if (loc!=-1)
-				return schema.substring(0,loc);
+			if (loc != -1)
+				return schema.substring(0, loc);
 		}
 		return ""; //$NON-NLS-1$
 	}
+
 	public String getPluginId() {
 		if (fPluginIdText != null) {
 			return fPluginIdText.getText();
@@ -372,12 +338,15 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected boolean isPluginIdNeeded() {
 		return false;
 	}
-	protected boolean isPluginIdFinal(){
+
+	protected boolean isPluginIdFinal() {
 		return false;
 	}
+
 	protected boolean isSharedSchemaSwitchNeeded() {
 		return false;
 	}
+
 	private void openSchemaFile(final IFile file) {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 		Display d = ww.getShell().getDisplay();
@@ -385,8 +354,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			public void run() {
 				try {
 					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
-					ww.getActivePage().openEditor(new FileEditorInput(file),
-							editorId);
+					ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
 				} catch (PartInitException e) {
 					PDEPlugin.logException(e);
 				}
@@ -422,7 +390,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (model == null) {
 			return NLS.bind(PDEUIMessages.BaseExtensionPointMainPage_errorMsgPluginNotFound, pluginID);
 		}
-		
+
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
 			if (!IdUtil.isValidCompositeID(id))
@@ -436,7 +404,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 	protected String validateExtensionPointName() {
 		// Verify not zero length
-		if ( fNameText.getText().length() == 0 )
+		if (fNameText.getText().length() == 0)
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointName;
 
 		return null;
@@ -444,31 +412,28 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 	protected String validateExtensionPointSchema() {
 		// Verify not zero length
-		if ( fSchemaText.getText().length() == 0 )
-			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointSchema; 
+		if (fSchemaText.getText().length() == 0)
+			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointSchema;
 
 		return null;
 	}
 
-	private void handlePluginBrowse(){
+	private void handlePluginBrowse() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PluginRegistry.getWorkspaceModels(), false);
 		dialog.create();
-		if (dialog.open() == Window.OK){
-			IPluginModelBase workspaceModelBase = (IPluginModelBase)dialog.getFirstResult();
+		if (dialog.open() == Window.OK) {
+			IPluginModelBase workspaceModelBase = (IPluginModelBase) dialog.getFirstResult();
 			fPluginIdText.setText(workspaceModelBase.getPluginBase().getId());
 		}
 	}
-	private void handleSchemaLocation(){
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-					getShell(),
-					new WorkbenchLabelProvider(),
-					new WorkbenchContentProvider());
-		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title); 
-		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc); 
+
+	private void handleSchemaLocation() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title);
+		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc);
 		dialog.setDoubleClickSelects(false);
 		dialog.setAllowMultiple(false);
-		dialog.addFilter(new ViewerFilter(){
+		dialog.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IFile)
 					return false;
@@ -481,19 +446,21 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		dialog.setInitialSelection(fContainer);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
-			if (elements.length >0){
+			if (elements.length > 0) {
 				IResource elem = (IResource) elements[0];
 				String newPath = getWorkspaceRelativePath(elem.getLocation().toString());
 				fSchemaLocationText.setText(newPath + "/"); //$NON-NLS-1$
 			}
 		}
 	}
-	private String getWorkspaceRelativePath(String path){
+
+	private String getWorkspaceRelativePath(String path) {
 		String workspacePath = PDECore.getWorkspace().getRoot().getLocation().toString();
 		if (path.startsWith(workspacePath))
 			path = path.replaceFirst(workspacePath, ""); //$NON-NLS-1$
 		return path;
 	}
+
 	public String getInvalidIdMessage() {
 		// No validation done (other than making sure id is not blank)
 		return null;

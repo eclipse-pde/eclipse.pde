@@ -45,5 +45,5 @@ public interface IBundleContentWizard extends IPluginContentWizard {
 	 * @return an array of package names required by this wizard
 	 */
 	String[] getImportPackages();
-	
+
 }

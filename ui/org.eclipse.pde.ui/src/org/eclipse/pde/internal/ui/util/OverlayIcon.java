@@ -23,14 +23,14 @@ public class OverlayIcon extends AbstractOverlayIcon {
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays) {
 		this(base, overlays, null);
 	}
-	
+
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays, Point size) {
 		super(overlays, size);
-		fBase= base;
+		fBase = base;
 		if (fBase == null)
-			fBase= ImageDescriptor.getMissingImageDescriptor();
+			fBase = ImageDescriptor.getMissingImageDescriptor();
 	}
-	
+
 	protected ImageData getBaseImageData() {
 		return fBase.getImageData();
 	}

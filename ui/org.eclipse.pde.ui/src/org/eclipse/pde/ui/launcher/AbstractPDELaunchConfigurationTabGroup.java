@@ -31,8 +31,7 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  * @since 3.3
  */
-public abstract class AbstractPDELaunchConfigurationTabGroup extends
-		AbstractLaunchConfigurationTabGroup {
+public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	/**
 	 * The tab group delegates to all tabs in the group.
@@ -48,8 +47,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 			public void run() {
 				try {
 					if (config instanceof ILaunchConfigurationWorkingCopy) {
-						checkBackwardCompatibility(
-							(ILaunchConfigurationWorkingCopy) config);
+						checkBackwardCompatibility((ILaunchConfigurationWorkingCopy) config);
 					}
 				} catch (CoreException e) {
 				}
@@ -59,7 +57,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 			}
 		});
 	}
-	
+
 	/**
 	 * Checks if the launch configuration is 3.2-compliant and migrates it if it's not.
 	 * 
@@ -70,34 +68,30 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 	 * 			configuration attributes
 	 */
 	private void checkBackwardCompatibility(ILaunchConfigurationWorkingCopy wc) throws CoreException {
-		String id = wc.getAttribute(
-						IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-						(String) null);
+		String id = wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String) null);
 		if (id == null) {
-			wc.setAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				PDESourcePathProvider.ID);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 		}
-		
-		String value = wc.getAttribute("vmargs", (String)null); //$NON-NLS-1$
+
+		String value = wc.getAttribute("vmargs", (String) null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("vmargs", (String)null); //$NON-NLS-1$
+			wc.setAttribute("vmargs", (String) null); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, value);
 		}
-		
-		value = wc.getAttribute("progargs", (String)null); //$NON-NLS-1$
+
+		value = wc.getAttribute("progargs", (String) null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("progargs", (String)null); //$NON-NLS-1$
+			wc.setAttribute("progargs", (String) null); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, value);
 		}
-		
-		value = wc.getAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); //$NON-NLS-1$
+
+		value = wc.getAttribute(IPDELauncherConstants.LOCATION + "0", (String) null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); //$NON-NLS-1$
-			wc.setAttribute(IPDELauncherConstants.LOCATION, value);			
+			wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String) null); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.LOCATION, value);
 		}
-		
-		LaunchPluginValidator.checkBackwardCompatibility(wc, false);	
+
+		LaunchPluginValidator.checkBackwardCompatibility(wc, false);
 		if (wc.isDirty()) {
 			wc.doSave();
 		}
@@ -117,10 +111,8 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
 			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$ 
 
-		configuration.setAttribute(
-			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-			PDESourcePathProvider.ID); 
-		
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
+
 		// Set Program/VM arguments with preference values
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments().trim();
 		if (programArgs.length() > 0)
@@ -129,7 +121,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments().trim();
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
-		
+
 		configuration.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
 	}
 

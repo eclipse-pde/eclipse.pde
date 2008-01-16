@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
-import java.util.Dictionary;
 
+import java.util.Dictionary;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -21,33 +21,40 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	private org.eclipse.ui.IWorkbench workbench;
 	private org.eclipse.jface.viewers.IStructuredSelection selection;
 	private Dictionary defaultValues;
-	
+
 	public NewWizard() {
 		super();
 		setWindowTitle(PDEUIMessages.NewWizard_wtitle);
 	}
+
 	public org.eclipse.jface.viewers.IStructuredSelection getSelection() {
 		return selection;
 	}
+
 	public IWorkbench getWorkbench() {
 		return workbench;
 	}
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;
 	}
+
 	public boolean performFinish() {
 		return true;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#getDefaultValue(java.lang.String)
 	 */
 	public String getDefaultValue(String key) {
-		if (defaultValues==null) return null;
-		return (String)defaultValues.get(key);
+		if (defaultValues == null)
+			return null;
+		return (String) defaultValues.get(key);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

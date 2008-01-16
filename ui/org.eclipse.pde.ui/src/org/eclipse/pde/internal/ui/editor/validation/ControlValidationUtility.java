@@ -17,12 +17,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.AbstractNLModel;
-import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -40,14 +36,11 @@ public class ControlValidationUtility {
 	 * @param validator
 	 * @return
 	 */
-	public static boolean validateRequiredField(String value,
-			IValidatorMessageHandler validator, int messageType) {
+	public static boolean validateRequiredField(String value, IValidatorMessageHandler validator, int messageType) {
 		// Check to see if a value was specified
 		if (value.length() == 0) {
-			validator.addMessage(
-					PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified, 
-					messageType);
-			return false;			
+			validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified, messageType);
+			return false;
 		}
 		return true;
 	}
@@ -60,13 +53,10 @@ public class ControlValidationUtility {
 	 * @param project
 	 * @return
 	 */
-	public static boolean validateTranslatableField(String value,
-			IValidatorMessageHandler validator, 
-			IPluginModelBase model, IProject project) {
-		
+	public static boolean validateTranslatableField(String value, IValidatorMessageHandler validator, IPluginModelBase model, IProject project) {
+
 		// Check the compiler flag and translate it into a message type
-		int messageType = AbstractControlValidator.getMessageType(project, 
-				CompilerFlags.P_NOT_EXTERNALIZED);
+		int messageType = AbstractControlValidator.getMessageType(project, CompilerFlags.P_NOT_EXTERNALIZED);
 		// If the message type is none, no validation is required
 		// Same as IGNORE
 		if (messageType == IMessageProvider.NONE) {
@@ -75,103 +65,88 @@ public class ControlValidationUtility {
 
 		// Check to see if the name has been externalized
 		if (value.startsWith("%") == false) { //$NON-NLS-1$
-			validator.addMessage(
-					PDEUIMessages.ControlValidationUtility_errorMsgValueNotExternalized, 
-					messageType);			
+			validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgValueNotExternalized, messageType);
 			return false;
 		}
-		
+
 		// Check to see if the key is in the plugin's property file
 		if (model instanceof AbstractNLModel) {
-			NLResourceHelper helper = ((AbstractNLModel)model).getNLResourceHelper();
-			if ((helper == null) || 
-					(helper.resourceExists(value) == false)) {
-				validator.addMessage(
-						PDEUIMessages.ControlValidationUtility_errorMsgKeyNotFound, 
-						messageType);					
+			NLResourceHelper helper = ((AbstractNLModel) model).getNLResourceHelper();
+			if ((helper == null) || (helper.resourceExists(value) == false)) {
+				validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgKeyNotFound, messageType);
 				return false;
 			}
-		}		
-		return true;		
-	}	
-	
+		}
+		return true;
+	}
+
 	/**
 	 * @param text
 	 * @param validator
 	 * @param required
 	 * @return
 	 */
-	public static boolean validateVersionField(String value,
-			IValidatorMessageHandler validator) {
+	public static boolean validateVersionField(String value, IValidatorMessageHandler validator) {
 		// Check for invalid version
 		IStatus status = VersionUtil.validateVersion(value);
 		if (status.isOK() == false) {
-			validator.addMessage(
-					status.getMessage(), 
-					AbstractControlValidator.getMessageType(status));
+			validator.addMessage(status.getMessage(), AbstractControlValidator.getMessageType(status));
 			return false;
 		}
-		return true;		
+		return true;
 	}
-	
+
 	/**
 	 * @param text
 	 * @param validator
 	 * @param model
 	 * @param project
 	 */
-	public static boolean validatePlatformFilterField(String value,
-			IValidatorMessageHandler validator) {
+	public static boolean validatePlatformFilterField(String value, IValidatorMessageHandler validator) {
 		// Check to see if the platform filter syntax is valid
 		try {
 			PDECore.getDefault().getBundleContext().createFilter(value);
 		} catch (InvalidSyntaxException ise) {
-			validator.addMessage(
-					PDEUIMessages.ControlValidationUtility_errorMsgFilterInvalidSyntax, 
-					IMessageProvider.ERROR);
+			validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgFilterInvalidSyntax, IMessageProvider.ERROR);
 			return false;
 		}
 
-		return true;		
+		return true;
 	}
-	
+
 	/**
 	 * @param text
 	 * @param validator
 	 * @param project
 	 * @return
 	 */
-	public static boolean validateActivatorField(String value,
-			IValidatorMessageHandler validator, IProject project) {
-		
+	public static boolean validateActivatorField(String value, IValidatorMessageHandler validator, IProject project) {
+
 		// Check the compiler flag and translate it into a message type
-		int messageType = AbstractControlValidator.getMessageType(project, 
-				CompilerFlags.P_UNKNOWN_CLASS);
+		int messageType = AbstractControlValidator.getMessageType(project, CompilerFlags.P_UNKNOWN_CLASS);
 		// If the message type is none, no validation is required
 		// Same as IGNORE
 		if (messageType == IMessageProvider.NONE) {
 			return true;
-		}		
-		
+		}
+
 		// Check to see if the class is on the plug-in classpath
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
 				// Look for this activator in the project's classpath
 				if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
-					validator.addMessage(
-							PDEUIMessages.ControlValidationUtility_errorMsgNotOnClasspath, 
-							messageType);
+					validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgNotOnClasspath, messageType);
 					return false;
 				}
 			}
 		} catch (CoreException ce) {
 			// Ignore
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * @param value
 	 * @param validator
@@ -179,21 +154,17 @@ public class ControlValidationUtility {
 	 * @param project
 	 * @return
 	 */
-	public static boolean validateFragmentHostPluginField(String value,
-			IValidatorMessageHandler validator, IProject project) {
+	public static boolean validateFragmentHostPluginField(String value, IValidatorMessageHandler validator, IProject project) {
 
 		// Check the compiler flag and translate it into a message type
 		// If the message type is none, it is the same as IGNORE
-		int reqAttMessageType = AbstractControlValidator.getMessageType(project, 
-				CompilerFlags.P_NO_REQUIRED_ATT);
+		int reqAttMessageType = AbstractControlValidator.getMessageType(project, CompilerFlags.P_NO_REQUIRED_ATT);
 		// Check to see if the host plug-in was defined
-		if ((reqAttMessageType != IMessageProvider.NONE) && 
-				validateRequiredField(value, validator, reqAttMessageType) == false) {
+		if ((reqAttMessageType != IMessageProvider.NONE) && validateRequiredField(value, validator, reqAttMessageType) == false) {
 			return false;
 		}
 		// Check the compiler flag and translate it into a message type
-		int unresImpMessageType = AbstractControlValidator.getMessageType(project, 
-				CompilerFlags.P_UNRESOLVED_IMPORTS);		
+		int unresImpMessageType = AbstractControlValidator.getMessageType(project, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		// If the message type is none, no validation is required
 		// Same as IGNORE		
 		if (unresImpMessageType == IMessageProvider.NONE) {
@@ -202,16 +173,12 @@ public class ControlValidationUtility {
 		// Check to see if the host plugin is defined, enabled and not a 
 		// fragment itself
 		IPluginModelBase hostModel = PluginRegistry.findModel(value);
-		if ((hostModel == null) || 
-				(hostModel instanceof IFragmentModel) || 
-				(hostModel.isEnabled() == false)) {
-			validator.addMessage(
-					PDEUIMessages.ControlValidationUtility_errorMsgPluginUnresolved,
-					unresImpMessageType);
+		if ((hostModel == null) || (hostModel instanceof IFragmentModel) || (hostModel.isEnabled() == false)) {
+			validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgPluginUnresolved, unresImpMessageType);
 			return false;
-		}	
-			
+		}
+
 		return true;
 	}
-	
+
 }

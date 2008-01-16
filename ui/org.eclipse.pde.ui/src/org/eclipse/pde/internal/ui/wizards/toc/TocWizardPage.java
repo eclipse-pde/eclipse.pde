@@ -18,30 +18,30 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 public class TocWizardPage extends PDEWizardNewFileCreationPage {
-	
+
 	private static String EXTENSION = "xml"; //$NON-NLS-1$
-	
+
 	public TocWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.TocWizardPage_title);
 		setDescription(PDEUIMessages.TocWizardPage_desc);
 		// Force the file extension to be 'xml'
-		setFileExtension(EXTENSION);		
+		setFileExtension(EXTENSION);
 	}
-	
+
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE );
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE);
 	}
-	
+
 	protected void createAdvancedControls(Composite parent) {
 	}
 
 	protected boolean validatePage() {
 		String tocName = getTocName();
-		if(tocName == null)
-		{	return false;
+		if (tocName == null) {
+			return false;
 		}
 
 		tocName = tocName.trim();
@@ -54,9 +54,8 @@ public class TocWizardPage extends PDEWizardNewFileCreationPage {
 		// Perform default validation
 		return super.validatePage();
 	}
-	
-	public String getTocName()
-	{	
+
+	public String getTocName() {
 		return PDEUIMessages.TocWizardPage_book;
 	}
 }

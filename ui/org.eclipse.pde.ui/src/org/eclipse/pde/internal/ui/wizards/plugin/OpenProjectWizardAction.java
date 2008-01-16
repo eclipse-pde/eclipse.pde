@@ -11,13 +11,14 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.Hashtable;
-
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
@@ -29,12 +30,12 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	public OpenProjectWizardAction() {
 		super("OpenProject"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run() {
-		run(new String [] {}, null);
+		run(new String[] {}, null);
 	}
 
 	/* (non-Javadoc)
@@ -42,9 +43,9 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 */
 	public void run(String[] params, ICheatSheetManager manager) {
 		Hashtable defValues = new Hashtable();
-		if (params.length>0)
+		if (params.length > 0)
 			defValues.put(NewPluginProjectWizard.DEF_PROJECT_NAME, params[0]);
-		if (params.length>1)
+		if (params.length > 1)
 			defValues.put(NewPluginProjectWizard.DEF_TEMPLATE_ID, params[1]);
 		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
@@ -54,6 +55,6 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 		SWTUtil.setDialogSize(dialog, 500, 500);
 		dialog.getShell().setText(wizard.getWindowTitle());
 		int result = dialog.open();
-		notifyResult(result==Window.OK);
+		notifyResult(result == Window.OK);
 	}
 }

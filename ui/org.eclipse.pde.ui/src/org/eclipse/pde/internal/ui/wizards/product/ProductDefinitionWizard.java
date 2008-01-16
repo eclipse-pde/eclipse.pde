@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -30,9 +29,9 @@ public class ProductDefinitionWizard extends Wizard {
 		fProduct = product;
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEUIMessages.ProductDefinitionWizard_title);  
+		setWindowTitle(PDEUIMessages.ProductDefinitionWizard_title);
 	}
-	
+
 	public void addPages() {
 		fMainPage = new ProductDefinitonWizardPage("product", fProduct); //$NON-NLS-1$
 		addPage(fMainPage);
@@ -46,25 +45,20 @@ public class ProductDefinitionWizard extends Wizard {
 			String newProductName = fMainPage.getProductName();
 			if (newProductName != null)
 				fProduct.setName(newProductName);
-			getContainer().run(
-					false,
-					true,
-					new ProductDefinitionOperation(fProduct,
-							fPluginId, fProductId, fApplication, 
-							getContainer().getShell()));
+			getContainer().run(false, true, new ProductDefinitionOperation(fProduct, fPluginId, fProductId, fApplication, getContainer().getShell()));
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage()); 
+			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage());
 			return false;
 		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public String getProductId() {
 		return fPluginId + "." + fProductId; //$NON-NLS-1$
 	}
-	
+
 	public String getApplication() {
 		return fApplication;
 	}

@@ -23,10 +23,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
@@ -51,35 +48,34 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 				}
 			});
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			store.addPropertyChangeListener(new IPropertyChangeListener(){
+			store.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					// the configuration will test if the properties affect the presentation also,
 					// but checking it here allows us to prevent the viewer from being invalidated
 					// and saves some unnecessary work
-					if (configuration.affectsColorPresentation(event) ||
-							configuration.affectsTextPresentation(event)) {
+					if (configuration.affectsColorPresentation(event) || configuration.affectsTextPresentation(event)) {
 						configuration.adaptToPreferenceChange(event);
 						textViewer.invalidateTextPresentation();
 					}
 				}
 			});
-			((SourceViewer)textViewer).configure(configuration);
+			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());
 			if (font != null)
-				((SourceViewer)textViewer).getTextWidget().setFont(font);
+				((SourceViewer) textViewer).getTextWidget().setFont(font);
 		}
 	}
 
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new XMLPartitionScanner(), XMLPartitionScanner.PARTITIONS);
 	}
-	
+
 	protected String getDocumentPartitioning() {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}
-	
+
 	public String getTitle() {
-		return PDEUIMessages.PluginContentMergeViewer_title; 
+		return PDEUIMessages.PluginContentMergeViewer_title;
 	}
 
 	protected void handleDispose(DisposeEvent event) {

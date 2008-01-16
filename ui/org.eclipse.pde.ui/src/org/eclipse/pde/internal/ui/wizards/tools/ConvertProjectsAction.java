@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
 import java.util.Vector;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
@@ -50,10 +49,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		IProject[] unconverted = getUnconvertedProjects();
 		if (unconverted.length == 0) {
-			MessageDialog
-					.openInformation(
-							this.getDisplay().getActiveShell(),
-							PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); // 
+			MessageDialog.openInformation(this.getDisplay().getActiveShell(), PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); // 
 			return;
 		}
 
@@ -77,12 +73,10 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 					initialSelection.add(project);
 			}
 
-			ConvertedProjectWizard wizard = new ConvertedProjectWizard(
-					unconverted, initialSelection);
+			ConvertedProjectWizard wizard = new ConvertedProjectWizard(unconverted, initialSelection);
 
 			final Display display = getDisplay();
-			final WizardDialog dialog = new WizardDialog(display
-					.getActiveShell(), wizard);
+			final WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
 			BusyIndicator.showWhile(display, new Runnable() {
 				public void run() {
 					dialog.open();
@@ -112,14 +106,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 		ArrayList unconverted = new ArrayList();
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i])
-					&& !PDE.hasFeatureNature(projects[i])
-					&& !PDE.hasUpdateSiteNature(projects[i])
-					&& projects[i].getName().indexOf('%') == -1
-					&& projects[i].getLocation().toString().indexOf('%') == -1)
+			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]) && !PDE.hasFeatureNature(projects[i]) && !PDE.hasUpdateSiteNature(projects[i]) && projects[i].getName().indexOf('%') == -1 && projects[i].getLocation().toString().indexOf('%') == -1)
 				unconverted.add(projects[i]);
 		}
-		return (IProject[]) unconverted
-				.toArray(new IProject[unconverted.size()]);
+		return (IProject[]) unconverted.toArray(new IProject[unconverted.size()]);
 	}
 }

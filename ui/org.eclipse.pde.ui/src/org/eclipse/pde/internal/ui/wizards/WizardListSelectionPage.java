@@ -11,22 +11,11 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Iterator;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.elements.ListContentProvider;
 import org.eclipse.pde.ui.IPluginContentWizard;
@@ -34,52 +23,50 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 
-
-public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
-		implements ISelectionChangedListener, IExecutableExtension {
+public abstract class WizardListSelectionPage extends BaseWizardSelectionPage implements ISelectionChangedListener, IExecutableExtension {
 	protected TableViewer wizardSelectionViewer;
 	protected ElementList wizardElements;
 	private WizardSelectedAction doubleClickAction = new WizardSelectedAction();
-	
+
 	private class WizardSelectedAction extends Action {
 		public WizardSelectedAction() {
 			super("wizardSelection"); //$NON-NLS-1$
 		}
+
 		public void run() {
-			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer,
-					wizardSelectionViewer.getSelection()));
+			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
 			advanceToNextPage();
 		}
 	}
+
 	public WizardListSelectionPage(ElementList wizardElements, String message) {
 		super("ListSelection", message); //$NON-NLS-1$
 		this.wizardElements = wizardElements;
 	}
+
 	public void advanceToNextPage() {
 		getContainer().showPage(getNextPage());
 	}
+
 	public ElementList getWizardElements() {
 		return wizardElements;
 	}
-	
+
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createAbove(container, 1);
 		Label label = new Label(container, SWT.NONE);
 		label.setText(getLabel());
 		GridData gd = new GridData();
 		label.setLayoutData(gd);
-		
+
 		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_BOTH);
 		// limit the width of the sash form to avoid the wizard
@@ -88,7 +75,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		// See bug #83356
 		gd.widthHint = 300;
 		sashForm.setLayoutData(gd);
-		
+
 		wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
@@ -100,21 +87,22 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		});
 		createDescriptionIn(sashForm);
 		createBelow(container, 1);
-		initializeViewer();		
+		initializeViewer();
 		wizardSelectionViewer.setInput(wizardElements);
-		wizardSelectionViewer.addSelectionChangedListener(this);		
+		wizardSelectionViewer.addSelectionChangedListener(this);
 		Dialog.applyDialogFont(container);
 		setControl(container);
 	}
-	
+
 	protected void createAbove(Composite container, int span) {
 	}
+
 	protected void createBelow(Composite container, int span) {
 	}
-	
+
 	protected void initializeViewer() {
 	}
-	
+
 	public void selectionChanged(SelectionChangedEvent event) {
 		setErrorMessage(null);
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -132,7 +120,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		setDescriptionText(finalSelection.getDescription());
 		getContainer().updateButtons();
 	}
-	
+
 	public IWizardPage getNextPage(boolean shouldCreate) {
 		if (!shouldCreate)
 			return super.getNextPage();
@@ -148,7 +136,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 			wizard.addPages();
 		return wizard.getStartingPage();
 	}
-	
+
 	protected void focusAndSelectFirst() {
 		Table table = wizardSelectionViewer.getTable();
 		table.setFocus();
@@ -165,19 +153,19 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 	}
-	
+
 	public IPluginContentWizard getSelectedWizard() {
 		IWizardNode node = getSelectedNode();
 		if (node != null)
-			return (IPluginContentWizard)node.getWizard();
+			return (IPluginContentWizard) node.getWizard();
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
-		IStructuredSelection ssel = (IStructuredSelection)wizardSelectionViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
 		return ssel != null && !ssel.isEmpty();
 	}
 }

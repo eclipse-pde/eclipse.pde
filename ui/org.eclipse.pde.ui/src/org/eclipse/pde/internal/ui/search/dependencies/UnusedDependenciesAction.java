@@ -18,19 +18,19 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.progress.IProgressConstants;
 
 public class UnusedDependenciesAction extends Action {
-	
+
 	private IPluginModelBase fModel;
 
 	private boolean fReadOnly;
 
 	public UnusedDependenciesAction(IPluginModelBase model, boolean readOnly) {
 		fModel = model;
-		setText(PDEUIMessages.UnusedDependencies_action); 
+		setText(PDEUIMessages.UnusedDependencies_action);
 		fReadOnly = readOnly;
 	}
 
 	public void run() {
-		Job job = new UnusedDependenciesJob(PDEUIMessages.UnusedDependenciesAction_jobName, fModel, fReadOnly); 
+		Job job = new UnusedDependenciesJob(PDEUIMessages.UnusedDependenciesAction_jobName, fModel, fReadOnly);
 		job.setUser(true);
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
 		job.schedule();

@@ -23,7 +23,7 @@ import org.osgi.framework.Constants;
 public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMarkerResolution {
 
 	private String id;
-	
+
 	public AddDefaultExecutionEnvironmentResolution(int type, String id) {
 		super(type);
 		this.id = id;
@@ -32,7 +32,7 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 	protected void createChange(BundleModel model) {
 
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if(header == null) {
+		if (header == null) {
 			// Initialize header with empty value
 			model.getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ""); //$NON-NLS-1$
 		}
@@ -40,7 +40,7 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		// Get header
 		header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 
-		if(header != null && header instanceof RequiredExecutionEnvironmentHeader) {
+		if (header != null && header instanceof RequiredExecutionEnvironmentHeader) {
 			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
 			((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(ee);
 		}

@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -48,7 +42,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/installation.htm"; //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -56,14 +50,14 @@ public class FeatureAdvancedPage extends PDEFormPage {
 
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
-		
+
 		Composite body = form.getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 
 		Composite left = toolkit.createComposite(body);
 		left.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		left.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fInstallSection = new InstallSection(this, left);
 		fDataSection = new DataSection(this, left);
 		fDataPortabilitySection = new DataPortabilitySection(this, left);
@@ -81,7 +75,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 		managedForm.addPart(fDataDetailsSection);
 		managedForm.addPart(fDataPortabilitySection);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_INSTALLATION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_INSTALLATION);
 
 		form.setText(PDEUIMessages.FeatureEditor_AdvancedPage_heading);
 		fDataSection.fireSelection();

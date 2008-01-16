@@ -10,55 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.IProgressService;
@@ -79,7 +54,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	private CheckboxTableViewer fFeatureViewer;
 	private TablePart fTablePart;
 	private IFeatureModel[] fModels;
-	
+
 	private Button fBinaryButton;
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
@@ -89,25 +64,25 @@ public class FeatureImportWizardPage extends WizardPage {
 			return new Object[0];
 		}
 	}
-	
+
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart() {
-			super(null, new String[] {
-					PDEUIMessages.FeatureImportWizardPage_reload,
-					PDEUIMessages.WizardCheckboxTablePart_selectAll,
-					PDEUIMessages.WizardCheckboxTablePart_deselectAll});
+			super(null, new String[] {PDEUIMessages.FeatureImportWizardPage_reload, PDEUIMessages.WizardCheckboxTablePart_selectAll, PDEUIMessages.WizardCheckboxTablePart_deselectAll});
 			setSelectAllIndex(1);
 			setDeselectAllIndex(2);
 		}
+
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
 		}
+
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			viewer.setComparator(ListUtil.FEATURE_COMPARATOR);
 			return viewer;
 		}
+
 		protected void buttonSelected(Button button, int index) {
 			if (index == 0)
 				loadFeatureTable();
@@ -115,12 +90,12 @@ public class FeatureImportWizardPage extends WizardPage {
 				super.buttonSelected(button, index);
 		}
 	}
-	
+
 	public FeatureImportWizardPage() {
 		super("FeatureImportWizardPage"); //$NON-NLS-1$
-		setTitle(PDEUIMessages.FeatureImportWizard_FirstPage_title); 
+		setTitle(PDEUIMessages.FeatureImportWizard_FirstPage_title);
 		setDescription(PDEUIMessages.FeatureImportWizard_FirstPage_desc);
-		fTablePart = new TablePart(); 
+		fTablePart = new TablePart();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -135,26 +110,26 @@ public class FeatureImportWizardPage extends WizardPage {
 
 		fRuntimeLocationButton = new Button(composite, SWT.CHECK);
 		fillHorizontal(fRuntimeLocationButton, 3, false);
-		fRuntimeLocationButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_runtimeLocation); 
-		
+		fRuntimeLocationButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_runtimeLocation);
+
 		fOtherLocationLabel = new Label(composite, SWT.NULL);
-		fOtherLocationLabel.setText(PDEUIMessages.FeatureImportWizard_FirstPage_otherFolder); 
+		fOtherLocationLabel.setText(PDEUIMessages.FeatureImportWizard_FirstPage_otherFolder);
 
 		fDropLocation = new Combo(composite, SWT.DROP_DOWN);
 		fillHorizontal(fDropLocation, 1, true);
 
 		fBrowseButton = new Button(composite, SWT.PUSH);
-		fBrowseButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_browse); 
+		fBrowseButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_browse);
 		fBrowseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
 		creatFeatureTable(composite);
-		
+
 		fBinaryButton = new Button(composite, SWT.CHECK);
 		GridData gd = fillHorizontal(fBinaryButton, 3, false);
 		gd.verticalIndent = 5;
-		fBinaryButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_binaryImport); 
-		
+		fBinaryButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_binaryImport);
+
 		initializeFields(getDialogSettings());
 		hookListeners();
 
@@ -173,8 +148,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		fRuntimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setOtherEnabled(!fRuntimeLocationButton.getSelection());
-				setLocation(fRuntimeLocationButton.getSelection() ? 
-						getTargetHome() : fCurrDropLocation);
+				setLocation(fRuntimeLocationButton.getSelection() ? getTargetHome() : fCurrDropLocation);
 				loadFeatureTable();
 			}
 		});
@@ -183,9 +157,7 @@ public class FeatureImportWizardPage extends WizardPage {
 				validateDropLocation();
 				if (!fRuntimeLocationButton.getSelection()) {
 					String newLoc = fDropLocation.getText();
-					if (getMessageType() != WARNING &&
-							!newLoc.equals(fCurrDropLocation) &&
-							!fSelfSetLocation)
+					if (getMessageType() != WARNING && !newLoc.equals(fCurrDropLocation) && !fSelfSetLocation)
 						setMessage(PDEUIMessages.FeatureImportWizardPage_reloadLocation, WARNING);
 					fCurrDropLocation = newLoc;
 				}
@@ -237,7 +209,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		fBinaryButton.setSelection(binary);
 
 		validateDropLocation();
-		
+
 		loadFeatureTable();
 	}
 
@@ -270,8 +242,8 @@ public class FeatureImportWizardPage extends WizardPage {
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(fDropLocation.getText());
-		dialog.setText(PDEUIMessages.FeatureImportWizard_messages_folder_title); 
-		dialog.setMessage(PDEUIMessages.FeatureImportWizard_messages_folder_message); 
+		dialog.setText(PDEUIMessages.FeatureImportWizard_messages_folder_title);
+		dialog.setMessage(PDEUIMessages.FeatureImportWizard_messages_folder_message);
 		String res = dialog.open();
 		return res != null ? new Path(res) : null;
 	}
@@ -281,21 +253,21 @@ public class FeatureImportWizardPage extends WizardPage {
 		if (isOtherLocation()) {
 			IPath curr = getDropLocation();
 			if (curr.segmentCount() == 0)
-				errorMessage = PDEUIMessages.FeatureImportWizard_errors_locationMissing; 
+				errorMessage = PDEUIMessages.FeatureImportWizard_errors_locationMissing;
 			else if (!Path.ROOT.isValidPath(fDropLocation.getText()))
-				errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderInvalid; 
+				errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderInvalid;
 			else {
 				File file = curr.toFile();
 				if (!file.exists() || !file.isDirectory())
-					errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderMissing; 
+					errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderMissing;
 			}
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 		fTablePart.setButtonEnabled(0, errorMessage == null);
 	}
-	
-	public boolean isBinary(){
+
+	public boolean isBinary() {
 		return fBinaryButton.getSelection();
 	}
 
@@ -317,7 +289,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			// warning had been issued for unreloaded location
 			if (getMessageType() == WARNING)
 				setMessage(null, WARNING);
-			if (!fRuntimeLocationButton.getSelection()) {	
+			if (!fRuntimeLocationButton.getSelection()) {
 				String currItem = fDropLocation.getText();
 				if (fDropLocation.indexOf(currItem) == -1) {
 					fDropLocation.add(currItem, 0);
@@ -330,10 +302,10 @@ public class FeatureImportWizardPage extends WizardPage {
 		}
 		fTablePart.updateCounter(models != null ? models.length : 0);
 		fTablePart.getTableViewer().refresh();
-		
+
 		fTablePart.setButtonEnabled(1, models != null && models.length > 0);
 		fTablePart.setButtonEnabled(2, models != null && models.length > 0);
-		
+
 		dialogChanged();
 	}
 
@@ -348,7 +320,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		gd.verticalIndent = 5;
 		gd.heightHint = gd.widthHint = 300;
 		container.setLayoutData(gd);
-		
+
 		fTablePart.createControl(container);
 		fFeatureViewer = fTablePart.getTableViewer();
 		fFeatureViewer.setContentProvider(new ContentProvider());
@@ -362,8 +334,7 @@ public class FeatureImportWizardPage extends WizardPage {
 
 	public IFeatureModel[] getModels() {
 		final IPath home = getDropLocation();
-		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() ||
-			getTargetHome().equals(fDropLocation.getText().trim());
+		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() || getTargetHome().equals(fDropLocation.getText().trim());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
@@ -374,11 +345,11 @@ public class FeatureImportWizardPage extends WizardPage {
 						if (allModels[i].getUnderlyingResource() == null)
 							result.add(allModels[i]);
 				} else {
-					MultiStatus errors = doLoadFeatures(result,	createPath(home));
+					MultiStatus errors = doLoadFeatures(result, createPath(home));
 					if (errors != null && errors.getChildren().length > 0)
 						PDEPlugin.log(errors);
 				}
-				fModels = (IFeatureModel[])result.toArray(new IFeatureModel[result.size()]);
+				fModels = (IFeatureModel[]) result.toArray(new IFeatureModel[result.size()]);
 				monitor.done();
 			}
 		};
@@ -416,11 +387,7 @@ public class FeatureImportWizardPage extends WizardPage {
 				}
 			}
 		}
-		return new MultiStatus(
-				IPDEUIConstants.PLUGIN_ID, IStatus.OK,
-				(IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]),
-				PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, 
-				null);
+		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, (IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]), PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, null);
 	}
 
 	private IStatus doLoadFeature(File dir, File manifest, ArrayList result) {
@@ -433,10 +400,8 @@ public class FeatureImportWizardPage extends WizardPage {
 		try {
 			stream = new BufferedInputStream(new FileInputStream(manifest));
 			model.load(stream, false);
-			if(!model.isValid()){
-				status = new Status(
-						IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK,
-						NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir), null);
+			if (!model.isValid()) {
+				status = new Status(IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK, NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir), null);
 			}
 		} catch (Exception e) {
 			// Errors in the file
@@ -453,7 +418,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		return status;
 	}
 
-	public IFeatureModel[] getSelectedModels() { 
+	public IFeatureModel[] getSelectedModels() {
 		Object[] selected = fFeatureViewer.getCheckedElements();
 		IFeatureModel[] result = new IFeatureModel[selected.length];
 		System.arraycopy(selected, 0, result, 0, selected.length);
@@ -463,19 +428,19 @@ public class FeatureImportWizardPage extends WizardPage {
 	private void dialogChanged() {
 		String message = null;
 		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0)
-			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures; 
-		
+			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures;
+
 		setMessage(message, IMessageProvider.INFORMATION);
 		setPageComplete(fTablePart.getSelectionCount() > 0);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
 		return fTablePart.getSelectionCount() > 0;
 	}
-	
+
 	private void setLocation(String location) {
 		fSelfSetLocation = true;
 		fDropLocation.setText(location);

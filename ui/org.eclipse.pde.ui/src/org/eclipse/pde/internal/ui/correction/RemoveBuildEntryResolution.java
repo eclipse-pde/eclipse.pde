@@ -31,7 +31,7 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	protected void createChange(Build build) {
 		try {
-			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);
+			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
 			if (buildEntry == null)
 				return;
 			if (fToken == null)

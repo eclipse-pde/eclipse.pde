@@ -31,7 +31,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	public void createPage() {
 		fPage = new TargetPlatformPreferencePage(getIndex());
 	}
-	
+
 	protected int getIndex() {
 		return TargetPlatformPreferencePage.PLUGINS_INDEX;
 	}
@@ -40,7 +40,8 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#disposeResources()
 	 */
 	public void disposeResources() {
-		if (fPage!=null) fPage.dispose();
+		if (fPage != null)
+			fPage.dispose();
 		fPage = null;
 	}
 
@@ -83,7 +84,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getSubNodes()
 	 */
 	public IPreferenceNode[] getSubNodes() {
-		return new IPreferenceNode [0];
+		return new IPreferenceNode[0];
 	}
 
 	/**

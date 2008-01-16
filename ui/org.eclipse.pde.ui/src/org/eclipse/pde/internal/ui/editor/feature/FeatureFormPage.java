@@ -13,15 +13,8 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWTException;
@@ -32,12 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * Feature page.
@@ -59,7 +47,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/overview.htm"; //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -67,7 +55,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		form.getBody().setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FTR_XML_OBJ));
-		
+
 		TableWrapData twd;
 
 		Composite left = toolkit.createComposite(form.getBody());
@@ -95,23 +83,20 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		managedForm.addPart(fSpecSection);
 		managedForm.addPart(fPortabilitySection);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 		initialize();
 	}
 
 	public void initialize() {
 		IFeatureModel model = (IFeatureModel) getModel();
 		IFeature feature = model.getFeature();
-		getManagedForm().getForm().setText(
-				model.getResourceString(feature.getLabel()));
+		getManagedForm().getForm().setText(model.getResourceString(feature.getLabel()));
 	}
 
-	private Section createContentSection(IManagedForm managedForm,
-			Composite parent, FormToolkit toolkit) {
+	private Section createContentSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		FormText text;
-		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_ContentSection_title); 
+		section.setText(PDEUIMessages.FeatureEditor_InfoPage_ContentSection_title);
 		text = createClient(section, PDEUIMessages.FeatureEditor_InfoPage_ContentSection_text, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
@@ -119,11 +104,9 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		return section;
 	}
 
-	private Section createPackagingSection(IManagedForm managedForm,
-			Composite parent, FormToolkit toolkit) {
+	private Section createPackagingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
-		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_title); 
+		section.setText(PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_title);
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =
@@ -142,11 +125,9 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		return section;
 	}
 
-	private Section createPublishingSection(IManagedForm managedForm,
-			Composite parent, FormToolkit toolkit) {
+	private Section createPublishingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
-		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title); 
+		section.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title);
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =
@@ -165,8 +146,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		return section;
 	}
 
-	private FormText createClient(Section section, String content,
-			FormToolkit toolkit) {
+	private FormText createClient(Section section, String content, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
 		try {
 			text.setText(content, true, false);
@@ -180,8 +160,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	}
 
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent,
-				ExpandableComposite.TITLE_BAR);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -212,19 +191,17 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(BuildPage.PAGE_ID);
 		else if (href.equals("synchronize")) { //$NON-NLS-1$ {
 			getEditor().setActivePage(FeatureReferencePage.PAGE_ID);
-			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor()
-					.getContributor();
+			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
 			BusyIndicator.showWhile(e.display, new Runnable() {
 				public void run() {
 					contributor.getSynchronizeAction().run();
 				}
 			});
 		} else if (href.equals("export")) { //$NON-NLS-1$
-			((FeatureEditor)getPDEEditor()).getFeatureExportAction().run();
+			((FeatureEditor) getPDEEditor()).getFeatureExportAction().run();
 		} else if (href.equals("siteProject")) { //$NON-NLS-1$
 			getEditor().doSave(null);
-			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor()
-					.getContributor();
+			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
 			BusyIndicator.showWhile(e.display, new Runnable() {
 				public void run() {
 					contributor.getNewSiteAction().run();
@@ -239,8 +216,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkEntered(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
 
@@ -250,8 +226,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkExited(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);
 	}
 }

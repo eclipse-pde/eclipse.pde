@@ -21,20 +21,20 @@ public abstract class BuildEntryMarkerResolution extends AbstractPDEMarkerResolu
 
 	protected String fEntry;
 	protected String fToken;
-	
+
 	public BuildEntryMarkerResolution(int type, IMarker marker) {
 		super(type);
 		try {
-			fEntry = (String)marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-			fToken = (String)marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
+			fEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			fToken = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
 		} catch (CoreException e) {
 		}
 	}
 
 	protected abstract void createChange(Build build);
-	
+
 	protected void createChange(IBaseModel model) {
 		if (model instanceof BuildModel)
-			createChange((Build)((BuildModel)model).getBuild());
+			createChange((Build) ((BuildModel) model).getBuild());
 	}
 }

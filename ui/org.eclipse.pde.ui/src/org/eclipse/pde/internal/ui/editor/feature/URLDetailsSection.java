@@ -12,38 +12,25 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
-public class URLDetailsSection extends PDESection implements
-		IPartSelectionListener {
+public class URLDetailsSection extends PDESection implements IPartSelectionListener {
 	private FormEntry fNameText;
 
 	private FormEntry fUrlText;
@@ -51,8 +38,7 @@ public class URLDetailsSection extends PDESection implements
 	private IFeatureURLElement fInput;
 
 	public URLDetailsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
-				false);
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE, false);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_URLDetailsSection_desc);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
@@ -211,8 +197,7 @@ public class URLDetailsSection extends PDESection implements
 		if (fInput != null) {
 			updateSiteLabel = fInput.getLabel();
 		}
-		fNameText
-				.setValue(updateSiteLabel != null ? updateSiteLabel : "", true); //$NON-NLS-1$
+		fNameText.setValue(updateSiteLabel != null ? updateSiteLabel : "", true); //$NON-NLS-1$
 	}
 
 	public void cancelEdit() {
@@ -226,8 +211,7 @@ public class URLDetailsSection extends PDESection implements
 	 */
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -240,8 +224,7 @@ public class URLDetailsSection extends PDESection implements
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();
-			if (o instanceof IFeatureURLElement
-					&& ((IFeatureURLElement) o).getElementType() == IFeatureURLElement.DISCOVERY) {
+			if (o instanceof IFeatureURLElement && ((IFeatureURLElement) o).getElementType() == IFeatureURLElement.DISCOVERY) {
 				fInput = (IFeatureURLElement) o;
 			} else {
 				fInput = null;

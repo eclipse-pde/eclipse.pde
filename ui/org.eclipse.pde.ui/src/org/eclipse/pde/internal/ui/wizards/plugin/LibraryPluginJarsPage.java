@@ -12,37 +12,21 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
-import org.eclipse.pde.internal.ui.util.FileValidator;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -64,14 +48,15 @@ public class LibraryPluginJarsPage extends WizardPage {
 	public LibraryPluginJarsPage(String pageName, LibraryPluginFieldData data, Collection jarPaths) {
 		super(pageName);
 		fData = data;
-		setTitle(PDEUIMessages.LibraryPluginJarsPage_title); 
+		setTitle(PDEUIMessages.LibraryPluginJarsPage_title);
 		setDescription(PDEUIMessages.LibraryPluginJarsPage_desc);
-		if(jarPaths != null) fJarPaths.addAll(jarPaths);
+		if (jarPaths != null)
+			fJarPaths.addAll(jarPaths);
 	}
 
 	private void chooseFile() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
-		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*.jar"}); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			String path = new File(res).getParent();
@@ -88,16 +73,12 @@ public class LibraryPluginJarsPage extends WizardPage {
 	}
 
 	private void chooseWorkspaceFile() {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
-				getShell(), new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(true);
-		dialog
-				.setTitle(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_title); 
-		dialog
-				.setMessage(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_message); 
+		dialog.setTitle(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_title);
+		dialog.setMessage(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_message);
 		dialog.addFilter(new FileExtensionFilter("jar")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -122,7 +103,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		control.setLayout(layout);
 
 		Label l = new Label(control, SWT.WRAP);
-		l.setText(PDEUIMessages.LibraryPluginJarsPage_label); 
+		l.setText(PDEUIMessages.LibraryPluginJarsPage_label);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		l.setLayoutData(data);
@@ -139,8 +120,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 				if (obj instanceof IFile) {
 					IFile jarFile = (IFile) obj;
 					name = jarFile.getName();
-					location = jarFile.getParent().getFullPath().toString()
-							.substring(1);
+					location = jarFile.getParent().getFullPath().toString().substring(1);
 				} else {
 					File jarFile = (File) obj;
 					name = jarFile.getName();
@@ -152,11 +132,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 			public Image getImage(Object obj) {
 				if (obj instanceof IFile) {
-					return PDEPlugin.getDefault().getLabelProvider().get(
-							PDEPluginImages.DESC_JAR_OBJ);
+					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAR_OBJ);
 				}
-				return PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_JAR_LIB_OBJ);
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAR_LIB_OBJ);
 			}
 		});
 		// should not sort, bug 98401
@@ -183,28 +161,27 @@ public class LibraryPluginJarsPage extends WizardPage {
 		buttons.setLayoutData(data);
 
 		Button browseWorkspace = new Button(buttons, SWT.PUSH);
-		browseWorkspace.setText(PDEUIMessages.LibraryPluginJarsPage_add); 
-		browseWorkspace.setLayoutData(new GridData(
-				GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
+		browseWorkspace.setText(PDEUIMessages.LibraryPluginJarsPage_add);
+		browseWorkspace.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseWorkspace);
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseWorkspaceFile(); 
+				chooseWorkspaceFile();
 			}
 		});
 
 		Button browseFile = new Button(buttons, SWT.PUSH);
-		browseFile.setText(PDEUIMessages.LibraryPluginJarsPage_addExternal); 
+		browseFile.setText(PDEUIMessages.LibraryPluginJarsPage_addExternal);
 		browseFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseFile);
 		browseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(); 
+				chooseFile();
 			}
 		});
 
 		fRemove = new Button(buttons, SWT.PUSH);
-		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove); 
+		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove);
 		fRemove.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fRemove);
 		fRemove.setEnabled(fJarPaths.size() > 0);
@@ -216,16 +193,14 @@ public class LibraryPluginJarsPage extends WizardPage {
 		});
 
 		Dialog.applyDialogFont(control);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
-				IHelpContextIds.NEW_LIBRARY_PROJECT_JAR_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.NEW_LIBRARY_PROJECT_JAR_PAGE);
 		setControl(control);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.LIBRARY_PLUGIN_JARS);
 	}
 
 	private void handleRemove() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
 			for (Iterator it = selection.iterator(); it.hasNext();) {
 				Object file = it.next();

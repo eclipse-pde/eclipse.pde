@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.ListDialog;
 
 public class ShowResultsAction extends Action {
-	
+
 	private IPluginModelBase fModel;
 	Object[] fUnusedImports;
 	private boolean fReadOnly;
@@ -31,30 +31,25 @@ public class ShowResultsAction extends Action {
 		fUnusedImports = unused;
 		fReadOnly = readOnly;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 		if (fUnusedImports.length == 0) {
-			MessageDialog.openInformation(
-				PDEPlugin.getActiveWorkbenchShell(),
-				PDEUIMessages.UnusedDependencies_title, 
-				PDEUIMessages.UnusedDependencies_notFound); 
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.UnusedDependencies_title, PDEUIMessages.UnusedDependencies_notFound);
 		} else {
 			Dialog dialog;
 			if (fReadOnly) {
 				// Launched from Dependencies View, show information dialog
 				dialog = getUnusedDependeciesInfoDialog();
 			} else {
-				dialog = new UnusedImportsDialog(PDEPlugin
-						.getActiveWorkbenchShell(), fModel, fUnusedImports);
+				dialog = new UnusedImportsDialog(PDEPlugin.getActiveWorkbenchShell(), fModel, fUnusedImports);
 				dialog.create();
 			}
-			dialog.getShell().setText(
-				PDEUIMessages.UnusedDependencies_title); 
+			dialog.getShell().setText(PDEUIMessages.UnusedDependencies_title);
 			dialog.open();
-		} 
+		}
 	}
 
 	/**
@@ -71,8 +66,7 @@ public class ShowResultsAction extends Action {
 			public void dispose() {
 			}
 
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
 		dialog.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
@@ -82,5 +76,3 @@ public class ShowResultsAction extends Action {
 		return dialog;
 	}
 }
-
-

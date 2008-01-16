@@ -34,7 +34,7 @@ public abstract class OrientableBlock extends PDEMasterDetailsBlock {
 			}
 		};
 		haction.setChecked(true);
-		haction.setToolTipText(PDEUIMessages.DetailsBlock_horizontal); 
+		haction.setToolTipText(PDEUIMessages.DetailsBlock_horizontal);
 		haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
@@ -45,10 +45,10 @@ public abstract class OrientableBlock extends PDEMasterDetailsBlock {
 			}
 		};
 		vaction.setChecked(false);
-		vaction.setToolTipText(PDEUIMessages.DetailsBlock_vertical); 
+		vaction.setToolTipText(PDEUIMessages.DetailsBlock_vertical);
 		vaction.setImageDescriptor(PDEPluginImages.DESC_VERTICAL);
 		vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
 		form.getToolBarManager().add(haction);
 		form.getToolBarManager().add(vaction);
-	}		
+	}
 }

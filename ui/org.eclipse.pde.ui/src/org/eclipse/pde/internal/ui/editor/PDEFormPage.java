@@ -9,14 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -24,48 +21,28 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public abstract class PDEFormPage extends FormPage {
 
-	private boolean fNewStyleHeader=true;
+	private boolean fNewStyleHeader = true;
 	private Control fLastFocusControl;
-	
+
 	private boolean fStale;
-	
+
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fLastFocusControl = null;
@@ -83,21 +60,21 @@ public abstract class PDEFormPage extends FormPage {
 	protected void markStale() {
 		fStale = true;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	protected boolean isStale() {
 		return fStale;
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected void refresh() {
 		fStale = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#setActive(boolean)
 	 */
@@ -106,27 +83,28 @@ public abstract class PDEFormPage extends FormPage {
 		if (active && isStale()) {
 			refresh();
 		}
-	}	
-	
+	}
+
 	public void dispose() {
 		Control c = getPartControl();
-		if (c!=null && !c.isDisposed()) {
+		if (c != null && !c.isDisposed()) {
 			Menu menu = c.getMenu();
-			if (menu!=null)
+			if (menu != null)
 				resetMenu(menu, c);
 		}
 		super.dispose();
 	}
+
 	private void resetMenu(Menu menu, Control c) {
 		if (c instanceof Composite) {
-			Composite comp = (Composite)c;
-			Control [] children = comp.getChildren();
-			for (int i=0; i<children.length; i++) {
+			Composite comp = (Composite) c;
+			Control[] children = comp.getChildren();
+			for (int i = 0; i < children.length; i++) {
 				resetMenu(menu, children[i]);
 			}
 		}
 		Menu cmenu = c.getMenu();
-		if (cmenu!=null && cmenu.equals(menu)) {
+		if (cmenu != null && cmenu.equals(menu)) {
 			c.setMenu(null);
 		}
 	}
@@ -142,9 +120,9 @@ public abstract class PDEFormPage extends FormPage {
 		}
 
 		IToolBarManager manager = form.getToolBarManager();
-		
+
 		getPDEEditor().contributeToToolbar(manager);
-		
+
 		final String href = getHelpResource();
 		if (href != null) {
 			Action helpAction = new Action("help") { //$NON-NLS-1$
@@ -156,19 +134,18 @@ public abstract class PDEFormPage extends FormPage {
 					});
 				}
 			};
-			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help); 
+			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help);
 			helpAction.setImageDescriptor(PDEPluginImages.DESC_HELP);
 			manager.add(helpAction);
 		}
 		//check to see if our form parts are contributing actions
 		IFormPart[] parts = managedForm.getParts();
-		for(int i = 0; i < parts.length; i++) {
-			if(parts[i] instanceof IAdaptable) {
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] instanceof IAdaptable) {
 				IAdaptable adapter = (IAdaptable) parts[i];
-				IAction[] actions = 
-					(IAction[]) adapter.getAdapter(IAction[].class);
-				if(actions != null) {
-					for(int j = 0; j < actions.length; j++) {
+				IAction[] actions = (IAction[]) adapter.getAdapter(IAction[].class);
+				if (actions != null) {
+					for (int j = 0; j < actions.length; j++) {
 						form.getToolBarManager().add(actions[j]);
 					}
 				}
@@ -180,12 +157,15 @@ public abstract class PDEFormPage extends FormPage {
 	public PDEFormEditor getPDEEditor() {
 		return (PDEFormEditor) getEditor();
 	}
+
 	protected String getHelpResource() {
 		return null;
 	}
+
 	public IBaseModel getModel() {
 		return getPDEEditor().getAggregateModel();
 	}
+
 	public void contextMenuAboutToShow(IMenuManager menu) {
 	}
 
@@ -202,6 +182,7 @@ public abstract class PDEFormPage extends FormPage {
 			return null;
 		return focusControl;
 	}
+
 	public boolean performGlobalAction(String actionId) {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)
@@ -210,11 +191,11 @@ public abstract class PDEFormPage extends FormPage {
 		if (canPerformDirectly(actionId, focusControl))
 			return true;
 		AbstractFormPart focusPart = getFocusSection();
-		if (focusPart!=null) {
+		if (focusPart != null) {
 			if (focusPart instanceof PDESection)
-				return ((PDESection)focusPart).doGlobalAction(actionId);
+				return ((PDESection) focusPart).doGlobalAction(actionId);
 			if (focusPart instanceof PDEDetails)
-				return ((PDEDetails)focusPart).doGlobalAction(actionId);
+				return ((PDEDetails) focusPart).doGlobalAction(actionId);
 		}
 		return false;
 	}
@@ -223,10 +204,10 @@ public abstract class PDEFormPage extends FormPage {
 		AbstractFormPart focusPart = getFocusSection();
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
-				return ((PDESection)focusPart).canPaste(clipboard);
+				return ((PDESection) focusPart).canPaste(clipboard);
 			}
 			if (focusPart instanceof PDEDetails) {
-				return ((PDEDetails)focusPart).canPaste(clipboard);
+				return ((PDEDetails) focusPart).canPaste(clipboard);
 			}
 		}
 		return false;
@@ -240,15 +221,15 @@ public abstract class PDEFormPage extends FormPage {
 		AbstractFormPart focusPart = getFocusSection();
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
-				return ((PDESection)focusPart).canCopy(selection);
+				return ((PDESection) focusPart).canCopy(selection);
 			}
 			if (focusPart instanceof PDEDetails) {
-				return ((PDEDetails)focusPart).canCopy(selection);
+				return ((PDEDetails) focusPart).canCopy(selection);
 			}
 		}
-		return false;		
+		return false;
 	}
-	
+
 	/**
 	 * @param selection
 	 * @return
@@ -257,15 +238,15 @@ public abstract class PDEFormPage extends FormPage {
 		AbstractFormPart focusPart = getFocusSection();
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
-				return ((PDESection)focusPart).canCut(selection);
+				return ((PDESection) focusPart).canCut(selection);
 			}
 			if (focusPart instanceof PDEDetails) {
-				return ((PDEDetails)focusPart).canCut(selection);
+				return ((PDEDetails) focusPart).canCut(selection);
 			}
 		}
-		return false;		
-	}	
-	
+		return false;
+	}
+
 	private AbstractFormPart getFocusSection() {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)
@@ -313,16 +294,17 @@ public abstract class PDEFormPage extends FormPage {
 			}
 		}
 		return false;
-	}	
+	}
+
 	public void cancelEdit() {
-		IFormPart [] parts = getManagedForm().getParts();
-		for (int i=0; i<parts.length; i++) {
+		IFormPart[] parts = getManagedForm().getParts();
+		for (int i = 0; i < parts.length; i++) {
 			IFormPart part = parts[i];
 			if (part instanceof IContextPart)
-				((IContextPart)part).cancelEdit();
+				((IContextPart) part).cancelEdit();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -335,7 +317,7 @@ public abstract class PDEFormPage extends FormPage {
 			addLastFocusListeners(managedForm.getForm());
 		}
 	}
-	
+
 	/**
 	 * Programatically and recursively add focus listeners to the specified
 	 * composite and its children that track the last control to have focus 
@@ -354,29 +336,16 @@ public abstract class PDEFormPage extends FormPage {
 			// Could not add super class categories of controls because it 
 			// would include things like tool bars that we don't want to track
 			// focus for.
-			if ((control instanceof Text) ||
-					(control instanceof Button) ||
-					(control instanceof Combo) || 
-					(control instanceof CCombo) ||
-					(control instanceof Tree) ||
-					(control instanceof Table) ||
-					(control instanceof Spinner) ||
-					(control instanceof Link) ||
-					(control instanceof List) ||
-					(control instanceof TabFolder) ||
-					(control instanceof CTabFolder) ||
-					(control instanceof Hyperlink) ||
-					(control instanceof FilteredTree)
-					) {
+			if ((control instanceof Text) || (control instanceof Button) || (control instanceof Combo) || (control instanceof CCombo) || (control instanceof Tree) || (control instanceof Table) || (control instanceof Spinner) || (control instanceof Link) || (control instanceof List) || (control instanceof TabFolder) || (control instanceof CTabFolder) || (control instanceof Hyperlink) || (control instanceof FilteredTree)) {
 				addLastFocusListener(control);
 			}
 			if (control instanceof Composite) {
 				// Recursively add focus listeners to this composites children
-				addLastFocusListeners((Composite)control);
+				addLastFocusListeners((Composite) control);
 			}
 		}
 	}
-	
+
 	/**
 	 * Add a focus listener to the specified control that tracks the last 
 	 * control to have focus on this page.
@@ -391,24 +360,24 @@ public abstract class PDEFormPage extends FormPage {
 			public void focusGained(FocusEvent e) {
 				// NO-OP
 			}
+
 			public void focusLost(FocusEvent e) {
 				fLastFocusControl = control;
 			}
 		});
 	}
-	
+
 	/**
 	 * Set the focus on the last control to have focus before a page change
 	 * or the editor lost focus.
 	 */
 	public void updateFormSelection() {
-		if ((fLastFocusControl != null) && 
-				(fLastFocusControl.isDisposed() == false)) {
+		if ((fLastFocusControl != null) && (fLastFocusControl.isDisposed() == false)) {
 			// Set focus on the control
 			fLastFocusControl.setFocus();
 			// If the control is a Text widget, select its contents
 			if (fLastFocusControl instanceof Text) {
-				Text text = (Text)fLastFocusControl;
+				Text text = (Text) fLastFocusControl;
 				text.setSelection(0, text.getText().length());
 			}
 		} else {
@@ -423,40 +392,38 @@ public abstract class PDEFormPage extends FormPage {
 			setFocus();
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public Control getLastFocusControl() {
 		return fLastFocusControl;
 	}
-	
+
 	/**
 	 * @param control
 	 */
 	public void setLastFocusControl(Control control) {
 		fLastFocusControl = control;
 	}
-	
+
 	/**
 	 * @param managedForm
 	 * @param errorTitle
 	 * @param errorMessage
 	 */
-	protected void createFormErrorContent(IManagedForm managedForm,
-			String errorTitle, String errorMessage) {
+	protected void createFormErrorContent(IManagedForm managedForm, String errorTitle, String errorMessage) {
 		createFormErrorContent(managedForm, errorTitle, errorMessage, null);
 	}
-	
+
 	/**
 	 * @param managedForm
 	 * @param errorTitle
 	 * @param errorMessage
 	 * @param e
 	 */
-	protected void createFormErrorContent(IManagedForm managedForm,
-			String errorTitle, String errorMessage, Exception e) {
-		
+	protected void createFormErrorContent(IManagedForm managedForm, String errorTitle, String errorMessage, Exception e) {
+
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		//FormColors colors = toolkit.getColors();
@@ -475,32 +442,30 @@ public abstract class PDEFormPage extends FormPage {
 		parent.setLayoutData(data2);
 		// Set the title and image of the form
 		form.setText(errorTitle);
-        form.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
-        
-        int sectionStyle = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-        // Create the message section
-        Section messageSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleMessage, 
-        		errorMessage, sectionStyle);
-        Composite messageClient = createUISectionContainer(messageSection, 1);
-        // Bind the widgets
+		form.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
+
+		int sectionStyle = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
+		// Create the message section
+		Section messageSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleMessage, errorMessage, sectionStyle);
+		Composite messageClient = createUISectionContainer(messageSection, 1);
+		// Bind the widgets
 		toolkit.paintBordersFor(messageClient);
-		messageSection.setClient(messageClient);			
+		messageSection.setClient(messageClient);
 		// Ensure the exception was defined
 		if (e == null) {
 			return;
 		}
 		// Create the details section
-        Section detailsSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleDetails, 
-        		e.getMessage(), sectionStyle);
-        Composite detailsClient = createUISectionContainer(detailsSection, 1);
+		Section detailsSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleDetails, e.getMessage(), sectionStyle);
+		Composite detailsClient = createUISectionContainer(detailsSection, 1);
 		// Create text widget holding the exception trace
-		int style = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY;		
-		Text text = toolkit.createText(detailsClient, getStackTrace(e), style); 
+		int style = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY;
+		Text text = toolkit.createText(detailsClient, getStackTrace(e), style);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 160;
-		data.widthHint  = 200;
+		data.widthHint = 200;
 		text.setLayoutData(data);
-        // Bind the widgets
+		// Bind the widgets
 		toolkit.paintBordersFor(detailsClient);
 		detailsSection.setClient(detailsClient);
 		// Note: The veritical scrollbar fails to appear when text widget is
@@ -514,10 +479,8 @@ public abstract class PDEFormPage extends FormPage {
 	 * @param style
 	 * @return
 	 */
-	public Section createUISection(Composite parent, String text,
-			String description, int style) {
-		Section section = 
-			getManagedForm().getToolkit().createSection(parent, style);
+	public Section createUISection(Composite parent, String text, String description, int style) {
+		Section section = getManagedForm().getToolkit().createSection(parent, style);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setText(text);
@@ -526,7 +489,7 @@ public abstract class PDEFormPage extends FormPage {
 		section.setLayoutData(data);
 		return section;
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param columns
@@ -535,22 +498,22 @@ public abstract class PDEFormPage extends FormPage {
 	public Composite createUISectionContainer(Composite parent, int columns) {
 		Composite container = getManagedForm().getToolkit().createComposite(parent);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columns));
-		return container;		
+		return container;
 	}
-	
-    /**
-     * @param throwable
-     * @return
-     */
-    public String getStackTrace(Throwable throwable) {
-        StringWriter swriter = new StringWriter();
-        PrintWriter pwriter = new PrintWriter(swriter);
-        throwable.printStackTrace(pwriter);
-        pwriter.flush();
-        pwriter.close();
-        return swriter.toString();
-    }
-	
+
+	/**
+	 * @param throwable
+	 * @return
+	 */
+	public String getStackTrace(Throwable throwable) {
+		StringWriter swriter = new StringWriter();
+		PrintWriter pwriter = new PrintWriter(swriter);
+		throwable.printStackTrace(pwriter);
+		pwriter.flush();
+		pwriter.close();
+		return swriter.toString();
+	}
+
 	/**
 	 * Used to align the section client / decriptions of two section headers 
 	 * horizontally adjacent to each other.  The misalignment is caused by one
@@ -559,17 +522,15 @@ public abstract class PDEFormPage extends FormPage {
 	 * @param masterSection
 	 * @param detailsSection
 	 */
-	public void alignSectionHeaders(Section masterSection,
-			Section detailsSection) {
-		detailsSection.descriptionVerticalSpacing += 
-			masterSection.getTextClientHeightDifference();
-	}	    
-    
+	public void alignSectionHeaders(Section masterSection, Section detailsSection) {
+		detailsSection.descriptionVerticalSpacing += masterSection.getTextClientHeightDifference();
+	}
+
 	/**
 	 * @param form
 	 * @param colors
 	 */
-    /*
+	/*
 	private void createNewStyleHeader(final ScrolledForm form, FormColors colors) {
 		colors.initializeSectionToolBarColors();
 		Color gbg = colors.getColor(IFormColors.TB_BG);

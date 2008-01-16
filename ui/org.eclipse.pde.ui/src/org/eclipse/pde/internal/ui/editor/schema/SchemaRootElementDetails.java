@@ -23,9 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -36,7 +34,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private Button fDepTrue;
 	private Button fDepFalse;
 	private FormEntry fSuggestion;
-	
+
 	public SchemaRootElementDetails(ElementSection section) {
 		super(section, true, true);
 	}
@@ -44,10 +42,10 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
-		
+
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.READ_ONLY);
 		// Ensures label columns on every detail page are same width
-		((GridData)fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
+		((GridData) fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
 
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
@@ -56,7 +54,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDepFalse = buttons[1];
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
-		
+
 		setText(PDEUIMessages.SchemaElementDetails_rootTitle);
 	}
 
@@ -64,17 +62,17 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		if (!(element instanceof ISchemaElement))
 			return;
 		if (element instanceof SchemaElementReference)
-			element = ((SchemaElementReference)element).getReferencedObject();
-		fElement = (SchemaRootElement)element;
+			element = ((SchemaElementReference) element).getReferencedObject();
+		fElement = (SchemaRootElement) element;
 		if (fElement == null)
 			return;
-		
+
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
-		fName.setValue(fElement.getName(), true);		
+		fName.setValue(fElement.getName(), true);
 		fDepTrue.setSelection(fElement.isDeprecated());
 		fDepFalse.setSelection(!fElement.isDeprecated());
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
-		
+
 		fDepTrue.setEnabled(isEditable());
 		fDepFalse.setEnabled(isEditable());
 
@@ -92,9 +90,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 				if (blockListeners())
 					return;
 				boolean deprecated = fDepTrue.getSelection();
-				fElement.setDeprecatedProperty(deprecated);				
+				fElement.setDeprecatedProperty(deprecated);
 				fSuggestion.getLabel().setEnabled(deprecated);
-				fSuggestion.getText().setEditable(deprecated);			
+				fSuggestion.getText().setEditable(deprecated);
 			}
 		});
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
@@ -105,7 +103,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -114,5 +112,5 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		// Only required for form entries
 		fSuggestion.commit();
 	}
-	
+
 }

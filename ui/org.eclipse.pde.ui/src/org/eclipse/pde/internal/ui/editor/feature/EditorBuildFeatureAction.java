@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import java.lang.reflect.InvocationTargetException;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -24,12 +24,15 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
 import org.eclipse.ui.PlatformUI;
+
 public class EditorBuildFeatureAction extends Action {
 	private FeatureEditor activeEditor;
 	private IFile featureFile;
+
 	public EditorBuildFeatureAction() {
 		setText(PDEUIMessages.FeatureEditor_BuildAction_label);
 	}
+
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
 			try {
@@ -38,9 +41,7 @@ public class EditorBuildFeatureAction extends Action {
 						activeEditor.doSave(monitor);
 					}
 				};
-				PlatformUI.getWorkbench().getProgressService().runInUI(
-						PDEPlugin.getActiveWorkbenchWindow(), op,
-						PDEPlugin.getWorkspace().getRoot());
+				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
@@ -48,6 +49,7 @@ public class EditorBuildFeatureAction extends Action {
 			}
 		}
 	}
+
 	public void run() {
 		ensureContentSaved();
 		FeatureExportWizard wizard = new FeatureExportWizard();
@@ -57,11 +59,11 @@ public class EditorBuildFeatureAction extends Action {
 		else
 			selection = new StructuredSelection();
 		wizard.init(PlatformUI.getWorkbench(), selection);
-		WizardDialog wd = new ResizableWizardDialog(PDEPlugin
-				.getActiveWorkbenchShell(), wizard);
+		WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		wd.create();
 		wd.open();
 	}
+
 	public void setActiveEditor(FeatureEditor editor) {
 		this.activeEditor = editor;
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();

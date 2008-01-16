@@ -14,19 +14,19 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 
-public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarkerResolution {	
-	
+public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarkerResolution {
+
 	public AbstractManifestMarkerResolution(int type) {
 		super(type);
 	}
-	
+
 	protected abstract void createChange(BundleModel model);
-	
+
 	protected void createChange(IBaseModel model) {
 		if (model instanceof IBundlePluginModelBase)
-			model = ((IBundlePluginModelBase)model).getBundleModel();
+			model = ((IBundlePluginModelBase) model).getBundleModel();
 		if (model instanceof BundleModel)
-			createChange((BundleModel)model);
+			createChange((BundleModel) model);
 	}
 
 }

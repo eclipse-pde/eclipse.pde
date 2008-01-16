@@ -10,21 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
+import java.util.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class CallersContentProvider extends DependenciesViewPageContentProvider {
 	public CallersContentProvider(DependenciesView view) {
 		super(view);
 	}
-	
+
 	protected Collection findReferences(BundleDescription desc) {
 		if (desc != null) {
 			// don't return any callers for fragments (since no one can depend on a fragment
-			if (desc.getHost() == null) { 
+			if (desc.getHost() == null) {
 				BundleDescription[] dependents = desc.getDependents();
 				return Arrays.asList(dependents);
 			}

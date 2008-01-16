@@ -19,11 +19,7 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 
 public class ProductDestinationGroup extends ExportDestinationTab {
 
@@ -61,29 +57,26 @@ public class ProductDestinationGroup extends ExportDestinationTab {
 
 		return group;
 	}
-	
+
 	protected void initialize(IDialogSettings settings, IFile file) {
 		try {
-			String toDirectory = 
-					(file != null)
-					? file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR)
-					: null;
+			String toDirectory = (file != null) ? file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR) : null;
 			if (toDirectory == null)
 				toDirectory = settings.get(S_EXPORT_DIRECTORY);
 			boolean useDirectory = toDirectory == null || "true".equals(toDirectory); //$NON-NLS-1$
-			fDirectoryButton.setSelection(useDirectory);			
+			fDirectoryButton.setSelection(useDirectory);
 			fArchiveFileButton.setSelection(!useDirectory);
 			toggleDestinationGroup(useDirectory);
-			
+
 			initializeCombo(settings, S_DESTINATION, fDirectoryCombo);
 			initializeCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
-			
+
 			updateDestination(file);
 			hookListeners();
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	protected void updateDestination(IFile file) {
 		try {
 			if (file == null)
@@ -95,8 +88,8 @@ public class ProductDestinationGroup extends ExportDestinationTab {
 			fArchiveFileButton.setSelection(!useDirectory);
 			fDirectoryButton.setSelection(useDirectory);
 			toggleDestinationGroup(useDirectory);
-			
-			Combo combo =  useDirectory? fDirectoryCombo : fArchiveCombo;
+
+			Combo combo = useDirectory ? fDirectoryCombo : fArchiveCombo;
 			String destination = file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION);
 			if (destination != null) {
 				if (combo.indexOf(destination) == -1)
@@ -104,22 +97,19 @@ public class ProductDestinationGroup extends ExportDestinationTab {
 				combo.setText(destination);
 			}
 		} catch (CoreException e) {
-		}		
+		}
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
-		IFile file = ((ProductExportWizardPage)fPage).getProductFile();
+		IFile file = ((ProductExportWizardPage) fPage).getProductFile();
 		try {
 			if (file != null && file.exists()) {
-				file.setPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR, 
-										Boolean.toString(doExportToDirectory()));
-				file.setPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION,
-						doExportToDirectory() ? fDirectoryCombo.getText().trim() : fArchiveCombo.getText().trim());
+				file.setPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR, Boolean.toString(doExportToDirectory()));
+				file.setPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION, doExportToDirectory() ? fDirectoryCombo.getText().trim() : fArchiveCombo.getText().trim());
 			}
 		} catch (CoreException e) {
 		}
 	}
-	
 
 }

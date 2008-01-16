@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.lang.reflect.InvocationTargetException;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -31,11 +31,14 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PluginExportAction extends Action {
 	private PDEFormEditor fEditor;
+
 	public PluginExportAction(PDEFormEditor editor) {
 		fEditor = editor;
 	}
+
 	public PluginExportAction() {
 	}
+
 	private void ensureContentSaved() {
 		if (fEditor.isDirty()) {
 			try {
@@ -44,15 +47,14 @@ public class PluginExportAction extends Action {
 						fEditor.doSave(monitor);
 					}
 				};
-				PlatformUI.getWorkbench().getProgressService().runInUI(
-						PDEPlugin.getActiveWorkbenchWindow(), op,
-						PDEPlugin.getWorkspace().getRoot());
+				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			} catch (InterruptedException e) {
 			}
 		}
 	}
+
 	public void run() {
 		if (fEditor != null)
 			ensureContentSaved();
@@ -60,15 +62,13 @@ public class PluginExportAction extends Action {
 		IStructuredSelection selection;
 		IResource resource = null;
 		if (fEditor != null)
-			resource = ((IModel) fEditor.getAggregateModel())
-					.getUnderlyingResource();
+			resource = ((IModel) fEditor.getAggregateModel()).getUnderlyingResource();
 		if (resource != null)
 			selection = new StructuredSelection(resource);
 		else
 			selection = new StructuredSelection();
 		wizard.init(PlatformUI.getWorkbench(), selection);
-		WizardDialog wd = new ResizableWizardDialog(PDEPlugin
-				.getActiveWorkbenchShell(), wizard);
+		WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		wd.create();
 		//wd.getShell().setSize(450, 600);
 		int result = wd.open();

@@ -11,31 +11,22 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.build.AbstractScriptGenerator;
-import org.eclipse.pde.internal.build.BuildScriptGenerator;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 public class BuildFeatureAction extends BaseBuildAction {
-	
+
 	private IFeatureModel fFeatureModel;
 
-	protected void makeScripts(IProgressMonitor monitor)
-		throws InvocationTargetException, CoreException {
-		
+	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
+
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].getUnderlyingResource() != null) {
@@ -44,7 +35,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 					fFeatureModel = models[i];
 			}
 		}
-		
+
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(true);
 		generator.setChildren(true);
@@ -56,17 +47,16 @@ public class BuildFeatureAction extends BaseBuildAction {
 		String configInfo = TargetPlatform.getOS() + ", " + TargetPlatform.getWS() + ", " + TargetPlatform.getOSArch(); //$NON-NLS-1$ //$NON-NLS-2$
 		AbstractScriptGenerator.setConfigInfo(configInfo); //This needs to be set before we set the format
 		generator.setArchivesFormat(AbstractScriptGenerator.getDefaultConfigInfos() + '-' + IXMLConstants.FORMAT_ANTZIP);
-		generator.setElements(new String[] { "feature@" + fFeatureModel.getFeature().getId() + (fFeatureModel.getFeature().getVersion() == null ? "" : ":" + fFeatureModel.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		generator.setElements(new String[] {"feature@" + fFeatureModel.getFeature().getId() + (fFeatureModel.getFeature().getVersion() == null ? "" : ":" + fFeatureModel.getFeature().getVersion())}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(TargetPlatformHelper.getFeaturePaths());
 		generator.setPDEState(TargetPlatformHelper.getState());
 		generator.setNextId(TargetPlatformHelper.getPDEState().getNextId());
 		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		generator.setGenerateAssembleScript(false);
-		generator.generate();	
+		generator.generate();
 	}
-	
-	private void refreshLocal(IFeature feature, IProgressMonitor monitor)
-		throws CoreException {
+
+	private void refreshLocal(IFeature feature, IProgressMonitor monitor) throws CoreException {
 		IFeaturePlugin[] references = feature.getPlugins();
 		for (int i = 0; i < references.length; i++) {
 			IPluginModelBase refmodel = feature.getReferencedModel(references[i]);
@@ -78,22 +68,19 @@ public class BuildFeatureAction extends BaseBuildAction {
 		}
 		IFeatureChild[] included = feature.getIncludedFeatures();
 		for (int i = 0; i < included.length; i++) {
-			IFeature child = ((FeatureChild) included[i])
-					.getReferencedFeature();
+			IFeature child = ((FeatureChild) included[i]).getReferencedFeature();
 			if (child != null && child != fFeatureModel.getFeature()) {
 				IFeatureModel refmodel = child.getModel();
 				if (refmodel != null && refmodel.getUnderlyingResource() != null) {
-					refmodel.getUnderlyingResource().getProject().refreshLocal(
-							IResource.DEPTH_ONE, monitor);
+					refmodel.getUnderlyingResource().getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
 				}
 				refreshLocal(child, monitor);
 
 			}
 		}
 	}
-	
-	protected void refreshLocal(IProgressMonitor monitor)
-		throws CoreException {
+
+	protected void refreshLocal(IProgressMonitor monitor) throws CoreException {
 		super.refreshLocal(monitor);
 		refreshLocal(fFeatureModel.getFeature(), monitor);
 	}

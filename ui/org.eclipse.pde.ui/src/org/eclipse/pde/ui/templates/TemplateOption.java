@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 /**
  * The base class of all the template options. Options have unique name and a
  * value that can be changed. The value of the option is automatically available
@@ -22,6 +23,7 @@ public abstract class TemplateOption extends TemplateField {
 	private Object value;
 	private boolean enabled = true;
 	private boolean required;
+
 	/**
 	 * Creates a new option for the provided template section.
 	 * 
@@ -32,11 +34,11 @@ public abstract class TemplateOption extends TemplateField {
 	 * @param label
 	 *            presentable label of this option
 	 */
-	public TemplateOption(BaseOptionTemplateSection section, String name,
-			String label) {
+	public TemplateOption(BaseOptionTemplateSection section, String name, String label) {
 		super(section, label);
 		this.name = name;
 	}
+
 	/**
 	 * Returns the unique name of this option
 	 * 
@@ -45,6 +47,7 @@ public abstract class TemplateOption extends TemplateField {
 	public String getName() {
 		return name;
 	}
+
 	/**
 	 * Changes the unique name of this option
 	 * 
@@ -54,6 +57,7 @@ public abstract class TemplateOption extends TemplateField {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	/**
 	 * Returns the value of this option.
 	 * 
@@ -62,6 +66,7 @@ public abstract class TemplateOption extends TemplateField {
 	public Object getValue() {
 		return value;
 	}
+
 	/**
 	 * Returns whether this option is currently empty. The actual semantics of
 	 * the result depends on the implementing option.
@@ -71,6 +76,7 @@ public abstract class TemplateOption extends TemplateField {
 	public boolean isEmpty() {
 		return false;
 	}
+
 	/**
 	 * Marks this option as required. Required options must be set by the user.
 	 * An option that is empty and is marked required will be flagged as an
@@ -83,6 +89,7 @@ public abstract class TemplateOption extends TemplateField {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
+
 	/**
 	 * Returns whether this option is required (cannot be empty)
 	 * 
@@ -92,6 +99,7 @@ public abstract class TemplateOption extends TemplateField {
 	public boolean isRequired() {
 		return required;
 	}
+
 	/**
 	 * Sets the new value of this option.
 	 * 
@@ -101,6 +109,7 @@ public abstract class TemplateOption extends TemplateField {
 	public void setValue(Object value) {
 		this.value = value;
 	}
+
 	/**
 	 * Returns whether this option is enabled. The actual presentation of
 	 * enabled state depends on the implementing option.
@@ -110,6 +119,7 @@ public abstract class TemplateOption extends TemplateField {
 	public boolean isEnabled() {
 		return enabled;
 	}
+
 	/**
 	 * Sets the enabled state of this option. The action presentation of the
 	 * enabled state depends on the implementing option.
@@ -120,6 +130,7 @@ public abstract class TemplateOption extends TemplateField {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+
 	/**
 	 * Returns the label of this option that can be presented in the messages to
 	 * the user. The default implementation trims the 'label' property from

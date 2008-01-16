@@ -10,38 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.actions.FindReferencesInWorkingSetAction;
 import org.eclipse.jdt.ui.actions.JavaSearchActionGroup;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.search.AbstractSearchResultPage;
-import org.eclipse.pde.internal.ui.search.ManifestEditorOpener;
-import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
+import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 
-
-public class DependencyExtentSearchResultPage extends
-		AbstractSearchResultPage {
-	
+public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 
 	class Comparator extends ViewerComparator {
 		/* (non-Javadoc)
@@ -50,7 +34,7 @@ public class DependencyExtentSearchResultPage extends
 		public int category(Object element) {
 			try {
 				if (element instanceof IType) {
-					if (((IType)element).isClass())
+					if (((IType) element).isClass())
 						return 1;
 					return 0;
 				}
@@ -59,7 +43,7 @@ public class DependencyExtentSearchResultPage extends
 			return 2;
 		}
 	}
-	
+
 	class LabelProvider extends JavaElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getImage(java.lang.Object)
@@ -69,25 +53,21 @@ public class DependencyExtentSearchResultPage extends
 				return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 			return super.getImage(element);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			if (element instanceof IPluginExtensionPoint) 
+			if (element instanceof IPluginExtensionPoint)
 				return ((IPluginExtensionPoint) element).getFullId();
-			
+
 			if (element instanceof IPluginExtension)
-				return ((IPluginExtension)element).getPoint();
-			
+				return ((IPluginExtension) element).getPoint();
+
 			if (element instanceof IJavaElement) {
 				IJavaElement javaElement = (IJavaElement) element;
-				String text =
-					super.getText(javaElement)
-						+ " - " //$NON-NLS-1$
-						+ javaElement
-							.getAncestor(IJavaElement.PACKAGE_FRAGMENT)
-							.getElementName();
+				String text = super.getText(javaElement) + " - " //$NON-NLS-1$
+						+ javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT).getElementName();
 				if (!(javaElement instanceof IType)) {
 					IJavaElement ancestor = javaElement.getAncestor(IJavaElement.TYPE);
 					if (ancestor == null)
@@ -106,7 +86,7 @@ public class DependencyExtentSearchResultPage extends
 	public DependencyExtentSearchResultPage() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#dispose()
 	 */
@@ -114,7 +94,7 @@ public class DependencyExtentSearchResultPage extends
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -129,31 +109,30 @@ public class DependencyExtentSearchResultPage extends
 		actionGroup.setContext(new ActionContext(getViewer().getSelection()));
 		actionGroup.fillContextMenu(mgr);
 	}
-	
+
 	private void addJavaSearchGroup(IMenuManager mgr) {
-		IStructuredSelection ssel = (IStructuredSelection)getViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) getViewer().getSelection();
 		if (ssel.size() == 1) {
 			final Object object = ssel.getFirstElement();
 			if (object instanceof IType) {
 				mgr.add(new Separator());
 				mgr.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
 					public void run() {
-						DependencyExtentQuery query = (DependencyExtentQuery)getInput().getQuery();
+						DependencyExtentQuery query = (DependencyExtentQuery) getInput().getQuery();
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 						IWorkingSet set = manager.createWorkingSet("temp", query.getDirectRoots()); //$NON-NLS-1$
-						new FindReferencesInWorkingSetAction(getViewPart().getSite(), new IWorkingSet[] {set}).run((IType)object);
+						new FindReferencesInWorkingSetAction(getViewPart().getSite(), new IWorkingSet[] {set}).run((IType) object);
 						manager.removeWorkingSet(set);
 					}
 				});
 			}
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 	 */
-	protected void showMatch(Match match, int currentOffset, int currentLength,
-			boolean activate) throws PartInitException {
+	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		if (match.getElement() instanceof IPluginObject) {
 			ManifestEditorOpener.open(match, activate);
 		} else {

@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
 import java.util.List;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
@@ -22,8 +21,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
  * SimpleCSContentProvider
  *
  */
-public class SimpleCSContentProvider extends DefaultContentProvider implements
-		ITreeContentProvider {
+public class SimpleCSContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 	/**
 	 * 
@@ -37,9 +35,9 @@ public class SimpleCSContentProvider extends DefaultContentProvider implements
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ISimpleCSModel) {
-			return new Object[]{((ISimpleCSModel)parentElement).getSimpleCS()};
+			return new Object[] {((ISimpleCSModel) parentElement).getSimpleCS()};
 		} else if (parentElement instanceof ISimpleCSObject) {
-			List list = ((ISimpleCSObject)parentElement).getChildren();
+			List list = ((ISimpleCSObject) parentElement).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -53,7 +51,7 @@ public class SimpleCSContentProvider extends DefaultContentProvider implements
 	 */
 	public Object getParent(Object element) {
 		if (element instanceof ISimpleCSObject) {
-			return ((ISimpleCSObject)element).getParent();
+			return ((ISimpleCSObject) element).getParent();
 		}
 		return null;
 	}

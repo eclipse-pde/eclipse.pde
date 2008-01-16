@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class PreviewReferenceAction implements IObjectActionDelegate {
 	private IFile fFile;
 	private ShowDescriptionAction fDelegate;
-	
+
 	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -50,9 +50,9 @@ public class PreviewReferenceAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		fFile = null;
 		if (selection instanceof IStructuredSelection) {
-			Object obj = ((IStructuredSelection)selection).getFirstElement();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof IFile)
-				fFile = (IFile)obj;
+				fFile = (IFile) obj;
 		}
 	}
 }

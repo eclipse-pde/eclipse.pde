@@ -12,44 +12,18 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.ContentAssistEvent;
-import org.eclipse.jface.text.contentassist.ICompletionListener;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
-import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -63,9 +37,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 public class XMLContentAssistProcessor extends TypePackageCompletionProcessor implements IContentAssistProcessor, ICompletionListener {
 
 	protected boolean fAssistSessionStarted;
-	
+
 	// Specific assist types
-	
+
 	protected static final int F_INFER_BY_OBJECT = -1;
 
 	protected static final int F_EXTENSION_POINT = 0;
@@ -83,31 +57,27 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	protected static final int F_EXTENSION_ATTRIBUTE_POINT_VALUE = 6;
 
 	protected static final int F_EXTENSION_POINT_AND_VALUE = 7;
-	
+
 	protected static final int F_TOTAL_TYPES = 8;
-	
+
 	// proposal generation type
-	private static final int 
-		F_NO_ASSIST = 0,
-		F_ADD_ATTRIB = 1,
-		F_ADD_CHILD = 2,
-		F_OPEN_TAG = 3;
-	
+	private static final int F_NO_ASSIST = 0, F_ADD_ATTRIB = 1, F_ADD_CHILD = 2, F_OPEN_TAG = 3;
+
 	private static final ArrayList F_V_BOOLS = new ArrayList();
 	static {
 		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
 		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
 	}
-	
+
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
 	private static final String F_STR_EXT = "extension"; //$NON-NLS-1$
-	
+
 	private PDESourcePage fSourcePage;
 	private final Image[] fImages = new Image[F_TOTAL_TYPES];
 	// TODO add a listener to add/remove extension points as they are added/removed from working models
 	private IDocumentRange fRange;
 	private int fDocLen = -1;
-	
+
 	/** All external plug-in extension points */
 	private ArrayList fExternalExtPoints;
 
@@ -116,7 +86,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	/** All external and internal plug-in extension points */
 	private ArrayList fAllExtPoints;
-	
+
 	public XMLContentAssistProcessor(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
 	}
@@ -126,18 +96,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		int docLen = doc.getLength();
 		if (docLen == fDocLen)
 			return null; // left/right cursor has been pressed - cancel content assist
-		
+
 		fDocLen = docLen;
 		IBaseModel model = getModel();
-		if (model instanceof AbstractEditingModel
-				&& fSourcePage.isDirty()
-				&& ((AbstractEditingModel)model).isStale()
-				&& fRange == null) {
-			((AbstractEditingModel)model).reconciled(doc);
+		if (model instanceof AbstractEditingModel && fSourcePage.isDirty() && ((AbstractEditingModel) model).isStale() && fRange == null) {
+			((AbstractEditingModel) model).reconciled(doc);
 		} else if (fAssistSessionStarted) {
 			// Always reconcile when content assist is first invoked
 			// Fix Bug # 149478
-			((AbstractEditingModel)model).reconciled(doc);
+			((AbstractEditingModel) model).reconciled(doc);
 			fAssistSessionStarted = false;
 		}
 
@@ -151,11 +118,11 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			if (!(fRange instanceof IDocumentAttributeNode))
 				// too easy to reconcile.. this is temporary
 				resetAndReconcile = true;
-				
+
 			if (resetAndReconcile) {
 				fRange = null;
 				if (model instanceof IReconcilingParticipant)
-					((IReconcilingParticipant)model).reconciled(doc);
+					((IReconcilingParticipant) model).reconciled(doc);
 			}
 		}
 		// Get content assist text if any
@@ -164,14 +131,14 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (caText != null) {
 			return computeCATextProposal(doc, offset, caText);
 		} else if (fRange instanceof IDocumentAttributeNode) {
-			return computeCompletionProposal((IDocumentAttributeNode)fRange, offset, doc);
+			return computeCompletionProposal((IDocumentAttributeNode) fRange, offset, doc);
 		} else if (fRange instanceof IDocumentElementNode) {
-			return computeCompletionProposal((IDocumentElementNode)fRange, offset, doc);
+			return computeCompletionProposal((IDocumentElementNode) fRange, offset, doc);
 		} else if (fRange instanceof IDocumentTextNode) {
 			return null;
 		} else if (model instanceof PluginModelBase) {
 			// broken model - infer from text content
-			return computeBrokenModelProposal(((PluginModelBase)model).getLastErrorNode(), offset, doc);
+			return computeBrokenModelProposal(((PluginModelBase) model).getLastErrorNode(), offset, doc);
 		}
 		return null;
 	}
@@ -196,7 +163,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 		return proposals;
 	}
-	
+
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);
 		if (fRange == null)
@@ -204,34 +171,30 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// if we are rigth AT (cursor before) the range, we want to contribute
 		// to its parent
 		if (fRange instanceof IDocumentAttributeNode) {
-			if (((IDocumentAttributeNode)fRange).getNameOffset() == offset)
-				fRange = ((IDocumentAttributeNode)fRange).getEnclosingElement();
+			if (((IDocumentAttributeNode) fRange).getNameOffset() == offset)
+				fRange = ((IDocumentAttributeNode) fRange).getEnclosingElement();
 		} else if (fRange instanceof IDocumentElementNode) {
-			if (((IDocumentElementNode)fRange).getOffset() == offset)
-				fRange = ((IDocumentElementNode)fRange).getParentNode();
+			if (((IDocumentElementNode) fRange).getOffset() == offset)
+				fRange = ((IDocumentElementNode) fRange).getParentNode();
 		} else if (fRange instanceof IDocumentTextNode) {
-			if (((IDocumentTextNode)fRange).getOffset() == offset)
-				fRange = ((IDocumentTextNode)fRange).getEnclosingElement();
+			if (((IDocumentTextNode) fRange).getOffset() == offset)
+				fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
 		}
 	}
 
-	private ICompletionProposal[] computeCATextProposal(IDocument doc,
-			int offset, XMLContentAssistText caText) {
+	private ICompletionProposal[] computeCATextProposal(IDocument doc, int offset, XMLContentAssistText caText) {
 		fRange = fSourcePage.getRangeElement(offset, true);
-		if ((fRange != null) && 
-				(fRange instanceof IDocumentTextNode)) {
+		if ((fRange != null) && (fRange instanceof IDocumentTextNode)) {
 			// We have a text node.
 			// Get its parent element
-			fRange = ((IDocumentTextNode)fRange).getEnclosingElement();
+			fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
 		}
-		if ((fRange != null) && 
-				(fRange instanceof IDocumentElementNode)) {
-			return computeAddChildProposal((IDocumentElementNode)fRange, 
-					caText.getStartOffset(), doc, caText.getText());
+		if ((fRange != null) && (fRange instanceof IDocumentElementNode)) {
+			return computeAddChildProposal((IDocumentElementNode) fRange, caText.getStartOffset(), doc, caText.getText());
 		}
 		return null;
 	}
-	
+
 	private ICompletionProposal[] computeCompletionProposal(IDocumentAttributeNode attr, int offset, IDocument doc) {
 		if (offset < attr.getValueOffset())
 			return null;
@@ -242,17 +205,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 //		String element = guess[0];
 //		String attribute = guess[1];
 		String attrValue = guess[2];
-		
+
 		IPluginObject obj = XMLUtil.getTopLevelParent(attr);
 		if (obj instanceof IPluginExtension) {
-			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
-					offset >= attr.getValueOffset()) {
+			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && offset >= attr.getValueOffset()) {
 				return computeExtPointAttrProposals(attr, offset, attrValue);
 			}
-			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension)obj).getPoint());
+			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension) obj).getPoint());
 			if (sAttr == null)
 				return null;
-			
+
 			if (sAttr.getKind() == IMetaAttribute.JAVA) {
 				IResource resource = obj.getModel().getUnderlyingResource();
 				if (resource == null)
@@ -260,9 +222,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				// Revisit: NEW CODE HERE
 				ArrayList list = new ArrayList();
 				ICompletionProposal[] proposals = null;
-				
-				generateTypePackageProposals(attrValue, resource.getProject(), 
-						list, offset - attrValue.length(), IJavaSearchConstants.CLASS_AND_INTERFACE);
+
+				generateTypePackageProposals(attrValue, resource.getProject(), list, offset - attrValue.length(), IJavaSearchConstants.CLASS_AND_INTERFACE);
 
 				if ((list != null) && (list.size() != 0)) {
 					// Convert the results array list into an array of completion
@@ -274,7 +235,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				return null;
 			} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
 				// provide proposals with all resources in current plugin?
-				
+
 			} else { // we have an IMetaAttribute.STRING kind
 				if (sAttr.getType() == null)
 					return null;
@@ -288,39 +249,35 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					Object[] restrictions = sRestr.getChildren();
 					for (int i = 0; i < restrictions.length; i++)
 						if (restrictions[i] instanceof ISchemaObject)
-							objs.add(new VirtualSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_ATTRIBUTE_VALUE));
+							objs.add(new VirtualSchemaObject(((ISchemaObject) restrictions[i]).getName(), null, F_ATTRIBUTE_VALUE));
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
 		} else if (obj instanceof IPluginExtensionPoint) {
 			if (attr.getAttributeValue().equals(IPluginExtensionPoint.P_SCHEMA)) {
 				// provide proposals with all schama files in current plugin?
-				
+
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param attribute
 	 * @param offset
 	 * @param currentAttributeValue
 	 * @return
 	 */
-	private ICompletionProposal[] computeExtPointAttrProposals(
-			IDocumentAttributeNode attribute, int offset, String currentAttributeValue) {
+	private ICompletionProposal[] computeExtPointAttrProposals(IDocumentAttributeNode attribute, int offset, String currentAttributeValue) {
 		// Get all the applicable extension points
-		ArrayList allExtensionPoints = 
-			getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+		ArrayList allExtensionPoints = getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
 		// Ensure we found extension points
-		if ((allExtensionPoints == null) ||
-				(allExtensionPoints.size() == 0)) {
+		if ((allExtensionPoints == null) || (allExtensionPoints.size() == 0)) {
 			return null;
 		}
 		// If there is no current attribute value, then the applicable extension
 		// points do not need to be filtered.  Return the list as is
-		if ((currentAttributeValue == null) || 
-				(currentAttributeValue.length() == 0)) {
+		if ((currentAttributeValue == null) || (currentAttributeValue.length() == 0)) {
 			return convertListToProposal(allExtensionPoints, attribute, offset);
 		}
 		// Create the filtered proposal list
@@ -331,45 +288,31 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Convert into a digestable list of proposals
 		return convertListToProposal(filteredProposalList, attribute, offset);
 	}
-	
+
 	/**
 	 * @param node
 	 * @param offset
 	 * @param filter
 	 * @return
 	 */
-	private ICompletionProposal[] computeRootNodeProposals(
-			IDocumentElementNode node, int offset, String filter) {
+	private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node, int offset, String filter) {
 		// Create the filtered proposal list
 		ArrayList filteredProposalList = new ArrayList();
 		// Add extension to the list
-		addToList(
-				filteredProposalList, 
-				filter, 
-				new VirtualSchemaObject(F_STR_EXT, 
-						PDEUIMessages.XMLContentAssistProcessor_extensions, 
-						F_EXTENSION));
+		addToList(filteredProposalList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EXTENSION));
 		// Add extension point to the list
-		addToList(
-				filteredProposalList, 
-				filter, 
-				new VirtualSchemaObject(F_STR_EXT_PT, 
-						PDEUIMessages.XMLContentAssistProcessor_extensionPoints, 
-						F_EXTENSION_POINT));
+		addToList(filteredProposalList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EXTENSION_POINT));
 		// Get all avaliable extensions with point attribute values
-		ArrayList allExtensionPoints = 
-			getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
+		ArrayList allExtensionPoints = getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
 		// Ensure we found extension points
-		if ((allExtensionPoints == null) ||
-				(allExtensionPoints.size() == 0)) {
+		if ((allExtensionPoints == null) || (allExtensionPoints.size() == 0)) {
 			// Return the current proposal list without extension points
 			return convertListToProposal(filteredProposalList, node, offset);
 		}
 		// If there is no current value, then the applicable extension
 		// points do not need to be filtered.  Merge the list as is with the
 		// existing proposals
-		if ((filter == null) || 
-				(filter.length() == 0)) {
+		if ((filter == null) || (filter.length() == 0)) {
 			filteredProposalList.addAll(allExtensionPoints);
 			return convertListToProposal(filteredProposalList, node, offset);
 		}
@@ -377,16 +320,14 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		filterExtPointAttrProposals(filteredProposalList, allExtensionPoints, filter);
 		// Convert into a digestable list of proposals
 		return convertListToProposal(filteredProposalList, node, offset);
-	}	
-	
+	}
+
 	/**
 	 * @param filteredProposalList - Must not be NULL
 	 * @param allExtensionPoints - Must not be NULL
 	 * @param filter - Must not be NULL
 	 */
-	private void filterExtPointAttrProposals(
-			ArrayList filteredProposalList, ArrayList allExtensionPoints,
-			String filter) {
+	private void filterExtPointAttrProposals(ArrayList filteredProposalList, ArrayList allExtensionPoints, String filter) {
 		// Create a regex pattern out of the current attribute value
 		// Ignore case
 		String patternString = "(?i)" + filter; //$NON-NLS-1$
@@ -397,7 +338,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		Iterator iterator = allExtensionPoints.iterator();
 		while (iterator.hasNext()) {
 			// Get the schema object
-			ISchemaObject schemaObject = (ISchemaObject)iterator.next();
+			ISchemaObject schemaObject = (ISchemaObject) iterator.next();
 			// Ensure the schema object is defined
 			if (schemaObject == null) {
 				continue;
@@ -411,36 +352,36 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			}
 		}
 	}
-	
+
 	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, ArrayList validValues) {
 		if (validValues == null)
 			return null;
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < validValues.size(); i++)
-			addToList(list, currValue, (ISchemaObject)validValues.get(i));
-		
+			addToList(list, currValue, (ISchemaObject) validValues.get(i));
+
 		return convertListToProposal(list, attr, offset);
 	}
 
 	private ICompletionProposal[] computeCompletionProposal(IDocumentElementNode node, int offset, IDocument doc) {
 		int prop_type = determineAssistType(node, doc, offset);
 		switch (prop_type) {
-		case F_ADD_ATTRIB:
-			return computeAddAttributeProposal(F_INFER_BY_OBJECT, node, offset, doc, null, node.getXMLTagName());
-		case F_OPEN_TAG:
-			return computeOpenTagProposal(node, offset, doc);
-		case F_ADD_CHILD:
-			return computeAddChildProposal(node, offset, doc, null);
+			case F_ADD_ATTRIB :
+				return computeAddAttributeProposal(F_INFER_BY_OBJECT, node, offset, doc, null, node.getXMLTagName());
+			case F_OPEN_TAG :
+				return computeOpenTagProposal(node, offset, doc);
+			case F_ADD_CHILD :
+				return computeAddChildProposal(node, offset, doc, null);
 		}
 		return null;
 	}
-	
+
 	private int determineAssistType(IDocumentElementNode node, IDocument doc, int offset) {
 		int len = node.getLength();
 		int off = node.getOffset();
 		if (len == -1 || off == -1)
 			return F_NO_ASSIST;
-		
+
 		offset = offset - off; // look locally
 		if (offset > node.getXMLTagName().length() + 1) {
 			try {
@@ -448,7 +389,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				int ind = eleValue.indexOf('>');
 				if (ind > 0 && eleValue.charAt(ind - 1) == '/')
 					ind -= 1;
-				if (offset <= ind) { 
+				if (offset <= ind) {
 					if (canInsertAttrib(eleValue, offset))
 						return F_ADD_ATTRIB;
 					return F_NO_ASSIST;
@@ -461,39 +402,35 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			} catch (BadLocationException e) {
 			}
 		}
-		return F_NO_ASSIST;		
+		return F_NO_ASSIST;
 	}
-	
+
 	private boolean canInsertAttrib(String eleValue, int offset) {
 		// character before offset must be whitespace
 		// character on offset must be whitespace, '/' or '>'
 		char c = eleValue.charAt(offset);
-		return offset - 1 >= 0 && Character.isWhitespace(eleValue.charAt(offset - 1)) && 
-					(Character.isWhitespace(c) || c == '/' || c == '>');
+		return offset - 1 >= 0 && Character.isWhitespace(eleValue.charAt(offset - 1)) && (Character.isWhitespace(c) || c == '/' || c == '>');
 	}
-	
+
 	private ICompletionProposal[] computeAddChildProposal(IDocumentElementNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
-			return computeRootNodeProposals(node, offset, filter);	
+			return computeRootNodeProposals(node, offset, filter);
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
 			IPluginObject obj = XMLUtil.getTopLevelParent(node);
 			if (obj instanceof IPluginExtension) {
-				ISchemaElement sElement = XMLUtil.getSchemaElement(node, 
-						((IPluginExtension)obj).getPoint());
-				if ((sElement != null) &&
-						(sElement.getType() instanceof ISchemaComplexType)) {
+				ISchemaElement sElement = XMLUtil.getSchemaElement(node, ((IPluginExtension) obj).getPoint());
+				if ((sElement != null) && (sElement.getType() instanceof ISchemaComplexType)) {
 					// We have a schema complex type.  Either the element has attributes
 					// or the element has children.					
 					// Generate the list of element proposals
-					TreeSet elementSet = XMLElementProposalComputer
-							.computeElementProposal(sElement, node);
+					TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(sElement, node);
 					// Filter the list of element proposals
 					Iterator iterator = elementSet.iterator();
 					while (iterator.hasNext()) {
-						addToList(propList, filter, (ISchemaObject)iterator.next());
+						addToList(propList, filter, (ISchemaObject) iterator.next());
 					}
 				} else {
 					return null;
@@ -502,16 +439,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 		return convertListToProposal(propList, node, offset);
 	}
-	
+
 	private ICompletionProposal[] computeOpenTagProposal(IDocumentElementNode node, int offset, IDocument doc) {
 		IPluginObject obj = XMLUtil.getTopLevelParent(node);
 		if (obj instanceof IPluginExtension) {
-			ISchemaElement sElem = XMLUtil.getSchemaElement(node, ((IPluginExtension)obj).getPoint());
+			ISchemaElement sElem = XMLUtil.getSchemaElement(node, ((IPluginExtension) obj).getPoint());
 			if (sElem == null)
 				return null;
-			ISchemaCompositor comp = ((ISchemaComplexType)sElem.getType()).getCompositor();
+			ISchemaCompositor comp = ((ISchemaComplexType) sElem.getType()).getCompositor();
 			if (comp != null)
-				return new ICompletionProposal[] { new XMLCompletionProposal(node, null, offset, this) };
+				return new ICompletionProposal[] {new XMLCompletionProposal(node, null, offset, this)};
 		}
 		return null;
 	}
@@ -521,28 +458,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (nodeName == null && node != null)
 			nodeName = node.getXMLTagName();
 		if (type == F_EXTENSION || node instanceof IPluginExtension) {
-			ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ?
-					((IPluginExtension)node).getPoint() : null);
-			ISchemaObject[] sAttrs = sElem != null ?
-					sElem.getAttributes() :
-					new ISchemaObject[] {
-						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_ATTRIBUTE),
-						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_ATTRIBUTE),
-						new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_ATTRIBUTE)
-					};
+			ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ? ((IPluginExtension) node).getPoint() : null);
+			ISchemaObject[] sAttrs = sElem != null ? sElem.getAttributes() : new ISchemaObject[] {new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_ATTRIBUTE), new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_ATTRIBUTE), new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_ATTRIBUTE)};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else if (type == F_EXTENSION_POINT || node instanceof IPluginExtensionPoint) {
-			ISchemaObject[] sAttrs = new ISchemaObject[] {
-						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_ATTRIBUTE),
-						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_ATTRIBUTE),
-						new VirtualSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_ATTRIBUTE)
-					};
+			ISchemaObject[] sAttrs = new ISchemaObject[] {new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_ATTRIBUTE), new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_ATTRIBUTE), new VirtualSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_ATTRIBUTE)};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else {
 			IPluginObject obj = XMLUtil.getTopLevelParent(node);
 			if (obj instanceof IPluginExtension) {
-				ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ?
-						((IPluginExtension)obj).getPoint() : null);
+				ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ? ((IPluginExtension) obj).getPoint() : null);
 				ISchemaObject[] sAttrs = sElem != null ? sElem.getAttributes() : null;
 				return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 			}
@@ -561,41 +486,41 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				list.add(object);
 		}
 	}
-	
+
 	private ICompletionProposal[] computeBrokenModelProposal(IDocumentElementNode parent, int offset, IDocument doc) {
 		if (parent == null)
 			return null;
-		
+
 		int[] offArr = new int[] {offset, offset, offset};
 		String[] guess = guessContentRequest(offArr, doc, true);
 		if (guess == null)
 			return null;
-		
+
 		int elRepOffset = offArr[0];
 		int atRepOffset = offArr[1];
 		int atValRepOffest = offArr[2];
 		String element = guess[0];
 		String attr = guess[1];
 		String attVal = guess[2];
-		
+
 		IPluginObject obj = XMLUtil.getTopLevelParent(parent);
 		if (obj instanceof IPluginExtension) {
-			String point = ((IPluginExtension)obj).getPoint();
+			String point = ((IPluginExtension) obj).getPoint();
 			if (attr == null)
 				// search for element proposals
 				return computeAddChildProposal(parent, elRepOffset, doc, element);
-			
+
 			ISchemaElement sEle = XMLUtil.getSchemaElement(parent, point);
 			if (sEle == null)
 				return null;
 			sEle = sEle.getSchema().findElement(element);
 			if (sEle == null)
 				return null;
-			
+
 			if (attr.indexOf('=') != -1)
 				// search for attribute content proposals
 				return computeBrokenModelAttributeContentProposal(parent, atValRepOffest, element, attr, attVal);
-			
+
 			// search for attribute proposals
 			return computeAttributeProposals(sEle.getAttributes(), null, atRepOffset, attr, element);
 		} else if (parent instanceof IPluginBase) {
@@ -608,14 +533,14 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 		return null;
 	}
-	
+
 	private ICompletionProposal[] computeBrokenModelAttributeContentProposal(IDocumentElementNode parent, int offset, String element, String attr, String filter) {
 		// TODO use computeCompletionProposal(IDocumentAttributeNode attr, int offset) if possible
 		// or refactor above to be used here
 		// CURRENTLY: attribute completion only works in non-broken models
 		return null;
 	}
-	
+
 	private String[] guessContentRequest(int[] offset, IDocument doc, boolean brokenModel) {
 		StringBuffer nodeBuffer = new StringBuffer();
 		StringBuffer attrBuffer = new StringBuffer();
@@ -656,35 +581,39 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					nodeBuffer.insert(0, c);
 				}
 			}
-		} catch (BadLocationException e) {}
+		} catch (BadLocationException e) {
+		}
 		if (node == null)
 			return null;
-		
+
 		if (quoteCount % 2 == 0)
 			attVal = null;
 		else if (brokenModel)
 			return null; // open quotes - don't provide assist
-			
+
 		return new String[] {node, attr, attVal};
 	}
-	
-	protected IBaseModel getModel()
-		{ return fSourcePage.getInputContext().getModel(); }
+
+	protected IBaseModel getModel() {
+		return fSourcePage.getInputContext().getModel();
+	}
+
 	protected ITextSelection getCurrentSelection() {
 		ISelection sel = fSourcePage.getSelectionProvider().getSelection();
 		if (sel instanceof ITextSelection)
-			return (ITextSelection)sel;
+			return (ITextSelection) sel;
 		return null;
 	}
+
 	protected void flushDocument() {
 		fSourcePage.getInputContext().flushEditorInput();
 	}
-	
+
 	private ICompletionProposal[] computeAttributeProposals(ISchemaObject[] sAttrs, IDocumentElementNode node, int offset, String filter, String parentName) {
 		if (sAttrs == null || sAttrs.length == 0)
 			return null;
 		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];
-		
+
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sAttrs.length; i++) {
 			int k; // if we break early we wont add
@@ -704,13 +633,13 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (proposals.length == 0)
 			return null;
 		for (int i = 0; i < proposals.length; i++)
-			proposals[i] = new XMLCompletionProposal(range, (ISchemaObject)list.get(i), offset, this);
+			proposals[i] = new XMLCompletionProposal(range, (ISchemaObject) list.get(i), offset, this);
 		return proposals;
 	}
 
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fRange = null;
-		
+
 		// Reset cached internal and external extension point proposals
 		fAllExtPoints = null;
 		// Reset cached internal point proposals
@@ -718,7 +647,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Assumption is that the users workspace can change; but, not the
 		// platform including all the external plugins
 		fInternalExtPoints = null;
-		
+
 		fDocLen = -1;
 	}
 
@@ -752,20 +681,18 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// by the plugin currently being edited.  May want to modify this
 		// behaviour in the future.
 		// Add all external extension point proposals to the list
-		fAllExtPoints = 
-			(ArrayList)getExternalExtensionPoints(model, vSchemaType).clone();
+		fAllExtPoints = (ArrayList) getExternalExtensionPoints(model, vSchemaType).clone();
 		// Add all internal extension point proposals to the list
 		fAllExtPoints.addAll(getInternalExtensionPoints(model, vSchemaType));
-		
+
 		return fAllExtPoints;
 	}
-	
+
 	/**
 	 * @param model
 	 * @return
 	 */
-	private ArrayList getExternalExtensionPoints(IPluginModelBase model, 
-			int vSchemaType) {
+	private ArrayList getExternalExtensionPoints(IPluginModelBase model, int vSchemaType) {
 		// Return the previous external extension points if defined
 		if (fExternalExtPoints != null) {
 			updateExternalExtPointTypes(vSchemaType);
@@ -781,27 +708,22 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			// editing which defines internal extension points.
 			// We don't want to cache internal extension points because the
 			// workspace can change.
-			if (plugins[i].getPluginBase().getId().equals(
-					model.getPluginBase().getId())) {
+			if (plugins[i].getPluginBase().getId().equals(model.getPluginBase().getId())) {
 				// Skip this plugin
 				continue;
 			}
 			// Get all extension points defined by this plugin
-			IPluginExtensionPoint[] points = 
-				plugins[i].getPluginBase().getExtensionPoints();
+			IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
 			// Process each extension point
 			for (int j = 0; j < points.length; j++) {
-				VirtualSchemaObject vObject = new VirtualSchemaObject(
-						IdUtil.getFullId(points[j], model),
-						points[j], 
-						vSchemaType);
+				VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(points[j], model), points[j], vSchemaType);
 				// Add the proposal to the list
 				fExternalExtPoints.add(vObject);
 			}
 		}
 		return fExternalExtPoints;
 	}
-	
+
 	/**
 	 * Handles edge case.
 	 * External extension points are cached.
@@ -817,8 +739,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return;
 		}
 		// Get the first proposal
-		VirtualSchemaObject vObject = 
-			(VirtualSchemaObject)fExternalExtPoints.get(0);
+		VirtualSchemaObject vObject = (VirtualSchemaObject) fExternalExtPoints.get(0);
 		// If the first proposals type is the same as the new type, then we
 		// do not have to do the update.  That is because all the proposals
 		// have the same type. 
@@ -828,16 +749,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Update all the proposals with the new type
 		Iterator iterator = fExternalExtPoints.iterator();
 		while (iterator.hasNext()) {
-			((VirtualSchemaObject)iterator.next()).setVType(newVType);
+			((VirtualSchemaObject) iterator.next()).setVType(newVType);
 		}
 	}
-	
+
 	/**
 	 * @param model
 	 * @return
 	 */
-	private ArrayList getInternalExtensionPoints(IPluginModelBase model, 
-			int vSchemaType) {
+	private ArrayList getInternalExtensionPoints(IPluginModelBase model, int vSchemaType) {
 		// Return the previous internal extension points if defined
 		if (fInternalExtPoints != null) {
 			// Realistically, this line should never be hit
@@ -845,20 +765,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 		fInternalExtPoints = new ArrayList();
 		// Get all extension points defined by this plugin
-		IPluginExtensionPoint[] points = 
-			model.getPluginBase().getExtensionPoints();
+		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 		// Process each extension point
 		for (int j = 0; j < points.length; j++) {
-			VirtualSchemaObject vObject = new VirtualSchemaObject(
-					IdUtil.getFullId(points[j], model), 
-					points[j], 
-					vSchemaType);
+			VirtualSchemaObject vObject = new VirtualSchemaObject(IdUtil.getFullId(points[j], model), points[j], vSchemaType);
 			// Add the proposal to the list
 			fInternalExtPoints.add(vObject);
 		}
 		return fInternalExtPoints;
 	}
-	
+
 	/**
 	 * Returns a BundlePluginModel which has a getId() method that works.
 	 * getModel() method returns a PluginModel whose getId() method does not
@@ -870,44 +786,44 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if ((formEditor instanceof PDEFormEditor) == false) {
 			return null;
 		}
-		IBaseModel bModel = ((PDEFormEditor)formEditor).getAggregateModel();
+		IBaseModel bModel = ((PDEFormEditor) formEditor).getAggregateModel();
 		if ((bModel instanceof IPluginModelBase) == false) {
 			return null;
 		}
-		return (IPluginModelBase)bModel;
+		return (IPluginModelBase) bModel;
 	}
-	
+
 	public Image getImage(int type) {
 		if (fImages[type] == null) {
-			switch(type) {
-			case F_EXTENSION_POINT:
-			case F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-				return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
-			case F_EXTENSION_POINT_AND_VALUE:
-			case F_EXTENSION:
-				return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
-			case F_ELEMENT:
-			case F_CLOSE_TAG:
-				return fImages[type] = PDEPluginImages.DESC_XML_ELEMENT_OBJ.createImage();
-			case F_ATTRIBUTE:
-			case F_ATTRIBUTE_VALUE:
-				return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
+			switch (type) {
+				case F_EXTENSION_POINT :
+				case F_EXTENSION_ATTRIBUTE_POINT_VALUE :
+					return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
+				case F_EXTENSION_POINT_AND_VALUE :
+				case F_EXTENSION :
+					return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
+				case F_ELEMENT :
+				case F_CLOSE_TAG :
+					return fImages[type] = PDEPluginImages.DESC_XML_ELEMENT_OBJ.createImage();
+				case F_ATTRIBUTE :
+				case F_ATTRIBUTE_VALUE :
+					return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
 			}
 		}
 		return fImages[type];
 	}
-	
+
 	public void dispose() {
 		for (int i = 0; i < fImages.length; i++)
 			if (fImages[i] != null && !fImages[i].isDisposed())
 				fImages[i].dispose();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public PDESourcePage getSourcePage() {
 		return fSourcePage;
 	}
-	
+
 }

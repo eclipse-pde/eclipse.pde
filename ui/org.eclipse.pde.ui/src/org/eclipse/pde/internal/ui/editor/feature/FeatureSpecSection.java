@@ -12,43 +12,28 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.*;
 
 public class FeatureSpecSection extends PDESection {
 	private FormEntry fIdText;
@@ -111,8 +96,7 @@ public class FeatureSpecSection extends PDESection {
 				URL siteUrl = new URL(value);
 				if (updateElement == null) {
 					// element needed, create it
-					updateElement = model.getFactory().createURLElement(
-							urlElement, IFeatureURLElement.UPDATE);
+					updateElement = model.getFactory().createURLElement(urlElement, IFeatureURLElement.UPDATE);
 					updateElement.setURL(siteUrl);
 					urlElement.setUpdate(updateElement);
 				} else {
@@ -122,8 +106,7 @@ public class FeatureSpecSection extends PDESection {
 				if (updateElement == null) {
 					// do nothing
 				} else {
-					if (updateElement.getLabel() != null
-							&& updateElement.getLabel().length() > 0) {
+					if (updateElement.getLabel() != null && updateElement.getLabel().length() > 0) {
 						updateElement.setURL(null);
 					} else {
 						// element not needed, remove it
@@ -156,8 +139,7 @@ public class FeatureSpecSection extends PDESection {
 			if (value.length() > 0) {
 				if (updateElement == null) {
 					// element needed, create it
-					updateElement = model.getFactory().createURLElement(
-							urlElement, IFeatureURLElement.UPDATE);
+					updateElement = model.getFactory().createURLElement(urlElement, IFeatureURLElement.UPDATE);
 					updateElement.setLabel(value);
 					// URL not set, so element will be flagged during validation
 					urlElement.setUpdate(updateElement);
@@ -196,12 +178,11 @@ public class FeatureSpecSection extends PDESection {
 			}
 		}
 		// need to recreate the import element
-		FeatureImport fimport = (FeatureImport) model.getFactory()
-				.createImport();
+		FeatureImport fimport = (FeatureImport) model.getFactory().createImport();
 		try {
 			fimport.setType(IFeatureImport.FEATURE);
 			fimport.setPatch(true);
-			feature.addImports(new IFeatureImport[] { fimport });
+			feature.addImports(new IFeatureImport[] {fimport});
 		} catch (CoreException ce) {
 			PDEPlugin.logException(ce);
 		}
@@ -213,23 +194,21 @@ public class FeatureSpecSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		TableWrapData twd = new TableWrapData();
 		twd.grabHorizontal = true;
 		section.setLayoutData(twd);
-		
+
 		fPatch = ((FeatureEditor) getPage().getEditor()).isPatchEditor();
 
 		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
-		if(isPatch()){
-			getSection().setDescription(
-				PDEUIMessages.FeatureEditor_SpecSection_desc_patch);
-		}else{
-			getSection().setDescription(
-					PDEUIMessages.FeatureEditor_SpecSection_desc);
+		if (isPatch()) {
+			getSection().setDescription(PDEUIMessages.FeatureEditor_SpecSection_desc_patch);
+		} else {
+			getSection().setDescription(PDEUIMessages.FeatureEditor_SpecSection_desc);
 		}
 
 		Composite container = toolkit.createComposite(section);
@@ -265,8 +244,7 @@ public class FeatureSpecSection extends PDESection {
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
-				getPage().getManagedForm().getForm().setText(
-						model.getResourceString(feature.getLabel()));
+				getPage().getManagedForm().getForm().setText(model.getResourceString(feature.getLabel()));
 				((FeatureEditor) getPage().getEditor()).updateTitle();
 			}
 		});
@@ -275,16 +253,14 @@ public class FeatureSpecSection extends PDESection {
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
-					feature
-							.setProviderName((value.length() > 0 ? value : null));
+					feature.setProviderName((value.length() > 0 ? value : null));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
 		});
 
-		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_plugin, PDEUIMessages.GeneralInfoSection_browse, 
-				isEditable());
+		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_plugin, PDEUIMessages.GeneralInfoSection_browse, isEditable());
 
 		fPluginText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
@@ -295,6 +271,7 @@ public class FeatureSpecSection extends PDESection {
 					PDEPlugin.logException(e);
 				}
 			}
+
 			public void linkActivated(HyperlinkEvent e) {
 				String plugin = fPluginText.getValue();
 				if (PluginRegistry.findModel(plugin) == null) {
@@ -302,13 +279,14 @@ public class FeatureSpecSection extends PDESection {
 				}
 				ManifestEditor.openPluginEditor(fPluginText.getValue());
 			}
+
 			public void browseButtonSelected(FormEntry entry) {
 				handleOpenDialog();
 			}
+
 			private void createFeaturePlugin() {
 				NewPluginProjectWizard wizard = new NewPluginProjectWizard();
-				WizardDialog dialog = new WizardDialog(PDEPlugin
-						.getActiveWorkbenchShell(), wizard);
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 500);
 				if (dialog.open() == Window.OK) {
@@ -339,19 +317,17 @@ public class FeatureSpecSection extends PDESection {
 			});
 
 			fPatchedVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_patchedVersion, null, false);
-			fPatchedVersionText
-					.setFormEntryListener(new FormEntryAdapter(this) {
-						public void textValueChanged(FormEntry text) {
-							IFeatureImport patchImport = getPatchedFeature();
-							if (patchImport != null) {
-								if (verifySetVersion(patchImport, text
-										.getValue()) == false) {
-									warnBadVersionFormat(text.getValue());
-									text.setValue(patchImport.getVersion());
-								}
-							}
+			fPatchedVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+				public void textValueChanged(FormEntry text) {
+					IFeatureImport patchImport = getPatchedFeature();
+					if (patchImport != null) {
+						if (verifySetVersion(patchImport, text.getValue()) == false) {
+							warnBadVersionFormat(text.getValue());
+							text.setValue(patchImport.getVersion());
 						}
-					});
+					}
+				}
+			});
 
 		}
 
@@ -489,20 +465,15 @@ public class FeatureSpecSection extends PDESection {
 		IFeature feature = model.getFeature();
 		setIfDefined(fIdText, feature.getId());
 		setIfDefined(fTitleText, feature.getLabel());
-		getPage().getManagedForm().getForm().setText(
-				model.getResourceString(feature.getLabel()));
+		getPage().getManagedForm().getForm().setText(model.getResourceString(feature.getLabel()));
 		setIfDefined(fVersionText, feature.getVersion());
 		setIfDefined(fProviderText, feature.getProviderName());
 		setIfDefined(fPluginText, feature.getPlugin());
 		if (isPatch()) {
 			IFeatureImport featureImport = getPatchedFeature();
 			if (featureImport != null) {
-				fPatchedIdText.setValue(
-						featureImport.getId() != null ? featureImport.getId()
-								: "", true); //$NON-NLS-1$
-				fPatchedVersionText.setValue(
-						featureImport.getVersion() != null ? featureImport
-								.getVersion() : "", true); //$NON-NLS-1$
+				fPatchedIdText.setValue(featureImport.getId() != null ? featureImport.getId() : "", true); //$NON-NLS-1$
+				fPatchedVersionText.setValue(featureImport.getVersion() != null ? featureImport.getVersion() : "", true); //$NON-NLS-1$
 			} else {
 				fPatchedIdText.setValue("", true); //$NON-NLS-1$
 				fPatchedVersionText.setValue("", true); //$NON-NLS-1$
@@ -522,8 +493,7 @@ public class FeatureSpecSection extends PDESection {
 		if (featureUrl != null) {
 			IFeatureURLElement urlElement = featureUrl.getUpdate();
 			if (urlElement != null) {
-				updateSiteUrl = urlElement.getURL() != null ? urlElement
-						.getURL().toExternalForm() : null;
+				updateSiteUrl = urlElement.getURL() != null ? urlElement.getURL().toExternalForm() : null;
 			}
 		}
 		fUpdateSiteUrlText.setValue(updateSiteUrl != null ? updateSiteUrl : "", //$NON-NLS-1$
@@ -543,8 +513,7 @@ public class FeatureSpecSection extends PDESection {
 				updateSiteLabel = urlElement.getLabel();
 			}
 		}
-		fUpdateSiteNameText.setValue(updateSiteLabel != null ? updateSiteLabel
-				: "", true); //$NON-NLS-1$
+		fUpdateSiteNameText.setValue(updateSiteLabel != null ? updateSiteLabel : "", true); //$NON-NLS-1$
 	}
 
 	public void cancelEdit() {
@@ -567,8 +536,7 @@ public class FeatureSpecSection extends PDESection {
 	 */
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -577,6 +545,7 @@ public class FeatureSpecSection extends PDESection {
 		}
 		return false;
 	}
+
 	protected void handleOpenDialog() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getSection().getShell(), false, false);
 		dialog.create();

@@ -18,10 +18,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,18 +26,15 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PluginDetailsSection extends PDESection implements IFormPart,
-IPartSelectionListener {
+public class PluginDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
 	protected IFeaturePlugin fInput;
 
 	private FormEntry fNameText;
-	
+
 	private FormEntry fVersionText;
 
 	private FormEntry fdownloadSizeText;
@@ -52,12 +46,10 @@ IPartSelectionListener {
 	private boolean fBlockNotification;
 
 	public PluginDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.SiteEditor_PluginDetailsSection_title,
-				PDEUIMessages.SiteEditor_PluginDetailsSection_desc, SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_PluginDetailsSection_title, PDEUIMessages.SiteEditor_PluginDetailsSection_desc, SWT.NULL);
 	}
 
-	public PluginDetailsSection(PDEFormPage page, Composite parent,
-			String title, String desc, int toggleStyle) {
+	public PluginDetailsSection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -81,9 +73,8 @@ IPartSelectionListener {
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		section.setLayoutData(data);		
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		section.setLayoutData(data);
 
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -93,7 +84,7 @@ IPartSelectionListener {
 		limitTextWidth(fNameText);
 		fNameText.setEditable(false);
 		fNameText.getText().setEnabled(false);
-		
+
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
@@ -214,12 +205,8 @@ IPartSelectionListener {
 		if (fInput != null) {
 			fNameText.setValue(fInput.getLabel());
 			fVersionText.setValue(fInput.getVersion(), true);
-			fdownloadSizeText
-			.setValue(
-					fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
-			fInstallSizeText
-			.setValue(
-					fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
+			fdownloadSizeText.setValue(fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
+			fInstallSizeText.setValue(fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
 			fBlockNotification = true;
 			fUnpackButton.setSelection(fInput.isUnpack());
 			fBlockNotification = false;
@@ -227,8 +214,8 @@ IPartSelectionListener {
 		} else {
 			fNameText.setValue(null);
 			fVersionText.setValue(null, true);
-			fdownloadSizeText.setValue(null, true); 
-			fInstallSizeText.setValue(null, true); 
+			fdownloadSizeText.setValue(null, true);
+			fInstallSizeText.setValue(null, true);
 			fBlockNotification = true;
 			fUnpackButton.setSelection(true);
 			fBlockNotification = false;

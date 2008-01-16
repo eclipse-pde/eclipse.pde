@@ -28,18 +28,18 @@ public class ManifestTextHover extends PDETextHover {
 
 	private PDESourcePage fSourcePage;
 	private IJavaProject fJP;
-	
+
 	public ManifestTextHover(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
-		IProject project = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
+		IProject project = ((PDEFormEditor) fSourcePage.getEditor()).getCommonProject();
 		fJP = JavaCore.create(project);
 	}
-	
+
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
 		IDocumentRange range = fSourcePage.getRangeElement(offset, false);
 		if (range instanceof IManifestHeader) {
-			IManifestHeader header = (IManifestHeader)range;
+			IManifestHeader header = (IManifestHeader) range;
 			String headerName = header.getName();
 			if (offset >= header.getOffset() + headerName.length())
 				return checkForTranslatable(header);
@@ -53,11 +53,10 @@ public class ManifestTextHover extends PDETextHover {
 		String name = header.getName();
 		String value = header.getValue();
 		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			if (name.equals(ICoreConstants.TRANSLATABLE_HEADERS[i]) &&
-					value.startsWith("%")) { //$NON-NLS-1$
-				IBaseModel model = ((PDEFormEditor)fSourcePage.getEditor()).getAggregateModel();
+			if (name.equals(ICoreConstants.TRANSLATABLE_HEADERS[i]) && value.startsWith("%")) { //$NON-NLS-1$
+				IBaseModel model = ((PDEFormEditor) fSourcePage.getEditor()).getAggregateModel();
 				if (model instanceof IModel)
-					return ((IModel)model).getResourceString(value);
+					return ((IModel) model).getResourceString(value);
 			}
 		}
 		return null;

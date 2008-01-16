@@ -60,5 +60,5 @@ public class LibraryPluginFieldData extends PluginFieldData {
 	public IPluginModelBase[] getPluginsToUpdate() {
 		return fPluginsToUpdate;
 	}
-	
+
 }

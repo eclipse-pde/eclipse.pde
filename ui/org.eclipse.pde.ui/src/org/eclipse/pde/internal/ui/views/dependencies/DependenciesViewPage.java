@@ -11,49 +11,23 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
@@ -66,9 +40,8 @@ public abstract class DependenciesViewPage extends Page {
 
 		public void update(Object object) {
 			setEnabled(object != null);
-			String name = ((LabelProvider) fViewer.getLabelProvider())
-					.getText(object);
-			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name)); 
+			String name = ((LabelProvider) fViewer.getLabelProvider()).getText(object);
+			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name));
 		}
 	}
 
@@ -77,7 +50,7 @@ public abstract class DependenciesViewPage extends Page {
 	private FocusOnSelectionAction fFocusOnSelectionAction;
 
 	private Action fOpenAction;
-	
+
 	protected PDERefactoringAction fRefactorAction;
 
 	private IPropertyChangeListener fPropertyListener;
@@ -85,32 +58,32 @@ public abstract class DependenciesViewPage extends Page {
 	private DependenciesView fView;
 
 	protected StructuredViewer fViewer;
-	
+
 	protected IContentProvider fContentProvider;
-	
+
 	private Action fHideFragmentFilterAction;
-	
+
 	protected Action fHideOptionalFilterAction;
-	
+
 	private FragmentFilter fHideFragmentFilter = new FragmentFilter();
-	
+
 	private static final String HIDE_FRAGMENTS = "hideFrags"; //$NON-NLS-1$
-	
+
 	private static final String HIDE_OPTIONAL = "hideOptional"; //$NON-NLS-1$
-	
+
 	class FragmentFilter extends ViewerFilter {
-		
+
 		public boolean select(Viewer v, Object parent, Object element) {
 			BundleDescription desc = null;
 			if (element instanceof BundleSpecification) {
-				BaseDescription supplier = ((BundleSpecification)element).getSupplier();
+				BaseDescription supplier = ((BundleSpecification) element).getSupplier();
 				if (supplier instanceof BundleDescription)
 					desc = (BundleDescription) supplier;
 			} else if (element instanceof BundleDescription) {
-				desc = (BundleDescription)element;
+				desc = (BundleDescription) element;
 			} else if (element instanceof ImportPackageSpecification) {
-				BaseDescription export = ((ImportPackageSpecification)element).getSupplier();
-				desc = ((ExportPackageDescription)export).getExporter();
+				BaseDescription export = ((ImportPackageSpecification) element).getSupplier();
+				desc = ((ExportPackageDescription) export).getExporter();
 			}
 			if (desc != null) {
 				return desc.getHost() == null;
@@ -143,22 +116,19 @@ public abstract class DependenciesViewPage extends Page {
 	public void createControl(Composite parent) {
 		fViewer = createViewer(parent);
 		fViewer.setComparator(DependenciesViewComparator.getViewerComparator());
-		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
-				fPropertyListener);
+		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 		getSite().setSelectionProvider(fViewer);
 	}
 
 	protected abstract StructuredViewer createViewer(Composite parent);
 
 	public void dispose() {
-		PDEPlugin.getDefault().getPreferenceStore()
-				.removePropertyChangeListener(fPropertyListener);
+		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 		super.dispose();
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (IStructuredSelection) fViewer
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 
 		if (selection.size() == 1) {
 			manager.add(fOpenAction);
@@ -175,37 +145,35 @@ public abstract class DependenciesViewPage extends Page {
 		if (selection.size() == 1 && !fView.isShowingCallers()) {
 			String id = null;
 			if (selectionElement instanceof BundleSpecification) {
-				id = ((BundleSpecification)selectionElement).getName();
+				id = ((BundleSpecification) selectionElement).getName();
 			} else if (selectionElement instanceof BundleDescription) {
-				id = ((BundleDescription)selectionElement).getSymbolicName();
+				id = ((BundleDescription) selectionElement).getSymbolicName();
 			}
 			// don't include find dependency extent for unresolved imports or bundles
 			if (id != null && PluginRegistry.findModel(id) != null) {
 				Object input = fViewer.getInput();
 				if (input instanceof IPluginBase)
-					input = ((IPluginBase)input).getModel();
+					input = ((IPluginBase) input).getModel();
 				if (input instanceof IPluginModelBase) {
-					IPluginModelBase base = (IPluginModelBase)input;
+					IPluginModelBase base = (IPluginModelBase) input;
 					IResource res = (base == null) ? null : base.getUnderlyingResource();
 					if (res != null)
-						manager.add(new DependencyExtentAction(res
-								.getProject(), id));
+						manager.add(new DependencyExtentAction(res.getProject(), id));
 				}
 			}
 		}
 		// Unused Dependencies Action, only for worskpace plug-ins
 		ISharedPluginModel model = null;
 		if (selectionElement instanceof BundleSpecification) {
-			model = PluginRegistry.findModel(((BundleSpecification)selectionElement).getName());
+			model = PluginRegistry.findModel(((BundleSpecification) selectionElement).getName());
 		} else if (selectionElement instanceof BundleDescription) {
-			model = PluginRegistry.findModel((BundleDescription)selectionElement);
+			model = PluginRegistry.findModel((BundleDescription) selectionElement);
 		} else if (selectionElement instanceof IPluginBase) {
 			// root
-			model = ((IPluginBase)selectionElement).getModel();
+			model = ((IPluginBase) selectionElement).getModel();
 		}
 		if (model != null && model.getUnderlyingResource() != null) {
-			manager.add(new UnusedDependenciesAction(
-					(IPluginModelBase) model, true));
+			manager.add(new UnusedDependenciesAction((IPluginModelBase) model, true));
 		}
 		if (enableRename(selection)) {
 			manager.add(new Separator());
@@ -235,12 +203,12 @@ public abstract class DependenciesViewPage extends Page {
 	protected IStructuredSelection getSelection() {
 		return (IStructuredSelection) fViewer.getSelection();
 	}
-	
+
 	protected void setSelection(IStructuredSelection selection) {
 		if (selection != null && !selection.isEmpty())
 			fViewer.setSelection(selection, true);
 	}
-	
+
 	/**
 	 * @return Returns the view.
 	 */
@@ -252,24 +220,23 @@ public abstract class DependenciesViewPage extends Page {
 		Object obj = getSelectedObject();
 		BundleDescription desc = null;
 		if (obj instanceof BundleSpecification) {
-			desc = (BundleDescription)((BundleSpecification)obj).getSupplier();
+			desc = (BundleDescription) ((BundleSpecification) obj).getSupplier();
 		} else if (obj instanceof BundleDescription) {
-			desc = (BundleDescription)obj;
-			
+			desc = (BundleDescription) obj;
+
 		} else if (obj instanceof IPluginBase) {
 			// root object
-			desc = ((IPluginModelBase)((IPluginBase)obj).getModel()).getBundleDescription();
+			desc = ((IPluginModelBase) ((IPluginBase) obj).getModel()).getBundleDescription();
 		} else if (obj instanceof ImportPackageSpecification) {
-			BaseDescription export = ((ImportPackageSpecification)obj).getSupplier();
-			desc = ((ExportPackageDescription)export).getExporter();
+			BaseDescription export = ((ImportPackageSpecification) obj).getSupplier();
+			desc = ((ExportPackageDescription) export).getExporter();
 		}
 		if (desc != null)
 			ManifestEditor.openPluginEditor(desc.getSymbolicName());
 	}
 
 	private void handleFocusOn() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(fViewer
-				.getControl().getShell(), true, false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(fViewer.getControl().getShell(), true, false);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			handleFocusOn(dialog.getFirstResult());
@@ -295,12 +262,12 @@ public abstract class DependenciesViewPage extends Page {
 		}
 		BundleDescription desc = null;
 		if (newFocus instanceof BundleSpecification) {
-			desc = (BundleDescription)((BundleSpecification)newFocus).getSupplier();
+			desc = (BundleDescription) ((BundleSpecification) newFocus).getSupplier();
 			if (desc == null)
 				fView.openTo(null);
 		}
 		if (newFocus instanceof BundleDescription) {
-			desc = (BundleDescription)newFocus;
+			desc = (BundleDescription) newFocus;
 		}
 		if (desc != null)
 			fView.openTo(PluginRegistry.findModel(desc.getSymbolicName()));
@@ -317,8 +284,7 @@ public abstract class DependenciesViewPage extends Page {
 		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 
-		getSite()
-				.registerContextMenu(fView.getSite().getId(), menuMgr, fViewer);
+		getSite().registerContextMenu(fView.getSite().getId(), menuMgr, fViewer);
 	}
 
 	private void hookDoubleClickAction() {
@@ -335,7 +301,7 @@ public abstract class DependenciesViewPage extends Page {
 				handleDoubleClick();
 			}
 		};
-		fOpenAction.setText(PDEUIMessages.DependenciesView_open); 
+		fOpenAction.setText(PDEUIMessages.DependenciesView_open);
 
 		fFocusOnSelectionAction = new FocusOnSelectionAction();
 
@@ -344,10 +310,10 @@ public abstract class DependenciesViewPage extends Page {
 				handleFocusOn();
 			}
 		};
-		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); 
-		
+		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn);
+
 		fRefactorAction = RefactoringActionFactory.createRefactorPluginIdAction();
-		
+
 		fHideFragmentFilterAction = new Action() {
 			public void run() {
 				boolean checked = fHideFragmentFilterAction.isChecked();
@@ -355,11 +321,11 @@ public abstract class DependenciesViewPage extends Page {
 					fViewer.removeFilter(fHideFragmentFilter);
 				else
 					fViewer.addFilter(fHideFragmentFilter);
-				getSettings().put(HIDE_FRAGMENTS, !checked); 
+				getSettings().put(HIDE_FRAGMENTS, !checked);
 			}
 		};
 		fHideFragmentFilterAction.setText(PDEUIMessages.DependenciesViewPage_showFragments);
-		
+
 		fHideOptionalFilterAction = new Action() {
 			public void run() {
 				boolean checked = isChecked();
@@ -369,9 +335,9 @@ public abstract class DependenciesViewPage extends Page {
 		};
 		fHideOptionalFilterAction.setText(PDEUIMessages.DependenciesViewPage_showOptional);
 	}
-	
+
 	protected abstract void handleShowOptional(boolean checked, boolean refreshIfNecessary);
-	
+
 	protected abstract boolean isShowingOptional();
 
 	/*
@@ -381,8 +347,7 @@ public abstract class DependenciesViewPage extends Page {
 	 *      org.eclipse.jface.action.IToolBarManager,
 	 *      org.eclipse.jface.action.IStatusLineManager)
 	 */
-	public void makeContributions(IMenuManager menuManager,
-			IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 		makeActions();
 		hookContextMenu();
@@ -408,23 +373,23 @@ public abstract class DependenciesViewPage extends Page {
 		if (object != fViewer.getInput())
 			fViewer.setInput(object);
 	}
-	
+
 	// returns true if Rename Action is valid.
 	protected boolean enableRename(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object selectionElement = selection.getFirstElement();
 			IPluginModelBase base = null;
 			if (selectionElement instanceof IPluginImport) {
-				String id = ((IPluginImport)selectionElement).getId();
+				String id = ((IPluginImport) selectionElement).getId();
 				base = PluginRegistry.findModel(id);
 			} else if (selectionElement instanceof IPluginObject) {
-				base = (IPluginModelBase)((IPluginObject) selectionElement).getModel();
+				base = (IPluginModelBase) ((IPluginObject) selectionElement).getModel();
 			} else if (selectionElement instanceof BundleSpecification) {
-				BundleDescription desc = (BundleDescription)((BundleSpecification)selectionElement).getSupplier();
+				BundleDescription desc = (BundleDescription) ((BundleSpecification) selectionElement).getSupplier();
 				if (desc != null)
 					base = PluginRegistry.findModel(desc);
 			} else if (selectionElement instanceof BundleDescription) {
-				base = PluginRegistry.findModel((BundleDescription)selectionElement);
+				base = PluginRegistry.findModel((BundleDescription) selectionElement);
 			}
 			if (base != null && base.getUnderlyingResource() != null) {
 				fRefactorAction.setSelection(base);
@@ -433,8 +398,8 @@ public abstract class DependenciesViewPage extends Page {
 		}
 		return false;
 	}
-	
-	public void setActive(boolean active) {		
+
+	public void setActive(boolean active) {
 		if (active) {
 			// update filter actions before updating filters because the filters depend on the state of the filter actions
 			// update filter actions - both filter actions are specific to each Page instance
@@ -453,7 +418,7 @@ public abstract class DependenciesViewPage extends Page {
 			boolean containsFragments = true;
 			ViewerFilter[] filters = fViewer.getFilters();
 			for (int i = 0; i < filters.length; i++) {
-				if (filters[i].equals(fHideFragmentFilter)) { 
+				if (filters[i].equals(fHideFragmentFilter)) {
 					containsFragments = false;
 					break;
 				}
@@ -462,29 +427,29 @@ public abstract class DependenciesViewPage extends Page {
 				if (showFragments)
 					fViewer.removeFilter(fHideFragmentFilter);
 				else
-					fViewer.addFilter(fHideFragmentFilter); 
-			
+					fViewer.addFilter(fHideFragmentFilter);
+
 			// update viewer's optional filtering
 			if (fHideOptionalFilterAction.isChecked() != isShowingOptional())
 				handleShowOptional(fHideOptionalFilterAction.isChecked(), false);
 		}
-		
+
 		if (fContentProvider instanceof DependenciesViewPageContentProvider) {
 			if (active) {
 				// when a page is activated, we need to have the content provider listen for changes and refresh the view to get current data
-				((DependenciesViewPageContentProvider)fContentProvider).attachModelListener();
+				((DependenciesViewPageContentProvider) fContentProvider).attachModelListener();
 				fViewer.refresh();
 			} else
 				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all 
 				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
-				((DependenciesViewPageContentProvider)fContentProvider).removeModelListener();
+				((DependenciesViewPageContentProvider) fContentProvider).removeModelListener();
 		}
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {
 		contributeToDropDownMenu(actionBars.getMenuManager());
 	}
-	
+
 	private void contributeToDropDownMenu(IMenuManager manager) {
 		manager.add(fHideFragmentFilterAction);
 		manager.add(fHideOptionalFilterAction);
@@ -495,12 +460,12 @@ public abstract class DependenciesViewPage extends Page {
 		fHideOptionalFilterAction.setChecked(!hideOptional);
 		// The filtering will be executed in the setActive function when the viewer is displayed
 	}
-	
+
 	private IDialogSettings getSettings() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("dependenciesView");  //$NON-NLS-1$
+		IDialogSettings section = master.getSection("dependenciesView"); //$NON-NLS-1$
 		if (section == null) {
-			section = master.addNewSection("dependenciesView");  //$NON-NLS-1$
+			section = master.addNewSection("dependenciesView"); //$NON-NLS-1$
 		}
 		return section;
 	}

@@ -12,13 +12,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.swt.widgets.Composite;
@@ -28,8 +23,8 @@ import org.eclipse.ui.part.IPageSite;
 /**
  * Content outline page for the XML editor.
  */
-public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage{
-	
+public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage {
+
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
@@ -37,17 +32,15 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	private ViewerComparator fViewerComparator;
 	private boolean sorted;
 	TreeViewer viewer;
-	
+
 	/**
 	 * This list is redundant; but, required because we can't access 
 	 * org.eclipse.ui.views.contentoutline.ContentOutlinePage.selectionChangedListeners
 	 * from our parent
 	 */
 	private ArrayList fListenerList;
-	
-	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider,
-			IContentProvider cProvider, ViewerComparator defaultComparator,
-			ViewerComparator comparator) {
+
+	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerComparator defaultComparator, ViewerComparator comparator) {
 		super();
 		fModel = model;
 		fLabelProvider = lProvider;
@@ -56,16 +49,16 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fViewerComparator = comparator;
 		fListenerList = new ArrayList();
 	}
-		
+
 	/**  
 	 * Creates the control for this outline page.
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		viewer= getTreeViewer();
+		viewer = getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
-		if(sorted)
+		if (sorted)
 			viewer.setComparator(fViewerComparator);
 		else
 			viewer.setComparator(fDefaultComparator);
@@ -79,7 +72,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
@@ -105,11 +97,11 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage#sort(boolean)
 	 */
-	public void sort (boolean sorting) {
+	public void sort(boolean sorting) {
 		sorted = sorting;
 		if (isViewerDefined()) {
 			if (sorting) {
@@ -119,7 +111,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			}
 		}
 	}
-	
+
 	/**
 	 * Used for restoral after temporary removal.  Uses listeners cached.
 	 */
@@ -131,11 +123,10 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		}
 		// Add all current listeners
 		for (int i = 0; i < fListenerList.size(); i++) {
-			super.addSelectionChangedListener(
-					(ISelectionChangedListener)fListenerList.get(i));
+			super.addSelectionChangedListener((ISelectionChangedListener) fListenerList.get(i));
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -147,7 +138,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Used for temporary removal.  Listeners cached.
 	 */
@@ -159,11 +150,10 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		}
 		// Remove all current listeners
 		for (int i = 0; i < fListenerList.size(); i++) {
-			super.removeSelectionChangedListener(
-					(ISelectionChangedListener)fListenerList.get(i));
+			super.removeSelectionChangedListener((ISelectionChangedListener) fListenerList.get(i));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
@@ -172,12 +162,11 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fListenerList.add(listener);
 		super.addSelectionChangedListener(listener);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		// Remove the listener from our private list
 		fListenerList.remove(listener);
 		super.removeSelectionChangedListener(listener);

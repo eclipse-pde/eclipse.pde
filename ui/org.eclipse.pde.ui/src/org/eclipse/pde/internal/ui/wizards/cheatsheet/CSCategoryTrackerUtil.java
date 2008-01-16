@@ -19,18 +19,18 @@ import java.util.HashMap;
  */
 public class CSCategoryTrackerUtil {
 
-	public final static int F_TYPE_NO_CATEGORY = 0;	
+	public final static int F_TYPE_NO_CATEGORY = 0;
 
 	public final static int F_TYPE_NEW_CATEGORY = 1;
-	
+
 	public final static int F_TYPE_OLD_CATEGORY = 2;
-	
+
 	private HashMap fCategoryNameMap;
-	
-	private HashMap fCategoryIDMap;	
-	
+
+	private HashMap fCategoryIDMap;
+
 	private HashMap fCategoryTypeMap;
-	
+
 	/**
 	 * 
 	 */
@@ -40,18 +40,17 @@ public class CSCategoryTrackerUtil {
 		// Keys are category ids
 		// Values are category names		
 		fCategoryIDMap = new HashMap();
-		
+
 		// Reverse look-up hashmap
 		// Keys are category names
 		// Values are category ids
-		fCategoryNameMap = new HashMap();		
-		
-		
+		fCategoryNameMap = new HashMap();
+
 		// Look-up hashmap
 		// Keys are category ids
 		// Values are category types: either new or old
 		fCategoryTypeMap = new HashMap();
-		
+
 	}
 
 	/**
@@ -63,7 +62,7 @@ public class CSCategoryTrackerUtil {
 		fCategoryIDMap.put(id, name);
 		fCategoryTypeMap.put(id, new Integer(type));
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
@@ -71,7 +70,7 @@ public class CSCategoryTrackerUtil {
 	public boolean containsCategoryName(String name) {
 		return fCategoryNameMap.containsKey(name);
 	}
-	
+
 	/**
 	 * @param id
 	 * @return
@@ -79,33 +78,33 @@ public class CSCategoryTrackerUtil {
 	public boolean containsCategoryID(String id) {
 		return fCategoryIDMap.containsKey(id);
 	}
-	
+
 	/**
 	 * @param id
 	 * @return
 	 */
 	public String getCategoryName(String id) {
-		return (String)fCategoryIDMap.get(id);
+		return (String) fCategoryIDMap.get(id);
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
 	 */
 	public String getCategoryID(String name) {
-		return (String)fCategoryNameMap.get(name);
+		return (String) fCategoryNameMap.get(name);
 	}
-	
+
 	/**
 	 * @param id
 	 * @return
 	 */
 	public int getCategoryType(String id) {
-		Integer integer = (Integer)fCategoryTypeMap.get(id);
+		Integer integer = (Integer) fCategoryTypeMap.get(id);
 		if (integer == null) {
 			return F_TYPE_NO_CATEGORY;
 		}
 		return integer.intValue();
 	}
-	
+
 }

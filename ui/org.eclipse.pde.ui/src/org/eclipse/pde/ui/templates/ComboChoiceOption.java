@@ -14,9 +14,7 @@ package org.eclipse.pde.ui.templates;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from
@@ -25,10 +23,10 @@ import org.eclipse.swt.widgets.Label;
  * @since 3.2
  */
 public class ComboChoiceOption extends AbstractChoiceOption {
-	
+
 	private Combo fCombo;
 	private Label fLabel;
-	
+
 	/**
 	 * Constructor for ComboChoiceOption.
 	 *
@@ -47,12 +45,12 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 	public ComboChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label, choices);
 	}
-	
+
 	public void createControl(Composite parent, int span) {
 		fLabel = createLabel(parent, 1);
 		fLabel.setEnabled(isEnabled());
 		fill(fLabel, 1);
-		
+
 		fCombo = new Combo(parent, SWT.READ_ONLY);
 		fill(fCombo, 1);
 		for (int i = 0; i < fChoices.length; i++) {
@@ -73,29 +71,29 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 				}
 			}
 		});
-		
+
 		if (getChoice() != null)
 			selectChoice(getChoice());
 	}
-	
+
 	protected void setOptionValue(Object value) {
 		if (fCombo != null && value != null) {
 			selectChoice(value.toString());
 		}
 	}
-	
+
 	protected void setOptionEnabled(boolean enabled) {
 		if (fLabel != null) {
 			fLabel.setEnabled(enabled);
 			fCombo.setEnabled(enabled);
 		}
 	}
-	
+
 	protected void selectOptionChoice(String choice) {
 		// choice is the value not the description
 		int index = getIndexOfChoice(choice);
-	
-		if( index == -1 ) {
+
+		if (index == -1) {
 			// Set to the first item
 			// Using set Value to keep everything consistent
 			fCombo.select(0);

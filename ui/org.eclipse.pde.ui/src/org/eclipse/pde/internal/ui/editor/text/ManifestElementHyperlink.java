@@ -19,7 +19,7 @@ public abstract class ManifestElementHyperlink extends AbstractHyperlink {
 	}
 
 	protected abstract void open2();
-	
+
 	public void open() {
 		// remove whitespace inbetween chars
 		int len = fElement.length();

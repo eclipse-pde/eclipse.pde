@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.resources.IProject;
@@ -24,27 +24,24 @@ import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.swt.widgets.Shell;
 
-public class CreateFeatureProjectFromLaunchOperation extends
-		CreateFeatureProjectOperation {
-	
+public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjectOperation {
+
 	private ILaunchConfiguration fLaunchConfig;
-	
-	public CreateFeatureProjectFromLaunchOperation(IProject project, IPath location,
-			FeatureData featureData, ILaunchConfiguration launchConfig, Shell shell) {
+
+	public CreateFeatureProjectFromLaunchOperation(IProject project, IPath location, FeatureData featureData, ILaunchConfiguration launchConfig, Shell shell) {
 		super(project, location, featureData, null, shell);
 		fLaunchConfig = launchConfig;
 	}
-	
-	protected void configureFeature(IFeature feature,
-			WorkspaceFeatureModel model) throws CoreException {
+
+	protected void configureFeature(IFeature feature, WorkspaceFeatureModel model) throws CoreException {
 		fPlugins = getPlugins();
 		super.configureFeature(feature, model);
 	}
-	
+
 	private IPluginBase[] getPlugins() {
 		IPluginModelBase[] models = null;
 		try {
-			ILaunchConfigurationType type =fLaunchConfig.getType();
+			ILaunchConfigurationType type = fLaunchConfig.getType();
 			String id = type.getIdentifier();
 			// if it is an Eclipse launch
 			if (id.equals("org.eclipse.pde.ui.RuntimeWorkbench")) //$NON-NLS-1$
@@ -55,7 +52,7 @@ public class CreateFeatureProjectFromLaunchOperation extends
 		} catch (CoreException e) {
 		}
 		IPluginBase[] result = new IPluginBase[models == null ? 0 : models.length];
-		for (int i = 0; i < result.length; i++) 
+		for (int i = 0; i < result.length; i++)
 			result[i] = models[i].getPluginBase(true);
 		return result;
 	}

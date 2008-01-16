@@ -12,14 +12,10 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Control;
 
 public class PluginsDragAdapter extends DragSourceAdapter {
@@ -52,6 +48,7 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 		}
 		event.data = fileNames;
 	}
+
 	/**
 	 * All selection must be files or folders.
 	 */
@@ -64,25 +61,26 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 			event.doit = false;
 			return;
 		}
-		
-		FileAdapter [] files = getSelectedFiles();
-		
-		if (files.length==0) {
+
+		FileAdapter[] files = getSelectedFiles();
+
+		if (files.length == 0) {
 			event.doit = false;
 			return;
 		}
 		event.doit = true;
 	}
-	private FileAdapter [] getSelectedFiles() {
-		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
+
+	private FileAdapter[] getSelectedFiles() {
+		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
 		ArrayList files = new ArrayList();
-		for (Iterator iter=selection.iterator(); iter.hasNext();) {
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof FileAdapter)
 				files.add(obj);
 			else
 				return new FileAdapter[0];
 		}
-		return (FileAdapter[])files.toArray(new FileAdapter[files.size()]);
+		return (FileAdapter[]) files.toArray(new FileAdapter[files.size()]);
 	}
 }

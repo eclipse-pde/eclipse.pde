@@ -9,16 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -26,14 +22,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+
 public class JavaAttributeWizard extends Wizard {
 
 	private static String STORE_SECTION = "JavaAttributeWizard"; //$NON-NLS-1$
@@ -56,7 +51,7 @@ public class JavaAttributeWizard extends Wizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setWindowTitle(PDEUIMessages.JavaAttributeWizard_wtitle); 
+		setWindowTitle(PDEUIMessages.JavaAttributeWizard_wtitle);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -70,7 +65,7 @@ public class JavaAttributeWizard extends Wizard {
 	public void addPages() {
 		fMainPage = new JavaAttributeWizardPage(fProject, fModel, fAttInfo, fClassName);
 		addPage(fMainPage);
-		((JavaAttributeWizardPage)fMainPage).init();
+		((JavaAttributeWizardPage) fMainPage).init();
 	}
 
 	public boolean performFinish() {
@@ -80,9 +75,7 @@ public class JavaAttributeWizard extends Wizard {
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PDEPlugin.getActiveWorkbenchWindow(), op,
-					PDEPlugin.getWorkspace().getRoot());
+			PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			IResource resource = fMainPage.getModifiedResource();
 			if (resource != null) {
 				selectAndReveal(resource);
@@ -121,7 +114,7 @@ public class JavaAttributeWizard extends Wizard {
 		if (name == null)
 			return null;
 		if (fMainPage instanceof JavaAttributeWizardPage) {
-			String classArgs = ((JavaAttributeWizardPage)fMainPage).getClassArgs();
+			String classArgs = ((JavaAttributeWizardPage) fMainPage).getClassArgs();
 			if (classArgs != null && classArgs.length() > 0)
 				return name + ':' + classArgs;
 		}

@@ -11,26 +11,16 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.File;
-
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJarEntryResource;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.pde.internal.core.ModelFileAdapter;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
-public class PluginsContentProvider extends DefaultContentProvider
-				implements ITreeContentProvider, IStructuredContentProvider {
-	
+public class PluginsContentProvider extends DefaultContentProvider implements ITreeContentProvider, IStructuredContentProvider {
+
 	private PluginsView fView;
 	private StandardJavaElementContentProvider fJavaProvider;
 
@@ -43,7 +33,8 @@ public class PluginsContentProvider extends DefaultContentProvider
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null) return;
+		if (newInput == null)
+			return;
 		fView.updateTitle(newInput);
 	}
 
@@ -56,30 +47,23 @@ public class PluginsContentProvider extends DefaultContentProvider
 			return ((PluginModelManager) parentElement).getAllModels();
 		}
 		if (parentElement instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase)parentElement;
+			IPluginModelBase model = (IPluginModelBase) parentElement;
 			if (model != null) {
 				File file = new File(model.getInstallLocation());
 				if (!file.isFile()) {
-					FileAdapter adapter =
-						new ModelFileAdapter(
-							model,
-							file,
-							PDECore.getDefault().getSearchablePluginsManager());
+					FileAdapter adapter = new ModelFileAdapter(model, file, PDECore.getDefault().getSearchablePluginsManager());
 					return adapter.getChildren();
 				}
 			}
 		}
-			
+
 		if (parentElement instanceof FileAdapter) {
 			return ((FileAdapter) parentElement).getChildren();
 		}
-		
-		if (parentElement instanceof IPackageFragmentRoot ||
-			parentElement instanceof IPackageFragment ||
-			parentElement instanceof ICompilationUnit ||
-			parentElement instanceof IStorage) 
+
+		if (parentElement instanceof IPackageFragmentRoot || parentElement instanceof IPackageFragment || parentElement instanceof ICompilationUnit || parentElement instanceof IStorage)
 			return fJavaProvider.getChildren(parentElement);
-		
+
 		return new Object[0];
 	}
 
@@ -115,18 +99,14 @@ public class PluginsContentProvider extends DefaultContentProvider
 			return !((PluginModelManager) element).isEmpty();
 		}
 		if (element instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase)element;
-			return model.getUnderlyingResource() == null 
-					&& !new File(model.getInstallLocation()).isFile();
+			IPluginModelBase model = (IPluginModelBase) element;
+			return model.getUnderlyingResource() == null && !new File(model.getInstallLocation()).isFile();
 		}
 		if (element instanceof FileAdapter) {
 			FileAdapter fileAdapter = (FileAdapter) element;
 			return fileAdapter.hasChildren();
 		}
-		if (element instanceof IPackageFragmentRoot ||
-			element instanceof IPackageFragment ||
-			element instanceof ICompilationUnit ||
-			element instanceof IStorage)
+		if (element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof ICompilationUnit || element instanceof IStorage)
 			return fJavaProvider.hasChildren(element);
 		return false;
 	}

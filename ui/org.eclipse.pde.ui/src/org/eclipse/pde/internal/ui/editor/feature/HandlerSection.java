@@ -12,20 +12,12 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -45,8 +37,7 @@ public class HandlerSection extends PDESection {
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -63,15 +54,15 @@ public class HandlerSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		section.setLayoutData(data);
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
@@ -101,20 +92,17 @@ public class HandlerSection extends PDESection {
 		initialize();
 	}
 
-	private void setLibrary(IFeature feature, String value)
-			throws CoreException {
+	private void setLibrary(IFeature feature, String value) throws CoreException {
 		IFeatureInstallHandler handler = getHandler(feature);
 		handler.setLibrary(value);
 	}
 
-	private void setHandler(IFeature feature, String value)
-			throws CoreException {
+	private void setHandler(IFeature feature, String value) throws CoreException {
 		IFeatureInstallHandler handler = getHandler(feature);
 		handler.setHandlerName(value);
 	}
 
-	private IFeatureInstallHandler getHandler(IFeature feature)
-			throws CoreException {
+	private IFeatureInstallHandler getHandler(IFeature feature) throws CoreException {
 		IFeatureInstallHandler handler = feature.getInstallHandler();
 		if (handler == null) {
 			handler = feature.getModel().getFactory().createInstallHandler();

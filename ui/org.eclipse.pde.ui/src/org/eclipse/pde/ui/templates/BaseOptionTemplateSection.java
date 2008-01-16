@@ -10,8 +10,8 @@
  *     Les Jones <lesojones@gmail.com> - bug 208531
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
-import java.util.Hashtable;
 
+import java.util.Hashtable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,8 +50,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *            a zero-based index of a page where this option should appear
 	 * @return the newly created option
 	 */
-	protected TemplateOption addOption(String name, String label,
-			boolean value, int pageIndex) {
+	protected TemplateOption addOption(String name, String label, boolean value, int pageIndex) {
 		BooleanOption option = new BooleanOption(this, name, label);
 		registerOption(option, value ? Boolean.TRUE : Boolean.FALSE, pageIndex);
 		return option;
@@ -71,12 +70,12 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *            a zero-based index of a page where this option should appear
 	 * @return the newly created option
 	 */
-	protected TemplateOption addOption(String name, String label, String value,
-			int pageIndex) {
+	protected TemplateOption addOption(String name, String label, String value, int pageIndex) {
 		StringOption option = new StringOption(this, name, label);
 		registerOption(option, value, pageIndex);
 		return option;
 	}
+
 	/**
 	 * Adds a choice option with a provided name, label, list of choices and the
 	 * initial value (choice).
@@ -97,17 +96,16 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *            a zero-based index of a page where this option should appear
 	 * @return the newly created option
 	 */
-	protected TemplateOption addOption(String name, String label,
-			String[][] choices, String value, int pageIndex) {
+	protected TemplateOption addOption(String name, String label, String[][] choices, String value, int pageIndex) {
 		AbstractChoiceOption option;
 		if (choices.length == 2)
 			option = new RadioChoiceOption(this, name, label, choices);
 		else
-			option = new ComboChoiceOption(this, name, label, choices);			
+			option = new ComboChoiceOption(this, name, label, choices);
 		registerOption(option, value, pageIndex);
 		return option;
 	}
-	
+
 	/**
 	 * Force a combo choice representation.
 	 * Radio buttons look bad - even if only two options specified.
@@ -118,13 +116,12 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @param pageIndex
 	 * @return the newly created option
 	 */
-	protected ComboChoiceOption addComboChoiceOption(String name, String label,
-			String[][] choices, String value, int pageIndex) {
+	protected ComboChoiceOption addComboChoiceOption(String name, String label, String[][] choices, String value, int pageIndex) {
 		ComboChoiceOption option = new ComboChoiceOption(this, name, label, choices);
 		registerOption(option, value, pageIndex);
 		return option;
 	}
-	
+
 	/**
 	 * Adds a blank field with a default height to provide spacing.
 	 * 
@@ -133,10 +130,11 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @return the newly created option
 	 */
 	protected TemplateOption addBlankField(int pageIndex) {
-		BlankField field = new BlankField(this);	
+		BlankField field = new BlankField(this);
 		registerOption(field, "", pageIndex); //$NON-NLS-1$
 		return field;
 	}
+
 	/**
 	 * Adds a blank field with a specific height to provide spacing.
 	 * 
@@ -147,10 +145,11 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @return the newly created option
 	 */
 	protected TemplateOption addBlankField(int height, int pageIndex) {
-		BlankField field = new BlankField(this, height);	
+		BlankField field = new BlankField(this, height);
 		registerOption(field, "", pageIndex); //$NON-NLS-1$
 		return field;
 	}
+
 	/**
 	 * Initializes the option with a given unique name with the provided value.
 	 * The value will be set only if the option has not yet been initialized.
@@ -168,6 +167,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 				option.setValue(value);
 		}
 	}
+
 	/**
 	 * Returns a string value of the option with a given name. The option with
 	 * that name must exist and must be registered as a string option to begin
@@ -183,7 +183,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		if (option != null) {
 			if (option instanceof StringOption) {
 				return ((StringOption) option).getText();
-				
+
 			} else if (option instanceof AbstractChoiceOption) {
 				// This situation covers both Combos and Radio buttons
 				Object value = option.getValue();
@@ -196,6 +196,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		}
 		return null;
 	}
+
 	/**
 	 * Returns a boolean value of the option with a given name. The option with
 	 * that name must exist and must be registered as a boolean option to begin
@@ -213,6 +214,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		}
 		return false;
 	}
+
 	/**
 	 * Enables the option with a given name. The exact effect of the method
 	 * depends on the option type, but the end-result should always be the same -
@@ -229,6 +231,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		if (option != null)
 			option.setEnabled(enabled);
 	}
+
 	/**
 	 * Returns the value of the option with a given name. The actual type of the
 	 * returned object depends on the option type.
@@ -244,6 +247,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 			return option.getValue();
 		return super.getValue(name);
 	}
+
 	/**
 	 * Returns true if this template depends on values set in the parent wizard.
 	 * Values in the parent wizard include plug-in id, plug-in name, plug-in
@@ -263,6 +267,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	public boolean isDependentOnParentWizard() {
 		return false;
 	}
+
 	/**
 	 * Initializes options in the wizard page using the data provided by the
 	 * method parameters. Some options may depend on the user selection in the
@@ -279,6 +284,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	protected void initializeFields(IFieldData data) {
 	}
+
 	/**
 	 * Initializes options in the wizard page using the data provided by the
 	 * method parameters. Some options may depend on the user selection in the
@@ -296,6 +302,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	public void initializeFields(IPluginModelBase model) {
 	}
+
 	/**
 	 * Subclasses must implement this method in order to validate options whose
 	 * value have been changed by the user. The subclass can elect to validate
@@ -306,6 +313,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *            the option whose value has been changed by the user
 	 */
 	public abstract void validateOptions(TemplateOption changed);
+
 	/**
 	 * Expands variable substitution to include all string options defined in
 	 * this template.
@@ -318,17 +326,18 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 			return value;
 		return super.getReplacementString(fileName, key);
 	}
+
 	/**
 	 * Modifies the superclass implementation by adding the initialization step
 	 * before commencing execution. This is important because some options may
 	 * not be initialized and users may choose to press 'Finish' before the
 	 * wizard page where the options are were shown for the first time.
 	 */
-	public void execute(IProject project, IPluginModelBase model,
-			IProgressMonitor monitor) throws CoreException {
+	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		initializeFields(model);
 		super.execute(project, model, monitor);
 	}
+
 	/**
 	 * Registers the provided option and sets the initial value.
 	 * 
@@ -339,8 +348,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @param pageIndex
 	 *            the page index to which this option belongs
 	 */
-	protected void registerOption(TemplateOption option, Object value,
-			int pageIndex) {
+	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		option.setValue(value);
 		options.put(option.getName(), option);
 	}

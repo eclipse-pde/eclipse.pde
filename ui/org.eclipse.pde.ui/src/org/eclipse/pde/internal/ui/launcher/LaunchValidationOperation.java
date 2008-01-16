@@ -10,18 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,9 +29,7 @@ import org.eclipse.pde.internal.core.BundleValidationOperation;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Constants;
 
-
 public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
-	
 
 	private BundleValidationOperation fOperation;
 	protected ILaunchConfiguration fLaunchConfiguration;
@@ -47,19 +37,19 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 	public LaunchValidationOperation(ILaunchConfiguration configuration) {
 		fLaunchConfiguration = configuration;
 	}
-	
+
 	public void run(IProgressMonitor monitor) throws CoreException {
 		fOperation = new BundleValidationOperation(getModels(), getPlatformProperties());
 		fOperation.run(monitor);
 	}
-		
+
 	protected abstract IPluginModelBase[] getModels() throws CoreException;
-	
+
 	protected Dictionary[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
 		if (envs.length == 0)
 			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-		
+
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(envs.length);
 		for (int i = 0; i < envs.length; i++) {
@@ -76,16 +66,16 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 			}
 		}
 		if (result.size() > 0)
-			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
+			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
 	}
-	
+
 	private IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
 		IVMInstall install = VMHelper.getVMInstall(fLaunchConfiguration);
 		if (install == null)
 			return new IExecutionEnvironment[0];
-		
+
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		List result = new ArrayList(envs.length);
@@ -99,14 +89,14 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 				}
 			}
 		}
-		return (IExecutionEnvironment[])result.toArray(new IExecutionEnvironment[result.size()]);
+		return (IExecutionEnvironment[]) result.toArray(new IExecutionEnvironment[result.size()]);
 	}
-	
+
 	private Properties getJavaProfileProperties(String ee) {
 		IPluginModelBase model = PluginRegistry.findModel("system.bundle"); //$NON-NLS-1$
 		if (model == null)
 			return null;
-		
+
 		File location = new File(model.getInstallLocation());
 		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
 		InputStream is = null;
@@ -151,19 +141,19 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 		}
 		return null;
 	}
-	
+
 	public boolean hasErrors() {
 		return fOperation.hasErrors();
 	}
-	
+
 	public Map getInput() {
 		return fOperation.getResolverErrors();
 	}
-	
+
 	public boolean isEmpty() {
 		return fOperation.getState().getHighestBundleId() == -1;
 	}
-	
+
 	protected State getState() {
 		return fOperation.getState();
 	}

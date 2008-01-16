@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.MatchSection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -51,7 +45,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/dependencies.htm"; //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -59,7 +53,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ));
-		
+
 		GridData gd;
 
 		Composite left = toolkit.createComposite(form.getBody());
@@ -76,22 +70,20 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		fMatchSection = new MatchSection(this, right, false);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMatchSection.getSection().setLayoutData(gd);
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		alignSectionHeaders(fRequiresSection.getSection(), 
-				fMatchSection.getSection());			
-		
+		alignSectionHeaders(fRequiresSection.getSection(), fMatchSection.getSection());
+
 		managedForm.addPart(fRequiresSection);
 		managedForm.addPart(fMatchSection);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES);
 		initialize();
 		fRequiresSection.fireSelection();
 		super.createFormContent(managedForm);
 	}
 
 	public void initialize() {
-		getManagedForm().getForm().setText(
-				PDEUIMessages.FeatureEditor_DependenciesPage_heading);
+		getManagedForm().getForm().setText(PDEUIMessages.FeatureEditor_DependenciesPage_heading);
 	}
 }

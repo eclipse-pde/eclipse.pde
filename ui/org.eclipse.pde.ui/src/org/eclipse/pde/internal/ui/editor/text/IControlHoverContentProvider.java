@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.swt.widgets.Control;
 
-
 /**
  * IControlHoverContentProvider
  *
@@ -25,5 +24,5 @@ public interface IControlHoverContentProvider {
 	 * @return
 	 */
 	public String getHoverContent(Control control);
-	
+
 }

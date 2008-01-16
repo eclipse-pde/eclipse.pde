@@ -11,11 +11,7 @@
 package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
-import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.EnvironmentTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
@@ -34,17 +30,10 @@ public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = 
-			new ILaunchConfigurationTab[]{
-				new BundlesTab(),
-				new JavaArgumentsTab(),
-				new OSGiSettingsTab(),
-				new TracingTab(), 
-				new EnvironmentTab(),
-				new CommonTab()};
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {new BundlesTab(), new JavaArgumentsTab(), new OSGiSettingsTab(), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
 	}
-	
+
 	/**
 	 * Configures defaults on newly created launch configurations.
 	 * This function also passes the launch configuration copy to the default

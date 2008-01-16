@@ -9,22 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.StandardSourcePathProvider;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
@@ -40,7 +33,7 @@ import org.eclipse.pde.internal.ui.launcher.VMHelper;
 public class PDESourcePathProvider extends StandardSourcePathProvider {
 
 	public static final String ID = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
@@ -54,7 +47,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		}
 		return (IRuntimeClasspathEntry[]) sourcePath.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
 	}
-	
+
 	/**
 	 * Returns a JRE runtime classpath entry
 	 * 
@@ -70,9 +63,9 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
 		containerPath = containerPath.append(jre.getVMInstallType().getId());
 		containerPath = containerPath.append(jre.getName());
-		return JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);		
+		return JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 	}
-	
+
 	/**
 	 * Returns an array of sorted plug-in projects that represent plug-ins participating
 	 * in the launch
@@ -94,8 +87,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration)
-			throws CoreException {
+	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List all = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
@@ -105,7 +97,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 				// also add non-JRE libraries
 				IResource resource = entries[i].getResource();
 				if (resource instanceof IProject) {
-					addBinaryPackageFragmentRoots(JavaCore.create((IProject)resource), all);
+					addBinaryPackageFragmentRoots(JavaCore.create((IProject) resource), all);
 				}
 			} else {
 				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
@@ -116,7 +108,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		}
 		return (IRuntimeClasspathEntry[]) all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
-	
+
 	/**
 	 * Adds runtime classpath entries for binary package fragment roots contained within
 	 * the project
@@ -142,6 +134,6 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 					all.add(rte);
 			}
 		}
-		
+
 	}
 }

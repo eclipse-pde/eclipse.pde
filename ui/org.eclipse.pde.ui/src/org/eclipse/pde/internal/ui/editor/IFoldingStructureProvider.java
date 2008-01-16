@@ -11,16 +11,14 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.Set;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 
-
-public interface IFoldingStructureProvider extends IReconcilingParticipant{
+public interface IFoldingStructureProvider extends IReconcilingParticipant {
 
 	public void initialize();
-	
+
 	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException;
-	
+
 }

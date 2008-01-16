@@ -24,16 +24,14 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil.PluginComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 public class UnusedImportsDialog extends TrayDialog {
 	private IPluginModelBase model;
 	private Object[] unused;
 	private WizardCheckboxTablePart checkboxTablePart;
 	private CheckboxTableViewer choiceViewer;
-	
+
 	static class Comparator extends PluginComparator {
 
 		public int compare(Viewer viewer, Object e1, Object e2) {
@@ -45,32 +43,23 @@ public class UnusedImportsDialog extends TrayDialog {
 				return -1;
 		}
 	}
-	
+
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			return unused;
 		}
 	}
 
-	public UnusedImportsDialog(
-		Shell parentShell,
-		IPluginModelBase model,
-		Object[] unused) {
+	public UnusedImportsDialog(Shell parentShell, IPluginModelBase model, Object[] unused) {
 		super(parentShell);
 		this.model = model;
 		this.unused = unused;
-		checkboxTablePart =
-			new WizardCheckboxTablePart(
-				PDEUIMessages.UnusedDependencies_remove); 
+		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.UnusedDependencies_remove);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 	protected Control createDialogArea(Composite parent) {

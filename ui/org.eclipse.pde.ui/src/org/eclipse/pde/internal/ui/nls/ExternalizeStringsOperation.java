@@ -14,11 +14,7 @@ package org.eclipse.pde.internal.ui.nls;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,11 +32,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEditGroup;
+import org.eclipse.text.edits.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
@@ -49,17 +41,18 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	private CompositeChange fParentChange;
 	private HashMap fCompositeChanges;
 	private HashMap fFileChanges;
-	
+
 	public ExternalizeStringsOperation(Object[] changeFiles, CompositeChange parentChange) {
 		fChangeFiles = changeFiles;
 		fParentChange = parentChange;
 		fCompositeChanges = new HashMap();
 		fFileChanges = new HashMap();
 	}
+
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		for (int i = 0; i < fChangeFiles.length; i++) {
 			if (fChangeFiles[i] instanceof ModelChangeFile) {
-				ModelChangeFile changeFile = (ModelChangeFile)fChangeFiles[i];
+				ModelChangeFile changeFile = (ModelChangeFile) fChangeFiles[i];
 				CompositeChange pluginChange = getChangeForPlugin(changeFile.getModel().getParentModel().getPluginBase().getId());
 				ModelChange change = changeFile.getModel();
 				IFile pFile = change.getPropertiesFile();
@@ -73,22 +66,22 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				}
 				if (!change.localizationSet())
 					addBundleLocalization(change, monitor, pluginChange);
-				
+
 				// Update build.properties file (if exists & not already done)
 				IFile buildProps = changeFile.getFile().getProject().getFile(PDEModelUtility.F_BUILD);
-				if(buildProps != null && buildProps.exists() && !fFileChanges.containsKey(buildProps)) {
+				if (buildProps != null && buildProps.exists() && !fFileChanges.containsKey(buildProps)) {
 					getChangeForBuild(buildProps, monitor, pluginChange, change.getBundleLocalization());
 				}
-				
+
 				ITextFileBufferManager pManager = FileBuffers.getTextFileBufferManager();
 				try {
 					pManager.connect(pFile.getFullPath(), LocationKind.IFILE, monitor);
 					ITextFileBuffer pBuffer = pManager.getTextFileBuffer(pFile.getFullPath(), LocationKind.IFILE);
 					IDocument pDoc = pBuffer.getDocument();
 					TextFileChange pChange = getChangeForFile(pFile, pluginChange);
-					
+
 					doReplace(changeFile, pDoc, pChange, monitor, pluginChange);
-					
+
 				} catch (MalformedTreeException e) {
 				} finally {
 					pManager.disconnect(pFile.getFullPath(), LocationKind.IFILE, monitor);
@@ -97,16 +90,16 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void getChangeForBuild(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent, final String localization){		
+	private void getChangeForBuild(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent, final String localization) {
 		// Create change
 		TextFileChange[] changes = PDEModelUtility.changesForModelModication(new ModelModification(buildPropsFile) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
 				// Get model & set includes entry...				
-				if(model instanceof IBuildModel) {
-					IBuildModel buildModel = (IBuildModel) model;					
+				if (model instanceof IBuildModel) {
+					IBuildModel buildModel = (IBuildModel) model;
 					IBuildEntry binIncludes = buildModel.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
-					if(binIncludes == null) {
+					if (binIncludes == null) {
 						binIncludes = buildModel.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
 					}
 					// Add new entry to bin.includes key
@@ -118,9 +111,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		if (changes.length > 0 && changes[0] != null) {
 			fFileChanges.put(buildPropsFile, changes[0]);
 			parent.add(changes[0]);
-		}		
+		}
 	}
-	
+
 	private CompositeChange getChangeForPlugin(String pluginName) {
 		if (fCompositeChanges.containsKey(pluginName))
 			return (CompositeChange) fCompositeChanges.get(pluginName);
@@ -129,6 +122,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		fParentChange.add(result);
 		return result;
 	}
+
 	private TextFileChange getChangeForFile(IFile file, CompositeChange parentChange) {
 		if (fFileChanges.containsKey(file))
 			return (TextFileChange) fFileChanges.get(file);
@@ -139,25 +133,25 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		// with the PluginContentMergeViewer
 		String textType = file.getName().equals("plugin.xml") || //$NON-NLS-1$
 				file.getName().equals("fragment.xml") ? //$NON-NLS-1$
-				"PLUGIN2" : file.getFileExtension(); //$NON-NLS-1$
+		"PLUGIN2"
+				: file.getFileExtension(); //$NON-NLS-1$
 		change.setTextType(textType);
 		parentChange.add(change);
 		fFileChanges.put(file, change);
 		return change;
 	}
+
 	private void doReplace(ModelChangeFile changeFile, IDocument pDoc, TextFileChange pChange, IProgressMonitor monitor, CompositeChange parentChange) throws CoreException {
 		IFile uFile = changeFile.getFile();
 		try {
 			TextFileChange uChange = getChangeForFile(uFile, parentChange);
-			
+
 			Iterator iter = changeFile.getChanges().iterator();
-			
+
 			while (iter.hasNext()) {
-				ModelChangeElement changeElement = (ModelChangeElement)iter.next();
+				ModelChangeElement changeElement = (ModelChangeElement) iter.next();
 				if (changeElement.isExternalized()) {
-					ReplaceEdit uEdit = new ReplaceEdit(changeElement.getOffset(),
-							changeElement.getLength(), 
-							changeElement.getExternKey());
+					ReplaceEdit uEdit = new ReplaceEdit(changeElement.getOffset(), changeElement.getLength(), changeElement.getExternKey());
 					uChange.getEdit().addChild(uEdit);
 					uChange.addTextEditGroup(new TextEditGroup(NLS.bind(PDEUIMessages.ExternalizeStringsOperation_editNames_replaceText, changeElement.getKey()), uEdit));
 					InsertEdit pEdit = getPropertiesInsertEdit(pDoc, changeElement);
@@ -167,8 +161,8 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			}
 		} catch (MalformedTreeException e) {
 		}
- 	}
-	
+	}
+
 	private void addBundleLocalization(ModelChange change, IProgressMonitor mon, CompositeChange parent) {
 		IPluginModelBase base = change.getParentModel();
 		IFile manifest = base.getUnderlyingResource().getProject().getFile(PDEModelUtility.F_MANIFEST_FP);
@@ -195,7 +189,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			parent.add(result[0]);
 		}
 	}
-	
+
 	public static InsertEdit getPropertiesInsertEdit(IDocument doc, ModelChangeElement element) {
 		String nl = TextUtilities.getDefaultLineDelimiter(doc);
 		StringBuffer sb = new StringBuffer(nl);
@@ -204,8 +198,8 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		sb.append(StringHelper.preparePropertiesString(element.getValue(), nl.toCharArray()));
 		return new InsertEdit(doc.getLength(), sb.toString());
 	}
-	
+
 	public static String getPropertiesFileComment(IFile file) {
 		return NLS.bind("#Properties file for {0}", file.getProject().getName()); //$NON-NLS-1$
 	}
- }
+}

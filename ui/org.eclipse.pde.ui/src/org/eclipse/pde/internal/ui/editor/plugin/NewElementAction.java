@@ -17,13 +17,11 @@ import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
 
 public class NewElementAction extends Action {
-	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic; 
+	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic;
 
 	private ISchemaElement elementInfo;
 
@@ -46,8 +44,8 @@ public class NewElementAction extends Action {
 		IPluginElement newElement = parent.getModel().getFactory().createElement(parent);
 		try {
 			newElement.setName(getElementName());
-			((PluginElementNode)newElement).setParentNode((IDocumentElementNode)parent);
-			
+			((PluginElementNode) newElement).setParentNode((IDocumentElementNode) parent);
+
 			// If there is an associated schema, recursively auto-insert 
 			// required child elements and attributes respecting multiplicity
 			if (elementInfo != null) {

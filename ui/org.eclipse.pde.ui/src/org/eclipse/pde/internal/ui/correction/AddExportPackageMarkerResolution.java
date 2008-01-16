@@ -11,20 +11,15 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.regex.Pattern;
-
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.IOrganizeManifestsSettings;
 import org.osgi.framework.Constants;
 
-public class AddExportPackageMarkerResolution extends
-AbstractManifestMarkerResolution {
+public class AddExportPackageMarkerResolution extends AbstractManifestMarkerResolution {
 
 	private String fValues;
 
@@ -40,9 +35,9 @@ AbstractManifestMarkerResolution {
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {
-			Bundle bun = (Bundle)bundle;
+			Bundle bun = (Bundle) bundle;
 			ExportPackageHeader header = (ExportPackageHeader) bun.getManifestHeader(Constants.EXPORT_PACKAGE);
-			if(header == null) {
+			if (header == null) {
 				bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 				header = (ExportPackageHeader) bun.getManifestHeader(Constants.EXPORT_PACKAGE);
 			}
@@ -56,7 +51,7 @@ AbstractManifestMarkerResolution {
 		if (filter == null)
 			filter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
 		Pattern pat = PatternConstructor.createPattern(filter, false);
-		for(int i = 0; i < packages.length; i++) {
+		for (int i = 0; i < packages.length; i++) {
 			ExportPackageObject obj = header.addPackage(packages[i]);
 			if (pat.matcher(packages[i]).matches())
 				obj.setInternal(true);

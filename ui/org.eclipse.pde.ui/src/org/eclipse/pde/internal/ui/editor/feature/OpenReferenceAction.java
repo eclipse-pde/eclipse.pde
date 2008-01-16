@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -32,17 +28,17 @@ import org.eclipse.ui.ide.IDE;
 
 public class OpenReferenceAction extends SelectionProviderAction {
 	public OpenReferenceAction(ISelectionProvider provider) {
-	super(provider, PDEUIMessages.Actions_open_label);
-}
+		super(provider, PDEUIMessages.Actions_open_label);
+	}
 
 	public void run() {
 		IStructuredSelection sel = (IStructuredSelection) getSelection();
 		Object obj = sel.getFirstElement();
-		
+
 		if (obj instanceof FeaturePlugin) {
-			IPluginBase base = ((FeaturePlugin)obj).getPluginBase();
+			IPluginBase base = ((FeaturePlugin) obj).getPluginBase();
 			if (base != null)
-				ManifestEditor.openPluginEditor((IPluginModelBase)base.getModel());
+				ManifestEditor.openPluginEditor((IPluginModelBase) base.getModel());
 		} else if (obj instanceof IFeatureData) {
 			IFeatureData data = (IFeatureData) obj;
 			String id = data.getId();
@@ -66,6 +62,6 @@ public class OpenReferenceAction extends SelectionProviderAction {
 	}
 
 	public void selectionChanged(IStructuredSelection selection) {
-	setEnabled(!selection.isEmpty());
-}
+		setEnabled(!selection.isEmpty());
+	}
 }

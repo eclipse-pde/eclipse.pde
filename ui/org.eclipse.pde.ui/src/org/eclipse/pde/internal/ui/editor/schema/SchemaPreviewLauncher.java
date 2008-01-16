@@ -38,8 +38,7 @@ public class SchemaPreviewLauncher implements IEditorLauncher {
 		PreviewReferenceAction action = new PreviewReferenceAction();
 		// Get the file in the workspace which the user right-clicked on and
 		// selected "Open With"
-		IFile file = 
-			ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
 		// Ensure the file is defined
 		if (file == null) {
 			// This should never happen
@@ -78,15 +77,11 @@ public class SchemaPreviewLauncher implements IEditorLauncher {
 		// Matching open editor found that IS dirty
 		// Open a dialog asking the user whether they would like to save the
 		// editor
-		boolean doSave = 
-			MessageDialog.openQuestion(
-					Display.getDefault().getActiveShell(),
-					PDEUIMessages.SchemaPreviewLauncher_msgEditorHasUnsavedChanges,
-					PDEUIMessages.SchemaPreviewLauncher_msgSaveChanges);
+		boolean doSave = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), PDEUIMessages.SchemaPreviewLauncher_msgEditorHasUnsavedChanges, PDEUIMessages.SchemaPreviewLauncher_msgSaveChanges);
 		// Save the editor if the user indicated so
 		if (doSave) {
 			editor.doSave(new NullProgressMonitor());
-		}				
+		}
 	}
 
 }

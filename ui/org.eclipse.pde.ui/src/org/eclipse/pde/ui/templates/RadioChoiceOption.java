@@ -12,14 +12,10 @@ package org.eclipse.pde.ui.templates;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from
@@ -28,7 +24,7 @@ import org.eclipse.swt.widgets.Label;
  * @since 3.2
  */
 public class RadioChoiceOption extends AbstractChoiceOption {
-	
+
 	private Button[] fButtons;
 	private Label fLabel;
 
@@ -49,8 +45,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
 	 */
-	public RadioChoiceOption(BaseOptionTemplateSection section, String name,
-			String label, String[][] choices) {
+	public RadioChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label, choices);
 		Assert.isTrue(choices.length == 2);
 	}
@@ -64,20 +59,19 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		return button;
 	}
 
-
 	public void createControl(Composite parent, int span) {
-		
+
 		fLabel = createLabel(parent, 1);
 		fLabel.setEnabled(isEnabled());
 		fill(fLabel, span);
-		
+
 		Composite radioComp = createComposite(parent, span);
 		GridData gd = fill(radioComp, span);
 		gd.horizontalIndent = 10;
 		GridLayout layout = new GridLayout(fChoices.length, true);
 		layout.marginWidth = layout.marginHeight = 0;
 		radioComp.setLayout(layout);
-		
+
 		fButtons = new Button[fChoices.length];
 
 		SelectionListener listener = new SelectionAdapter() {
@@ -97,7 +91,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 			fButtons[i].addSelectionListener(listener);
 			fButtons[i].setEnabled(isEnabled());
 		}
-		
+
 		if (getChoice() != null)
 			selectChoice(getChoice());
 	}

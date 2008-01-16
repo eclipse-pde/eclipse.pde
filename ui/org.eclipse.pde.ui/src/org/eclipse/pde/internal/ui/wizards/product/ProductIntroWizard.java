@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -28,17 +27,17 @@ public class ProductIntroWizard extends Wizard {
 	private String fPluginId;
 	private String fApplication;
 	private IProduct fProduct;
-	
+
 	public ProductIntroWizard(IProduct product, boolean needNewProduct) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
 		setNeedsProgressMonitor(true);
 		fProduct = product;
 		fNeedNewProduct = needNewProduct;
-		setWindowTitle(PDEUIMessages.ProductIntroWizard_title);  
+		setWindowTitle(PDEUIMessages.ProductIntroWizard_title);
 	}
-	
+
 	public void addPages() {
-		if (fNeedNewProduct)  {
+		if (fNeedNewProduct) {
 			fProductDefinitionPage = new ProductDefinitonWizardPage("product", fProduct); //$NON-NLS-1$
 			addPage(fProductDefinitionPage);
 		}
@@ -57,38 +56,30 @@ public class ProductIntroWizard extends Wizard {
 					fProduct.setName(newProductName);
 				fProduct.setId(getProductId());
 				fProduct.setApplication(fApplication);
-				getContainer().run(
-						false,
-						true,
-						new ProductDefinitionOperation(fProduct,
-								fPluginId, fProductId, fApplication, 
-								getContainer().getShell()));
+				getContainer().run(false, true, new ProductDefinitionOperation(fProduct, fPluginId, fProductId, fApplication, getContainer().getShell()));
 			}
-			
+
 			fIntroId = fNewIntroPage.getIntroId();
 			if (fPluginId == null)
 				fPluginId = fNewIntroPage.getDefiningPlugin();
-			getContainer().run(
-					false,
-					true,
-					new ProductIntroOperation(fProduct, fPluginId, fIntroId, getContainer().getShell()));
+			getContainer().run(false, true, new ProductIntroOperation(fProduct, fPluginId, fIntroId, getContainer().getShell()));
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage()); 
+			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage());
 			return false;
 		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public String getIntroId() {
 		return fIntroId;
 	}
-	
+
 	public String getProductId() {
 		return fPluginId + "." + fProductId; //$NON-NLS-1$
 	}
-	
+
 	public String getApplication() {
 		return fApplication;
 	}

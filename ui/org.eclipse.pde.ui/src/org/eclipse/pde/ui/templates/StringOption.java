@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
+
 /**
  * This template option can be used to collect string option from the user in
  * the template section wizard page.
@@ -27,8 +27,9 @@ public class StringOption extends TemplateOption {
 	private Label labelControl;
 	private boolean ignoreListener;
 	private int fStyle;
-	
+
 	private final static int F_DEFAULT_STYLE = SWT.SINGLE | SWT.BORDER;
+
 	/**
 	 * The constructor.
 	 * 
@@ -39,13 +40,12 @@ public class StringOption extends TemplateOption {
 	 * @param label
 	 *            the translatable label of the option
 	 */
-	public StringOption(BaseOptionTemplateSection section, String name,
-			String label) {
+	public StringOption(BaseOptionTemplateSection section, String name, String label) {
 		super(section, name, label);
 		fStyle = F_DEFAULT_STYLE;
 		setRequired(true);
 	}
-	
+
 	/**
 	 * Update the text widget style to be read only
 	 * Added to default style (does not override)
@@ -58,7 +58,7 @@ public class StringOption extends TemplateOption {
 			fStyle = F_DEFAULT_STYLE;
 		}
 	}
-	
+
 	/**
 	 * A utility version of the <samp>getValue() </samp> method that converts
 	 * the current value into the String object.
@@ -70,6 +70,7 @@ public class StringOption extends TemplateOption {
 			return getValue().toString();
 		return null;
 	}
+
 	/**
 	 * A utility version of the <samp>setValue </samp> method that accepts
 	 * String objects.
@@ -81,6 +82,7 @@ public class StringOption extends TemplateOption {
 	public void setText(String newText) {
 		setValue(newText);
 	}
+
 	/**
 	 * Implements the superclass method by passing the string value of the new
 	 * value to the widget
@@ -97,6 +99,7 @@ public class StringOption extends TemplateOption {
 			ignoreListener = false;
 		}
 	}
+
 	/**
 	 * Creates the string option control.
 	 * 
@@ -124,6 +127,7 @@ public class StringOption extends TemplateOption {
 			}
 		});
 	}
+
 	/**
 	 * A string option is empty if its text field contains no text.
 	 * 
@@ -132,6 +136,7 @@ public class StringOption extends TemplateOption {
 	public boolean isEmpty() {
 		return getValue() == null || getValue().toString().length() == 0;
 	}
+
 	/**
 	 * Implements the superclass method by passing the enabled state to the
 	 * option's widget.

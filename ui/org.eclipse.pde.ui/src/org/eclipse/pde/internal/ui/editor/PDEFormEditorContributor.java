@@ -12,23 +12,13 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.Hashtable;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorActionBarContributor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -52,9 +42,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	private ClipboardAction fPasteAction;
 
 	private Hashtable fGlobalActions = new Hashtable();
-	
+
 	private ISharedImages fSharedImages;
-	
+
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 
@@ -95,7 +85,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_cut);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
-            setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
+			setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -109,7 +99,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_copy);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-            setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+			setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -123,7 +113,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_paste);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
-            setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+			setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -159,8 +149,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 	}
 
-	public PDEFormEditorContributor(String menuName) {}
-	
+	public PDEFormEditorContributor(String menuName) {
+	}
+
 	private void addGlobalAction(String id) {
 		GlobalAction action = new GlobalAction(id);
 		addGlobalAction(id, action);
@@ -260,10 +251,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 		if (!(targetEditor instanceof PDEFormEditor))
 			return;
-		
+
 		fEditor = (PDEFormEditor) targetEditor;
-		fEditor.updateUndo(getGlobalAction(ActionFactory.UNDO.getId()),
-						   getGlobalAction(ActionFactory.REDO.getId()));
+		fEditor.updateUndo(getGlobalAction(ActionFactory.UNDO.getId()), getGlobalAction(ActionFactory.REDO.getId()));
 		setActivePage(fEditor.getActiveEditor());
 		updateSelectableActions(fEditor.getSelection());
 	}
@@ -293,19 +283,19 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			fPasteAction.selectionChanged(selection);
 		}
 	}
-	
+
 	public IEditorActionBarContributor getSourceContributor() {
 		return null;
 	}
-	
-    public void init(IActionBars bars) {
-    	super.init(bars);
-    	makeActions();
-    }
 
-    protected ISharedImages getSharedImages() {
-    	if ( fSharedImages == null )
-        	fSharedImages = getPage().getWorkbenchWindow().getWorkbench().getSharedImages();
-    	return fSharedImages;
-    }
+	public void init(IActionBars bars) {
+		super.init(bars);
+		makeActions();
+	}
+
+	protected ISharedImages getSharedImages() {
+		if (fSharedImages == null)
+			fSharedImages = getPage().getWorkbenchWindow().getWorkbench().getSharedImages();
+		return fSharedImages;
+	}
 }

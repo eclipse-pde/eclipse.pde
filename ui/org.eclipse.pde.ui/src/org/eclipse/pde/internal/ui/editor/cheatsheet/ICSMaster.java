@@ -23,19 +23,19 @@ public interface ICSMaster {
 	 * 
 	 */
 	public void updateButtons();
-	
+
 	/**
 	 * @return
 	 */
 	public boolean isEditable();
-	
+
 	/**
 	 * Special case:  Need to set the selection after the full UI is created
 	 * in order to properly fire an event to summon up the right details 
 	 * section
 	 */
 	public void fireSelection();
-	
+
 	/**
 	 * @return
 	 */
@@ -46,5 +46,5 @@ public interface ICSMaster {
 	 * @return
 	 */
 	public boolean setFormInput(Object object);
-	
+
 }

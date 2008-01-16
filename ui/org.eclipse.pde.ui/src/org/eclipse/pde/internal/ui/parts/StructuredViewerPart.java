@@ -63,6 +63,5 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 		super.updateEnabledState();
 	}
 
-	protected abstract StructuredViewer createStructuredViewer(Composite parent,
-			int style, FormToolkit toolkit);
+	protected abstract StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit);
 }

@@ -10,32 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import com.ibm.icu.text.MessageFormat;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.StateHelper;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Offers a classpath fix proposal if the broken import statement can be
@@ -48,17 +33,17 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor#getFixImportProposals(org.eclipse.jdt.core.IJavaProject, java.lang.String)
 	 */
 	public ClasspathFixProposal[] getFixImportProposals(IJavaProject project, String name) throws CoreException {
-		int idx= name.lastIndexOf('.');
-		String packageName= idx != -1 ? name.substring(0, idx) : null;
-		String typeName= name.substring(idx + 1);
+		int idx = name.lastIndexOf('.');
+		String packageName = idx != -1 ? name.substring(0, idx) : null;
+		String typeName = name.substring(idx + 1);
 		if (typeName.length() == 1 && typeName.charAt(0) == '*') {
-			typeName= null;
+			typeName = null;
 		}
-		
+
 		// if package is already referenced by Import-Package, exit since Import-Package overrides Require-Bundle during lookup
-		if (packageName != null && !isImportedPackage(project, packageName)){
+		if (packageName != null && !isImportedPackage(project, packageName)) {
 			// Get the packages exported by all bundles, see if any can provide the required classes
-			Set validPackages = getValidPackages(project, packageName);			
+			Set validPackages = getValidPackages(project, packageName);
 			List proposals = new ArrayList();
 			Iterator validPackagesIter = validPackages.iterator();
 			Set visiblePkgs = null;
@@ -70,32 +55,32 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 				ExportPackageDescription currentPackage = (ExportPackageDescription) validPackagesIter.next();
 				// if package is already visible, skip over
 				if (visiblePkgs.contains(currentPackage)) {
-						continue;
+					continue;
 				}
-				addRequireBundleProposal(proposals, project.getProject(),currentPackage);
+				addRequireBundleProposal(proposals, project.getProject(), currentPackage);
 			}
-				
+
 //			if (!proposals.isEmpty() && PluginRegistry.findModel(project.getProject()) instanceof IBundlePluginModelBase) {
 //				ExportPackageDescription pkgDesc = ((UnresolvedImportFixProposal)proposals.get(0)).getDependency();
 //				addImportPackageProposal(proposals, project.getProject(), pkgDesc);
 //			}
 
-			return (ClasspathFixProposal[])proposals.toArray(new ClasspathFixProposal[proposals.size()]);
+			return (ClasspathFixProposal[]) proposals.toArray(new ClasspathFixProposal[proposals.size()]);
 		}
 
 		return new ClasspathFixProposal[0];
 	}
-	
+
 	/**
 	 * Helper method to create a proposal to add a require bundle dependency to the project
 	 */
-	private void addRequireBundleProposal(List proposalList, IProject project, ExportPackageDescription dependency){
+	private void addRequireBundleProposal(List proposalList, IProject project, ExportPackageDescription dependency) {
 		proposalList.add(new UnresolvedImportFixProposal(project, dependency) {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.internal.ui.correction.java.UnresolvedImportFixProposal#handleDependencyChange(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase, org.eclipse.osgi.service.resolver.ExportPackageDescription, boolean)
 			 */
-			public void handleDependencyChange(IProgressMonitor pm,	IPluginModelBase model, ExportPackageDescription dependency, boolean isAdd) throws CoreException {
+			public void handleDependencyChange(IProgressMonitor pm, IPluginModelBase model, ExportPackageDescription dependency, boolean isAdd) throws CoreException {
 				IPluginImport pluginImport = model.getPluginFactory().createImport();
 				pluginImport.setId(dependency.getExporter().getSymbolicName());
 				if (isAdd) {
@@ -110,9 +95,9 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			 */
 			public String getLabel(boolean isAdd) {
 				if (isAdd) {
-					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0,new Object[]{getDependency().getExporter().getName()});
+					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, new Object[] {getDependency().getExporter().getName()});
 				}
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1,new Object[]{getDependency().getExporter().getName()});
+				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1, new Object[] {getDependency().getExporter().getName()});
 			}
 
 			/* (non-Javadoc)
@@ -121,7 +106,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			public String getDescription() {
 				return PDEUIMessages.UnresolvedImportFixProcessor_2;
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
 			 */
@@ -130,7 +115,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			}
 		});
 	}
-	
+
 	/**
 	 * Helper method to create a proposal to add an import package dependency to the project
 	 */
@@ -204,24 +189,23 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 //
 //		});
 //	}
-	
 	private Set getVisiblePackages(IJavaProject project) {
 		IPluginModelBase base = PluginRegistry.findModel(project.getProject());
 		BundleDescription desc = base.getBundleDescription();
-		
+
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
-		
+
 		HashSet set = new HashSet();
-		for (int i =0; i < visiblePkgs.length; i++) {
+		for (int i = 0; i < visiblePkgs.length; i++) {
 			set.add(visiblePkgs[i]);
 		}
 		return set;
 	}
-	
+
 	private boolean isImportedPackage(IJavaProject project, String pkgName) {
 		BundleDescription desc = PluginRegistry.findModel(project.getProject()).getBundleDescription();
-		if (desc != null){
+		if (desc != null) {
 			ImportPackageSpecification[] importPkgs = desc.getImportPackages();
 			for (int i = 0; i < importPkgs.length; i++) {
 				if (importPkgs[i].getName().equals(pkgName)) {
@@ -233,12 +217,12 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		// if no BundleDescription, we return true so we don't create any proposals.  This is the safe way out if no BundleDescription is available.
 		return true;
 	}
-	
+
 	private Set getValidPackages(IJavaProject project, String pkgName) {
 		ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
 		Set validPackages = new HashSet();
 		for (int i = 0; i < knownPackages.length; i++) {
-			if (knownPackages[i].getName().equals(pkgName)){
+			if (knownPackages[i].getName().equals(pkgName)) {
 				validPackages.add(knownPackages[i]);
 			}
 		}

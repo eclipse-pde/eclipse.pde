@@ -11,11 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -28,7 +24,7 @@ import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 public class BuildHyperlinkDetector implements IHyperlinkDetector {
 
 	private PDESourcePage fSourcePage;
-	
+
 	/**
 	 * @param editor the editor in which to detect the hyperlink
 	 */
@@ -46,33 +42,30 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
 		if (!(element instanceof BuildEntry))
 			return null;
-		
-		BuildEntry entry = (BuildEntry)element;
+
+		BuildEntry entry = (BuildEntry) element;
 		if (!entry.getModel().isEditable() || !(entry.getModel() instanceof IEditingModel))
 			return null;
-		
-		
+
 		String name = entry.getName();
 		// as of now only scanning bin.includes, src.includes and source.* entries
-		if (!name.equals(IBuildEntry.BIN_INCLUDES) &&
-				!name.equals(IBuildEntry.SRC_INCLUDES) &&
-				!name.startsWith(IBuildEntry.JAR_PREFIX))
+		if (!name.equals(IBuildEntry.BIN_INCLUDES) && !name.equals(IBuildEntry.SRC_INCLUDES) && !name.startsWith(IBuildEntry.JAR_PREFIX))
 			return null;
-		
+
 		if (region.getOffset() <= entry.getOffset() + entry.getName().length())
 			return null;
-		
+
 		return matchLinkFor(entry, region.getOffset());
 	}
 
 	private IHyperlink[] matchLinkFor(BuildEntry header, int mainOffset) {
 		try {
-			IDocument doc = ((IEditingModel)header.getModel()).getDocument();
+			IDocument doc = ((IEditingModel) header.getModel()).getDocument();
 			String value = doc.get(header.getOffset(), header.getLength());
 			int offset = mainOffset - header.getOffset();
 			if (skipChar(value.charAt(offset)))
 				return null;
-			
+
 			// all chars up to the offset
 			String pre = value.substring(0, offset);
 			char[] preChars = pre.toCharArray();
@@ -81,12 +74,12 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 				// we are looking at 1st entry, skip to ':'
 				if ((start = value.indexOf('=')) == 0)
 					return null;
-			
+
 			// skip to 1st non whitespace char
 			while (++start < preChars.length)
 				if (!skipChar(preChars[start]))
 					break;
-			
+
 			// all chars past to ofset
 			String post = value.substring(offset);
 			char[] postChars = post.toCharArray();
@@ -94,34 +87,30 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 			if (end == -1)
 				// we are looking at last entry, skip to end
 				end = post.length();
-			
+
 			// move back to 1st non whitespace char
 			while (--end < postChars.length)
 				if (!skipChar(postChars[end]))
 					break;
 			end += 1;
-			
+
 			String match = value.substring(start, preChars.length + end);
 			if (match.length() == 0 || match.indexOf('*') != -1)
 				return null;
-			
+
 			IResource res = header.getModel().getUnderlyingResource();
 			if (res == null)
 				return null;
 			res = res.getProject().findMember(match);
-			return new IHyperlink[] {
-				new ResourceHyperlink(
-						new Region(header.getOffset() + start, match.length()),
-						match, res)	
-			};
-			
+			return new IHyperlink[] {new ResourceHyperlink(new Region(header.getOffset() + start, match.length()), match, res)};
+
 		} catch (BadLocationException e) {
 		}
 		return null;
 	}
-	
+
 	private boolean skipChar(char c) {
 		return Character.isWhitespace(c) || c == '\\' || c == ',';
 	}
-	
+
 }

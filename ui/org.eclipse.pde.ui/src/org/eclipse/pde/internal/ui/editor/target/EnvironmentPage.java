@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -24,15 +21,15 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class EnvironmentPage extends PDEFormPage {
-	
+
 	private EnvironmentSection fEnvSection;
-	
+
 	public static final String PAGE_ID = "environment"; //$NON-NLS-1$
 
 	public EnvironmentPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.EnvironmentPage_title); 
+		super(editor, PAGE_ID, PDEUIMessages.EnvironmentPage_title);
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -40,20 +37,20 @@ public class EnvironmentPage extends PDEFormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_ENVIRONMENT));
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);
 	}
-	
+
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
-		
+
 		managedForm.addPart(fEnvSection = new EnvironmentSection(this, body));
 		managedForm.addPart(new JRESection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
 		managedForm.addPart(new ImplicitDependenciesSection(this, body));
 	}
-	
+
 	protected void updateChoices() {
 		fEnvSection.updateChoices();
 	}
@@ -61,5 +58,5 @@ public class EnvironmentPage extends PDEFormPage {
 	protected String getHelpResource() {
 		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/environment.htm"; //$NON-NLS-1$
 	}
-	
+
 }

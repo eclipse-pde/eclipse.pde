@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
@@ -26,7 +24,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int CREATE_TYPE = 1;
 	public static final int RENAME_TYPE = 2;
 	public static final int REMOVE_TYPE = 3;
-	
+
 	protected int fType;
 	/**
 	 * This variable will only be available after run() is called.
@@ -37,7 +35,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public AbstractPDEMarkerResolution(int type) {
 		fType = type;
 	}
-	
+
 	public Image getImage() {
 		return null;
 	}
@@ -49,17 +47,17 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public String getDescription() {
 		return getLabel();
 	}
-	
+
 	public void run(IMarker marker) {
 		fResource = marker.getResource();
-		ModelModification modification = new ModelModification((IFile)marker.getResource()) {
+		ModelModification modification = new ModelModification((IFile) marker.getResource()) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				createChange(model);
 			}
 		};
 		PDEModelUtility.modifyModel(modification, null);
 	}
-	
+
 	protected abstract void createChange(IBaseModel model);
-	
+
 }

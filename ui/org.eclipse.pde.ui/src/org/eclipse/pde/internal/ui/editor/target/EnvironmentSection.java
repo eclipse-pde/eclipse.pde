@@ -11,47 +11,34 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
+import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class EnvironmentSection extends PDESection {
-	
+
 	private ComboPart fOSCombo;
 	private ComboPart fWSCombo;
 	private ComboPart fNLCombo;
 	private ComboPart fArchCombo;
-	
+
 	private TreeSet fNLChoices;
 	private TreeSet fOSChoices;
 	private TreeSet fWSChoices;
@@ -71,62 +58,61 @@ public class EnvironmentSection extends PDESection {
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
-		
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(true, 2));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Composite left = toolkit.createComposite(client);
 		left.setLayout(new GridLayout(2, false));
-		GridLayout layout= FormLayoutFactory.createClearGridLayout(false, 2);
+		GridLayout layout = FormLayoutFactory.createClearGridLayout(false, 2);
 		layout.horizontalSpacing = layout.verticalSpacing = 5;
 		left.setLayout(layout);
 		left.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		IEnvironmentInfo orgEnv = getEnvironment();
 		initializeChoices(orgEnv);
-		
+
 		Label label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_operationSystem);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		
+
 		fOSCombo = new ComboPart();
-		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER );
+		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fOSCombo.setItems((String[])fOSChoices.toArray(new String[fOSChoices.size()]));
+		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
 
 		label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		
+
 		fWSCombo = new ComboPart();
 		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fWSCombo.setItems((String[])fWSChoices.toArray(new String[fWSChoices.size()]));
+		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
 
 		Composite right = toolkit.createComposite(client);
-		layout= FormLayoutFactory.createClearGridLayout(false, 2);
+		layout = FormLayoutFactory.createClearGridLayout(false, 2);
 		layout.verticalSpacing = layout.horizontalSpacing = 5;
 		right.setLayout(layout);
 		right.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_architecture);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		
+
 		fArchCombo = new ComboPart();
 		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fArchCombo.setItems((String[])fArchChoices.toArray(new String[fArchChoices.size()]));
-		
-		
+		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
+
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		
+
 		fNLCombo = new ComboPart();
 		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 		fNLCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
-		
+		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+
 		refresh();
-		
+
 		fOSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getEnvironment().setOS(getText(fOSCombo));
@@ -159,17 +145,17 @@ public class EnvironmentSection extends PDESection {
 						PDEPlugin.log(e);
 					}
 				}
-				
+
 				// first time through, we should have a max item count of 1.
 				// On the first time through, we need to set the new values, and also attach the listener
 				// If we attached the listener initially, when we call setItems(..), it would make the editor dirty (when the user didn't change anything)
-				if (fNLCombo.getItemCount()  < 3) {
+				if (fNLCombo.getItemCount() < 3) {
 					String current = fNLCombo.getSelection();
 					if (!fNLCombo.getControl().isDisposed()) {
-						fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
+						fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
 						fNLCombo.setText(current);
 					}
-					
+
 					fNLCombo.addModifyListener(new ModifyListener() {
 						public void modifyText(ModifyEvent e) {
 							String value = getText(fNLCombo);
@@ -180,34 +166,34 @@ public class EnvironmentSection extends PDESection {
 						}
 					});
 				}
-					
+
 			}
 		});
-		
+
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		
+
 		// Register to be notified when the model changes
-		getModel().addModelChangedListener(this);		
+		getModel().addModelChangedListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 		}
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+		}
 	}
-	
+
 	/**
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Perform the refresh
 		refresh();
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
@@ -218,8 +204,8 @@ public class EnvironmentSection extends PDESection {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}	
-	
+	}
+
 	private void initializeChoices(IEnvironmentInfo orgEnv) {
 		fOSChoices = new TreeSet();
 		String[] os = Platform.knownOSValues();
@@ -229,16 +215,16 @@ public class EnvironmentSection extends PDESection {
 		String fileValue = orgEnv.getOS();
 		if (fileValue != null)
 			fOSChoices.add(fileValue);
-		
+
 		fWSChoices = new TreeSet();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++)
 			fWSChoices.add(ws[i]);
 		fWSChoices.add(""); //$NON-NLS-1$
 		fileValue = orgEnv.getWS();
-		if (fileValue != null) 
+		if (fileValue != null)
 			fWSChoices.add(fileValue);
-		
+
 		fArchChoices = new TreeSet();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++)
@@ -247,11 +233,11 @@ public class EnvironmentSection extends PDESection {
 		fileValue = orgEnv.getArch();
 		if (fileValue != null)
 			fArchChoices.add(fileValue);
-		
+
 		fNLChoices = new TreeSet();
 		fNLChoices.add(""); //$NON-NLS-1$
 	}
-	
+
 	private void initializeAllLocales() {
 		String[] nl = getLocales();
 		for (int i = 0; i < nl.length; i++)
@@ -261,7 +247,7 @@ public class EnvironmentSection extends PDESection {
 			fNLChoices.add(expandLocaleName(fileValue));
 		LOCALES_INITIALIZED = true;
 	}
-	
+
 	private static String[] getLocales() {
 		Locale[] locales = Locale.getAvailableLocales();
 		String[] result = new String[locales.length];
@@ -275,12 +261,12 @@ public class EnvironmentSection extends PDESection {
 		}
 		return result;
 	}
-	
+
 	private String expandLocaleName(String name) {
 		String language = ""; //$NON-NLS-1$
 		String country = ""; //$NON-NLS-1$
 		String variant = ""; //$NON-NLS-1$
-		
+
 		StringTokenizer tokenizer = new StringTokenizer(name, "_"); //$NON-NLS-1$
 		if (tokenizer.hasMoreTokens())
 			language = tokenizer.nextToken();
@@ -288,18 +274,18 @@ public class EnvironmentSection extends PDESection {
 			country = tokenizer.nextToken();
 		if (tokenizer.hasMoreTokens())
 			variant = tokenizer.nextToken();
-			
+
 		Locale locale = new Locale(language, country, variant);
 		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
 	}
-	
+
 	private String getText(ComboPart combo) {
 		Control control = combo.getControl();
 		if (control instanceof Combo)
 			return ((Combo) control).getText();
 		return ((CCombo) control).getText();
 	}
-	
+
 	private IEnvironmentInfo getEnvironment() {
 		IEnvironmentInfo info = getTarget().getEnvironment();
 		if (info == null) {
@@ -308,15 +294,15 @@ public class EnvironmentSection extends PDESection {
 		}
 		return info;
 	}
-	
+
 	private ITarget getTarget() {
 		return getModel().getTarget();
 	}
-	
+
 	private ITargetModel getModel() {
-		return (ITargetModel)getPage().getPDEEditor().getAggregateModel();
+		return (ITargetModel) getPage().getPDEEditor().getAggregateModel();
 	}
-	
+
 	public void refresh() {
 		IEnvironmentInfo orgEnv = getEnvironment();
 		String presetValue = (orgEnv.getOS() == null) ? "" : orgEnv.getOS(); //$NON-NLS-1$
@@ -327,10 +313,10 @@ public class EnvironmentSection extends PDESection {
 		fArchCombo.setText(presetValue);
 		presetValue = (orgEnv.getNL() == null) ? "" : expandLocaleName(orgEnv.getNL()); //$NON-NLS-1$
 		fNLCombo.setText(presetValue);
-		
+
 		super.refresh();
 	}
-	
+
 	protected void updateChoices() {
 		if (LOCALES_INITIALIZED)
 			return;

@@ -12,9 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 
 /**
  * SimpleCSAddStepAction
@@ -23,7 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
 public abstract class CompCSAbstractAddAction extends Action {
 
 	protected ICompCSObject fParentObject;
-	
+
 	/**
 	 * 
 	 */
@@ -37,14 +35,14 @@ public abstract class CompCSAbstractAddAction extends Action {
 	public void setParentObject(ICompCSObject object) {
 		fParentObject = object;
 	}
-	
-	protected String[] getTaskObjectNames(ICompCSTaskGroup parent)
-	{	ICompCSTaskObject[] taskObjects = parent.getFieldTaskObjects();
+
+	protected String[] getTaskObjectNames(ICompCSTaskGroup parent) {
+		ICompCSTaskObject[] taskObjects = parent.getFieldTaskObjects();
 		String[] taskObjectNames = new String[taskObjects.length];
-		for(int i = 0; i < taskObjects.length; ++i)
-		{	taskObjectNames[i] = taskObjects[i].getFieldName();
+		for (int i = 0; i < taskObjects.length; ++i) {
+			taskObjectNames[i] = taskObjects[i].getFieldName();
 		}
-		
+
 		return taskObjectNames;
 	}
 }

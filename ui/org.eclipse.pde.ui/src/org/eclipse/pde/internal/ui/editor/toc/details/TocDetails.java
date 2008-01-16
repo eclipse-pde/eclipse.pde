@@ -34,11 +34,11 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class TocDetails extends TocAbstractDetails {
 
 	private Toc fDataTOC;
-	
+
 	private FormEntry fNameEntry;
 	private FormEntry fAnchorEntry;
 	private FormEntry fPageEntry;
-	
+
 	/**
 	 * @param masterSection
 	 */
@@ -50,7 +50,7 @@ public class TocDetails extends TocAbstractDetails {
 		fAnchorEntry = null;
 		fPageEntry = null;
 	}
-	
+
 	/**
 	 * @param object
 	 */
@@ -59,15 +59,14 @@ public class TocDetails extends TocAbstractDetails {
 		fDataTOC = object;
 	}
 
-	protected TocObject getDataObject()
-	{	return fDataTOC;
+	protected TocObject getDataObject() {
+		return fDataTOC;
 	}
-
 
 	protected FormEntry getPathEntryField() {
 		return fPageEntry;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -85,8 +84,7 @@ public class TocDetails extends TocAbstractDetails {
 	private void createNameWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_name_desc);
 
-		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.TocDetails_name, SWT.NONE);
+		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_name, SWT.NONE);
 	}
 
 	/**
@@ -95,27 +93,24 @@ public class TocDetails extends TocAbstractDetails {
 	private void createAnchorWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_anchor_desc);
 
-		fAnchorEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.TocDetails_anchor, SWT.NONE);
+		fAnchorEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_anchor, SWT.NONE);
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	private void createPageWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_topic_desc);
 
-		fPageEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.TocDetails_topic, PDEUIMessages.GeneralInfoSection_browse,
-				isEditable());
+		fPageEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.TocDetails_topic, PDEUIMessages.GeneralInfoSection_browse, isEditable());
 	}
 
-	protected String getDetailsTitle()
-	{	return PDEUIMessages.TocDetails_title;
+	protected String getDetailsTitle() {
+		return PDEUIMessages.TocDetails_title;
 	}
-	
-	protected String getDetailsDescription()
-	{	return null;
+
+	protected String getDetailsDescription() {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -132,14 +127,15 @@ public class TocDetails extends TocAbstractDetails {
 	 */
 	private void createNameEntryListeners() {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
-				public void textValueChanged(FormEntry entry) {
-					// Ensure data object is defined
-					if (fDataTOC != null) {
-					{	fDataTOC.setFieldLabel(fNameEntry.getValue());
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTOC != null) {
+					{
+						fDataTOC.setFieldLabel(fNameEntry.getValue());
 					}
 				}
 			}
-		});			
+		});
 	}
 
 	/**
@@ -147,54 +143,51 @@ public class TocDetails extends TocAbstractDetails {
 	 */
 	private void createAnchorEntryListeners() {
 		fAnchorEntry.setFormEntryListener(new FormEntryAdapter(this) {
-				public void textValueChanged(FormEntry entry) {
-					// Ensure data object is defined
-					if (fDataTOC != null) {
-					{	fDataTOC.setFieldAnchorTo(fAnchorEntry.getValue());
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTOC != null) {
+					{
+						fDataTOC.setFieldAnchorTo(fAnchorEntry.getValue());
 					}
 				}
 			}
-		});			
+		});
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void createPageEntryListeners() {
-		fPageEntry.setFormEntryListener(new FormEntryAdapter(this)
-		{	public void textValueChanged(FormEntry entry)
-			{	// Ensure data object is defined
-				if (fDataTOC != null)
-				{	fDataTOC.setFieldRef(fPageEntry.getValue());
+		fPageEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) { // Ensure data object is defined
+				if (fDataTOC != null) {
+					fDataTOC.setFieldRef(fPageEntry.getValue());
 				}
 			}
 
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
+
 			public void linkActivated(HyperlinkEvent e) {
 				handleOpen();
 			}
 		});
 	}
-	
-	private void handleBrowse()
-	{	ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-				getPage().getSite().getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
-				
+
+	private void handleBrowse() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getPage().getSite().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.TocDetails_browseSelection);  
-		dialog.setMessage(PDEUIMessages.TocDetails_browseMessage);  
+		dialog.setTitle(PDEUIMessages.TocDetails_browseSelection);
+		dialog.setMessage(PDEUIMessages.TocDetails_browseMessage);
 		dialog.addFilter(new TocPageFilter());
-		
+
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {
-			IFile file = (IFile)dialog.getFirstResult();
+			IFile file = (IFile) dialog.getFirstResult();
 			setPathEntry(file);
 		}
 	}
@@ -204,8 +197,7 @@ public class TocDetails extends TocAbstractDetails {
 	 */
 	public void updateFields() {
 		// Ensure data object is defined
-		if (fDataTOC != null)
-		{	// Update name entry
+		if (fDataTOC != null) { // Update name entry
 			updateNameEntry(isEditableElement());
 			updateAnchorEntry(isEditableElement());
 			updatePageEntry(isEditableElement());
@@ -217,25 +209,25 @@ public class TocDetails extends TocAbstractDetails {
 	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTOC.getFieldLabel(), true);
-		fNameEntry.setEditable(editable);			
+		fNameEntry.setEditable(editable);
 	}
-	
+
 	/**
 	 * @param editable
 	 */
 	private void updateAnchorEntry(boolean editable) {
 		fAnchorEntry.setValue(fDataTOC.getFieldAnchorTo(), true);
-		fAnchorEntry.setEditable(editable);			
+		fAnchorEntry.setEditable(editable);
 	}
-	
+
 	/**
 	 * @param editable
 	 */
 	private void updatePageEntry(boolean editable) {
 		fPageEntry.setValue(fDataTOC.getFieldRef(), true);
-		fPageEntry.setEditable(editable);			
+		fPageEntry.setEditable(editable);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -257,7 +249,7 @@ public class TocDetails extends TocAbstractDetails {
 		// Ensure we have the right type
 		if (object != null && object instanceof Toc) {
 			// Set data
-			setData((Toc)object);
+			setData((Toc) object);
 			// Update the UI given the new data
 			updateFields();
 		}

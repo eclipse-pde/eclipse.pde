@@ -11,16 +11,11 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -28,12 +23,12 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	private IPluginExtensionPoint fPoint;
 	private boolean isPluginIdFinal;
-	
+
 	public NewSchemaFileMainPage(IContainer container) {
 		this(container, null, false);
 	}
-	
-	public NewSchemaFileMainPage(IContainer container, IPluginExtensionPoint point, boolean isPluginIdFinal){
+
+	public NewSchemaFileMainPage(IContainer container, IPluginExtensionPoint point, boolean isPluginIdFinal) {
 		super(container);
 		setTitle(PDEUIMessages.NewSchemaFileWizard_title);
 		setDescription(PDEUIMessages.NewSchemaFileWizard_desc);
@@ -45,74 +40,78 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		IRunnableWithProgress operation = getOperation();
 		try {
 			getContainer().run(true, true, operation);
-			if (fPoint != null){
+			if (fPoint != null) {
 				fPoint.setId(fIdText.getText());
 				fPoint.setName(fNameText.getText());
 				fPoint.setSchema(fSchemaText.getText());
 			}
-				
+
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
 		} catch (InterruptedException e) {
 			return false;
-		} catch (CoreException e){
+		} catch (CoreException e) {
 			return false;
 		}
 		return true;
 	}
+
 	protected boolean isPluginIdNeeded() {
 		return true;
 	}
-	protected boolean isPluginIdFinal(){
+
+	protected boolean isPluginIdFinal() {
 		return isPluginIdFinal;
 	}
+
 	protected boolean isSharedSchemaSwitchNeeded() {
 		return true;
 	}
-	public void initializeValues(){
-		if (fContainer!=null){
+
+	public void initializeValues() {
+		if (fContainer != null) {
 			fPluginIdText.setText(fContainer.getProject().getName());
 			if (!isPluginIdFinal())
 				fSchemaLocationText.setText(fContainer.getProject().getName() + "/" + fContainer.getProjectRelativePath().toString()); //$NON-NLS-1$
 		}
 		if (fPoint == null)
 			return;
-		if (fIdText!=null && fPoint.getId()!=null)
+		if (fIdText != null && fPoint.getId() != null)
 			fIdText.setText(fPoint.getId());
-		if (fNameText !=null && fPoint.getName() != null)
+		if (fNameText != null && fPoint.getName() != null)
 			fNameText.setText(fPoint.getName());
-		if (fSchemaText!= null && fPoint.getSchema()!=null)
+		if (fSchemaText != null && fPoint.getSchema() != null)
 			fSchemaText.setText(fPoint.getSchema());
-		
+
 		fPluginIdText.setEnabled(!isPluginIdFinal);
 		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
 	}
-	
+
 	protected String validateFieldContents() {
 		String message = validatePluginID();
 		if (message != null)
 			return message;
-		
+
 		message = validateExtensionPointID();
 		if (message != null)
 			return message;
-		
+
 		message = validateExtensionPointName();
 		if (message != null)
 			return message;
-		
+
 		message = validateContainer();
 		if (message != null)
 			return message;
-		
+
 		message = validateExtensionPointSchema();
 		if (message != null)
 			return message;
-		
+
 		return null;
 	}
-	
+
 	protected String validatePluginID() {
 		// Verify not zero length
 		String pluginID = getPluginId();
@@ -155,5 +154,5 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 
 		return null;
 	}
-	
+
 }

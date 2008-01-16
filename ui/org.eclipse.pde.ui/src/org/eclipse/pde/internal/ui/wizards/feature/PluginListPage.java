@@ -10,25 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import com.ibm.icu.text.Collator;
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -36,25 +29,19 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.icu.text.Collator;
-
 public class PluginListPage extends BasePluginListPage {
-	class PluginContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return PluginRegistry.getActiveModels();
 		}
 	}
-	
+
 	private Combo fLaunchConfigsCombo;
 	private Button fInitLaunchConfigButton;
-	
+
 	private static final String S_INIT_LAUNCH = "initLaunch"; //$NON-NLS-1$
 
 	public PluginListPage() {
@@ -70,12 +57,12 @@ public class PluginListPage extends BasePluginListPage {
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
-		
+
 		String[] launchConfigs = getLaunchConfigurations();
-		
+
 		IDialogSettings settings = getDialogSettings();
 		boolean initLaunch = (settings != null) ? settings.getBoolean(S_INIT_LAUNCH) && launchConfigs.length > 0 : false;
-		
+
 		if (launchConfigs.length > 0) {
 			fInitLaunchConfigButton = new Button(container, SWT.RADIO);
 			fInitLaunchConfigButton.setText(PDEUIMessages.PluginListPage_initializeFromLaunch);
@@ -87,9 +74,9 @@ public class PluginListPage extends BasePluginListPage {
 					fLaunchConfigsCombo.setEnabled(initLaunchConfigs);
 					tablePart.setEnabled(!initLaunchConfigs);
 				}
-				
+
 			});
-		
+
 			fLaunchConfigsCombo = new Combo(container, SWT.READ_ONLY);
 			fLaunchConfigsCombo.setItems(launchConfigs);
 			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -97,7 +84,7 @@ public class PluginListPage extends BasePluginListPage {
 			fLaunchConfigsCombo.setLayoutData(gd);
 			fLaunchConfigsCombo.select(0);
 			fLaunchConfigsCombo.setEnabled(initLaunch);
-			
+
 			Button initPluginsButton = new Button(container, SWT.RADIO);
 			initPluginsButton.setText(PDEUIMessages.PluginListPage_initializeFromPlugins);
 			gd = new GridData();
@@ -114,7 +101,7 @@ public class PluginListPage extends BasePluginListPage {
 		gd = (GridData) tablePart.getControl().getLayoutData();
 		if (launchConfigs.length > 0) {
 			gd.horizontalIndent = 30;
-			((GridData)tablePart.getCounterLabel().getLayoutData()).horizontalIndent = 30;
+			((GridData) tablePart.getCounterLabel().getLayoutData()).horizontalIndent = 30;
 		}
 		gd.heightHint = 250;
 		gd.widthHint = 300;
@@ -130,25 +117,25 @@ public class PluginListPage extends BasePluginListPage {
 		if (fInitLaunchConfigButton == null || !fInitLaunchConfigButton.getSelection()) {
 			Object[] result = tablePart.getSelection();
 			IPluginBase[] plugins = new IPluginBase[result.length];
-			for (int i=0; i<result.length; i++) {
-				IPluginModelBase model = (IPluginModelBase)result[i];
+			for (int i = 0; i < result.length; i++) {
+				IPluginModelBase model = (IPluginModelBase) result[i];
 				plugins[i] = model.getPluginBase();
 			}
 			return plugins;
 		}
 		return new IPluginBase[0];
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_INIT_LAUNCH, fInitLaunchConfigButton != null && fInitLaunchConfigButton.getSelection());
 	}
-	
+
 	private String[] getLaunchConfigurations() {
 		TreeSet launcherNames = new TreeSet(Collator.getInstance());
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			String [] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
-			for (int j  = 0; j < 2; j++) {
+			String[] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				for (int i = 0; i < configs.length; i++) {
@@ -158,18 +145,18 @@ public class PluginListPage extends BasePluginListPage {
 			}
 		} catch (CoreException e) {
 		}
-		return (String[])launcherNames.toArray(new String[launcherNames.size()]);
+		return (String[]) launcherNames.toArray(new String[launcherNames.size()]);
 	}
-	
+
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
 		if (fInitLaunchConfigButton == null || !fInitLaunchConfigButton.getSelection())
 			return null;
-		
+
 		String configName = fLaunchConfigsCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			String [] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
-			for (int j  = 0; j < 2; j++) {
+			String[] types = new String[] {"org.eclipse.pde.ui.RuntimeWorkbench", "org.eclipse.pde.ui.EquinoxLauncher"}; //$NON-NLS-1$ //$NON-NLS-2$
+			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				for (int i = 0; i < configs.length; i++) {
@@ -181,6 +168,5 @@ public class PluginListPage extends BasePluginListPage {
 		}
 		return null;
 	}
-	
 
 }

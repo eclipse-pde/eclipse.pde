@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class CalleesTreeContentProvider extends CalleesContentProvider
-		implements ITreeContentProvider {
+public class CalleesTreeContentProvider extends CalleesContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Constructor.
@@ -30,19 +27,19 @@ public class CalleesTreeContentProvider extends CalleesContentProvider
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IPluginBase) {
-			parentElement = ((IPluginBase)parentElement).getModel();
+			parentElement = ((IPluginBase) parentElement).getModel();
 		}
 		if (parentElement instanceof IPluginModelBase) {
-			return findCallees(((IPluginModelBase)parentElement));
+			return findCallees(((IPluginModelBase) parentElement));
 		}
 		if (parentElement instanceof BundleSpecification) {
-			parentElement = ((BundleSpecification)parentElement).getSupplier();
+			parentElement = ((BundleSpecification) parentElement).getSupplier();
 		}
 		if (parentElement instanceof ImportPackageSpecification) {
-			parentElement = ((ExportPackageDescription)(((ImportPackageSpecification)parentElement).getSupplier())).getExporter();
+			parentElement = ((ExportPackageDescription) (((ImportPackageSpecification) parentElement).getSupplier())).getExporter();
 		}
 		if (parentElement instanceof BundleDescription) {
-			return findCallees((BundleDescription)parentElement);
+			return findCallees((BundleDescription) parentElement);
 		}
 		return new Object[0];
 	}
@@ -55,7 +52,7 @@ public class CalleesTreeContentProvider extends CalleesContentProvider
 		if (inputElement instanceof IPluginModelBase) {
 			// need to use PluginBase.  If we use BundleDescription, whenever the Manifest is update the tree refreshes and collapses
 			// If we use IPluginModelBase, it confuses the Tree since we return the same object as our input
-			return new Object[] { ((IPluginModelBase) inputElement).getPluginBase() };
+			return new Object[] {((IPluginModelBase) inputElement).getPluginBase()};
 		}
 		return new Object[0];
 	}

@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -25,7 +22,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	protected final int F_CAT_CONTENT = 0; // category grouped content
 	protected final int F_CON_CONTENT = 1; // context grouped content
-	
+
 	private ICommandService fComServ;
 	private TreeMap fCatMap; // mapping of commands to category
 	private TreeMap fConMap; // mapping of commands to context
@@ -36,7 +33,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		fComServ = comServ;
 		init();
 	}
-	
+
 	private void init() {
 		fCatMap = new TreeMap(new Comparator() {
 			public int compare(Object arg0, Object arg1) {
@@ -59,7 +56,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 			// populate category map
 			try {
 				Category cat = commands[i].getCategory();
-				ArrayList list = (ArrayList)fCatMap.get(cat);
+				ArrayList list = (ArrayList) fCatMap.get(cat);
 				if (list == null)
 					fCatMap.put(cat, list = new ArrayList());
 				list.add(commands[i]);
@@ -74,7 +71,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
 		if (element instanceof Command)
 			try {
-				return ((Command)element).getCategory();
+				return ((Command) element).getCategory();
 			} catch (NotDefinedException e) {
 				// undefined category - should never hit this as these commands
 				// will not be listed
@@ -107,10 +104,10 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	public Object[] getElements(Object inputElement) {
 		switch (fCurContent) {
-		case F_CAT_CONTENT:
-			return fCatMap.keySet().toArray();
-		case F_CON_CONTENT:
-			return new Object[0];
+			case F_CAT_CONTENT :
+				return fCatMap.keySet().toArray();
+			case F_CON_CONTENT :
+				return new Object[0];
 		}
 		return null;
 	}
@@ -118,17 +115,17 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer = viewer;
 	}
-	
+
 	public void refreshWithCategoryContent() {
 		fCurContent = F_CAT_CONTENT;
 		if (fViewer != null)
 			fViewer.refresh();
 	}
-	
+
 	public void refreshWithContextContent() {
 		fCurContent = F_CON_CONTENT;
 		if (fViewer != null)
 			fViewer.refresh();
 	}
-	
+
 }

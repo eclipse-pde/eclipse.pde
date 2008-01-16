@@ -21,6 +21,7 @@ public class PDEMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 	class PDEMarkerAnnotation extends MarkerAnnotation implements IQuickFixableAnnotation {
 		boolean quickFixableState;
 		boolean isQuickFixable;
+
 		public PDEMarkerAnnotation(IMarker marker) {
 			super(marker);
 		}
@@ -37,13 +38,13 @@ public class PDEMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 		public boolean isQuickFixable() {
 			return isQuickFixable;
 		}
-		
+
 	}
-	
+
 	public PDEMarkerAnnotationModel(IResource resource) {
 		super(resource);
 	}
-	
+
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 		return new PDEMarkerAnnotation(marker);
 	}

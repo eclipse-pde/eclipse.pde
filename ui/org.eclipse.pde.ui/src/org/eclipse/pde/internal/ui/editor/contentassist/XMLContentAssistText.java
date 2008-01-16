@@ -20,16 +20,16 @@ import org.eclipse.jface.text.IDocument;
  * content assist at the end of it.
  */
 public class XMLContentAssistText {
-	
+
 	private String fText;
-	
+
 	private int fStartOffset;
-	
+
 	private XMLContentAssistText(String text, int startOffset) {
 		fText = text;
 		fStartOffset = startOffset;
 	}
-	
+
 	/**
 	 * Parses document for content assist text.
 	 * @param offset The document offset to start scanning backward from
@@ -42,7 +42,7 @@ public class XMLContentAssistText {
 		StringBuffer buffer = new StringBuffer();
 		int endOffset = offset - 1;
 		char currentChar;
-		
+
 		if (offset <= 0) {
 			return null;
 		}
@@ -87,9 +87,7 @@ public class XMLContentAssistText {
 				// We found the right angle bracket, if there is anything in
 				// the buffer it is valid content assist text
 				if (buffer.length() > 0) {
-					return new XMLContentAssistText(
-							buffer.reverse().toString(),
-							lastCATextOffset);
+					return new XMLContentAssistText(buffer.reverse().toString(), lastCATextOffset);
 				}
 				return null;
 			} else {
@@ -99,9 +97,9 @@ public class XMLContentAssistText {
 			}
 		}
 		// We should never reach here
-		return null;			
+		return null;
 	}
-	
+
 	/**
 	 * Determines whether a character is a valid XML element name character
 	 * @param c A character
@@ -109,30 +107,26 @@ public class XMLContentAssistText {
 	 * returns false. 
 	 */
 	private static boolean isContentAssistText(char c) {
-		if ((Character.isLetterOrDigit(c)) ||
-				(c == '.') ||
-				(c == '-') ||
-				(c == '_') ||
-				(c == ':')) {
+		if ((Character.isLetterOrDigit(c)) || (c == '.') || (c == '-') || (c == '_') || (c == ':')) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return the fText
 	 */
 	public String getText() {
 		return fText;
 	}
-	
+
 	/**
 	 * @return the fStartOffset
 	 */
 	public int getStartOffset() {
 		return fStartOffset;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.search;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -23,17 +22,13 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.IEditorMatchAdapter;
-import org.eclipse.search.ui.text.IFileMatchAdapter;
-import org.eclipse.search.ui.text.ISearchEditorAccess;
-import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.*;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class SearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter {
 	protected ISearchQuery fQuery;
-	
+
 	public SearchResult(ISearchQuery query) {
 		fQuery = query;
 	}
@@ -49,7 +44,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
 	public String getLabel() {
-		int numMatches = getMatchCount();	
+		int numMatches = getMatchCount();
 		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$  
 	}
 
@@ -80,7 +75,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		Object element = match.getElement();
 		if (element instanceof IPluginObject)
-			return isMatchContained(editor, (IPluginObject)element);
+			return isMatchContained(editor, (IPluginObject) element);
 		return false;
 	}
 
@@ -92,8 +87,8 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		Object[] objects = result.getElements();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IPluginObject) {
-				IPluginObject object = (IPluginObject)objects[i];
-				if (isMatchContained(editor, object)){
+				IPluginObject object = (IPluginObject) objects[i];
+				if (isMatchContained(editor, object)) {
 					Match[] matches = getMatches(object);
 					for (int j = 0; j < matches.length; j++) {
 						IDocument document = getDocument(editor, matches[j]);
@@ -105,8 +100,6 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		}
 		return (Match[]) list.toArray(new Match[list.size()]);
 	}
-	
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
@@ -114,15 +107,15 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
-	
+
 	protected boolean isMatchContained(IEditorPart editor, IPluginObject object) {
-		IFile resource = (IFile)editor.getEditorInput().getAdapter(IFile.class);
+		IFile resource = (IFile) editor.getEditorInput().getAdapter(IFile.class);
 		if (resource != null) {
 			IResource objectResource = object.getModel().getUnderlyingResource();
 			if (objectResource != null)
 				return resource.getProject().equals(objectResource.getProject());
 		}
-		File file = (File)editor.getEditorInput().getAdapter(File.class);
+		File file = (File) editor.getEditorInput().getAdapter(File.class);
 		if (file != null) {
 			IPath path = new Path(object.getModel().getInstallLocation());
 			IPath filePath = null;
@@ -133,17 +126,17 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 			} else {
 				filePath = new Path(file.getParent());
 			}
-			return path.equals(filePath);		
+			return path.equals(filePath);
 		}
 		return false;
 	}
-	
+
 	protected IDocument getDocument(IEditorPart editor, Match match) {
 		IDocument document = null;
 		if (editor instanceof ISearchEditorAccess) {
-			document = ((ISearchEditorAccess)editor).getDocument(match);
+			document = ((ISearchEditorAccess) editor).getDocument(match);
 		} else if (editor instanceof ITextEditor) {
-			document = ((ITextEditor)editor).getDocumentProvider().getDocument(editor.getEditorInput());
+			document = ((ITextEditor) editor).getDocumentProvider().getDocument(editor.getEditorInput());
 		}
 		return document;
 	}

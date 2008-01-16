@@ -13,23 +13,20 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractExportTab {
-	
+
 	protected AbstractExportWizardPage fPage;
-	
+
 	public AbstractExportTab(AbstractExportWizardPage page) {
 		fPage = page;
 	}
-	
+
 	protected abstract Control createControl(Composite parent);
 
 	protected abstract void initialize(IDialogSettings settings);
-	
+
 	protected abstract void saveSettings(IDialogSettings settings);
 
 	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
@@ -51,16 +48,16 @@ public abstract class AbstractExportTab {
 			for (int i = 0; i < nEntries; i++) {
 				settings.put(key + String.valueOf(i + 1), items[i].trim());
 			}
-		}	
+		}
 	}
-	
+
 	protected void chooseFile(Combo combo, String filter) {
 		FileDialog dialog = new FileDialog(fPage.getShell(), SWT.SAVE);
 		String path = combo.getText();
 		if (path.trim().length() == 0)
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
 		dialog.setFileName(path);
-		dialog.setFilterExtensions(new String[] { filter });
+		dialog.setFilterExtensions(new String[] {filter});
 		String res = dialog.open();
 		if (res != null) {
 			if (combo.indexOf(res) == -1)
@@ -68,6 +65,5 @@ public abstract class AbstractExportTab {
 			combo.setText(res);
 		}
 	}
-
 
 }

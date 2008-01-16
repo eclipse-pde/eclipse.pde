@@ -11,14 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.information.IInformationProvider;
-import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.information.*;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -55,30 +50,28 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		fColorManager = manager;
 		fSourcePage = page;
 	}
-	
+
 	public ChangeAwareSourceViewerConfiguration(PDESourcePage page, IColorManager manager) {
-		this(page, manager, new ChainedPreferenceStore(new IPreferenceStore[] {
-				PDEPlugin.getDefault().getPreferenceStore(),
-				EditorsUI.getPreferenceStore() // general text editor store
+		this(page, manager, new ChainedPreferenceStore(new IPreferenceStore[] {PDEPlugin.getDefault().getPreferenceStore(), EditorsUI.getPreferenceStore() // general text editor store
 				}));
 	}
-	
+
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fReconciler == null) {
 			IBaseModel model = fSourcePage.getInputContext().getModel();
 			if (model instanceof IReconcilingParticipant) {
 				ReconcilingStrategy strategy = new ReconcilingStrategy();
-				strategy.addParticipant((IReconcilingParticipant)model);
+				strategy.addParticipant((IReconcilingParticipant) model);
 				ISortableContentOutlinePage outline = fSourcePage.getContentOutline();
 				if (outline instanceof IReconcilingParticipant)
-					strategy.addParticipant((IReconcilingParticipant)outline);
+					strategy.addParticipant((IReconcilingParticipant) outline);
 				fReconciler = new MonoReconciler(strategy, false);
 				fReconciler.setDelay(500);
 			}
 		}
 		return fReconciler;
-	}	
-	
+	}
+
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		if (fSourcePage == null)
 			return null;
@@ -86,18 +79,18 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 			IInformationControlCreator icc = getInformationControlCreator(false);
 			fInfoPresenter = new InformationPresenter(icc);
 			fInfoPresenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-			
+
 			// Register information provider
 			IInformationProvider provider = new SourceInformationProvider(fSourcePage, icc, getInfoImplementationType());
 			String[] contentTypes = getConfiguredContentTypes(sourceViewer);
-			for (int i= 0; i < contentTypes.length; i++)
+			for (int i = 0; i < contentTypes.length; i++)
 				fInfoPresenter.setInformationProvider(provider, contentTypes[i]);
-			
+
 			fInfoPresenter.setSizeConstraints(60, 10, true, true);
 		}
 		return fInfoPresenter;
 	}
-	
+
 	/**
 	 * @param sourceViewer
 	 * @return
@@ -112,26 +105,22 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 			return fOutlinePresenter;
 		}
 		// Define a new outline presenter
-		fOutlinePresenter = 
-			new InformationPresenter(getOutlinePresenterControlCreator(
-					sourceViewer, PDEActionConstants.COMMAND_ID_QUICK_OUTLINE));
-		fOutlinePresenter.setDocumentPartitioning(
-				getConfiguredDocumentPartitioning(sourceViewer));
-		fOutlinePresenter.setAnchor(
-				AbstractInformationControlManager.ANCHOR_GLOBAL);
+		fOutlinePresenter = new InformationPresenter(getOutlinePresenterControlCreator(sourceViewer, PDEActionConstants.COMMAND_ID_QUICK_OUTLINE));
+		fOutlinePresenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		fOutlinePresenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		// Define a new outline provider
 		IInformationProvider provider = new PDESourceInfoProvider(fSourcePage);
 		// Set the provider on all defined content types
 		String[] contentTypes = getConfiguredContentTypes(sourceViewer);
-		for (int i= 0; i < contentTypes.length; i++) {
+		for (int i = 0; i < contentTypes.length; i++) {
 			fOutlinePresenter.setInformationProvider(provider, contentTypes[i]);
 		}
 		// Set the presenter size constraints
 		fOutlinePresenter.setSizeConstraints(50, 20, true, false);
-		
+
 		return fOutlinePresenter;
 	}
-	
+
 	/**
 	 * Returns the outline presenter control creator. The creator is a 
 	 * factory creating outline presenter controls for the given source viewer. 
@@ -140,43 +129,41 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	 * @param commandId the ID of the command that opens this control
 	 * @return an information control creator
 	 */
-	private IInformationControlCreator getOutlinePresenterControlCreator(
-			ISourceViewer sourceViewer, final String commandId) {
+	private IInformationControlCreator getOutlinePresenterControlCreator(ISourceViewer sourceViewer, final String commandId) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				int shellStyle = SWT.RESIZE;
-				QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(
-						parent, shellStyle, fSourcePage, fSourcePage);
+				QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(parent, shellStyle, fSourcePage, fSourcePage);
 				return dialog;
 			}
 		};
-	}	
-	
+	}
+
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_NO_IMP;
 	}
-	
+
 	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				int style = cutDown ? SWT.RESIZE : (SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
-				return new DefaultInformationControl(parent, style,	new HTMLTextPresenter(cutDown));
+				return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
 			}
 		};
 	}
-	
- 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
- 		if (fSourcePage != null)
- 			return new IHyperlinkDetector[] { (IHyperlinkDetector)fSourcePage.getAdapter(IHyperlinkDetector.class) };
+
+	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		if (fSourcePage != null)
+			return new IHyperlinkDetector[] {(IHyperlinkDetector) fSourcePage.getAdapter(IHyperlinkDetector.class)};
 		return super.getHyperlinkDetectors(sourceViewer);
 	}
 
 	public abstract boolean affectsTextPresentation(PropertyChangeEvent event);
- 	
- 	public abstract boolean affectsColorPresentation(PropertyChangeEvent event);
- 	
+
+	public abstract boolean affectsColorPresentation(PropertyChangeEvent event);
+
 	public abstract void adaptToPreferenceChange(PropertyChangeEvent event);
-	
+
 	public abstract void dispose();
 
 }

@@ -15,16 +15,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.ui.PlatformUI;
@@ -41,7 +34,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
 
 	private CompCSBlock fBlock;
-	
+
 	/**
 	 * @param editor
 	 */
@@ -57,9 +50,9 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/composite_cs_editor/editor.htm"; //$NON-NLS-1$
 	}
-	
+
 	// TODO: MP: LOW: CompCS: Clean-up and reuse externalized strings
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -69,29 +62,23 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		// Note: Scrolled form #1 created here
 		ScrolledForm form = managedForm.getForm();
 		// Set page title
-		ICompCSModel model = (ICompCSModel)getModel();
+		ICompCSModel model = (ICompCSModel) getModel();
 		// Ensure the model was loaded properly
-		if ((model == null) || 
-				(model.isLoaded() == false)) {
+		if ((model == null) || (model.isLoaded() == false)) {
 			Exception e = null;
 			if (model instanceof AbstractModel) {
-				e = ((AbstractModel)model).getException();
+				e = ((AbstractModel) model).getException();
 			}
 			// Create a formatted error page
-			createFormErrorContent(managedForm, 
-					PDEUIMessages.SimpleCSPage_msgCheatSheetLoadFailure, 
-					PDEUIMessages.SimpleCSPage_msgCheatSheetParsingFailure, 
-					e);
+			createFormErrorContent(managedForm, PDEUIMessages.SimpleCSPage_msgCheatSheetLoadFailure, PDEUIMessages.SimpleCSPage_msgCheatSheetParsingFailure, e);
 			return;
-		}		
+		}
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_CHEATSHEET_OBJ));
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_CHEATSHEET_OBJ));
 		// Form title
-		String title = PDETextHelper.translateReadText(model.getCompCS()
-				.getFieldName());
+		String title = PDETextHelper.translateReadText(model.getCompCS().getFieldName());
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
@@ -106,27 +93,26 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
 		// Set context-sensitive help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), 
-				IHelpContextIds.COMPOSITE_CS_EDITOR);		
-	}	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.COMPOSITE_CS_EDITOR);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
-		
-		ICompCSModel compCSModel = (ICompCSModel)getModel();
+
+		ICompCSModel compCSModel = (ICompCSModel) getModel();
 		if (compCSModel != null) {
 			compCSModel.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		
+
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object[] objects = event.getChangedObjects();
 			ICompCSObject object = (ICompCSObject) objects[0];
@@ -134,14 +120,10 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 				// Ignore
 			} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 				String changeProperty = event.getChangedProperty();
-				if ((changeProperty != null)
-						&& changeProperty
-								.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
+				if ((changeProperty != null) && changeProperty.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
 					// Has to be a String if the property is a title
 					// Update the form page title
-					getManagedForm().getForm().setText(
-							PDETextHelper.translateReadText((String) event
-									.getNewValue()));
+					getManagedForm().getForm().setText(PDETextHelper.translateReadText((String) event.getNewValue()));
 				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -157,30 +139,29 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
-	
+
 	/**
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
-		
+
 		Object[] objects = event.getChangedObjects();
-		ICompCSObject object = (ICompCSObject) objects[0];		
+		ICompCSObject object = (ICompCSObject) objects[0];
 		if (object == null) {
 			// Ignore
 			return;
 		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
-			String newValue = ((ICompCS)object).getFieldName();
+			String newValue = ((ICompCS) object).getFieldName();
 			// Update page title
-			getManagedForm().getForm().setText(
-					PDETextHelper.translateReadText(newValue));
+			getManagedForm().getForm().setText(PDETextHelper.translateReadText(newValue));
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public PDEMasterDetailsBlock getBlock() {
 		return fBlock;
-	}	
-	
+	}
+
 }

@@ -24,9 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * SimpleCSDetails
@@ -35,18 +33,18 @@ import org.eclipse.ui.forms.widgets.Section;
 public class SimpleCSDetails extends CSAbstractDetails {
 
 	private ISimpleCS fCheatSheet;
-	
+
 	private FormEntry fTitle;
-	
+
 	private Section fMainSection;
-	
+
 	/**
 	 * @param section
 	 */
 	public SimpleCSDetails(ICSMaster section) {
 		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fCheatSheet = null;
-		
+
 		fTitle = null;
 		fMainSection = null;
 	}
@@ -57,8 +55,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	public void setData(ISimpleCS object) {
 		// Set data
 		fCheatSheet = object;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -66,16 +64,15 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) ||
-				(object instanceof ISimpleCS) == false) {
+		if ((object == null) || (object instanceof ISimpleCS) == false) {
 			return;
 		}
 		// Set data
-		setData((ISimpleCS)object);
+		setData((ISimpleCS) object);
 		// Update the UI given the new data
-		updateFields();	
+		updateFields();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -83,7 +80,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		GridData data = null;
-		
+
 		// Create main section
 		fMainSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -94,12 +91,11 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fMainSection.setLayoutData(data);
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fMainSection);	
-		
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fMainSection);
+
 		// Create container for main section
 		Composite mainSectionClient = toolkit.createComposite(fMainSection);
-		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));		
+		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 
 		// Attribute: title
 		fTitle = new FormEntry(mainSectionClient, toolkit, PDEUIMessages.SimpleCSDetails_0, SWT.NONE);
@@ -107,7 +103,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Bind widgets
 		toolkit.paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
-		markDetailsPart(fMainSection);		
+		markDetailsPart(fMainSection);
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +119,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 				}
 				fCheatSheet.setTitle(fTitle.getValue());
 			}
-		});		
+		});
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +130,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		if (fCheatSheet == null) {
 			return;
 		}
-		
+
 		boolean editable = isEditableElement();
 		// Attribute: title
 		fTitle.setValue(fCheatSheet.getTitle(), true);

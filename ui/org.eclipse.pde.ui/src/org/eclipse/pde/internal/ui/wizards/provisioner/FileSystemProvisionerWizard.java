@@ -11,21 +11,18 @@
 package org.eclipse.pde.internal.ui.wizards.provisioner;
 
 import java.io.File;
-
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.IProvisionerWizard;
 
 public class FileSystemProvisionerWizard extends Wizard implements IProvisionerWizard {
-	
+
 	private DirectorySelectionPage fPage = null;
 	private File[] fDirs = null;
-	
+
 	public FileSystemProvisionerWizard() {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.FileSystemProvisionerWizard_title); 
+		setWindowTitle(PDEUIMessages.FileSystemProvisionerWizard_title);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FILESYSTEM_WIZARD);
 	}
 

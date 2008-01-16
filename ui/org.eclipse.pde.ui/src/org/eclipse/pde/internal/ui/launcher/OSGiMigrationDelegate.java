@@ -19,11 +19,10 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
 public class OSGiMigrationDelegate extends PDEMigrationDelegate {
 
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
-		return  super.isCandidate(candidate)
-				 || !candidate.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "").equals("3.3"); //$NON-NLS-1$ //$NON-NLS-2$
+		return super.isCandidate(candidate) || !candidate.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "").equals("3.3"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void migrate (ILaunchConfigurationWorkingCopy wc) throws CoreException {
+	public void migrate(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		if (!wc.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "").equals("3.3")) { //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 			StringBuffer vmArgs = new StringBuffer(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$

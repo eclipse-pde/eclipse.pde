@@ -4,39 +4,26 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.internal.core.text.toc.Toc;
-import org.eclipse.pde.internal.core.text.toc.TocAnchor;
-import org.eclipse.pde.internal.core.text.toc.TocLink;
-import org.eclipse.pde.internal.core.text.toc.TocTopic;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.toc.details.TocAbstractDetails;
-import org.eclipse.pde.internal.ui.editor.toc.details.TocAnchorDetails;
-import org.eclipse.pde.internal.ui.editor.toc.details.TocDetails;
-import org.eclipse.pde.internal.ui.editor.toc.details.TocLinkDetails;
-import org.eclipse.pde.internal.ui.editor.toc.details.TocTopicDetails;
+import org.eclipse.pde.internal.core.text.toc.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.toc.details.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.DetailsPart;
-import org.eclipse.ui.forms.IDetailsPage;
-import org.eclipse.ui.forms.IDetailsPageProvider;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 
 /**
  * TODO: Comment
  *
  */
-public class TocBlock extends PDEMasterDetailsBlock implements
-	IModelChangedListener, IDetailsPageProvider {
+public class TocBlock extends PDEMasterDetailsBlock implements IModelChangedListener, IDetailsPageProvider {
 
-	private TocTreeSection fMasterSection;	
+	private TocTreeSection fMasterSection;
 
 	private TocAbstractDetails fDetails;
-	
+
 	private TocAbstractDetails fTopicDetails;
-	
+
 	private TocAnchorDetails fAnchorDetails;
-	
+
 	private TocLinkDetails fLinkDetails;
 
 	/**TODO: Comment
@@ -45,12 +32,11 @@ public class TocBlock extends PDEMasterDetailsBlock implements
 	public TocBlock(PDEFormPage page) {
 		super(page);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
 	 */
-	protected PDESection createMasterSection(IManagedForm managedForm,
-			Composite parent) {
+	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new TocTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
@@ -60,19 +46,19 @@ public class TocBlock extends PDEMasterDetailsBlock implements
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
-		detailsPart.setPageLimit(0); 
+		detailsPart.setPageLimit(0);
 		// Register static page:  toc
 		fDetails = new TocDetails(fMasterSection);
-		detailsPart.registerPage(TocDetails.class, fDetails);				
+		detailsPart.registerPage(TocDetails.class, fDetails);
 		// Register static page:  tocTopic
 		fTopicDetails = new TocTopicDetails(fMasterSection);
-		detailsPart.registerPage(TocTopicDetails.class, fTopicDetails);		
+		detailsPart.registerPage(TocTopicDetails.class, fTopicDetails);
 		// Register static page:  tocAnchor
 		fAnchorDetails = new TocAnchorDetails(fMasterSection);
 		detailsPart.registerPage(TocAnchorDetails.class, fAnchorDetails);
 		// Register static page:  tocLink
 		fLinkDetails = new TocLinkDetails(fMasterSection);
-		detailsPart.registerPage(TocLinkDetails.class, fLinkDetails);		
+		detailsPart.registerPage(TocLinkDetails.class, fLinkDetails);
 		// Set this class as the page provider
 		detailsPart.setPageProvider(this);
 	}
@@ -100,9 +86,8 @@ public class TocBlock extends PDEMasterDetailsBlock implements
 	 */
 	public Object getPageKey(Object object) {
 		ISelection selection = getSelection();
-		if(!(selection instanceof IStructuredSelection)
-				|| ((IStructuredSelection)selection).size() > 1)
-		{	return object.getClass();
+		if (!(selection instanceof IStructuredSelection) || ((IStructuredSelection) selection).size() > 1) {
+			return object.getClass();
 		}
 
 		// Get static page key

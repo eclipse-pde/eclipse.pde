@@ -32,14 +32,12 @@ public class FeatureData {
 	public boolean hasCustomHandler() {
 		return library != null && library.length() > 0;
 	}
-	
+
 	public String getSourceFolderName() {
-		return PreferenceConstants.getPreferenceStore().getString(
-				PreferenceConstants.SRCBIN_SRCNAME);
+		return PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.SRCBIN_SRCNAME);
 	}
 
 	public String getJavaBuildFolderName() {
-		return PreferenceConstants.getPreferenceStore().getString(
-				PreferenceConstants.SRCBIN_BINNAME);
+		return PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.SRCBIN_BINNAME);
 	}
 }

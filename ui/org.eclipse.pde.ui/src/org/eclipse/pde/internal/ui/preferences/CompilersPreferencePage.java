@@ -16,12 +16,9 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
-public class CompilersPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class CompilersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private CompilersConfigurationTab configurationBlock;
 
@@ -30,9 +27,9 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public CompilersPreferencePage() {
 		super();
-		setDescription(PDEUIMessages.CompilersPreferencePage_desc); 
+		setDescription(PDEUIMessages.CompilersPreferencePage_desc);
 		// only used when page is shown programatically
-		setTitle(PDEUIMessages.CompilersPreferencePage_title); 
+		setTitle(PDEUIMessages.CompilersPreferencePage_title);
 
 		configurationBlock = new CompilersConfigurationTab(null);
 	}
@@ -53,8 +50,7 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem()
-				.setHelp(getControl(), IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 	}
 
 	/*

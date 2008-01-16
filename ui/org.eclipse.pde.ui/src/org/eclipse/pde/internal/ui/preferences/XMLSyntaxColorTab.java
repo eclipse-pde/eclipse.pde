@@ -14,26 +14,18 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
-import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class XMLSyntaxColorTab extends SyntaxColorTab {
 
 	private static final String[][] COLOR_STRINGS = new String[][] {
-			/*		{Display name, IPreferenceStore key}		*/
-					{PDEUIMessages.EditorPreferencePage_text, IPDEColorConstants.P_DEFAULT},
-					{PDEUIMessages.EditorPreferencePage_proc, IPDEColorConstants.P_PROC_INSTR},
-					{PDEUIMessages.EditorPreferencePage_tag, IPDEColorConstants.P_TAG},
-					{PDEUIMessages.EditorPreferencePage_string, IPDEColorConstants.P_STRING},
-					{PDEUIMessages.XMLSyntaxColorTab_externalizedStrings, IPDEColorConstants.P_EXTERNALIZED_STRING},
-					{PDEUIMessages.EditorPreferencePage_comment, IPDEColorConstants.P_XML_COMMENT}};
+	/*		{Display name, IPreferenceStore key}		*/
+	{PDEUIMessages.EditorPreferencePage_text, IPDEColorConstants.P_DEFAULT}, {PDEUIMessages.EditorPreferencePage_proc, IPDEColorConstants.P_PROC_INSTR}, {PDEUIMessages.EditorPreferencePage_tag, IPDEColorConstants.P_TAG}, {PDEUIMessages.EditorPreferencePage_string, IPDEColorConstants.P_STRING}, {PDEUIMessages.XMLSyntaxColorTab_externalizedStrings, IPDEColorConstants.P_EXTERNALIZED_STRING}, {PDEUIMessages.EditorPreferencePage_comment, IPDEColorConstants.P_XML_COMMENT}};
 
 	public XMLSyntaxColorTab(IColorManager manager) {
 		super(manager);
 	}
-	
+
 	protected IDocument getDocument() {
 		StringBuffer buffer = new StringBuffer();
 		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -50,7 +42,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 		buffer.append("   </extension>"); //$NON-NLS-1$
 		buffer.append(delimiter);
 		buffer.append("</plugin>"); //$NON-NLS-1$
-		
+
 		IDocument document = new Document(buffer.toString());
 		new XMLDocumentSetupParticpant().setup(document);
 		return document;

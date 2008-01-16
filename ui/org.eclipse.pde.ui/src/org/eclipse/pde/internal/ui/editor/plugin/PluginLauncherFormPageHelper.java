@@ -15,15 +15,19 @@ import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
 
 public class PluginLauncherFormPageHelper implements ILauncherFormPageHelper {
 	PDELauncherFormEditor fEditor;
+
 	public PluginLauncherFormPageHelper(PDELauncherFormEditor editor) {
 		fEditor = editor;
 	}
+
 	public Object getLaunchObject() {
 		return fEditor.getCommonProject();
 	}
+
 	public boolean isOSGi() {
-		return !((ManifestEditor)fEditor).showExtensionTabs();
+		return !((ManifestEditor) fEditor).showExtensionTabs();
 	}
+
 	public void preLaunch() {
 	}
 }

@@ -15,17 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeaturePatchOperation extends AbstractCreateFeatureOperation {
 
 	private IFeatureModel fFeatureModel;
 
-	public CreateFeaturePatchOperation(IProject project, IPath location,
-			FeatureData featureData, IFeatureModel featureModel, Shell shell) {
+	public CreateFeaturePatchOperation(IProject project, IPath location, FeatureData featureData, IFeatureModel featureModel, Shell shell) {
 		super(project, location, featureData, shell);
 		fFeatureModel = featureModel;
 	}
@@ -43,7 +40,7 @@ public class CreateFeaturePatchOperation extends AbstractCreateFeatureOperation 
 			featureImport.setVersion(fFeatureData.featureToPatchVersion);
 			featureImport.setId(fFeatureData.featureToPatchId);
 		}
-		feature.addImports(new IFeatureImport[] { featureImport });
+		feature.addImports(new IFeatureImport[] {featureImport});
 	}
 
 }

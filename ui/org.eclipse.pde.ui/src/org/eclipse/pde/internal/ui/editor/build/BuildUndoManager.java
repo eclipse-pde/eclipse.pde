@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -38,7 +36,7 @@ public class BuildUndoManager extends ModelUndoManager {
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
-		IBuildModel model = (IBuildModel)event.getChangeProvider();
+		IBuildModel model = (IBuildModel) event.getChangeProvider();
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
@@ -55,17 +53,9 @@ public class BuildUndoManager extends ModelUndoManager {
 				break;
 			case IModelChangedEvent.CHANGE :
 				if (undo)
-					executeChange(
-						elements[0],
-						propertyName,
-						event.getNewValue(),
-						event.getOldValue());
+					executeChange(elements[0], propertyName, event.getNewValue(), event.getOldValue());
 				else
-					executeChange(
-						elements[0],
-						propertyName,
-						event.getOldValue(),
-						event.getNewValue());
+					executeChange(elements[0], propertyName, event.getOldValue(), event.getNewValue());
 		}
 	}
 
@@ -77,7 +67,7 @@ public class BuildUndoManager extends ModelUndoManager {
 				Object element = elements[i];
 
 				if (element instanceof IBuildEntry) {
-					build.add((IBuildEntry)element);
+					build.add((IBuildEntry) element);
 				}
 			}
 		} catch (CoreException e) {
@@ -93,7 +83,7 @@ public class BuildUndoManager extends ModelUndoManager {
 				Object element = elements[i];
 
 				if (element instanceof IBuildEntry) {
-					build.remove((IBuildEntry)element);
+					build.remove((IBuildEntry) element);
 				}
 			}
 		} catch (CoreException e) {
@@ -101,11 +91,7 @@ public class BuildUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeChange(
-		Object element,
-		String propertyName,
-		Object oldValue,
-		Object newValue) {
+	private void executeChange(Object element, String propertyName, Object oldValue, Object newValue) {
 		if (element instanceof BuildObject) {
 			BuildObject bobj = (BuildObject) element;
 			try {

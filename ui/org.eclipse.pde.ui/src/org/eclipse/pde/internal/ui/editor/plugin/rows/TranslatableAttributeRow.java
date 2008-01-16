@@ -36,12 +36,11 @@ public class TranslatableAttributeRow extends ReferenceAttributeRow {
 	}
 
 	protected void openReference() {
-		TranslationHyperlink link = new TranslationHyperlink(null, text.getText(),
-				(IPluginModelBase)part.getPage().getModel());
+		TranslationHyperlink link = new TranslationHyperlink(null, text.getText(), (IPluginModelBase) part.getPage().getModel());
 		link.open();
 		if (!link.getOpened()) {
 			Display.getCurrent().beep();
 		}
-	}	
-	
+	}
+
 }

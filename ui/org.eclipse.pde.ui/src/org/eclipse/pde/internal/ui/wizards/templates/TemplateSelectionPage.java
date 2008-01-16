@@ -11,25 +11,11 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.FormBrowser;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -38,10 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -50,19 +33,16 @@ public class TemplateSelectionPage extends WizardPage {
 	private ArrayList fVisiblePages;
 	private WizardCheckboxTablePart fTablePart;
 	private FormBrowser fDescriptionBrowser;
+
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
 		}
-		protected StructuredViewer createStructuredViewer(
-			Composite parent,
-			int style,
-			FormToolkit toolkit) {
-			return super.createStructuredViewer(
-				parent,
-				style | SWT.FULL_SELECTION,
-				toolkit);
+
+		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
+			return super.createStructuredViewer(parent, style | SWT.FULL_SELECTION, toolkit);
 		}
+
 		protected void updateCounter(int amount) {
 			super.updateCounter(amount);
 			if (getContainer() != null)
@@ -70,9 +50,7 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 	}
 
-	class ListContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class ListContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return fCandidates;
 		}
@@ -85,12 +63,11 @@ public class TemplateSelectionPage extends WizardPage {
 				return section.getLabel();
 			return section.getUsedExtensionPoint();
 		}
+
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
-				return PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_EXTENSION_OBJ);
-			return PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_EXT_POINT_OBJ);
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSION_OBJ);
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 		}
 	}
 
@@ -100,13 +77,13 @@ public class TemplateSelectionPage extends WizardPage {
 	 */
 	public TemplateSelectionPage(ITemplateSection[] candidates) {
 		super("templateSelection"); //$NON-NLS-1$
-        fCandidates = candidates;
+		fCandidates = candidates;
 		setTitle(PDEUIMessages.TemplateSelectionPage_title);
 		setDescription(PDEUIMessages.TemplateSelectionPage_desc);
 		initializeTemplates();
 	}
 
-	private void initializeTemplates(){
+	private void initializeTemplates() {
 		fTablePart = new TablePart(PDEUIMessages.TemplateSelectionPage_table);
 		fDescriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 		fDescriptionBrowser.setText(""); //$NON-NLS-1$
@@ -141,8 +118,7 @@ public class TemplateSelectionPage extends WizardPage {
 		});
 		fDescriptionBrowser.createControl(container);
 		Control c = fDescriptionBrowser.getControl();
-		GridData gd =
-			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.heightHint = 100;
 		//gd.horizontalSpan = 2;
 		c.setLayoutData(gd);
@@ -154,7 +130,7 @@ public class TemplateSelectionPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
 	}
-	
+
 	private void initializeWizardPages() {
 		for (int i = 0; i < fCandidates.length; i++) {
 			ITemplateSection section = fCandidates[i];
@@ -164,10 +140,10 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	public ITemplateSection[] getSelectedTemplates() {
-        Object[] elements = fTablePart.getTableViewer().getCheckedElements();
-        ITemplateSection[] result = new ITemplateSection[elements.length];
-        System.arraycopy(elements, 0, result, 0, elements.length);
-        return result;
+		Object[] elements = fTablePart.getTableViewer().getCheckedElements();
+		ITemplateSection[] result = new ITemplateSection[elements.length];
+		System.arraycopy(elements, 0, result, 0, elements.length);
+		return result;
 	}
 
 	private void initializeTable(Table table) {
@@ -211,7 +187,7 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 		if (fVisiblePages.size() > 0)
 			return (IWizardPage) fVisiblePages.get(0);
-		
+
 		return null;
 	}
 

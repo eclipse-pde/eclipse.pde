@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.core.search.ExtensionPluginSearchScope;
-import org.eclipse.pde.internal.core.search.PluginSearchInput;
-import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 
-
 public class FindDeclarationsAction extends BaseSearchAction {
-	
+
 	private Object fSelectedObject;
 
 	public FindDeclarationsAction(Object object) {
@@ -31,7 +25,7 @@ public class FindDeclarationsAction extends BaseSearchAction {
 		setImageDescriptor(PDEPluginImages.DESC_PSEARCH_OBJ);
 		this.fSelectedObject = object;
 	}
-	
+
 	protected ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
 		PluginSearchScope scope = null;
@@ -39,15 +33,15 @@ public class FindDeclarationsAction extends BaseSearchAction {
 		if (fSelectedObject instanceof IPluginImport) {
 			input.setSearchString(((IPluginImport) fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
-		} else if (fSelectedObject instanceof IPluginExtension)  {
-			input.setSearchString(((IPluginExtension)fSelectedObject).getPoint());
+		} else if (fSelectedObject instanceof IPluginExtension) {
+			input.setSearchString(((IPluginExtension) fSelectedObject).getPoint());
 			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
 			scope = new ExtensionPluginSearchScope(input);
 		} else if (fSelectedObject instanceof IPlugin) {
-			input.setSearchString(((IPlugin)fSelectedObject).getId());
+			input.setSearchString(((IPlugin) fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
 		} else if (fSelectedObject instanceof IFragment) {
-			input.setSearchString(((IFragment)fSelectedObject).getId());
+			input.setSearchString(((IFragment) fSelectedObject).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_FRAGMENT);
 		}
 		input.setSearchLimit(PluginSearchInput.LIMIT_DECLARATIONS);

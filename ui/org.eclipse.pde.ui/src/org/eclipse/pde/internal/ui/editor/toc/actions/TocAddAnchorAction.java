@@ -29,10 +29,8 @@ public class TocAddAnchorAction extends TocAddObjectAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (fParentObject != null)
-		{	//Create a new anchor
-			TocAnchor anchor = 
-				fParentObject.getModel().getFactory().createTocAnchor(); 
+		if (fParentObject != null) { //Create a new anchor
+			TocAnchor anchor = fParentObject.getModel().getFactory().createTocAnchor();
 			//Generate the name of the anchor
 			String name = PDELabelUtility.generateName(getChildNames(), PDEUIMessages.TocPage_TocAnchor);
 			anchor.setFieldAnchorId(name);

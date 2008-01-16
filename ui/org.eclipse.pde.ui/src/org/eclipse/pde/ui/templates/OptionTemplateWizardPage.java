@@ -11,7 +11,6 @@
 package org.eclipse.pde.ui.templates;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -44,13 +43,13 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * @param helpContextId
 	 * 			  the help context id
 	 */
-	public OptionTemplateWizardPage(BaseOptionTemplateSection section,
-			ArrayList options, String helpContextId) {
+	public OptionTemplateWizardPage(BaseOptionTemplateSection section, ArrayList options, String helpContextId) {
 		super(""); //$NON-NLS-1$
 		this.section = section;
 		this.options = options;
 		this.helpContextId = helpContextId;
 	}
+
 	/**
 	 * Creates the page control by creating individual options in the order
 	 * subject to their position in the list.'
@@ -73,6 +72,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 	}
+
 	/**
 	 * Initializes the options that require late initialization when the page is
 	 * made visible.

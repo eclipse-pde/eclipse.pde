@@ -28,7 +28,7 @@ public class MissingResourcePage extends PDEFormPage {
 	public MissingResourcePage(FormEditor editor) {
 		super(editor, "missing", PDEUIMessages.MissingResourcePage_missingResource); //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		Composite comp = managedForm.getToolkit().createComposite(form);
@@ -36,12 +36,8 @@ public class MissingResourcePage extends PDEFormPage {
 		IPersistableElement persistable = getEditorInput().getPersistable();
 		String text;
 		if (persistable instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)persistable).getFile();
-			text = NLS.bind(PDEUIMessages.MissingResourcePage_unableToOpenFull,
-					new String[] {
-					PDEUIMessages.MissingResourcePage_unableToOpen,
-					file.getProjectRelativePath().toString(),
-					file.getProject().getName()});
+			IFile file = ((IFileEditorInput) persistable).getFile();
+			text = NLS.bind(PDEUIMessages.MissingResourcePage_unableToOpenFull, new String[] {PDEUIMessages.MissingResourcePage_unableToOpen, file.getProjectRelativePath().toString(), file.getProject().getName()});
 		} else
 			text = PDEUIMessages.MissingResourcePage_unableToOpen;
 		form.setText(text);

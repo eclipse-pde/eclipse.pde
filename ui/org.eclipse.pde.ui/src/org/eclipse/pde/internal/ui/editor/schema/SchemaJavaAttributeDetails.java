@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -32,9 +29,7 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -44,7 +39,6 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 	private FormEntry fInterfaceEntry;
 	private TypeFieldAssistDisposer fClassEntryFieldAssistDisposer;
 	private TypeFieldAssistDisposer fInterfaceEntryFieldAssistDisposer;
-	
 
 	public SchemaJavaAttributeDetails(ElementSection section) {
 		super(section);
@@ -53,28 +47,21 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 	protected void createTypeDetails(Composite parent, FormToolkit toolkit) {
 		fClassEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
 		fInterfaceEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
-		fClassEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fClassEntry.getText(),
-				getPage().getPDEEditor().getCommonProject(),
-				IJavaSearchConstants.CLASS);
-		fInterfaceEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fInterfaceEntry.getText(),
-				getPage().getPDEEditor().getCommonProject(),
-				IJavaSearchConstants.INTERFACE);
-		}
-	
+		fClassEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fClassEntry.getText(), getPage().getPDEEditor().getCommonProject(), IJavaSearchConstants.CLASS);
+		fInterfaceEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fInterfaceEntry.getText(), getPage().getPDEEditor().getCommonProject(), IJavaSearchConstants.INTERFACE);
+	}
+
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
 		super.updateFields(object);
 
 		String basedOn = getAttribute().getBasedOn();
-		if ((basedOn != null) && 
-				(basedOn.length() > 0)) {
+		if ((basedOn != null) && (basedOn.length() > 0)) {
 			int index = basedOn.indexOf(":"); //$NON-NLS-1$
 			if (index == -1) {
-				String className = 
-					basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
-				if ((className.length() > 1) && 
-						(className.charAt(0) == 'I')) {
+				String className = basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
+				if ((className.length() > 1) && (className.charAt(0) == 'I')) {
 					fClassEntry.setValue("", true); //$NON-NLS-1$
 					fInterfaceEntry.setValue(basedOn, true);
 				} else {
@@ -89,12 +76,12 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 			fClassEntry.setValue("", true); //$NON-NLS-1$
 			fInterfaceEntry.setValue("", true); //$NON-NLS-1$
 		}
-		
+
 		boolean editable = isEditableElement();
 		fClassEntry.setEditable(editable);
 		fInterfaceEntry.setEditable(editable);
 	}
-	
+
 	public void hookListeners() {
 		super.hookListeners();
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
@@ -104,6 +91,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 					return;
 				setBasedOn();
 			}
+
 			public void linkActivated(HyperlinkEvent e) {
 				if (blockListeners())
 					return;
@@ -112,11 +100,11 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 				if (value != null)
 					fClassEntry.setValue(value);
 			}
+
 			public void browseButtonSelected(FormEntry entry) {
 				if (blockListeners())
 					return;
-				doOpenSelectionDialog(
-						IJavaElementSearchConstants.CONSIDER_CLASSES, fClassEntry);
+				doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_CLASSES, fClassEntry);
 			}
 		});
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -125,6 +113,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 					return;
 				setBasedOn();
 			}
+
 			public void linkActivated(HyperlinkEvent e) {
 				if (blockListeners())
 					return;
@@ -133,15 +122,15 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 				if (value != null)
 					fInterfaceEntry.setValue(value);
 			}
+
 			public void browseButtonSelected(FormEntry entry) {
 				if (blockListeners())
 					return;
-				doOpenSelectionDialog(
-						IJavaElementSearchConstants.CONSIDER_INTERFACES, fInterfaceEntry);
+				doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_INTERFACES, fInterfaceEntry);
 			}
 		});
 	}
-	
+
 	private String handleLinkActivated(String value, boolean isInter) {
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		try {
@@ -165,7 +154,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		}
 		return null;
 	}
-	
+
 	private void setBasedOn() {
 		String classEntry = fClassEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String interfaceEntry = fInterfaceEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -178,16 +167,13 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 			sb.append(interfaceEntry);
 		getAttribute().setBasedOn(sb.length() > 0 ? sb.toString() : null);
 	}
-	
+
 	private void doOpenSelectionDialog(int scopeType, FormEntry entry) {
 		try {
 			String filter = entry.getValue();
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
-			SelectionDialog dialog = JavaUI.createTypeDialog(
-					PDEPlugin.getActiveWorkbenchShell(),
-					PlatformUI.getWorkbench().getProgressService(),
-					SearchEngine.createWorkspaceScope(), scopeType, false, filter); //$NON-NLS-1$
-			dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); 
+			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), SearchEngine.createWorkspaceScope(), scopeType, false, filter); //$NON-NLS-1$
+			dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle);
 			if (dialog.open() == Window.OK) {
 				IType type = (IType) dialog.getResult()[0];
 				entry.setValue(type.getFullyQualifiedName('$'));
@@ -196,14 +182,14 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
 		fClassEntry.commit();
 		fInterfaceEntry.commit();
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		if (fClassEntryFieldAssistDisposer != null)

@@ -43,7 +43,7 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 			NewSearchUI.runQueryInBackground(createSearchQuery());
 		}
 	}
-	
+
 	private ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
 		input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);

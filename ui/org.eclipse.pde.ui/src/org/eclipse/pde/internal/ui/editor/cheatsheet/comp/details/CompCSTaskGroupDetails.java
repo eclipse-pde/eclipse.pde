@@ -27,12 +27,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -43,23 +39,23 @@ import org.eclipse.ui.forms.widgets.Section;
 public class CompCSTaskGroupDetails extends CSAbstractDetails {
 
 	private Section fDefinitionSection;
-	
+
 	private FormEntry fNameEntry;
-	
+
 	private ComboPart fKindCombo;
-	
-	private Button fSkip;	
-	
+
+	private Button fSkip;
+
 	private ICompCSTaskGroup fDataTaskGroup;
-	
+
 	private CompCSEnclosingTextDetails fEnclosingTextSection;
-	
+
 	private static final String F_KIND_VALUE_SET = PDEUIMessages.CompCSTaskGroupDetails_Set;
-	
+
 	private static final String F_KIND_VALUE_CHOICE = PDEUIMessages.CompCSTaskGroupDetails_Choice;
 
 	private static final String F_KIND_VALUE_SEQUENCE = PDEUIMessages.CompCSTaskGroupDetails_Sequence;
-	
+
 	/**
 	 * @param section
 	 */
@@ -72,10 +68,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fSkip = null;
 
 		fDefinitionSection = null;
-		fEnclosingTextSection = 
-			new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASKGROUP, section);
+		fEnclosingTextSection = new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASKGROUP, section);
 	}
-	
+
 	/**
 	 * @param object
 	 */
@@ -84,8 +79,8 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fDataTaskGroup = object;
 		// Set data on the enclosing text section
 		fEnclosingTextSection.setData(object);
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -96,27 +91,25 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// registered directly.
 		// Initialize managed form for enclosing text section
 		fEnclosingTextSection.initialize(form);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
-		
+
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
-			PDEUIMessages.CompCSTaskGroupDetails_SectionDescription, style);
+		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, PDEUIMessages.CompCSTaskGroupDetails_SectionDescription, style);
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fDefinitionSection);			
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fDefinitionSection);
 		// Create the container for the main section
-		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 2);		
+		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 2);
 		// Create the name entry
 		createUINameEntry(sectionClient);
 		// Create the kind label
-		createUIKindLabel(sectionClient);		
+		createUIKindLabel(sectionClient);
 		// Create the kind combo
 		createUIKindCombo(sectionClient);
 		// Create the skip button
@@ -126,7 +119,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
-		markDetailsPart(fDefinitionSection);			
+		markDetailsPart(fDefinitionSection);
 
 	}
 
@@ -134,7 +127,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUISkipButton(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		fSkip = getToolkit().createButton(parent, PDEUIMessages.CompCSTaskGroupDetails_SkipLabel, SWT.CHECK);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -146,13 +139,12 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUIKindLabel(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
-		Label label = getToolkit().createLabel(parent, 
-				PDEUIMessages.CompCSTaskGroupDetails_Type, SWT.WRAP);
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
+		Label label = getToolkit().createLabel(parent, PDEUIMessages.CompCSTaskGroupDetails_Type, SWT.WRAP);
 		label.setForeground(foreground);
 		label.setToolTipText(PDEUIMessages.CompCSTaskGroupDetails_KindToolTip);
 	}
-	
+
 	/**
 	 * @param parent
 	 */
@@ -167,17 +159,15 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fKindCombo.add(F_KIND_VALUE_SET);
 		fKindCombo.add(F_KIND_VALUE_SEQUENCE);
 		fKindCombo.add(F_KIND_VALUE_CHOICE);
-		fKindCombo.setText(F_KIND_VALUE_SET);	
-		fKindCombo.getControl().setToolTipText(
-				PDEUIMessages.CompCSTaskGroupDetails_KindToolTip); 
+		fKindCombo.setText(F_KIND_VALUE_SET);
+		fKindCombo.getControl().setToolTipText(PDEUIMessages.CompCSTaskGroupDetails_KindToolTip);
 	}
 
 	/**
 	 * @param parent
 	 */
 	private void createUINameEntry(Composite parent) {
-		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.CompCSTaskGroupDetails_Name, SWT.NONE);		
+		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.CompCSTaskGroupDetails_Name, SWT.NONE);
 	}
 
 	/* (non-Javadoc)
@@ -203,11 +193,11 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
 					return;
-				}				
+				}
 				fDataTaskGroup.setFieldName(fNameEntry.getValue());
 			}
-		});			
-	}	
+		});
+	}
 
 	/**
 	 * 
@@ -218,21 +208,18 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
 					return;
-				}				
+				}
 				String selection = fKindCombo.getSelection();
 				if (selection.equals(F_KIND_VALUE_CHOICE)) {
-					fDataTaskGroup.setFieldKind(
-							ICompCSConstants.ATTRIBUTE_VALUE_CHOICE);
+					fDataTaskGroup.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_CHOICE);
 				} else if (selection.equals(F_KIND_VALUE_SEQUENCE)) {
-					fDataTaskGroup.setFieldKind(
-							ICompCSConstants.ATTRIBUTE_VALUE_SEQUENCE);
+					fDataTaskGroup.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_SEQUENCE);
 				} else if (selection.equals(F_KIND_VALUE_SET)) {
-					fDataTaskGroup.setFieldKind(
-							ICompCSConstants.ATTRIBUTE_VALUE_SET);
+					fDataTaskGroup.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_SET);
 				}
 			}
 		});
-	}	
+	}
 
 	/**
 	 * 
@@ -243,12 +230,12 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTaskGroup == null) {
 					return;
-				}				
+				}
 				fDataTaskGroup.setFieldSkip(fSkip.getSelection());
 			}
-		});		
-	}	
-	
+		});
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
@@ -256,7 +243,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// Ensure data object is defined
 		if (fDataTaskGroup == null) {
 			return;
-		}		
+		}
 		boolean editable = isEditableElement();
 		// Update name entry
 		updateNameEntry(editable);
@@ -273,15 +260,15 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTaskGroup.getFieldName(), true);
-		fNameEntry.setEditable(editable);			
-	}	
+		fNameEntry.setEditable(editable);
+	}
 
 	/**
 	 * @param editable
 	 */
 	private void updateKindCombo(boolean editable) {
 		String kind = fDataTaskGroup.getFieldKind();
-		
+
 		if (kind == null) {
 			// NO-OP
 		} else if (kind.compareTo(ICompCSConstants.ATTRIBUTE_VALUE_SEQUENCE) == 0) {
@@ -291,18 +278,18 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		} else {
 			fKindCombo.setText(F_KIND_VALUE_SET);
 		}
-		
+
 		fKindCombo.setEnabled(editable);
-	}	
+	}
 
 	/**
 	 * @param editable
 	 */
 	private void updateSkipButton(boolean editable) {
 		fSkip.setSelection(fDataTaskGroup.getFieldSkip());
-		fSkip.setEnabled(editable);	
-	}	
-	
+		fSkip.setEnabled(editable);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -320,16 +307,15 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) ||
-				(object instanceof ICompCSTaskGroup) == false) {
+		if ((object == null) || (object instanceof ICompCSTaskGroup) == false) {
 			return;
 		}
 		// Set data
-		setData((ICompCSTaskGroup)object);
+		setData((ICompCSTaskGroup) object);
 		// Update the UI given the new data
 		updateFields();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -340,6 +326,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 			fEnclosingTextSection = null;
 		}
 		super.dispose();
-	}	
-	
+	}
+
 }

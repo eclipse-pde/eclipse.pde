@@ -10,65 +10,46 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IAccessRule;
-import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaModelStatus;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
-import org.eclipse.pde.internal.core.JavadocLocationManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
-	
+
 	private static Hashtable fSeverityTable = null;
 	private static final int SEVERITY_ERROR = 3;
 	private static final int SEVERITY_WARNING = 2;
 	private static final int SEVERITY_IGNORE = 1;
-	
+
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
 		IClasspathEntry[] entries = getClasspath(project, model, false);
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
-	
+
 	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear) throws CoreException {
 
 		ArrayList result = new ArrayList();
-				
+
 		IBuild build = getBuild(project);
 
 		// add own libraries/source
 		addSourceAndLibraries(project, model, build, clear, result);
-	
+
 		// add JRE and set compliance options
-		String ee = getExecutionEnvironment(model.getBundleDescription());	
+		String ee = getExecutionEnvironment(model.getBundleDescription());
 		result.add(createJREEntry(ee));
 		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
 
@@ -77,21 +58,16 @@ public class ClasspathComputer {
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaProject javaProject = JavaCore.create(project);
-		IJavaModelStatus validation = 
-			JavaConventions.validateClasspath(
-								javaProject, 
-								entries, 
-								javaProject.getOutputLocation());
+		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
 		if (!validation.isOK()) {
 			PDECore.logErrorMessage(validation.getMessage());
 			throw new CoreException(validation);
 		}
-		return (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
+		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, 
-			ArrayList result) throws CoreException {
-		
+	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, ArrayList result) throws CoreException {
+
 		HashSet paths = new HashSet();
 
 		// keep existing source folders
@@ -130,20 +106,19 @@ public class ClasspathComputer {
 			}
 		}
 	}
-	
+
 	private static IClasspathAttribute[] getClasspathAttributes(IProject project, IPluginModelBase model) {
 		IClasspathAttribute[] attributes = new IClasspathAttribute[0];
-		if (!RepositoryProvider.isShared(project)) {			
+		if (!RepositoryProvider.isShared(project)) {
 			JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 			String javadoc = manager.getJavadocLocation(model);
 			if (javadoc != null) {
-				attributes = new IClasspathAttribute[] 
-				   {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadoc)};
+				attributes = new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadoc)};
 			}
 		}
 		return attributes;
 	}
-	
+
 	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet paths, ArrayList result) throws CoreException {
 		String[] folders = buildEntry.getTokens();
 		for (int j = 0; j < folders.length; j++) {
@@ -157,13 +132,13 @@ public class ClasspathComputer {
 					if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 						result.add(root.getRawClasspathEntry());
 						continue;
-					} 
+					}
 				}
 				result.add(JavaCore.newSourceEntry(path));
-			} 
-		}	
+			}
+		}
 	}
-	
+
 	protected static IBuild getBuild(IProject project) throws CoreException {
 		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
 		IBuildModel buildModel = null;
@@ -173,18 +148,18 @@ public class ClasspathComputer {
 		}
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
-	
+
 	private static void addLibraryEntry(IProject project, IPluginLibrary library, IClasspathAttribute[] attrs, ArrayList result) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
 		if (jarFile == null)
 			return;
-		
+
 		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 			IClasspathEntry oldEntry = root.getRawClasspathEntry();
 			if (oldEntry.getSourceAttachmentPath() != null && !result.contains(oldEntry)) {
-				result.add(oldEntry);		
+				result.add(oldEntry);
 				return;
 			}
 		}
@@ -194,7 +169,7 @@ public class ClasspathComputer {
 			result.add(entry);
 	}
 
-	private static void addJARdPlugin(IProject project, String filename, IClasspathAttribute[] attrs, ArrayList result) {		
+	private static void addJARdPlugin(IProject project, String filename, IClasspathAttribute[] attrs, ArrayList result) {
 		String name = ClasspathUtilCore.expandLibraryName(filename);
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
@@ -203,7 +178,7 @@ public class ClasspathComputer {
 				result.add(entry);
 		}
 	}
-	
+
 	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IClasspathAttribute[] attrs, boolean isExported) {
 		String sourceZipName = ClasspathUtilCore.getSourceZipName(fileName);
 		IResource resource = project.findMember(sourceZipName);
@@ -218,7 +193,7 @@ public class ClasspathComputer {
 		IPath srcAttachment = resource != null ? resource.getFullPath() : library.getFullPath();
 		return JavaCore.newLibraryEntry(library.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, isExported);
 	}
-	
+
 	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
 		if (bundleDescription != null) {
 			String[] envs = bundleDescription.getExecutionEnvironments();
@@ -227,16 +202,16 @@ public class ClasspathComputer {
 		}
 		return null;
 	}
-	
+
 	public static void setComplianceOptions(IJavaProject project, String compliance) {
-		Map map = project.getOptions(false);		
+		Map map = project.getOptions(false);
 		if (compliance == null) {
 			if (map.size() > 0) {
 				map.remove(JavaCore.COMPILER_COMPLIANCE);
 				map.remove(JavaCore.COMPILER_SOURCE);
 				map.remove(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
 				map.remove(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
-				map.remove(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);	
+				map.remove(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
 			} else {
 				return;
 			}
@@ -265,9 +240,9 @@ public class ClasspathComputer {
 			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
 			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
 		}
-		project.setOptions(map);		
+		project.setOptions(map);
 	}
-	
+
 	private static void updateSeverityComplianceOption(Map map, String key, String value) {
 		Integer current_value = null;
 		Integer new_value = null;
@@ -280,17 +255,17 @@ public class ClasspathComputer {
 			fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
 			fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
 			fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
-		}		
+		}
 		// Get the current severity
-		current_string_value = (String)map.get(key);
+		current_string_value = (String) map.get(key);
 		if (current_string_value != null) {
-			current_value = (Integer)fSeverityTable.get(current_string_value);
+			current_value = (Integer) fSeverityTable.get(current_string_value);
 			if (current_value != null) {
 				current_int_value = current_value.intValue();
 			}
 		}
 		// Get the new severity
-		new_value = (Integer)fSeverityTable.get(value);
+		new_value = (Integer) fSeverityTable.get(value);
 		if (new_value != null) {
 			new_int_value = new_value.intValue();
 		}
@@ -299,21 +274,20 @@ public class ClasspathComputer {
 			map.put(key, value);
 		}
 	}
-	
-	
+
 	public static IClasspathEntry createJREEntry(String ee) {
 		IPath path = null;
 		if (ee != null) {
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment env = manager.getEnvironment(ee);
-			if (env != null) 
+			if (env != null)
 				path = JavaRuntime.newJREContainerPath(env);
 		}
 		if (path == null)
 			path = JavaRuntime.newDefaultJREContainerPath();
 		return JavaCore.newContainerEntry(path);
 	}
-	
+
 	public static IClasspathEntry createContainerEntry() {
 		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
 	}

@@ -23,11 +23,11 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 	private ContentAssistant fContentAssistant;
 	private XMLContentAssistProcessor fContentAssistProcessor;
 	private PluginXMLTextHover fTextHover;
-	
+
 	public PluginXMLConfiguration(IColorManager colorManager, PDESourcePage page) {
 		super(colorManager, page);
 	}
-	
+
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable() && fContentAssistant == null) {
 			fContentAssistProcessor = new XMLContentAssistProcessor(fSourcePage);
@@ -41,17 +41,17 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 		}
 		return fContentAssistant;
 	}
-	
+
 	public void dispose() {
 		if (fContentAssistProcessor != null)
 			fContentAssistProcessor.dispose();
 		super.dispose();
 	}
-	
+
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (fTextHover == null && fSourcePage != null)
 			fTextHover = new PluginXMLTextHover(fSourcePage);
 		return fTextHover;
 	}
-	
+
 }

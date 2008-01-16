@@ -27,9 +27,9 @@ import org.eclipse.ui.PlatformUI;
 public class ProductExportAction extends Action {
 
 	private IProject fProject;
-	
+
 	private IStructuredSelection fSelection;
-	
+
 	public ProductExportAction(PDEFormEditor editor) {
 		IResource resource = null;
 		if (editor != null)
@@ -37,12 +37,12 @@ public class ProductExportAction extends Action {
 		fSelection = resource != null ? new StructuredSelection(resource) : new StructuredSelection();
 		fProject = editor.getCommonProject();
 	}
-	
+
 	public ProductExportAction(IStructuredSelection selection) {
 		fSelection = selection;
 		fProject = null;
 	}
-	
+
 	public void run() {
 		ProductExportWizard wizard = new ProductExportWizard(fProject);
 		wizard.init(PlatformUI.getWorkbench(), fSelection);
@@ -50,5 +50,5 @@ public class ProductExportAction extends Action {
 		wd.create();
 		notifyResult(wd.open() == Window.OK);
 	}
-	
+
 }

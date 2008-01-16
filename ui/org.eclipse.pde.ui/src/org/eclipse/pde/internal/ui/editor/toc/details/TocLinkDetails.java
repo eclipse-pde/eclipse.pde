@@ -19,10 +19,7 @@ import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.toc.TocExtensionUtil;
-import org.eclipse.pde.internal.ui.editor.toc.TocFileValidator;
-import org.eclipse.pde.internal.ui.editor.toc.TocInputContext;
-import org.eclipse.pde.internal.ui.editor.toc.TocTreeSection;
+import org.eclipse.pde.internal.ui.editor.toc.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.swt.widgets.Composite;
@@ -35,9 +32,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class TocLinkDetails extends TocAbstractDetails {
 
 	private TocLink fDataTOCLink;
-	
+
 	private FormEntry fTocPathEntry;
-	
+
 	/**
 	 * @param masterSection
 	 */
@@ -47,26 +44,25 @@ public class TocLinkDetails extends TocAbstractDetails {
 
 		fTocPathEntry = null;
 	}
-	
+
 	/**
 	 * @param object
 	 */
 	public void setData(TocLink object) {
 		// Set data
 		fDataTOCLink = object;
-	}		
-
-	protected TocObject getDataObject()
-	{	return fDataTOCLink;
 	}
 
+	protected TocObject getDataObject() {
+		return fDataTOCLink;
+	}
 
 	protected FormEntry getPathEntryField() {
 		return fTocPathEntry;
 	}
 
-	protected boolean isTocPath()
-	{	return true;
+	protected boolean isTocPath() {
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -75,24 +71,22 @@ public class TocLinkDetails extends TocAbstractDetails {
 	public void createFields(Composite parent) {
 		createTocPathWidget(parent);
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	private void createTocPathWidget(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), PDEUIMessages.TocLinkDetails_tocPath_desc);
-		
-		fTocPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.TocLinkDetails_tocPath, 
-				PDEUIMessages.GeneralInfoSection_browse, isEditable());
+
+		fTocPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.TocLinkDetails_tocPath, PDEUIMessages.GeneralInfoSection_browse, isEditable());
 	}
 
-	protected String getDetailsTitle()
-	{	return PDEUIMessages.TocLinkDetails_title;
+	protected String getDetailsTitle() {
+		return PDEUIMessages.TocLinkDetails_title;
 	}
-	
-	protected String getDetailsDescription()
-	{	return null;
+
+	protected String getDetailsDescription() {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -109,38 +103,34 @@ public class TocLinkDetails extends TocAbstractDetails {
 		fTocPathEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
-				if (fDataTOCLink != null)
-				{	fDataTOCLink.setFieldTocPath(fTocPathEntry.getValue());
+				if (fDataTOCLink != null) {
+					fDataTOCLink.setFieldTocPath(fTocPathEntry.getValue());
 				}
 			}
 
-			public void browseButtonSelected(FormEntry entry)
-			{	handleBrowse();
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse();
 			}
-			
-			public void linkActivated(HyperlinkEvent e)
-			{	handleOpen();
+
+			public void linkActivated(HyperlinkEvent e) {
+				handleOpen();
 			}
-		});			
+		});
 	}
-	
-	private void handleBrowse()
-	{	ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-				getPage().getSite().getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
+
+	private void handleBrowse() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getPage().getSite().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
 		dialog.setValidator(new TocFileValidator(fDataTOCLink.getModel()));
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.TocLinkDetails_browseSelection);  
+		dialog.setTitle(PDEUIMessages.TocLinkDetails_browseSelection);
 		dialog.setMessage(PDEUIMessages.TocLinkDetails_browseMessage);
 		dialog.addFilter(new FileExtensionFilter(TocExtensionUtil.tocExtension));
 
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {
-			IFile file = (IFile)dialog.getFirstResult();
+			IFile file = (IFile) dialog.getFirstResult();
 			setPathEntry(file);
 		}
 	}
@@ -150,8 +140,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 	 */
 	public void updateFields() {
 		// Ensure data object is defined
-		if (fDataTOCLink != null)
-		{	// Update name entry
+		if (fDataTOCLink != null) { // Update name entry
 			updateTocPathEntry(isEditableElement());
 		}
 	}
@@ -161,9 +150,9 @@ public class TocLinkDetails extends TocAbstractDetails {
 	 */
 	private void updateTocPathEntry(boolean editable) {
 		fTocPathEntry.setValue(fDataTOCLink.getFieldTocPath(), true);
-		fTocPathEntry.setEditable(editable);			
+		fTocPathEntry.setEditable(editable);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -182,7 +171,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 		// Ensure we have the right type
 		if (object != null && object instanceof TocLink) {
 			// Set data
-			setData((TocLink)object);
+			setData((TocLink) object);
 			// Update the UI given the new data
 			updateFields();
 		}

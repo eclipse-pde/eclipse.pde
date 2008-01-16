@@ -14,9 +14,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -27,19 +25,10 @@ import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -61,16 +50,15 @@ public class FragmentContentPage extends ContentPage {
 			validatePage();
 		}
 	};
-	
-	public FragmentContentPage(String pageName, IProjectProvider provider,
-			NewProjectCreationPage page, AbstractFieldData data) {
+
+	public FragmentContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
-		setTitle(PDEUIMessages.ContentPage_ftitle); 
+		setTitle(PDEUIMessages.ContentPage_ftitle);
 		setDescription(PDEUIMessages.ContentPage_fdesc);
 		updateVersion(false);
 		fVersionPart = new PluginVersionPart(fNewVersion);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -79,7 +67,7 @@ public class FragmentContentPage extends ContentPage {
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 15;
 		container.setLayout(layout);
-		
+
 		createFragmentPropertiesGroup(container);
 		createParentPluginGroup(container);
 
@@ -92,22 +80,22 @@ public class FragmentContentPage extends ContentPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.ContentPage_fGroup); 
+		propertiesGroup.setText(PDEUIMessages.ContentPage_fGroup);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fid); 
+		label.setText(PDEUIMessages.ContentPage_fid);
 		fIdText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fversion); 
+		label.setText(PDEUIMessages.ContentPage_fversion);
 		fVersionText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fname); 
+		label.setText(PDEUIMessages.ContentPage_fname);
 		fNameText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fprovider); 
+		label.setText(PDEUIMessages.ContentPage_fprovider);
 		fProviderText = createText(propertiesGroup, propertiesListener);
 	}
 
@@ -115,9 +103,9 @@ public class FragmentContentPage extends ContentPage {
 		Group parentGroup = new Group(container, SWT.NONE);
 		parentGroup.setLayout(new GridLayout(2, false));
 		parentGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		parentGroup.setText(PDEUIMessages.ContentPage_parentPluginGroup); 
-		
-		fNotebook =  new Composite(parentGroup, SWT.NONE);
+		parentGroup.setText(PDEUIMessages.ContentPage_parentPluginGroup);
+
+		fNotebook = new Composite(parentGroup, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		fNotebook.setLayoutData(gd);
@@ -127,7 +115,7 @@ public class FragmentContentPage extends ContentPage {
 		fNewComp = createNewVersionComp(fNotebook);
 		fOldComp = createOldVersionComp(fNotebook);
 		fNotebookLayout.topControl = fNewVersion ? fNewComp : fOldComp;
-		
+
 	}
 
 	private Composite createNewVersionComp(Composite notebook) {
@@ -135,11 +123,11 @@ public class FragmentContentPage extends ContentPage {
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		comp.setLayout(layout);
-		
+
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(PDEUIMessages.FragmentContentPage_pid); 
+		label.setText(PDEUIMessages.FragmentContentPage_pid);
 		fPluginIdText_newV = createPluginIdContainer(comp, true, 2);
-		
+
 		fVersionPart.createVersionFields(comp, false, true);
 		fVersionPart.addListeners(listener, listener);
 		return comp;
@@ -150,10 +138,10 @@ public class FragmentContentPage extends ContentPage {
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		comp.setLayout(layout);
-		
+
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(PDEUIMessages.FragmentContentPage_pid); 
-		
+		label.setText(PDEUIMessages.FragmentContentPage_pid);
+
 		Composite container = new Composite(comp, SWT.NONE);
 		layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
@@ -161,21 +149,18 @@ public class FragmentContentPage extends ContentPage {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fPluginIdText_oldV = createPluginIdContainer(container, false, 1);
-		
+
 		label = new Label(comp, SWT.NONE);
-		label.setText(PDEUIMessages.FragmentContentPage_pversion); 
+		label.setText(PDEUIMessages.FragmentContentPage_pversion);
 		fPluginVersion = createText(comp, listener);
-		
+
 		label = new Label(comp, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_matchRule); 
-		
+		label.setText(PDEUIMessages.ContentPage_matchRule);
+
 		fMatchCombo = new Combo(comp, SWT.READ_ONLY | SWT.BORDER);
 		fMatchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fMatchCombo.setItems(new String[]{"", //$NON-NLS-1$
-				PDEUIMessages.ManifestEditor_MatchSection_equivalent,
-				PDEUIMessages.ManifestEditor_MatchSection_compatible,
-				PDEUIMessages.ManifestEditor_MatchSection_perfect,
-				PDEUIMessages.ManifestEditor_MatchSection_greater});
+		fMatchCombo.setItems(new String[] {"", //$NON-NLS-1$
+				PDEUIMessages.ManifestEditor_MatchSection_equivalent, PDEUIMessages.ManifestEditor_MatchSection_compatible, PDEUIMessages.ManifestEditor_MatchSection_perfect, PDEUIMessages.ManifestEditor_MatchSection_greater});
 		fMatchCombo.setText(fMatchCombo.getItem(0));
 		return comp;
 	}
@@ -184,14 +169,13 @@ public class FragmentContentPage extends ContentPage {
 		final Text pluginText = createText(parent, listener);
 
 		Button browse = new Button(parent, SWT.PUSH);
-		browse.setText(PDEUIMessages.ContentPage_browse); 
+		browse.setText(PDEUIMessages.ContentPage_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(pluginText.getDisplay(), new Runnable() {
 					public void run() {
-						PluginSelectionDialog dialog = new PluginSelectionDialog(
-								pluginText.getShell(), false, false);
+						PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
 						dialog.create();
 						if (dialog.open() == Window.OK) {
 							IPluginModel model = (IPluginModel) dialog.getFirstResult();
@@ -212,15 +196,14 @@ public class FragmentContentPage extends ContentPage {
 		SWTUtil.setButtonDimensionHint(browse);
 		return pluginText;
 	}
-	
+
 	private String computeInitialPluginVersion(String pluginVersion) {
-		if (pluginVersion != null
-				&& VersionUtil.validateVersion(pluginVersion).isOK()) {
+		if (pluginVersion != null && VersionUtil.validateVersion(pluginVersion).isOK()) {
 			Version pvi = Version.parseVersion(pluginVersion);
 			return pvi.getMajor() + "." + pvi.getMinor() //$NON-NLS-1$
-						+ "." + pvi.getMicro(); //$NON-NLS-1$
+					+ "." + pvi.getMicro(); //$NON-NLS-1$
 		}
-		
+
 		return pluginVersion;
 	}
 
@@ -237,25 +220,24 @@ public class FragmentContentPage extends ContentPage {
 		}
 		((FragmentFieldData) fData).setPluginVersion(version);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
 	protected void validatePage() {
 		String errorMessage = validateProperties();
-		
+
 		if (errorMessage == null) {
-			String pluginID = fNewVersion ? 
-					fPluginIdText_newV.getText().trim() : fPluginIdText_oldV.getText().trim();
+			String pluginID = fNewVersion ? fPluginIdText_newV.getText().trim() : fPluginIdText_oldV.getText().trim();
 			if (pluginID.length() == 0) {
-				errorMessage = PDEUIMessages.ContentPage_nopid; 
+				errorMessage = PDEUIMessages.ContentPage_nopid;
 			} else if (!(PluginRegistry.findModel(pluginID) instanceof IPluginModel)) {
-				errorMessage = PDEUIMessages.ContentPage_pluginNotFound; 
+				errorMessage = PDEUIMessages.ContentPage_pluginNotFound;
 			} else {
 				if (fNewVersion) {
 					IStatus status = fVersionPart.validateFullVersionRangeText(false);
 					if (status.getSeverity() != IStatus.OK) {
-						errorMessage = status.getMessage(); 
+						errorMessage = status.getMessage();
 					}
 				} else {
 					errorMessage = validateVersion(fPluginVersion);
@@ -266,14 +248,14 @@ public class FragmentContentPage extends ContentPage {
 			setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
 	 */
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_fragment; 
+		return PDEUIMessages.ContentPage_fragment;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
 	 */
@@ -284,7 +266,7 @@ public class FragmentContentPage extends ContentPage {
 		}
 		super.setVisible(visible);
 	}
-	
+
 	private void updateVersion(boolean updateComposite) {
 		fNewVersion = Double.parseDouble(fData.getTargetVersion()) > 3.0;
 		if (updateComposite) {

@@ -12,10 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
 import java.util.Iterator;
-
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.ISimpleCSCommandKeyListener;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.NewCommandKeyEvent;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSCommandManager;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.DisposeEvent;
@@ -28,13 +25,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * SimpleCSCommandComboPart
  *
  */
-public class SimpleCSCommandComboPart extends ComboPart implements
-		ISimpleCSCommandKeyListener, DisposeListener {
+public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSCommandKeyListener, DisposeListener {
 
 	private int fNewCommandKeyIndex;
 
 	private int fComboEntryLimit;
-	
+
 	/**
 	 * 
 	 */
@@ -43,7 +39,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 		fNewCommandKeyIndex = -1;
 		fComboEntryLimit = -1;
 	}
-	
+
 	/**
 	 * @param listener
 	 */
@@ -56,7 +52,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 			((CCombo) combo).addDisposeListener(listener);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.parts.ComboPart#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
@@ -66,9 +62,9 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 		SimpleCSCommandManager.Instance().addCommandKeyListener(this);
 		// Register to be notified when the combo is diposed in order to 
 		// disconnect from the global command manager
-		addDisposeListener(this);		
+		addDisposeListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.ISimpleCSCommandKeyListener#newCommandKey(org.eclipse.pde.internal.ui.editor.cheatsheet.simple.NewCommandKeyEvent)
 	 */
@@ -101,7 +97,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 			add(key, index);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -129,21 +125,21 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 		int secondlastEntry = lastEntry - 1;
 		remove(secondlastEntry);
 	}
-	
+
 	/**
 	 * @param limit
 	 */
 	public void setComboEntryLimit(int limit) {
 		fComboEntryLimit = limit;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public int getComboEntryLimit() {
 		return fComboEntryLimit;
 	}
-	
+
 	/**
 	 * Specify the index to insert the new command key into the combo box 
 	 * reciever.  Applicable to new command keys obtained via new command key
@@ -153,7 +149,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 	public void setNewCommandKeyIndex(int newCommandKeyIndex) {
 		fNewCommandKeyIndex = newCommandKeyIndex;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -167,8 +163,8 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 	public void widgetDisposed(DisposeEvent e) {
 		// Disconnect from the global command manager
 		SimpleCSCommandManager.Instance().removeCommandKeyListener(this);
-	}			
-	
+	}
+
 	/**
 	 * 
 	 */
@@ -176,11 +172,11 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 		// Populate the combo with all the values found in the command manager
 		Iterator iterator = SimpleCSCommandManager.Instance().getKeys().iterator();
 		while (iterator.hasNext()) {
-			String key = (String)iterator.next();
+			String key = (String) iterator.next();
 			add(key);
 		}
 	}
-	
+
 	/**
 	 * @param key
 	 * @param value
@@ -188,7 +184,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 	public void putValue(String key, String value) {
 		putValue(key, value, -1);
 	}
-	
+
 	/**
 	 * @param key
 	 * @param value
@@ -201,14 +197,14 @@ public class SimpleCSCommandComboPart extends ComboPart implements
 		// Store the actual value in the command manager and notify the
 		// other command combo boxes
 		manager.put(key, value);
-	}	
-	
+	}
+
 	/**
 	 * @param key
 	 * @return
 	 */
 	public String getValue(String key) {
-		return SimpleCSCommandManager.Instance().get(key);		
+		return SimpleCSCommandManager.Instance().get(key);
 	}
-	
+
 }

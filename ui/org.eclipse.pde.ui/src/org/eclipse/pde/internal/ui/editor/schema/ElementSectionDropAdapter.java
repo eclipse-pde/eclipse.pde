@@ -11,10 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
@@ -45,11 +42,10 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 		if (!ModelDataTransfer.getInstance().isSupportedType(fCurrentTransfer))
 			return false;
 		Object cargo = getSelectedObject();
-		
+
 		if (cargo instanceof ISchemaObjectReference) { // dropping an element reference
 			// onto a compositor or reference
-			if ((target instanceof ISchemaCompositor 
-					|| target instanceof ISchemaObjectReference))
+			if ((target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference))
 				return true;
 		} else if (cargo instanceof ISchemaElement) { // dropping an element
 			// onto a non referenced element
@@ -66,7 +62,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 		}
 		return false;
 	}
-	
+
 	private boolean isNonRefElement(Object obj) {
 		return (obj instanceof ISchemaElement && !(obj instanceof ISchemaObjectReference));
 	}

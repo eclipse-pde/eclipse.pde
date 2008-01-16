@@ -11,14 +11,10 @@
 package org.eclipse.pde.ui.templates;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Implementation of the TemplateOption that allows users to choose a value from
@@ -48,12 +44,11 @@ public class ChoiceOption extends TemplateOption {
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
 	 */
-	public ChoiceOption(BaseOptionTemplateSection section, String name,
-			String label, String[][] choices) {
+	public ChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label);
 		this.choices = choices;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.TemplateField#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
@@ -91,6 +86,7 @@ public class ChoiceOption extends TemplateOption {
 		if (getChoice() != null)
 			selectChoice(getChoice());
 	}
+
 	/**
 	 * Returns the string value of the current choice.
 	 * 
@@ -113,6 +109,7 @@ public class ChoiceOption extends TemplateOption {
 			selectChoice(value.toString());
 		}
 	}
+
 	/**
 	 * Implements the superclass method by updating the enable state of the
 	 * option's widget.

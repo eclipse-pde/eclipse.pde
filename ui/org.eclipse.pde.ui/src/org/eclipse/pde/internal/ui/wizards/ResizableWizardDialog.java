@@ -15,10 +15,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
-
 public class ResizableWizardDialog extends WizardDialog {
-   public ResizableWizardDialog(Shell shell, IWizard wizard) {
-   	super(shell, wizard);
-	setShellStyle(getShellStyle() | SWT.RESIZE);
-  }
+	public ResizableWizardDialog(Shell shell, IWizard wizard) {
+		super(shell, wizard);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
+	}
 }

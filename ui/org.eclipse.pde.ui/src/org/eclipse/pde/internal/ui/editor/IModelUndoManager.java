@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.IModelChangeProvider;
 
@@ -44,6 +45,7 @@ public interface IModelUndoManager {
 	 * @param provider the model change provider to connect to
 	 */
 	public void connect(IModelChangeProvider provider);
+
 	/**
 	 * Disconnects from the change provider. Upon disconnecting,
 	 * the manager will no longer be able to revert or reapply
@@ -51,34 +53,40 @@ public interface IModelUndoManager {
 	 * @param provider the model change provider to disconnect from
 	 */
 	public void disconnect(IModelChangeProvider provider);
+
 	/**
 	 * Tests whether the current operation in the undo stack can
 	 * be reverted.
 	 * @return true if the current operation can be undone.
 	 */
 	public boolean isUndoable();
+
 	/**
 	 * Tests whether the current operation in the undo stack can
 	 * be reapplied.
 	 * @return true if the current operation can be redone.
 	 */
 	public boolean isRedoable();
+
 	/**
 	 * Reverts the current operation in the undo stack and decrements
 	 * the stack pointer.
 	 */
 	public void undo();
+
 	/**
 	 * Reapplies the next operation in the undo stack and sets
 	 * the stack pointer to that operation.
 	 * 
 	 */
 	public void redo();
+
 	/**
 	 * Sets the depth of the undo stack.
 	 * @param limit number of levels in the undo stack.
 	 */
 	public void setUndoLevelLimit(int limit);
+
 	/**
 	 * Temporarily suspends undo manager.
 	 * @param ignore if true, model changes reported by the 
@@ -86,6 +94,7 @@ public interface IModelUndoManager {
 	 * property is set to <samp>false</samp> again.
 	 */
 	public void setIgnoreChanges(boolean ignore);
+
 	/**
 	 * Connects the undo manager with the undo and redo actions 
 	 * in the workbench part using the manager. The manager

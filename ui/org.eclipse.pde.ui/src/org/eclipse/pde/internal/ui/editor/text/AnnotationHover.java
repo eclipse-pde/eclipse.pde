@@ -12,14 +12,9 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 public class AnnotationHover implements IAnnotationHover {
@@ -53,12 +48,9 @@ public class AnnotationHover implements IAnnotationHover {
 			Object object = iter.next();
 			if (object instanceof MarkerAnnotation) {
 				MarkerAnnotation annotation = (MarkerAnnotation) object;
-				if (compareRulerLine(model.getPosition(annotation),
-					document,
-					line)) {
+				if (compareRulerLine(model.getPosition(annotation), document, line)) {
 					IMarker marker = annotation.getMarker();
-					String message =
-						marker.getAttribute(IMarker.MESSAGE, (String) null);
+					String message = marker.getAttribute(IMarker.MESSAGE, (String) null);
 					if (message != null && message.trim().length() > 0)
 						messages.add(message);
 				}
@@ -67,10 +59,7 @@ public class AnnotationHover implements IAnnotationHover {
 		return (String[]) messages.toArray(new String[messages.size()]);
 	}
 
-	private boolean compareRulerLine(
-		Position position,
-		IDocument document,
-		int line) {
+	private boolean compareRulerLine(Position position, IDocument document, int line) {
 
 		try {
 			if (position.getOffset() > -1 && position.getLength() > -1) {

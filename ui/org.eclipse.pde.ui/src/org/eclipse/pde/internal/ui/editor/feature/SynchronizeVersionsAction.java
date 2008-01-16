@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-import java.lang.reflect.InvocationTargetException;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -22,9 +22,11 @@ import org.eclipse.ui.PlatformUI;
 
 public class SynchronizeVersionsAction extends Action {
 	private FeatureEditor activeEditor;
+
 	public SynchronizeVersionsAction() {
 		setText(PDEUIMessages.Actions_synchronizeVersions_label);
 	}
+
 	private void ensureContentSaved() {
 		if (activeEditor.isDirty()) {
 			try {
@@ -33,9 +35,7 @@ public class SynchronizeVersionsAction extends Action {
 						activeEditor.doSave(monitor);
 					}
 				};
-				PlatformUI.getWorkbench().getProgressService().runInUI(
-						PDEPlugin.getActiveWorkbenchWindow(), op,
-						PDEPlugin.getWorkspace().getRoot());
+				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			} catch (InterruptedException e) {
@@ -45,12 +45,11 @@ public class SynchronizeVersionsAction extends Action {
 
 	public void run() {
 		ensureContentSaved();
-		SynchronizeVersionsWizard wizard = new SynchronizeVersionsWizard(
-				activeEditor);
-		WizardDialog dialog = new WizardDialog(PDEPlugin
-				.getActiveWorkbenchShell(), wizard);
+		SynchronizeVersionsWizard wizard = new SynchronizeVersionsWizard(activeEditor);
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.open();
 	}
+
 	public void setActiveEditor(FeatureEditor editor) {
 		this.activeEditor = editor;
 		IModel model = (IModel) editor.getAggregateModel();

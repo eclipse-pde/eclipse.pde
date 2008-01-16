@@ -22,24 +22,19 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-
 public class FeatureExportWizardPage extends BaseExportWizardPage {
-	
+
 	private JNLPTab fJNLPTab;
 
 	public FeatureExportWizardPage(IStructuredSelection selection) {
-		super(
-			selection,
-			"featureExport", //$NON-NLS-1$
-			PDEUIMessages.ExportWizard_Feature_pageBlock); 
-		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle); 
+		super(selection, "featureExport", //$NON-NLS-1$
+				PDEUIMessages.ExportWizard_Feature_pageBlock);
+		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle);
 	}
-	
+
 	protected Object getInput() {
 		return PDECore.getDefault().getFeatureModelManager();
 	}
@@ -48,15 +43,15 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		return manager.getWorkspaceModels();
 	}
-	
+
 	protected void hookHelpContext(Control control) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
 	}
-	
+
 	protected boolean isValidModel(IModel model) {
 		return model instanceof IFeatureModel;
 	}
-	
+
 	protected void createTabs(TabFolder folder, IDialogSettings settings) {
 		super.createTabs(folder, settings);
 		if (fDestinationTab.doExportToDirectory() && fOptionsTab.useJARFormat()) {
@@ -64,54 +59,54 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			fJNLPTab.initialize(settings);
 		}
 	}
-	
+
 	protected void createDestinationTab(TabFolder folder) {
 		fDestinationTab = new FeatureDestinationTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fDestinationTab.createControl(folder));
-		item.setText(PDEUIMessages.ExportWizard_destination); 
+		item.setText(PDEUIMessages.ExportWizard_destination);
 	}
 
 	protected void createOptionsTab(TabFolder folder) {
 		fOptionsTab = new FeatureOptionsTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fOptionsTab.createControl(folder));
-		item.setText(PDEUIMessages.ExportWizard_options); 		
+		item.setText(PDEUIMessages.ExportWizard_options);
 	}
-	
+
 	private void createJNLPTab(TabFolder folder) {
 		fJNLPTab = new JNLPTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fJNLPTab.createControl(folder));
-		item.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); 
+		item.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp);
 	}
-	
+
 	protected IModel findModelFor(IAdaptable object) {
 		IProject project = (IProject) object.getAdapter(IProject.class);
 		if (project != null)
 			return PDECore.getDefault().getFeatureModelManager().getFeatureModel(project);
 		return null;
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
 		if (fJNLPTab != null)
 			fJNLPTab.saveSettings(settings);
 	}
-	
+
 	protected String validateTabs() {
 		String message = super.validateTabs();
 		if (message == null && fTabFolder.getItemCount() > 3)
 			message = fJNLPTab.validate();
 		return message;
 	}
-	
+
 	protected void adjustAdvancedTabsVisibility() {
 		adjustJARSigningTabVisibility();
 		adjustJNLPTabVisibility();
 		pageChanged();
 	}
-	
+
 	protected void adjustJNLPTabVisibility() {
 		IDialogSettings settings = getDialogSettings();
 		if (useJARFormat() && doExportToDirectory()) {
@@ -123,23 +118,23 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			int count = fTabFolder.getItemCount();
 			if (count >= (useJARFormat() ? 4 : 3)) {
 				fJNLPTab.saveSettings(settings);
-				fTabFolder.getItem(count-1).dispose();
-			}			
+				fTabFolder.getItem(count - 1).dispose();
+			}
 		}
 	}
-	
+
 	protected boolean doMultiPlatform() {
-		return ((FeatureOptionsTab)fOptionsTab).doMultiplePlatform();
+		return ((FeatureOptionsTab) fOptionsTab).doMultiplePlatform();
 	}
-	
+
 	protected String[] getJNLPInfo() {
 		if (fJNLPTab == null || fTabFolder.getItemCount() < 4)
 			return null;
 		return fJNLPTab.getJNLPInfo();
 	}
-	
+
 	public IWizardPage getNextPage() {
 		return doMultiPlatform() ? getWizard().getNextPage(this) : null;
 	}
-	
+
 }

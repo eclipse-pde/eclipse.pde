@@ -10,24 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -36,19 +23,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.TracingTab;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 
@@ -68,14 +49,14 @@ public class TracingBlock {
 	public TracingBlock(TracingTab tab) {
 		fTab = tab;
 	}
-	
+
 	public AbstractLauncherTab getTab() {
 		return fTab;
 	}
-	
+
 	public void createControl(Composite parent) {
 		fTracingCheck = new Button(parent, SWT.CHECK);
-		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing); 
+		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing);
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -87,20 +68,20 @@ public class TracingBlock {
 		createSashSection(parent);
 		createButtonSection(parent);
 	}
-	
+
 	private void createSashSection(Composite container) {
 		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createPluginViewer(sashForm);
 		createPropertySheetClient(sashForm);
 	}
-	
+
 	private void createPluginViewer(Composite sashForm) {
 		Composite composite = new Composite(sashForm, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 1;
 		composite.setLayout(layout);
-		
+
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
@@ -126,7 +107,7 @@ public class TracingBlock {
 		fPluginViewer.getTable().setLayoutData(gd);
 		fPluginViewer.setInput(getTraceableModels());
 	}
-	
+
 	private void createPropertySheetClient(Composite sashForm) {
 		Composite tableChild = new Composite(sashForm, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -135,15 +116,15 @@ public class TracingBlock {
 		int margin = createPropertySheet(tableChild);
 		layout.marginWidth = layout.marginHeight = margin;
 	}
-	
+
 	private void createButtonSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		
+
 		fSelectAllButton = new Button(container, SWT.PUSH);
-		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll); 
+		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll);
 		fSelectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
@@ -152,11 +133,10 @@ public class TracingBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fDeselectAllButton = new Button(container, SWT.PUSH);
-		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll); 
-		fDeselectAllButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING));
+		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll);
+		fDeselectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -165,12 +145,12 @@ public class TracingBlock {
 			}
 		});
 	}
-	
+
 	protected int createPropertySheet(Composite parent) {
 		fToolkit = new FormToolkit(parent.getDisplay());
 		int toolkitBorderStyle = fToolkit.getBorderStyle();
 		int style = toolkitBorderStyle == SWT.BORDER ? SWT.NULL : SWT.BORDER;
-		
+
 		Composite container = new Composite(parent, style);
 		FillLayout flayout = new FillLayout();
 		flayout.marginWidth = 1;
@@ -179,15 +159,15 @@ public class TracingBlock {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fPageBook = new ScrolledPageBook(container, style | SWT.V_SCROLL | SWT.H_SCROLL);
-		fToolkit.adapt(fPageBook, false, false);	
-		
+		fToolkit.adapt(fPageBook, false, false);
+
 		if (style == SWT.NULL) {
 			fPageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 			fToolkit.paintBordersFor(container);
 		}
 		return style == SWT.NULL ? 2 : 0;
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration config) {
 		fMasterOptions.clear();
 		disposePropertySources();
@@ -227,7 +207,7 @@ public class TracingBlock {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		boolean tracingEnabled = fTracingCheck.getSelection();
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
@@ -236,10 +216,8 @@ public class TracingBlock {
 			String id = (model == null) ? null : model.getPluginBase().getId();
 			config.setAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, id);
 			boolean changes = false;
-			for (Enumeration elements = fPropertySources.elements(); elements
-					.hasMoreElements();) {
-				TracingPropertySource source = (TracingPropertySource) elements
-						.nextElement();
+			for (Enumeration elements = fPropertySources.elements(); elements.hasMoreElements();) {
+				TracingPropertySource source = (TracingPropertySource) elements.nextElement();
 				if (source.isModified()) {
 					changes = true;
 					source.save();
@@ -266,25 +244,25 @@ public class TracingBlock {
 			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, buffer.toString());
 		}
 	}
-	
+
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.TRACING, false);
 		configuration.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 	}
-	
+
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fPageBook.getParent().getParent().layout(true);
 	}
-	
+
 	public void dispose() {
 		if (fToolkit != null)
 			fToolkit.dispose();
 	}
-	
+
 	public FormToolkit getToolkit() {
 		return fToolkit;
 	}
-	
+
 	private IPluginModelBase getSelectedModel() {
 		if (fTracingCheck.isEnabled()) {
 			Object item = ((IStructuredSelection) fPluginViewer.getSelection()).getFirstElement();
@@ -293,7 +271,7 @@ public class TracingBlock {
 		}
 		return null;
 	}
-	
+
 	private void pluginSelected(IPluginModelBase model, boolean checked) {
 		TracingPropertySource source = getPropertySource(model);
 		if (source == null || checked == false) {
@@ -319,9 +297,8 @@ public class TracingBlock {
 		}
 		return fTraceableModels;
 	}
-	
-	private IPluginModelBase getLastSelectedPlugin(ILaunchConfiguration config)
-			throws CoreException {
+
+	private IPluginModelBase getLastSelectedPlugin(ILaunchConfiguration config) throws CoreException {
 		String pluginID = config.getAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, (String) null);
 		return pluginID == null ? null : PluginRegistry.findModel(pluginID);
 	}
@@ -338,7 +315,7 @@ public class TracingBlock {
 		}
 		return source;
 	}
-	
+
 	private void masterCheckChanged(boolean userChange) {
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginViewer.getTable().setEnabled(enabled);
@@ -354,7 +331,7 @@ public class TracingBlock {
 		Enumeration elements = fPropertySources.elements();
 		while (elements.hasMoreElements()) {
 			TracingPropertySource source = (TracingPropertySource) elements.nextElement();
-			fPageBook.removePage(source.getModel());			
+			fPageBook.removePage(source.getModel());
 		}
 		fPropertySources.clear();
 	}

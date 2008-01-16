@@ -11,15 +11,11 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.*;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -31,8 +27,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	protected boolean initialize(Object element) {
 		if (element instanceof IType) {
 			IType type = (IType) element;
-			IJavaProject javaProject = (IJavaProject) type
-					.getAncestor(IJavaElement.JAVA_PROJECT);
+			IJavaProject javaProject = (IJavaProject) type.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
@@ -47,51 +42,41 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	public String getName() {
 		return PDEUIMessages.ManifestTypeRenameParticipant_composite;
 	}
-	
+
 	protected boolean isInterestingForExtensions() {
 		Object dest = getArguments().getDestination();
 		if (dest instanceof IJavaElement) {
-			IJavaElement destination = (IJavaElement)dest;
-			IJavaProject jProject = (IJavaProject)destination.getAncestor(IJavaElement.JAVA_PROJECT);
+			IJavaElement destination = (IJavaElement) dest;
+			IJavaProject jProject = (IJavaProject) destination.getAncestor(IJavaElement.JAVA_PROJECT);
 			return jProject.getProject().equals(fProject);
 		}
-		return false;		
+		return false;
 	}
 
-	protected void addChange(CompositeChange result, String filename, IProgressMonitor pm)
-			throws CoreException {
+	protected void addChange(CompositeChange result, String filename, IProgressMonitor pm) throws CoreException {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
-			Change change = PluginManifestChange.createRenameChange(file, 
-					fElements.keySet().toArray(), 
-					getNewNames(), 
-					getTextChange(file),
-					pm);
+			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
 			if (change != null)
-				result.add(change);				
+				result.add(change);
 		}
 	}
-	
+
 	protected String getNewName(Object destination, Object element) {
 		if (destination instanceof IPackageFragment && element instanceof IJavaElement) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(((IPackageFragment)destination).getElementName());
+			buffer.append(((IPackageFragment) destination).getElementName());
 			if (buffer.length() > 0)
 				buffer.append('.');
-			return buffer.append(((IJavaElement)element).getElementName()).toString();
+			return buffer.append(((IJavaElement) element).getElementName()).toString();
 		}
 		return super.getNewName(destination, element);
 	}
 
-	protected void addChange(CompositeChange result, IProgressMonitor pm)
-			throws CoreException {
+	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		IFile file = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (file.exists()) {
-			Change change = BundleManifestChange.createRenameChange(
-										file, 
-										fElements.keySet().toArray(),
-										getNewNames(), 
-										pm);
+			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)
 				result.add(change);
 		}

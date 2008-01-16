@@ -12,78 +12,60 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * RegisterCSWizardPage
  *
  */
-public abstract class RegisterCSWizardPage extends WizardPage implements
-		IRegisterCSData {
+public abstract class RegisterCSWizardPage extends WizardPage implements IRegisterCSData {
 
 	public final static String F_PAGE_NAME = "register-cs"; //$NON-NLS-1$	
-	
+
 	public final static String F_CS_ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 
 	public final static String F_CS_ELEMENT_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 
 	public final static String F_CS_ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
-	
+
 	private final static String F_LOCALE_VARIABLE = "$nl$/"; //$NON-NLS-1$
-	
+
 	private Combo fCategoryCombo;
-	
+
 	private Button fCategoryButton;
-	
+
 	private Text fDescriptionText;
-	
+
 	protected IModel fCheatSheetModel;
-	
+
 	private ISharedExtensionsModel fExtensionsModel;
-	
+
 	private IProject fPluginProject;
-	
+
 	private String fDataCategoryName;
-	
+
 	private String fDataDescription;
-	
+
 	private String fDataCheatSheetID;
-	
+
 	private CSCategoryTrackerUtil fCategoryTrackerUtil;
-	
+
 	/**
 	 * @param pageName
 	 */
@@ -98,24 +80,24 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 * 
 	 */
 	private void initialize() {
-		
+
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
-		setDescription(PDEUIMessages.RegisterCSWizardPage_wizardPageDescription);		
-		
+		setDescription(PDEUIMessages.RegisterCSWizardPage_wizardPageDescription);
+
 		fCategoryCombo = null;
 		fCategoryButton = null;
 		fDescriptionText = null;
-		
+
 		fCategoryTrackerUtil = new CSCategoryTrackerUtil();
-		
+
 		fDataCategoryName = null;
 		fDataDescription = null;
-		
+
 		// Get the project the cheat sheet is stored in
 		fPluginProject = fCheatSheetModel.getUnderlyingResource().getProject();
 
-		fDataCheatSheetID = generateCheatSheetID();		
-		
+		fDataCheatSheetID = generateCheatSheetID();
+
 		initializePluginModel();
 	}
 
@@ -128,25 +110,25 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		if (base == null)
 			return;
 		if (base instanceof IBundlePluginModelBase)
-			fExtensionsModel = ((IBundlePluginModelBase)base).getExtensionsModel();
+			fExtensionsModel = ((IBundlePluginModelBase) base).getExtensionsModel();
 		else
 			fExtensionsModel = base;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataDescription()
 	 */
 	public String getDataDescription() {
 		return fDataDescription;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryName()
 	 */
 	public String getDataCategoryName() {
 		return fDataCategoryName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryType()
 	 */
@@ -157,7 +139,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		}
 		return fCategoryTrackerUtil.getCategoryType(categoryID);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCategoryID()
 	 */
@@ -167,50 +149,49 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataContentFile()
 	 */
 	public String getDataContentFile() {
 		// Retrieve the project relative path to the cheat sheet
-		String portablePath = 
-			fCheatSheetModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
+		String portablePath = fCheatSheetModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
 		// Prepend the locale specific variable
 		return F_LOCALE_VARIABLE + portablePath;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getDataCheatSheetID()
 	 */
 	public String getDataCheatSheetID() {
-		return fDataCheatSheetID; 
+		return fDataCheatSheetID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.IRegisterCSData#getPluginProject()
 	 */
 	public IProject getPluginProject() {
 		return fPluginProject;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public abstract String getDataCheatSheetName();
-	
+
 	/**
 	 * @return
 	 */
 	public abstract boolean isCompositeCheatSheet();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		
+
 		createUI(parent);
 		createUIListeners();
-		
+
 		updateUI();
 		validateUI();
 
@@ -225,7 +206,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		// Create the label
 		createUILabel(container);
 		// Create the group
-		Group group = createUIGroup(container);		
+		Group group = createUIGroup(container);
 		// Create the category field
 		createUICategoryField(group);
 		// Create the description field
@@ -235,10 +216,9 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		setControl(container);
 		// Apply the dialog font to all controls using the default font
 		Dialog.applyDialogFont(container);
-		
+
 		// Provide functionality for the help button
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
-				IHelpContextIds.REGISTER_CS);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REGISTER_CS);
 	}
 
 	/**
@@ -281,7 +261,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		container.setLayout(layout);
 		return container;
 	}
-	
+
 	/**
 	 * @param parent
 	 */
@@ -343,8 +323,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	private void createUIDescriptionLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEUIMessages.RegisterCSWizardPage_labelDescription);
-		int style = GridData.VERTICAL_ALIGN_BEGINNING
-				| GridData.HORIZONTAL_ALIGN_END;
+		int style = GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END;
 		GridData data = new GridData(style);
 		label.setLayoutData(data);
 	}
@@ -358,7 +337,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		data.horizontalSpan = 2;
-		fDescriptionText.setLayoutData(data);		
+		fDescriptionText.setLayoutData(data);
 	}
 
 	/**
@@ -393,7 +372,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				fDataCategoryName = fCategoryCombo.getText();
 			}
 		});
-	}	
+	}
 
 	/**
 	 * 
@@ -404,15 +383,14 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				fDataDescription = fDescriptionText.getText();
 			}
 		});
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
 	private void handleWidgetSelectedCategoryButton() {
 		// Create a dialog allowing the user to input the category name
-		NewCategoryNameDialog dialog = new NewCategoryNameDialog(
-				PDEPlugin.getActiveWorkbenchShell());
+		NewCategoryNameDialog dialog = new NewCategoryNameDialog(PDEPlugin.getActiveWorkbenchShell());
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.RegisterCSWizardPage_dialogTitleNewCategory);
 
@@ -425,12 +403,11 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				fCategoryCombo.setText(trimmedText);
 				fCategoryCombo.setFocus();
 				String id = generateCategoryID(trimmedText);
-				fCategoryTrackerUtil.associate(id, trimmedText, 
-						CSCategoryTrackerUtil.F_TYPE_NEW_CATEGORY);
+				fCategoryTrackerUtil.associate(id, trimmedText, CSCategoryTrackerUtil.F_TYPE_NEW_CATEGORY);
 			}
 		}
-		
-	}	
+
+	}
 
 	/**
 	 * 
@@ -444,7 +421,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 			processCategoryElements(extensions);
 			// Process all cheat sheet elements
 			processCheatSheetElements(extensions);
-		}	
+		}
 	}
 
 	/**
@@ -462,7 +439,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 			// Process all children
 			for (int j = 0; j < pluginObjects.length; j++) {
 				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement)pluginObjects[j];
+					IPluginElement element = (IPluginElement) pluginObjects[j];
 					if (element.getName().equals(F_CS_ELEMENT_CATEGORY)) {
 						// Category element
 						// Update the category combo
@@ -471,8 +448,8 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param extensions
 	 */
@@ -490,12 +467,12 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 			// Process all children
 			for (int j = 0; j < pluginObjects.length; j++) {
 				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement)pluginObjects[j];
+					IPluginElement element = (IPluginElement) pluginObjects[j];
 					if (element.getName().equals(F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
 						processCheatSheetElement(element, fDataCheatSheetID);
-					}					
-					
+					}
+
 				}
 			}
 		}
@@ -507,45 +484,34 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 */
 	private void updateUICategoryComboElement(IPluginElement parentElement) {
 		// Get the id attribute
-		IPluginAttribute idAttribute = 
-			parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
+		IPluginAttribute idAttribute = parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
 		// Get the name attribute
-		IPluginAttribute nameAttribute = 
-			parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_NAME);
+		IPluginAttribute nameAttribute = parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_NAME);
 		// Add the category to the combo box only if
 		// (1) the category name is defined
 		// (2) the category has not already been added to the combo box
-		if ((nameAttribute != null) && 
-				PDETextHelper.isDefined(nameAttribute.getValue()) &&
-				(idAttribute != null) &&
-				PDETextHelper.isDefined(idAttribute.getValue()) &&
-				(fCategoryTrackerUtil.containsCategoryName(nameAttribute.getValue()) == false)) {
+		if ((nameAttribute != null) && PDETextHelper.isDefined(nameAttribute.getValue()) && (idAttribute != null) && PDETextHelper.isDefined(idAttribute.getValue()) && (fCategoryTrackerUtil.containsCategoryName(nameAttribute.getValue()) == false)) {
 			// TODO: MP: LOW: CompCS: Reference translated value
 			fCategoryCombo.add(nameAttribute.getValue());
 			// Assocate the category ID with the category name
-			fCategoryTrackerUtil.associate(idAttribute.getValue(), 
-					nameAttribute.getValue(), 
-					CSCategoryTrackerUtil.F_TYPE_OLD_CATEGORY);
+			fCategoryTrackerUtil.associate(idAttribute.getValue(), nameAttribute.getValue(), CSCategoryTrackerUtil.F_TYPE_OLD_CATEGORY);
 		}
 	}
-	
+
 	/**
 	 * Process cheatsheet elements with a category attribute
 	 * @param parentElement
 	 */
 	private void updateUICategoryComboAttribute(IPluginElement element) {
 		// Get the category attribute
-		IPluginAttribute categoryAttribute = 
-			element.getAttribute(F_CS_ELEMENT_CATEGORY);	
+		IPluginAttribute categoryAttribute = element.getAttribute(F_CS_ELEMENT_CATEGORY);
 		// Process the category attribute
-		if ((categoryAttribute != null) &&
-				PDETextHelper.isDefined(categoryAttribute.getValue())) {
+		if ((categoryAttribute != null) && PDETextHelper.isDefined(categoryAttribute.getValue())) {
 			String id = categoryAttribute.getValue();
 			// Check to see if the category ID has been defined
 			if (fCategoryTrackerUtil.containsCategoryID(id)) {
 				// Update the category combo selection
-				String name = 
-					fCategoryTrackerUtil.getCategoryName(id);
+				String name = fCategoryTrackerUtil.getCategoryName(id);
 				fCategoryCombo.setText(name);
 			} else {
 				// Add the category ID to the combo box (no assoicated name)
@@ -553,27 +519,22 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				// the plug-in the cheat sheet is stored in
 				fCategoryCombo.add(id);
 				fCategoryCombo.setText(id);
-				fCategoryTrackerUtil.associate(id, id,
-						CSCategoryTrackerUtil.F_TYPE_OLD_CATEGORY);
+				fCategoryTrackerUtil.associate(id, id, CSCategoryTrackerUtil.F_TYPE_OLD_CATEGORY);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param extensions
 	 */
-	private void processCheatSheetElement(IPluginElement parentElement,
-			String generatedID) {
+	private void processCheatSheetElement(IPluginElement parentElement, String generatedID) {
 		// Get the id attribute
-		IPluginAttribute idAttribute = 
-			parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
+		IPluginAttribute idAttribute = parentElement.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
 
 		// Check for the generated ID for this cheat sheet
 		// If a cheat sheet exists with the generated ID already, read its
 		// description and populate the description text accordingly		
-		if ((idAttribute != null) && 
-				PDETextHelper.isDefined(idAttribute.getValue()) &&
-				generatedID.equals(idAttribute.getValue())) {
+		if ((idAttribute != null) && PDETextHelper.isDefined(idAttribute.getValue()) && generatedID.equals(idAttribute.getValue())) {
 			// Matching cheat sheet extension found
 			// Process children if any
 			if (parentElement.getChildCount() > 0) {
@@ -581,7 +542,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				updateUIDescriptionText(parentElement);
 			}
 			updateUICategoryComboAttribute(parentElement);
-		}		
+		}
 	}
 
 	/**
@@ -590,31 +551,29 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	private void updateUIDescriptionText(IPluginElement parentElement) {
 		IPluginObject pluginObject = parentElement.getChildren()[0];
 		if (pluginObject instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement)pluginObject;
-			if (element.getName().equals(F_CS_ELEMENT_DESCRIPTION) &&
-					PDETextHelper.isDefinedAfterTrim(element.getText())) {
+			IPluginElement element = (IPluginElement) pluginObject;
+			if (element.getName().equals(F_CS_ELEMENT_DESCRIPTION) && PDETextHelper.isDefinedAfterTrim(element.getText())) {
 				// Triggers listener to update data description on load
 				fDescriptionText.setText(element.getText().trim());
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void validateUI() {
 		setPageComplete(true);
-	}	
-	
+	}
+
 	/**
 	 * @param model
 	 * @param extensionPointID
 	 * @return
 	 */
-	public IPluginExtension[] findExtensions(ISharedExtensionsModel model,
-			String extensionPointID) {
+	public IPluginExtension[] findExtensions(ISharedExtensionsModel model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
-		
+
 		ArrayList csExtensions = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -622,10 +581,9 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 				csExtensions.add(extensions[i]);
 			}
 		}
-		return (IPluginExtension[]) csExtensions.toArray(
-				new IPluginExtension[csExtensions.size()]);
-	}	
-	
+		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
+	}
+
 	/**
 	 * @return
 	 */
@@ -636,13 +594,10 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		// Append the hash code to make the name unique and allow cheat sheets
 		// with the same name (but different directories) be registered 
 		// individually
-		String result = fPluginProject.getName() + 
-						'.' +
-						F_CS_ELEMENT_CHEATSHEET +
-						uniqueID;
-		return result; 
+		String result = fPluginProject.getName() + '.' + F_CS_ELEMENT_CHEATSHEET + uniqueID;
+		return result;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -651,13 +606,10 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		long uniqueID = hash(name);
 		// Qualify with the project name
 		// Append the hash code to make the name unique 
-		String result = fPluginProject.getName() + 
-						'.' + 
-						F_CS_ELEMENT_CATEGORY +
-						uniqueID;
+		String result = fPluginProject.getName() + '.' + F_CS_ELEMENT_CATEGORY + uniqueID;
 		return result;
 	}
-	
+
 	/**
 	 * @param string
 	 * @return
@@ -667,11 +619,11 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		int a = 63689;
 		long hash = 0;
 
-		for(int i = 0; i < string.length(); i++) {
+		for (int i = 0; i < string.length(); i++) {
 			hash = hash * a + string.charAt(i);
 			a = a * b;
 		}
 		return (hash & 0x7FFFFFFF);
-	}	
-	
+	}
+
 }

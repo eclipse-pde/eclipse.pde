@@ -19,13 +19,12 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  */
 public interface ISplashHandlerConstants {
 
-	public final static String[] F_SPLASH_SCREEN_CLASSES = {
-		"InteractiveSplashHandler", //$NON-NLS-1$
-		"BrowserSplashHandler", //$NON-NLS-1$
-		"ExtensibleSplashHandler" //$NON-NLS-1$
+	public final static String[] F_SPLASH_SCREEN_CLASSES = {"InteractiveSplashHandler", //$NON-NLS-1$
+			"BrowserSplashHandler", //$NON-NLS-1$
+			"ExtensibleSplashHandler" //$NON-NLS-1$
 	};
 
-	public final static String F_UNQUALIFIED_EXTENSION_ID = "splashHandlers";	 //$NON-NLS-1$
+	public final static String F_UNQUALIFIED_EXTENSION_ID = "splashHandlers"; //$NON-NLS-1$
 
 	public final static String F_ATTRIBUTE_TOOLTIP = "tooltip"; //$NON-NLS-1$
 
@@ -47,12 +46,11 @@ public interface ISplashHandlerConstants {
 
 	public final static String F_SPLASH_EXTENSION_POINT = "splashExtension"; //$NON-NLS-1$
 
-	public final static String F_SPLASH_HANDLERS_EXTENSION = "org.eclipse.ui.splashHandlers";	 //$NON-NLS-1$
-	
-	public final static String[][] F_SPLASH_SCREEN_TYPE_CHOICES = {
-		{"interactive", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeInteractive}, //$NON-NLS-1$
-		{"browser", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeBrowser}, //$NON-NLS-1$
-		{"extensible", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeExtensible} //$NON-NLS-1$
-	};			
-	
+	public final static String F_SPLASH_HANDLERS_EXTENSION = "org.eclipse.ui.splashHandlers"; //$NON-NLS-1$
+
+	public final static String[][] F_SPLASH_SCREEN_TYPE_CHOICES = { {"interactive", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeInteractive}, //$NON-NLS-1$
+			{"browser", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeBrowser}, //$NON-NLS-1$
+			{"extensible", PDEUIMessages.UpdateSplashHandlerInModelAction_templateTypeExtensible} //$NON-NLS-1$
+	};
+
 }

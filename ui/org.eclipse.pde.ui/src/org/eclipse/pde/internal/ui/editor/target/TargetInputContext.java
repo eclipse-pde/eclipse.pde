@@ -10,35 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.core.target.WorkspaceTargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-
+import org.eclipse.ui.*;
 
 public class TargetInputContext extends UTF8InputContext {
-	
+
 	public static final String CONTEXT_ID = "target-context"; //$NON-NLS-1$
 
-	public TargetInputContext(PDEFormEditor editor, IEditorInput input,boolean primary) {
+	public TargetInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
@@ -63,7 +53,7 @@ public class TargetInputContext extends UTF8InputContext {
 					model.load();
 				} else if (input instanceof IStorageEditorInput) {
 					InputStream is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
-					model =  new TargetModel();
+					model = new TargetModel();
 					model.load(is, false);
 				}
 			} catch (CoreException e) {
@@ -79,7 +69,7 @@ public class TargetInputContext extends UTF8InputContext {
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
 	 */

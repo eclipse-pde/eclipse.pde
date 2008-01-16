@@ -10,17 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -28,43 +20,33 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.core.itarget.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class TargetImplicitPluginsTab {
-	
+
 	private TableViewer fElementViewer;
 	protected Set fElements;
-	
+
 	private Button fAddButton;
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
-	
+
 	private TargetPlatformPreferencePage fPage;
-	
+
 	public TargetImplicitPluginsTab(TargetPlatformPreferencePage page) {
 		fPage = page;
 	}
-	
+
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
 			if (fElements == null)
@@ -72,20 +54,20 @@ public class TargetImplicitPluginsTab {
 			return fElements.toArray();
 		}
 	}
-	
+
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createLabel(container);
 		createTable(container);
 		createButtons(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.IMPLICIT_PLUGINS_PREFERENCE_PAGE);
 		return container;
 	}
-	
+
 	private void createLabel(Composite container) {
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.TargetImplicitPluginsTab_desc);
@@ -93,7 +75,7 @@ public class TargetImplicitPluginsTab {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 	}
-	
+
 	private void createTable(Composite container) {
 		fElementViewer = new TableViewer(container, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -105,7 +87,7 @@ public class TargetImplicitPluginsTab {
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
-			}		
+			}
 		});
 		fElementViewer.getTable().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -115,12 +97,12 @@ public class TargetImplicitPluginsTab {
 			}
 		});
 	}
-	
+
 	protected void loadTable() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
-		StringTokenizer tokens = new StringTokenizer(value,","); //$NON-NLS-1$
-		fElements = new HashSet((4/3) * tokens.countTokens() + 1);
+		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
+		fElements = new HashSet((4 / 3) * tokens.countTokens() + 1);
 		while (tokens.hasMoreElements()) {
 			IPluginModelBase base = PluginRegistry.findModel(tokens.nextToken());
 			if (base != null) {
@@ -130,16 +112,16 @@ public class TargetImplicitPluginsTab {
 			}
 		}
 	}
-	
+
 	private void createButtons(Composite container) {
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		buttonContainer.setLayout(layout);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
+
 		fAddButton = new Button(buttonContainer, SWT.PUSH);
-		fAddButton.setText(PDEUIMessages.SourceBlock_add); 
+		fAddButton.setText(PDEUIMessages.SourceBlock_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -147,9 +129,9 @@ public class TargetImplicitPluginsTab {
 				handleAdd();
 			}
 		});
-		
+
 		fRemoveButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove); 
+		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -157,7 +139,7 @@ public class TargetImplicitPluginsTab {
 				handleRemove();
 			}
 		});
-		
+
 		fRemoveAllButton = new Button(buttonContainer, SWT.PUSH);
 		fRemoveAllButton.setText(PDEUIMessages.TargetImplicitPluginsTab_removeAll3);
 		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
@@ -172,20 +154,18 @@ public class TargetImplicitPluginsTab {
 			fRemoveAllButton.setEnabled(false);
 		}
 	}
-	
+
 	private void updateButtons() {
 		boolean empty = fElementViewer.getSelection().isEmpty();
 		fRemoveButton.setEnabled(!empty);
 		fRemoveAllButton.setEnabled(fElementViewer.getElementAt(0) != null);
 	}
-	
+
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-				PDEPlugin.getActiveWorkbenchShell(), 
-				PDEPlugin.getDefault().getLabelProvider());
-		
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
+
 		dialog.setElements(getValidBundles());
-		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title); 
+		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == Window.OK) {
@@ -197,18 +177,18 @@ public class TargetImplicitPluginsTab {
 			updateButtons();
 		}
 	}
-	
+
 	protected Object[] getValidBundles() {
-		
-		Set currentPlugins = new HashSet((4/3) * fElements.size() + 1);
+
+		Set currentPlugins = new HashSet((4 / 3) * fElements.size() + 1);
 		Iterator it = fElements.iterator();
 		while (it.hasNext()) {
-			BundleDescription desc = (BundleDescription)it.next();
+			BundleDescription desc = (BundleDescription) it.next();
 			currentPlugins.add(desc.getSymbolicName());
 		}
-		
+
 		IPluginModelBase[] models = fPage.getCurrentModels();
-		Set result = new HashSet((4/3) * models.length + 1);
+		Set result = new HashSet((4 / 3) * models.length + 1);
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
 			if (!currentPlugins.contains(desc.getSymbolicName()))
@@ -216,21 +196,21 @@ public class TargetImplicitPluginsTab {
 		}
 		return result.toArray();
 	}
-	
+
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection)fElementViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fElementViewer.getSelection();
 		Iterator it = ssel.iterator();
 		while (it.hasNext()) {
 			Object item = it.next();
 			fElements.remove(item);
 			fElementViewer.remove(item);
 		}
-		if (fElements.size() == 0) 
+		if (fElements.size() == 0)
 			fRemoveButton.setEnabled(false);
 		updateButtons();
 	}
-	
-	private void handleRemoveAll(){
+
+	private void handleRemoveAll() {
 		fElementViewer.remove(fElements.toArray());
 		fElements.clear();
 		updateButtons();
@@ -254,7 +234,7 @@ public class TargetImplicitPluginsTab {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, buffer.toString());
 	}
-	
+
 	public void loadTargetProfile(ITarget target) {
 		fElements.clear();
 		IImplicitDependenciesInfo info = target.getImplicitPluginsInfo();
@@ -269,13 +249,13 @@ public class TargetImplicitPluginsTab {
 		}
 		fElementViewer.refresh();
 	}
-	
+
 	protected String[] getImplicitPlugins() {
 		String[] result = new String[fElements.size()];
 		Iterator iter = fElements.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
-			result[i++] = ((BundleDescription)iter.next()).getSymbolicName();
+			result[i++] = ((BundleDescription) iter.next()).getSymbolicName();
 		}
 		return result;
 	}

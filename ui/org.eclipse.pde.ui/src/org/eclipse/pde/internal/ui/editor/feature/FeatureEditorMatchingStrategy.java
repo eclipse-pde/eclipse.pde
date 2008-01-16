@@ -12,20 +12,15 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorMatchingStrategy;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.ide.ResourceUtil;
-
 
 public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 
 	private static final String BP = "build.properties"; //$NON-NLS-1$
 	private static final String FX = "feature.xml"; //$NON-NLS-1$
-	
-    public boolean matches(IEditorReference editorRef, IEditorInput input) {
+
+	public boolean matches(IEditorReference editorRef, IEditorInput input) {
 		if (!(input instanceof IFileEditorInput))
 			return false;
 		IFile inputFile = ResourceUtil.getFile(input);
@@ -55,4 +50,3 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 	}
 
 }
-

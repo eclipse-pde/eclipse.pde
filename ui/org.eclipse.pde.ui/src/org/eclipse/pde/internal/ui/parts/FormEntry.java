@@ -9,28 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.forms.widgets.*;
+
 /**
  * The helper class for creating entry fields with label and text. Optionally,
  * a button can be added after the text. The attached listener reacts to all
@@ -42,13 +30,13 @@ public class FormEntry {
 	private Control fLabel;
 	private Text fText;
 	private Button fBrowse;
-	private String fValue=""; //$NON-NLS-1$
+	private String fValue = ""; //$NON-NLS-1$
 	private boolean fDirty;
 	boolean fIgnoreModify = false;
 	private IFormEntryListener fListener;
-	
+
 	public static final int F_DEFAULT_TEXT_WIDTH_HINT = 100;
-	
+
 	/**
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
@@ -56,6 +44,7 @@ public class FormEntry {
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
 		createControl(parent, toolkit, labelText, style, null, false, 0, 0);
 	}
+
 	/**
 	 * This constructor create all the controls right away.
 	 * 
@@ -65,21 +54,18 @@ public class FormEntry {
 	 * @param browseText
 	 * @param linkLabel
 	 */
-	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
-			String browseText, boolean linkLabel) {
+	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, String browseText, boolean linkLabel) {
 		this(parent, toolkit, labelText, browseText, linkLabel, 0);
 	}
-	
-	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
-			String browseText, boolean linkLabel, int indent) {
+
+	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, String browseText, boolean linkLabel, int indent) {
 		createControl(parent, toolkit, labelText, SWT.SINGLE, browseText, linkLabel, indent, 0);
 	}
-	
-	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
-			int indent, int tcolspan) {
+
+	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int indent, int tcolspan) {
 		createControl(parent, toolkit, labelText, SWT.SINGLE, null, false, indent, tcolspan);
 	}
-	
+
 	/**
 	 * Create all the controls in the provided parent.
 	 * 
@@ -90,11 +76,9 @@ public class FormEntry {
 	 * @param browseText
 	 * @param linkLabel
 	 */
-	private void createControl(Composite parent, FormToolkit toolkit,
-			String labelText, int style, String browseText, boolean linkLabel, int indent, int tcolspan) {
+	private void createControl(Composite parent, FormToolkit toolkit, String labelText, int style, String browseText, boolean linkLabel, int indent, int tcolspan) {
 		if (linkLabel) {
-			Hyperlink link = toolkit.createHyperlink(parent, labelText,
-					SWT.NULL);
+			Hyperlink link = toolkit.createHyperlink(parent, labelText, SWT.NULL);
 			fLabel = link;
 		} else {
 			if (labelText != null) {
@@ -118,14 +102,16 @@ public class FormEntry {
 		// after the fact
 		setTextWidthHint(F_DEFAULT_TEXT_WIDTH_HINT);
 	}
+
 	public void setEditable(boolean editable) {
 		fText.setEditable(editable);
 		if (fLabel instanceof Hyperlink)
-			((Hyperlink)fLabel).setUnderlined(editable);
-		
-		if (fBrowse!=null) 
+			((Hyperlink) fLabel).setUnderlined(editable);
+
+		if (fBrowse != null)
 			fBrowse.setEnabled(editable);
 	}
+
 	private void fillIntoGrid(Composite parent, int indent, int tcolspan) {
 		Layout layout = parent.getLayout();
 		int tspan;
@@ -170,7 +156,7 @@ public class FormEntry {
 			td.colspan = tspan;
 			if (fLabel != null) {
 				td.indent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
-			}			
+			}
 			td.grabHorizontal = (tspan == 1);
 			td.valign = TableWrapData.MIDDLE;
 			fText.setLayoutData(td);
@@ -181,6 +167,7 @@ public class FormEntry {
 			}
 		}
 	}
+
 	/**
 	 * Attaches the listener for the entry.
 	 * 
@@ -188,13 +175,14 @@ public class FormEntry {
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
 		if (fLabel != null && fLabel instanceof Hyperlink) {
-			if (this.fListener!=null)
-				((Hyperlink)fLabel).removeHyperlinkListener(this.fListener);
-			if (listener!=null)
-				((Hyperlink)fLabel).addHyperlinkListener(listener);
+			if (this.fListener != null)
+				((Hyperlink) fLabel).removeHyperlinkListener(this.fListener);
+			if (listener != null)
+				((Hyperlink) fLabel).addHyperlinkListener(listener);
 		}
 		this.fListener = listener;
 	}
+
 	private void addListeners() {
 		fText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -211,12 +199,14 @@ public class FormEntry {
 				if (fListener != null)
 					fListener.focusGained(FormEntry.this);
 			}
+
 			public void focusLost(FocusEvent e) {
 				if (fDirty)
 					commit();
 			}
 		});
 	}
+
 	/**
 	 * If dirty, commits the text in the widget to the value and notifies the
 	 * listener. This call clears the 'dirty' flag.
@@ -226,16 +216,18 @@ public class FormEntry {
 		if (fDirty) {
 			fValue = fText.getText();
 			//if (value.length()==0)
-				//value = null;
+			//value = null;
 			//notify
 			if (fListener != null)
 				fListener.textValueChanged(this);
 		}
 		fDirty = false;
 	}
+
 	public void cancelEdit() {
 		fDirty = false;
 	}
+
 	private void editOccured(ModifyEvent e) {
 		if (fIgnoreModify)
 			return;
@@ -243,6 +235,7 @@ public class FormEntry {
 		if (fListener != null)
 			fListener.textDirty(this);
 	}
+
 	/**
 	 * Returns the text control.
 	 * 
@@ -251,11 +244,11 @@ public class FormEntry {
 	public Text getText() {
 		return fText;
 	}
-	
+
 	public Control getLabel() {
 		return fLabel;
 	}
-	
+
 	/**
 	 * Returns the browse button control.
 	 * @return
@@ -263,6 +256,7 @@ public class FormEntry {
 	public Button getButton() {
 		return fBrowse;
 	}
+
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
@@ -272,6 +266,7 @@ public class FormEntry {
 	public String getValue() {
 		return fValue.trim();
 	}
+
 	/**
 	 * Returns true if the text has been modified.
 	 * 
@@ -280,19 +275,21 @@ public class FormEntry {
 	public boolean isDirty() {
 		return fDirty;
 	}
+
 	private void keyReleaseOccured(KeyEvent e) {
 		if (e.character == '\r') {
 			// commit value
 			if (fDirty)
 				commit();
 		} else if (e.character == '\u001b') { // Escape character
-			if (!fValue.equals(fText.getText())) 
+			if (!fValue.equals(fText.getText()))
 				fText.setText(fValue != null ? fValue : ""); // restore old //$NON-NLS-1$
 			fDirty = false;
 		}
 		if (fListener != null)
 			fListener.selectionChanged(FormEntry.this);
 	}
+
 	/**
 	 * Sets the value of this entry.
 	 * 
@@ -303,6 +300,7 @@ public class FormEntry {
 			fText.setText(value != null ? value : ""); //$NON-NLS-1$
 		this.fValue = (value != null) ? value : ""; //$NON-NLS-1$
 	}
+
 	/**
 	 * Sets the value of this entry with the possibility to turn the
 	 * notification off.
@@ -315,7 +313,7 @@ public class FormEntry {
 		setValue(value);
 		fIgnoreModify = false;
 	}
-	
+
 	public void setVisible(boolean visible) {
 		if (fLabel != null)
 			fLabel.setVisible(visible);
@@ -336,9 +334,9 @@ public class FormEntry {
 		if (data == null) {
 			return;
 		} else if (data instanceof GridData) {
-			((GridData)data).widthHint = width;
+			((GridData) data).widthHint = width;
 		} else if (data instanceof TableWrapData) {
-			((TableWrapData)data).maxWidth = width;
+			((TableWrapData) data).maxWidth = width;
 		}
 	}
 }

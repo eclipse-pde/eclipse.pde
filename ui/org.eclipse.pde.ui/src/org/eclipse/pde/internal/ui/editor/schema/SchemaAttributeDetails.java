@@ -10,15 +10,11 @@
  *	   Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 201965 [Schema][Editors] Inappropriate selection behaviour after delete attempt in non-editable editor
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -32,14 +28,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
-	
+
 	private SchemaAttribute fAttribute;
 	private FormEntry fValue;
 	private FormEntry fName;
@@ -52,7 +46,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Composite fUseComp;
 	private Composite fUseCompDefault;
 	private Composite fUseCompOther;
-	
+
 	public SchemaAttributeDetails(ElementSection section) {
 		super(section, false, true);
 	}
@@ -66,15 +60,15 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			return new Object[0];
 		}
 	}
-	
+
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
-		
+
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		// Ensures label columns on every detail page are same width
-		((GridData)fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
-		
+		((GridData) fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
+
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
 		Button[] buttons = createTrueFalseButtons(parent, toolkit, 2);
@@ -83,31 +77,31 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
 		label.setForeground(foreground);
-		
+
 		fUseComp = toolkit.createComposite(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fUseComp.setLayoutData(gd);
 		fUseLayout = new StackLayout();
 		fUseComp.setLayout(fUseLayout);
-		
+
 		fUseCompDefault = toolkit.createComposite(fUseComp);
-		fUseCompDefault.setLayout(GridLayoutFactory.fillDefaults().margins(0,0).numColumns(2).create());
-		
+		fUseCompDefault.setLayout(GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).create());
+
 		fUseDefault = createComboPart(fUseCompDefault, toolkit, ISchemaAttribute.USE_TABLE, 1, SWT.NONE);
 		fValue = new FormEntry(fUseCompDefault, toolkit, null, 0, 1);
-		
+
 		fUseCompOther = toolkit.createComposite(fUseComp);
-		fUseCompOther.setLayout(GridLayoutFactory.fillDefaults().margins(0,0).create());
+		fUseCompOther.setLayout(GridLayoutFactory.fillDefaults().margins(0, 0).create());
 
 		fUseOther = createComboPart(fUseCompOther, toolkit, ISchemaAttribute.USE_TABLE, 1);
-		
+
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
 		label.setForeground(foreground);
 		fType = createComboPart(parent, toolkit, ISchemaAttribute.TYPES, 2);
-		
+
 		createTypeDetails(parent, toolkit);
-		
+
 		toolkit.paintBordersFor(parent);
 		setText(PDEUIMessages.SchemaAttributeDetails_title);
 	}
@@ -117,21 +111,21 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
-		fAttribute = (SchemaAttribute)object;
+		fAttribute = (SchemaAttribute) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 		fName.setValue(fAttribute.getName(), true); //$NON-NLS-1$
 		fDepTrue.setSelection(fAttribute.isDeprecated());
 		fDepFalse.setSelection(!fAttribute.isDeprecated());
-		
+
 		boolean isStringType = fAttribute.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]);
 		int kind = fAttribute.getKind();
 		fType.select(isStringType ? 1 + kind : 0);
-		
+
 		fUseDefault.select(fAttribute.getUse());
 		fUseOther.select(fAttribute.getUse());
 		Object value = fAttribute.getValue();
 		fValue.setValue(value != null ? value.toString() : PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue, true);
-		
+
 		boolean editable = isEditableElement();
 		if (fAttribute.getUse() != 2) {
 			fUseLayout.topControl = fUseCompOther;
@@ -147,7 +141,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fUseOther.setEnabled(editable);
 		fValue.setEditable(editable);
 	}
-	
+
 	public void hookListeners() {
 		fValue.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
@@ -167,7 +161,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 					ISchemaObject parent = fAttribute.getParent();
 					while (!(parent instanceof ISchemaElement))
 						parent = parent.getParent();
-					ISchemaElement element = (ISchemaElement)parent;
+					ISchemaElement element = (ISchemaElement) parent;
 					ISchemaAttribute[] attributes = element.getAttributes();
 					for (int i = 0; i < attributes.length; i++) {
 						if (attributes[i] != fAttribute && attributes[i].getName().equalsIgnoreCase(fName.getValue())) {
@@ -198,16 +192,14 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 				String typeString = fType.getSelection();
 				if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
 					typeString = ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND];
-				
+
 				fAttribute.setType(new SchemaSimpleType(fAttribute.getSchema(), typeString));
-				
+
 				int kind = fType.getSelectionIndex() - 1; // adjust for "boolean" in combo
 				fAttribute.setKind(kind > 0 ? kind : 0); // kind could be -1
-				
+
 				ISchemaSimpleType type = fAttribute.getType();
-				if (type instanceof SchemaSimpleType
-						&& kind != IMetaAttribute.STRING
-						&& ((SchemaSimpleType) type).getRestriction() != null) {
+				if (type instanceof SchemaSimpleType && kind != IMetaAttribute.STRING && ((SchemaSimpleType) type).getRestriction() != null) {
 					((SchemaSimpleType) type).setRestriction(null);
 				}
 				fireSelectionChange();
@@ -236,8 +228,8 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-	
-	private void doUseChange (int index) {
+
+	private void doUseChange(int index) {
 		fAttribute.setUse(index);
 		if (index == 2) {
 			fUseLayout.topControl = fUseCompDefault;
@@ -255,14 +247,14 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] changedObjs = event.getChangedObjects();
-		if(event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
-			if(changedObjs[0] instanceof SchemaAttribute) {	
+		if (event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
+			if (changedObjs[0] instanceof SchemaAttribute) {
 				fName.getText().setFocus();
-		    }
+			}
 		}
 		super.modelChanged(event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -275,5 +267,5 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 	protected SchemaAttribute getAttribute() {
 		return fAttribute;
-	}	
+	}
 }

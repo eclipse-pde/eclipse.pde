@@ -13,22 +13,14 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -77,12 +69,10 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	 * @param monitor
 	 *            Progress monitor
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		try {
-			monitor.beginTask(PDEUIMessages.ConvertedProjectWizard_converting,
-					projectsToConvert.length);
+			monitor.beginTask(PDEUIMessages.ConvertedProjectWizard_converting, projectsToConvert.length);
 
 			for (int i = 0; i < projectsToConvert.length; i++) {
 				IProject projectToConvert = projectsToConvert[i];
@@ -98,8 +88,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	private void convertProject(IProject projectToConvert,
-			IProgressMonitor monitor) throws CoreException {
+	private void convertProject(IProject projectToConvert, IProgressMonitor monitor) throws CoreException {
 
 		// Do early checks to make sure we can get out fast if we're not setup
 		// properly
@@ -112,25 +101,21 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 			return;
 		}
 
-		CoreUtility.addNatureToProject(projectToConvert, PDE.PLUGIN_NATURE,
-				monitor);
+		CoreUtility.addNatureToProject(projectToConvert, PDE.PLUGIN_NATURE, monitor);
 
 		loadClasspathEntries(projectToConvert, monitor);
 		loadLibraryName(projectToConvert);
 
-		createManifestFile(projectToConvert
-				.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
+		createManifestFile(projectToConvert.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
 
 		IFile buildFile = projectToConvert.getFile(PDEModelUtility.F_BUILD);
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
 			IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.BIN_INCLUDES); //$NON-NLS-1$
-			if (projectToConvert.getFile(
-					ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists())
+			if (projectToConvert.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists())
 				entry.addToken("plugin.xml"); //$NON-NLS-1$
-			if (projectToConvert.getFile(
-					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
+			if (projectToConvert.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
 				entry.addToken("META-INF/"); //$NON-NLS-1$
 			for (int i = 0; i < fLibEntries.length; i++) {
 				entry.addToken(fLibEntries[i]);
@@ -138,8 +123,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 			if (fSrcEntries.length > 0) {
 				entry.addToken(fLibraryName);
-				IBuildEntry source = model.getFactory().createEntry(
-						IBuildEntry.JAR_PREFIX + fLibraryName); //$NON-NLS-1$
+				IBuildEntry source = model.getFactory().createEntry(IBuildEntry.JAR_PREFIX + fLibraryName); //$NON-NLS-1$
 				for (int i = 0; i < fSrcEntries.length; i++) {
 					source.addToken(fSrcEntries[i]);
 				}
@@ -164,8 +148,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		for (int i = 0; i < currentClassPath.length; i++) {
 			int contentType = currentClassPath[i].getEntryKind();
 			if (contentType == IClasspathEntry.CPE_SOURCE) {
-				String relativePath = getRelativePath(currentClassPath[i],
-						project);
+				String relativePath = getRelativePath(currentClassPath[i], project);
 				if (relativePath.equals("")) { //$NON-NLS-1$
 					sources.add("."); //$NON-NLS-1$
 				} else {
@@ -180,14 +163,11 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 			}
 		}
 		fSrcEntries = (String[]) sources.toArray(new String[sources.size()]);
-		fLibEntries = (String[]) libraries
-				.toArray(new String[libraries.size()]);
+		fLibEntries = (String[]) libraries.toArray(new String[libraries.size()]);
 
 		IClasspathEntry[] classPath = new IClasspathEntry[currentClassPath.length + 1];
-		System.arraycopy(currentClassPath, 0, classPath, 0,
-				currentClassPath.length);
-		classPath[classPath.length - 1] = ClasspathComputer
-				.createContainerEntry();
+		System.arraycopy(currentClassPath, 0, classPath, 0, currentClassPath.length);
+		classPath[classPath.length - 1] = ClasspathComputer.createContainerEntry();
 		try {
 			javaProject.setRawClasspath(classPath, monitor);
 		} catch (JavaModelException e) {
@@ -212,15 +192,11 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	}
 
 	private void organizeExports(final IProject project) {
-		PDEModelUtility.modifyModel(new ModelModification(project
-				.getFile(PDEModelUtility.F_MANIFEST_FP)) {
-			protected void modifyModel(IBaseModel model,
-					IProgressMonitor monitor) throws CoreException {
+		PDEModelUtility.modifyModel(new ModelModification(project.getFile(PDEModelUtility.F_MANIFEST_FP)) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;
-				OrganizeManifest.organizeExportPackages(
-						((IBundlePluginModelBase) model).getBundleModel()
-								.getBundle(), project, true, true);
+				OrganizeManifest.organizeExportPackages(((IBundlePluginModelBase) model).getBundleModel().getBundle(), project, true, true);
 			}
 		}, null);
 	}
@@ -234,10 +210,8 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		return buf.toString();
 	}
 
-	private void createManifestFile(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(file,
-				null);
+	private void createManifestFile(IFile file, IProgressMonitor monitor) throws CoreException {
+		WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(file, null);
 		model.load();
 		IBundle pluginBundle = model.getBundleModel().getBundle();
 

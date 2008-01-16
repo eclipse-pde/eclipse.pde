@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 
 /**
  *
@@ -27,36 +24,39 @@ public class GenericSourcePage extends PDESourcePage {
 	public GenericSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineLabelProvider()
 	 */
 	public ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
 	 */
 	public ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
 	 */
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#outlineSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void updateSelection(SelectionChangedEvent e) {
 		// NO-OP
 	}
-	
+
 	protected ISortableContentOutlinePage createOutlinePage() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */

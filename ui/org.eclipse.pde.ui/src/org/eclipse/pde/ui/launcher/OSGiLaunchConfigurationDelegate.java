@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 
 /**
@@ -31,18 +26,16 @@ import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
  * @since 3.3
  */
 public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
-	
+
 	/**
 	 * Delegates to the launcher delegate associated with the OSGi framwork
 	 * selected in the launch configuration.
 	 * 
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void launch(ILaunchConfiguration configuration, String mode,
-			ILaunch launch, IProgressMonitor monitor) throws CoreException {	
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
-		String id = configuration.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, 
-				  							   manager.getDefaultFramework());
+		String id = configuration.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, manager.getDefaultFramework());
 		LaunchConfigurationDelegate launcher = manager.getFrameworkLauncher(id);
 		if (launcher != null) {
 			launcher.launch(configuration, mode, launch, monitor);
@@ -51,9 +44,9 @@ public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate
 			if (name == null)
 				name = PDEUIMessages.OSGiLaunchConfiguration_selected;
 			String message = NLS.bind(PDEUIMessages.OSGiLaunchConfiguration_cannotFindLaunchConfiguration, name);
-			IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message , null);
-			throw new CoreException(status);			
-		}		
+			IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message, null);
+			throw new CoreException(status);
+		}
 	}
-	
+
 }

@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-
 /**
  * IPDEDropParticipant
  *
@@ -24,7 +23,7 @@ public interface IPDEDropParticipant {
 	 * @param targetLocation ViewerDropAdapter:  LOCATION_ON, LOCATION_BEFORE, LOCATION_AFTER
 	 */
 	public void doDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation);
-	
+
 	/**
 	 * @param targetObject The original target object
 	 * @param sourceObjects The serialized / deserialized source objects (need to be reconnected)
@@ -38,7 +37,7 @@ public interface IPDEDropParticipant {
 	 * @param targetLocation ViewerDropAdapter:  LOCATION_ON, LOCATION_BEFORE, LOCATION_AFTER
 	 */
 	public void doDropLink(Object targetObject, Object[] sourceObjects, int targetLocation);
-	
+
 	/**
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects
@@ -46,7 +45,7 @@ public interface IPDEDropParticipant {
 	 * @return
 	 */
 	public boolean canDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation);
-	
+
 	/**
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects
@@ -54,7 +53,7 @@ public interface IPDEDropParticipant {
 	 * @return
 	 */
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation);
-	
+
 	/**
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects

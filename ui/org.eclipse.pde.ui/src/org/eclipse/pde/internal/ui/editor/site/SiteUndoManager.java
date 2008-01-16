@@ -13,14 +13,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteDescription;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.SiteObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
@@ -35,14 +28,14 @@ public class SiteUndoManager extends ModelUndoManager {
 		if (obj instanceof ISiteDescription) {
 			return ArchivePage.PAGE_ID;
 		}
-		if (obj instanceof ISiteFeature || obj instanceof ISiteCategory
-				|| obj instanceof ISiteCategoryDefinition) {
+		if (obj instanceof ISiteFeature || obj instanceof ISiteCategory || obj instanceof ISiteCategoryDefinition) {
 			return FeaturesPage.PAGE_ID;
 		}
 		// site elements and attributes are on different pages, stay on the
 		// current page
 		return null;
 	}
+
 	/*
 	 * @see IModelUndoManager#execute(ModelUndoOperation)
 	 */
@@ -67,37 +60,29 @@ public class SiteUndoManager extends ModelUndoManager {
 				break;
 			case IModelChangedEvent.CHANGE :
 				if (undo)
-					executeChange(
-						elements[0],
-						propertyName,
-						event.getNewValue(),
-						event.getOldValue());
+					executeChange(elements[0], propertyName, event.getNewValue(), event.getOldValue());
 				else
-					executeChange(
-						elements[0],
-						propertyName,
-						event.getOldValue(),
-						event.getNewValue());
+					executeChange(elements[0], propertyName, event.getOldValue(), event.getNewValue());
 		}
 	}
 
 	private void executeAdd(IModelChangeProvider model, Object[] elements) {
-		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
-		ISite site = siteModel!=null?siteModel.getSite():null;
+		ISiteModel siteModel = (model instanceof ISiteModel) ? (ISiteModel) model : null;
+		ISite site = siteModel != null ? siteModel.getSite() : null;
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 
 				if (element instanceof ISiteFeature) {
-					site.addFeatures(new ISiteFeature [] {(ISiteFeature) element});
+					site.addFeatures(new ISiteFeature[] {(ISiteFeature) element});
 				} else if (element instanceof ISiteArchive) {
 					site.addArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
 				} else if (element instanceof ISiteCategory) {
-					ISiteCategory category = (ISiteCategory)element;
-					ISiteFeature feature = (ISiteFeature)category.getParent();
+					ISiteCategory category = (ISiteCategory) element;
+					ISiteFeature feature = (ISiteFeature) category.getParent();
 					feature.addCategories(new ISiteCategory[] {category});
 				}
 			}
@@ -107,22 +92,22 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	private void executeRemove(IModelChangeProvider model, Object[] elements) {
-		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
-		ISite site = siteModel!=null?siteModel.getSite():null;
-		
+		ISiteModel siteModel = (model instanceof ISiteModel) ? (ISiteModel) model : null;
+		ISite site = siteModel != null ? siteModel.getSite() : null;
+
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 
 				if (element instanceof ISiteFeature) {
-					site.removeFeatures(new ISiteFeature [] {(ISiteFeature) element});
+					site.removeFeatures(new ISiteFeature[] {(ISiteFeature) element});
 				} else if (element instanceof ISiteArchive) {
 					site.removeArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.removeCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
 				} else if (element instanceof ISiteCategory) {
-					ISiteCategory category = (ISiteCategory)element;
-					ISiteFeature feature = (ISiteFeature)category.getParent();
+					ISiteCategory category = (ISiteCategory) element;
+					ISiteFeature feature = (ISiteFeature) category.getParent();
 					feature.removeCategories(new ISiteCategory[] {category});
 				}
 			}
@@ -131,11 +116,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeChange(
-		Object element,
-		String propertyName,
-		Object oldValue,
-		Object newValue) {
+	private void executeChange(Object element, String propertyName, Object oldValue, Object newValue) {
 
 		if (element instanceof SiteObject) {
 			SiteObject sobj = (SiteObject) element;

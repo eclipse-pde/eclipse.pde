@@ -11,16 +11,13 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.TreeSet;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -29,17 +26,10 @@ import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -58,10 +48,10 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 			validatePage();
 		}
 	};
-	
+
 	public ProductIntroWizardPage(String pageName, IProduct product) {
 		super(pageName);
-		setTitle(PDEUIMessages.ProductIntroWizardPage_title); 
+		setTitle(PDEUIMessages.ProductIntroWizardPage_title);
 		setDescription(PDEUIMessages.ProductIntroWizardPage_description);
 		fIntroIds = getCurrentIntroIds();
 		fProduct = product;
@@ -72,8 +62,8 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 20;
 		comp.setLayout(layout);
-		
-		createProductGroup(comp);		
+
+		createProductGroup(comp);
 
 		setControl(comp);
 		setPageComplete(getPluginId() != null);
@@ -83,7 +73,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	private void createProductGroup(Composite comp) {
 		Group group = new Group(comp, SWT.NONE);
-		group.setText(PDEUIMessages.ProductIntroWizardPage_groupText); 
+		group.setText(PDEUIMessages.ProductIntroWizardPage_groupText);
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -96,30 +86,30 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		text.setLayoutData(gd);
 		text.setBackground(null);
 		text.addHyperlinkListener(this);
-		
+
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductIntroWizardPage_targetLabel); 
-		
-		fPluginText = new Text(group, SWT.SINGLE|SWT.BORDER);
+		label.setText(PDEUIMessages.ProductIntroWizardPage_targetLabel);
+
+		fPluginText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		fPluginText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Button button = new Button(group, SWT.PUSH);
-		button.setText(PDEUIMessages.ProductIntroWizardPage_browse); 
+		button.setText(PDEUIMessages.ProductIntroWizardPage_browse);
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
 		});
-		
+
 		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductIntroWizardPage_introLabel); 
-		
-		fIntroIdText = new Text(group, SWT.SINGLE|SWT.BORDER);
+		label.setText(PDEUIMessages.ProductIntroWizardPage_introLabel);
+
+		fIntroIdText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fIntroIdText.setLayoutData(gd);
-		
+
 		String pluginId = getPluginId();
 		if (pluginId != null) {
 			fPluginText.setText(pluginId);
@@ -128,8 +118,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		fPluginText.addModifyListener(fListener);
 		fIntroIdText.addModifyListener(fListener);
 	}
-	
-	
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
@@ -142,29 +131,29 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		String error = null;
 		String pluginId = getDefiningPlugin();
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
-		if (model == null){ 
-			error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; 
+		if (model == null) {
+			error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin;
 		} else if (model.getUnderlyingResource() == null) {
-			error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; 
+			error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace;
 		} else if (pluginId.length() == 0) {
-			error = PDEUIMessages.ProductIntroWizardPage_targetNotSet; 
+			error = PDEUIMessages.ProductIntroWizardPage_targetNotSet;
 		}
 		validateId(error);
 
 	}
-	
+
 	private void validateId(String error) {
 		if (error == null) {
 			String id = fIntroIdText.getText().trim();
-			
+
 			if (id.length() == 0)
-				error = PDEUIMessages.ProductIntroWizardPage_introNotSet; 
-			
+				error = PDEUIMessages.ProductIntroWizardPage_introNotSet;
+
 			if (error == null)
 				for (int i = 0; i < id.length(); i++)
-					if (!id.substring(i,i+1).matches("[a-zA-Z0-9.]")) //$NON-NLS-1$
-						error = PDEUIMessages.ProductIntroWizardPage_invalidIntroId; 
-			
+					if (!id.substring(i, i + 1).matches("[a-zA-Z0-9.]")) //$NON-NLS-1$
+						error = PDEUIMessages.ProductIntroWizardPage_invalidIntroId;
+
 			if (error == null && fIntroIds.contains(id))
 				error = PDEUIMessages.ProductIntroWizardPage_introIdExists;
 		}
@@ -175,14 +164,13 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private void handleBrowse() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PluginRegistry.getWorkspaceModels(), false);
 		if (dialog.open() == Window.OK) {
-			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
+			IPluginModelBase model = (IPluginModelBase) dialog.getFirstResult();
 			String id = model.getPluginBase().getId();
 			fPluginText.setText(id);
-			fIntroIdText.setText(getAvailableIntroId(id)); 
+			fIntroIdText.setText(getAvailableIntroId(id));
 		}
 	}
-	
-	
+
 	private String getAvailableIntroId(String id) {
 		String introId = "intro"; //$NON-NLS-1$
 		String numString = ""; //$NON-NLS-1$
@@ -209,12 +197,11 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		}
 		return result;
 	}
-	
-	
+
 	public String getDefiningPlugin() {
 		return fPluginText.getText().trim();
 	}
-	
+
 	public String getIntroId() {
 		return fIntroIdText.getText().trim();
 	}
@@ -236,6 +223,6 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);
 		if (point != null)
 			new ShowDescriptionAction(point, true).run();
-		
+
 	}
 }

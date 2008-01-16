@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IBaseModel;
 
 /**
@@ -29,7 +27,7 @@ public abstract class ModelModification {
 	private IFile fXMLFile;
 	private IFile fPropertiesFile;
 	private boolean fIsBundleModel;
-	
+
 	/**
 	 * Create a single model modification - used for modifying single AbstractEditingModels
 	 * @param modelFile the basic underlying file for the model you wish to modify.
@@ -37,8 +35,7 @@ public abstract class ModelModification {
 	public ModelModification(IFile modelFile) {
 		singleFileModification(modelFile);
 	}
-	
-	
+
 	/**
 	 * Create a full IBundlePluginModelBase modification
 	 * @param bundleFile the MANIFEST.MF file
@@ -48,7 +45,7 @@ public abstract class ModelModification {
 	public ModelModification(IFile bundleFile, IFile xmlFile) {
 		createFullBundleModification(bundleFile, xmlFile);
 	}
-	
+
 	/**
 	 * Create a ModelModification based on the contents of the project
 	 * ie. if the project contains a MANIFEST.MF this will be tagged as a 
@@ -68,7 +65,7 @@ public abstract class ModelModification {
 		else if (manifest.exists())
 			createFullBundleModification(manifest, xml);
 	}
-	
+
 	private void singleFileModification(IFile file) {
 		assignFile(file);
 		if (fManifestFile != null)
@@ -79,16 +76,16 @@ public abstract class ModelModification {
 			fModelFile = fPropertiesFile;
 		fIsBundleModel = file.getName().equals(PDEModelUtility.F_MANIFEST);
 	}
-	
+
 	private void createFullBundleModification(IFile bundleFile, IFile xmlFile) {
 		assignFile(bundleFile);
 		assignFile(xmlFile);
-		
+
 		Assert.isNotNull(fManifestFile);
 		fModelFile = fManifestFile;
 		fIsBundleModel = true;
 	}
-	
+
 	private void assignFile(IFile file) {
 		if (file == null)
 			return;
@@ -100,7 +97,7 @@ public abstract class ModelModification {
 		else if (name.endsWith(PDEModelUtility.F_PROPERTIES))
 			fPropertiesFile = file;
 	}
-	
+
 	/**
 	 * Invoke this using PDEModelUtility.modifyModel(ModelModification modification)
 	 * Clients / subclasses should not invoke this method.
@@ -109,27 +106,27 @@ public abstract class ModelModification {
 	 * @throws CoreException
 	 */
 	protected abstract void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException;
-	
+
 	protected final IFile getFile() {
 		return fModelFile;
 	}
-	
+
 	protected final IFile getManifestFile() {
 		return fManifestFile;
 	}
-	
+
 	protected final IFile getXMLFile() {
 		return fXMLFile;
 	}
-	
+
 	protected final IFile getPropertiesFile() {
 		return fPropertiesFile;
 	}
-	
+
 	protected final boolean isFullBundleModification() {
 		return fIsBundleModel;
 	}
-	
+
 	public boolean saveOpenEditor() {
 		return true;
 	}

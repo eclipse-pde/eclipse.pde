@@ -10,51 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
-import org.eclipse.pde.internal.ui.elements.ListContentProvider;
-import org.eclipse.pde.internal.ui.elements.TreeContentProvider;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 
-
-public abstract class WizardTreeSelectionPage
-	extends BaseWizardSelectionPage
-	implements ISelectionChangedListener {
+public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage implements ISelectionChangedListener {
 	private TreeViewer categoryTreeViewer;
 	private String baseCategory;
 	protected TableViewer wizardSelectionViewer;
 
 	private WizardCollectionElement wizardCategories;
 
-	public WizardTreeSelectionPage(
-		WizardCollectionElement categories,
-		String baseCategory,
-		String message) {
-		super("NewExtension", message);  //$NON-NLS-1$
+	public WizardTreeSelectionPage(WizardCollectionElement categories, String baseCategory, String message) {
+		super("NewExtension", message); //$NON-NLS-1$
 		this.wizardCategories = categories;
 		this.baseCategory = baseCategory;
 	}
+
 	public void advanceToNextPage() {
 		getContainer().showPage(getNextPage());
 	}
+
 	public void createControl(Composite parent) {
 		// top level group
 		Composite container = new Composite(parent, SWT.NULL);
@@ -88,18 +70,11 @@ public abstract class WizardTreeSelectionPage
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		wizardSelectionViewer.addSelectionChangedListener(this);
-		wizardSelectionViewer
-			.addDoubleClickListener(new IDoubleClickListener() {
+		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				BusyIndicator
-					.showWhile(
-						wizardSelectionViewer.getControl().getDisplay(),
-						new Runnable() {
+				BusyIndicator.showWhile(wizardSelectionViewer.getControl().getDisplay(), new Runnable() {
 					public void run() {
-						selectionChanged(
-							new SelectionChangedEvent(
-								wizardSelectionViewer,
-								wizardSelectionViewer.getSelection()));
+						selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
 						advanceToNextPage();
 					}
 				});
@@ -108,8 +83,7 @@ public abstract class WizardTreeSelectionPage
 
 		// the new composite below is needed in order to make the label span the two
 		// defined columns of outerContainer
-		Composite descriptionComposite =
-			new Composite(rootSash, SWT.NONE);
+		Composite descriptionComposite = new Composite(rootSash, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -117,37 +91,34 @@ public abstract class WizardTreeSelectionPage
 		createDescriptionIn(descriptionComposite);
 
 		initializeViewers();
-		rootSash.setWeights(new int[] {70, 30});		
-		setControl(container);		
+		rootSash.setWeights(new int[] {70, 30});
+		setControl(container);
 	}
+
 	protected Object getSingleSelection(IStructuredSelection selection) {
 		Object selectedObject = selection.getFirstElement();
 		if (selection.size() > 1)
 			selectedObject = null; // ie.- a multi-selection
 		return selectedObject;
 	}
+
 	private void handleCategorySelection(SelectionChangedEvent selectionEvent) {
 		setErrorMessage(null);
 		setDescriptionText(""); //$NON-NLS-1$
 		setSelectedNode(null);
 
-		WizardCollectionElement selectedCategory =
-			(WizardCollectionElement) getSingleSelection(
-				(IStructuredSelection) selectionEvent
-				.getSelection());
+		WizardCollectionElement selectedCategory = (WizardCollectionElement) getSingleSelection((IStructuredSelection) selectionEvent.getSelection());
 
 		if (selectedCategory == null)
 			wizardSelectionViewer.setInput(null);
 		else
 			wizardSelectionViewer.setInput(selectedCategory.getWizards());
 	}
+
 	private void handleWizardSelection(SelectionChangedEvent selectionEvent) {
 		setErrorMessage(null);
 
-		WizardElement currentSelection =
-			(WizardElement) getSingleSelection(
-				(IStructuredSelection) selectionEvent
-				.getSelection());
+		WizardElement currentSelection = (WizardElement) getSingleSelection((IStructuredSelection) selectionEvent.getSelection());
 
 		// If no single selection, clear and return
 		if (currentSelection == null) {
@@ -167,21 +138,23 @@ public abstract class WizardTreeSelectionPage
 			});
 		*/
 	}
+
 	protected void initializeViewers() {
 		categoryTreeViewer.setInput(wizardCategories);
 		wizardSelectionViewer.addSelectionChangedListener(this);
 		Object[] categories = wizardCategories.getChildren();
 		if (categories.length > 0)
-			categoryTreeViewer.setSelection(new StructuredSelection(
-					categories[0]));
+			categoryTreeViewer.setSelection(new StructuredSelection(categories[0]));
 		categoryTreeViewer.getTree().setFocus();
 	}
+
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
 		if (selectionEvent.getSelectionProvider().equals(categoryTreeViewer))
 			handleCategorySelection(selectionEvent);
 		else
 			handleWizardSelection(selectionEvent);
 	}
+
 	public void setSelectedNode(IWizardNode node) {
 		super.setSelectedNode(node);
 	}

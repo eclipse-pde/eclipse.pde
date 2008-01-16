@@ -13,17 +13,17 @@ package org.eclipse.pde.internal.ui.wizards.toc;
 import org.eclipse.core.resources.IProject;
 
 public interface IRegisterTOCData {
-	
+
 	/**
 	 * @return
 	 */
 	public boolean getDataPrimary();
-	
+
 	/**
 	 * @return
 	 */
 	public String getDataTocFile();
-	
+
 	/**
 	 * @return
 	 */

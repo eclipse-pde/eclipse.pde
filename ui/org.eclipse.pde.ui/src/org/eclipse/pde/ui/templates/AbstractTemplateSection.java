@@ -11,49 +11,18 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import java.util.*;
+import java.util.zip.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
@@ -65,10 +34,7 @@ import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
  * @since 2.0
  */
 
-public abstract class AbstractTemplateSection
-		implements
-			ITemplateSection,
-			IVariableProvider {
+public abstract class AbstractTemplateSection implements ITemplateSection, IVariableProvider {
 
 	/**
 	 * The project handle.
@@ -83,7 +49,7 @@ public abstract class AbstractTemplateSection
 	 * used for (value="pluginClass").  The return value is a fully-qualified class name.
 	 */
 	public static final String KEY_PLUGIN_CLASS = "pluginClass"; //$NON-NLS-1$
-	
+
 	/**
 	 * The key for the simple class name of a bundle activator (value="activator")
 	 * 
@@ -107,6 +73,7 @@ public abstract class AbstractTemplateSection
 	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 
 	private boolean pagesAdded = false;
+
 	/**
 	 * The default implementation of this method provides values of the
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
@@ -126,16 +93,16 @@ public abstract class AbstractTemplateSection
 	public Object getValue(String key) {
 		return getKeyValue(key);
 	}
-	
+
 	private String getKeyValue(String key) {
 		if (model == null)
 			return null;
-		
+
 		if (key.equals(KEY_PLUGIN_CLASS) && model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
 			return plugin.getClassName();
 		}
-		
+
 		if (key.equals(KEY_ACTIVATOR_SIMPLE) && model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
 			String qualified = plugin.getClassName();
@@ -152,7 +119,7 @@ public abstract class AbstractTemplateSection
 			IPluginBase plugin = model.getPluginBase();
 			return plugin.getTranslatedName();
 		}
-		
+
 		if (key.equals(KEY_PACKAGE_NAME) && model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
 			String qualified = plugin.getClassName();
@@ -163,18 +130,21 @@ public abstract class AbstractTemplateSection
 		}
 		return null;
 	}
+
 	/**
 	 * @see ITemplateSection#getTemplateLocation()
 	 */
 	public URL getTemplateLocation() {
 		return null;
 	}
+
 	/**
 	 * @see ITemplateSection#getDescription()
 	 */
 	public String getDescription() {
 		return ""; //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the translated version of the resource string represented by the
 	 * provided key.
@@ -194,6 +164,7 @@ public abstract class AbstractTemplateSection
 			return key;
 		}
 	}
+
 	/**
 	 * An abstract method that returns the resource bundle that corresponds to
 	 * the best match of <samp>plugin.properties </samp> file for the current
@@ -210,7 +181,7 @@ public abstract class AbstractTemplateSection
 	 */
 	public void addPages(Wizard wizard) {
 	}
-	
+
 	/**
 	 * Tests if wizard pages for this template section have been added.
 	 * 
@@ -245,10 +216,10 @@ public abstract class AbstractTemplateSection
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[]{new PluginReference("org.eclipse.ui", //$NON-NLS-1$
+		return new IPluginReference[] {new PluginReference("org.eclipse.ui", //$NON-NLS-1$
 				null, 0)};
 	}
-	
+
 	/**
 	 * Returns the folder with Java files in the target project. The default
 	 * implementation looks for source folders in the classpath of the target
@@ -261,8 +232,7 @@ public abstract class AbstractTemplateSection
 	 *         <samp>null </samp> if none found.
 	 */
 
-	protected IFolder getSourceFolder(IProgressMonitor monitor)
-			throws CoreException {
+	protected IFolder getSourceFolder(IProgressMonitor monitor) throws CoreException {
 		IFolder sourceFolder = null;
 
 		try {
@@ -294,7 +264,7 @@ public abstract class AbstractTemplateSection
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		generateFiles(monitor, getTemplateLocation());
 	}
-	
+
 	/**
 	 * Generates files as part of the template execution.
 	 * The files found in the location are processed in the following way:
@@ -367,7 +337,7 @@ public abstract class AbstractTemplateSection
 		monitor.subTask(""); //$NON-NLS-1$
 		monitor.worked(1);
 	}
-	
+
 	/**
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
@@ -406,8 +376,7 @@ public abstract class AbstractTemplateSection
 	 * @param monitor
 	 *            the progress monitor to be used
 	 */
-	protected abstract void updateModel(IProgressMonitor monitor)
-			throws CoreException;
+	protected abstract void updateModel(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * The default implementation of the interface method. It will generate
@@ -417,13 +386,13 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#execute(IProject, IPluginModelBase,
 	 *      IProgressMonitor)
 	 */
-	public void execute(IProject project, IPluginModelBase model,
-			IProgressMonitor monitor) throws CoreException {
+	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		this.project = project;
 		this.model = model;
 		generateFiles(monitor);
 		updateModel(monitor);
 	}
+
 	/**
 	 * A utility method to create an extension object for the plug-in model from
 	 * the provided extension point id.
@@ -436,11 +405,9 @@ public abstract class AbstractTemplateSection
 	 * @return an existing extension (if exists and <samp>reuse </samp> is
 	 *         <samp>true </samp>), or a new extension object otherwise.
 	 */
-	protected IPluginExtension createExtension(String pointId, boolean reuse)
-			throws CoreException {
+	protected IPluginExtension createExtension(String pointId, boolean reuse) throws CoreException {
 		if (reuse) {
-			IPluginExtension[] extensions = model.getPluginBase()
-					.getExtensions();
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IPluginExtension extension = extensions[i];
 				if (extension.getPoint().equalsIgnoreCase(pointId)) {
@@ -453,8 +420,7 @@ public abstract class AbstractTemplateSection
 		return extension;
 	}
 
-	private void generateFiles(File src, IContainer dst, boolean firstLevel,
-			boolean binary, IProgressMonitor monitor) throws CoreException {
+	private void generateFiles(File src, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		File[] members = src.listFiles();
 
 		for (int i = 0; i < members.length; i++) {
@@ -466,7 +432,7 @@ public abstract class AbstractTemplateSection
 					binary = false;
 					if (!isOkToCreateFolder(member))
 						continue;
-					
+
 					if (member.getName().equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
 						dstContainer = generateJavaSourceFolder(sourceFolder, monitor);
@@ -478,8 +444,7 @@ public abstract class AbstractTemplateSection
 				if (dstContainer == null) {
 					if (isOkToCreateFolder(member) == false)
 						continue;
-					String folderName = getProcessedString(member.getName(),
-							member.getName());
+					String folderName = getProcessedString(member.getName(), member.getName());
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
@@ -506,15 +471,12 @@ public abstract class AbstractTemplateSection
 		}
 	}
 
-	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst,
-			boolean firstLevel, boolean binary, IProgressMonitor monitor)
-			throws CoreException {
+	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		int pathLength = path.segmentCount();
 		// Immidiate children
 		Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
 
-		for (Enumeration zipEntries = zipFile.entries(); zipEntries
-				.hasMoreElements();) {
+		for (Enumeration zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
 			IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
@@ -528,9 +490,8 @@ public abstract class AbstractTemplateSection
 			if (entryPath.segmentCount() == pathLength + 1) {
 				childZipEntries.put(zipEntry.getName(), zipEntry);
 			} else {
-				String name = entryPath.uptoSegment(
-						pathLength + 1).addTrailingSeparator().toString();
-				if(!childZipEntries.containsKey(name)){	
+				String name = entryPath.uptoSegment(pathLength + 1).addTrailingSeparator().toString();
+				if (!childZipEntries.containsKey(name)) {
 					ZipEntry dirEntry = new ZipEntry(name);
 					childZipEntries.put(name, dirEntry);
 				}
@@ -547,8 +508,7 @@ public abstract class AbstractTemplateSection
 					binary = false;
 					if (name.equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
-						dstContainer = generateJavaSourceFolder(sourceFolder,
-								monitor);
+						dstContainer = generateJavaSourceFolder(sourceFolder, monitor);
 					} else if (name.equals("bin")) { //$NON-NLS-1$
 						binary = true;
 						dstContainer = dst;
@@ -562,8 +522,7 @@ public abstract class AbstractTemplateSection
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
-				generateFiles(zipFile, path.append(name), dstContainer, false,
-						binary, monitor);
+				generateFiles(zipFile, path.append(name), dstContainer, false, binary, monitor);
 			} else {
 				if (isOkToCreateFile(new File(path.toFile(), name))) {
 					if (firstLevel)
@@ -585,12 +544,9 @@ public abstract class AbstractTemplateSection
 		}
 	}
 
-	private IFolder generateJavaSourceFolder(IFolder sourceFolder,
-			IProgressMonitor monitor) throws CoreException {
+	private IFolder generateJavaSourceFolder(IFolder sourceFolder, IProgressMonitor monitor) throws CoreException {
 		Object packageValue = getValue(KEY_PACKAGE_NAME);
-		String packageName = packageValue != null
-				? packageValue.toString()
-				: null;
+		String packageName = packageValue != null ? packageValue.toString() : null;
 		if (packageName == null)
 			packageName = model.getPluginBase().getId();
 		IPath path = new Path(packageName.replace('.', File.separatorChar));
@@ -606,8 +562,7 @@ public abstract class AbstractTemplateSection
 		return project.getFolder(path);
 	}
 
-	private void copyFile(String fileName, InputStream input, IContainer dst, boolean binary,
-			IProgressMonitor monitor) throws CoreException {
+	private void copyFile(String fileName, InputStream input, IContainer dst, boolean binary, IProgressMonitor monitor) throws CoreException {
 		String targetFileName = getProcessedString(fileName, fileName);
 
 		monitor.subTask(targetFileName);
@@ -652,8 +607,7 @@ public abstract class AbstractTemplateSection
 		return buffer.toString();
 	}
 
-	private InputStream getProcessedStream(String fileName, InputStream stream, boolean binary)
-			throws IOException, CoreException {
+	private InputStream getProcessedStream(String fileName, InputStream stream, boolean binary) throws IOException, CoreException {
 		if (binary)
 			return stream;
 
@@ -701,9 +655,9 @@ public abstract class AbstractTemplateSection
 						String line = preBuffer.toString().trim();
 						preStack.processLine(line);
 						continue;
-					} 
+					}
 					preBuffer.append(c);
-					
+
 					continue;
 				}
 
@@ -737,15 +691,15 @@ public abstract class AbstractTemplateSection
 		}
 		return new ByteArrayInputStream(outBuffer.toString().getBytes(project.getDefaultCharset()));
 	}
-	
+
 	protected double getTargetVersion() {
-        try {
-    		IPluginBase plugin = model.getPluginBase();
+		try {
+			IPluginBase plugin = model.getPluginBase();
 			if (plugin instanceof IBundlePluginBase)
-			    return Double.parseDouble(((IBundlePluginBase)plugin).getTargetVersion());
+				return Double.parseDouble(((IBundlePluginBase) plugin).getTargetVersion());
 		} catch (NumberFormatException e) {
 		}
-       return TargetPlatformHelper.getTargetVersion();
+		return TargetPlatformHelper.getTargetVersion();
 	}
 
 	/**
@@ -818,7 +772,7 @@ public abstract class AbstractTemplateSection
 		// essentially, do we have a bundle?
 		return (bundle != null);
 	}
-	
+
 	/**
 	 * Try to get hold of the underlying bundle for the model, if applicable.
 	 * 
@@ -828,8 +782,8 @@ public abstract class AbstractTemplateSection
 	private IBundle getBundleFromModel() {
 
 		// Do early exit checks
-		if (model != null && (model instanceof IBundlePluginModelBase)) { 
-			
+		if (model != null && (model instanceof IBundlePluginModelBase)) {
+
 			IBundlePluginModelBase bundlePModel = (IBundlePluginModelBase) model;
 			IBundleModel bundleModel = bundlePModel.getBundleModel();
 

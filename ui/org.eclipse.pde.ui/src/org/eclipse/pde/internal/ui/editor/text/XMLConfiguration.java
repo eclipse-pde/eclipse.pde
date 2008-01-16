@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
@@ -24,7 +22,6 @@ import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
-
 public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private AnnotationHover fAnnotationHover;
 	private XMLDoubleClickStrategy fDoubleClickStrategy;
@@ -34,42 +31,37 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private TextAttribute fXMLCommentAttr;
 	private MultilineDamagerRepairer fDamagerRepairer;
 	private PDEQuickAssistAssistant fQuickAssistant;
-	
+
 	public XMLConfiguration(IColorManager colorManager) {
 		this(colorManager, null);
 	}
-	
+
 	public XMLConfiguration(IColorManager colorManager, PDESourcePage page) {
 		super(page, colorManager);
 	}
-	
+
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] {
-			IDocument.DEFAULT_CONTENT_TYPE,
-			XMLPartitionScanner.XML_COMMENT,
-			XMLPartitionScanner.XML_TAG };
+		return new String[] {IDocument.DEFAULT_CONTENT_TYPE, XMLPartitionScanner.XML_COMMENT, XMLPartitionScanner.XML_TAG};
 	}
-	
-	public ITextDoubleClickStrategy getDoubleClickStrategy(
-		ISourceViewer sourceViewer,
-		String contentType) {
+
+	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (fDoubleClickStrategy == null)
 			fDoubleClickStrategy = new XMLDoubleClickStrategy();
 		return fDoubleClickStrategy;
 	}
-	
+
 	protected XMLScanner getPDEScanner() {
 		if (fPdeScanner == null)
 			fPdeScanner = new XMLScanner(fColorManager);
 		return fPdeScanner;
 	}
-	
+
 	protected XMLTagScanner getPDETagScanner() {
-		if (fTagScanner == null) 
+		if (fTagScanner == null)
 			fTagScanner = new XMLTagScanner(fColorManager);
 		return fTagScanner;
 	}
-	
+
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(XMLDocumentSetupParticpant.XML_PARTITIONING);
@@ -81,7 +73,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		dr = new MultilineDamagerRepairer(getPDETagScanner());
 		reconciler.setDamager(dr, XMLPartitionScanner.XML_TAG);
 		reconciler.setRepairer(dr, XMLPartitionScanner.XML_TAG);
-	
+
 		fXMLCommentAttr = BasePDEScanner.createTextAttribute(fColorManager, IPDEColorConstants.P_XML_COMMENT);
 		fDamagerRepairer = new MultilineDamagerRepairer(null, fXMLCommentAttr);
 		reconciler.setDamager(fDamagerRepairer, XMLPartitionScanner.XML_COMMENT);
@@ -89,13 +81,13 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 		return reconciler;
 	}
-	
+
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fAnnotationHover == null)
 			fAnnotationHover = new AnnotationHover();
 		return fAnnotationHover;
 	}
-	
+
 	/**
 	 * Preference colors or fonts have changed.  
 	 * Update the default tokens of the scanners.
@@ -107,12 +99,12 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 			fColorManager.handlePropertyChangeEvent(event);
 		fTagScanner.adaptToPreferenceChange(event);
 		fPdeScanner.adaptToPreferenceChange(event);
-		String property= event.getProperty();
+		String property = event.getProperty();
 		if (property.startsWith(IPDEColorConstants.P_XML_COMMENT)) {
-	    	adaptTextAttribute(event);
-		} 
+			adaptTextAttribute(event);
+		}
 	}
-	
+
 	private void adaptTextAttribute(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX)) {
@@ -120,49 +112,37 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		} else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX)) {
 			fXMLCommentAttr = adaptToStyleChange(event, SWT.ITALIC, fXMLCommentAttr);
 		} else {
-	    	fXMLCommentAttr = new TextAttribute(fColorManager.getColor(event.getProperty()), 
-	    									   fXMLCommentAttr.getBackground(), 
-	    									   fXMLCommentAttr.getStyle());
+			fXMLCommentAttr = new TextAttribute(fColorManager.getColor(event.getProperty()), fXMLCommentAttr.getBackground(), fXMLCommentAttr.getStyle());
 		}
 		fDamagerRepairer.setDefaultTextAttribute(fXMLCommentAttr);
 	}
-	
+
 	private TextAttribute adaptToStyleChange(PropertyChangeEvent event, int styleAttribute, TextAttribute textAttribute) {
 		boolean eventValue = false;
 		Object value = event.getNewValue();
 		if (value instanceof Boolean)
-			eventValue = ((Boolean)value).booleanValue();
-		
+			eventValue = ((Boolean) value).booleanValue();
+
 		boolean activeValue = (textAttribute.getStyle() & styleAttribute) == styleAttribute;
-		if (activeValue != eventValue) { 
+		if (activeValue != eventValue) {
 			Color foreground = textAttribute.getForeground();
 			Color background = textAttribute.getBackground();
 			int style = eventValue ? textAttribute.getStyle() | styleAttribute : textAttribute.getStyle() & ~styleAttribute;
-			textAttribute= new TextAttribute(foreground, background, style);
-		}	
+			textAttribute = new TextAttribute(foreground, background, style);
+		}
 		return textAttribute;
 	}
-	
+
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		return property.startsWith(IPDEColorConstants.P_DEFAULT) ||
-			property.startsWith(IPDEColorConstants.P_PROC_INSTR) ||
-			property.startsWith(IPDEColorConstants.P_STRING) || 
-			property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING) || 
-			property.startsWith(IPDEColorConstants.P_TAG) || 
-			property.startsWith(IPDEColorConstants.P_XML_COMMENT);
+		return property.startsWith(IPDEColorConstants.P_DEFAULT) || property.startsWith(IPDEColorConstants.P_PROC_INSTR) || property.startsWith(IPDEColorConstants.P_STRING) || property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING) || property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_XML_COMMENT);
 	}
-	
+
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		return property.equals(IPDEColorConstants.P_DEFAULT) ||
-			property.equals(IPDEColorConstants.P_PROC_INSTR) ||
-			property.equals(IPDEColorConstants.P_STRING) || 
-			property.equals(IPDEColorConstants.P_EXTERNALIZED_STRING) || 
-			property.equals(IPDEColorConstants.P_TAG) || 
-			property.equals(IPDEColorConstants.P_XML_COMMENT);
+		return property.equals(IPDEColorConstants.P_DEFAULT) || property.equals(IPDEColorConstants.P_PROC_INSTR) || property.equals(IPDEColorConstants.P_STRING) || property.equals(IPDEColorConstants.P_EXTERNALIZED_STRING) || property.equals(IPDEColorConstants.P_TAG) || property.equals(IPDEColorConstants.P_XML_COMMENT);
 	}
-	
+
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable()) {
 			if (fQuickAssistant == null)
@@ -171,16 +151,16 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		}
 		return null;
 	}
-		
+
 	public void dispose() {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
 	}
-	
+
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_XML_IMP;
 	}
-	
+
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}

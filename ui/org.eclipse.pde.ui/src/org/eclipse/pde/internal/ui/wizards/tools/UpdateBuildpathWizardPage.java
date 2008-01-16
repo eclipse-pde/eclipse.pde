@@ -11,14 +11,10 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -35,9 +31,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	private CheckboxTableViewer pluginListViewer;
 	private TablePart tablePart;
 
-	public class BuildpathContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	public class BuildpathContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (fUnmigrated != null)
 				return fUnmigrated;
@@ -54,12 +48,9 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 			super.updateCounter(count);
 			dialogChanged();
 		}
-		protected StructuredViewer createStructuredViewer(
-			Composite parent,
-			int style,
-			FormToolkit toolkit) {
-			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, toolkit);
+
+		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
+			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 			return viewer;
 		}
@@ -74,7 +65,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		tablePart = new TablePart(PDEUIMessages.UpdateBuildpathWizard_availablePlugins);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -94,10 +85,10 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		pluginListViewer.setContentProvider(new BuildpathContentProvider());
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		GridData gd = (GridData)tablePart.getControl().getLayoutData();
+		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
-		
+
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(fSelected);
 
@@ -112,11 +103,11 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	public Object[] getSelected() {
 		return tablePart.getSelection();
 	}
-	
+
 	private void dialogChanged() {
 		setPageComplete(tablePart.getSelectionCount() > 0);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */

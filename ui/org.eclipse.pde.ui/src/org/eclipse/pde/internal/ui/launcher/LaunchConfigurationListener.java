@@ -11,12 +11,8 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
-
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-
 
 public class LaunchConfigurationListener implements ILaunchConfigurationListener {
 

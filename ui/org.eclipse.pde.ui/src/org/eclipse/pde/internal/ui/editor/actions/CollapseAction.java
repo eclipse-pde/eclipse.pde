@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 public class CollapseAction extends Action {
 
 	private AbstractTreeViewer fTreeViewer;
-	
+
 	private Object fTreeObject;
-	
+
 	private int fExpandToLevel;
 
 	/**
@@ -29,14 +29,13 @@ public class CollapseAction extends Action {
 	 * @param expandToLevel
 	 * @param treeObject
 	 */
-	public CollapseAction(AbstractTreeViewer viewer, String tooltipText, 
-			int expandToLevel, Object treeObject) {
+	public CollapseAction(AbstractTreeViewer viewer, String tooltipText, int expandToLevel, Object treeObject) {
 		super(tooltipText, IAction.AS_PUSH_BUTTON);
 		fExpandToLevel = expandToLevel;
 		fTreeObject = treeObject;
 		initialize(viewer, tooltipText);
 	}
-	
+
 	/**
 	 * @param viewer
 	 * @param tooltipText
@@ -57,16 +56,15 @@ public class CollapseAction extends Action {
 		setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		fTreeViewer = viewer;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		
+
 		if (fTreeViewer == null) {
 			return;
-		} else if ((fTreeObject != null) &&
-				(fExpandToLevel > 0)) {
+		} else if ((fTreeObject != null) && (fExpandToLevel > 0)) {
 			// Redraw modification needed to avoid flicker
 			// Collapsing to a specific level does not work			
 			fTreeViewer.getControl().setRedraw(false);
@@ -76,7 +74,7 @@ public class CollapseAction extends Action {
 		} else {
 			fTreeViewer.collapseAll();
 		}
-		
+
 	}
 
 }

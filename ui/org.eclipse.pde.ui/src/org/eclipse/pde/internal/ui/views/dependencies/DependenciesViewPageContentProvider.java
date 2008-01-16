@@ -15,14 +15,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
-public class DependenciesViewPageContentProvider extends DefaultContentProvider
-		implements IPluginModelListener {
+public class DependenciesViewPageContentProvider extends DefaultContentProvider implements IPluginModelListener {
 	private PluginModelManager fPluginManager;
 
 	private DependenciesView fView;
@@ -37,11 +33,11 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider
 		fPluginManager = PDECore.getDefault().getModelManager();
 		attachModelListener();
 	}
-	
+
 	public void attachModelListener() {
 		fPluginManager.addPluginModelListener(this);
 	}
-	
+
 	public void removeModelListener() {
 		fPluginManager.removePluginModelListener(this);
 	}
@@ -53,24 +49,24 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider
 	private void handleModifiedModels(ModelEntry[] modified) {
 		Object input = fViewer.getInput();
 		if (input instanceof IPluginModelBase) {
-			BundleDescription desc = ((IPluginModelBase)input).getBundleDescription();
-			String inputID = (desc != null) ? desc.getSymbolicName() : ((IPluginModelBase)input).getPluginBase().getId();
+			BundleDescription desc = ((IPluginModelBase) input).getBundleDescription();
+			String inputID = (desc != null) ? desc.getSymbolicName() : ((IPluginModelBase) input).getPluginBase().getId();
 
 			for (int i = 0; i < modified.length; i++) {
 				ModelEntry entry = modified[i];
 				if (entry.getId().equals(inputID)) {
 					// if we find a matching id to our current input, check to see if the input still exists
-					if (modelExists(entry, (IPluginModelBase)input))
+					if (modelExists(entry, (IPluginModelBase) input))
 						fView.updateTitle(input);
 					else
-					// if input model does not exist, clear view
+						// if input model does not exist, clear view
 						fView.openTo(null);
 					return;
 				}
 			}
 		}
 	}
-	
+
 	private boolean modelExists(ModelEntry entry, IPluginModelBase input) {
 		IPluginModelBase[][] entries = new IPluginModelBase[][] {entry.getExternalModels(), entry.getWorkspaceModels()};
 		for (int i = 0; i < 2; i++) {

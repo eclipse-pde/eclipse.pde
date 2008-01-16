@@ -14,36 +14,26 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details.CompCSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details.CompCSTaskDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details.CompCSTaskGroupDetails;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.DetailsPart;
-import org.eclipse.ui.forms.IDetailsPage;
-import org.eclipse.ui.forms.IDetailsPageProvider;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 
 /**
  * CompCSBlock
  *
  */
-public class CompCSBlock extends PDEMasterDetailsBlock implements
-		IModelChangedListener, IDetailsPageProvider {
+public class CompCSBlock extends PDEMasterDetailsBlock implements IModelChangedListener, IDetailsPageProvider {
 
-	private CompCSMasterTreeSection fMasterSection;	
+	private CompCSMasterTreeSection fMasterSection;
 
 	private CompCSDetails fDetails;
-	
+
 	private CompCSTaskGroupDetails fTaskGroupDetails;
-	
+
 	private CompCSTaskDetails fTaskDetails;
-	
+
 	/**
 	 * @param page
 	 */
@@ -54,8 +44,7 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
 	 */
-	protected PDESection createMasterSection(IManagedForm managedForm,
-			Composite parent) {
+	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new CompCSMasterTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
@@ -65,16 +54,16 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
-		detailsPart.setPageLimit(0); 
+		detailsPart.setPageLimit(0);
 		// Register static page:  compositeCheatsheet
 		fDetails = new CompCSDetails(fMasterSection);
-		detailsPart.registerPage(CompCSDetails.class, fDetails);				
+		detailsPart.registerPage(CompCSDetails.class, fDetails);
 		// Register static page:  taskGroup
 		fTaskGroupDetails = new CompCSTaskGroupDetails(fMasterSection);
-		detailsPart.registerPage(CompCSTaskGroupDetails.class, fTaskGroupDetails);		
+		detailsPart.registerPage(CompCSTaskGroupDetails.class, fTaskGroupDetails);
 		// Register static page:  task
 		fTaskDetails = new CompCSTaskDetails(fMasterSection);
-		detailsPart.registerPage(CompCSTaskDetails.class, fTaskDetails);		
+		detailsPart.registerPage(CompCSTaskDetails.class, fTaskDetails);
 		// Set this class as the page provider
 		detailsPart.setPageProvider(this);
 	}
@@ -93,19 +82,19 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 		} else if (object instanceof ICompCSTask) {
 			// Static page:  task
 			return CompCSTaskDetails.class;
-		}	
+		}
 		// Should never reach here
 		return object.getClass();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
 	 */
 	public IDetailsPage getPage(Object key) {
 		// No dynamic pages.  Static pages already registered
 		return null;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -127,7 +116,7 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 	public CompCSMasterTreeSection getMastersSection() {
 		return fMasterSection;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -137,5 +126,5 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 		}
 		return null;
 	}
-	
+
 }

@@ -11,10 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.HashSet;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -24,11 +21,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
@@ -37,28 +30,25 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	private DuplicateStatusValidator validator;
 	private String libraryName;
 	private HashSet librarySet;
-	
+
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
 			String id = PDEPlugin.getPluginId();
 			if (text.length() == 0)
-				return new Status(IStatus.ERROR, id, IStatus.ERROR,
-						PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
-			
+				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
+
 			if (text.indexOf(' ') != -1)
-				return new Status(IStatus.ERROR,  id, IStatus.ERROR,
-						PDEUIMessages.AddLibraryDialog_nospaces, null);
-			
+				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.AddLibraryDialog_nospaces, null);
+
 			if (libraries == null || libraries.length == 0)
 				return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 
 			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(text))))
-				return new Status(IStatus.ERROR, id, IStatus.ERROR,
-						PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError,
-						null);
+				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError, null);
 			return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 		}
 	}
+
 	public NewRuntimeLibraryDialog(Shell parent, IPluginLibrary[] libraries) {
 		super(parent);
 		this.libraries = libraries;
@@ -69,11 +59,13 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		}
 		setStatusLineAboveButtons(true);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -82,7 +74,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 8;
 		layout.numColumns = 1;
-		
+
 		layout.makeColumnsEqualWidth = false;
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -90,12 +82,12 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		Label libraryLabel = new Label(container, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryLabel.setLayoutData(gd);
-		libraryLabel.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label); 
-		
-		libraryText = new Text(container, SWT.SINGLE|SWT.BORDER);
+		libraryLabel.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label);
+
+		libraryText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryText.setLayoutData(gd);
-		libraryText.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default); 
+		libraryText.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default);
 		libraryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateStatus(validator.validate(libraryText.getText()));
@@ -104,6 +96,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		applyDialogFont(container);
 		return container;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
@@ -112,7 +105,8 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		libraryText.setSelection(0, libraryText.getText().length() - 4);
 		return super.open();
 	}
-	public String getLibraryName(){
+
+	public String getLibraryName() {
 		return libraryName;
 	}
 

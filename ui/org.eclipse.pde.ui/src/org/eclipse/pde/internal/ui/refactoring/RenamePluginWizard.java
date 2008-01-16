@@ -16,16 +16,15 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 public class RenamePluginWizard extends RefactoringWizard {
 
 	RefactoringInfo fInfo;
-	
+
 	public RenamePluginWizard(Refactoring refactoring, RefactoringInfo info) {
 		super(refactoring, RefactoringWizard.DIALOG_BASED_USER_INTERFACE);
 		fInfo = info;
 	}
 
 	protected void addUserInputPages() {
-		 setDefaultPageTitle( getRefactoring().getName() );
-		 addPage( new RenamePluginWizardPage( fInfo) );
-	 }
-	
+		setDefaultPageTitle(getRefactoring().getName());
+		addPage(new RenamePluginWizardPage(fInfo));
+	}
 
 }

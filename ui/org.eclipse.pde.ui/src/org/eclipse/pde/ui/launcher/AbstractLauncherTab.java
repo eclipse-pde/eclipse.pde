@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
  * @since 3.2
  */
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
-	
+
 	/**
 	 * Creates an empty label and hence a space in the tab
 	 * 
@@ -51,13 +51,13 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	public boolean isValid(ILaunchConfiguration config) {
 		return getErrorMessage() == null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -73,11 +73,11 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		validateTab();
 		super.updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Validates the data entered on the tab.
 	 *
 	 */
 	public abstract void validateTab();
-		
+
 }

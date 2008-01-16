@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.swt.graphics.Point;
@@ -24,45 +22,48 @@ public abstract class WizardNode implements IWizardNode {
 	private WizardSelectionPage parentWizardPage;
 	protected WizardElement wizardElement;
 
-public WizardNode(WizardSelectionPage parentPage, WizardElement element) {
-	parentWizardPage = parentPage;
-	wizardElement = element;
-}
-protected abstract IBasePluginWizard createWizard() throws CoreException;
-public void dispose() {
-	if (wizard != null) {
-		wizard.dispose();
-		wizard = null;
+	public WizardNode(WizardSelectionPage parentPage, WizardElement element) {
+		parentWizardPage = parentPage;
+		wizardElement = element;
 	}
-}
-public WizardElement getElement() {
-	return wizardElement;
-}
-public Point getExtent() {
-	return new Point(-1, -1);
-}
-public IWizard getWizard() {
-	if (wizard != null)
-		return wizard; // we've already created it
 
-	IBasePluginWizard pluginWizard;
-	try {
-		pluginWizard = createWizard(); // create instance of target wizard
-	} catch (CoreException e) {
-		if (parentWizardPage instanceof BaseWizardSelectionPage)
-			((BaseWizardSelectionPage)parentWizardPage).setDescriptionText(""); //$NON-NLS-1$
-		parentWizardPage.setErrorMessage(PDEUIMessages.Errors_CreationError_NoWizard);
-		MessageDialog.openError(
-			parentWizardPage.getWizard().getContainer().getShell(), 
-			PDEUIMessages.Errors_CreationError, 
-			PDEUIMessages.Errors_CreationError_NoWizard); 
-		return null;
+	protected abstract IBasePluginWizard createWizard() throws CoreException;
+
+	public void dispose() {
+		if (wizard != null) {
+			wizard.dispose();
+			wizard = null;
+		}
 	}
-	wizard = pluginWizard;
-	//wizard.setUseContainerState(false);
-	return wizard;
-}
-public boolean isContentCreated() {
-	return wizard != null;
-}
+
+	public WizardElement getElement() {
+		return wizardElement;
+	}
+
+	public Point getExtent() {
+		return new Point(-1, -1);
+	}
+
+	public IWizard getWizard() {
+		if (wizard != null)
+			return wizard; // we've already created it
+
+		IBasePluginWizard pluginWizard;
+		try {
+			pluginWizard = createWizard(); // create instance of target wizard
+		} catch (CoreException e) {
+			if (parentWizardPage instanceof BaseWizardSelectionPage)
+				((BaseWizardSelectionPage) parentWizardPage).setDescriptionText(""); //$NON-NLS-1$
+			parentWizardPage.setErrorMessage(PDEUIMessages.Errors_CreationError_NoWizard);
+			MessageDialog.openError(parentWizardPage.getWizard().getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);
+			return null;
+		}
+		wizard = pluginWizard;
+		//wizard.setUseContainerState(false);
+		return wizard;
+	}
+
+	public boolean isContentCreated() {
+		return wizard != null;
+	}
 }

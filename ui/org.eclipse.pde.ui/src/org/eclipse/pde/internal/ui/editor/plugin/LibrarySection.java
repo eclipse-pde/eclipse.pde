@@ -12,52 +12,23 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
-import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
-import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
-import org.eclipse.pde.internal.ui.editor.build.JARFileFilter;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
@@ -67,11 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -83,34 +50,34 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class LibrarySection extends TableSection implements IModelChangedListener, IBuildPropertiesConstants {
 
-    private static final int NEW_INDEX = 0;
-    private static final int ADD_INDEX = 1;
-    private static final int REMOVE_INDEX = 2;
-    private static final int UP_INDEX = 3;
-    private static final int DOWN_INDEX = 4;
-    
-    private Action fRenameAction;
-    private Action fRemoveAction;
-    private Action fNewAction;
-	    
-    private TableViewer fLibraryTable;
-    
-    class LibraryFilter extends JARFileFilter {
+	private static final int NEW_INDEX = 0;
+	private static final int ADD_INDEX = 1;
+	private static final int REMOVE_INDEX = 2;
+	private static final int UP_INDEX = 3;
+	private static final int DOWN_INDEX = 4;
+
+	private Action fRenameAction;
+	private Action fRemoveAction;
+	private Action fNewAction;
+
+	private TableViewer fLibraryTable;
+
+	class LibraryFilter extends JARFileFilter {
 		public LibraryFilter(HashSet set) {
 			super(set);
 		}
 
 		public boolean select(Viewer viewer, Object parent, Object element) {
 			if (element instanceof IFolder)
-				return isPathValid(((IFolder)element).getProjectRelativePath());
+				return isPathValid(((IFolder) element).getProjectRelativePath());
 			if (element instanceof IFile)
-				return isFileValid(((IFile)element).getProjectRelativePath());
+				return isFileValid(((IFile) element).getProjectRelativePath());
 			return false;
 		}
 	}
-	
+
 	class LibrarySelectionValidator extends JarSelectionValidator {
-		
+
 		public LibrarySelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
 			super(acceptedTypes, allowMultipleSelection);
 		}
@@ -120,51 +87,37 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
-	class TableContentProvider extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getModel().getPluginBase().getLibraries();
 		}
 	}
 
 	public LibrarySection(PDEFormPage page, Composite parent) {
-		super(
-			page,
-			parent,
-			Section.DESCRIPTION,
-			new String[] {
-				PDEUIMessages.NewManifestEditor_LibrarySection_new,
-				PDEUIMessages.NewManifestEditor_LibrarySection_add,
-                PDEUIMessages.NewManifestEditor_LibrarySection_remove,
-				PDEUIMessages.ManifestEditor_LibrarySection_up,
-				PDEUIMessages.ManifestEditor_LibrarySection_down});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.NewManifestEditor_LibrarySection_new, PDEUIMessages.NewManifestEditor_LibrarySection_add, PDEUIMessages.NewManifestEditor_LibrarySection_remove, PDEUIMessages.ManifestEditor_LibrarySection_up, PDEUIMessages.ManifestEditor_LibrarySection_down});
 	}
-    
-    private String getSectionDescription() {
-        IPluginModelBase model = getModel();
-        if (isBundle()) {
-           return (model.isFragmentModel())
-               ? PDEUIMessages.ClasspathSection_fragment
-               : PDEUIMessages.ClasspathSection_plugin;
-        }      
-        return (model.isFragmentModel())
-                    ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc
-                    : PDEUIMessages.ManifestEditor_LibrarySection_desc;       
-    }
-    
-    protected boolean isBundle() {
-        return getBundleContext() != null;
-    }
-    
-    private BundleInputContext getBundleContext() {
-        InputContextManager manager = getPage().getPDEEditor().getContextManager();
-        return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
-    }
-    
+
+	private String getSectionDescription() {
+		IPluginModelBase model = getModel();
+		if (isBundle()) {
+			return (model.isFragmentModel()) ? PDEUIMessages.ClasspathSection_fragment : PDEUIMessages.ClasspathSection_plugin;
+		}
+		return (model.isFragmentModel()) ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc : PDEUIMessages.ManifestEditor_LibrarySection_desc;
+	}
+
+	protected boolean isBundle() {
+		return getBundleContext() != null;
+	}
+
+	private BundleInputContext getBundleContext() {
+		InputContextManager manager = getPage().getPDEEditor().getContextManager();
+		return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
+	}
+
 	public void createClient(Section section, FormToolkit toolkit) {
-        section.setText(PDEUIMessages.ManifestEditor_LibrarySection_title);
-        section.setDescription(getSectionDescription());
-        
+		section.setText(PDEUIMessages.ManifestEditor_LibrarySection_title);
+		section.setDescription(getSectionDescription());
+
 		Composite container = createClientContainer(section, 2, toolkit);
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(isEditable());
@@ -174,59 +127,59 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fLibraryTable.setContentProvider(new TableContentProvider());
 		fLibraryTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		toolkit.paintBordersFor(container);
-        
-        makeActions();
-        updateButtons();
-        section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-        section.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		makeActions();
+		updateButtons();
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
 
-        IPluginModelBase model = getModel();
-        fLibraryTable.setInput(model.getPluginBase());
-        model.addModelChangedListener(this);
+		IPluginModelBase model = getModel();
+		fLibraryTable.setInput(model.getPluginBase());
+		model.addModelChangedListener(this);
 	}
 
 	private void updateButtons() {
-        Table table = fLibraryTable.getTable();
-        boolean hasSelection = table.getSelection().length > 0;
-        boolean singleSelection = table.getSelection().length == 1;
-        int count = table.getItemCount();
-        int index = table.getSelectionIndex();
-        boolean canMoveUp = singleSelection && index > 0;
-        boolean canMoveDown = singleSelection && index < count - 1;
-        
-        TablePart tablePart = getTablePart();
-        tablePart.setButtonEnabled(ADD_INDEX, isEditable());
-        tablePart.setButtonEnabled(NEW_INDEX, isEditable());
-        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
-        tablePart.setButtonEnabled(UP_INDEX, isEditable() && canMoveUp);
-        tablePart.setButtonEnabled(DOWN_INDEX, isEditable() && canMoveDown);
-    }
+		Table table = fLibraryTable.getTable();
+		boolean hasSelection = table.getSelection().length > 0;
+		boolean singleSelection = table.getSelection().length == 1;
+		int count = table.getItemCount();
+		int index = table.getSelectionIndex();
+		boolean canMoveUp = singleSelection && index > 0;
+		boolean canMoveDown = singleSelection && index < count - 1;
 
-    private void makeActions() {
-        fNewAction = new Action(PDEUIMessages.ManifestEditor_LibrarySection_newLibrary) {
-            public void run() {
-                handleNew();
-            }
-        };
-        fNewAction.setEnabled(isEditable());
-        
-        fRenameAction = new Action(PDEUIMessages.EditableTablePart_renameAction) {
-            public void run() {
-                getRenameAction().run();
-            }
-        };
-        fRenameAction.setEnabled(isEditable());
-        
-        fRemoveAction = new Action(PDEUIMessages.NewManifestEditor_LibrarySection_remove) {
-            public void run() {
-                handleRemove();
-            }
-        };
-        fRemoveAction.setEnabled(isEditable());
-    }
+		TablePart tablePart = getTablePart();
+		tablePart.setButtonEnabled(ADD_INDEX, isEditable());
+		tablePart.setButtonEnabled(NEW_INDEX, isEditable());
+		tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
+		tablePart.setButtonEnabled(UP_INDEX, isEditable() && canMoveUp);
+		tablePart.setButtonEnabled(DOWN_INDEX, isEditable() && canMoveDown);
+	}
 
-    protected void selectionChanged(IStructuredSelection selection) {
+	private void makeActions() {
+		fNewAction = new Action(PDEUIMessages.ManifestEditor_LibrarySection_newLibrary) {
+			public void run() {
+				handleNew();
+			}
+		};
+		fNewAction.setEnabled(isEditable());
+
+		fRenameAction = new Action(PDEUIMessages.EditableTablePart_renameAction) {
+			public void run() {
+				getRenameAction().run();
+			}
+		};
+		fRenameAction.setEnabled(isEditable());
+
+		fRemoveAction = new Action(PDEUIMessages.NewManifestEditor_LibrarySection_remove) {
+			public void run() {
+				handleRemove();
+			}
+		};
+		fRemoveAction.setEnabled(isEditable());
+	}
+
+	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		if (getPage().getModel().isEditable())
 			updateButtons();
@@ -237,12 +190,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			case NEW_INDEX :
 				handleNew();
 				break;
-			case ADD_INDEX:
+			case ADD_INDEX :
 				handleAdd();
 				break;
-            case REMOVE_INDEX:
-                handleRemove();
-                break;
+			case REMOVE_INDEX :
+				handleRemove();
+				break;
 			case UP_INDEX :
 				handleUp();
 				break;
@@ -264,8 +217,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	 */
 	public boolean doGlobalAction(String actionId) {
 
-		if (!isEditable()) { return false; }
-		
+		if (!isEditable()) {
+			return false;
+		}
+
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
@@ -282,7 +237,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		return false;
 	}
-    
+
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginLibrary) {
 			fLibraryTable.setSelection(new StructuredSelection(object), true);
@@ -295,14 +250,14 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		manager.add(fNewAction);
 		if (!fLibraryTable.getSelection().isEmpty()) {
 			manager.add(new Separator());
-			manager.add(fRenameAction);			
+			manager.add(fRenameAction);
 			manager.add(fRemoveAction);
 		}
 		// Copy, cut, and paste operations not supported for plug-ins that do 
-        // not have a MANIFEST.MF (not a Bundle)		
+		// not have a MANIFEST.MF (not a Bundle)		
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, isBundle());
 	}
-    
+
 	private void handleRemove() {
 		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
 		int index = fLibraryTable.getTable().getSelectionIndex();
@@ -310,7 +265,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		for (int i = 0; i < indices.length; i++)
 			if (indices[i] < index)
 				index = indices[i];
-		
+
 		String[] remove = new String[selection.length];
 		for (int i = 0; i < selection.length; i++) {
 			if (selection[i] != null && selection[i] instanceof IPluginLibrary) {
@@ -326,8 +281,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		updateBuildProperties(remove, new String[remove.length], true);
 		updateJavaClasspathLibs(remove, new String[remove.length]);
-		
-		int itemCount = fLibraryTable.getTable().getItemCount(); 
+
+		int itemCount = fLibraryTable.getTable().getItemCount();
 		if (itemCount > 0) {
 			if (index >= itemCount)
 				index = itemCount - 1;
@@ -336,23 +291,24 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		updateButtons();
 	}
+
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
 		if (index != table.getItemCount() - 1)
-            swap(index, index + 1);		
+			swap(index, index + 1);
 	}
-	
+
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
 		if (index >= 1)
-            swap(index, index - 1);
+			swap(index, index - 1);
 	}
-	
+
 	public void swap(int index1, int index2) {
 		Table table = getTablePart().getTableViewer().getTable();
-		IPluginLibrary l1 = (IPluginLibrary)table.getItem(index1).getData();
-		IPluginLibrary l2 = (IPluginLibrary)table.getItem(index2).getData();
+		IPluginLibrary l1 = (IPluginLibrary) table.getItem(index1).getData();
+		IPluginLibrary l2 = (IPluginLibrary) table.getItem(index2).getData();
 
 		try {
 			IPluginModelBase model = getModel();
@@ -364,21 +320,19 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			updateButtons();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
 	}
-	
-	private void handleNew(){
+
+	private void handleNew() {
 		IPluginModelBase model = getModel();
-		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(
-				getPage().getSite().getShell(), 
-				model.getPluginBase().getLibraries());
+		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), model.getPluginBase().getLibraries());
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
 		SWTUtil.setDialogSize(dialog, 250, 175);
 
-		if (dialog.open() == Window.OK){
+		if (dialog.open() == Window.OK) {
 			String libName = dialog.getLibraryName();
-			if (libName==null || libName.length()==0)
+			if (libName == null || libName.length() == 0)
 				return;
 			try {
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
@@ -386,18 +340,15 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				library.setExported(true);
 				model.getPluginBase().add(library);
 				checkSourceRootEntry();
-				updateBuildProperties(
-						new String[] {null},
-						new String[] { library.getName()},
-						true);
+				updateBuildProperties(new String[] {null}, new String[] {library.getName()}, true);
 				fLibraryTable.setSelection(new StructuredSelection(library));
-		        fLibraryTable.getTable().setFocus();
+				fLibraryTable.getTable().setFocus();
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
 	}
-	
+
 	private void checkSourceRootEntry() {
 		IPluginModelBase pluginModel = getModel();
 		IPluginLibrary[] libraries = pluginModel.getPluginBase().getLibraries();
@@ -407,7 +358,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IBuildModel model = getBuildModel();
 		if (model == null)
 			return;
-		
+
 		IBuildEntry[] entires = model.getBuild().getBuildEntries();
 		for (int i = 0; i < entires.length; i++) {
 			if (entires[i].getName().equals(PROPERTY_SOURCE_PREFIX + '.')) {
@@ -425,20 +376,20 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
 		IBaseModel model = null;
 		if (page instanceof BuildSourcePage)
-			model = ((BuildSourcePage)page).getInputContext().getModel();
-		
+			model = ((BuildSourcePage) page).getInputContext().getModel();
+
 		if (model != null && model instanceof IBuildModel)
-			return (IBuildModel)model;
+			return (IBuildModel) model;
 		return null;
 	}
-	
+
 	private void configureSourceBuildEntry(IBuildModel bmodel, String oldPath, String newPath) throws CoreException {
 		IBuild build = bmodel.getBuild();
 		IBuildEntry entry = build.getEntry(PROPERTY_SOURCE_PREFIX + (oldPath != null ? oldPath : newPath));
 		try {
 			if (newPath != null) {
 				if (entry == null) {
-					IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+					IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 					IJavaProject jproject = JavaCore.create(project);
 					ArrayList tokens = new ArrayList();
 					IClasspathEntry[] entries = jproject.getRawClasspath();
@@ -447,10 +398,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 							tokens.add(entries[i].getPath().removeFirstSegments(1).addTrailingSeparator().toString());
 					if (tokens.size() == 0)
 						return;
-					
+
 					entry = bmodel.getFactory().createEntry(PROPERTY_SOURCE_PREFIX + newPath);
 					for (int i = 0; i < tokens.size(); i++)
-						entry.addToken((String)tokens.get(i));
+						entry.addToken((String) tokens.get(i));
 					build.add(entry);
 				} else
 					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
@@ -459,15 +410,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		} catch (JavaModelException e) {
 		}
 	}
-	
+
 	private void handleAdd() {
 		final boolean[] updateClasspath = new boolean[] {true};
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
-				getPage().getSite().getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider()) {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getPage().getSite().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider()) {
 			protected Control createDialogArea(Composite parent) {
-				Composite comp = (Composite)super.createDialogArea(parent);
+				Composite comp = (Composite) super.createDialogArea(parent);
 				final Button button = new Button(comp, SWT.CHECK);
 				button.setText(PDEUIMessages.LibrarySection_addDialogButton);
 				button.setSelection(updateClasspath[0]);
@@ -480,18 +428,18 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				return comp;
 			}
 		};
-				
-		Class[] acceptedClasses = new Class[] { IFile.class };
+
+		Class[] acceptedClasses = new Class[] {IFile.class};
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); 
-		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); 
+		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);
+		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage);
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		HashSet set = new HashSet();
-		for (int i = 0; i < libraries.length; i++) 
+		for (int i = 0; i < libraries.length; i++)
 			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
-		
+
 		dialog.addFilter(new LibraryFilter(set));
-		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		dialog.setInput(project);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
@@ -521,7 +469,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			if (updateClasspath[0])
 				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
 			fLibraryTable.setSelection(new StructuredSelection(list.toArray()));
-	        fLibraryTable.getTable().setFocus();
+			fLibraryTable.getTable().setFocus();
 		}
 	}
 
@@ -529,13 +477,13 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IBuildModel bmodel = getBuildModel();
 		if (bmodel == null)
 			return;
-		
+
 		IBuild build = bmodel.getBuild();
-		
+
 		IBuildEntry entry = build.getEntry(PROPERTY_BIN_INCLUDES);
 		if (entry == null)
 			entry = bmodel.getFactory().createEntry(PROPERTY_BIN_INCLUDES);
-		
+
 		try {
 			// adding new entries
 			if (oldPaths[0] == null) {
@@ -545,7 +493,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 						if (modifySourceEntry)
 							configureSourceBuildEntry(bmodel, null, newPaths[i]);
 					}
-			// removing entries
+				// removing entries
 			} else if (newPaths[0] == null) {
 				for (int i = 0; i < oldPaths.length; i++)
 					if (oldPaths[i] != null) {
@@ -555,7 +503,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					}
 				if (entry.getTokens().length == 0)
 					build.remove(entry);
-			// rename entries
+				// rename entries
 			} else {
 				for (int i = 0; i < oldPaths.length; i++)
 					if (newPaths[i] != null && oldPaths[i] != null) {
@@ -569,7 +517,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
 
 	private void updateJavaClasspathLibs(String[] oldPaths, String[] newPaths) {
-		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		IJavaProject jproject = JavaCore.create(project);
 		try {
 			IClasspathEntry[] entries = jproject.getRawClasspath();
@@ -582,8 +530,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					// do not add the old paths (handling deletion/renaming)
 					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
 					for (int j = 0; j < oldPaths.length; j++)
-						if (oldPaths[j] != null &&
-								path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
+						if (oldPaths[j] != null && path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
 							continue entryLoop;
 				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					if (index == -1)
@@ -592,26 +539,25 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			}
 			if (index == -1)
 				index = entries.length;
-			
+
 			// add paths
 			for (int i = 0; i < newPaths.length; i++) {
 				if (newPaths[i] == null)
 					continue;
-				IClasspathEntry entry = JavaCore.newLibraryEntry(
-						project.getFullPath().append(newPaths[i]), null, null, true);
+				IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath().append(newPaths[i]), null, null, true);
 				if (!toBeAdded.contains(entry))
 					toBeAdded.add(index++, entry);
 			}
-			
+
 			if (toBeAdded.size() == entries.length)
 				return;
-			
-			IClasspathEntry[] updated = (IClasspathEntry[])toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
+
+			IClasspathEntry[] updated = (IClasspathEntry[]) toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
 			jproject.setRawClasspath(updated, null);
 		} catch (JavaModelException e) {
 		}
 	}
-	
+
 	public void refresh() {
 		if (fLibraryTable.getControl().isDisposed())
 			return;
@@ -619,6 +565,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fLibraryTable.refresh();
 		super.refresh();
 	}
+
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -629,21 +576,21 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				fLibraryTable.refresh();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-                fLibraryTable.remove(changeObject);
+				fLibraryTable.remove(changeObject);
 			} else {
-                fLibraryTable.update(changeObject, null);
+				fLibraryTable.update(changeObject, null);
 			}
 		} else if (changeObject.equals(fLibraryTable.getInput())) {
 			markStale();
-		} else if (changeObject instanceof IPluginElement && ((IPluginElement)changeObject).getParent() instanceof IPluginLibrary) {
-			fLibraryTable.update(((IPluginElement)changeObject).getParent(), null);
+		} else if (changeObject instanceof IPluginElement && ((IPluginElement) changeObject).getParent() instanceof IPluginLibrary) {
+			fLibraryTable.update(((IPluginElement) changeObject).getParent(), null);
 		}
 	}
-    
+
 	public void setFocus() {
 		fLibraryTable.getTable().setFocus();
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -669,7 +616,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			PDEPlugin.logException(e);
 		}
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -677,31 +624,31 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		HashSet librarySet = null;
 		// Only source objects that are plugin libraries that have not already
 		// been specified can be pasted
-	   	for (int i = 0; i < sourceObjects.length; i++) {
-	   		// Only plugin libraries are allowed
-	    	if ((sourceObjects[i] instanceof IPluginLibrary) == false) {
-	    		return false;
-	    	}
-	    	// We have a plugin library
-	    	// Get the current libraries already specified and store them in
-	    	// a set to assist with searching
-	    	if (librarySet == null) {
-	    		librarySet = createPluginLibrarySet();
-	    	}
-	    	// No duplicate libraries are allowed
-	    	IPluginLibrary library = (IPluginLibrary)sourceObjects[i];
-	    	if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(library.getName())))) {
-	    		return false;
-	    	}
-    	}
-    	return true;
+		for (int i = 0; i < sourceObjects.length; i++) {
+			// Only plugin libraries are allowed
+			if ((sourceObjects[i] instanceof IPluginLibrary) == false) {
+				return false;
+			}
+			// We have a plugin library
+			// Get the current libraries already specified and store them in
+			// a set to assist with searching
+			if (librarySet == null) {
+				librarySet = createPluginLibrarySet();
+			}
+			// No duplicate libraries are allowed
+			IPluginLibrary library = (IPluginLibrary) sourceObjects[i];
+			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(library.getName())))) {
+				return false;
+			}
+		}
+		return true;
 	}
-    
-    /**
-     * @return
-     */
-    private HashSet createPluginLibrarySet() {
-    	// Get the current libraries and add them to a set for easy searching
+
+	/**
+	 * @return
+	 */
+	private HashSet createPluginLibrarySet() {
+		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		HashSet librarySet = new HashSet();
 		for (int i = 0; i < libraries.length; i++) {
@@ -716,8 +663,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			IProject project = model.getUnderlyingResource().getProject();
 			IPluginLibrary library = (IPluginLibrary) entry;
 			model.getPluginBase().remove(library);
-			String[] oldValue = { library.getName() };
-			String[] newValue = { value };
+			String[] oldValue = {library.getName()};
+			String[] newValue = {value};
 			library.setName(value);
 			boolean memberExists = project.findMember(value) != null;
 			updateBuildProperties(oldValue, newValue, !memberExists);
@@ -727,37 +674,37 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			PDEPlugin.logException(e);
 		}
 	}
-	
-    /**
-     * @return
-     */
-    private IPluginModelBase getModel() {
-    	return (IPluginModelBase)getPage().getModel();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
-     */
-    protected boolean isDragAndDropEnabled() {
-    	return true;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-     */
-    public boolean canDragMove(Object[] sourceObjects) {
+
+	/**
+	 * @return
+	 */
+	private IPluginModelBase getModel() {
+		return (IPluginModelBase) getPage().getModel();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
+	 */
+	protected boolean isDragAndDropEnabled() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+	 */
+	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
 		}
-    	return true;
-    }    
-    
-    /**
-     * @param sourceObjects
-     * @return
-     */
-    private boolean validateDragMoveSanity(Object[] sourceObjects) {
-    	// Validate source
+		return true;
+	}
+
+	/**
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDragMoveSanity(Object[] sourceObjects) {
+		// Validate source
 		if (sourceObjects == null) {
 			// No objects
 			return false;
@@ -767,33 +714,31 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		} else if ((sourceObjects[0] instanceof IPluginLibrary) == false) {
 			// Must be the right type
 			return false;
-		}    	
+		}
 		return true;
-    }    
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-     */
-    public boolean canDropMove(Object targetObject, Object[] sourceObjects,
-    		int targetLocation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			return false;
 		}
 		// Multiple selection not supported
-		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
-		IPluginLibrary targetPluginLibrary = (IPluginLibrary)targetObject;
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary) sourceObjects[0];
+		IPluginLibrary targetPluginLibrary = (IPluginLibrary) targetObject;
 		// Validate model
 		if (validateDropMoveModel(sourcePluginLibrary, targetPluginLibrary) == false) {
 			return false;
-		}		
+		}
 		// Get the bundle plug-in base
-		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();		
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Get the previous element of the target 
-			IPluginLibrary previousLibrary = 
-				bundlePluginBase.getPreviousLibrary(targetPluginLibrary);
+			IPluginLibrary previousLibrary = bundlePluginBase.getPreviousLibrary(targetPluginLibrary);
 			// Ensure the previous element is not the source
 			if (sourcePluginLibrary.equals(previousLibrary)) {
 				return false;
@@ -801,8 +746,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			// Get the next element of the target 
-			IPluginLibrary nextLibrary = 
-				bundlePluginBase.getNextLibrary(targetPluginLibrary);
+			IPluginLibrary nextLibrary = bundlePluginBase.getNextLibrary(targetPluginLibrary);
 			// Ensure the next element is not the source
 			if (sourcePluginLibrary.equals(nextLibrary)) {
 				return false;
@@ -812,9 +756,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			// Not supported
 			return false;
 		}
-    	return false;
-    }
-    
+		return false;
+	}
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -831,7 +775,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param sourcePluginLibrary
 	 * @param targetPluginLibrary
@@ -840,46 +784,42 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	private boolean validateDropMoveModel(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary) {
 		// Objects have to be from the same model
 		ISharedPluginModel sourceModel = sourcePluginLibrary.getModel();
-		ISharedPluginModel targetModel = targetPluginLibrary.getModel();		
+		ISharedPluginModel targetModel = targetPluginLibrary.getModel();
 		if (sourceModel.equals(targetModel) == false) {
 			return false;
 		} else if ((getModel().getPluginBase() instanceof BundlePluginBase) == false) {
 			return false;
 		}
 		return true;
-	}  
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-     */
-    public void doDropMove(Object targetObject, Object[] sourceObjects,
-    		int targetLocation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			Display.getDefault().beep();
 			return;
 		}
 		// Multiple selection not supported
-		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
-		IPluginLibrary targetPluginLibrary = (IPluginLibrary)targetObject;
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary) sourceObjects[0];
+		IPluginLibrary targetPluginLibrary = (IPluginLibrary) targetObject;
 		// Validate move
-		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) ||
-				(targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
+		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) || (targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
 			// Do move
 			doDropMove(sourcePluginLibrary, targetPluginLibrary, targetLocation);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			// Not supported
 		}
-    }	
+	}
 
 	/**
 	 * @param sourcePluginLibrary
 	 * @param targetPluginLibrary
 	 * @param targetLocation
 	 */
-	private void doDropMove(IPluginLibrary sourcePluginLibrary,
-			IPluginLibrary targetPluginLibrary,
-			int targetLocation) {
+	private void doDropMove(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary, int targetLocation) {
 		// Remove the original source object
 		// Normally we remove the original source object after inserting the
 		// serialized source object; however, the libraries are removed via ID
@@ -888,7 +828,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		doDragRemove();
 		// Get the bundle plug-in base
 		IPluginModelBase model = getModel();
-		BundlePluginBase bundlePluginBase = (BundlePluginBase)model.getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) model.getPluginBase();
 		// Get the index of the target
 		int index = bundlePluginBase.getIndexOf(targetPluginLibrary);
 		// Ensure the target index was found
@@ -906,17 +846,17 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		// Adjust all the source object transient field values to
 		// acceptable values
-		((PluginLibrary)sourcePluginLibrary).reconnect(model, bundlePluginBase);
+		((PluginLibrary) sourcePluginLibrary).reconnect(model, bundlePluginBase);
 		// Add source as sibling of target		
-		bundlePluginBase.add(sourcePluginLibrary, targetIndex);	
+		bundlePluginBase.add(sourcePluginLibrary, targetIndex);
 	}
-	
-    /**
-     * 
-     */
-    private void doDragRemove() {
+
+	/**
+	 * 
+	 */
+	private void doDragRemove() {
 		// Get the bundle plug-in base
-    	BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Retrieve the original non-serialized source objects dragged initially
 		Object[] sourceObjects = getDragSourceObjects();
 		// Validate source objects
@@ -924,12 +864,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			return;
 		}
 		// Remove the library
-		IPluginLibrary sourcePluginLibrary = (IPluginLibrary)sourceObjects[0];
+		IPluginLibrary sourcePluginLibrary = (IPluginLibrary) sourceObjects[0];
 		try {
 			bundlePluginBase.remove(sourcePluginLibrary);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}    	
-    }
-	
+		}
+	}
+
 }

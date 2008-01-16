@@ -12,35 +12,18 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.IFeatureModelDelta;
-import org.eclipse.pde.internal.core.IFeatureModelListener;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -53,15 +36,12 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class IncludedFeaturesSection extends TableSection implements
-		IFeatureModelListener {
+public class IncludedFeaturesSection extends TableSection implements IFeatureModelListener {
 	private TableViewer fIncludesViewer;
 
 	private Action fNewAction;
@@ -70,10 +50,9 @@ public class IncludedFeaturesSection extends TableSection implements
 
 	private Action fDeleteAction;
 
-	private SortAction fSortAction;	
-	
-	class IncludedFeaturesContentProvider extends DefaultContentProvider
-			implements IStructuredContentProvider {
+	private SortAction fSortAction;
+
+	class IncludedFeaturesContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				return ((IFeature) parent).getIncludedFeatures();
@@ -83,7 +62,7 @@ public class IncludedFeaturesSection extends TableSection implements
 	}
 
 	public IncludedFeaturesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.FeatureEditor_IncludedFeatures_new });
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new});
 		getSection().setText(PDEUIMessages.FeatureEditor_IncludedFeatures_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_IncludedFeatures_desc);
 		getTablePart().setEditable(false);
@@ -95,20 +74,18 @@ public class IncludedFeaturesSection extends TableSection implements
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		Composite container = createClientContainer(section, 2, toolkit);
 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fIncludesViewer = tablePart.getTableViewer();
-		fIncludesViewer
-				.setContentProvider(new IncludedFeaturesContentProvider());
-		fIncludesViewer.setLabelProvider(PDEPlugin.getDefault()
-				.getLabelProvider());
+		fIncludesViewer.setContentProvider(new IncludedFeaturesContentProvider());
+		fIncludesViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fIncludesViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		toolkit.paintBordersFor(container);
 		makeActions();
@@ -122,7 +99,7 @@ public class IncludedFeaturesSection extends TableSection implements
 	 * @param toolkit
 	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
-		
+
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
@@ -130,27 +107,21 @@ public class IncludedFeaturesSection extends TableSection implements
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});			
+		});
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(
-				getStructuredViewerPart().getViewer(), 
-				PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, 
-				ListUtil.NAME_COMPARATOR,
-				null,
-				null);
-		
+		fSortAction = new SortAction(getStructuredViewerPart().getViewer(), PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, ListUtil.NAME_COMPARATOR, null, null);
+
 		toolBarManager.add(fSortAction);
 
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
-	}	
-	
+	}
+
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		fOpenAction.run();
 	}
@@ -164,8 +135,7 @@ public class IncludedFeaturesSection extends TableSection implements
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
-		FeatureModelManager mng = PDECore.getDefault()
-		.getFeatureModelManager();
+		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
 		mng.removeFeatureModelListener(this);
 		super.dispose();
 	}
@@ -184,36 +154,30 @@ public class IncludedFeaturesSection extends TableSection implements
 		manager.add(fNewAction);
 		manager.add(fDeleteAction);
 		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleNew() {
-		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(),
-				new Runnable() {
-					public void run() {
-						IFeatureModel[] allModels = PDECore.getDefault()
-								.getFeatureModelManager().getModels();
-						ArrayList newModels = new ArrayList();
-						for (int i = 0; i < allModels.length; i++) {
-							if (canAdd(allModels[i]))
-								newModels.add(allModels[i]);
-						}
-						IFeatureModel[] candidateModels = (IFeatureModel[]) newModels
-								.toArray(new IFeatureModel[newModels.size()]);
-						FeatureSelectionDialog dialog = new FeatureSelectionDialog(
-								fIncludesViewer.getTable().getShell(),
-								candidateModels, true);
-						if (dialog.open() == Window.OK) {
-							Object[] models = dialog.getResult();
-							try {
-								doAdd(models);
-							} catch (CoreException e) {
-								PDEPlugin.log(e);
-							}
-						}
+		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+				ArrayList newModels = new ArrayList();
+				for (int i = 0; i < allModels.length; i++) {
+					if (canAdd(allModels[i]))
+						newModels.add(allModels[i]);
+				}
+				IFeatureModel[] candidateModels = (IFeatureModel[]) newModels.toArray(new IFeatureModel[newModels.size()]);
+				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(), candidateModels, true);
+				if (dialog.open() == Window.OK) {
+					Object[] models = dialog.getResult();
+					try {
+						doAdd(models);
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
 					}
-				});
+				}
+			}
+		});
 	}
 
 	private void doAdd(Object[] candidates) throws CoreException {
@@ -222,8 +186,7 @@ public class IncludedFeaturesSection extends TableSection implements
 		IFeatureChild[] added = new IFeatureChild[candidates.length];
 		for (int i = 0; i < candidates.length; i++) {
 			IFeatureModel candidate = (IFeatureModel) candidates[i];
-			FeatureChild child = (FeatureChild) model.getFactory()
-					.createChild();
+			FeatureChild child = (FeatureChild) model.getFactory().createChild();
 			child.loadFrom(candidate.getFeature());
 			child.setVersion("0.0.0"); //$NON-NLS-1$
 			added[i] = child;
@@ -237,13 +200,11 @@ public class IncludedFeaturesSection extends TableSection implements
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
-		if (cfeature.getId().equals(feature.getId())
-				&& cfeature.getVersion().equals(feature.getVersion())) {
+		if (cfeature.getId().equals(feature.getId()) && cfeature.getVersion().equals(feature.getVersion())) {
 			return false;
 		}
 
-		boolean isPatchEditor = ((FeatureEditor) getPage().getEditor())
-		.isPatchEditor();
+		boolean isPatchEditor = ((FeatureEditor) getPage().getEditor()).isPatchEditor();
 		if (isPatchEditor && !isFeaturePatch(candidate.getFeature())) {
 			return false;
 		}
@@ -251,8 +212,7 @@ public class IncludedFeaturesSection extends TableSection implements
 		IFeatureChild[] features = feature.getIncludedFeatures();
 
 		for (int i = 0; i < features.length; i++) {
-			if (features[i].getId().equals(cfeature.getId())
-					&& features[i].getVersion().equals(cfeature.getVersion()))
+			if (features[i].getId().equals(cfeature.getId()) && features[i].getVersion().equals(cfeature.getVersion()))
 				return false;
 		}
 		return true;
@@ -268,16 +228,14 @@ public class IncludedFeaturesSection extends TableSection implements
 	}
 
 	private void handleSelectAll() {
-		IStructuredContentProvider provider = (IStructuredContentProvider) fIncludesViewer
-				.getContentProvider();
+		IStructuredContentProvider provider = (IStructuredContentProvider) fIncludesViewer.getContentProvider();
 		Object[] elements = provider.getElements(fIncludesViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
 		fIncludesViewer.setSelection(ssel);
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fIncludesViewer
-				.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fIncludesViewer.getSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -302,21 +260,19 @@ public class IncludedFeaturesSection extends TableSection implements
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleDelete();
-						}
-					});
+			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleSelectAll();
-						}
-					});
+			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -341,8 +297,7 @@ public class IncludedFeaturesSection extends TableSection implements
 		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		FeatureModelManager mng = PDECore.getDefault()
-				.getFeatureModelManager();
+		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
 		mng.addFeatureModelListener(this);
 	}
 
@@ -358,8 +313,7 @@ public class IncludedFeaturesSection extends TableSection implements
 			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 				fIncludesViewer.add(e.getChangedObjects());
 				if (e.getChangedObjects().length > 0) {
-					fIncludesViewer.setSelection(new StructuredSelection(e
-							.getChangedObjects()[0]));
+					fIncludesViewer.setSelection(new StructuredSelection(e.getChangedObjects()[0]));
 				}
 			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 				fIncludesViewer.remove(e.getChangedObjects());
@@ -379,13 +333,11 @@ public class IncludedFeaturesSection extends TableSection implements
 
 		fDeleteAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(
-						fIncludesViewer.getTable().getDisplay(),
-						new Runnable() {
-							public void run() {
-								handleDelete();
-							}
-						});
+				BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handleDelete();
+					}
+				});
 			}
 		};
 		fDeleteAction.setEnabled(model.isEditable());
@@ -402,8 +354,7 @@ public class IncludedFeaturesSection extends TableSection implements
 				IFeatureModel[] added = delta.getAdded();
 				IFeatureModel[] removed = delta.getRemoved();
 				IFeatureModel[] changed = delta.getChanged();
-				if (hasModels(added) || hasModels(removed)
-						|| hasModels(changed))
+				if (hasModels(added) || hasModels(removed) || hasModels(changed))
 					markStale();
 			}
 		});
@@ -439,8 +390,7 @@ public class IncludedFeaturesSection extends TableSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer
-				.getInstance());
+		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && objects.length > 0) {
 			return canPaste(null, objects);
 		}
@@ -503,11 +453,12 @@ public class IncludedFeaturesSection extends TableSection implements
 		if (!sel.isEmpty()) {
 			fIncludesViewer.setSelection(fIncludesViewer.getSelection());
 		} else if (fIncludesViewer.getElementAt(0) != null) {
-			fIncludesViewer.setSelection(new StructuredSelection(
-					fIncludesViewer.getElementAt(0)));
+			fIncludesViewer.setSelection(new StructuredSelection(fIncludesViewer.getElementAt(0)));
 		}
 	}
-	
-	protected boolean createCount() { return true; }
-	
+
+	protected boolean createCount() {
+		return true;
+	}
+
 }

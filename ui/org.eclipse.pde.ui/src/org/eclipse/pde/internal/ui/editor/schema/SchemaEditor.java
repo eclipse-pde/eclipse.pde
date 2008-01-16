@@ -14,38 +14,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
-import org.eclipse.pde.internal.ui.editor.JarEntryFile;
-import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaEditor extends MultiSourceEditor {
@@ -57,34 +40,33 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected String getEditorID() {
 		return IPDEUIConstants.SCHEMA_EDITOR_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
 	public String getContextIDForSaveAs() {
 		return SchemaInputContext.CONTEXT_ID;
-	}	
-	
+	}
+
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFileEditorInput in = new FileEditorInput(file);
 		manager.putContext(in, new SchemaInputContext(this, in, true));
-		manager.monitorFile(file);		
+		manager.monitorFile(file);
 	}
-	
+
 	protected InputContextManager createInputContextManager() {
 		SchemaInputContextManager contextManager = new SchemaInputContextManager(this);
 		//contextManager.setUndoManager(new SchemaUndoManager(this));
 		return contextManager;
 	}
-	
 
 	public void monitoredFileAdded(IFile file) {
 		/*
@@ -108,6 +90,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
+
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
@@ -119,7 +102,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
-	
+
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getAggregateModel();
 		if (fPreviewAction == null)
@@ -127,18 +110,17 @@ public class SchemaEditor extends MultiSourceEditor {
 		else
 			fPreviewAction.setSchema(schema);
 		fPreviewAction.run();
-	}	
+	}
 
 	protected void addEditorPages() {
 		try {
-		 	addPage(new SchemaOverviewPage(this));
+			addPage(new SchemaOverviewPage(this));
 			addPage(new SchemaFormPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 		addSourcePage(SchemaInputContext.CONTEXT_ID);
 	}
-
 
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
@@ -147,18 +129,18 @@ public class SchemaEditor extends MultiSourceEditor {
 		}
 		return firstPageId;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SchemaSourcePage(editor, title, name);
 	}
-	
+
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SchemaFormOutlinePage(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
@@ -166,10 +148,10 @@ public class SchemaEditor extends MultiSourceEditor {
 		InputContext context = null;
 		if (object instanceof ISchemaObject) {
 			context = fInputContextManager.findContext(SchemaInputContext.CONTEXT_ID);
-		}		
+		}
 		return context;
 	}
-	
+
 	public static boolean openSchema(IFile file) {
 		if (file != null && file.exists()) {
 			IEditorInput input = new FileEditorInput(file);
@@ -193,15 +175,14 @@ public class SchemaEditor extends MultiSourceEditor {
 		Display.getDefault().beep();
 		return false;
 	}
-	
+
 	/**
 	 * @param file
 	 * @return
 	 */
 	public static boolean openSchema(File file) {
 		// Ensure the file exists
-		if ((file == null) || 
-				(file.exists() == false)) {
+		if ((file == null) || (file.exists() == false)) {
 			Display.getDefault().beep();
 			return false;
 		}
@@ -217,8 +198,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		IEditorPart part = null;
 		try {
 			// Open the schema editor using the editor input
-			part = PDEPlugin.getActivePage().openEditor(input,
-					IPDEUIConstants.SCHEMA_EDITOR_ID);
+			part = PDEPlugin.getActivePage().openEditor(input, IPDEUIConstants.SCHEMA_EDITOR_ID);
 		} catch (PartInitException e) {
 			Display.getDefault().beep();
 			return false;
@@ -230,7 +210,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param jarFile
 	 * @param schemaJarFileEntry
@@ -238,8 +218,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	 */
 	public static boolean openSchema(File jarFile, String schemaJarFileEntry) {
 		// Ensure the file exists
-		if ((jarFile == null) || 
-				(jarFile.exists() == false)) {
+		if ((jarFile == null) || (jarFile.exists() == false)) {
 			Display.getDefault().beep();
 			return false;
 		}
@@ -255,44 +234,39 @@ public class SchemaEditor extends MultiSourceEditor {
 			return false;
 		}
 		// Ensure the schema file exists in the jar archive
-		if ((schemaJarFileEntry == null) ||
-				zipFile.getEntry(schemaJarFileEntry) == null) {
+		if ((schemaJarFileEntry == null) || zipFile.getEntry(schemaJarFileEntry) == null) {
 			Display.getDefault().beep();
-			return false;			
+			return false;
 		}
 		// Create the editor input
 		IStorage storage = new JarEntryFile(zipFile, schemaJarFileEntry);
 		IEditorInput input = new JarEntryEditorInput(storage);
-		return openEditor(input);		
+		return openEditor(input);
 	}
-	
-	
+
 	public static void openToElement(IPath path, ISchemaElement element) {
 		if (openSchema(path)) {
 			IEditorPart editorPart = PDEPlugin.getActivePage().getActiveEditor();
 			if (!(editorPart instanceof SchemaEditor))
 				return; // something messed up, schema editor should be open
-			SchemaEditor schemaEditor = (SchemaEditor)editorPart;
+			SchemaEditor schemaEditor = (SchemaEditor) editorPart;
 			schemaEditor.selectReveal(element);
 		}
 	}
-	
+
 	public boolean canCut(ISelection selection) {
-		if (selection instanceof IStructuredSelection)
-		{	Object selected = ((IStructuredSelection)selection).getFirstElement();
-			if(selected instanceof ISchemaRootElement)
-			{	return false;
-			}
-			else if (selected instanceof ISchemaAttribute)
-			{	if(((ISchemaAttribute)selected).getParent() instanceof ISchemaRootElement)
-				{	return false;
+		if (selection instanceof IStructuredSelection) {
+			Object selected = ((IStructuredSelection) selection).getFirstElement();
+			if (selected instanceof ISchemaRootElement) {
+				return false;
+			} else if (selected instanceof ISchemaAttribute) {
+				if (((ISchemaAttribute) selected).getParent() instanceof ISchemaRootElement) {
+					return false;
 				}
 			}
 		}
 
 		return super.canCut(selection);
 	}
-	
-	
 
 }

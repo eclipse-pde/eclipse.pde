@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -22,7 +21,7 @@ import org.osgi.framework.Bundle;
 public abstract class TextUtil {
 
 	private static URL fJavaDocStyleSheet = null;
-	
+
 	public static String createMultiLine(String text, int limit) {
 		return createMultiLine(text, limit, false);
 	}
@@ -120,14 +119,14 @@ public abstract class TextUtil {
 			return false;
 		return true;
 	}
-	
+
 	public static URL getJavaDocStyleSheerURL() {
 		if (fJavaDocStyleSheet == null) {
-			Bundle bundle= Platform.getBundle(IPDEUIConstants.PLUGIN_ID);
-			fJavaDocStyleSheet= bundle.getEntry("/JavadocHoverStyleSheet.css"); //$NON-NLS-1$
+			Bundle bundle = Platform.getBundle(IPDEUIConstants.PLUGIN_ID);
+			fJavaDocStyleSheet = bundle.getEntry("/JavadocHoverStyleSheet.css"); //$NON-NLS-1$
 			if (fJavaDocStyleSheet != null) {
 				try {
-					fJavaDocStyleSheet= FileLocator.toFileURL(fJavaDocStyleSheet);
+					fJavaDocStyleSheet = FileLocator.toFileURL(fJavaDocStyleSheet);
 				} catch (IOException ex) {
 					PDEPlugin.log(ex);
 				}
@@ -135,7 +134,7 @@ public abstract class TextUtil {
 		}
 		return fJavaDocStyleSheet;
 	}
-	
+
 	public static String trimNonAlphaChars(String value) {
 		value = value.trim();
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
@@ -147,5 +146,5 @@ public abstract class TextUtil {
 			value = ""; //$NON-NLS-1$
 		return value;
 	}
-	
+
 }

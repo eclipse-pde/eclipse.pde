@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.io.File;
 import java.util.Locale;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,37 +20,16 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.IBuildObject;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
-import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
-import org.eclipse.pde.internal.ui.editor.build.BuildPage;
-import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IShowEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
@@ -62,15 +38,16 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput {
 
 	private Action fExportAction;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
 	protected String getEditorID() {
 		return IPDEUIConstants.FEATURE_EDITOR_ID;
 	}
-	
+
 	public static void openFeatureEditor(IFeature feature) {
-		if(feature!=null){
+		if (feature != null) {
 			IFeatureModel model = feature.getModel();
 			openFeatureEditor(model);
 		} else {
@@ -86,10 +63,8 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 				if (resource != null)
 					input = new FileEditorInput((IFile) resource);
 				else
-					input = new SystemFileEditorInput(new File(model
-							.getInstallLocation(), "feature.xml")); //$NON-NLS-1$
-				IDE.openEditor(PDEPlugin.getActivePage(), input,
-						IPDEUIConstants.FEATURE_EDITOR_ID, true);
+					input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml")); //$NON-NLS-1$
+				IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
 			} catch (PartInitException e) {
 			}
 		} else {
@@ -101,8 +76,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	public FeatureEditor() {
 	}
 
-	protected void createResourceContexts(InputContextManager manager,
-			IFileEditorInput input) {
+	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IProject project = file.getProject();
 		IFile buildFile = null;
@@ -118,21 +92,18 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 		if (featureFile.exists()) {
 			FileEditorInput in = new FileEditorInput(featureFile);
-			manager.putContext(in, new FeatureInputContext(this, in,
-					file == featureFile));
+			manager.putContext(in, new FeatureInputContext(this, in, file == featureFile));
 		}
 		if (buildFile.exists()) {
 			FileEditorInput in = new FileEditorInput(buildFile);
-			manager.putContext(in, new BuildInputContext(this, in,
-					file == buildFile));
+			manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
 		}
 		manager.monitorFile(featureFile);
 		manager.monitorFile(buildFile);
 	}
 
 	protected InputContextManager createInputContextManager() {
-		FeatureInputContextManager manager = new FeatureInputContextManager(
-				this);
+		FeatureInputContextManager manager = new FeatureInputContextManager(this);
 		manager.setUndoManager(new FeatureUndoManager(this));
 		return manager;
 	}
@@ -148,8 +119,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		} else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
-				fInputContextManager.putContext(in, new BuildInputContext(this,
-						in, false));
+				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
 			}
 		}
 	}
@@ -175,8 +145,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			removePage(context.getId());
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		File buildFile = null;
 		File featureFile = null;
@@ -192,13 +161,11 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 		if (featureFile.exists()) {
 			SystemFileEditorInput in = new SystemFileEditorInput(featureFile);
-			manager.putContext(in, new FeatureInputContext(this, in,
-					file == featureFile));
+			manager.putContext(in, new FeatureInputContext(this, in, file == featureFile));
 		}
 		if (buildFile.exists()) {
 			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
-			manager.putContext(in, new BuildInputContext(this, in,
-					file == buildFile));
+			manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
 		}
 	}
 
@@ -212,14 +179,12 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return featureFile;
 	}
 
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("build.properties")) { //$NON-NLS-1$
 			manager.putContext(input, new BuildInputContext(this, input, true));
 		} else if (name.startsWith("feature.xml")) { //$NON-NLS-1$
-			manager.putContext(input,
-					new FeatureInputContext(this, input, true));
+			manager.putContext(input, new FeatureInputContext(this, input, true));
 		}
 	}
 
@@ -258,8 +223,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor,
 	 *      java.lang.String, java.lang.String)
 	 */
-	protected PDESourcePage createSourcePage(PDEFormEditor editor,
-			String title, String name, String contextId) {
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
 			return new FeatureSourcePage(editor, title, name);
 		if (contextId.equals(BuildInputContext.CONTEXT_ID))
@@ -308,8 +272,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected boolean hasKnownTypes() {
 		try {
 			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-					RTFTransfer.getInstance() };
+			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 			for (int i = 0; i < types.length; i++) {
 				for (int j = 0; j < transfers.length; j++) {
 					if (transfers[j].isSupportedType(types[i]))
@@ -337,21 +300,19 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
-			context = fInputContextManager
-					.findContext(BuildInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IFeatureObject) {
-			context = fInputContextManager
-					.findContext(FeatureInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(FeatureInputContext.CONTEXT_ID);
 		}
 		return context;
 	}
 
 	protected boolean isPatchEditor() {
 		IBaseModel model = getAggregateModel();
-		if(model==null || !(model instanceof IFeatureModel)){
+		if (model == null || !(model instanceof IFeatureModel)) {
 			return false;
 		}
-		IFeature feature = ((IFeatureModel)model).getFeature();
+		IFeature feature = ((IFeatureModel) model).getFeature();
 		IFeatureImport[] imports = feature.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			if (imports[i].isPatch()) {
@@ -362,18 +323,18 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	public void showEditorInput(IEditorInput editorInput) {
-    	String name = editorInput.getName();
-    	if (name.equals("feature.xml")) { //$NON-NLS-1$
-    		setActivePage(0);
-    	} else {
-    		setActivePage(getPageCount() - 3);
-    	}
+		String name = editorInput.getName();
+		if (name.equals("feature.xml")) { //$NON-NLS-1$
+			setActivePage(0);
+		} else {
+			setActivePage(getPageCount() - 3);
+		}
 	}
 
 	protected Action getFeatureExportAction() {
 		if (fExportAction == null) {
 			fExportAction = new Action() {
-				public void run() { 
+				public void run() {
 					doSave(null);
 					FeatureEditorContributor contributor = (FeatureEditorContributor) getContributor();
 					contributor.getBuildAction().run();
@@ -384,6 +345,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 		return fExportAction;
 	}
+
 	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getFeatureExportAction());
 	}

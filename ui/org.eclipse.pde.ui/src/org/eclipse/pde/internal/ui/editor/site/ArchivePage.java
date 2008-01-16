@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -31,28 +25,29 @@ public class ArchivePage extends PDEFormPage {
 	private DescriptionSection fDescSection;
 	private MirrorsSection fMirrorsSection;
 	private ArchiveSection fArchiveSection;
-	
+
 	public ArchivePage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.ArchivePage_name);  
+		super(editor, PAGE_ID, PDEUIMessages.ArchivePage_name);
 	}
+
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
-		
+
 		fDescSection = new DescriptionSection(this, form.getBody());
 		fArchiveSection = new ArchiveSection(this, form.getBody());
 		fMirrorsSection = new MirrorsSection(this, form.getBody());
-		
+
 		mform.addPart(fDescSection);
 		mform.addPart(fMirrorsSection);
 		mform.addPart(fArchiveSection);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_ARCHIVES);
-		form.setText(PDEUIMessages.ArchivePage_title); 
+		form.setText(PDEUIMessages.ArchivePage_title);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAVA_LIB_OBJ));
 	}
-	
+
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/archives.htm"; //$NON-NLS-1$
 	}

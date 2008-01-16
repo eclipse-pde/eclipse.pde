@@ -13,13 +13,11 @@ package org.eclipse.pde.internal.ui.editor.text;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
 
 /**
  * Provides a set of convenience methods for creating HTML pages.
@@ -28,10 +26,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class HTMLPrinter {
 
-	private static RGB BG_COLOR_RGB= null;
+	private static RGB BG_COLOR_RGB = null;
 
 	static {
-		final Display display= Display.getDefault();
+		final Display display = Display.getDefault();
 		if (display != null && !display.isDisposed()) {
 			try {
 				display.asyncExec(new Runnable() {
@@ -39,7 +37,7 @@ public class HTMLPrinter {
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
-						BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+						BG_COLOR_RGB = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
 					}
 				});
 			} catch (SWTError err) {
@@ -55,18 +53,18 @@ public class HTMLPrinter {
 
 	private static String replace(String text, char c, String s) {
 
-		int previous= 0;
-		int current= text.indexOf(c, previous);
+		int previous = 0;
+		int current = text.indexOf(c, previous);
 
 		if (current == -1)
 			return text;
 
-		StringBuffer buffer= new StringBuffer();
+		StringBuffer buffer = new StringBuffer();
 		while (current > -1) {
 			buffer.append(text.substring(previous, current));
 			buffer.append(s);
-			previous= current + 1;
-			current= text.indexOf(c, previous);
+			previous = current + 1;
+			current = text.indexOf(c, previous);
 		}
 		buffer.append(text.substring(previous));
 
@@ -74,22 +72,22 @@ public class HTMLPrinter {
 	}
 
 	public static String convertToHTMLContent(String content) {
-		content= replace(content, '&', "&amp;"); //$NON-NLS-1$
-		content= replace(content, '"', "&quot;"); //$NON-NLS-1$
-		content= replace(content, '<', "&lt;"); //$NON-NLS-1$
+		content = replace(content, '&', "&amp;"); //$NON-NLS-1$
+		content = replace(content, '"', "&quot;"); //$NON-NLS-1$
+		content = replace(content, '<', "&lt;"); //$NON-NLS-1$
 		return replace(content, '>', "&gt;"); //$NON-NLS-1$
 	}
 
 	public static String read(Reader rd) {
 
-		StringBuffer buffer= new StringBuffer();
-		char[] readBuffer= new char[2048];
+		StringBuffer buffer = new StringBuffer();
+		char[] readBuffer = new char[2048];
 
 		try {
-			int n= rd.read(readBuffer);
+			int n = rd.read(readBuffer);
 			while (n > 0) {
 				buffer.append(readBuffer, 0, n);
-				n= rd.read(readBuffer);
+				n = rd.read(readBuffer);
 			}
 			return buffer.toString();
 		} catch (IOException x) {
@@ -103,7 +101,7 @@ public class HTMLPrinter {
 		if (bgRGB == null)
 			insertPageProlog(buffer, position, styleSheetURL);
 		else {
-			StringBuffer pageProlog= new StringBuffer(300);
+			StringBuffer pageProlog = new StringBuffer(300);
 
 			pageProlog.append("<html>"); //$NON-NLS-1$
 
@@ -113,25 +111,26 @@ public class HTMLPrinter {
 			appendColor(pageProlog, bgRGB);
 			pageProlog.append("\">"); //$NON-NLS-1$
 
-			buffer.insert(position,  pageProlog.toString());
+			buffer.insert(position, pageProlog.toString());
 		}
 	}
+
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB, String styleSheet) {
-		
+
 		if (bgRGB == null)
 			insertPageProlog(buffer, position, styleSheet);
 		else {
-			StringBuffer pageProlog= new StringBuffer(300);
-			
+			StringBuffer pageProlog = new StringBuffer(300);
+
 			pageProlog.append("<html>"); //$NON-NLS-1$
-			
+
 			appendStyleSheetURL(pageProlog, styleSheet);
-			
+
 			pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
 			appendColor(pageProlog, bgRGB);
 			pageProlog.append("\">"); //$NON-NLS-1$
-			
-			buffer.insert(position,  pageProlog.toString());
+
+			buffer.insert(position, pageProlog.toString());
 		}
 	}
 
@@ -139,8 +138,8 @@ public class HTMLPrinter {
 		if (styles == null || styles.length == 0)
 			return;
 
-		StringBuffer styleBuf= new StringBuffer(10 * styles.length);
-		for (int i= 0; styles != null && i < styles.length; i++) {
+		StringBuffer styleBuf = new StringBuffer(10 * styles.length);
+		for (int i = 0; styles != null && i < styles.length; i++) {
 			styleBuf.append(" style=\""); //$NON-NLS-1$
 			styleBuf.append(styles[i]);
 			styleBuf.append('"');
@@ -148,17 +147,17 @@ public class HTMLPrinter {
 
 		// Find insertion index
 		// a) within existing body tag with trailing space 
-		int index= buffer.indexOf("<body "); //$NON-NLS-1$
+		int index = buffer.indexOf("<body "); //$NON-NLS-1$
 		if (index != -1) {
-			buffer.insert(index+5, styleBuf);
+			buffer.insert(index + 5, styleBuf);
 			return;
 		}
 
 		// b) within existing body tag without attributes
-		index= buffer.indexOf("<body>"); //$NON-NLS-1$
+		index = buffer.indexOf("<body>"); //$NON-NLS-1$
 		if (index != -1) {
-			buffer.insert(index+5, ' ');
-			buffer.insert(index+6, styleBuf);
+			buffer.insert(index + 5, ' ');
+			buffer.insert(index + 6, styleBuf);
 			return;
 		}
 	}
@@ -167,23 +166,23 @@ public class HTMLPrinter {
 		if (bgRGB == null)
 			insertPageProlog(buffer, position);
 		else {
-			StringBuffer pageProlog= new StringBuffer(60);
+			StringBuffer pageProlog = new StringBuffer(60);
 			pageProlog.append("<html><body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
 			appendColor(pageProlog, bgRGB);
 			pageProlog.append("\">"); //$NON-NLS-1$
-			buffer.insert(position,  pageProlog.toString());
+			buffer.insert(position, pageProlog.toString());
 		}
 	}
 
 	private static void appendStyleSheetURL(StringBuffer buffer, String styleSheet) {
 		if (styleSheet == null)
 			return;
-		
+
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
 		buffer.append(styleSheet);
 		buffer.append("</style></head>"); //$NON-NLS-1$
 	}
-	
+
 	private static void appendStyleSheetURL(StringBuffer buffer, URL styleSheetURL) {
 		if (styleSheetURL == null)
 			return;
@@ -205,21 +204,21 @@ public class HTMLPrinter {
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position) {
-		insertPageProlog(buffer, position, getBgColor()); 
+		insertPageProlog(buffer, position, getBgColor());
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
-		insertPageProlog(buffer, position, getBgColor(), styleSheetURL); 
+		insertPageProlog(buffer, position, getBgColor(), styleSheetURL);
 	}
-	
+
 	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
-		insertPageProlog(buffer, position, getBgColor(), styleSheet); 
+		insertPageProlog(buffer, position, getBgColor(), styleSheet);
 	}
 
 	private static RGB getBgColor() {
 		if (BG_COLOR_RGB != null)
 			return BG_COLOR_RGB;
-		return new RGB(255,255, 225); // RGB value of info bg color on WindowsXP
+		return new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
 
 	}
 
@@ -266,7 +265,7 @@ public class HTMLPrinter {
 		if (paragraphReader != null)
 			addParagraph(buffer, read(paragraphReader));
 	}
-	
+
 	/**
 	 * Replaces the following style attributes of the font definition of the <code>html</code>
 	 * element:
@@ -288,17 +287,17 @@ public class HTMLPrinter {
 	 * @since 3.3
 	 */
 	public static String convertTopLevelFont(String styles, FontData fontData) {
-		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
-		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
-		
+		boolean bold = (fontData.getStyle() & SWT.BOLD) != 0;
+		boolean italic = (fontData.getStyle() & SWT.ITALIC) != 0;
+
 		// See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
-		String size= Integer.toString(fontData.getHeight()) + ("carbon".equals(SWT.getPlatform()) ? "px" : "pt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-		String family= "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
-		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+pt(\\;?.*\\})", "$1" + size + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-family:\\s*).+?(;.*\\})", "$1" + family + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String size = Integer.toString(fontData.getHeight()) + ("carbon".equals(SWT.getPlatform()) ? "px" : "pt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		String family = "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
+		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+pt(\\;?.*\\})", "$1" + size + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		styles = styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-family:\\s*).+?(;.*\\})", "$1" + family + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return styles;
 	}
 }

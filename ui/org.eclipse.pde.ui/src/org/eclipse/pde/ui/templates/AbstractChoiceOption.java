@@ -41,12 +41,10 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
 	 */
-	public AbstractChoiceOption(BaseOptionTemplateSection section, String name,
-			String label, String[][] choices) {
+	public AbstractChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label);
 		this.fChoices = choices;
 	}
-	
 
 	/**
 	 * Returns the string value of the current choice.
@@ -67,7 +65,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	public void setValue(Object value) {
 		setValue(value, true);
 	}
-	
+
 	/**
 	 * Implements the superclass method by passing the new value to the option's
 	 * widget; updates to the combo can be supressed.
@@ -86,7 +84,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 			setOptionValue(value);
 		}
 	}
-	
+
 	protected abstract void setOptionValue(Object value);
 
 	/**
@@ -97,9 +95,9 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 		super.setEnabled(enabled);
 		setOptionEnabled(enabled);
 	}
-	
+
 	protected abstract void setOptionEnabled(boolean enabled);
-	
+
 	protected GridData fill(Control control, int span) {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
@@ -120,7 +118,7 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 	}
 
 	protected abstract void selectOptionChoice(String choice);
-	
+
 	protected boolean isBlocked() {
 		return fBlockListener;
 	}

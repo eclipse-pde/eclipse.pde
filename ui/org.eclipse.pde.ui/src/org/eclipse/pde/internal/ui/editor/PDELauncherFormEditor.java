@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.Action;
@@ -32,13 +26,13 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 	Action[][] fActions = null;
 
 	protected abstract ILauncherFormPageHelper getLauncherHelper();
-	
+
 	protected void contributeLaunchersToToolbar(IToolBarManager manager) {
 
 		// this should never be null (no point in using this class if you don't provide an ILauncherFormPageHelper)
 		// but we'll guard against it anyway
 		if (getLauncherHelper() != null) {
-			
+
 			Action[][] actions = getActions();
 			if (actions[RUN_LAUNCHER_INDEX].length > 0) {
 				Action runAction = new ActionMenu(actions[RUN_LAUNCHER_INDEX]);
@@ -56,7 +50,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 			}
 		}
 	}
-	
+
 	private Action[][] getActions() {
 		if (fActions == null) {
 			fActions = new Action[3][];
@@ -67,7 +61,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		}
 		return fActions;
 	}
-	
+
 	private Action[] getLauncherActions(IConfigurationElement[] elements) {
 		Action[] result = new Action[elements.length];
 		for (int i = 0; i < elements.length; i++) {
@@ -85,7 +79,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		}
 		return result;
 	}
-	
+
 	protected Runnable getPreLaunchRunnable() {
 		return new Runnable() {
 			public void run() {
@@ -101,7 +95,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		sb.append(e.getAttribute("id")); //$NON-NLS-1$
 		return sb.toString();
 	}
-	
+
 	private ImageDescriptor getImageDescriptor(IConfigurationElement element) {
 		String mode = element.getAttribute("mode"); //$NON-NLS-1$
 		if (mode == null)
@@ -120,15 +114,15 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 			launchShortcut = launchShortcut.substring(15);
 			int index = launchShortcut.indexOf('.');
 			if (index < 0)
-				return;  // error.  Format of launchShortcut should be launchShortcut.<mode>.<launchShortcutId>
+				return; // error.  Format of launchShortcut should be launchShortcut.<mode>.<launchShortcutId>
 			String mode = launchShortcut.substring(0, index);
-			String id = launchShortcut.substring(index + 1); 
+			String id = launchShortcut.substring(index + 1);
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
 			for (int i = 0; i < elements.length; i++) {
 				if (id.equals(elements[i].getAttribute("id"))) //$NON-NLS-1$
 					try {
-						ILaunchShortcut shortcut = (ILaunchShortcut)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+						ILaunchShortcut shortcut = (ILaunchShortcut) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
 						preLaunch.run();
 						shortcut.launch(new StructuredSelection(launchObject), mode);
 					} catch (CoreException e1) {
@@ -136,10 +130,11 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 			}
 		}
 	}
-	
+
 	protected static final int RUN_LAUNCHER_INDEX = 0;
 	protected static final int DEBUG_LAUNCHER_INDEX = 1;
 	protected static final int PROFILE_LAUNCHER_INDEX = 2;
+
 	protected IConfigurationElement[][] getLaunchers(boolean osgi) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.ui.launchShortcuts"); //$NON-NLS-1$
@@ -149,7 +144,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		ArrayList profileList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
-			if (mode != null && elements[i].getAttribute("label") != null && elements[i].getAttribute("id") != null &&  //$NON-NLS-1$ //$NON-NLS-2$
+			if (mode != null && elements[i].getAttribute("label") != null && elements[i].getAttribute("id") != null && //$NON-NLS-1$ //$NON-NLS-2$
 					osgi == "true".equals(elements[i].getAttribute("osgi"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				if (mode.equals(ILaunchManager.RUN_MODE))
 					runList.add(elements[i]);
@@ -159,21 +154,21 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 					profileList.add(elements[i]);
 			}
 		}
-		
+
 		// sort elements based on criteria specified in bug 172703
-		IConfigurationElement[] runElements = (IConfigurationElement[])runList.toArray(new IConfigurationElement[runList.size()]);
-		IConfigurationElement[] debugElements = (IConfigurationElement[])debugList.toArray(new IConfigurationElement[debugList.size()]);
-		IConfigurationElement[] profileElements = (IConfigurationElement[])profileList.toArray(new IConfigurationElement[profileList.size()]);
+		IConfigurationElement[] runElements = (IConfigurationElement[]) runList.toArray(new IConfigurationElement[runList.size()]);
+		IConfigurationElement[] debugElements = (IConfigurationElement[]) debugList.toArray(new IConfigurationElement[debugList.size()]);
+		IConfigurationElement[] profileElements = (IConfigurationElement[]) profileList.toArray(new IConfigurationElement[profileList.size()]);
 		Comparator comparator = new Comparator() {
 			public int compare(Object arg0, Object arg1) {
-				String label1 = ((IConfigurationElement)arg0).getAttribute("label"); //$NON-NLS-1$
-				String label2 = ((IConfigurationElement)arg1).getAttribute("label"); //$NON-NLS-1$
+				String label1 = ((IConfigurationElement) arg0).getAttribute("label"); //$NON-NLS-1$
+				String label2 = ((IConfigurationElement) arg1).getAttribute("label"); //$NON-NLS-1$
 				return label1.compareTo(label2);
 			}
 		};
 		Arrays.sort(runElements, comparator);
 		Arrays.sort(debugElements, comparator);
 		Arrays.sort(profileElements, comparator);
-		return new IConfigurationElement[][] {runElements,debugElements,profileElements};
+		return new IConfigurationElement[][] {runElements, debugElements, profileElements};
 	}
 }

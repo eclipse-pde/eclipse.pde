@@ -14,27 +14,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.ifeature.IFeatureEntry;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DataDetailsSection extends PDESection implements IFormPart,
-		IPartSelectionListener {
+public class DataDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
 	protected IFeatureEntry fInput;
 
 	private FormEntry fdownloadSizeText;
@@ -42,12 +34,10 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fInstallSizeText;
 
 	public DataDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.SiteEditor_DataDetailsSection_title,
-				PDEUIMessages.SiteEditor_DataDetailsSection_desc, SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_DataDetailsSection_title, PDEUIMessages.SiteEditor_DataDetailsSection_desc, SWT.NULL);
 	}
 
-	public DataDetailsSection(PDEFormPage page, Composite parent, String title,
-			String desc, int toggleStyle) {
+	public DataDetailsSection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -67,14 +57,14 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DataDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
@@ -137,10 +127,7 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
-		} else if (e.getChangeType() == IModelChangedEvent.CHANGE
-				&& e.getChangedObjects().length > 0
-				&& e.getChangedObjects()[0] instanceof IFeatureData
-				&& e.getChangedObjects()[0] == fInput) {
+		} else if (e.getChangeType() == IModelChangedEvent.CHANGE && e.getChangedObjects().length > 0 && e.getChangedObjects()[0] instanceof IFeatureData && e.getChangedObjects()[0] == fInput) {
 			markStale();
 		}
 	}
@@ -170,15 +157,11 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 
 	private void update() {
 		if (fInput != null) {
-			fdownloadSizeText
-					.setValue(
-							fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
-			fInstallSizeText
-					.setValue(
-							fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
+			fdownloadSizeText.setValue(fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
+			fInstallSizeText.setValue(fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
 		} else {
-			fdownloadSizeText.setValue(null, true); 
-			fInstallSizeText.setValue(null, true); 
+			fdownloadSizeText.setValue(null, true);
+			fInstallSizeText.setValue(null, true);
 		}
 		fdownloadSizeText.setEditable(fInput != null && isEditable());
 		fInstallSizeText.setEditable(fInput != null && isEditable());

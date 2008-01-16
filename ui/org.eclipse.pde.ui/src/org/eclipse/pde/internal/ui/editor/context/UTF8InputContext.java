@@ -15,9 +15,9 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.context;
+
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.ui.IEditorInput;
-
 
 public abstract class UTF8InputContext extends InputContext {
 	/**
@@ -27,9 +27,9 @@ public abstract class UTF8InputContext extends InputContext {
 	public UTF8InputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 	}
-	
+
 	protected String getDefaultCharset() {
 		return "UTF-8"; //$NON-NLS-1$
 	}
-	
+
 }

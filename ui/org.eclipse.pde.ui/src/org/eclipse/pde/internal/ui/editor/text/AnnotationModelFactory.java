@@ -21,9 +21,9 @@ public class AnnotationModelFactory implements IAnnotationModelFactory {
 
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		IFile file = FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file == null) 
+		if (file == null)
 			return new SystemFileMarkerAnnotationModel();
-		
+
 		return new PDEMarkerAnnotationModel(file);
 	}
 

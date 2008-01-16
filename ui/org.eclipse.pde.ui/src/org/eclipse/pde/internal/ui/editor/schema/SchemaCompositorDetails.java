@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -29,17 +30,17 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 	private SchemaCompositor fCompositor;
 	private ComboPart fKind;
 	private Label fKindLabel;
-	
+
 	public SchemaCompositorDetails(ElementSection section) {
 		super(section, true, false);
 	}
 
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		
+
 		createMinOccurComp(parent, toolkit);
 		createMaxOccurComp(parent, toolkit);
-		
+
 		fKindLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaCompositorDetails_type);
 		fKindLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fKind = new ComboPart();
@@ -47,23 +48,21 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fKind.getControl().setLayoutData(gd);
-		fKind.setItems(new String[] {
-				ISchemaCompositor.kindTable[ISchemaCompositor.CHOICE],
-				ISchemaCompositor.kindTable[ISchemaCompositor.SEQUENCE]});
+		fKind.setItems(new String[] {ISchemaCompositor.kindTable[ISchemaCompositor.CHOICE], ISchemaCompositor.kindTable[ISchemaCompositor.SEQUENCE]});
 		fKind.getControl().setEnabled(isEditable());
-		
+
 		setText(PDEUIMessages.SchemaCompositorDetails_title);
 	}
 
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaCompositor))
 			return;
-		fCompositor = (SchemaCompositor)object;
+		fCompositor = (SchemaCompositor) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
 		updateMinOccur(fCompositor.getMinOccurs());
 		updateMaxOccur(fCompositor.getMaxOccurs());
 		fKind.select(fCompositor.getKind() - 1);
-		
+
 		boolean editable = isEditableElement();
 		fKindLabel.setEnabled(editable);
 		fKind.setEnabled(editable);
@@ -94,7 +93,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -102,5 +101,5 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		super.commit(onSave);
 		// Only required for form entries
 		// NO-OP
-	}	
+	}
 }

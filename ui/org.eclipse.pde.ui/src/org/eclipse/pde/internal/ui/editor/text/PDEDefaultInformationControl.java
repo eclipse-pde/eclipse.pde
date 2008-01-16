@@ -14,13 +14,13 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.swt.widgets.Shell;
 
 public class PDEDefaultInformationControl extends DefaultInformationControl {
-	
+
 	private boolean fDisposed = false;
-	
+
 	public PDEDefaultInformationControl(Shell parent, int style, IInformationPresenter presenter, String statusFieldText) {
 		super(parent, style, presenter, statusFieldText);
 	}
-	
+
 	/*
 	 * @see IInformationControl#dispose()
 	 */
@@ -28,7 +28,7 @@ public class PDEDefaultInformationControl extends DefaultInformationControl {
 		fDisposed = true;
 		super.dispose();
 	}
-	
+
 	public boolean isDisposed() {
 		return fDisposed;
 	}

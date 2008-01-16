@@ -22,7 +22,7 @@ import java.io.File;
  */
 
 public interface IProvisionerWizard extends IBasePluginWizard {
-	
+
 	/**
 	 * Returns an array of locations which contain plug-ins to be added to
 	 * the Target Platform.  If a location contains a "plugins" subdirectory,

@@ -11,66 +11,41 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.BundleManifestSourceLocationManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceLocation;
-import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.OverlayIcon;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-public class TargetSourceTab {	
+public class TargetSourceTab {
 	private Image fFolderImage;
 	private TreeViewer fTreeViewer;
 	private Image fExtensionImage;
 	private Image fUserImage;
-	
+
 	private List fUserLocations;
 	private List fSystemLocations;
 	private NamedElement fSystemNode;
@@ -78,14 +53,16 @@ public class TargetSourceTab {
 	private Button fAddButton;
 	private Button fRemoveButton;
 	private String fLastUserPath = null;
-	
+
 	private TargetPlatformPreferencePage fPage = null;
 
 	class NamedElement {
 		String text;
+
 		public NamedElement(String text) {
 			this.text = text;
 		}
+
 		public String toString() {
 			return text;
 		}
@@ -106,7 +83,7 @@ public class TargetSourceTab {
 
 		public Object getParent(Object element) {
 			if (element instanceof SourceLocation) {
-				SourceLocation loc = (SourceLocation)element;
+				SourceLocation loc = (SourceLocation) element;
 				return loc.isUserDefined() ? fUserNode : fSystemNode;
 			}
 			return null;
@@ -121,7 +98,7 @@ public class TargetSourceTab {
 		}
 	}
 
-	class SourceLabelProvider extends LabelProvider {		
+	class SourceLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof SourceLocation) {
 				SourceLocation location = (SourceLocation) obj;
@@ -129,18 +106,19 @@ public class TargetSourceTab {
 			}
 			return super.getText(obj);
 		}
+
 		public Image getImage(Object obj) {
 			if (obj instanceof SourceLocation)
 				return fFolderImage;
-		
-			return obj.equals(fUserNode)? fUserImage : fExtensionImage;
-		}	
+
+			return obj.equals(fUserNode) ? fUserImage : fExtensionImage;
+		}
 	}
 
 	public TargetSourceTab(TargetPlatformPreferencePage page) {
 		initializeImages();
-		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target); 
-		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional); 
+		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target);
+		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional);
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		fSystemLocations = new ArrayList();
 		fSystemLocations.addAll(manager.getExtensionLocations());
@@ -149,18 +127,14 @@ public class TargetSourceTab {
 		fUserLocations.addAll(manager.getUserLocations());
 		fPage = page;
 	}
-	
+
 	private void initializeImages() {
 		fExtensionImage = PDEPluginImages.DESC_SOURCE_ATTACHMENT_OBJ.createImage();
-		ImageDescriptor userDesc =
-			new OverlayIcon(
-				PDEPluginImages.DESC_SOURCE_ATTACHMENT_OBJ,
-				new ImageDescriptor[][] { { PDEPluginImages.DESC_DOC_CO }
-		});
+		ImageDescriptor userDesc = new OverlayIcon(PDEPluginImages.DESC_SOURCE_ATTACHMENT_OBJ, new ImageDescriptor[][] {{PDEPluginImages.DESC_DOC_CO}});
 		fUserImage = userDesc.createImage();
 		fFolderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 	}
-	
+
 	public void resetExtensionLocations(IPluginModelBase[] models) {
 		fTreeViewer.getTree().getItem(0).setExpanded(false);
 		fTreeViewer.refresh(fSystemNode);
@@ -176,7 +150,7 @@ public class TargetSourceTab {
 		}
 		return buf.toString();
 	}
-	
+
 	public void dispose() {
 		fExtensionImage.dispose();
 		fUserImage.dispose();
@@ -191,12 +165,12 @@ public class TargetSourceTab {
 		PDECore.getDefault().getJavadocLocationManager().reset();
 		return true;
 	}
-	
+
 	public void performDefaults() {
 		fUserLocations.clear();
 		fTreeViewer.refresh();
 	}
-	
+
 	protected void loadTargetProfile(ITarget target) {
 		// this tab should do nothing.  It may later be removed altogether
 	}
@@ -211,10 +185,10 @@ public class TargetSourceTab {
 			fLastUserPath = path;
 		}
 	}
-	
+
 	private DirectoryDialog getDirectoryDialog(String filterPath) {
 		DirectoryDialog dialog = new DirectoryDialog(fPage.getShell());
-		dialog.setMessage(PDEUIMessages.SourcePreferencePage_dialogMessage); 
+		dialog.setMessage(PDEUIMessages.SourcePreferencePage_dialogMessage);
 		if (filterPath != null)
 			dialog.setFilterPath(filterPath);
 		return dialog;
@@ -243,16 +217,16 @@ public class TargetSourceTab {
 		container.setLayout(layout);
 
 		Link text = new Link(container, SWT.WRAP);
-		text.setText(PDEUIMessages.SourceBlock_desc); 
+		text.setText(PDEUIMessages.SourceBlock_desc);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.widthHint = 400;
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-			IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
-			if (point != null)
-				new ShowDescriptionAction(point, true).run();	
+				IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
+				if (point != null)
+					new ShowDescriptionAction(point, true).run();
 			}
 		});
 
@@ -267,11 +241,11 @@ public class TargetSourceTab {
 		fTreeViewer.expandAll();
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)event.getSelection();
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				boolean removeEnabled = false;
 				if (ssel != null && ssel.size() > 0) {
 					Object object = ssel.getFirstElement();
-					removeEnabled = (object instanceof SourceLocation && ((SourceLocation)object).isUserDefined());
+					removeEnabled = (object instanceof SourceLocation && ((SourceLocation) object).isUserDefined());
 				}
 				fRemoveButton.setEnabled(removeEnabled);
 			}
@@ -282,16 +256,16 @@ public class TargetSourceTab {
 					handleRemove();
 				}
 			}
-		});	
-	
+		});
+
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		buttonContainer.setLayout(layout);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
+
 		fAddButton = new Button(buttonContainer, SWT.PUSH);
-		fAddButton.setText(PDEUIMessages.SourceBlock_add); 
+		fAddButton.setText(PDEUIMessages.SourceBlock_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -299,9 +273,9 @@ public class TargetSourceTab {
 				handleAdd();
 			}
 		});
-		
+
 		fRemoveButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove); 
+		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -310,12 +284,12 @@ public class TargetSourceTab {
 			}
 		});
 		fRemoveButton.setEnabled(false);
-		
+
 		Dialog.applyDialogFont(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.SOURCE_PREFERENCE_PAGE);
 		return container;
 	}
-	
+
 	/**
 	 * Collect and return all the source locations that are included by default
 	 * in the state/target currently defined by this page.
@@ -328,7 +302,7 @@ public class TargetSourceTab {
 			IExtension[] extensions = fPage.getExtensionRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
 			State resolverState = fPage.getCurrentState().getState();
 			for (int i = 0; i < extensions.length; i++) {
-				long id = Long.parseLong(((RegistryContributor)extensions[i].getContributor()).getId());
+				long id = Long.parseLong(((RegistryContributor) extensions[i].getContributor()).getId());
 				BundleDescription desc = resolverState.getBundle(id);
 				IPath path = new Path(desc.getLocation());
 				IConfigurationElement[] children = extensions[i].getConfigurationElements();
@@ -342,7 +316,7 @@ public class TargetSourceTab {
 							if (!result.contains(location))
 								result.add(location);
 						}
-					}	
+					}
 				}
 			}
 			// Find bundle manifest locations

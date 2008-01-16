@@ -11,13 +11,10 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions;
 
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.CompCSCreationOperation;
-
 
 /**
  * CompCSAddTaskAction
@@ -36,21 +33,21 @@ public class CompCSAddTaskAction extends CompCSAbstractAddAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		
+
 		if (fParentObject == null) {
 			return;
 		}
-		ICompCSTask task = CompCSCreationOperation.createBasicTask(fParentObject); 
+		ICompCSTask task = CompCSCreationOperation.createBasicTask(fParentObject);
 		// Set on the proper parent object
 		if (fParentObject.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-			ICompCSTaskGroup parent = (ICompCSTaskGroup)fParentObject;
-			
+			ICompCSTaskGroup parent = (ICompCSTaskGroup) fParentObject;
+
 			String name = PDELabelUtility.generateName(getTaskObjectNames(parent), PDEUIMessages.CompCSCreationOperation_task);
 			task.setFieldName(name);
 			parent.addFieldTaskObject(task);
 		} else if (fParentObject.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 			// Not supported by editor
-		} 
-	}	
-	
+		}
+	}
+
 }

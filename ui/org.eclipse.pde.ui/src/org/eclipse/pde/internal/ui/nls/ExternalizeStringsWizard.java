@@ -26,8 +26,9 @@ public class ExternalizeStringsWizard extends RefactoringWizard {
 		setNeedsProgressMonitor(true);
 		fModelChangeTable = changeTable;
 	}
+
 	protected void addUserInputPages() {
-		setDefaultPageTitle( getRefactoring().getName() );
+		setDefaultPageTitle(getRefactoring().getName());
 		page1 = new ExternalizeStringsWizardPage(fModelChangeTable);
 		addPage(page1);
 	}

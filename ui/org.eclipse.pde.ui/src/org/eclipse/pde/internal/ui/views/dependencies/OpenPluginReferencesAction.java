@@ -18,19 +18,18 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 
 public class OpenPluginReferencesAction extends Action {
-	
+
 	private IPluginModelBase fModel;
-	
+
 	public OpenPluginReferencesAction(IPluginModelBase base) {
 		fModel = base;
 	}
-	
+
 	public void run() {
 		try {
 			IViewPart view = PDEPlugin.getActivePage().showView(IPDEUIConstants.DEPENDENCIES_VIEW_ID);
-			((DependenciesView)view).openCallersFor(fModel);
-		}
-		catch (PartInitException e) {
+			((DependenciesView) view).openCallersFor(fModel);
+		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}

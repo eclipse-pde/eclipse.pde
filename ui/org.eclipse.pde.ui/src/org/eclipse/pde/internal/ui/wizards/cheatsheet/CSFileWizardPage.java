@@ -21,10 +21,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -34,25 +31,24 @@ import org.eclipse.ui.PlatformUI;
 public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	private Button fSimpleCheatSheetButton;
-	
+
 	private Button fCompositeCheatSheetButton;
-	
+
 	private Group fGroup;
-	
+
 	protected static final String F_FILE_EXTENSION = "xml"; //$NON-NLS-1$
-	
+
 	public static final int F_SIMPLE_CHEAT_SHEET = 0;
-	
+
 	public static final int F_COMPOSITE_CHEAT_SHEET = 1;
-	
+
 	/**
 	 * @param pageName
 	 * @param selection
 	 */
-	public CSFileWizardPage(String pageName,
-			IStructuredSelection selection) {
+	public CSFileWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		
+
 		initialize();
 	}
 
@@ -63,9 +59,9 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
 		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
 		// Force the file extension to be 'xml'
-		setFileExtension(F_FILE_EXTENSION);		
+		setFileExtension(F_FILE_EXTENSION);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -78,30 +74,30 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		// Neither selected. Unknown type
 		return -1;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createAdvancedControls(Composite parent) {
 
 		GridData data = null;
-		
+
 		// Cheat Sheet Group
 		fGroup = new Group(parent, SWT.NONE);
-		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4); 
+		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4);
 		fGroup.setLayout(new GridLayout(1, false));
-		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		
+		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		// Simple Cheat Sheet Button
 		fSimpleCheatSheetButton = new Button(fGroup, SWT.RADIO);
-		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5); 
+		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5);
 		fSimpleCheatSheetButton.setSelection(true);
 		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-                getWizard().getContainer().updateButtons();
+				getWizard().getContainer().updateButtons();
 			}
 		});
-		
+
 		// Simple Cheat Sheet Description Label
 		final Label simpleCSLabel = new Label(fGroup, SWT.WRAP);
 		simpleCSLabel.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
@@ -109,21 +105,20 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		data.widthHint = 300;
 		data.horizontalIndent = 20;
 		simpleCSLabel.setLayoutData(data);
-		
+
 		// Composite Cheat Sheet Button
 		fCompositeCheatSheetButton = new Button(fGroup, SWT.RADIO);
 		fCompositeCheatSheetButton.setSelection(false);
-		fCompositeCheatSheetButton
-				.setText(PDEUIMessages.CheatSheetFileWizardPage_7);
+		fCompositeCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_7);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalIndent = 10;
 		fCompositeCheatSheetButton.setLayoutData(data);
 		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-                getWizard().getContainer().updateButtons();
+				getWizard().getContainer().updateButtons();
 			}
-		});		
-		
+		});
+
 		// Composite Cheat Sheet Description Label
 		final Label compositeCSLabel = new Label(fGroup, SWT.WRAP);
 		compositeCSLabel.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
@@ -131,9 +126,9 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		data.widthHint = 300;
 		data.horizontalIndent = 20;
 		compositeCSLabel.setLayoutData(data);
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -141,7 +136,7 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.CHEAT_SHEET_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.CHEAT_SHEET_PAGE);
 	}
 
 }

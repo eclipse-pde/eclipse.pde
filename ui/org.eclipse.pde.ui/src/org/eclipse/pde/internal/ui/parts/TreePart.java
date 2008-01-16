@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class TreePart extends StructuredViewerPart {
-	
+
 	/**
 	 * Constructor for TreePart.
 	 * @param buttonLabels
@@ -31,7 +25,7 @@ public class TreePart extends StructuredViewerPart {
 	public TreePart(String[] buttonLabels) {
 		super(buttonLabels);
 	}
-	
+
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		return new TreeViewer(parent, style);
 	}
@@ -46,30 +40,32 @@ public class TreePart extends StructuredViewerPart {
 		else
 			style |= toolkit.getBorderStyle();
 		TreeViewer treeViewer = createTreeViewer(parent, style);
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener () {
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				TreePart.this.selectionChanged((IStructuredSelection)e.getSelection());
+				TreePart.this.selectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
-				TreePart.this.handleDoubleClick((IStructuredSelection)e.getSelection());
+				TreePart.this.handleDoubleClick((IStructuredSelection) e.getSelection());
 			}
 		});
 		return treeViewer;
 	}
-	
+
 	public TreeViewer getTreeViewer() {
-		return (TreeViewer)getViewer();
+		return (TreeViewer) getViewer();
 	}
+
 	/*
 	 * @see SharedPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(Button button, int index) {
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
+
 	protected void handleDoubleClick(IStructuredSelection selection) {
 	}
 }

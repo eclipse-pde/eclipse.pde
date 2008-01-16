@@ -64,9 +64,11 @@ public class NullUndoManager implements IModelUndoManager {
 	 */
 	public void setIgnoreChanges(boolean ignore) {
 	}
-	
+
 	public void setActions(IAction undoAction, IAction redoAction) {
-		if (undoAction!=null) undoAction.setEnabled(false);
-		if (redoAction!=null) redoAction.setEnabled(false);
+		if (undoAction != null)
+			undoAction.setEnabled(false);
+		if (redoAction != null)
+			redoAction.setEnabled(false);
 	}
 }

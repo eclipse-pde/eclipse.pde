@@ -11,39 +11,21 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchMatch;
-import org.eclipse.jdt.core.search.SearchParticipant;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
 import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.Match;
 
-
 public class DependencyExtentOperation {
-	
+
 	class TypeReferenceSearchRequestor extends SearchRequestor {
 		boolean fUsed = false;
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
 		 */
@@ -52,14 +34,14 @@ public class DependencyExtentOperation {
 				fUsed = true;
 			}
 		}
-		
+
 		public boolean containMatches() {
 			return fUsed;
 		}
 	}
-	
+
 	class TypeDeclarationSearchRequestor extends SearchRequestor {
-		
+
 		private Match fMatch;
 
 		/* (non-Javadoc)
@@ -67,29 +49,29 @@ public class DependencyExtentOperation {
 		 */
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			if (!match.isInsideDocComment())
-				fMatch = new Match(match.getElement(), Match.UNIT_CHARACTER, match.getOffset(), match.getLength()); 
+				fMatch = new Match(match.getElement(), Match.UNIT_CHARACTER, match.getOffset(), match.getLength());
 		}
-		
+
 		public Match getMatch() {
 			return fMatch;
-		}		
+		}
 	}
-	
+
 	private DependencyExtentSearchResult fSearchResult;
 	private String fImportID;
 	private IPluginModelBase fModel;
 	private IProject fProject;
 
 	public DependencyExtentOperation(IProject project, String importID, ISearchResult searchResult) {
-		fSearchResult = (DependencyExtentSearchResult)searchResult;
+		fSearchResult = (DependencyExtentSearchResult) searchResult;
 		fProject = project;
 		fImportID = importID;
 		fModel = PluginRegistry.findModel(project);
 	}
-	
+
 	public void execute(IProgressMonitor monitor) {
 		IPluginModelBase[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10);  //$NON-NLS-1$//$NON-NLS-2$ 
+		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10); //$NON-NLS-1$//$NON-NLS-2$ 
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
@@ -103,7 +85,7 @@ public class DependencyExtentOperation {
 			findMatches(extPoints[i]);
 		}
 	}
-	
+
 	private void findMatches(IPluginExtensionPoint point) {
 		String fullID = point.getFullId();
 		if (fullID == null)
@@ -112,7 +94,7 @@ public class DependencyExtentOperation {
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			if (fullID.equals(extensions[i].getPoint())) {
-				int line = ((ISourceObject)extensions[i]).getStartLine()-1;
+				int line = ((ISourceObject) extensions[i]).getStartLine() - 1;
 				if (line >= 0) {
 					fSearchResult.addMatch(new Match(point, Match.UNIT_LINE, line, 1));
 					break;
@@ -120,12 +102,12 @@ public class DependencyExtentOperation {
 			}
 		}
 	}
-	
+
 	private void checkForJavaDependencies(IPluginModelBase[] models, IProgressMonitor monitor) {
 		try {
-			if (!fProject.hasNature(JavaCore.NATURE_ID)) 
+			if (!fProject.hasNature(JavaCore.NATURE_ID))
 				return;
-			
+
 			IJavaProject jProject = JavaCore.create(fProject);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
@@ -150,40 +132,30 @@ public class DependencyExtentOperation {
 						if (types.length > 0)
 							searchForTypesUsed(engine, child, types, PluginJavaSearchUtil.createSeachScope(jProject));
 					}
-				} 
+				}
 				monitor.worked(1);
-			}	
-		} catch (CoreException e) {			
+			}
+		} catch (CoreException e) {
 		} finally {
 			monitor.done();
 		}
 	}
-	
+
 	private void searchForTypesUsed(SearchEngine engine, IJavaElement parent, IType[] types, IJavaSearchScope scope) throws CoreException {
 		for (int i = 0; i < types.length; i++) {
 			if (types[i].isAnonymous())
 				continue;
 			TypeReferenceSearchRequestor requestor = new TypeReferenceSearchRequestor();
-			engine.search(
-					SearchPattern.createPattern(types[i], IJavaSearchConstants.REFERENCES),
-					new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()},
-					scope,
-					requestor,
-					null);
+			engine.search(SearchPattern.createPattern(types[i], IJavaSearchConstants.REFERENCES), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, scope, requestor, null);
 			if (requestor.containMatches()) {
 				TypeDeclarationSearchRequestor decRequestor = new TypeDeclarationSearchRequestor();
-				engine.search(
-						SearchPattern.createPattern(types[i], IJavaSearchConstants.DECLARATIONS),
-						new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()},
-						SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}),
-						decRequestor,
-						null);
+				engine.search(SearchPattern.createPattern(types[i], IJavaSearchConstants.DECLARATIONS), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}), decRequestor, null);
 				Match match = decRequestor.getMatch();
 				if (match != null)
-					fSearchResult.addMatch(match);	
+					fSearchResult.addMatch(match);
 			}
 		}
-		
+
 	}
 
 }

@@ -12,20 +12,13 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -33,14 +26,14 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestPackageRenameParticipant extends PDERenameParticipant {
-	
+
 	protected boolean initialize(Object element) {
 		try {
 			if (element instanceof IPackageFragment) {
-				IPackageFragment fragment = (IPackageFragment)element;
+				IPackageFragment fragment = (IPackageFragment) element;
 				if (!fragment.containsJavaResources())
 					return false;
-				IJavaProject javaProject = (IJavaProject)fragment.getAncestor(IJavaElement.JAVA_PROJECT);
+				IJavaProject javaProject = (IJavaProject) fragment.getAncestor(IJavaElement.JAVA_PROJECT);
 				IProject project = javaProject.getProject();
 				if (WorkspaceModelManager.isPluginProject(project)) {
 					fProject = javaProject.getProject();
@@ -57,7 +50,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	public String getName() {
 		return PDEUIMessages.ManifestPackageRenameParticipant_packageRename;
 	}
-	
+
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		super.addBundleManifestChange(result, pm);
 		IPluginModelBase model = PluginRegistry.findModel(fProject);
@@ -69,7 +62,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 					if (isAffected(desc, dependents[i])) {
 						IPluginModelBase candidate = PluginRegistry.findModel(dependents[i]);
 						if (candidate instanceof IBundlePluginModelBase) {
-							IFile file = (IFile)candidate.getUnderlyingResource();
+							IFile file = (IFile) candidate.getUnderlyingResource();
 							addBundleManifestChange(file, result, pm);
 						}
 					}
@@ -77,17 +70,17 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 			}
 		}
 	}
-	
+
 	private boolean isAffected(BundleDescription desc, BundleDescription dependent) {
 		ImportPackageSpecification[] imports = dependent.getImportPackages();
 		Iterator iter = fElements.keySet().iterator();
 		while (iter.hasNext()) {
-			String name = ((IJavaElement)iter.next()).getElementName();
+			String name = ((IJavaElement) iter.next()).getElementName();
 			for (int i = 0; i < imports.length; i++) {
 				if (name.equals(imports[i].getName())) {
 					BaseDescription supplier = imports[i].getSupplier();
 					if (supplier instanceof ExportPackageDescription) {
-						if (desc.equals(((ExportPackageDescription)supplier).getExporter()))
+						if (desc.equals(((ExportPackageDescription) supplier).getExporter()))
 							return true;
 					}
 				}

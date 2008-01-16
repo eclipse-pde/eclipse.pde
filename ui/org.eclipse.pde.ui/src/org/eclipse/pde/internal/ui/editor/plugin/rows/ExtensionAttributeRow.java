@@ -17,13 +17,10 @@ import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
-import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -35,63 +32,65 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	protected boolean blockNotification;
 	protected boolean dirty;
 	protected IInformationControl fIC;
-	
+
 	public ExtensionAttributeRow(IContextPart part, ISchemaAttribute att) {
 		this.part = part;
 		this.att = att;
 	}
-	
+
 	public ExtensionAttributeRow(IContextPart part, IPluginAttribute att) {
 		this.part = part;
 		this.att = att;
 	}
-	
+
 	public ISchemaAttribute getAttribute() {
-		return (att instanceof ISchemaAttribute) ? (ISchemaAttribute)att:null;
+		return (att instanceof ISchemaAttribute) ? (ISchemaAttribute) att : null;
 	}
-	
+
 	public String getName() {
 		if (att instanceof ISchemaAttribute)
-			return ((ISchemaAttribute)att).getName();
+			return ((ISchemaAttribute) att).getName();
 
-		return ((IPluginAttribute)att).getName();
+		return ((IPluginAttribute) att).getName();
 	}
-	
+
 	protected int getUse() {
 		if (att instanceof ISchemaAttribute)
-			return ((ISchemaAttribute)att).getUse();
+			return ((ISchemaAttribute) att).getUse();
 		return ISchemaAttribute.OPTIONAL;
 	}
-	
+
 	protected String getDescription() {
 		if (att instanceof ISchemaAttribute)
-			return ((ISchemaAttribute)att).getDescription();
+			return ((ISchemaAttribute) att).getDescription();
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	protected String getValue() {
-		String value= ""; //$NON-NLS-1$
-		if (input!=null) {
+		String value = ""; //$NON-NLS-1$
+		if (input != null) {
 			IPluginAttribute patt = input.getAttribute(getName());
-			if (patt!=null)
+			if (patt != null)
 				value = patt.getValue();
 		}
 		return value;
 	}
+
 	protected String getPropertyLabel() {
-		String label=getName();
-		if (getUse()==ISchemaAttribute.REQUIRED)
-			label+= "*:"; //$NON-NLS-1$
+		String label = getName();
+		if (getUse() == ISchemaAttribute.REQUIRED)
+			label += "*:"; //$NON-NLS-1$
 		else
-			label+=":"; //$NON-NLS-1$
+			label += ":"; //$NON-NLS-1$
 		return label;
 	}
+
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(parent, getPropertyLabel(), SWT.NULL);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		PDETextHover.addHoverListenerToControl(fIC, label, this);	
+		PDETextHover.addHoverListenerToControl(fIC, label, this);
 	}
-	
+
 	/**
 	 * @param control
 	 */
@@ -99,12 +98,12 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		fIC = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
 		fIC.setSizeConstraints(300, 600);
 	}
-	
+
 	public String getHoverContent(Control c) {
 		if (c instanceof Label || c instanceof Hyperlink)
 			return getDescription();
 		if (c instanceof Text) {
-			String text = ((Text)c).getText();
+			String text = ((Text) c).getText();
 			ISchemaAttribute sAtt = getAttribute();
 			String translated = null;
 			if (input != null && sAtt != null && sAtt.isTranslatable() && text.startsWith("%")) //$NON-NLS-1$
@@ -114,7 +113,7 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param toolkit
@@ -124,17 +123,18 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		createTextHover(parent);
 	}
 
-	protected abstract void update();	
+	protected abstract void update();
+
 	public abstract void commit();
 
 	public abstract void setFocus();
-	
+
 	public boolean isDirty() {
 		return dirty;
 	}
 
 	protected void markDirty() {
-		dirty=true;
+		dirty = true;
 		part.fireSaveNeeded();
 	}
 
@@ -147,6 +147,7 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		this.input = input;
 		update();
 	}
+
 	protected IProject getProject() {
 		return part.getPage().getPDEEditor().getCommonProject();
 	}

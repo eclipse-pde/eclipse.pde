@@ -12,13 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -28,7 +22,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class SimpleCSRemoveRunObjectAction extends Action {
 
 	private ISimpleCSRunContainerObject fRunContainerObject;
-	
+
 	/**
 	 * 
 	 */
@@ -53,18 +47,17 @@ public class SimpleCSRemoveRunObjectAction extends Action {
 			// Determine parent type and remove accordingly 
 			ISimpleCSObject parent = fRunContainerObject.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				ISimpleCSItem item = (ISimpleCSItem)parent;
+				ISimpleCSItem item = (ISimpleCSItem) parent;
 				item.setExecutable(null);
 			} else if (parent.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem)parent;
-				subitem.setExecutable(null);				
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem) parent;
+				subitem.setExecutable(null);
 			} else if (parent.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) {
 				// Specifically for perform-when edge case
 				// Action and command supported; but, will never be applicable
-				if ((fRunContainerObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
-						(fRunContainerObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
-					ISimpleCSPerformWhen performWhen = (ISimpleCSPerformWhen)parent;
-					performWhen.removeExecutable((ISimpleCSRunObject)fRunContainerObject);
+				if ((fRunContainerObject.getType() == ISimpleCSConstants.TYPE_ACTION) || (fRunContainerObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+					ISimpleCSPerformWhen performWhen = (ISimpleCSPerformWhen) parent;
+					performWhen.removeExecutable((ISimpleCSRunObject) fRunContainerObject);
 				}
 			}
 		}

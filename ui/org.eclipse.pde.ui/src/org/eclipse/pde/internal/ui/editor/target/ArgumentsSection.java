@@ -12,15 +12,10 @@ package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -31,23 +26,20 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class ArgumentsSection extends PDESection {
-	
+
 	private static final String[] TAB_LABELS = new String[2];
 	static {
 		TAB_LABELS[0] = PDEUIMessages.ArgumentsSection_programTabLabel;
 		TAB_LABELS[1] = PDEUIMessages.ArgumentsSection_vmTabLabel;
 	}
-	
+
 	private CTabFolder fTabFolder;
 	private FormEntry fArgument;
 	private int fLastTab;
@@ -66,13 +58,13 @@ public class ArgumentsSection extends PDESection {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 1;
 		section.setLayoutData(data);
-		
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 100;
 		client.setLayoutData(gd);
-		
+
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -80,9 +72,7 @@ public class ArgumentsSection extends PDESection {
 		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
-				toolkit.getColors().getBackground() },
-				new int[] { 100 }, true);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fArgument.isDirty())
@@ -92,10 +82,10 @@ public class ArgumentsSection extends PDESection {
 		});
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		
-		fArgument = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_argumentsTextLabel, SWT.MULTI|SWT.WRAP); 
+
+		fArgument = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_argumentsTextLabel, SWT.MULTI | SWT.WRAP);
 		fArgument.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
-		fArgument.setFormEntryListener(new FormEntryAdapter(this, actionBars) {			
+		fArgument.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				if (fLastTab == 0)
 					getArgumentInfo().setProgramArguments(fArgument.getValue());
@@ -103,7 +93,7 @@ public class ArgumentsSection extends PDESection {
 					getArgumentInfo().setVMArguments(fArgument.getValue());
 			}
 		});
-		
+
 		Button variables = toolkit.createButton(client, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		variables.addSelectionListener(new SelectionAdapter() {
@@ -112,7 +102,7 @@ public class ArgumentsSection extends PDESection {
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
-                    fArgument.getText().insert(variable);
+					fArgument.getText().insert(variable);
 				}
 			}
 		});
@@ -120,29 +110,29 @@ public class ArgumentsSection extends PDESection {
 		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		
+
 		// Register to be notified when the model changes
-		getModel().addModelChangedListener(this);		
+		getModel().addModelChangedListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 		}
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+		}
 	}
-	
+
 	/**
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Perform the refresh
 		refresh();
-	}		
-	
+	}
+
 	private void createTabs() {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
@@ -152,7 +142,7 @@ public class ArgumentsSection extends PDESection {
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
 	}
-	
+
 	private IArgumentsInfo getArgumentInfo() {
 		IArgumentsInfo info = getTarget().getArguments();
 		if (info == null) {
@@ -161,15 +151,15 @@ public class ArgumentsSection extends PDESection {
 		}
 		return info;
 	}
-	
+
 	private ITarget getTarget() {
 		return getModel().getTarget();
 	}
-	
+
 	private ITargetModel getModel() {
-		return (ITargetModel)getPage().getPDEEditor().getAggregateModel();
+		return (ITargetModel) getPage().getPDEEditor().getAggregateModel();
 	}
-	
+
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
 		if (fLastTab == 0)
@@ -178,22 +168,22 @@ public class ArgumentsSection extends PDESection {
 			fArgument.setValue(getArgumentInfo().getVMArguments(), true);
 		super.refresh();
 	}
-	
+
 	public void commit(boolean onSave) {
 		fArgument.commit();
 		super.commit(onSave);
 	}
-	
+
 	public void cancelEdit() {
 		fArgument.cancelEdit();
 		super.cancelEdit();
 	}
-	
+
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return d.getFocusControl() instanceof Text;
 	}
-	
+
 	public void dispose() {
 		ITargetModel model = getModel();
 		if (model != null) {
@@ -203,5 +193,5 @@ public class ArgumentsSection extends PDESection {
 			fImage.dispose();
 		super.dispose();
 	}
-	
+
 }

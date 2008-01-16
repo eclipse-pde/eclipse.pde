@@ -12,12 +12,10 @@ package org.eclipse.pde.internal.ui;
 
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.*;
 
 public class PDEPerspective implements IPerspectiveFactory {
-	
+
 	private IPageLayout factory;
 
 	public PDEPerspective() {
@@ -32,61 +30,49 @@ public class PDEPerspective implements IPerspectiveFactory {
 		addPerspectiveShortcuts();
 		addViewShortcuts();
 	}
-	
+
 	private void addPerspectiveShortcuts() {
 		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
 		factory.addPerspectiveShortcut(JavaUI.ID_PERSPECTIVE);
-		factory.addPerspectiveShortcut(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);		
+		factory.addPerspectiveShortcut(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 	}
-	
+
 	private void addViews() {
-		IFolderLayout topLeft =
-			factory.createFolder(
-				"topLeft", //$NON-NLS-1$
-				IPageLayout.LEFT,
-				0.25f,
-				factory.getEditorArea());
+		IFolderLayout topLeft = factory.createFolder("topLeft", //$NON-NLS-1$
+				IPageLayout.LEFT, 0.25f, factory.getEditorArea());
 		topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addView(IPDEUIConstants.PLUGINS_VIEW_ID);
 
-		IFolderLayout bottom =
-			factory.createFolder(
-				"bottomRight", //$NON-NLS-1$
-				IPageLayout.BOTTOM,
-				0.75f,
-				factory.getEditorArea());
+		IFolderLayout bottom = factory.createFolder("bottomRight", //$NON-NLS-1$
+				IPageLayout.BOTTOM, 0.75f, factory.getEditorArea());
 		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		
-		factory.addView(
-			IPageLayout.ID_OUTLINE,
-			IPageLayout.RIGHT,
-			0.75f,
-			factory.getEditorArea());		
+
+		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
 	}
-	
+
 	private void addActionSets() {
 		factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 		factory.addActionSet(JavaUI.ID_ACTION_SET);
-		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
+		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
 		factory.addActionSet("org.eclipse.debug.ui.breakpointActionSet"); //$NON-NLS-1$
 	}
-	
+
 	private void addNewWizardShortcuts() {
 		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProductConfigurationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProfileWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard");	 //$NON-NLS-1$
+		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
 	}
-	
+
 	private void addViewShortcuts() {
 		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
 		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$

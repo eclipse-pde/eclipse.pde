@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 /**
  * An interface for extension editor wizards. Clients should implement this
  * interface if they are plugging into PDE using
@@ -48,6 +50,5 @@ public interface IExtensionEditorWizard extends IBasePluginWizard {
 	 *            manifest editor extension tree
 	 *  
 	 */
-	public void init(IProject project, IPluginModelBase pluginModel,
-			IStructuredSelection selection);
+	public void init(IProject project, IPluginModelBase pluginModel, IStructuredSelection selection);
 }

@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPage {
-	
+
 	class ContentProvider implements IStructuredContentProvider {
 
 		private TableViewer fTableViewer;
@@ -45,16 +40,16 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			fTableViewer = (TableViewer)viewer;
-			fSearchResult = (AbstractTextSearchResult)newInput;
+			fTableViewer = (TableViewer) viewer;
+			fSearchResult = (AbstractTextSearchResult) newInput;
 		}
-		
+
 		public void clear() {
 			fTableViewer.refresh();
 		}
-		
+
 		public void elementsChanged(Object[] updatedElements) {
-			for (int i= 0; i < updatedElements.length; i++) {
+			for (int i = 0; i < updatedElements.length; i++) {
 				if (fSearchResult.getMatchCount(updatedElements[i]) > 0) {
 					if (fTableViewer.testFindItem(updatedElements[i]) != null)
 						fTableViewer.refresh(updatedElements[i]);
@@ -72,8 +67,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	public AbstractSearchResultPage() {
 		super(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
 	 */
@@ -89,7 +83,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		if (fContentProvider != null)
 			fContentProvider.clear();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
 	 */
@@ -103,13 +97,12 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setComparator(createViewerComparator());
 		viewer.setLabelProvider(createLabelProvider());
-		fContentProvider= new ContentProvider();
+		fContentProvider = new ContentProvider();
 		viewer.setContentProvider(fContentProvider);
 	}
-	
+
 	protected abstract ILabelProvider createLabelProvider();
-	
+
 	protected abstract ViewerComparator createViewerComparator();
-	
 
 }

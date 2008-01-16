@@ -11,11 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.outline;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.util.StringMatcher;
 
 /**
@@ -25,7 +21,7 @@ import org.eclipse.pde.internal.ui.util.StringMatcher;
 public class QuickOutlineNamePatternFilter extends ViewerFilter {
 
 	private StringMatcher fStringMatcher;
-	
+
 	/**
 	 * 
 	 */
@@ -39,17 +35,14 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		// Element passes the filter if the string matcher is undefined or the
 		// viewer is not a tree viewer
-		if ((fStringMatcher == null) || 
-				((viewer instanceof TreeViewer) == false)) {
+		if ((fStringMatcher == null) || ((viewer instanceof TreeViewer) == false)) {
 			return true;
 		}
-		TreeViewer treeViewer = (TreeViewer)viewer;
+		TreeViewer treeViewer = (TreeViewer) viewer;
 		// Match the pattern against the label of the given element
-		String matchName = 
-			((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
+		String matchName = ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
 		// Element passes the filter if it matches the pattern
-		if ((matchName != null) && 
-				fStringMatcher.match(matchName)) {
+		if ((matchName != null) && fStringMatcher.match(matchName)) {
 			return true;
 		}
 		// Determine whether the element has children that pass the filter
@@ -66,8 +59,7 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 		// as getting the children
 		// If the element has a child that passes the filter, then we want to
 		// keep the parent around - even if it does not pass the filter itself
-		Object[] children = 
-			((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
+		Object[] children = ((ITreeContentProvider) viewer.getContentProvider()).getChildren(element);
 		for (int i = 0; i < children.length; i++) {
 			if (select(viewer, element, children[i])) {
 				return true;
@@ -75,13 +67,13 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 		}
 		// Element does not pass the filter
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @param stringMatcher
 	 */
 	public void setStringMatcher(StringMatcher stringMatcher) {
 		fStringMatcher = stringMatcher;
 	}
-	
+
 }

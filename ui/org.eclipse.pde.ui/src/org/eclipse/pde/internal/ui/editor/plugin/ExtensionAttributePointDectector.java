@@ -19,46 +19,40 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 
 /**
  * ExtensionAttributePointDectector
  *
  */
-public class ExtensionAttributePointDectector implements MouseListener,
-		KeyListener {
+public class ExtensionAttributePointDectector implements MouseListener, KeyListener {
 
 	private ManifestSourcePage fSourcePage;
-	
+
 	private StyledText fStyledText;
-	
+
 	private ISelection fSelection;
-	
+
 	/**
 	 * 
 	 */
 	public ExtensionAttributePointDectector() {
 		fSelection = null;
 		fStyledText = null;
-		fSourcePage = null;		
+		fSourcePage = null;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ISelection getSelection() {
 		return fSelection;
 	}
-	
+
 	/**
 	 * @param editor
 	 */
@@ -72,8 +66,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		}
 		StyledText newStyledText = viewer.getTextWidget();
 		// If the new styled text equals the old one, keep the old one
-		if ((fStyledText != null) && 
-				fStyledText.equals(newStyledText)) {
+		if ((fStyledText != null) && fStyledText.equals(newStyledText)) {
 			return;
 		}
 		// Remove the listeners on the old styled text
@@ -86,7 +79,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		// an extension
 		checkIfOnTarget();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -99,17 +92,14 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		}
 		// Get the region selected
 		Point selectionPoint = fStyledText.getSelection();
-		Region selectionRegion = new Region(selectionPoint.x, 
-				selectionPoint.y - selectionPoint.x);
+		Region selectionRegion = new Region(selectionPoint.x, selectionPoint.y - selectionPoint.x);
 		// Determine whether the region selected is the point attribute of
 		// and extension
-		if ((selectionRegion == null) ||
-				(fSourcePage == null)) {
+		if ((selectionRegion == null) || (fSourcePage == null)) {
 			return;
 		}
 		// Retrieve the document range corresponding to the selection region
-		IDocumentRange element = 
-			fSourcePage.getRangeElement(selectionRegion.getOffset(), true);
+		IDocumentRange element = fSourcePage.getRangeElement(selectionRegion.getOffset(), true);
 		// Validate the obtained document range
 		if (XMLUtil.withinRange(element, selectionRegion.getOffset()) == false) {
 			return;
@@ -120,19 +110,16 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		}
 		// Ignore IDocumentElementNode
 		// Ignore IDocumentTextNode
-		IDocumentAttributeNode documentAttribute = ((IDocumentAttributeNode)element);
+		IDocumentAttributeNode documentAttribute = ((IDocumentAttributeNode) element);
 		String attributeValue = documentAttribute.getAttributeValue();
 		// Ensure the attribute value is defined
-		if ((attributeValue == null) || 
-				(attributeValue.length() == 0)) {
+		if ((attributeValue == null) || (attributeValue.length() == 0)) {
 			return;
 		}
 		// Get the parent node: either extension or extension point
-		IPluginObject node = 
-			XMLUtil.getTopLevelParent((IDocumentElementNode)documentAttribute);
+		IPluginObject node = XMLUtil.getTopLevelParent((IDocumentElementNode) documentAttribute);
 		// Ensure the node is defined and comes from and editable model
-		if ((node == null) || 
-				(node.getModel().isEditable() == false)) {
+		if ((node == null) || (node.getModel().isEditable() == false)) {
 			return;
 		}
 		// Ensure the node is an extension
@@ -140,18 +127,15 @@ public class ExtensionAttributePointDectector implements MouseListener,
 			return;
 		}
 		// Ignore IPluginExtensionPoint
-		IPluginExtension extension = (IPluginExtension)node;
+		IPluginExtension extension = (IPluginExtension) node;
 		// Retrieve the corresponding schema attribute to this node
-		ISchemaAttribute schemaAttribute = 
-			XMLUtil.getSchemaAttribute(documentAttribute, 
-					extension.getPoint());
+		ISchemaAttribute schemaAttribute = XMLUtil.getSchemaAttribute(documentAttribute, extension.getPoint());
 		// Ensure the schema attribute is defined
 		if (schemaAttribute == null) {
 			return;
 		}
 		// Ensure the attribute is a point
-		if (((schemaAttribute.getParent() instanceof SchemaRootElement) == false) ||
-				(documentAttribute.getAttributeName().equals(IPluginExtension.P_POINT) == false)) {
+		if (((schemaAttribute.getParent() instanceof SchemaRootElement) == false) || (documentAttribute.getAttributeName().equals(IPluginExtension.P_POINT) == false)) {
 			return;
 		}
 		fSelection = new StructuredSelection(extension);
@@ -172,13 +156,12 @@ public class ExtensionAttributePointDectector implements MouseListener,
 	 * @return
 	 */
 	private boolean isInputInitialized() {
-		if ((fStyledText == null) ||
-				(fStyledText.isDisposed())) {
+		if ((fStyledText == null) || (fStyledText.isDisposed())) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -188,7 +171,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		}
 		fStyledText.addMouseListener(this);
 		fStyledText.addKeyListener(this);
-	}		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
@@ -217,6 +200,6 @@ public class ExtensionAttributePointDectector implements MouseListener,
 	 */
 	public void keyReleased(KeyEvent e) {
 		// Ignore
-	}	
-	
+	}
+
 }

@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -26,29 +25,25 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
 public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
-	
+
 	private ISelection fSelection;
-	
+
 	public OpenManifestAction() {
 		super();
 	}
-	
+
 	public void dispose() {
 	}
-	
+
 	public void init(IWorkbenchWindow window) {
 	}
-	
+
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) fSelection;
@@ -61,14 +56,13 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 					proj = ((IFile) element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
-				else if (element instanceof IAdaptable) 
-					proj = (IProject)((IAdaptable)element).getAdapter(IProject.class);
+				else if (element instanceof IAdaptable)
+					proj = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
 				if (proj != null && WorkspaceModelManager.isPluginProject(proj))
 					projects.add(proj);
 			}
 			if (projects.size() > 0) {
-				BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
-						.getDisplay(), new Runnable() {
+				BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 					public void run() {
 						Iterator it = projects.iterator();
 						while (it.hasNext()) {
@@ -79,29 +73,21 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 							if (file == null || !file.exists())
 								file = project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 							if (file == null || !file.exists())
-								MessageDialog.openError(PDEPlugin
-										.getActiveWorkbenchShell(),
-										PDEUIMessages.OpenManifestsAction_title,
-										NLS.bind(PDEUIMessages.OpenManifestsAction_cannotFind, project.getName()));
+								MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, NLS.bind(PDEUIMessages.OpenManifestsAction_cannotFind, project.getName()));
 							else
 								try {
 									IDE.openEditor(PDEPlugin.getActivePage(), file, IPDEUIConstants.MANIFEST_EDITOR_ID);
 								} catch (PartInitException e) {
-									MessageDialog.openError(PDEPlugin
-											.getActiveWorkbenchShell(),
-											PDEUIMessages.OpenManifestsAction_title,
-											NLS.bind(PDEUIMessages.OpenManifestsAction_cannotOpen, project.getName()));
+									MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, NLS.bind(PDEUIMessages.OpenManifestsAction_cannotOpen, project.getName()));
 								}
 						}
 					}
 				});
 			} else
-				MessageDialog.openInformation(PDEPlugin
-						.getActiveWorkbenchShell(),
-						PDEUIMessages.OpenManifestsAction_title,
-						PDEUIMessages.OpenManifestAction_noManifest);
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, PDEUIMessages.OpenManifestAction_noManifest);
 		}
 	}
+
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}

@@ -23,12 +23,12 @@ public interface ICSDetails {
 	 * @param parent
 	 */
 	public void createDetails(Composite parent);
-	
+
 	/**
 	 * 
 	 */
 	public void updateFields();
-	
+
 	/**
 	 * 
 	 */

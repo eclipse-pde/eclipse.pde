@@ -9,12 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.ui.editor.*;
 
 public class BuildOutlinePage extends FormOutlinePage {
 	/**
@@ -23,6 +20,7 @@ public class BuildOutlinePage extends FormOutlinePage {
 	public BuildOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
+
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
@@ -35,6 +33,7 @@ public class BuildOutlinePage extends FormOutlinePage {
 		}
 		return new Object[0];
 	}
+
 	protected String getParentPageId(Object item) {
 		String pageId = null;
 		if (item instanceof IBuildEntry)

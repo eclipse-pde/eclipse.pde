@@ -11,15 +11,9 @@
 
 package org.eclipse.pde.internal.ui.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
+import java.io.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
@@ -49,8 +43,8 @@ public class XMLRootElementMatcher {
 		}
 	}
 
-	private static boolean matchFile(InputStream stream, String element)
-	{	XMLContentTypeHandler handler = new XMLContentTypeHandler();
+	private static boolean matchFile(InputStream stream, String element) {
+		XMLContentTypeHandler handler = new XMLContentTypeHandler();
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
 			parser.parse(stream, handler);
@@ -65,9 +59,10 @@ public class XMLRootElementMatcher {
 		} catch (IOException e) {
 			return false;
 		}
-	
+
 		return handler.isRootType(element);
 	}
+
 	/**
 	 * AbortParseException
 	 *
@@ -80,8 +75,8 @@ public class XMLRootElementMatcher {
 		}
 	}
 
-	private static class XMLContentTypeHandler extends DefaultHandler
-	{	private String fRootElem;
+	private static class XMLContentTypeHandler extends DefaultHandler {
+		private String fRootElem;
 
 		/**
 		 * 
@@ -89,18 +84,17 @@ public class XMLRootElementMatcher {
 		private XMLContentTypeHandler() {
 			fRootElem = null;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
-		public void startElement(String uri, String localName, String qName,
-				Attributes attributes) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			fRootElem = qName;
 			// Only care about the root node
 			// Abort parsing to save on performance
 			throw new AbortParseException();
 		}
-		
+
 		/**
 		 * @return
 		 */

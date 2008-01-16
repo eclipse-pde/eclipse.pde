@@ -14,9 +14,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.forms.editor.IFormPage;
 
@@ -30,7 +28,7 @@ class SiteLabelProvider extends LabelProvider {
 	private Image fSiteFeatureImage;
 
 	private Image fMissingSiteFeatureImage;
-	
+
 	private Image fPageImage;
 
 	private Image fCatDefImage;
@@ -44,14 +42,11 @@ class SiteLabelProvider extends LabelProvider {
 		fSharedProvider.connect(this);
 	}
 
-
 	public Image getImage(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(
-					((SiteFeatureAdapter) element).feature.getId(),
-					((SiteFeatureAdapter) element).feature.getVersion()) == null)
+			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null)
 				return fMissingSiteFeatureImage;
 			return fSiteFeatureImage;
 		}
@@ -68,7 +63,7 @@ class SiteLabelProvider extends LabelProvider {
 			return fSharedProvider.getObjectText(feature);
 		}
 		if (element instanceof IFormPage)
-			return ((IFormPage)element).getTitle();
+			return ((IFormPage) element).getTitle();
 		return fSharedProvider.getText(element);
 	}
 
@@ -78,23 +73,19 @@ class SiteLabelProvider extends LabelProvider {
 	public void dispose() {
 		fSharedProvider.disconnect(this);
 		// Dispose of images
-		if ((fCatDefImage != null) &&
-				(fCatDefImage.isDisposed() == false)) {
+		if ((fCatDefImage != null) && (fCatDefImage.isDisposed() == false)) {
 			fCatDefImage.dispose();
 			fCatDefImage = null;
 		}
-		if ((fSiteFeatureImage != null) &&
-				(fSiteFeatureImage.isDisposed() == false)) {
+		if ((fSiteFeatureImage != null) && (fSiteFeatureImage.isDisposed() == false)) {
 			fSiteFeatureImage.dispose();
 			fSiteFeatureImage = null;
 		}
-		if ((fMissingSiteFeatureImage != null) &&
-				(fMissingSiteFeatureImage.isDisposed() == false)) {
+		if ((fMissingSiteFeatureImage != null) && (fMissingSiteFeatureImage.isDisposed() == false)) {
 			fMissingSiteFeatureImage.dispose();
 			fMissingSiteFeatureImage = null;
 		}
-		if ((fPageImage != null) &&
-				(fPageImage.isDisposed() == false)) {
+		if ((fPageImage != null) && (fPageImage.isDisposed() == false)) {
 			fPageImage.dispose();
 			fPageImage = null;
 		}

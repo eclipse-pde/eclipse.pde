@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.io.File;
-
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -20,13 +19,13 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 public class PDEStorageDocumentProvider extends StorageDocumentProvider {
-	
+
 	private IDocumentSetupParticipant fSetupParticipant;
 
 	public PDEStorageDocumentProvider(IDocumentSetupParticipant participant) {
 		fSetupParticipant = participant;
 	}
-	
+
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null && fSetupParticipant != null) {
 			fSetupParticipant.setup(document);
@@ -38,14 +37,13 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof IAdaptable) {
-			IAdaptable input= (IAdaptable) element;
-			File file = (File)input.getAdapter(File.class);
+			IAdaptable input = (IAdaptable) element;
+			File file = (File) input.getAdapter(File.class);
 			if (file != null) {
 				return new SystemFileMarkerAnnotationModel();
 			}
 		}
 		return super.createAnnotationModel(element);
 	}
-
 
 }

@@ -9,8 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+
 /**
  * This interface is used to insulate the client's wizards from the master
  * wizard that is responsible for creating the new project. Clients use this
@@ -27,6 +29,7 @@ public interface IProjectProvider {
 	 * @return the handle of the new plug-in project
 	 */
 	IProject getProject();
+
 	/**
 	 * Returns the name of the plug-in project that will be created. This method
 	 * can be called at any time without forcing the project resource creation.
@@ -34,6 +37,7 @@ public interface IProjectProvider {
 	 * @return new project name
 	 */
 	String getProjectName();
+
 	/**
 	 * Returns an absolute path of the new plug-in project that will be created.
 	 * This method can be called at any time without forcing the project

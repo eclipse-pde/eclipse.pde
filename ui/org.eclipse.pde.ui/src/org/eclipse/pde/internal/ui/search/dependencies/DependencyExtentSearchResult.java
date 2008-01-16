@@ -12,22 +12,15 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IParent;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.search.SearchResult;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.IEditorMatchAdapter;
-import org.eclipse.search.ui.text.IFileMatchAdapter;
-import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-
 
 public class DependencyExtentSearchResult extends SearchResult implements IEditorMatchAdapter {
 
@@ -66,26 +59,26 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 		IEditorInput editorInput = editor.getEditorInput();
 		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
 		if (element != null) {
-			Set matches= new HashSet();
+			Set matches = new HashSet();
 			collectMatches(matches, element);
 			return (Match[]) matches.toArray(new Match[matches.size()]);
 		}
 		return super.computeContainedMatches(result, editor);
 
 	}
-	
+
 	private void collectMatches(Set matches, IJavaElement element) {
-		Match[] m= getMatches(element);
+		Match[] m = getMatches(element);
 		if (m.length != 0) {
-			for (int i= 0; i < m.length; i++) {
+			for (int i = 0; i < m.length; i++) {
 				matches.add(m[i]);
 			}
 		}
 		if (element instanceof IParent) {
-			IParent parent= (IParent) element;
+			IParent parent = (IParent) element;
 			try {
-				IJavaElement[] children= parent.getChildren();
-				for (int i= 0; i < children.length; i++) {
+				IJavaElement[] children = parent.getChildren();
+				for (int i = 0; i < children.length; i++) {
 					collectMatches(matches, children[i]);
 				}
 			} catch (JavaModelException e) {
@@ -93,7 +86,6 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 			}
 		}
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
@@ -123,5 +115,5 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
-	
+
 }

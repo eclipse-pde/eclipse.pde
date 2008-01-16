@@ -25,7 +25,7 @@ import org.eclipse.ui.IEditorPart;
  * @since 3.3
  */
 public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
@@ -33,7 +33,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	public void launch(ISelection selection, String mode) {
 		launch(mode);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
@@ -47,9 +47,9 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getLaunchConfigurationTypeName()
 	 */
 	protected String getLaunchConfigurationTypeName() {
-		return "org.eclipse.pde.ui.EquinoxLauncher";	 //$NON-NLS-1$
+		return "org.eclipse.pde.ui.EquinoxLauncher"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Delegates to the initializer associated with the selected OSGI framework
 	 * to initialize the launch configuration
@@ -70,5 +70,5 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		return true;
 	}
-	
+
 }

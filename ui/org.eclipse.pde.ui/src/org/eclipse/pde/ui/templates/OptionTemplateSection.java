@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -46,6 +46,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	private static class TemplatePage {
 		WizardPage page;
 		ArrayList options;
+
 		public TemplatePage() {
 			options = new ArrayList();
 		}
@@ -82,6 +83,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 			return "templates_" + schemaVersion; //$NON-NLS-1$
 		return "templates"; //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the install URL of the plug-in that contributes this template.
 	 * 
@@ -102,12 +104,13 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		URL url = getInstallURL();
 		try {
 			String location = getTemplateDirectory() + "/" //$NON-NLS-1$
-			+ getSectionId() + "/"; //$NON-NLS-1$
+					+ getSectionId() + "/"; //$NON-NLS-1$
 			return new URL(url, location);
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
+
 	/**
 	 * Returns the wizard page at the specified index. Pages must be created
 	 * prior to calling this method.
@@ -144,6 +147,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		tpage.page = new OptionTemplateWizardPage(this, tpage.options, null);
 		return tpage.page;
 	}
+
 	/**
 	 * Creates the wizard page for the specified page index. This method cannot
 	 * be called before setPageCount(int). The page will be created with all the
@@ -166,10 +170,10 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
 		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
-		tpage.page = new OptionTemplateWizardPage(this, tpage.options,
-				helpContextId);
+		tpage.page = new OptionTemplateWizardPage(this, tpage.options, helpContextId);
 		return tpage.page;
 	}
+
 	/**
 	 * Returns a number of pages that this template contributes to the wizard.
 	 * 
@@ -209,8 +213,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return new TemplateOption[0];
 		TemplatePage page = (TemplatePage) pages.get(pageIndex);
-		return (TemplateOption[]) page.options
-		.toArray(new TemplateOption[page.options.size()]);
+		return (TemplateOption[]) page.options.toArray(new TemplateOption[page.options.size()]);
 	}
 
 	/**
@@ -259,6 +262,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		String key = "template." + getSectionId() + ".name"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
 	}
+
 	/**
 	 * Returns the description of this template to be used in the UI. The
 	 * description is obtained by creating a lookup key using the following
@@ -272,6 +276,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		String key = "template." + getSectionId() + ".desc"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
 	}
+
 	/**
 	 * Locates the page that this option is presented in and flags that the
 	 * option is required and is currently not set. The flagging is done by
@@ -312,8 +317,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		currentPage.setPageComplete(true);
 	}
 
-	protected void registerOption(TemplateOption option, Object value,
-			int pageIndex) {
+	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		super.registerOption(option, value, pageIndex);
 		if (pageIndex >= 0 && pageIndex < pages.size()) {
 			TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
@@ -342,5 +346,5 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		}
 		resetPageState();
 	}
-	
+
 }

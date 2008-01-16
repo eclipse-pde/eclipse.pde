@@ -12,28 +12,20 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 
 public class LoopDialog extends TrayDialog {
 	private DependencyLoop[] fLoops;
 	private TreeViewer fLoopViewer;
 	private Image fLoopImage;
-	
+
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 		/* (non-Javadoc)
@@ -41,7 +33,7 @@ public class LoopDialog extends TrayDialog {
 		 */
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof DependencyLoop)
-				return ((DependencyLoop)parentElement).getMembers();
+				return ((DependencyLoop) parentElement).getMembers();
 			return new Object[0];
 		}
 
@@ -65,9 +57,9 @@ public class LoopDialog extends TrayDialog {
 		public Object[] getElements(Object inputElement) {
 			return fLoops;
 		}
-		
+
 	}
-	
+
 	class LoopLabelProvider extends LabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
@@ -77,6 +69,7 @@ public class LoopDialog extends TrayDialog {
 				return fLoopImage;
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
@@ -84,16 +77,14 @@ public class LoopDialog extends TrayDialog {
 			return PDEPlugin.getDefault().getLabelProvider().getText(element);
 		}
 	}
-	
-	
-	public LoopDialog(
-		Shell parentShell, DependencyLoop[] loops) {
+
+	public LoopDialog(Shell parentShell, DependencyLoop[] loops) {
 		super(parentShell);
 		fLoops = loops;
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		fLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ);		
+		fLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ);
 	}
-	
+
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
@@ -117,7 +108,7 @@ public class LoopDialog extends TrayDialog {
 		tree.setLayoutData(gd);
 		fLoopViewer.setInput(PDEPlugin.getDefault());
 		fLoopViewer.expandAll();
-		getShell().setText(PDEUIMessages.LoopDialog_title); 
+		getShell().setText(PDEUIMessages.LoopDialog_title);
 		return container;
 	}
 }

@@ -27,9 +27,9 @@ import org.eclipse.ui.ide.IDE;
 public class TranslationHyperlink extends AbstractHyperlink {
 
 	private IModel fBase;
-	
+
 	private boolean fOpened;
-	
+
 	public TranslationHyperlink(IRegion region, String element, IModel base) {
 		super(region, element);
 		fBase = base;
@@ -38,20 +38,20 @@ public class TranslationHyperlink extends AbstractHyperlink {
 	private String getLocaliation() {
 		String localiz = null;
 		if (fBase instanceof IPluginModelBase)
-			localiz = PDEManager.getBundleLocalization((IPluginModelBase)fBase);
+			localiz = PDEManager.getBundleLocalization((IPluginModelBase) fBase);
 		else if (fBase instanceof IBundleModel)
-			localiz = ((IBundleModel)fBase).getBundle().getLocalization();
+			localiz = ((IBundleModel) fBase).getBundle().getLocalization();
 		return localiz;
 	}
-	
+
 	public boolean getOpened() {
 		return fOpened;
 	}
-	
+
 	public void open() {
 		fOpened = openHyperLink();
 	}
-	
+
 	public boolean openHyperLink() {
 		String localiz = getLocaliation();
 		if (localiz == null) {
@@ -61,21 +61,21 @@ public class TranslationHyperlink extends AbstractHyperlink {
 		} else if (fElement.length() == 0 || fElement.charAt(0) != '%') {
 			return false;
 		}
-		
+
 		IProject proj = fBase.getUnderlyingResource().getProject();
 		IFile file = proj.getFile(localiz + ".properties"); //$NON-NLS-1$
 		if (!file.exists())
 			return false;
-		
+
 		try {
 			IEditorPart editor = IDE.openEditor(PDEPlugin.getActivePage(), file);
 			if (!(editor instanceof TextEditor))
 				return false;
-			TextEditor tEditor = (TextEditor)editor;
+			TextEditor tEditor = (TextEditor) editor;
 			IDocument doc = tEditor.getDocumentProvider().getDocument(tEditor.getEditorInput());
 			if (doc == null)
 				return false;
-			
+
 			String key = fElement.substring(1);
 			int keyLen = key.length();
 			String contents = doc.get();

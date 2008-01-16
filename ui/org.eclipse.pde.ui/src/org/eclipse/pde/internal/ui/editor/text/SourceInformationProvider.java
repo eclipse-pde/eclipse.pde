@@ -10,31 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-
+import org.eclipse.ui.*;
 
 public class SourceInformationProvider implements IInformationProvider, IInformationProviderExtension2, IPartListener {
 
 	public static final int F_NO_IMP = 0;
 	public static final int F_XML_IMP = 1;
 	public static final int F_MANIFEST_IMP = 2;
-	
+
 	protected PDESourcePage fSourcePage;
 	protected String fCurrentPerspective;
 	protected ITextHover fImplementation;
 	protected int fImpType;
-	
+
 	public void partOpened(IWorkbenchPart part) {
 	}
 
@@ -53,10 +45,9 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 	public void partBroughtToTop(IWorkbenchPart part) {
 		update();
 	}
-	
 
 	private IInformationControlCreator fPresenterControlCreator;
-	
+
 	public SourceInformationProvider(PDESourcePage editor, IInformationControlCreator creator, int impType) {
 		fSourcePage = editor;
 		fPresenterControlCreator = creator;
@@ -71,17 +62,17 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 		IWorkbenchPage page = fSourcePage.getSite().getWorkbenchWindow().getActivePage();
 		if (page != null) {
 			IPerspectiveDescriptor perspective = page.getPerspective();
-			if (perspective != null)  {
+			if (perspective != null) {
 				String perspectiveId = perspective.getId();
 				if (fCurrentPerspective == null || fCurrentPerspective != perspectiveId) {
 					fCurrentPerspective = perspectiveId;
 					switch (fImpType) {
-					case F_MANIFEST_IMP:
-						fImplementation = new ManifestTextHover(fSourcePage);
-						break;
-					case F_XML_IMP:
-						fImplementation = new PluginXMLTextHover(fSourcePage);
-						break;
+						case F_MANIFEST_IMP :
+							fImplementation = new ManifestTextHover(fSourcePage);
+							break;
+						case F_XML_IMP :
+							fImplementation = new PluginXMLTextHover(fSourcePage);
+							break;
 					}
 				}
 			}

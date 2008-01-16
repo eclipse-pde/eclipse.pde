@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
+
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.ui.PartInitException;
@@ -21,7 +22,8 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 			return;
 		PDESourcePage sourcePage;
 		// Don't duplicate
-		if (findPage(contextId)!=null) return;
+		if (findPage(contextId) != null)
+			return;
 		sourcePage = createSourcePage(this, contextId, context.getInput().getName(), context.getId());
 		sourcePage.setInputContext(context);
 		try {
@@ -30,7 +32,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	protected void removePage(String pageId) {
 		IFormPage page = findPage(pageId);
 		if (page == null)
@@ -43,7 +45,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 				page.dispose();
 		}
 	}
-	
+
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new GenericSourcePage(editor, title, name);
 	}

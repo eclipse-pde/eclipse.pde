@@ -14,28 +14,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.JREBlock;
-import org.eclipse.pde.internal.ui.launcher.ProgramBlock;
-import org.eclipse.pde.internal.ui.launcher.WorkspaceDataBlock;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-
 
 /**
  * A launch configuration tab that displays and edits the main launching arguments
@@ -46,11 +33,11 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.2
  */
 public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
-	
+
 	protected WorkspaceDataBlock fDataBlock;
 	protected ProgramBlock fProgramBlock;
 	protected JREBlock fJreBlock;
-	
+
 	private Image fImage;
 
 	public MainTab() {
@@ -76,42 +63,46 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	public void createControl(Composite parent) {
 		final ScrolledComposite scrollContainer = new ScrolledComposite(parent, SWT.V_SCROLL);
 		scrollContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Composite composite = new Composite(scrollContainer, SWT.NONE);
 		scrollContainer.setContent(composite);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		fDataBlock.createControl(composite);		
+
+		fDataBlock.createControl(composite);
 		fProgramBlock.createControl(composite);
 		fJreBlock.createControl(composite);
-		
+
 		// Add listener for each control to recalculate scroll bar when it is entered.
 		// This results in scrollbar scrolling when user tabs to a control that is not in the field of view.
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				Control child = (Control)e.widget;
+				Control child = (Control) e.widget;
 				Rectangle bounds = child.getBounds();
 				Rectangle area = scrollContainer.getClientArea();
 				Point origin = scrollContainer.getOrigin();
-				if (origin.x > bounds.x) origin.x = Math.max(0, bounds.x);
-				if (origin.y > bounds.y) origin.y = Math.max(0, bounds.y);
-				if (origin.x + area.width < bounds.x + bounds.width) origin.x = Math.max(0, bounds.x + bounds.width - area.width);
-				if (origin.y + area.height < bounds.y + bounds.height) origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+				if (origin.x > bounds.x)
+					origin.x = Math.max(0, bounds.x);
+				if (origin.y > bounds.y)
+					origin.y = Math.max(0, bounds.y);
+				if (origin.x + area.width < bounds.x + bounds.width)
+					origin.x = Math.max(0, bounds.x + bounds.width - area.width);
+				if (origin.y + area.height < bounds.y + bounds.height)
+					origin.y = Math.max(0, bounds.y + bounds.height - area.height);
 				scrollContainer.setOrigin(origin);
 			}
 		};
 		Control[] controls = composite.getChildren();
-		for (int i = 0; i < controls.length; i++) 
+		for (int i = 0; i < controls.length; i++)
 			controls[i].addListener(SWT.Activate, listener);
-				
+
 		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scrollContainer.setExpandHorizontal(true);
 		setControl(scrollContainer);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -126,7 +117,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		} finally {
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -136,7 +127,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fProgramBlock.setDefaults(config);
 		fJreBlock.setDefaults(config);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -146,7 +137,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fProgramBlock.performApply(config);
 		fJreBlock.performApply(config);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
@@ -154,7 +145,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	public String getName() {
 		return PDEUIMessages.MainTab_name;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
@@ -162,20 +153,20 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	/**
 	 * Creates the Workspace Data group on the tab
 	 */
 	protected void createWorkspaceDataBlock() {
-		fDataBlock = new WorkspaceDataBlock(this);		
+		fDataBlock = new WorkspaceDataBlock(this);
 	}
-	
+
 	/**
 	 * Creates the Program To Run group on the tab
 	 *
 	 */
 	protected void createProgramBlock() {
-		fProgramBlock = new ProgramBlock(this);		
+		fProgramBlock = new ProgramBlock(this);
 	}
 
 	/*
@@ -188,5 +179,5 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 			error = fJreBlock.validate();
 		setErrorMessage(error);
 	}
-	
+
 }

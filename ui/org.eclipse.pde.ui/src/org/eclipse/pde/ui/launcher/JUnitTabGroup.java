@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.EnvironmentTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 
@@ -25,23 +22,15 @@ import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
  * @since 3.3
  */
 public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
-		tabs = new ILaunchConfigurationTab[]{
-				new JUnitLaunchConfigurationTab(),
-				new PluginJUnitMainTab(), 
-				new JavaArgumentsTab(),
-				new PluginsTab(false),	
-				new ConfigurationTab(true), 
-				new TracingTab(),
-				new EnvironmentTab(), 
-				new CommonTab()};
+		tabs = new ILaunchConfigurationTab[] {new JUnitLaunchConfigurationTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(false), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
 	}
-	
+
 }

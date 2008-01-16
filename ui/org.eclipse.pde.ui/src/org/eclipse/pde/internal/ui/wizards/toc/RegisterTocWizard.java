@@ -12,14 +12,11 @@
 package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -29,10 +26,10 @@ import org.eclipse.ui.IWorkbench;
  */
 public class RegisterTocWizard extends Wizard implements INewWizard {
 
-	private RegisterTocWizardPage fMainPage;	
-	
+	private RegisterTocWizardPage fMainPage;
+
 	private IModel fModel;
-	
+
 	/**
 	 * 
 	 */
@@ -44,10 +41,10 @@ public class RegisterTocWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new RegisterTocWizardPage(fModel); 
+		fMainPage = new RegisterTocWizardPage(fModel);
 		addPage(fMainPage);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
@@ -68,16 +65,16 @@ public class RegisterTocWizard extends Wizard implements INewWizard {
 	 */
 	private IRunnableWithProgress getOperation() {
 		return new RegisterTocOperation(fMainPage, getShell());
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-        setWindowTitle(PDEUIMessages.RegisterTocWizard_registerTOC);
-        // TODO: MP: LOW: TOC: New register table of contents wizard image
-        setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
-        setNeedsProgressMonitor(true);
+		setWindowTitle(PDEUIMessages.RegisterTocWizard_registerTOC);
+		// TODO: MP: LOW: TOC: New register table of contents wizard image
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
+		setNeedsProgressMonitor(true);
 	}
-	
+
 }

@@ -15,24 +15,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteDescription;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
@@ -40,8 +29,7 @@ import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class CategoryDetailsSection extends PDESection implements IFormPart,
-		IPartSelectionListener {
+public class CategoryDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
 
 	private static final String PROPERTY_DESC = "desc"; //$NON-NLS-1$
 
@@ -58,13 +46,11 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fNameText;
 
 	public CategoryDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.CategoryDetails_title,
-				PDEUIMessages.CategoryDetails_sectionDescription, SWT.NULL);
+		this(page, parent, PDEUIMessages.CategoryDetails_title, PDEUIMessages.CategoryDetails_sectionDescription, SWT.NULL);
 
 	}
 
-	public CategoryDetailsSection(PDEFormPage page, Composite parent,
-			String title, String desc, int toggleStyle) {
+	public CategoryDetailsSection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -72,8 +58,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	}
 
 	private boolean alreadyExists(String name) {
-		ISiteCategoryDefinition[] defs = fCurrentCategoryDefinition.getModel()
-				.getSite().getCategoryDefinitions();
+		ISiteCategoryDefinition[] defs = fCurrentCategoryDefinition.getModel().getSite().getCategoryDefinitions();
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
 			if (def == fCurrentCategoryDefinition)
@@ -88,7 +73,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 	private void applyValue(String property, String value) throws CoreException {
 		if (fCurrentCategoryDefinition == null)
 			return;
-		if (property.equals(PROPERTY_NAME)){
+		if (property.equals(PROPERTY_NAME)) {
 			String oldName = fCurrentCategoryDefinition.getName();
 			fCurrentCategoryDefinition.setName(value);
 			bringFeatures(oldName);
@@ -98,12 +83,9 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 			if (value == null || value.length() == 0) {
 				fCurrentCategoryDefinition.setDescription(null);
 			} else {
-				ISiteDescription siteDesc = fCurrentCategoryDefinition
-						.getDescription();
+				ISiteDescription siteDesc = fCurrentCategoryDefinition.getDescription();
 				if (siteDesc == null) {
-					siteDesc = fCurrentCategoryDefinition.getModel()
-							.getFactory().createDescription(
-									fCurrentCategoryDefinition);
+					siteDesc = fCurrentCategoryDefinition.getModel().getFactory().createDescription(fCurrentCategoryDefinition);
 					siteDesc.setText(value);
 					fCurrentCategoryDefinition.setDescription(siteDesc);
 				} else {
@@ -122,8 +104,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -165,20 +146,15 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		fNameText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_name, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
-					if (text.getValue().length() <= 0
-							|| alreadyExists(text.getValue())) {
+					if (text.getValue().length() <= 0 || alreadyExists(text.getValue())) {
 						setValue(PROPERTY_NAME);
-						String message = PDEUIMessages.CategoryDetails_alreadyExists; 
-						MessageDialog
-								.openError(
-										PDEPlugin.getActiveWorkbenchShell(),
-										PDEUIMessages.CategoryDetails_alreadyExists_title, 
-										message);
+						String message = PDEUIMessages.CategoryDetails_alreadyExists;
+						MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.CategoryDetails_alreadyExists_title, message);
 					} else {
 						applyValue(PROPERTY_NAME, text.getValue());
 					}
@@ -204,11 +180,10 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		fLabelText.setEditable(isEditable());
 
 		fDescriptionText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_desc, SWT.WRAP | SWT.MULTI);
-		fDescriptionText.getText().setLayoutData(
-				new GridData(GridData.FILL_BOTH));
+		fDescriptionText.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fDescriptionText.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		fDescriptionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
@@ -244,22 +219,21 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		markStale();
 	}
 
-	private void bringFeatures(String oldCategory){
-		ISiteFeature[] siteFeatures = fCurrentCategoryDefinition.getModel()
-				.getSite().getFeatures();
+	private void bringFeatures(String oldCategory) {
+		ISiteFeature[] siteFeatures = fCurrentCategoryDefinition.getModel().getSite().getFeatures();
 		for (int i = 0; i < siteFeatures.length; i++) {
 			ISiteCategory[] categories = siteFeatures[i].getCategories();
 			for (int c = 0; c < categories.length; c++) {
 				if (oldCategory.equals(categories[c].getName())) {
 					try {
-						categories[c].setName(fCurrentCategoryDefinition
-								.getName());
+						categories[c].setName(fCurrentCategoryDefinition.getName());
 					} catch (CoreException ce) {
 					}
 				}
 			}
 		}
 	}
+
 	public void refresh() {
 		if (fCurrentCategoryDefinition == null) {
 			clearFields();
@@ -299,8 +273,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 			else if (property.equals(PROPERTY_TYPE))
 				fLabelText.setValue(fCurrentCategoryDefinition.getLabel(), true);
 			else if (property.equals(PROPERTY_DESC)) {
-				ISiteDescription siteDesc = fCurrentCategoryDefinition
-						.getDescription();
+				ISiteDescription siteDesc = fCurrentCategoryDefinition.getDescription();
 				if (siteDesc == null) {
 					clearField(property);
 				} else {

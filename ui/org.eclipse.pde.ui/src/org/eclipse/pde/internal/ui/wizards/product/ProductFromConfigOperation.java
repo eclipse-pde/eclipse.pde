@@ -12,16 +12,12 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IJREInfo;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -39,7 +35,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 		super(file);
 		fLaunchConfiguration = config;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation#initializeProduct(org.eclipse.pde.internal.core.iproduct.IProduct)
 	 */
@@ -50,7 +46,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			IProductModelFactory factory = product.getModel().getFactory();
 			boolean useProduct = fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false);
 			if (useProduct) {
-				String id = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+				String id = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 				if (id != null) {
 					initializeProductInfo(factory, product, id);
 				}
@@ -58,19 +54,19 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				String appName = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 				product.setApplication(appName);
 			}
-			
+
 			// Set JRE info from information from the launch config
-			String jreString = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
-			if (jreString != null){
+			String jreString = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
+			if (jreString != null) {
 				IPath jreContainerPath = new Path(jreString);
 				IJREInfo jreInfo = product.getJREInfo();
-				if (jreInfo == null){
+				if (jreInfo == null) {
 					jreInfo = product.getModel().getFactory().createJVMInfo();
 				}
 				jreInfo.setJREContainerPath(TargetPlatform.getOS(), jreContainerPath);
 				product.setJREInfo(jreInfo);
 			}
-			
+
 			addPlugins(factory, product, LaunchPluginValidator.getPluginList(fLaunchConfiguration));
 			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
@@ -81,13 +77,13 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 					IConfigurationFileInfo info = factory.createConfigFileInfo();
 					info.setUse("custom"); //$NON-NLS-1$
 					info.setPath(container.getFullPath().toString());
-					product.setConfigurationFileInfo(info);	
+					product.setConfigurationFileInfo(info);
 				} else {
 					super.initializeProduct(product);
 				}
 			}
 		} catch (CoreException e) {
-		}	
+		}
 	}
-	
+
 }

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui;
 
 import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,20 +22,20 @@ import org.eclipse.swt.graphics.Image;
  */
 public class PDEPluginImages {
 
-	private static final String NAME_PREFIX= PDEPlugin.getPluginId()+"."; //$NON-NLS-1$
+	private static final String NAME_PREFIX = PDEPlugin.getPluginId() + "."; //$NON-NLS-1$
 
 	private static ImageRegistry PLUGIN_REGISTRY;
-	
+
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	/**
 	 * Set of predefined Image Descriptors.
 	 */
-	
-	private static final String PATH_OBJ= ICONS_PATH+"obj16/"; //$NON-NLS-1$
-	private static final String PATH_VIEW = ICONS_PATH+"view16/"; //$NON-NLS-1$
-	private static final String PATH_LCL= ICONS_PATH+"elcl16/"; //$NON-NLS-1$
-	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/"; //$NON-NLS-1$
+
+	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
+	private static final String PATH_VIEW = ICONS_PATH + "view16/"; //$NON-NLS-1$
+	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
+	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_TOOL = ICONS_PATH + "etool16/"; //$NON-NLS-1$
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
@@ -44,49 +43,49 @@ public class PDEPluginImages {
 	/**
 	 * Frequently used images
 	 */
-	public static final String IMG_FORM_WIZ = NAME_PREFIX+"FORM_WIZ"; //$NON-NLS-1$
-	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER"; //$NON-NLS-1$
+	public static final String IMG_FORM_WIZ = NAME_PREFIX + "FORM_WIZ"; //$NON-NLS-1$
+	public static final String IMG_FORM_BANNER = NAME_PREFIX + "FORM_BANNER"; //$NON-NLS-1$
 	public static final String IMG_ATT_CLASS_OBJ = NAME_PREFIX + "IMG_ATT_CLASS_OBJ"; //$NON-NLS-1$
-	public static final String IMG_ATT_FILE_OBJ  = NAME_PREFIX + "IMG_ATT_FILE_OBJ"; //$NON-NLS-1$
-	public static final String IMG_ATT_IMPL_OBJ  = NAME_PREFIX + "IMG_ATT_IMPL_OBJ"; //$NON-NLS-1$
-	public static final String IMG_ATT_REQ_OBJ   = NAME_PREFIX + "IMG_ATT_REQ_OBJ"; //$NON-NLS-1$
-	public static final String IMG_GENERIC_XML_OBJ  = NAME_PREFIX + "IMG_GENERIC_XML_OBJ"; //$NON-NLS-1$
-	public static final String OBJ_DESC_GENERATE_CLASS  = NAME_PREFIX + "OBJ_DESC_GENERATE_CLASS"; //$NON-NLS-1$
-	public static final String OBJ_DESC_GENERATE_INTERFACE  = NAME_PREFIX + "OBJ_DESC_GENERATE_INTERFACE"; //$NON-NLS-1$
+	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX + "IMG_ATT_FILE_OBJ"; //$NON-NLS-1$
+	public static final String IMG_ATT_IMPL_OBJ = NAME_PREFIX + "IMG_ATT_IMPL_OBJ"; //$NON-NLS-1$
+	public static final String IMG_ATT_REQ_OBJ = NAME_PREFIX + "IMG_ATT_REQ_OBJ"; //$NON-NLS-1$
+	public static final String IMG_GENERIC_XML_OBJ = NAME_PREFIX + "IMG_GENERIC_XML_OBJ"; //$NON-NLS-1$
+	public static final String OBJ_DESC_GENERATE_CLASS = NAME_PREFIX + "OBJ_DESC_GENERATE_CLASS"; //$NON-NLS-1$
+	public static final String OBJ_DESC_GENERATE_INTERFACE = NAME_PREFIX + "OBJ_DESC_GENERATE_INTERFACE"; //$NON-NLS-1$
 	public static final String OBJ_DESC_PACKAGE = NAME_PREFIX + "OBJ_DESC_PACKAGE"; //$NON-NLS-1$
 	public static final String OBJ_DESC_BUNDLE = NAME_PREFIX + "OBJ_DESC_BUNDLE"; //$NON-NLS-1$
-	
+
 	/**
 	 * OBJ16
 	 */
-	public static final ImageDescriptor DESC_MAIN_TAB  = create(PATH_OBJ, "main_tab.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ALL_SC_OBJ    = create(PATH_OBJ, "all_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAIN_TAB = create(PATH_OBJ, "main_tab.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ALL_SC_OBJ = create(PATH_OBJ, "all_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_CLASS_OBJ = create(PATH_OBJ, "att_class_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ATT_FILE_OBJ  = create(PATH_OBJ, "att_file_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ATT_IMPL_OBJ  = create(PATH_OBJ, "att_impl_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ATT_REQ_OBJ   = create(PATH_OBJ, "att_req_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ATT_URI_OBJ   = create(PATH_OBJ, "att_URI_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATT_FILE_OBJ = create(PATH_OBJ, "att_file_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATT_IMPL_OBJ = create(PATH_OBJ, "att_impl_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATT_REQ_OBJ = create(PATH_OBJ, "att_req_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATT_URI_OBJ = create(PATH_OBJ, "att_URI_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUNDLE_OBJ = create(PATH_OBJ, "bundle_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHOICE_SC_OBJ = create(PATH_OBJ, "choice_sc_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ  = create(PATH_OBJ, "ftr_jar_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FEATURE_MF_OBJ   = create(PATH_OBJ, "ftr_mf_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FEATURE_OBJ   = create(PATH_OBJ, "feature_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ = create(PATH_OBJ, "ftr_jar_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FEATURE_MF_OBJ = create(PATH_OBJ, "ftr_mf_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NOREF_FEATURE_OBJ = create(PATH_OBJ, "noref_feature_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELREF_SC_OBJ  = create(PATH_OBJ, "elref_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELREF_SC_OBJ = create(PATH_OBJ, "elref_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXT_PLUGIN_OBJ   = create(PATH_OBJ, "ext_plugin_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXT_FRAGMENT_OBJ   = create(PATH_OBJ, "external_frgmt_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXT_POINTS_OBJ   = create(PATH_OBJ, "ext_points_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXT_POINT_OBJ   = create(PATH_OBJ, "ext_point_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GEL_SC_OBJ    = create(PATH_OBJ, "gel_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXT_PLUGIN_OBJ = create(PATH_OBJ, "ext_plugin_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXT_FRAGMENT_OBJ = create(PATH_OBJ, "external_frgmt_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXT_POINTS_OBJ = create(PATH_OBJ, "ext_points_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(PATH_OBJ, "ext_point_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_GEL_SC_OBJ = create(PATH_OBJ, "gel_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(PATH_OBJ, "generic_xml_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GROUP_SC_OBJ   = create(PATH_OBJ, "group_sc_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAR_OBJ   = create(PATH_OBJ, "jar_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAR_LIB_OBJ   = create(PATH_OBJ, "jar_l_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAVA_LIB_OBJ   = create(PATH_OBJ, "java_lib_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVERVIEW_OBJ  = create(PATH_OBJ, "overview_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PAGE_OBJ   = create(PATH_OBJ, "page_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_GROUP_SC_OBJ = create(PATH_OBJ, "group_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_OBJ = create(PATH_OBJ, "jar_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_LIB_OBJ = create(PATH_OBJ, "jar_l_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAVA_LIB_OBJ = create(PATH_OBJ, "java_lib_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVERVIEW_OBJ = create(PATH_OBJ, "overview_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PAGE_OBJ = create(PATH_OBJ, "page_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_MF_OBJ = create(PATH_OBJ, "plugin_mf_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FRAGMENT_MF_OBJ = create(PATH_OBJ, "frgmt_mf_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_VAR_OBJ = create(PATH_OBJ, "build_var_obj.gif"); //$NON-NLS-1$
@@ -105,29 +104,29 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CSCONCLUSION_OBJ = create(PATH_OBJ, "cheatsheet_conclusion_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.gif"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_TOC_OBJ = create(PATH_OBJ, "toc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOC_TOPIC_OBJ = create(PATH_OBJ, "toc_topic_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOC_LEAFTOPIC_OBJ = create(PATH_OBJ, "toc_leaftopic_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOC_LINK_OBJ = create(PATH_OBJ, "toc_link_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOC_ANCHOR_OBJ = create(PATH_OBJ, "toc_anchor_obj.gif"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_COMGROUP_OBJ = create(PATH_OBJ, "keygroups_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENCOM_OBJ = create(PATH_OBJ, "command_obj.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OPERATING_SYSTEM_OBJ = create(PATH_OBJ, "operating_system_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SETTINGS_OBJ   = create(PATH_OBJ, "settings.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FRAGMENT_OBJ   = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FRAGMENT_DIS_OBJ   = create(PATH_OBJ, "frgmt_dis_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ   = create(PATH_OBJ, "req_plugins_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FRAGMENTS_OBJ   = create(PATH_OBJ, "frgmts_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ   = create(PATH_OBJ, "req_plugin_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_RUNTIME_OBJ   = create(PATH_OBJ, "runtime_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SCHEMA_OBJ   = create(PATH_OBJ, "schema_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SETTINGS_OBJ = create(PATH_OBJ, "settings.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FRAGMENT_OBJ = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FRAGMENT_DIS_OBJ = create(PATH_OBJ, "frgmt_dis_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ = create(PATH_OBJ, "req_plugins_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FRAGMENTS_OBJ = create(PATH_OBJ, "frgmts_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ = create(PATH_OBJ, "req_plugin_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(PATH_OBJ, "runtime_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SCHEMA_OBJ = create(PATH_OBJ, "schema_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SCOMP_JAR_OBJ = create(PATH_OBJ, "scomp_jar_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SEQ_SC_OBJ   = create(PATH_OBJ, "seq_sc_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SEQ_SC_OBJ = create(PATH_OBJ, "seq_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DOC_SECTION_OBJ = create(PATH_OBJ, "doc_section_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALERT_OBJ = create(PATH_OBJ, "alert_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TSK_ALERT_OBJ = create(PATH_OBJ, "tsk_alert_obj.gif"); //$NON-NLS-1$
@@ -158,22 +157,22 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_SITE_XML_OBJ = create(PATH_OBJ, "site_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMAGE_APPLICATION = create(PATH_OBJ, "image_application.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FOCUS_ON = create(PATH_OBJ, "focus.gif"); //$NON-NLS-1$
-	
+
 	/**
 	 * OVR16
 	 */
-	public static final ImageDescriptor DESC_DOC_CO   = create(PATH_OVR, "doc_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_WARNING_CO   = create(PATH_OVR, "warning_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ERROR_CO   = create(PATH_OVR, "error_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXPORT_CO   = create(PATH_OVR, "export_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXTERNAL_CO   = create(PATH_OVR, "external_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BINARY_CO   = create(PATH_OVR, "binary_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAVA_CO   = create(PATH_OVR, "java_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAR_CO   = create(PATH_OVR, "jar_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PROJECT_CO   = create(PATH_OVR, "project_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OPTIONAL_CO   = create(PATH_OVR, "optional_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_INTERNAL_CO   = create(PATH_OVR, "internal_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FRIEND_CO   = create(PATH_OVR, "friend_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DOC_CO = create(PATH_OVR, "doc_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_WARNING_CO = create(PATH_OVR, "warning_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ERROR_CO = create(PATH_OVR, "error_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPORT_CO = create(PATH_OVR, "export_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXTERNAL_CO = create(PATH_OVR, "external_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_BINARY_CO = create(PATH_OVR, "binary_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAVA_CO = create(PATH_OVR, "java_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_CO = create(PATH_OVR, "jar_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PROJECT_CO = create(PATH_OVR, "project_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OPTIONAL_CO = create(PATH_OVR, "optional_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_INTERNAL_CO = create(PATH_OVR, "internal_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FRIEND_CO = create(PATH_OVR, "friend_co.gif"); //$NON-NLS-1$
 
 	/**
 	 * TOOL16
@@ -193,7 +192,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_EXPORT_PRODUCT_TOOL = create(PATH_TOOL, "exp_product.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_FEATURE_TOOL = create(PATH_TOOL, "exp_deployfeat.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TOOL = create(PATH_TOOL, "build_exec.gif"); //$NON-NLS-1$
-	
+
 	/**
 	 * LCL
 	 */
@@ -226,7 +225,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HISTORY_LIST = create(PATH_LCL, "history_list.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER = create(PATH_LCL, "filter_ps.gif"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif"); //$NON-NLS-1$
@@ -248,16 +247,15 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HISTORY_LIST_DISABLED = create(PATH_LCL_DISABLED, "history_list.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DCLEAR = create(PATH_LCL_DISABLED, "clear.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_DISABLED = create(PATH_LCL_DISABLED, "filter_ps.gif"); //$NON-NLS-1$
-	
+
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROFILE_EXC = create(PATH_OBJ, "profile_exc.gif"); //$NON-NLS-1$
 
-
 	/**
 	 * WIZ
 	 */
- 	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEFCON_WIZ = create(PATH_WIZBAN, "defcon_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TARGET_WIZ = create(PATH_WIZBAN, "target_wiz.png"); //$NON-NLS-1$
@@ -285,37 +283,40 @@ public class PDEPluginImages {
 	/**
 	 * View
 	 */
-	public static final ImageDescriptor DESC_ARGUMENT_TAB  = create(PATH_VIEW, "variable_tab.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ARGUMENT_TAB = create(PATH_VIEW, "variable_tab.gif"); //$NON-NLS-1$
+
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
 	}
+
 	public static Image get(String key) {
-		if (PLUGIN_REGISTRY==null) initialize();
+		if (PLUGIN_REGISTRY == null)
+			initialize();
 		return PLUGIN_REGISTRY.get(key);
 	}
 
-/* package */
-private static final void initialize() {
-	PLUGIN_REGISTRY = new ImageRegistry();
-	manage(IMG_ATT_CLASS_OBJ,DESC_ATT_CLASS_OBJ);
-	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
-	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
-	manage(IMG_ATT_REQ_OBJ,  DESC_ATT_REQ_OBJ);
-	manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
-	manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
-	manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
-	manage(OBJ_DESC_PACKAGE, DESC_PACKAGE_OBJ);
-	manage(OBJ_DESC_BUNDLE, DESC_BUNDLE_OBJ);
-}
+	/* package */
+	private static final void initialize() {
+		PLUGIN_REGISTRY = new ImageRegistry();
+		manage(IMG_ATT_CLASS_OBJ, DESC_ATT_CLASS_OBJ);
+		manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
+		manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
+		manage(IMG_ATT_REQ_OBJ, DESC_ATT_REQ_OBJ);
+		manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
+		manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
+		manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
+		manage(OBJ_DESC_PACKAGE, DESC_PACKAGE_OBJ);
+		manage(OBJ_DESC_BUNDLE, DESC_BUNDLE_OBJ);
+	}
 
-private static URL makeImageURL(String prefix, String name) {
-	String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-	return FileLocator.find(PDEPlugin.getDefault().getBundle(), new Path(path), null);
-}
+	private static URL makeImageURL(String prefix, String name) {
+		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
+		return FileLocator.find(PDEPlugin.getDefault().getBundle(), new Path(path), null);
+	}
 
-public static Image manage(String key, ImageDescriptor desc) {
-	Image image = desc.createImage();
-	PLUGIN_REGISTRY.put(key, image);
-	return image;
-}
+	public static Image manage(String key, ImageDescriptor desc) {
+		Image image = desc.createImage();
+		PLUGIN_REGISTRY.put(key, image);
+		return image;
+	}
 }

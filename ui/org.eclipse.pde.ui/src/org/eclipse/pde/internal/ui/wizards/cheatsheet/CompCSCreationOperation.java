@@ -15,22 +15,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.cheatsheet.comp.CompCSWorkspaceModel;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * CompCSCreationOperation
  *
  */
-public class CompCSCreationOperation extends BaseCSCreationOperation
-		implements IRunnableWithProgress {
+public class CompCSCreationOperation extends BaseCSCreationOperation implements IRunnableWithProgress {
 
 	/**
 	 * @param file
@@ -50,10 +42,10 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCheatSheetCreationOperation#createContent()
 	 */
 	protected void createContent() {
-        CompCSWorkspaceModel model = new CompCSWorkspaceModel(fFile, false);
-        initializeCS(model.getCompCS());
-        model.save();
-        model.dispose();
+		CompCSWorkspaceModel model = new CompCSWorkspaceModel(fFile, false);
+		initializeCS(model.getCompCS());
+		model.save();
+		model.dispose();
 	}
 
 	/**
@@ -86,23 +78,20 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 		// Configure Task
 		// Element: intro
 		ICompCSIntro taskIntro = factory.createCompCSIntro(task);
-		taskIntro.setFieldContent(
-				formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
+		taskIntro.setFieldContent(formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
 		// Element: onCompletion
-		ICompCSOnCompletion taskConclusion = 
-			factory.createCompCSOnCompletion(task);
-		taskConclusion.setFieldContent(
-				formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
+		ICompCSOnCompletion taskConclusion = factory.createCompCSOnCompletion(task);
+		taskConclusion.setFieldContent(formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
 		// Attribute: name
 		task.setFieldName(PDEUIMessages.CompCSCreationOperation_task);
 		// Attribute: kind
 		task.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_CHEATSHEET);
 		task.setFieldIntro(taskIntro);
-		task.setFieldOnCompletion(taskConclusion);		
-		
+		task.setFieldOnCompletion(taskConclusion);
+
 		return task;
 	}
-	
+
 	/**
 	 * @param parent
 	 * @return
@@ -115,20 +104,17 @@ public class CompCSCreationOperation extends BaseCSCreationOperation
 		// Configure Task Group
 		// Element: intro
 		ICompCSIntro taskGroupIntro = factory.createCompCSIntro(taskGroup);
-		taskGroupIntro.setFieldContent(
-				formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
+		taskGroupIntro.setFieldContent(formatTextBold(PDEUIMessages.CompCSCreationOperation_introduction));
 		// Element: onCompletion
-		ICompCSOnCompletion taskGroupConclusion = 
-			factory.createCompCSOnCompletion(taskGroup);
-		taskGroupConclusion.setFieldContent(
-				formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
+		ICompCSOnCompletion taskGroupConclusion = factory.createCompCSOnCompletion(taskGroup);
+		taskGroupConclusion.setFieldContent(formatTextBold(PDEUIMessages.CompCSCreationOperation_conclusion));
 		// Attribute: name
 		taskGroup.setFieldName(PDEUIMessages.CompCSCreationOperation_group);
 		// Attribute: kind
 		taskGroup.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_SET);
 		taskGroup.setFieldIntro(taskGroupIntro);
-		taskGroup.setFieldOnCompletion(taskGroupConclusion);	
-		
+		taskGroup.setFieldOnCompletion(taskGroupConclusion);
+
 		return taskGroup;
 	}
 }

@@ -21,5 +21,5 @@ public interface ISimpleCSCommandKeyListener {
 	 * @param event
 	 */
 	public void newCommandKey(NewCommandKeyEvent event);
-	
+
 }

@@ -23,16 +23,16 @@ public interface IOutlineSelectionHandler {
 	/**
 	 * @param e
 	 */
-	public void updateSelection(SelectionChangedEvent e);	
-	
+	public void updateSelection(SelectionChangedEvent e);
+
 	/**
 	 * @param e
 	 */
-	public void updateSelection(Object object);	
-	
+	public void updateSelection(Object object);
+
 	/**
 	 * @return
 	 */
 	public ISortableContentOutlinePage getContentOutline();
-	
+
 }

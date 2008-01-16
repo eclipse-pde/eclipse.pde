@@ -12,32 +12,24 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.*;
 
 public class PluginBlock extends AbstractPluginBlock {
-	
+
 	protected ILaunchConfiguration fLaunchConfig;
 
 	public PluginBlock(AbstractLauncherTab tab) {
 		super(tab);
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration config, boolean customSelection) throws CoreException {
 		super.initializeFrom(config);
 		if (customSelection) {
@@ -52,7 +44,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		fLaunchConfig = config;
 		handleFilterButton(); // Once the page is initialized, apply any filtering
 	}
-	
+
 	/*
 	 * if the "automatic add" option is selected, then we save the ids of plugins
 	 * that have been "deselected" by the user.
@@ -65,13 +57,11 @@ public class PluginBlock extends AbstractPluginBlock {
 	 * then we check the plugins that had been selected and saved in the config.
 	 */
 	protected void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);		
+		boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, automaticAdd);
 		fNumWorkspaceChecked = automaticAdd ? fWorkspaceModels.length : 0;
-		
-		String attribute = automaticAdd
-							? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS
-							: IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
+
+		String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
 		TreeSet ids = LaunchPluginValidator.parsePlugins(configuration, attribute);
 		for (int i = 0; i < fWorkspaceModels.length; i++) {
 			String id = fWorkspaceModels[i].getPluginBase().getId();
@@ -83,22 +73,18 @@ public class PluginBlock extends AbstractPluginBlock {
 			} else if (!automaticAdd && ids.contains(id)) {
 				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], true))
 					fNumWorkspaceChecked += 1;
-			} 
-		}			
+			}
+		}
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(
-			fWorkspacePlugins,
-			fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
 	}
-	
-	protected void initExternalPluginsState(ILaunchConfiguration config)
-			throws CoreException {
+
+	protected void initExternalPluginsState(ILaunchConfiguration config) throws CoreException {
 		fNumExternalChecked = 0;
 
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		TreeSet selected = LaunchPluginValidator.parsePlugins(config,
-								IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+		TreeSet selected = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
 		for (int i = 0; i < fExternalModels.length; i++) {
 			if (selected.contains(fExternalModels[i].getPluginBase().getId())) {
 				if (fPluginTreeViewer.setChecked(fExternalModels[i], true))
@@ -107,8 +93,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0
-				&& fNumExternalChecked < fExternalModels.length);
+		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
 	}
 
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
@@ -125,11 +110,11 @@ public class PluginBlock extends AbstractPluginBlock {
 					wbuf.append(model.getPluginBase().getId());
 				}
 			}
-			
+
 			String value = wbuf.length() > 0 ? wbuf.toString() : null;
 			if (fAddWorkspaceButton.getSelection()) {
 				config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, value);
-				config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String)null);
+				config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
 			} else {
 				config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, value);
 			}
@@ -151,7 +136,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		} else {
 			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, (String) null);
 			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
-			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, (String)null);
+			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, (String) null);
 		}
 	}
 
@@ -159,22 +144,20 @@ public class PluginBlock extends AbstractPluginBlock {
 		validateExtensions();
 		super.computeSubset();
 	}
-	
+
 	private void validateExtensions() {
 		try {
 			if (fLaunchConfig.getAttribute(IPDELauncherConstants.USE_PRODUCT, true)) {
-				String product = fLaunchConfig.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+				String product = fLaunchConfig.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 				if (product != null) {
 					validateLaunchId(product);
 					String application = getApplication(product);
 					if (application != null)
 						validateLaunchId(application);
 				}
-			} 
-			else {
+			} else {
 				String configType = fLaunchConfig.getType().getIdentifier();
-				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE)
-				? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
+				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE) ? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
 				String application = fLaunchConfig.getAttribute(attribute, TargetPlatform.getDefaultApplication());
 				if (!IPDEUIConstants.CORE_TEST_APPLICATION.equals(application))
 					validateLaunchId(application);
@@ -182,7 +165,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	private void validateLaunchId(String launchId) {
 		if (launchId != null) {
 			int index = launchId.lastIndexOf('.');
@@ -199,20 +182,20 @@ public class PluginBlock extends AbstractPluginBlock {
 			}
 		}
 	}
-	
+
 	private String getApplication(String product) {
 		String bundleID = product.substring(0, product.lastIndexOf('.'));
 		IPluginModelBase model = findPlugin(bundleID);
-		
+
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IPluginExtension ext = extensions[i];
 				String point = ext.getPoint();
-				if ("org.eclipse.core.runtime.products".equals(point)  //$NON-NLS-1$
-						&& product.equals(IdUtil.getFullId(ext))) { 
+				if ("org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
+						&& product.equals(IdUtil.getFullId(ext))) {
 					if (ext.getChildCount() == 1) {
-						IPluginElement prod = (IPluginElement)ext.getChildren()[0];
+						IPluginElement prod = (IPluginElement) ext.getChildren()[0];
 						if (prod.getName().equals("product")) { //$NON-NLS-1$
 							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
 							return attr != null ? attr.getValue() : null;
@@ -223,7 +206,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 		return null;
 	}
-	
+
 	protected LaunchValidationOperation createValidationOperation() {
 		return new EclipsePluginValidationOperation(fLaunchConfig);
 	}

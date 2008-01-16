@@ -10,27 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
-import org.eclipse.pde.internal.ui.wizards.NewWizard;
-import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
@@ -53,53 +40,54 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.NewProjectWizard_title); 
+		setWindowTitle(PDEUIMessages.NewProjectWizard_title);
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new PluginFieldData();
 	}
-	
+
 	public NewPluginProjectWizard(String osgiFramework) {
 		this();
 		fPluginData.setOSGiFramework(osgiFramework);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fPluginData, fPureOSGi, getSelection()); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); 
-		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); 
+		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title);
+		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname!=null)
+		if (pname != null)
 			fMainPage.setInitialProjectName(pname);
 		addPage(fMainPage);
-		
+
 		fProjectProvider = new IProjectProvider() {
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
+
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
+
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
 		};
-		
+
 		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
-        
-		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEUIMessages.WizardListSelectionPage_templates); 
+
+		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEUIMessages.WizardListSelectionPage_templates);
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
-		if (tid!=null)
+		if (tid != null)
 			fWizardListPage.setInitialTemplateId(tid);
 
 		addPage(fContentPage);
 		addPage(fWizardListPage);
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
@@ -107,6 +95,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		IWizardPage page = getContainer().getCurrentPage();
 		return super.canFinish() && page != fMainPage;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -123,12 +112,10 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
-			getContainer().run(false, true,
-					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
-			
+			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
+
 			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
-			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(),
-					workingSets);
+			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
 
 			return true;
 		} catch (InvocationTargetException e) {
@@ -137,7 +124,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()
 	 */
@@ -149,11 +136,10 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}
-	
+
 	protected WizardElement createWizardElement(IConfigurationElement config) {
 		String name = config.getAttribute(WizardElement.ATT_NAME);
 		String id = config.getAttribute(WizardElement.ATT_ID);
@@ -164,8 +150,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
 			String pluginID = config.getNamespaceIdentifier();
-			Image image =
-				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
+			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);
 		}
 		return element;
@@ -179,8 +164,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			return wizards;
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements =
-				extensions[i].getConfigurationElements();
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
 				if (elements[j].getName().equals(TAG_WIZARD)) {
 					WizardElement element = createWizardElement(elements[j]);
@@ -192,9 +176,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		}
 		return wizards;
 	}
-	
+
 	public String getPluginId() {
 		return fPluginData.getId();
 	}
-	
+
 }

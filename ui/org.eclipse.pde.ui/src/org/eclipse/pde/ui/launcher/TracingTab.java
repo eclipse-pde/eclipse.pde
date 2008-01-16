@@ -13,10 +13,7 @@ package org.eclipse.pde.ui.launcher;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.TracingBlock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -33,10 +30,10 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.2
  */
 public class TracingTab extends AbstractLauncherTab {
-	
+
 	private Image fImage;
 	private TracingBlock fTracingBlock;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -46,7 +43,7 @@ public class TracingTab extends AbstractLauncherTab {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fImage = PDEPluginImages.DESC_DOC_SECTION_OBJ.createImage();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -67,7 +64,7 @@ public class TracingTab extends AbstractLauncherTab {
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fTracingBlock.activated(workingCopy);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
@@ -79,7 +76,7 @@ public class TracingTab extends AbstractLauncherTab {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -87,7 +84,7 @@ public class TracingTab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		fTracingBlock.initializeFrom(config);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -95,7 +92,7 @@ public class TracingTab extends AbstractLauncherTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fTracingBlock.performApply(config);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -103,15 +100,15 @@ public class TracingTab extends AbstractLauncherTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		fTracingBlock.setDefaults(config);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.TracingLauncherTab_name; 
+		return PDEUIMessages.TracingLauncherTab_name;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
@@ -119,7 +116,7 @@ public class TracingTab extends AbstractLauncherTab {
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()

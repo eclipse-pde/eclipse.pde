@@ -17,9 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.toc.TocTreeSection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -27,9 +25,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * TocAbstractDetails
@@ -42,9 +38,9 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	private TocTreeSection fMasterSection;
 
 	private Section fMainSection;
-	
+
 	private String fContextID;
-	
+
 	/**
 	 * 
 	 */
@@ -53,7 +49,7 @@ public abstract class TocAbstractDetails extends PDEDetails {
 		fContextID = contextID;
 		fMainSection = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -67,62 +63,59 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	 * @param parent
 	 */
 	private void configureParentLayout(Composite parent) {
-		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));	
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 	}
-	
+
 	/**
 	 * @param parent
 	 */
-	public void createDetails(Composite parent)
-	{	// Create the main section
+	public void createDetails(Composite parent) { // Create the main section
 		int style = ExpandableComposite.TITLE_BAR;
-		
-		if(getDetailsDescription() != null) style |= Section.DESCRIPTION;
-		
-		fMainSection = getPage().createUISection(parent, getDetailsTitle(), 
-			getDetailsDescription(), style);
+
+		if (getDetailsDescription() != null)
+			style |= Section.DESCRIPTION;
+
+		fMainSection = getPage().createUISection(parent, getDetailsTitle(), getDetailsDescription(), style);
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fMainSection);
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fMainSection);
 		// Create the container for the main section
 		Composite sectionClient = getPage().createUISectionContainer(fMainSection, NUM_COLUMNS);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		fMainSection.setLayoutData(data);
 		createFields(sectionClient);
-		
+
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fMainSection.setClient(sectionClient);
 		markDetailsPart(fMainSection);
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected abstract void createFields(Composite parent);
 
-
 	/**
 	 * 
 	 */
 	protected abstract String getDetailsTitle();
-	
+
 	/**
 	 * 
 	 */
 	protected abstract String getDetailsDescription();
-	
+
 	/**
 	 * 
 	 */
 	public abstract void updateFields();
-	
+
 	/**
 	 * 
 	 */
 	public abstract void hookListeners();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -150,31 +143,31 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
 	 */
 	public PDEFormPage getPage() {
-		return (PDEFormPage)getManagedForm().getContainer();
+		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
 	protected void setPathEntry(IFile file) {
 		IPath path = file.getFullPath();
-		if(file.getProject().equals(getDataObject().getModel().getUnderlyingResource().getProject()))
-		{	getPathEntryField().setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
-		}
-		else
-		{	getPathEntryField().setValue(".." + path.toString()); //$NON-NLS-1$
-		}
-	}
-	
-	protected void handleOpen()
-	{	IFile file = getMasterSection().openFile(getPathEntryField().getValue(), isTocPath());
-		if(file != null)
-		{	setPathEntry(file);
+		if (file.getProject().equals(getDataObject().getModel().getUnderlyingResource().getProject())) {
+			getPathEntryField().setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
+		} else {
+			getPathEntryField().setValue(".." + path.toString()); //$NON-NLS-1$
 		}
 	}
 
-	protected boolean isTocPath()
-	{	return false;
+	protected void handleOpen() {
+		IFile file = getMasterSection().openFile(getPathEntryField().getValue(), isTocPath());
+		if (file != null) {
+			setPathEntry(file);
+		}
+	}
+
+	protected boolean isTocPath() {
+		return false;
 	}
 
 	protected abstract TocObject getDataObject();
+
 	protected abstract FormEntry getPathEntryField();
 
 	/* (non-Javadoc)
@@ -190,35 +183,35 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	public void modelChanged(IModelChangedEvent event) {
 		// NO-OP
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean isEditableElement() {
 		return fMasterSection.isEditable();
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
 	public FormToolkit getToolkit() {
 		return getManagedForm().getToolkit();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public TocTreeSection getMasterSection() {
 		return fMasterSection;
 	}
-	
+
 	/**
 	 * @param selection
 	 * @return
 	 */
 	protected Object getFirstSelectedObject(ISelection selection) {
 		// Get the structured selection (obtained from the master tree viewer)
-		IStructuredSelection structuredSel = ((IStructuredSelection)selection);
+		IStructuredSelection structuredSel = ((IStructuredSelection) selection);
 		// Ensure we have a selection
 		if (structuredSel == null) {
 			return null;
@@ -236,5 +229,5 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	protected void createSpace(Composite parent) {
 		createLabel(parent, getManagedForm().getToolkit(), ""); //$NON-NLS-1$
 	}
-	
+
 }

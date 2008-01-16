@@ -12,22 +12,16 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.HashMap;
 import java.util.Set;
-
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Constants;
 
 public class DependencyCalculator {
-	
+
 	boolean fIncludeOptional;
 	protected HashMap fDependencies;
-	
+
 	/*
 	 * Object[] can be IPluginModelBases, BundleDescriptions, or Strings (id's of bundles)
 	 */
@@ -35,8 +29,7 @@ public class DependencyCalculator {
 		super();
 		fIncludeOptional = includeOptional;
 	}
-	
-	
+
 	public void findDependencies(Object[] includedBundles) {
 		if (fDependencies == null)
 			fDependencies = new HashMap();
@@ -44,24 +37,24 @@ public class DependencyCalculator {
 			findObjectDependencies(includedBundles[i]);
 		}
 	}
-	
+
 	public void findDependency(Object bundle) {
 		if (fDependencies == null)
 			fDependencies = new HashMap();
 		findObjectDependencies(bundle);
 	}
-	
+
 	private void findObjectDependencies(Object obj) {
 		if (obj instanceof IPluginModelBase) {
-			IPluginModelBase base = ((IPluginModelBase)obj);
+			IPluginModelBase base = ((IPluginModelBase) obj);
 			BundleDescription desc = base.getBundleDescription();
 			if (desc != null)
 				obj = desc;
 		}
 		if (obj instanceof BundleDescription)
-			findDependencies((BundleDescription)obj);
+			findDependencies((BundleDescription) obj);
 	}
-	
+
 	/*
 	 * Returns a Set of Bundle Ids
 	 */
@@ -70,7 +63,7 @@ public class DependencyCalculator {
 		fDependencies = null;
 		return temp;
 	}
-	
+
 	protected void findDependencies(BundleDescription desc) {
 		if (desc == null)
 			return;
@@ -84,46 +77,46 @@ public class DependencyCalculator {
 
 		addRequiredBundles(desc.getRequiredBundles());
 		addImportedPackages(desc.getImportPackages());
-		
+
 		HostSpecification host = desc.getHost();
 		if (host != null) {
 			// if current BundleDescription is a fragment, include host bundle
 			BaseDescription bd = host.getSupplier();
-			if (bd != null && bd instanceof BundleDescription) 
-				findDependencies((BundleDescription)bd);
+			if (bd != null && bd instanceof BundleDescription)
+				findDependencies((BundleDescription) bd);
 		} else {
 			// otherwise, include applicable fragments for bundle
 			addFragments(desc);
 		}
 	}
-	
+
 	protected void addRequiredBundles(BundleSpecification[] requiredBundles) {
 		for (int i = 0; i < requiredBundles.length; i++) {
 			if (requiredBundles[i].isOptional() && !fIncludeOptional)
 				continue;
 			BaseDescription bd = requiredBundles[i].getSupplier();
 			// only recursively search statisfied require-bundles
-			if (bd != null && bd instanceof BundleDescription) 
-				findDependencies((BundleDescription)bd);
+			if (bd != null && bd instanceof BundleDescription)
+				findDependencies((BundleDescription) bd);
 		}
 	}
-	
+
 	protected void addImportedPackages(ImportPackageSpecification[] packages) {
 		for (int i = 0; i < packages.length; i++) {
-			if (!fIncludeOptional) 
+			if (!fIncludeOptional)
 				if (Constants.RESOLUTION_OPTIONAL.equals(packages[i].getDirective(Constants.RESOLUTION_DIRECTIVE))) {
 					continue;
 				}
 			BaseDescription bd = packages[i].getSupplier();
 			// only recursively search statisfied import-packages
 			if (bd != null && bd instanceof ExportPackageDescription) {
-				BundleDescription exporter = ((ExportPackageDescription)bd).getExporter();
+				BundleDescription exporter = ((ExportPackageDescription) bd).getExporter();
 				if (exporter != null)
 					findDependencies(exporter);
 			}
 		}
 	}
-	
+
 	protected void addFragments(BundleDescription desc) {
 		BundleDescription[] fragments = desc.getFragments();
 		for (int i = 0; i < fragments.length; i++)
@@ -131,7 +124,7 @@ public class DependencyCalculator {
 				findDependencies(fragments[i]);
 			}
 	}
-	
+
 	public boolean containsPluginId(String id) {
 		return fDependencies.containsKey(id);
 	}

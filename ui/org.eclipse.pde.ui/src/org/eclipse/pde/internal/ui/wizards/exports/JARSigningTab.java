@@ -12,23 +12,13 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class JARSigningTab {
@@ -37,20 +27,20 @@ public class JARSigningTab {
 	private static final String S_KEYSTORE = "keystore"; //$NON-NLS-1$
 	private static final String S_ALIAS = "alias"; //$NON-NLS-1$
 	private static final String S_PASSWORD = "password"; //$NON-NLS-1$
-	
+
 	private Button fButton;
-	
+
 	private Label fKeystoreLabel;
 	private Text fKeystoreText;
-	
-	private Label fAliasLabel;	
+
+	private Label fAliasLabel;
 	private Text fAliasText;
-	
+
 	private Label fPasswordLabel;
 	private Text fPasswordText;
 	private BaseExportWizardPage fPage;
 	private Button fBrowseButton;
-	
+
 	public JARSigningTab(BaseExportWizardPage page) {
 		fPage = page;
 	}
@@ -59,7 +49,7 @@ public class JARSigningTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(3, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fButton = new Button(comp, SWT.CHECK);
 		fButton.setText(PDEUIMessages.AdvancedPluginExportPage_signButton);
 		GridData gd = new GridData();
@@ -71,10 +61,10 @@ public class JARSigningTab {
 				fPage.pageChanged();
 			}
 		});
-		
-		fKeystoreLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_keystore);	 
+
+		fKeystoreLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_keystore);
 		fKeystoreText = createText(comp, 1);
-		
+
 		fBrowseButton = new Button(comp, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.ExportWizard_browse);
 		fBrowseButton.setLayoutData(new GridData());
@@ -92,19 +82,19 @@ public class JARSigningTab {
 				}
 			}
 		});
-		
-		fAliasLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_alias); 
+
+		fAliasLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_alias);
 		fAliasText = createText(comp, 2);
-		
-		fPasswordLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_password);	 
+
+		fPasswordLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_password);
 		fPasswordText = createText(comp, 2);
 		fPasswordText.setEchoChar('*');
-		
+
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.ADVANCED_PLUGIN_EXPORT);
 		return comp;
 	}
-	
+
 	protected void initialize(IDialogSettings settings) {
 		fKeystoreText.setText(getString(settings, S_KEYSTORE));
 		fAliasText.setText(getString(settings, S_ALIAS));
@@ -112,12 +102,12 @@ public class JARSigningTab {
 		fButton.setSelection(settings.getBoolean(S_SIGN_JARS));
 		updateGroup(fButton.getSelection());
 	}
-	
+
 	private String getString(IDialogSettings settings, String key) {
 		String value = settings.get(key);
 		return value == null ? "" : value; //$NON-NLS-1$
 	}
-	
+
 	protected Label createLabel(Composite group, String text) {
 		Label label = new Label(group, SWT.NONE);
 		label.setText(text);
@@ -126,9 +116,9 @@ public class JARSigningTab {
 		label.setLayoutData(gd);
 		return label;
 	}
-	
+
 	protected Text createText(Composite group, int span) {
-		Text text = new Text(group, SWT.SINGLE|SWT.BORDER);
+		Text text = new Text(group, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
@@ -139,21 +129,21 @@ public class JARSigningTab {
 		});
 		return text;
 	}
-	
+
 	protected String validate() {
 		String error = null;
 		if (fButton.getSelection()) {
 			if (fKeystoreText.getText().trim().length() == 0) {
-				error = PDEUIMessages.AdvancedPluginExportPage_noKeystore; 
+				error = PDEUIMessages.AdvancedPluginExportPage_noKeystore;
 			} else if (fAliasText.getText().trim().length() == 0) {
-				error = PDEUIMessages.AdvancedPluginExportPage_noAlias; 
+				error = PDEUIMessages.AdvancedPluginExportPage_noAlias;
 			} else if (fPasswordText.getText().trim().length() == 0) {
-				error = PDEUIMessages.AdvancedPluginExportPage_noPassword; 
+				error = PDEUIMessages.AdvancedPluginExportPage_noPassword;
 			}
 		}
 		return error;
 	}
-	
+
 	private void updateGroup(boolean enabled) {
 		fKeystoreLabel.setEnabled(enabled);
 		fKeystoreText.setEnabled(enabled);
@@ -163,20 +153,17 @@ public class JARSigningTab {
 		fPasswordLabel.setEnabled(enabled);
 		fPasswordText.setEnabled(enabled);
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_SIGN_JARS, fButton.getSelection());
 		settings.put(S_KEYSTORE, fKeystoreText.getText().trim());
 		settings.put(S_ALIAS, fAliasText.getText().trim());
 		settings.put(S_PASSWORD, fPasswordText.getText().trim());
 	}
-	
+
 	protected String[] getSigningInfo() {
 		if (fButton.getSelection()) {
-			return new String[] { 
-					fAliasText.getText().trim(),
-					fKeystoreText.getText().trim(),
-					fPasswordText.getText().trim() };
+			return new String[] {fAliasText.getText().trim(), fKeystoreText.getText().trim(), fPasswordText.getText().trim()};
 		}
 		return null;
 	}

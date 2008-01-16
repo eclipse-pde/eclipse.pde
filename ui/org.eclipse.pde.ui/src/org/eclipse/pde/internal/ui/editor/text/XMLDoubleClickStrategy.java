@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.*;
 
 public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
@@ -25,7 +22,7 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 			selectWord(pos);
 		}
 	}
-	
+
 	protected boolean selectWord(int caretPos) {
 
 		IDocument doc = fText.getDocument();
@@ -64,9 +61,9 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		return false;
 	}
-	
+
 	private void selectRange(int startPos, int stopPos) {
-		int offset = startPos+1;
+		int offset = startPos + 1;
 		int length = stopPos - offset;
 		fText.setSelectedRange(offset, length);
 	}

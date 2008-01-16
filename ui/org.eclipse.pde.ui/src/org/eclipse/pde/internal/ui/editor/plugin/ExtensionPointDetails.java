@@ -9,33 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindReferencesAction;
@@ -54,10 +38,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
@@ -71,23 +52,29 @@ public class ExtensionPointDetails extends PDEDetails {
 	private FormText fRichText;
 	private String fRichTextData;
 
-	private static final String SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_schemaLinks; 
-	private static final String NO_SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_noSchemaLinks; 
+	private static final String SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_schemaLinks;
+	private static final String NO_SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_noSchemaLinks;
+
 	public ExtensionPointDetails() {
 	}
+
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
+
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
+
 	public PDEFormPage getPage() {
-		return (PDEFormPage)getManagedForm().getContainer();
+		return (PDEFormPage) getManagedForm().getContainer();
 	}
+
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,18 +83,18 @@ public class ExtensionPointDetails extends PDEDetails {
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(PDEUIMessages.ExtensionPointDetails_title); 
-		section.setDescription(PDEUIMessages.ExtensionPointDetails_desc); 
+		section.setText(PDEUIMessages.ExtensionPointDetails_title);
+		section.setDescription(PDEUIMessages.ExtensionPointDetails_desc);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false); 
+
+		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -119,7 +106,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 			}
 		});
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_name, null, false); 
+		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_name, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null)
@@ -146,7 +133,7 @@ public class ExtensionPointDetails extends PDEDetails {
 
 			public void linkActivated(HyperlinkEvent e) {
 				IProject project = getPage().getPDEEditor().getCommonProject();
-				if (fSchemaEntry.getValue() == null || fSchemaEntry.getValue().length() ==0){
+				if (fSchemaEntry.getValue() == null || fSchemaEntry.getValue().length() == 0) {
 					generateSchema();
 					return;
 				}
@@ -159,25 +146,20 @@ public class ExtensionPointDetails extends PDEDetails {
 
 			public void browseButtonSelected(FormEntry entry) {
 				final IProject project = getPage().getPDEEditor().getCommonProject();
-				ElementTreeSelectionDialog dialog =
-					new ElementTreeSelectionDialog(
-						PDEPlugin.getActiveWorkbenchShell(),
-						new WorkbenchLabelProvider(),
-						new WorkbenchContentProvider());
-				dialog.setTitle(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_title); 
-				dialog.setMessage(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_desc); 
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+				dialog.setTitle(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_title);
+				dialog.setMessage(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_desc);
 				dialog.setDoubleClickSelects(false);
 				dialog.setAllowMultiple(false);
-				dialog.addFilter(new ViewerFilter(){
-					public boolean select(Viewer viewer, Object parent,
-							Object element) {
-						if (element instanceof IFile){
-							String ext = ((IFile)element).getFullPath().getFileExtension();
-								return "exsd".equals(ext) || "mxsd".equals(ext); //$NON-NLS-1$ //$NON-NLS-2$
-						} else if (element instanceof IContainer){ // i.e. IProject, IFolder
+				dialog.addFilter(new ViewerFilter() {
+					public boolean select(Viewer viewer, Object parent, Object element) {
+						if (element instanceof IFile) {
+							String ext = ((IFile) element).getFullPath().getFileExtension();
+							return "exsd".equals(ext) || "mxsd".equals(ext); //$NON-NLS-1$ //$NON-NLS-2$
+						} else if (element instanceof IContainer) { // i.e. IProject, IFolder
 							try {
-								IResource[] resources = ((IContainer)element).members();
-								for (int i = 0; i < resources.length; i++){
+								IResource[] resources = ((IContainer) element).members();
+								for (int i = 0; i < resources.length; i++) {
 									if (select(viewer, parent, resources[i]))
 										return true;
 								}
@@ -190,29 +172,16 @@ public class ExtensionPointDetails extends PDEDetails {
 				});
 				dialog.setValidator(new ISelectionStatusValidator() {
 					public IStatus validate(Object[] selection) {
-						IPluginModelBase model = (IPluginModelBase) getPage()
-								.getPDEEditor().getAggregateModel();
+						IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 						String pluginName = model.getPluginBase().getId();
 
-						if (selection == null || selection.length != 1
-								|| !(selection[0] instanceof IFile))
-							return new Status(
-									IStatus.ERROR,
-									pluginName,
-									IStatus.ERROR,
-									PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, 
-									null);
+						if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile))
+							return new Status(IStatus.ERROR, pluginName, IStatus.ERROR, PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
 						IFile file = (IFile) selection[0];
 						String ext = file.getFullPath().getFileExtension();
 						if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
-							return new Status(IStatus.OK, pluginName,
-									IStatus.OK, "", null); //$NON-NLS-1$
-						return new Status(
-								IStatus.ERROR,
-								pluginName,
-								IStatus.ERROR,
-								PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, 
-								null);
+							return new Status(IStatus.OK, pluginName, IStatus.OK, "", null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, pluginName, IStatus.ERROR, PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
 					}
 				});
 				dialog.setDoubleClickSelects(true);
@@ -220,13 +189,13 @@ public class ExtensionPointDetails extends PDEDetails {
 				dialog.setInput(project);
 				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 				String filePath = fSchemaEntry.getValue();
-				if (filePath!=null && filePath.length()!=0 && project.exists(new Path(filePath)))
+				if (filePath != null && filePath.length() != 0 && project.exists(new Path(filePath)))
 					dialog.setInitialSelection(project.getFile(new Path(filePath)));
 				else
 					dialog.setInitialSelection(null);
 				if (dialog.open() == Window.OK) {
 					Object[] elements = dialog.getResult();
-					if (elements.length >0){
+					if (elements.length > 0) {
 						IResource elem = (IResource) elements[0];
 						fSchemaEntry.setValue(elem.getProjectRelativePath().toString());
 					}
@@ -234,11 +203,11 @@ public class ExtensionPointDetails extends PDEDetails {
 			}
 		});
 		createSpacer(toolkit, client, 2);
-		
+
 		Composite container = toolkit.createComposite(parent, SWT.NONE);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));			
-		
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+
 		fRichText = toolkit.createFormText(container, true);
 		fRichText.setImage("open", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_SCHEMA_OBJ));
@@ -250,10 +219,10 @@ public class ExtensionPointDetails extends PDEDetails {
 			public void linkActivated(HyperlinkEvent e) {
 				IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 				String pointID = null;
-				IPluginBase base = ((IPluginModelBase)model).getPluginBase();
+				IPluginBase base = ((IPluginModelBase) model).getPluginBase();
 				String pluginID = base.getId();
 				if (Double.parseDouble(base.getSchemaVersion()) >= 3.2) {
-					if (fInput.getId().indexOf('.') != -1) 
+					if (fInput.getId().indexOf('.') != -1)
 						pointID = fInput.getId();
 				}
 				if (pointID == null)
@@ -270,40 +239,40 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 			}
 		});
-		
+
 		fIdEntry.setEditable(isEditable());
 		fNameEntry.setEditable(isEditable());
 		fSchemaEntry.setEditable(isEditable());
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 		markDetailsPart(section);
 	}
 
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-		if (model!=null)
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
+
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
 			if (obj.equals(fInput))
 				refresh();
 		}
 	}
+
 	private void update() {
-		fIdEntry.setValue(
-				fInput != null && fInput.getId() != null ? fInput.getId() : "", //$NON-NLS-1$
+		fIdEntry.setValue(fInput != null && fInput.getId() != null ? fInput.getId() : "", //$NON-NLS-1$
 				true);
-		fNameEntry.setValue(fInput != null && fInput.getName() != null ? fInput
-				.getName() : "", true); //$NON-NLS-1$
-		fSchemaEntry.setValue(fInput != null && fInput.getSchema() != null ? fInput
-				.getSchema() : "", true); //$NON-NLS-1$
+		fNameEntry.setValue(fInput != null && fInput.getName() != null ? fInput.getName() : "", true); //$NON-NLS-1$
+		fSchemaEntry.setValue(fInput != null && fInput.getSchema() != null ? fInput.getSchema() : "", true); //$NON-NLS-1$
 		updateRichText();
 	}
+
 	public void cancelEdit() {
 		fIdEntry.cancelEdit();
 		fNameEntry.cancelEdit();
@@ -311,6 +280,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		updateRichText();
 		super.cancelEdit();
 	}
+
 	private void updateRichText() {
 		boolean hasSchema = fSchemaEntry.getValue().length() > 0;
 		if (hasSchema && fRichTextData == SCHEMA_RTEXT_DATA)
@@ -321,6 +291,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		fRichText.setText(fRichTextData, true, false);
 		getManagedForm().getForm().reflow(true);
 	}
+
 	private void openSchemaFile(final IFile file) {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 
@@ -329,34 +300,28 @@ public class ExtensionPointDetails extends PDEDetails {
 			public void run() {
 				try {
 					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
-					ww.getActivePage().openEditor(
-						new FileEditorInput(file),
-						editorId);
+					ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
 				} catch (PartInitException e) {
 					PDEPlugin.logException(e);
 				}
 			}
 		});
 	}
-	
+
 	private void generateSchema() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		BusyIndicator
-			.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
 			public void run() {
-				NewSchemaFileWizard wizard =
-					new NewSchemaFileWizard(project, fInput, true);
-				WizardDialog dialog =
-					new WizardDialog(
-						PDEPlugin.getActiveWorkbenchShell(),
-						wizard);
+				NewSchemaFileWizard wizard = new NewSchemaFileWizard(project, fInput, true);
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 450);
-				if(dialog.open() == Window.OK)
+				if (dialog.open() == Window.OK)
 					update();
 			}
 		});
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -370,6 +335,7 @@ public class ExtensionPointDetails extends PDEDetails {
 			fInput = null;
 		update();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -381,6 +347,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		fSchemaEntry.commit();
 		super.commit(onSave);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -389,6 +356,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	public void setFocus() {
 		fIdEntry.getText().setFocus();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -398,5 +366,5 @@ public class ExtensionPointDetails extends PDEDetails {
 		update();
 		super.refresh();
 	}
-	
+
 }

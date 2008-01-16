@@ -11,20 +11,10 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -32,26 +22,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IJREInfo;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.PDESourcePathProvider;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.ui.launcher.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class LaunchAction extends Action {
@@ -65,7 +42,7 @@ public class LaunchAction extends Action {
 		fMode = mode;
 		fPath = path;
 	}
-	
+
 	public void run() {
 		try {
 			ILaunchConfiguration config = findLaunchConfiguration();
@@ -74,10 +51,10 @@ public class LaunchAction extends Action {
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	private ILaunchConfiguration findLaunchConfiguration() throws CoreException {
 		ILaunchConfiguration[] configs = getLaunchConfigurations();
-		
+
 		if (configs.length == 0)
 			return createConfiguration();
 
@@ -88,7 +65,7 @@ public class LaunchAction extends Action {
 			// Prompt the user to choose a config. 
 			config = chooseConfiguration(configs);
 		}
-		
+
 		if (config != null) {
 			config = refreshConfiguration(config.getWorkingCopy());
 		}
@@ -98,7 +75,7 @@ public class LaunchAction extends Action {
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getId());
 		String os = Platform.getOS();
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os)); 
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, getJREContainer(os));
 		StringBuffer wsplugins = new StringBuffer();
@@ -113,7 +90,7 @@ public class LaunchAction extends Action {
 			} else {
 				wsplugins.append(id);
 				wsplugins.append(","); //$NON-NLS-1$
-			}	
+			}
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
@@ -123,7 +100,7 @@ public class LaunchAction extends Action {
 			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
 		return wc.doSave();
 	}
-	
+
 	private String getProgramArguments(String os) {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
@@ -134,23 +111,23 @@ public class LaunchAction extends Action {
 		}
 		return buffer.toString();
 	}
-	
+
 	private String getVMArguments(String os) {
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		return (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
-	}	
-	
+	}
+
 	private String getJREContainer(String os) {
 		IJREInfo info = fProduct.getJREInfo();
-		if (info != null){
+		if (info != null) {
 			IPath jrePath = info.getJREContainerPath(os);
-			if (jrePath != null){
+			if (jrePath != null) {
 				return jrePath.toPortableString();
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	private IPluginModelBase[] getModels() {
 		HashMap map = new HashMap();
 		if (fProduct.useFeatures()) {
@@ -166,12 +143,12 @@ public class LaunchAction extends Action {
 					continue;
 				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-					map.put(id, model);				
+					map.put(id, model);
 			}
 		}
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
 	}
-	
+
 	private IFeatureModel[] getUniqueFeatures() {
 		ArrayList list = new ArrayList();
 		IProductFeature[] features = fProduct.getFeatures();
@@ -180,23 +157,23 @@ public class LaunchAction extends Action {
 			String version = features[i].getVersion();
 			addFeatureAndChildren(id, version, list);
 		}
-		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);
+		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
-	
+
 	private void addFeatureAndChildren(String id, String version, List list) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel model = manager.findFeatureModel(id, version);
 		if (model == null || list.contains(model))
 			return;
-		
+
 		list.add(model);
-		
+
 		IFeatureChild[] children = model.getFeature().getIncludedFeatures();
 		for (int i = 0; i < children.length; i++) {
 			addFeatureAndChildren(children[i].getId(), children[i].getVersion(), list);
-		}	
+		}
 	}
-	
+
 	private void addFeaturePlugins(IFeature feature, HashMap map) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
@@ -208,10 +185,10 @@ public class LaunchAction extends Action {
 				map.put(id, model);
 		}
 	}
-	
+
 	private String getTemplateConfigIni() {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		if (info != null  && info.getUse().equals("custom")) { //$NON-NLS-1$
+		if (info != null && info.getUse().equals("custom")) { //$NON-NLS-1$
 			String path = getExpandedPath(info.getPath());
 			if (path != null) {
 				File file = new File(path);
@@ -221,7 +198,7 @@ public class LaunchAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private String getExpandedPath(String path) {
 		if (path == null || path.length() == 0)
 			return null;
@@ -233,30 +210,29 @@ public class LaunchAction extends Action {
 		return null;
 	}
 
-
 	private ILaunchConfiguration chooseConfiguration(ILaunchConfiguration[] configs) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configs);
-		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  
+		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); 
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug);
 		} else {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);
 		}
 		dialog.setMultipleSelection(false);
-		int result= dialog.open();
+		int result = dialog.open();
 		labelProvider.dispose();
 		if (result == Window.OK) {
-			return (ILaunchConfiguration)dialog.getFirstResult();
+			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
-		return null;		
+		return null;
 	}
 
 	private ILaunchConfiguration createConfiguration() throws CoreException {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(new Path(fPath).lastSegment());
-		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
+		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
@@ -268,18 +244,18 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
-		return refreshConfiguration(wc);		
+		return refreshConfiguration(wc);
 	}
-	
+
 	private String getComputedName(String prefix) {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		return lm.generateUniqueLaunchConfigurationNameFrom(prefix);
 	}
-	
+
 	private ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {
 		ArrayList result = new ArrayList();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);	
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 		for (int i = 0; i < configs.length; i++) {
 			if (!DebugUITools.isPrivate(configs[i])) {
@@ -291,10 +267,10 @@ public class LaunchAction extends Action {
 		}
 		return (ILaunchConfiguration[]) result.toArray(new ILaunchConfiguration[result.size()]);
 	}
-	
+
 	protected ILaunchConfigurationType getWorkbenchLaunchConfigType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);	
-	}	
-	
+		return lm.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
+	}
+
 }

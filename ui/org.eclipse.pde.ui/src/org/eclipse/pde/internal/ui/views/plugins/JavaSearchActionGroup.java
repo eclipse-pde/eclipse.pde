@@ -13,11 +13,8 @@ package org.eclipse.pde.internal.ui.views.plugins;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,7 +35,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 
 		public JavaSearchAction(boolean add) {
 			this.add = add;
-			if(add)
+			if (add)
 				setText(PDEUIMessages.PluginsView_addToJavaSearch);
 			else
 				setText(PDEUIMessages.PluginsView_removeFromJavaSearch);
@@ -76,10 +73,10 @@ public class JavaSearchActionGroup extends ActionGroup {
 		IPluginModelBase model = null;
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			model = getModel(iter.next());		
+			model = getModel(iter.next());
 			if (model == null)
 				return false;
-			
+
 			if (model.getUnderlyingResource() == null) {
 				if (add == !manager.isInJavaSearch(model.getPluginBase().getId()))
 					nhits++;
@@ -87,7 +84,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 		}
 		return nhits > 0;
 	}
-	
+
 	private IPluginModelBase getModel(Object object) {
 		IPluginModelBase model = null;
 		if (object instanceof IAdaptable) {
@@ -107,16 +104,13 @@ public class JavaSearchActionGroup extends ActionGroup {
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
-				if (model != null 
-					  && model.getUnderlyingResource() == null
-					  && manager.isInJavaSearch(model.getPluginBase().getId()) != add) {
-					result.add(model);
-				}
+			if (model != null && model.getUnderlyingResource() == null && manager.isInJavaSearch(model.getPluginBase().getId()) != add) {
+				result.add(model);
 			}
+		}
 		if (result.size() == 0)
 			return;
-		final IPluginModelBase[] array =
-			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		final IPluginModelBase[] array = (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 
 		IRunnableWithProgress op = new JavaSearchOperation(array, add);
 		try {

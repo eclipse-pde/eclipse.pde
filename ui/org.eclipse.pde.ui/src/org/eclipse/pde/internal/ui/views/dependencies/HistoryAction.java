@@ -13,9 +13,7 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.PlatformUI;
@@ -44,8 +42,7 @@ public class HistoryAction extends Action {
 		 * @see Object#equals(Object)
 		 */
 		public boolean equals(Object obj) {
-			return (obj != null) && getClass().equals(obj.getClass())
-					&& fImage.equals(((ImageImageDescriptor) obj).fImage);
+			return (obj != null) && getClass().equals(obj.getClass()) && fImage.equals(((ImageImageDescriptor) obj).fImage);
 		}
 
 		/*
@@ -81,16 +78,14 @@ public class HistoryAction extends Action {
 		setImageDescriptor(getImageDescriptor(elementName));
 		setDisabledImageDescriptor(PDEPluginImages.DESC_PLUGIN_OBJ);
 
-		setDescription(NLS.bind(PDEUIMessages.HistoryAction_description, elementName)); 
-		setToolTipText(NLS.bind(PDEUIMessages.HistoryAction_tooltip, elementName)); 
+		setDescription(NLS.bind(PDEUIMessages.HistoryAction_description, elementName));
+		setToolTipText(NLS.bind(PDEUIMessages.HistoryAction_tooltip, elementName));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_ACTION);
 	}
 
 	private ImageDescriptor getImageDescriptor(String element) {
-		DependenciesLabelProvider imageProvider = new DependenciesLabelProvider(
-				false);
-		ImageDescriptor desc = new ImageImageDescriptor(imageProvider
-				.getImage(element));
+		DependenciesLabelProvider imageProvider = new DependenciesLabelProvider(false);
+		ImageDescriptor desc = new ImageImageDescriptor(imageProvider.getImage(element));
 		imageProvider.dispose();
 
 		return desc;

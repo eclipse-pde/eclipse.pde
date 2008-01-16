@@ -10,24 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import java.io.*;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -35,35 +20,32 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class LaunchConfigurationHelper {
-	
+
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
-			String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
-														""); //$NON-NLS-1$
+			String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			if (programArgs.indexOf("-clean") != -1) //$NON-NLS-1$
 				return;
 		} catch (CoreException e) {
 		}
 		File dir = new File(configDir, "org.eclipse.osgi/manifests"); //$NON-NLS-1$
 		if (dir.exists() && dir.isDirectory()) {
-			PDECore.getDefault().getJavaElementChangeListener().synchronizeManifests(dir);	
+			PDECore.getDefault().getJavaElementChangeListener().synchronizeManifests(dir);
 		}
 	}
 
 	public static File getConfigurationArea(ILaunchConfiguration config) {
 		File dir = getConfigurationLocation(config);
-		if (!dir.exists()) 
-			dir.mkdirs();		
-		return dir;		
+		if (!dir.exists())
+			dir.mkdirs();
+		return dir;
 	}
-	
+
 	public static File getConfigurationLocation(ILaunchConfiguration config) {
 		//bug 170213 change config location if config name contains #
 		String configName = config.getName();
@@ -71,15 +53,15 @@ public class LaunchConfigurationHelper {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString(), configName);
 		try {
 			if (!config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
-				String userPath = config.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, (String)null);
+				String userPath = config.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, (String) null);
 				if (userPath != null) {
 					userPath = getSubstitutedString(userPath);
 					dir = new File(userPath).getAbsoluteFile();
 				}
 			}
 		} catch (CoreException e) {
-		}		
-		return dir;		
+		}
+		return dir;
 	}
 
 	private static String getSubstitutedString(String text) throws CoreException {
@@ -88,7 +70,7 @@ public class LaunchConfigurationHelper {
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}
-	
+
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map map, File directory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
@@ -105,7 +87,7 @@ public class LaunchConfigurationHelper {
 			if (bundleList != null)
 				properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), map)); //$NON-NLS-1$
 		} else {
-			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
+			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String) null);
 			if (templateLoc != null) {
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
 				// if template contains osgi.bundles, then only strip the path, do not compute the value
@@ -125,7 +107,7 @@ public class LaunchConfigurationHelper {
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
 	}
-	
+
 	private static void addRequiredProperties(Properties properties, String productID, Map map) {
 		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -143,7 +125,7 @@ public class LaunchConfigurationHelper {
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	private static String computeOSGiBundles(String bundleList, Map map) {
 		// if using p2's simple configurator, revert to default osgi.bundles
 		if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
@@ -160,8 +142,8 @@ public class LaunchConfigurationHelper {
 				if (buffer.length() > 0)
 					buffer.append(',');
 				buffer.append(id);
-				if (index != -1 && index < token.length() -1)
-					buffer.append(token.substring(index));				
+				if (index != -1 && index < token.length() - 1)
+					buffer.append(token.substring(index));
 				initialBundleSet.add(id);
 			}
 		}
@@ -180,7 +162,7 @@ public class LaunchConfigurationHelper {
 		}
 		return buffer.toString();
 	}
-	
+
 	private static Properties loadFromTemplate(String templateLoc) throws CoreException {
 		Properties properties = new Properties();
 		File templateFile = new File(templateLoc);
@@ -192,13 +174,7 @@ public class LaunchConfigurationHelper {
 			} catch (Exception e) {
 				String message = e.getMessage();
 				if (message != null)
-					throw new CoreException(
-						new Status(
-							IStatus.ERROR,
-							PDEPlugin.getPluginId(),
-							IStatus.ERROR,
-							message,
-							e));
+					throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, message, e));
 			} finally {
 				if (stream != null) {
 					try {
@@ -211,15 +187,15 @@ public class LaunchConfigurationHelper {
 		return properties;
 	}
 
-	private static void addSplashLocation(Properties properties, String productID, Map map)  {
-		Properties targetConfig = TargetPlatformHelper.getConfigIniProperties(); 
+	private static void addSplashLocation(Properties properties, String productID, Map map) {
+		Properties targetConfig = TargetPlatformHelper.getConfigIniProperties();
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		if (!productID.equals(targetProduct) || targetSplash == null) {
 			ArrayList locations = new ArrayList();
 			String plugin = getContributingPlugin(productID);
 			locations.add(plugin);
-			IPluginModelBase model = (IPluginModelBase)map.get(plugin);
+			IPluginModelBase model = (IPluginModelBase) map.get(plugin);
 			if (model != null) {
 				BundleDescription desc = model.getBundleDescription();
 				if (desc != null) {
@@ -229,10 +205,10 @@ public class LaunchConfigurationHelper {
 				}
 			}
 			resolveLocationPath(locations, properties, map);
-		} else 
+		} else
 			resolveLocationPath(targetSplash, properties, map);
 	}
-	
+
 	private static void resolveLocationPath(String splashPath, Properties properties, Map map) {
 		ArrayList locations = new ArrayList();
 		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
@@ -240,11 +216,11 @@ public class LaunchConfigurationHelper {
 			locations.add(tok.nextToken());
 		resolveLocationPath(locations, properties, map);
 	}
-		
-	private static void resolveLocationPath(ArrayList locations, Properties properties, Map map) { 
+
+	private static void resolveLocationPath(ArrayList locations, Properties properties, Map map) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.size(); i++) {
-			String location = (String)locations.get(i);
+			String location = (String) locations.get(i);
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -258,18 +234,18 @@ public class LaunchConfigurationHelper {
 		if (buffer.length() > 0)
 			properties.setProperty("osgi.splashPath", buffer.toString()); //$NON-NLS-1$
 	}
-	
+
 	public static String getBundleURL(String id, Map pluginMap) {
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id.trim());
+		IPluginModelBase model = (IPluginModelBase) pluginMap.get(id.trim());
 		return getBundleURL(model);
 	}
-	
+
 	public static String getBundleURL(IPluginModelBase model) {
 		if (model == null)
 			return null;
 		return "file:" + new Path(model.getInstallLocation()).removeTrailingSeparator().toString(); //$NON-NLS-1$		
 	}
-		
+
 	private static void setBundleLocations(Map map, Properties properties) {
 		String framework = properties.getProperty("osgi.framework"); //$NON-NLS-1$
 		if (framework != null) {
@@ -286,7 +262,7 @@ public class LaunchConfigurationHelper {
 			if (url != null)
 				properties.setProperty("osgi.framework", url); //$NON-NLS-1$
 		}
-		
+
 		String bundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (bundles != null) {
 			StringBuffer buffer = new StringBuffer();
@@ -298,11 +274,11 @@ public class LaunchConfigurationHelper {
 				if (url == null) {
 					index = token.indexOf('@');
 					if (index != -1)
-						url = getBundleURL(token.substring(0,index), map);
+						url = getBundleURL(token.substring(0, index), map);
 					if (url == null) {
 						index = token.indexOf(':');
 						if (index != -1)
-							url = getBundleURL(token.substring(0,index), map);
+							url = getBundleURL(token.substring(0, index), map);
 					}
 				}
 				if (url != null) {
@@ -317,7 +293,7 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 		}
 	}
-	
+
 	public static void save(File file, Properties properties) {
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
@@ -335,18 +311,15 @@ public class LaunchConfigurationHelper {
 		int index = productID.lastIndexOf('.');
 		return index == -1 ? productID : productID.substring(0, index);
 	}
-	
-	public static String getProductID(ILaunchConfiguration configuration)
-			throws CoreException {
+
+	public static String getProductID(ILaunchConfiguration configuration) throws CoreException {
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-			return configuration.getAttribute(IPDELauncherConstants.PRODUCT,
-					(String) null);
+			return configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 		}
 
 		// find the product associated with the application, and return its
 		// contributing plug-in
-		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION,
-				TargetPlatform.getDefaultApplication());
+		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();

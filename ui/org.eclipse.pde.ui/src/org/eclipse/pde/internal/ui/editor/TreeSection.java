@@ -20,29 +20,33 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TreeSection extends StructuredViewerSection {
-	
+
 	protected boolean fHandleDefaultButton = true;
-	
+
 	class PartAdapter extends TreePart {
 		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
 		}
+
 		public void selectionChanged(IStructuredSelection selection) {
 			getManagedForm().fireSelectionChanged(TreeSection.this, selection);
 			TreeSection.this.selectionChanged(selection);
 		}
+
 		public void handleDoubleClick(IStructuredSelection selection) {
 			TreeSection.this.handleDoubleClick(selection);
 		}
+
 		public void buttonSelected(Button button, int index) {
 			TreeSection.this.buttonSelected(index);
 			if (fHandleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
+
 		protected void createButtons(Composite parent, FormToolkit toolkit) {
 			super.createButtons(parent, toolkit);
 			enableButtons();
-			if(parent.getData("filtered") != null) { //$NON-NLS-1$
+			if (parent.getData("filtered") != null) { //$NON-NLS-1$
 				GridLayout layout = (GridLayout) fButtonContainer.getLayout();
 				layout.marginHeight = 28;
 			}
@@ -53,6 +57,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 		}
 
 	}
+
 	/**
 	 * Constructor for TableSection.
 	 * @param formPage
@@ -73,8 +78,9 @@ public abstract class TreeSection extends StructuredViewerSection {
 		return new TreeViewer(parent, style);
 	}
 
-	protected void selectionChanged(IStructuredSelection selection) {}
-	
+	protected void selectionChanged(IStructuredSelection selection) {
+	}
+
 	/**
 	 * Expands or collapsed selected node according to its current state
 	 * @param selection
@@ -84,5 +90,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 		boolean expandedState = viewer.getExpandedState(selection.getFirstElement());
 		viewer.setExpandedState(selection.getFirstElement(), !expandedState);
 	}
-	protected void enableButtons() {}
+
+	protected void enableButtons() {
+	}
 }

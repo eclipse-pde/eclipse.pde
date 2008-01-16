@@ -11,15 +11,10 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.io.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 
@@ -29,10 +24,10 @@ import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
  */
 public class SimpleCSPreviewAction extends Action {
 
-	private ISimpleCS fDataModelObject; 
-	
+	private ISimpleCS fDataModelObject;
+
 	private IEditorInput fEditorInput;
-	
+
 	/**
 	 * @param input
 	 */
@@ -44,7 +39,7 @@ public class SimpleCSPreviewAction extends Action {
 		// Set action image
 		setImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_OBJ);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -67,29 +62,25 @@ public class SimpleCSPreviewAction extends Action {
 			swriter.close();
 			// Launch in the cheat sheet view
 			// Note:  Having a null URL is valid for simple cheat sheets
-			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
-					fEditorInput.getName(),
-					fEditorInput.getName(), 
-					swriter.toString(),
-					null);
+			OpenCheatSheetAction openAction = new OpenCheatSheetAction(fEditorInput.getName(), fEditorInput.getName(), swriter.toString(), null);
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param object
 	 */
 	public void setDataModelObject(ISimpleCS object) {
 		fDataModelObject = object;
 	}
-	
+
 	/**
 	 * @param editorInput
 	 */
 	public void setEditorInput(IEditorInput editorInput) {
 		fEditorInput = editorInput;
 	}
-	
+
 }

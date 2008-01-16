@@ -16,19 +16,21 @@ import org.eclipse.swt.graphics.Image;
 public class ElementLabelProvider extends LabelProvider {
 	public static final ElementLabelProvider INSTANCE = new ElementLabelProvider();
 
-public ElementLabelProvider() {
-	super();
-}
-public Image getImage(Object element) {
-   if (element instanceof IPDEElement) {
-	   return ((IPDEElement)element).getImage();
-   }
-   return super.getImage(element);
-}
-public String getText(Object element) {
-   if (element instanceof IPDEElement) {
-	   return ((IPDEElement)element).getLabel();
-   }
-   return super.getText(element);
-}
+	public ElementLabelProvider() {
+		super();
+	}
+
+	public Image getImage(Object element) {
+		if (element instanceof IPDEElement) {
+			return ((IPDEElement) element).getImage();
+		}
+		return super.getImage(element);
+	}
+
+	public String getText(Object element) {
+		if (element instanceof IPDEElement) {
+			return ((IPDEElement) element).getLabel();
+		}
+		return super.getText(element);
+	}
 }

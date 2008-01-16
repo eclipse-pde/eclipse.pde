@@ -11,12 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.jface.text.*;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 /**
@@ -25,16 +21,16 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
  */
 public class CompCSConclusionTextListener implements IDocumentListener {
 
-	private ICompCSTaskObject fDataTaskObject;	
-	
+	private ICompCSTaskObject fDataTaskObject;
+
 	private boolean fBlockEvents;
-	
+
 	/**
 	 * 
 	 */
 	public CompCSConclusionTextListener() {
 		fDataTaskObject = null;
-		fBlockEvents = false;		
+		fBlockEvents = false;
 	}
 
 	/**
@@ -43,29 +39,29 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
-	}	
-	
+	}
+
 	/**
 	 * @param object
 	 */
 	public void setData(ICompCSTaskObject object) {
 		// Set data
 		fDataTaskObject = object;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		// NO-OP
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
@@ -73,7 +69,7 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		// Check whether to handle this event
 		if (fBlockEvents) {
 			return;
-		}		
+		}
 		// Ensure the task object is defined
 		if (fDataTaskObject == null) {
 			return;
@@ -92,9 +88,9 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		} else {
 			// No conclusion was specified, remove any existing one
 			removeConclusionText(text);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param text
 	 */
@@ -112,10 +108,8 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 	 * @param text
 	 */
 	private void addConclusionText(String text) {
-		ICompCSModelFactory factory = 
-			fDataTaskObject.getModel().getFactory(); 
-		ICompCSOnCompletion conclusion = 
-			factory.createCompCSOnCompletion(fDataTaskObject); 
+		ICompCSModelFactory factory = fDataTaskObject.getModel().getFactory();
+		ICompCSOnCompletion conclusion = factory.createCompCSOnCompletion(fDataTaskObject);
 		conclusion.setFieldContent(text);
 		fDataTaskObject.setFieldOnCompletion(conclusion);
 	}
@@ -136,6 +130,6 @@ public class CompCSConclusionTextListener implements IDocumentListener {
 		if (conclusion != null) {
 			fDataTaskObject.setFieldOnCompletion(null);
 		}
-	}	
-	
+	}
+
 }

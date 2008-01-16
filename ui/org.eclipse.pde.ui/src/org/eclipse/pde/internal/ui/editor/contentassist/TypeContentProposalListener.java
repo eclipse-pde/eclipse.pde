@@ -11,19 +11,14 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.IContentProposal;
-import org.eclipse.jface.fieldassist.IContentProposalListener;
-import org.eclipse.jface.fieldassist.IContentProposalListener2;
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.fieldassist.*;
 
 /**
  * TypeContentProposalListener
  *
  */
-public class TypeContentProposalListener implements IContentProposalListener,
-		IContentProposalListener2 {
-	
+public class TypeContentProposalListener implements IContentProposalListener, IContentProposalListener2 {
+
 	/**
 	 * 
 	 */
@@ -45,7 +40,7 @@ public class TypeContentProposalListener implements IContentProposalListener,
 		IContentProposalProvider provider = adapter.getContentProposalProvider();
 		if (provider instanceof TypeContentProposalProvider) {
 			// Reset state related information used for filtering existing proposals
-			((TypeContentProposalProvider)provider).reset();
+			((TypeContentProposalProvider) provider).reset();
 		}
 	}
 

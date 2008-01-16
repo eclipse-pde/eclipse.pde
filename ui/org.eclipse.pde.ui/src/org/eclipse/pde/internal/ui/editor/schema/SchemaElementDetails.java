@@ -12,13 +12,8 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.schema.Schema;
-import org.eclipse.pde.internal.core.schema.SchemaElement;
-import org.eclipse.pde.internal.core.schema.SchemaElementReference;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -27,9 +22,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -41,7 +34,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private Button fDepFalse;
 	private Button fTransTrue;
 	private Button fTransFalse;
-	
+
 	public SchemaElementDetails(ElementSection section) {
 		super(section, true, true);
 	}
@@ -49,10 +42,10 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
-		
+
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		// Ensures label columns on every detail page are same width
-		((GridData)fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
+		((GridData) fName.getLabel().getLayoutData()).widthHint = minLabelWeight;
 
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
@@ -65,34 +58,32 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		buttons = createTrueFalseButtons(parent, toolkit, 2);
 		fTransTrue = buttons[0];
 		fTransFalse = buttons[1];
-		
+
 		setText(PDEUIMessages.SchemaElementDetails_title);
 	}
 
 	public void updateFields(ISchemaObject object) {
 		if (object instanceof SchemaElementReference)
-			object = ((SchemaElementReference)object).getReferencedObject();
-		fElement = (SchemaElement)object;
+			object = ((SchemaElementReference) object).getReferencedObject();
+		fElement = (SchemaElement) object;
 		if (fElement == null)
 			return;
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 		fName.setValue(fElement.getName(), true);
-		
+
 		fDepTrue.setSelection(fElement.isDeprecated());
 		fDepFalse.setSelection(!fElement.isDeprecated());
-		
+
 		boolean isTranslatable = true;
-		if ((fElement.getType() instanceof ISchemaComplexType &&
-				((ISchemaComplexType)fElement.getType()).getCompositor() != null) ||
-				fElement.getAttributeCount() != 0)
+		if ((fElement.getType() instanceof ISchemaComplexType && ((ISchemaComplexType) fElement.getType()).getCompositor() != null) || fElement.getAttributeCount() != 0)
 			isTranslatable = false;
 
 		fTransTrue.setSelection(fElement.hasTranslatableContent());
 		fTransFalse.setSelection(!fElement.hasTranslatableContent());
-		
+
 		boolean editable = isEditableElement();
 		fName.setEditable(editable);
-		
+
 		fDepTrue.setEnabled(editable);
 		fDepFalse.setEnabled(editable);
 		fTransTrue.setEnabled(editable && isTranslatable);
@@ -117,10 +108,10 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 					}
 				}
 				if (revert)
-					fName.setValue(fElement.getName(),true);
+					fName.setValue(fElement.getName(), true);
 				else {
 					fElement.setName(fName.getValue());
-					((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
+					((Schema) fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
 					setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 				}
 			}
@@ -140,17 +131,17 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-	
+
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] changedObjs = event.getChangedObjects();
-		if(event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
-			if (changedObjs[0] instanceof SchemaElement) {	
+		if (event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
+			if (changedObjs[0] instanceof SchemaElement) {
 				fName.getText().setFocus();
-		    }
+			}
 		}
 		super.modelChanged(event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -158,5 +149,5 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		super.commit(onSave);
 		// Only required for form entries
 		fName.commit();
-	}	
+	}
 }

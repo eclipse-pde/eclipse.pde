@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -22,10 +21,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 
 /**
@@ -47,21 +43,21 @@ public class CompCSEditor extends CSAbstractEditor {
 	protected String getEditorID() {
 		return IPDEUIConstants.COMPOSITE_CHEAT_SHEET_EDITOR_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
 	public String getContextIDForSaveAs() {
 		return CompCSInputContext.CONTEXT_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
 	 */
@@ -90,8 +86,7 @@ public class CompCSEditor extends CSAbstractEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
 	 */
-	protected void createResourceContexts(InputContextManager contexts,
-			IFileEditorInput input) {
+	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
 		contexts.putContext(input, new CompCSInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
@@ -99,17 +94,15 @@ public class CompCSEditor extends CSAbstractEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
 	 */
-	protected void createStorageContexts(InputContextManager contexts,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
 		contexts.putContext(input, new CompCSInputContext(this, input, true));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager contexts,
-			SystemFileEditorInput input) {
-		File file = (File)input.getAdapter(File.class);
+	protected void createSystemFileContexts(InputContextManager contexts, SystemFileEditorInput input) {
+		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			IEditorInput in = new SystemFileEditorInput(file);
 			contexts.putContext(in, new CompCSInputContext(this, in, true));
@@ -160,15 +153,14 @@ public class CompCSEditor extends CSAbstractEditor {
 		// track selections made in the master tree view.
 		// The selection is required to synchronize the master tree view with 
 		// the outline view
-		IFormPage formPage = getActivePageInstance();	
-		if ((formPage != null) && 
-				(formPage instanceof CompCSPage)) {
+		IFormPage formPage = getActivePageInstance();
+		if ((formPage != null) && (formPage instanceof CompCSPage)) {
 			// Synchronizes the selection made in the master tree view with the
 			// selection in the outline view when the link with editor button
 			// is toggled on
-			return ((CompCSPage)formPage).getSelection();
+			return ((CompCSPage) formPage).getSelection();
 		}
 		return super.getSelection();
 	}
-	
+
 }

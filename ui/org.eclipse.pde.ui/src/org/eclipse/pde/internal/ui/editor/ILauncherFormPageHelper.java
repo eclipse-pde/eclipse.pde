@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-
 /**
  * This is an interface used only by subclasses of PDELauncherFormPage.
  * It's purpose is to allow code reuse between direct subclasses of
@@ -19,6 +18,8 @@ package org.eclipse.pde.internal.ui.editor;
 
 public interface ILauncherFormPageHelper {
 	public void preLaunch();
+
 	public Object getLaunchObject();
+
 	public boolean isOSGi();
 }

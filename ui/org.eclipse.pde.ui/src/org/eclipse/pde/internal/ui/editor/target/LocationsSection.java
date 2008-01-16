@@ -11,29 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
-import org.eclipse.pde.internal.core.itarget.ILocationInfo;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -45,11 +30,10 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-
 public class LocationsSection extends TableSection {
-	
+
 	private TableViewer fContentViewer;
-	
+
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			ITarget target = getTarget();
@@ -58,7 +42,7 @@ public class LocationsSection extends TableSection {
 	}
 
 	public LocationsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.LocationsSection_add,PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.LocationsSection_add, PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -66,9 +50,9 @@ public class LocationsSection extends TableSection {
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
-		
+
 		createViewerPartControl(client, SWT.MULTI, 2, toolkit);
-		
+
 		TablePart tablePart = getTablePart();
 		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.grabExcessVerticalSpace = true;
@@ -84,68 +68,68 @@ public class LocationsSection extends TableSection {
 		});
 		fContentViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				IAdditionalLocation loc1 = (IAdditionalLocation)e1;
-				return loc1.getPath().compareToIgnoreCase(((IAdditionalLocation)e2).getPath());
+				IAdditionalLocation loc1 = (IAdditionalLocation) e1;
+				return loc1.getPath().compareToIgnoreCase(((IAdditionalLocation) e2).getPath());
 			}
 		});
 		fContentViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				// if user double clicked on one selected item
-				if (((StructuredSelection)fContentViewer.getSelection()).toArray().length == 1)
+				if (((StructuredSelection) fContentViewer.getSelection()).toArray().length == 1)
 					handleEdit();
 			}
 		});
-		
+
 		toolkit.paintBordersFor(client);
-		section.setClient(client);	
+		section.setClient(client);
 		section.setText(PDEUIMessages.LocationsSection_title);
 		section.setDescription(PDEUIMessages.LocationsSection_description);
 		GridData sectionData = new GridData(GridData.FILL_BOTH);
 		sectionData.horizontalSpan = 2;
 		section.setLayoutData(sectionData);
 		updateButtons();
-		
+
 		getModel().addModelChangedListener(this);
 	}
-	
+
 	private ITarget getTarget() {
 		return getModel().getTarget();
 	}
-	
+
 	private ITargetModel getModel() {
-		return (ITargetModel)getPage().getPDEEditor().getAggregateModel();
+		return (ITargetModel) getPage().getPDEEditor().getAggregateModel();
 	}
-	
+
 	protected void updateButtons() {
-		int selectionNum = ((StructuredSelection)fContentViewer.getSelection()).toArray().length;
+		int selectionNum = ((StructuredSelection) fContentViewer.getSelection()).toArray().length;
 		TablePart table = getTablePart();
 		table.setButtonEnabled(1, selectionNum == 1);
 		table.setButtonEnabled(2, selectionNum > 0);
 	}
-	
+
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case 0:
-			handleAdd();
-			break;
-		case 1:
-			handleEdit();
-			break;
-		case 2:
-			handleDelete();
+			case 0 :
+				handleAdd();
+				break;
+			case 1 :
+				handleEdit();
+				break;
+			case 2 :
+				handleDelete();
 		}
 	}
-	
+
 	protected void handleAdd() {
 		showDialog(null);
 	}
-	
+
 	protected void handleEdit() {
-		showDialog((IAdditionalLocation)((StructuredSelection)fContentViewer.getSelection()).iterator().next());
+		showDialog((IAdditionalLocation) ((StructuredSelection) fContentViewer.getSelection()).iterator().next());
 	}
-	
+
 	protected void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection)fContentViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fContentViewer.getSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			ITarget target = getTarget();
@@ -154,20 +138,19 @@ public class LocationsSection extends TableSection {
 			target.removeAdditionalDirectories(dirs);
 		}
 	}
-	
+
 	private void showDialog(final IAdditionalLocation location) {
 		final ITarget model = getTarget();
 		BusyIndicator.showWhile(fContentViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
-				LocationDialog dialog = new LocationDialog(fContentViewer.getTable()
-						.getShell(), model, location);
+				LocationDialog dialog = new LocationDialog(fContentViewer.getTable().getShell(), model, location);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 500, -1);
 				dialog.open();
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -203,13 +186,13 @@ public class LocationsSection extends TableSection {
 		fContentViewer.setInput(getTarget());
 		// Perform the refresh
 		refresh();
-	}		
-	
+	}
+
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
-		} 	
+		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			handleDelete();
 			return false;
@@ -220,7 +203,7 @@ public class LocationsSection extends TableSection {
 		}
 		return false;
 	}
-	
+
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IAdditionalLocation)
@@ -228,18 +211,17 @@ public class LocationsSection extends TableSection {
 		}
 		return false;
 	}
-	
+
 	protected void doPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IAdditionalLocation &&
-					!hasPath(((IAdditionalLocation)objects[i]).getPath())) {
-				IAdditionalLocation loc = (IAdditionalLocation)objects[i];
+			if (objects[i] instanceof IAdditionalLocation && !hasPath(((IAdditionalLocation) objects[i]).getPath())) {
+				IAdditionalLocation loc = (IAdditionalLocation) objects[i];
 				loc.setModel(getModel());
-				getTarget().addAdditionalDirectories(new IAdditionalLocation[] {loc});	
+				getTarget().addAdditionalDirectories(new IAdditionalLocation[] {loc});
 			}
 		}
 	}
-	
+
 	protected boolean hasPath(String path) {
 		Path checkPath = new Path(path);
 		IAdditionalLocation[] locs = getModel().getTarget().getAdditionalDirectories();
@@ -249,13 +231,13 @@ public class LocationsSection extends TableSection {
 		}
 		return isTargetLocation(checkPath);
 	}
-	
+
 	private boolean isTargetLocation(Path path) {
 		ILocationInfo info = getModel().getTarget().getLocationInfo();
 		if (info.useDefault()) {
 			Path home = new Path(TargetPlatform.getDefaultLocation());
 			return home.equals(path);
-		} 
+		}
 		return new Path(info.getPath()).equals(path);
 	}
 
@@ -265,7 +247,7 @@ public class LocationsSection extends TableSection {
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
@@ -274,25 +256,25 @@ public class LocationsSection extends TableSection {
 		updateButtons();
 		super.refresh();
 	}
-	
+
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = (IStructuredSelection)fContentViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fContentViewer.getSelection();
 		if (ssel == null)
 			return;
-		
-		Action removeAction = new Action(PDEUIMessages.ContentSection_remove) { 
+
+		Action removeAction = new Action(PDEUIMessages.ContentSection_remove) {
 			public void run() {
 				handleDelete();
 			}
 		};
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
-		
+
 		manager.add(new Separator());
-		
+
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 	}

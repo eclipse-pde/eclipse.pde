@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 
 	public static final String XML_PARTITIONING = "_pde_xml_partitioning"; //$NON-NLS-1$
-	
+
 	public void setup(IDocument document) {
 		IDocumentPartitioner partitioner = createDocumentPartitioner();
 		if (partitioner != null) {
@@ -31,7 +31,7 @@ public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 			}
 		}
 	}
-	
+
 	private IDocumentPartitioner createDocumentPartitioner() {
 		return new FastPartitioner(new XMLPartitionScanner(), XMLPartitionScanner.PARTITIONS);
 	}

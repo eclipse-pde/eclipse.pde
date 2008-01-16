@@ -21,18 +21,17 @@ import org.eclipse.swt.graphics.Image;
 public class TypeContentProposal implements IContentProposal {
 
 	private String fLabel;
-	
+
 	private String fContent;
-	
+
 	private String fDescription;
-	
+
 	private Image fImage;
-	
+
 	/**
 	 * 
 	 */
-	public TypeContentProposal(String label, String content,
-			String description, Image image) {
+	public TypeContentProposal(String label, String content, String description, Image image) {
 		fLabel = label;
 		fContent = content;
 		fDescription = description;
@@ -69,7 +68,7 @@ public class TypeContentProposal implements IContentProposal {
 	public String getLabel() {
 		return fLabel;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -83,5 +82,5 @@ public class TypeContentProposal implements IContentProposal {
 	public String toString() {
 		return fLabel;
 	}
-	
+
 }

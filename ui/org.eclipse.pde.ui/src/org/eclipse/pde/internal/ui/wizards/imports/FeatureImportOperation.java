@@ -13,45 +13,21 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.ui.wizards.datatransfer.*;
 
 public class FeatureImportOperation implements IWorkspaceRunnable {
 	public interface IReplaceQuery {
@@ -80,11 +56,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	 * @param targetPath a parent of external project or null
 	 * @param replaceQuery
 	 */
-	public FeatureImportOperation(
-		IFeatureModel[] models,
-		boolean binary,
-		IPath targetPath,
-		IReplaceQuery replaceQuery) {
+	public FeatureImportOperation(IFeatureModel[] models, boolean binary, IPath targetPath, IReplaceQuery replaceQuery) {
 		fModels = models;
 		fBinary = binary;
 		fTargetPath = targetPath;
@@ -95,21 +67,13 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	/*
 	 * @see IWorkspaceRunnable#run(IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor)
-		throws CoreException, OperationCanceledException {
+	public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(
-			PDEUIMessages.FeatureImportWizard_operation_creating, 
-			fModels.length);
+		monitor.beginTask(PDEUIMessages.FeatureImportWizard_operation_creating, fModels.length);
 		try {
-			MultiStatus multiStatus =
-				new MultiStatus(
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					PDEUIMessages.FeatureImportWizard_operation_multiProblem, 
-					null);
+			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.FeatureImportWizard_operation_multiProblem, null);
 			for (int i = 0; i < fModels.length; i++) {
 				try {
 					createProject(fModels[i], new SubProgressMonitor(monitor, 1));
@@ -128,8 +92,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void createProject(IFeatureModel model, IProgressMonitor monitor)
-		throws CoreException {
+	private void createProject(IFeatureModel model, IProgressMonitor monitor) throws CoreException {
 		String name = model.getFeature().getId();
 
 		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
@@ -140,9 +103,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			}
 
 		}
-		
-		String task =
-			NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name);
+
+		String task = NLS.bind(PDEUIMessages.FeatureImportWizard_operation_creating2, name);
 		monitor.beginTask(task, 9);
 		try {
 			IProject project = fRoot.getProject(name);
@@ -163,8 +125,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				monitor.worked(1);
 			}
 
-			IProjectDescription description =
-				PDEPlugin.getWorkspace().newProjectDescription(name);
+			IProjectDescription description = PDEPlugin.getWorkspace().newProjectDescription(name);
 			if (fTargetPath != null)
 				description.setLocation(fTargetPath.append(name));
 
@@ -174,12 +135,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			}
 			File featureDir = new File(model.getInstallLocation());
 
-			importContent(
-				featureDir,
-				project.getFullPath(),
-				FileSystemStructureProvider.INSTANCE,
-				null,
-				new SubProgressMonitor(monitor, 1));
+			importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null, new SubProgressMonitor(monitor, 1));
 			IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
 			if (folder.exists()) {
 				folder.delete(true, null);
@@ -187,9 +143,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			if (fBinary) {
 				// Mark this project so that we can show image overlay
 				// using the label decorator
-				project.setPersistentProperty(
-						PDECore.EXTERNAL_PROJECT_PROPERTY,
-						PDECore.BINARY_PROJECT_VALUE);
+				project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
 			}
 			createBuildProperties(project);
 			setProjectNatures(project, model, monitor);
@@ -201,13 +155,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void importContent(
-		Object source,
-		IPath destPath,
-		IImportStructureProvider provider,
-		List filesToImport,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void importContent(Object source, IPath destPath, IImportStructureProvider provider, List filesToImport, IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String file) {
 				return ALL;
@@ -226,13 +174,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			if (th instanceof CoreException) {
 				throw (CoreException) th;
 			}
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					e.getMessage(),
-					e);
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException(e.getMessage());
@@ -249,34 +191,25 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		return true;
 	}
 
-	private void setProjectNatures(
-		IProject project,
-		IFeatureModel model,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void setProjectNatures(IProject project, IFeatureModel model, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		if (needsJavaNature(model)) {
-			desc.setNatureIds(new String[] { JavaCore.NATURE_ID,
-					PDE.FEATURE_NATURE });
+			desc.setNatureIds(new String[] {JavaCore.NATURE_ID, PDE.FEATURE_NATURE});
 		} else {
-			desc.setNatureIds(new String[] { PDE.FEATURE_NATURE });
+			desc.setNatureIds(new String[] {PDE.FEATURE_NATURE});
 		}
 		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 	}
 
-	private void setClasspath(IProject project, IFeatureModel model,
-			IProgressMonitor monitor) throws JavaModelException {
+	private void setClasspath(IProject project, IFeatureModel model, IProgressMonitor monitor) throws JavaModelException {
 		IJavaProject jProject = JavaCore.create(project);
 
-		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(new Path(
-				"org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
+		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 
 		String libName = model.getFeature().getInstallHandler().getLibrary();
-		IClasspathEntry handlerCPEntry = JavaCore.newLibraryEntry(project
-				.getFullPath().append(libName), null, null);
+		IClasspathEntry handlerCPEntry = JavaCore.newLibraryEntry(project.getFullPath().append(libName), null, null);
 
-		jProject.setRawClasspath(new IClasspathEntry[] { jreCPEntry,
-				handlerCPEntry }, monitor);
+		jProject.setRawClasspath(new IClasspathEntry[] {jreCPEntry, handlerCPEntry}, monitor);
 	}
 
 	private boolean needsJavaNature(IFeatureModel model) {
@@ -291,7 +224,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		File lib = new File(model.getInstallLocation(), libName);
 		return lib.exists();
 	}
-	
+
 	private void createBuildProperties(IProject project) {
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
 		if (!file.exists()) {

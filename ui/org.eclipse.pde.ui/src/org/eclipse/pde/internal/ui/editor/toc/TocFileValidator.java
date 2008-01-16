@@ -37,7 +37,7 @@ public class TocFileValidator implements ISelectionStatusValidator {
 	 * @see org.eclipse.ui.dialogs.ISelectionStatusValidator#validate(java.lang.Object[])
 	 */
 	public IStatus validate(Object[] selection) {
-		
+
 		// Ensure something was selected
 		if (selection.length == 0) {
 			return errorStatus(""); //$NON-NLS-1$
@@ -46,46 +46,36 @@ public class TocFileValidator implements ISelectionStatusValidator {
 		if ((selection[0] instanceof IFile) == false) {
 			return errorStatus(""); //$NON-NLS-1$
 		}
-		IFile file = (IFile)selection[0];
+		IFile file = (IFile) selection[0];
 		// Ensure we have a TOC file
 		if (!TocExtensionUtil.isTOCFile(file.getFullPath())) {
 			return errorStatus(PDEUIMessages.TocFileValidator_errorInvalidTOC);
 		}
-		
+
 		//Ensure that the TOC file selected isn't the current file
-		if(TocExtensionUtil.isCurrentResource(file.getFullPath(), fModel))
-		{	return errorStatus(PDEUIMessages.TocFileValidator_errorSameTOC);
+		if (TocExtensionUtil.isCurrentResource(file.getFullPath(), fModel)) {
+			return errorStatus(PDEUIMessages.TocFileValidator_errorSameTOC);
 		}
 
 		// If we got this far, we have a valid file
 		return okStatus(""); //$NON-NLS-1$
-		
+
 	}
-	
+
 	/**
 	 * @param message
 	 * @return
 	 */
 	private IStatus errorStatus(String message) {
-		return new Status(
-				IStatus.ERROR,
-				PDEPlugin.getPluginId(),
-				IStatus.ERROR,
-				message,
-				null);
+		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, message, null);
 	}
-	
+
 	/**
 	 * @param message
 	 * @return
 	 */
 	private IStatus okStatus(String message) {
-		return new Status(
-				IStatus.OK,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				message, 
-				null);		
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, message, null);
 	}
 
 }

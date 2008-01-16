@@ -11,26 +11,20 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
-
 public class DependencyExtentQuery implements ISearchQuery {
-	
+
 	private ISearchResult fSearchResult;
 	private IProject fProject;
 	private String fImportID;
-	
+
 	public DependencyExtentQuery(IProject project, String importID) {
 		fProject = project;
 		fImportID = importID;
@@ -76,21 +70,19 @@ public class DependencyExtentQuery implements ISearchQuery {
 			fSearchResult = new DependencyExtentSearchResult(this);
 		return fSearchResult;
 	}
-	
+
 	public IPackageFragmentRoot[] getDirectRoots() {
 		ArrayList result = new ArrayList();
 		try {
 			IPackageFragmentRoot[] roots = JavaCore.create(fProject).getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
-						|| (roots[i].isArchive() && !roots[i].isExternal())) {
+				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].isArchive() && !roots[i].isExternal())) {
 					result.add(roots[i]);
 				}
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragmentRoot[]) result
-				.toArray(new IPackageFragmentRoot[result.size()]);
+		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
 }

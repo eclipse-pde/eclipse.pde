@@ -21,5 +21,5 @@ public interface IPDESourceParticipant {
 	 * @return The original source objects (dragged)
 	 */
 	public Object[] getSourceObjects();
-	
+
 }

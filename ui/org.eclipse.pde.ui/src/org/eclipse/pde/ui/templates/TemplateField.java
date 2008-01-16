@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
 /**
  * The base class for all the template option fields. Template option is a
  * single editable option that is exposed to the users in the wizard pages
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 public abstract class TemplateField {
 	private BaseOptionTemplateSection section;
 	private String label;
+
 	/**
 	 * The constructor for the field.
 	 * 
@@ -37,6 +40,7 @@ public abstract class TemplateField {
 		this.section = section;
 		this.label = label;
 	}
+
 	/**
 	 * Returns the field label.
 	 * 
@@ -45,6 +49,7 @@ public abstract class TemplateField {
 	public String getLabel() {
 		return label;
 	}
+
 	/**
 	 * Changes the label of this field.
 	 * 
@@ -54,6 +59,7 @@ public abstract class TemplateField {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 	/**
 	 * Returns the template section that owns this option field.
 	 * 
@@ -62,6 +68,7 @@ public abstract class TemplateField {
 	public BaseOptionTemplateSection getSection() {
 		return section;
 	}
+
 	/**
 	 * Factory method that creates the label in the provided parent.
 	 * 
@@ -76,6 +83,7 @@ public abstract class TemplateField {
 		label.setText(getLabel());
 		return label;
 	}
+
 	/**
 	 * Subclasses must implement this method to create the control of the
 	 * template field.

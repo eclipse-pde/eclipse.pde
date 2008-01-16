@@ -9,40 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
+import java.io.*;
+import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.ExternalSiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 
 public class SiteInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "site-context"; //$NON-NLS-1$
-	private boolean storageModel=false;
+	private boolean storageModel = false;
+
 	/**
 	 * @param editor
 	 * @param input
 	 */
-	public SiteInputContext(PDEFormEditor editor, IEditorInput input,
-			boolean primary) {
+	public SiteInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
@@ -57,9 +47,8 @@ public class SiteInputContext extends XMLInputContext {
 					is = new BufferedInputStream(file.getContents());
 					model = createWorkspaceModel(file, is, true);
 				} else if (input instanceof IStorageEditorInput) {
-					is = new BufferedInputStream(((IStorageEditorInput) input).getStorage()
-							.getContents());
-					model =  createStorageModel(is);
+					is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
+					model = createStorageModel(is);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -69,8 +58,7 @@ public class SiteInputContext extends XMLInputContext {
 		return model;
 	}
 
-	private IBaseModel createWorkspaceModel(IFile file, InputStream stream,
-			boolean editable) {
+	private IBaseModel createWorkspaceModel(IFile file, InputStream stream, boolean editable) {
 		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		try {
 			model.setEditable(editable);
@@ -84,7 +72,7 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		return model;
 	}
-	
+
 	private IBaseModel createStorageModel(InputStream stream) {
 		ExternalSiteModel model = new ExternalSiteModel();
 		try {
@@ -106,6 +94,7 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		super.dispose();
 	}
+
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
@@ -113,8 +102,10 @@ public class SiteInputContext extends XMLInputContext {
 		if (!(getModel() instanceof IEditable))
 			return;
 		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isEditable()==false) return;
-		if (editableModel.isDirty() == false) return;
+		if (editableModel.isEditable() == false)
+			return;
+		if (editableModel.isDirty() == false)
+			return;
 		try {
 			StringWriter swriter = new StringWriter();
 			PrintWriter writer = new PrintWriter(swriter);
@@ -126,14 +117,13 @@ public class SiteInputContext extends XMLInputContext {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	protected boolean synchronizeModel(IDocument doc) {
 		ISiteModel model = (ISiteModel) getModel();
 		boolean cleanModel = true;
 		String text = doc.get();
 		try {
-			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
+			InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
 			try {
 				model.reload(stream, false);
 			} catch (CoreException e) {
@@ -148,6 +138,7 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		return cleanModel;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -156,6 +147,7 @@ public class SiteInputContext extends XMLInputContext {
 	public String getId() {
 		return CONTEXT_ID;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

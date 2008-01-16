@@ -17,21 +17,15 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.IProjectionListener;
-import org.eclipse.jface.text.source.projection.ProjectionSupport;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
-import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.widgets.Composite;
-
 
 public abstract class PDEProjectionSourcePage extends PDESourcePage implements IProjectionListener {
 
@@ -43,12 +37,11 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	public PDEProjectionSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fColorManager = ColorManager.getDefault();
-		fConfiguration = 
-			SourceViewerConfigurationFactory.createSourceViewerConfiguration(this, fColorManager);
+		fConfiguration = SourceViewerConfigurationFactory.createSourceViewerConfiguration(this, fColorManager);
 		if (fConfiguration != null)
 			setSourceViewerConfiguration(fConfiguration);
 	}
-	
+
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
@@ -61,13 +54,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	}
 
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new PDEProjectionViewer(
-				parent, 
-				ruler,
-				getOverviewRuler(), 
-				isOverviewRulerVisible(), 
-				styles,
-				isQuickOutlineEnabled());
+		ISourceViewer viewer = new PDEProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles, isQuickOutlineEnabled());
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
@@ -76,7 +63,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	 * @return
 	 */
 	public abstract boolean isQuickOutlineEnabled();
-	
+
 	public void dispose() {
 		((ProjectionViewer) getSourceViewer()).removeProjectionListener(this);
 		if (fProjectionSupport != null) {
@@ -90,30 +77,26 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	}
 
 	private void createFoldingSupport(ProjectionViewer projectionViewer) {
-		fProjectionSupport = new ProjectionSupport(
-				projectionViewer,
-				getAnnotationAccess(),
-				getSharedColors());
+		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
 
 		fProjectionSupport.install();
-		((ProjectionViewer)getSourceViewer()).addProjectionListener(this);
+		((ProjectionViewer) getSourceViewer()).addProjectionListener(this);
 
 	}
 
 	public void projectionEnabled() {
 		IBaseModel model = getInputContext().getModel();
-		if(model instanceof IEditingModel) {
-			fFoldingStructureProvider = 
-				FoldingStructureProviderFactory.createProvider(this, (IEditingModel) model);
-			if(fFoldingStructureProvider != null) {
+		if (model instanceof IEditingModel) {
+			fFoldingStructureProvider = FoldingStructureProviderFactory.createProvider(this, (IEditingModel) model);
+			if (fFoldingStructureProvider != null) {
 				fFoldingStructureProvider.initialize();
 				IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
 				IReconcilingStrategy startegy = rec.getReconcilingStrategy(new String());
 				if (startegy instanceof ReconcilingStrategy) {
-					((ReconcilingStrategy)startegy).addParticipant(fFoldingStructureProvider);
+					((ReconcilingStrategy) startegy).addParticipant(fFoldingStructureProvider);
 				}
 			}
-		}	
+		}
 	}
 
 	public void projectionDisabled() {
@@ -124,13 +107,13 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
-	
+
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		if (fConfiguration == null)
 			return false;
 		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
-	
+
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		try {
 			if (fConfiguration != null) {
@@ -143,9 +126,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 	}
 
-	public Object getAdapter(Class key) { 
-		if (fProjectionSupport != null) { 
-			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key); 
+	public Object getAdapter(Class key) {
+		if (fProjectionSupport != null) {
+			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
 			if (adapter != null) {
 				return adapter;
 			}
@@ -162,7 +145,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		// Add the rest
 		super.editorContextMenuAboutToShow(menu);
 	}
-	
+
 	/**
 	 * @param menu
 	 */
@@ -173,14 +156,13 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 		// Get the appropriate quick outline action associated with the active
 		// source page
-		IAction quickOutlineAction = getAction(
-				PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		IAction quickOutlineAction = getAction(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
 		// Ensure it is defined
 		if (quickOutlineAction == null) {
 			return;
 		}
 		// Insert the quick outline action after the "Show In" menu contributed
 		menu.add(quickOutlineAction);
-	}	
-	
+	}
+
 }

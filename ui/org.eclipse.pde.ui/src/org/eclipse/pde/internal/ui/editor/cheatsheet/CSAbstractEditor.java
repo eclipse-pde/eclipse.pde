@@ -36,7 +36,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 		if (getAggregateModel().isEditable())
 			manager.add(createUIControlConRegisterCS());
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -49,7 +49,7 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 				createUIListenerImageHyperlinkRegisterCS();
 				return fImageHyperlinkRegisterCS;
 			}
-		};			
+		};
 	}
 
 	/**
@@ -57,11 +57,9 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 	 */
 	private void createUIImageHyperlinkRegisterCS(Composite parent) {
 		fImageHyperlinkRegisterCS = new ImageHyperlink(parent, SWT.NONE);
-		fImageHyperlinkRegisterCS.setText(
-				PDEUIMessages.CSAbstractPage_msgRegisterThisCheatSheet);
+		fImageHyperlinkRegisterCS.setText(PDEUIMessages.CSAbstractPage_msgRegisterThisCheatSheet);
 		fImageHyperlinkRegisterCS.setUnderlined(true);
-		fImageHyperlinkRegisterCS.setForeground(
-				getToolkit().getHyperlinkGroup().getForeground());
+		fImageHyperlinkRegisterCS.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 	}
 
 	/**
@@ -72,54 +70,53 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 			public void linkActivated(HyperlinkEvent e) {
 				handleLinkActivatedRegisterCS();
 			}
+
 			public void linkEntered(HyperlinkEvent e) {
 				handleLinkEnteredRegisterCS(e.getLabel());
 			}
+
 			public void linkExited(HyperlinkEvent e) {
 				handleLinkExitedRegisterCS();
 			}
-		});	
+		});
 	}
-	
+
 	/**
 	 * @param message
 	 */
 	private void handleLinkEnteredRegisterCS(String message) {
 		// Update colour
-		fImageHyperlinkRegisterCS.setForeground(
-				getToolkit().getHyperlinkGroup().getActiveForeground());
+		fImageHyperlinkRegisterCS.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
 		// Update IDE status line
 		getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
-	}	
-	
+	}
+
 	/**
 	 *
 	 */
 	private void handleLinkExitedRegisterCS() {
 		// Update colour
-		fImageHyperlinkRegisterCS.setForeground(
-				getToolkit().getHyperlinkGroup().getForeground());
+		fImageHyperlinkRegisterCS.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 		// Update IDE status line
 		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
-	}		
-	
+	}
+
 	/**
 	 * 
 	 */
 	private void handleLinkActivatedRegisterCS() {
-		RegisterCSWizard wizard = new RegisterCSWizard((IModel)getAggregateModel());
+		RegisterCSWizard wizard = new RegisterCSWizard((IModel) getAggregateModel());
 		// Initialize the wizard
 		wizard.init(PlatformUI.getWorkbench(), null);
 		// Create the dialog for the wizard
-		WizardDialog dialog = 
-			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		// Configure the dialogs size
 		dialog.getShell().setSize(400, 370);
 		// Check the result
 		if (dialog.open() == Window.OK) {
 			// TODO: MP: COMPCS: HIGH: Automatic save of editor after creating simple cheat sheet?
-		}			
-	}	
+		}
+	}
 
 }

@@ -14,24 +14,16 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
-import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
-import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class ManifestSyntaxColorTab extends SyntaxColorTab {
 
-	private static final String[][] COLOR_STRINGS = new String[][] {
-			{PDEUIMessages.ManifestSyntaxColorTab_reservedOSGi, IPDEColorConstants.P_HEADER_OSGI},
-			{PDEUIMessages.ManifestSyntaxColorTab_keys, IPDEColorConstants.P_HEADER_KEY},
-			{PDEUIMessages.ManifestSyntaxColorTab_assignment, IPDEColorConstants.P_HEADER_ASSIGNMENT},
-			{PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE},
-			{PDEUIMessages.ManifestSyntaxColorTab_attributes, IPDEColorConstants.P_HEADER_ATTRIBUTES}};
+	private static final String[][] COLOR_STRINGS = new String[][] { {PDEUIMessages.ManifestSyntaxColorTab_reservedOSGi, IPDEColorConstants.P_HEADER_OSGI}, {PDEUIMessages.ManifestSyntaxColorTab_keys, IPDEColorConstants.P_HEADER_KEY}, {PDEUIMessages.ManifestSyntaxColorTab_assignment, IPDEColorConstants.P_HEADER_ASSIGNMENT}, {PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE}, {PDEUIMessages.ManifestSyntaxColorTab_attributes, IPDEColorConstants.P_HEADER_ATTRIBUTES}};
 
 	public ManifestSyntaxColorTab(IColorManager manager) {
 		super(manager);
 	}
-	
+
 	protected IDocument getDocument() {
 		StringBuffer buffer = new StringBuffer();
 		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$

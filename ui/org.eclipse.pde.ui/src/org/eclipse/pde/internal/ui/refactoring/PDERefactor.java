@@ -14,9 +14,9 @@ import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 
 public class PDERefactor extends ProcessorBasedRefactoring {
-	
+
 	RefactoringProcessor fProcessor;
-	
+
 	public PDERefactor(RefactoringProcessor processor) {
 		super(processor);
 		fProcessor = processor;

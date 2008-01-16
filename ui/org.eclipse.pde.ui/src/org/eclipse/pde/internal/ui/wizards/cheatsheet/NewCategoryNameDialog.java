@@ -17,11 +17,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 /**
  * NewCategoryNameDialog
@@ -30,15 +26,15 @@ import org.eclipse.swt.widgets.Text;
 public class NewCategoryNameDialog extends TrayDialog {
 
 	private Text fNameText;
-	
+
 	private String fNameTextValue;
-	
+
 	/**
 	 * @param shell
 	 */
 	public NewCategoryNameDialog(Shell shell) {
 		super(shell);
-		
+
 		fNameText = null;
 		fNameTextValue = null;
 	}
@@ -47,7 +43,7 @@ public class NewCategoryNameDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		
+
 		Composite composite = createUI(parent);
 		createListeners();
 		updateUI();
@@ -67,24 +63,24 @@ public class NewCategoryNameDialog extends TrayDialog {
 		createUINameField(container);
 		// Apply the default font to the dialog
 		applyDialogFont(container);
-		
+
 		return container;
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void createListeners() {
 		// NO-OP	
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void updateUI() {
 		// NO-OP
 	}
-	
+
 	/**
 	 * @param parent
 	 * @return
@@ -111,9 +107,9 @@ public class NewCategoryNameDialog extends TrayDialog {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = 200;
-		label.setLayoutData(data);		
-	}	
-	
+		label.setLayoutData(data);
+	}
+
 	/**
 	 * @param parent
 	 */
@@ -121,7 +117,7 @@ public class NewCategoryNameDialog extends TrayDialog {
 		// Create the label
 		createUINameLabel(parent);
 		// Create the text widget
-		createUINameText(parent);		
+		createUINameText(parent);
 	}
 
 	/**
@@ -129,7 +125,7 @@ public class NewCategoryNameDialog extends TrayDialog {
 	 */
 	private void createUINameLabel(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.NewCategoryNameDialog_name);		
+		label.setText(PDEUIMessages.NewCategoryNameDialog_name);
 	}
 
 	/**
@@ -139,8 +135,8 @@ public class NewCategoryNameDialog extends TrayDialog {
 		int style = SWT.BORDER;
 		fNameText = new Text(parent, style);
 		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -150,12 +146,12 @@ public class NewCategoryNameDialog extends TrayDialog {
 		fNameTextValue = fNameText.getText();
 		super.okPressed();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public String getNameText() {
 		return fNameTextValue;
 	}
-	
+
 }

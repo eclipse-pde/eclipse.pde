@@ -12,42 +12,21 @@ package org.eclipse.pde.internal.ui.search;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.ui.search.ElementQuerySpecification;
-import org.eclipse.jdt.ui.search.IMatchPresentation;
-import org.eclipse.jdt.ui.search.IQueryParticipant;
-import org.eclipse.jdt.ui.search.ISearchRequestor;
-import org.eclipse.jdt.ui.search.PatternQuerySpecification;
-import org.eclipse.jdt.ui.search.QuerySpecification;
+import org.eclipse.jdt.ui.search.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -78,27 +57,24 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private static final int S_LIMIT_ALL = 3;
 	private static final int S_FOR_TYPES = 0;
 	private static final int S_FOR_PACKAGES = 2;
-	
+
 	private ISearchRequestor fSearchRequestor;
 	private Pattern fSearchPattern;
 	private int fSearchFor = -1; // set since S_FOR_TYPES = 0;
-	
+
 	public ClassSearchParticipant() {
 	}
-	
-	public void search(ISearchRequestor requestor,
-			QuerySpecification querySpecification, IProgressMonitor monitor)
-			throws CoreException {
-		
-		if (querySpecification.getLimitTo() != S_LIMIT_REF && 
-				querySpecification.getLimitTo() != S_LIMIT_ALL) 
+
+	public void search(ISearchRequestor requestor, QuerySpecification querySpecification, IProgressMonitor monitor) throws CoreException {
+
+		if (querySpecification.getLimitTo() != S_LIMIT_REF && querySpecification.getLimitTo() != S_LIMIT_ALL)
 			return;
-		
+
 		String search;
 		if (querySpecification instanceof ElementQuerySpecification) {
-			IJavaElement element = ((ElementQuerySpecification)querySpecification).getElement();
+			IJavaElement element = ((ElementQuerySpecification) querySpecification).getElement();
 			if (element instanceof IType)
-				search = ((IType)element).getFullyQualifiedName('.');
+				search = ((IType) element).getFullyQualifiedName('.');
 			else
 				search = element.getElementName();
 			int type = element.getElementType();
@@ -107,14 +83,14 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT)
 				fSearchFor = S_FOR_PACKAGES;
 		} else {
-			fSearchFor = ((PatternQuerySpecification)querySpecification).getSearchFor();
-			search = ((PatternQuerySpecification)querySpecification).getPattern();
+			fSearchFor = ((PatternQuerySpecification) querySpecification).getSearchFor();
+			search = ((PatternQuerySpecification) querySpecification).getPattern();
 		}
 		if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES)
 			return;
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
-		
+
 		IPath[] enclosingPaths = querySpecification.getScope().enclosingProjectsAndJars();
 		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
@@ -124,27 +100,26 @@ public class ClassSearchParticipant implements IQueryParticipant {
 				searchProject(project, monitor);
 		}
 	}
-	
+
 	private boolean encloses(IPath[] paths, IPath path) {
 		for (int i = 0; i < paths.length; i++)
 			if (paths[i].equals(path))
 				return true;
 		return false;
 	}
-	
-	
+
 	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		ModelModification mod = new ModelModification(project) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
-					IBundleModel bmodel = ((IBundlePluginModelBase)model).getBundleModel(); 
+					IBundleModel bmodel = ((IBundlePluginModelBase) model).getBundleModel();
 					inspectBundle(bmodel.getBundle());
-					model = ((IBundlePluginModelBase)model).getExtensionsModel();
+					model = ((IBundlePluginModelBase) model).getExtensionsModel();
 				}
 				if (model instanceof IPluginModelBase) {
-					IFile file = (IFile)((IPluginModelBase)model).getUnderlyingResource();
+					IFile file = (IFile) ((IPluginModelBase) model).getUnderlyingResource();
 					SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-					IPluginBase pbase = ((IPluginModelBase)model).getPluginBase();
+					IPluginBase pbase = ((IPluginModelBase) model).getPluginBase();
 					IPluginExtension[] extensions = pbase.getExtensions();
 					for (int j = 0; j < extensions.length; j++) {
 						ISchema schema = registry.getSchema(extensions[j].getPoint());
@@ -160,16 +135,14 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private void inspectExtension(ISchema schema, IPluginParent parent, IFile file) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement)children[i];
+			IPluginElement child = (IPluginElement) children[i];
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
 				IPluginAttribute[] attributes = child.getAttributes();
 				for (int j = 0; j < attributes.length; j++) {
 					IPluginAttribute attr = attributes[j];
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null 
-							&& attInfo.getKind() == IMetaAttribute.JAVA
-							&& attr instanceof IDocumentAttributeNode)
+					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA && attr instanceof IDocumentAttributeNode)
 						checkMatch(attr, file);
 				}
 			}
@@ -184,13 +157,13 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			value = attr.getValue().replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			matcher = getMatcher(value);
 		}
-		if (value == null || (matcher != null && !matcher.matches()) ){
+		if (value == null || (matcher != null && !matcher.matches())) {
 			value = getProperValue(attr.getValue()).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			matcher = getMatcher(value);
 		}
 		if (matcher.matches()) {
 			String group = matcher.group(0);
-			int offset = ((IDocumentAttributeNode)attr).getValueOffset() + value.indexOf(group);
+			int offset = ((IDocumentAttributeNode) attr).getValueOffset() + value.indexOf(group);
 			int attOffset = attr.getValue().indexOf(value);
 			if (attOffset != -1)
 				offset += attOffset;
@@ -198,7 +171,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offset, length));
 		}
 	}
-	
+
 	private void inspectBundle(IBundle bundle) {
 		for (int i = 0; i < H_TOTAL; i++) {
 			if (fSearchFor == S_FOR_TYPES && (i == H_IMP || i == H_EXP))
@@ -207,29 +180,28 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			if (header != null) {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(header.getName(), header.getValue());
-					if (elements == null) continue;
+					if (elements == null)
+						continue;
 					for (int j = 0; j < elements.length; j++) {
 						String value = null;
 						Matcher matcher = null;
 						if (fSearchFor == S_FOR_TYPES) {
 							value = elements[j].getValue();
 							matcher = getMatcher(value);
-						} 
-						if (value == null || (matcher != null && !matcher.matches()) ){
+						}
+						if (value == null || (matcher != null && !matcher.matches())) {
 							value = getProperValue(elements[j].getValue());
 							matcher = getMatcher(value);
-						} 
+						}
 						if (matcher.matches()) {
 							String group = matcher.group(0);
 							int[] offlen;
 							try {
 								offlen = getOffsetOfElement(bundle, header, group);
 							} catch (CoreException e) {
-								offlen = new int[]{header.getOffset(), header.getLength()};
+								offlen = new int[] {header.getOffset(), header.getLength()};
 							}
-							fSearchRequestor.reportMatch(new Match(
-									bundle.getModel().getUnderlyingResource(),
-									Match.UNIT_CHARACTER, offlen[0], offlen[1]));
+							fSearchRequestor.reportMatch(new Match(bundle.getModel().getUnderlyingResource(), Match.UNIT_CHARACTER, offlen[0], offlen[1]));
 							break; // only one package will be listed per header
 						}
 					}
@@ -238,16 +210,16 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			}
 		}
 	}
-	
+
 	private Matcher getMatcher(String value) {
 		return fSearchPattern.matcher(value.subSequence(0, value.length()));
 	}
-	
+
 	private int[] getOffsetOfElement(IBundle bundle, IManifestHeader header, String value) throws CoreException {
 		int[] offlen = new int[] {0, 0};
 		IBundleModel model = bundle.getModel();
 		if (model instanceof IEditingModel) {
-			IDocument pDoc = ((IEditingModel)model).getDocument();
+			IDocument pDoc = ((IEditingModel) model).getDocument();
 			int headerOffset = header.getOffset() + header.getName().length();
 			try {
 				String headerString = pDoc.get(headerOffset, header.getLength() - header.getName().length());
@@ -262,24 +234,28 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 		return offlen;
 	}
-	
+
 	private String getProperValue(String value) {
 		return fSearchFor == S_FOR_TYPES ? extractType(value) : extractPackage(value);
 	}
+
 	private String extractType(String value) {
 		int index = value.lastIndexOf("."); //$NON-NLS-1$
-		if (index == -1 || index == value.length() - 1) return value;
+		if (index == -1 || index == value.length() - 1)
+			return value;
 		return value.substring(index + 1);
 	}
+
 	private String extractPackage(String value) {
 		int index = value.lastIndexOf("."); //$NON-NLS-1$
-		if (index == -1 || index == value.length() - 1) return value;
+		if (index == -1 || index == value.length() - 1)
+			return value;
 		char afterPeriod = value.charAt(index + 1);
 		if (afterPeriod >= 'A' && afterPeriod <= 'Z')
 			return value.substring(0, index);
 		return value;
 	}
-	
+
 	public int estimateTicks(QuerySpecification specification) {
 		return 100;
 	}

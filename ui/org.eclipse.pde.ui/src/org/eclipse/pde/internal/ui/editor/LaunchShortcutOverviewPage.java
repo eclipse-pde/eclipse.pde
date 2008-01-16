@@ -17,18 +17,14 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.*;
 
 public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements IHyperlinkListener {
 
 	public LaunchShortcutOverviewPage(PDELauncherFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
-	
+
 	protected final Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -38,7 +34,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		section.setLayoutData(data);
 		return section;
 	}
-	
+
 	protected final FormText createClient(Composite section, String content, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
 		try {
@@ -49,7 +45,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		text.addHyperlinkListener(this);
 		return text;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -62,35 +58,33 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 
 	// returns the indent for each launcher
 	protected abstract short getIndent();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkEntered(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkExited(HyperlinkEvent e) {
-		IStatusLineManager mng = getEditor().getEditorSite().getActionBars()
-				.getStatusLineManager();
+		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);
 	}
-	
+
 	protected final String getLauncherText(boolean osgi, String message) {
 		IConfigurationElement[][] elements = getPDELauncherEditor().getLaunchers(osgi);
-		
+
 		StringBuffer buffer = new StringBuffer();
 		String indent = Short.toString(getIndent());
-		
+
 		for (int i = 0; i < elements.length; i++) {
 			for (int j = 0; j < elements[i].length; j++) {
 				String mode = elements[i][j].getAttribute("mode"); //$NON-NLS-1$
@@ -107,8 +101,8 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		}
 		return NLS.bind(message, buffer.toString());
 	}
-	
+
 	protected PDELauncherFormEditor getPDELauncherEditor() {
-		return (PDELauncherFormEditor)getPDEEditor();
+		return (PDELauncherFormEditor) getPDEEditor();
 	}
 }

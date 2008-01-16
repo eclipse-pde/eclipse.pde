@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import java.util.Vector;
-
 import org.eclipse.pde.core.build.IBuildEntry;
 
 public class BuildUtil {

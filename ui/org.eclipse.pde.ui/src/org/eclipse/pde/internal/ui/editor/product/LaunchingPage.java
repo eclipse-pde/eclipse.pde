@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -24,22 +20,21 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
 public class LaunchingPage extends PDEFormPage {
-	
+
 	public static final String PAGE_ID = "launcher"; //$NON-NLS-1$
 
 	public LaunchingPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.LauncherPage_title); 
+		super(editor, PAGE_ID, PDEUIMessages.LauncherPage_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/launching.htm"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -48,11 +43,11 @@ public class LaunchingPage extends PDEFormPage {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_LAUNCHING));
-		form.setText(PDEUIMessages.LauncherPage_title);  
+		form.setText(PDEUIMessages.LauncherPage_title);
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.LAUNCHING_PAGE);
 	}
-	
+
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
@@ -61,6 +56,5 @@ public class LaunchingPage extends PDEFormPage {
 		managedForm.addPart(new LauncherSection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
 	}
-
 
 }

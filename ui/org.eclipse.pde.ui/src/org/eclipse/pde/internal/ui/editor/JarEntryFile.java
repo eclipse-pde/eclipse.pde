@@ -14,19 +14,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
-
 public class JarEntryFile extends PlatformObject implements IStorage {
-	
+
 	private ZipFile fZipFile;
 	private String fEntryName;
 
@@ -42,7 +35,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 		try {
 			ZipEntry zipEntry = fZipFile.getEntry(fEntryName);
 			return fZipFile.getInputStream(zipEntry);
-		} catch (Exception e){
+		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 		}
 	}
@@ -67,7 +60,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	public boolean isReadOnly() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
@@ -78,11 +71,11 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 			return new File(fZipFile.getName());
 		return super.getAdapter(adapter);
 	}
-	
+
 	public String toString() {
-		return "JarEntryFile["+ fZipFile.getName() + "::" + fEntryName + "]"; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
+		return "JarEntryFile[" + fZipFile.getName() + "::" + fEntryName + "]"; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (!(obj instanceof JarEntryFile))
 			return false;

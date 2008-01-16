@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
-import java.util.HashSet;
 
+import java.util.HashSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -28,13 +28,13 @@ public class PluginAdapter implements IWorkingSetElementAdapter {
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		HashSet set = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
-			IResource res = (IResource)elements[i].getAdapter(IResource.class);
-			if (res == null) 
+			IResource res = (IResource) elements[i].getAdapter(IResource.class);
+			if (res == null)
 				continue;
 			IProject proj = res.getProject();
 			IPluginModelBase base = PluginRegistry.findModel(proj);
 			// if project is a plug-in project
-			if (base == null) 
+			if (base == null)
 				continue;
 			BundleDescription desc = base.getBundleDescription();
 			String id = (desc != null) ? desc.getSymbolicName() : base.getPluginBase().getId();

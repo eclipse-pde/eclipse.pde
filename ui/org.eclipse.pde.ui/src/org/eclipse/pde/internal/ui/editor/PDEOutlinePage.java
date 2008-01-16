@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.swt.widgets.Control;
@@ -25,19 +21,16 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public abstract class PDEOutlinePage extends ContentOutlinePage {
 
 	protected PDEFormEditor fEditor;
-	
+
 	public PDEOutlinePage(PDEFormEditor editor) {
 		fEditor = editor;
 	}
 
 	public PDEOutlinePage() {
-	}	
-	
-	public void makeContributions(
-			IMenuManager menuManager, 
-			IToolBarManager toolBarManager, 
-			IStatusLineManager statusLineManager) {
-		
+	}
+
+	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -49,12 +42,12 @@ public abstract class PDEOutlinePage extends ContentOutlinePage {
 				actionGroup.fillContextMenu(manager);
 			}
 		};
-		
+
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Control control = getTreeViewer().getControl();
 		Menu menu = popupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
 	}
-	
+
 }

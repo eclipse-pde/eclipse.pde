@@ -12,19 +12,9 @@ package org.eclipse.pde.internal.ui.correction;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
@@ -36,9 +26,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.nls.ExternalizeStringsOperation;
-import org.eclipse.pde.internal.ui.nls.ModelChange;
-import org.eclipse.pde.internal.ui.nls.ModelChangeElement;
+import org.eclipse.pde.internal.ui.nls.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -56,7 +44,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		ModelChangeElement element = new ModelChangeElement(change, node);
 		if (element.updateValue()) {
 			String localization = PDEManager.getBundleLocalization(model);
-			if (localization == null) 
+			if (localization == null)
 				addLocalization(model, localization = "plugin"); //$NON-NLS-1$
 			localization += ModelChange.LOCALIZATION_FILE_SUFFIX;
 			IProject project = model.getUnderlyingResource().getProject();
@@ -68,7 +56,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 				if (buffer.isDirty())
 					buffer.commit(null, true);
-				
+
 				IDocument document = buffer.getDocument();
 				ExternalizeStringsOperation.getPropertiesInsertEdit(document, element).apply(document);
 				buffer.commit(null, true);
@@ -95,20 +83,20 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_text, getNameOfNode());
 		return NLS.bind(PDEUIMessages.ExternalizeResolution_header, fLocationPath);
 	}
-	
-		private void addLocalization(IPluginModelBase model, String localizationValue) {
+
+	private void addLocalization(IPluginModelBase model, String localizationValue) {
 		// should always be IBundlePluginModelBase.  Only time wasn't was when we only passed in plugin.xml to ModelModification contructor.
 		// Now that we pass in both the Manifest and plugin.xml if we are externalizing the a plugin.xml string (see run(IMarker)), 
 		// model should always be IBundlePluginModelBase
 		if (model instanceof IBundlePluginModelBase) {
-			IBundle bundle = ((IBundlePluginModelBase)model).getBundleModel().getBundle();
+			IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
 			bundle.setHeader(Constants.BUNDLE_LOCALIZATION, localizationValue);
 		}
 	}
-	
+
 	public void run(IMarker marker) {
 		fResource = marker.getResource();
-		IFile file = ((IFile)marker.getResource());
+		IFile file = ((IFile) marker.getResource());
 		ModelModification modification = null;
 		// if file we are externalizing is not manifest, try to pass manifest in if it exists
 		if (!file.getName().equals(PDEModelUtility.F_MANIFEST)) {
@@ -119,7 +107,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 						createChange(model);
 					}
 				};
-			} 
+			}
 		}
 		if (modification == null) {
 			modification = new ModelModification(file) {
@@ -139,7 +127,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				IContainer container = file.getParent();
 				if (!container.exists())
 					// project will exists, therefore we can assume if !IContainer.exist(), the object is an IFolder
-					CoreUtility.createFolder((IFolder)container);
+					CoreUtility.createFolder((IFolder) container);
 				file.create(pStream, true, new NullProgressMonitor());
 				pStream.close();
 			} catch (CoreException e1) {

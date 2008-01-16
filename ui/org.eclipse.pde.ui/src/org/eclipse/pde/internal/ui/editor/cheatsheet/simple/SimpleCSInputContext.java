@@ -13,20 +13,15 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.cheatsheet.simple.SimpleCSModel;
-import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 
 /**
  * SimpleCSInputContext
@@ -35,14 +30,13 @@ import org.eclipse.ui.IStorageEditorInput;
 public class SimpleCSInputContext extends XMLInputContext {
 
 	public static final String CONTEXT_ID = "simplecs-context"; //$NON-NLS-1$	
-	
+
 	/**
 	 * @param editor
 	 * @param input
 	 * @param primary
 	 */
-	public SimpleCSInputContext(PDEFormEditor editor, IEditorInput input,
-			boolean primary) {
+	public SimpleCSInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
@@ -61,7 +55,7 @@ public class SimpleCSInputContext extends XMLInputContext {
 		IDocument document = getDocumentProvider().getDocument(input);
 		// Create the model
 		SimpleCSModel model = new SimpleCSModel(document, isReconciling);
-		
+
 		if (input instanceof IFileEditorInput) {
 			// File from workspace
 			IFile file = ((IFileEditorInput) input).getFile();
@@ -69,12 +63,12 @@ public class SimpleCSInputContext extends XMLInputContext {
 			model.setCharset(file.getCharset());
 		} else if (input instanceof SystemFileEditorInput) {
 			// File from file system
-			File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
+			File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
 			model.setInstallLocation(file.getParent());
 			model.setCharset(getDefaultCharset());
 		} else if (input instanceof JarEntryEditorInput) {
 			// File from JAR
-			File file = (File)((JarEntryEditorInput)input).getAdapter(File.class);
+			File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
 			model.setInstallLocation(file.toString());
 			model.setCharset(getDefaultCharset());
 		} else {
@@ -85,8 +79,8 @@ public class SimpleCSInputContext extends XMLInputContext {
 		model.load();
 
 		return model;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#doRevert()
 	 */
@@ -95,10 +89,10 @@ public class SimpleCSInputContext extends XMLInputContext {
 		fEditOperations.clear();
 		fOperationTable.clear();
 		fMoveOperations.clear();
-		AbstractEditingModel model = (AbstractEditingModel)getModel();
+		AbstractEditingModel model = (AbstractEditingModel) getModel();
 		model.reconciled(model.getDocument());
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
 	 */
@@ -119,5 +113,5 @@ public class SimpleCSInputContext extends XMLInputContext {
 	protected void reorderInsertEdits(ArrayList ops) {
 		// NO-OP
 	}
-	
+
 }

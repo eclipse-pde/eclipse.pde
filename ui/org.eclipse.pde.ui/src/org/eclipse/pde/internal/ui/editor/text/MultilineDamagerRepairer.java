@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
@@ -22,11 +19,11 @@ public class MultilineDamagerRepairer extends DefaultDamagerRepairer {
 	public MultilineDamagerRepairer(ITokenScanner scanner, TextAttribute defaultTextAttribute) {
 		super(scanner, defaultTextAttribute);
 	}
-	
+
 	public MultilineDamagerRepairer(ITokenScanner scanner) {
 		super(scanner);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
 	 */
@@ -39,7 +36,7 @@ public class MultilineDamagerRepairer extends DefaultDamagerRepairer {
 	 * which is returned when none is returned by the current token.
 	 */
 	public void setDefaultTextAttribute(TextAttribute defaultTextAttribute) {
-		fDefaultTextAttribute= defaultTextAttribute;
+		fDefaultTextAttribute = defaultTextAttribute;
 	}
 
 }

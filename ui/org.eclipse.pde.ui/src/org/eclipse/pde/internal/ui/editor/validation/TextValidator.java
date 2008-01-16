@@ -24,19 +24,18 @@ import org.eclipse.ui.forms.IManagedForm;
 public abstract class TextValidator extends AbstractControlValidator {
 
 	private ModifyListener fModifyListener;
-	
+
 	private boolean fAutoValidate;
-	
+
 	private String fCurrentText;
-	
+
 	/**
 	 * @param managedForm
 	 * @param control
 	 * @param project
 	 * @param autoValidate
 	 */
-	public TextValidator(IManagedForm managedForm, Text control, 
-			IProject project, boolean autoValidate) {
+	public TextValidator(IManagedForm managedForm, Text control, IProject project, boolean autoValidate) {
 		super(managedForm, control, project);
 		// Turn on / off auto-validation
 		// If auto-validation is on, validation is triggered by modify text 
@@ -63,7 +62,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 			addListeners();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#setEnabled(boolean)
 	 */
@@ -85,7 +84,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 			removeListeners();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -112,28 +111,28 @@ public abstract class TextValidator extends AbstractControlValidator {
 		// Perform auto-validation
 		validate();
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected void addListeners() {
 		getText().addModifyListener(fModifyListener);
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected void removeListeners() {
 		getText().removeModifyListener(fModifyListener);
 	}
-	
+
 	/**
 	 * @return
 	 */
 	protected Text getText() {
-		return (Text)getControl();
-	}	
-	
+		return (Text) getControl();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#autoEnable()
 	 */
@@ -143,5 +142,5 @@ public abstract class TextValidator extends AbstractControlValidator {
 			return false;
 		}
 		return super.autoEnable();
-	}	
+	}
 }

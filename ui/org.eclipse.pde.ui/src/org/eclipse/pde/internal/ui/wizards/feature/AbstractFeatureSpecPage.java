@@ -21,14 +21,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPage {
-	
+
 	protected Text fFeatureNameText;
 	protected Text fFeatureVersionText;
 	protected Text fLibraryText;
@@ -37,53 +35,53 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	protected IFeatureModel fFeatureToPatch;
 	protected boolean fSelfModification;
 	private boolean fUpdateName = true;
-	
+
 	public AbstractFeatureSpecPage() {
 		super("specPage"); //$NON-NLS-1$
 	}
-	
+
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Composite comp = (Composite)getControl();
-		
+		Composite comp = (Composite) getControl();
+
 		createContents(comp);
-		
+
 		initialize();
 		attachListeners();
-		
+
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, getHelpId());
 	}
 
 	protected abstract void createContents(Composite container);
-	
+
 	protected abstract void initialize();
-	
+
 	protected abstract void attachListeners(ModifyListener listener);
-	
+
 	protected abstract String getHelpId();
-	
+
 	protected void createCommonInput(Composite common) {
 		Label label = new Label(common, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_name);
 		fFeatureNameText = new Text(common, SWT.BORDER);
 		fFeatureNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		label = new Label(common, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_version);
 		fFeatureVersionText = new Text(common, SWT.BORDER);
 		fFeatureVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
-	protected void createInstallHandlerText(Composite parent) {	
+
+	protected void createInstallHandlerText(Composite parent) {
 		Label libraryLabel = new Label(parent, SWT.NULL);
 		libraryLabel.setText(PDEUIMessages.NewFeatureWizard_SpecPage_library);
 		fLibraryText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		fLibraryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
+
 	protected abstract void updateNameRelativeFields();
-	
+
 	protected boolean validatePage() {
 		boolean valid = super.validatePage();
 		if (!valid)
@@ -92,7 +90,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 			updateNameRelativeFields();
 		return validateBaseContent(false);
 	}
-	
+
 	private boolean validateBaseContent(boolean validateSuper) {
 		if (validateSuper && !super.validatePage())
 			return false;
@@ -107,7 +105,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		setErrorMessage(null);
 		return true;
 	}
-	
+
 	private boolean setValidationMessage(String message) {
 		if (message == null)
 			return true;
@@ -115,25 +113,25 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		setErrorMessage(message);
 		return false;
 	}
-	
+
 	protected abstract String validateContent();
-	
+
 	public String getInitialName() {
 		return fInitialName;
 	}
-	
+
 	public void setInitialName(String initialName) {
 		fInitialName = initialName;
 	}
-	
+
 	public void setInitialId(String initialId) {
 		fInitialId = initialId;
 	}
-	
+
 	public String getInitialId() {
 		return fInitialId;
 	}
-	
+
 	protected String verifyVersion() {
 		String value = fFeatureVersionText.getText();
 		if (VersionUtil.validateVersion(value).getSeverity() != IStatus.OK)
@@ -142,7 +140,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	}
 
 	protected abstract String getFeatureId();
-	
+
 	protected String verifyIdRules() {
 		String id = getFeatureId();
 		if (id == null || id.length() == 0)
@@ -153,10 +151,10 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		return null;
 	}
 
-	public IFeatureModel getFeatureToPatch(){
+	public IFeatureModel getFeatureToPatch() {
 		return fFeatureToPatch;
 	}
-		
+
 	protected String getInstallHandlerLibrary() {
 		String library = fLibraryText.getText();
 		if (library == null || library.length() == 0)
@@ -165,7 +163,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 			library += "/"; //$NON-NLS-1$
 		return library;
 	}
-	
+
 	private void attachListeners() {
 		ModifyListener listener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -180,6 +178,6 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		fFeatureVersionText.addModifyListener(listener);
 		fLibraryText.addModifyListener(listener);
 	}
-	
+
 	public abstract FeatureData getFeatureData();
 }

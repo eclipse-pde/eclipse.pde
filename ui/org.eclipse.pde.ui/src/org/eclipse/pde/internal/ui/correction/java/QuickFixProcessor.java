@@ -11,21 +11,11 @@
 package org.eclipse.pde.internal.ui.correction.java;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.IBinding;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.ui.text.java.IInvocationContext;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.IProblemLocation;
-import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.ui.text.java.*;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -36,27 +26,25 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse.jdt.ui.text.java.IInvocationContext, org.eclipse.jdt.ui.text.java.IProblemLocation[])
 	 */
-	public IJavaCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException {
+	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		Hashtable results = new Hashtable();
 		for (int i = 0; i < locations.length; i++) {
 			int id = locations[i].getProblemId();
 			switch (id) {
-				case IProblem.ForbiddenReference:
+				case IProblem.ForbiddenReference :
 					handleAccessRestrictionProblem(context, locations[i], results);
 			}
 		}
-		return (IJavaCompletionProposal[])results.values().toArray(new IJavaCompletionProposal[results.size()]);
+		return (IJavaCompletionProposal[]) results.values().toArray(new IJavaCompletionProposal[results.size()]);
 	}
-	
-	private void handleAccessRestrictionProblem(IInvocationContext context,
-			IProblemLocation location, Hashtable results) {
-		IBinding referencedElement= null;
-		ASTNode node= location.getCoveredNode(context.getASTRoot());
+
+	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, Hashtable results) {
+		IBinding referencedElement = null;
+		ASTNode node = location.getCoveredNode(context.getASTRoot());
 		if (node instanceof Type) {
-			referencedElement= ((Type) node).resolveBinding();
+			referencedElement = ((Type) node).resolveBinding();
 		} else if (node instanceof Name) {
-			referencedElement= ((Name) node).resolveBinding();
+			referencedElement = ((Name) node).resolveBinding();
 		}
 		if (referencedElement != null) {
 			// get the project that contains the reference element
@@ -70,18 +58,17 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				ExportPackageDescription[] exportPackages = referencedModel.getBundleDescription().getExportPackages();
 				// check if the required package is exported already
 				boolean packageExported = false;
-				IPackageFragment referencedPackage = (IPackageFragment)referencedElement.getJavaElement().getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+				IPackageFragment referencedPackage = (IPackageFragment) referencedElement.getJavaElement().getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 				if (referencedPackage != null) {
 					for (int i = 0; i < exportPackages.length; i++) {
-						if (exportPackages[i].getName().equals(referencedPackage.getElementName())){
+						if (exportPackages[i].getName().equals(referencedPackage.getElementName())) {
 							packageExported = true;
 							break;
 						}
 					}
 					// if the package is not exported, add the quickfix
 					if (!packageExported) {
-						results.put(referencedPackage, 
-								new ForbiddenAccessProposal(referencedPackage, referencedJavaProject.getProject()));
+						results.put(referencedPackage, new ForbiddenAccessProposal(referencedPackage, referencedJavaProject.getProject()));
 					}
 				}
 			}
@@ -93,7 +80,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 */
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		switch (problemId) {
-			case IProblem.ForbiddenReference:
+			case IProblem.ForbiddenReference :
 				IJavaElement parent = unit.getParent();
 				if (parent != null) {
 					IJavaProject project = parent.getJavaProject();

@@ -41,5 +41,5 @@ public class ExternalPluginLibrariesFilter extends ViewerFilter {
 		}
 		return true;
 	}
-	
+
 }

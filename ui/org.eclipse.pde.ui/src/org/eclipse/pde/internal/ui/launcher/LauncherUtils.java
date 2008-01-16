@@ -10,36 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -49,23 +28,15 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsProcessor;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 
 public class LauncherUtils {
 
@@ -82,8 +53,7 @@ public class LauncherUtils {
 	}
 
 	public final static Shell getActiveShell() {
-		IWorkbenchWindow window = 
-			PDEPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PDEPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			IWorkbenchWindow[] windows = PDEPlugin.getDefault().getWorkbench().getWorkbenchWindows();
 			if (windows.length > 0)
@@ -93,28 +63,27 @@ public class LauncherUtils {
 		return getDisplay().getActiveShell();
 	}
 
-	public static boolean clearWorkspace(ILaunchConfiguration configuration,
-			String workspace, IProgressMonitor monitor) throws CoreException {
-		
+	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
+
 		// If the workspace is not defined, there is no workspace to clear
 		// What will happen is that the workspace chooser dialog will be 
 		// brought up because no -data parameter will be specified on the 
 		// launch
 		if (workspace.length() == 0) {
 			monitor.done();
-			return true;		
+			return true;
 		}
-		
+
 		// Check if the workspace is already in use, if so, open a message and stop the launch before clearing
 		boolean isLocked = false;
-		try{
+		try {
 			BundleContext context = PDECore.getDefault().getBundleContext();
-			ServiceReference[] references = context.getServiceReferences(Location.class.getName(),"(type=osgi.configuration.area)"); //$NON-NLS-1$
-			if (references.length > 0){
+			ServiceReference[] references = context.getServiceReferences(Location.class.getName(), "(type=osgi.configuration.area)"); //$NON-NLS-1$
+			if (references.length > 0) {
 				Object service = context.getService(references[0]);
-				if (service instanceof Location){
+				if (service instanceof Location) {
 					URL workspaceURL = new Path(workspace).toFile().toURI().toURL();
-					Location targetLocation = ((Location)service).createLocation(null, workspaceURL, false);
+					Location targetLocation = ((Location) service).createLocation(null, workspaceURL, false);
 					targetLocation.setURL(targetLocation.getDefault(), false);
 					isLocked = targetLocation.isLocked();
 				}
@@ -129,18 +98,16 @@ public class LauncherUtils {
 			PDECore.log(e);
 			isLocked = false;
 		}
-			
-		if (isLocked){
-			generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked,NLS.bind(PDEUIMessages.LauncherUtils_cannotLaunchApplication,workspace));
+
+		if (isLocked) {
+			generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked, NLS.bind(PDEUIMessages.LauncherUtils_cannotLaunchApplication, workspace));
 			monitor.done();
 			return false;
 		}
-		
+
 		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
-		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false)
-				&& workspaceFile.exists()) {
-			boolean doClear = !configuration.getAttribute(IPDELauncherConstants.ASKCLEAR,
-					true);
+		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false) && workspaceFile.exists()) {
+			boolean doClear = !configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true);
 			if (!doClear) {
 				int result = confirmDeleteWorkspace(workspaceFile);
 				if (result == 2 || result == -1) {
@@ -151,7 +118,7 @@ public class LauncherUtils {
 			}
 
 			if (doClear) {
-				if(configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
+				if (configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false)) {
 					LauncherUtils.clearWorkspaceLog(workspace);
 				} else {
 					CoreUtility.deleteContent(workspaceFile);
@@ -164,9 +131,7 @@ public class LauncherUtils {
 	}
 
 	private static int confirmDeleteWorkspace(final File workspaceFile) {
-		String message = NLS.bind(
-				PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace,
-				workspaceFile.getPath());
+		String message = NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace, workspaceFile.getPath());
 		return generateDialog(message);
 	}
 
@@ -180,16 +145,13 @@ public class LauncherUtils {
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEUIMessages.LauncherUtils_title;
-				MessageDialog dialog = new MessageDialog(getActiveShell(),
-						title, null, message, MessageDialog.QUESTION, new String[] {
-					IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
-					IDialogConstants.CANCEL_LABEL }, 0);
+				MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
 				result[0] = dialog.open();
 			}
 		});
 		return result[0];
 	}
-	
+
 	private static void generateErrorDialog(final String title, final String message) {
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -214,12 +176,12 @@ public class LauncherUtils {
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			useDefault |= launch.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			final ArrayList projects = new ArrayList();
-			if (useDefault) 
+			if (useDefault)
 				handleUseDefault(timeStamp, projects);
-			else if (autoAdd) 
+			else if (autoAdd)
 				handleDeselectedPlugins(timeStamp, deSelected, projects);
-			else 
-				handleSelectedPlugins(timeStamp, selected, projects); 
+			else
+				handleSelectedPlugins(timeStamp, selected, projects);
 
 			if (!projects.isEmpty())
 				Display.getDefault().syncExec(new Runnable() {
@@ -233,17 +195,17 @@ public class LauncherUtils {
 							Properties table = getLastRun();
 							String ts = Long.toString(System.currentTimeMillis());
 							Iterator it = projects.iterator();
-							while (it.hasNext()) 
-								table.put(((IProject)it.next()).getName(), ts);
+							while (it.hasNext())
+								table.put(((IProject) it.next()).getName(), ts);
 						} catch (OperationCanceledException e) {
 						} catch (CoreException e) {
-						} 
+						}
 					}
 				});
 
 			ILaunchConfigurationWorkingCopy wc = null;
 			if (launch.isWorkingCopy())
-				wc = (ILaunchConfigurationWorkingCopy)launch;
+				wc = (ILaunchConfigurationWorkingCopy) launch;
 			else
 				wc = launch.getWorkingCopy();
 			wc.setAttribute(TIMESTAMP, Long.toString(System.currentTimeMillis()));
@@ -251,7 +213,7 @@ public class LauncherUtils {
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	private static void initializeProcessor(OrganizeManifestsProcessor processor) {
 		processor.setAddMissing(false);
 		processor.setRemoveUnresolved(false);
@@ -274,7 +236,7 @@ public class LauncherUtils {
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					File file;
 					IPath location = entries[i].getOutputLocation();
-					if (location == null) 
+					if (location == null)
 						location = jp.getOutputLocation();
 					IResource res = project.getWorkspace().getRoot().findMember(location);
 					IPath path = res == null ? null : res.getLocation();
@@ -283,15 +245,14 @@ public class LauncherUtils {
 					file = path.toFile();
 					Stack files = new Stack();
 					files.push(file);
-					while(!files.isEmpty()) {
+					while (!files.isEmpty()) {
 						file = (File) files.pop();
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
-							for (int j =0 ; j < children.length; j++) 
+							for (int j = 0; j < children.length; j++)
 								files.push(children[j]);
-						} else 
-							if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
-								timeStamp = file.lastModified();
+						} else if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
+							timeStamp = file.lastModified();
 					}
 				}
 			}
@@ -313,18 +274,17 @@ public class LauncherUtils {
 	private static void handleUseDefault(String launcherTimeStamp, ArrayList projects) {
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i])) 
+			if (!WorkspaceModelManager.isPluginProject(projs[i]))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && 
-					shouldAdd(projs[i], launcherTimeStamp, timestamp)) 
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
 				projects.add(projs[i]);
 		}
 	}
 
 	private static void handleSelectedPlugins(String timeStamp, String value, ArrayList projects) {
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-		while(tokenizer.hasMoreTokens()) {
+		while (tokenizer.hasMoreTokens()) {
 			value = tokenizer.nextToken();
 			int index = value.indexOf('@');
 			String id = index > 0 ? value.substring(0, index) : value;
@@ -334,8 +294,7 @@ public class LauncherUtils {
 				if (res != null) {
 					IProject project = res.getProject();
 					String projTimeStamp = getTimeStamp(project);
-					if (projTimeStamp.compareTo(timeStamp) > 0 && 
-							shouldAdd(project, timeStamp, projTimeStamp)) 
+					if (projTimeStamp.compareTo(timeStamp) > 0 && shouldAdd(project, timeStamp, projTimeStamp))
 						projects.add(project);
 				}
 			}
@@ -345,19 +304,18 @@ public class LauncherUtils {
 	private static void handleDeselectedPlugins(String launcherTimeStamp, String value, ArrayList projects) {
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 		HashSet deSelectedProjs = new HashSet();
-		while (tokenizer.hasMoreTokens()) 
+		while (tokenizer.hasMoreTokens())
 			deSelectedProjs.add(tokenizer.nextToken());
 
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i])) 
+			if (!WorkspaceModelManager.isPluginProject(projs[i]))
 				continue;
 			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
 			if (base == null || base != null && deSelectedProjs.contains(base.getPluginBase().getId()))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && 
-					shouldAdd(projs[i], launcherTimeStamp, timestamp)) 
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
 				projects.add(projs[i]);
 		}
 	}
@@ -378,7 +336,7 @@ public class LauncherUtils {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e1) {
-			}			
+			}
 		}
 	}
 
@@ -394,7 +352,7 @@ public class LauncherUtils {
 		if (fLastRun == null) {
 			fLastRun = new Properties();
 			FileInputStream fis = null;
-			try { 
+			try {
 				File file = new File(getDirectory(), FILE_NAME);
 				if (file.exists()) {
 					fis = new FileInputStream(file);
@@ -408,14 +366,14 @@ public class LauncherUtils {
 					if (fis != null)
 						fis.close();
 				} catch (IOException e1) {
-				}			
+				}
 			}
 		}
 		return fLastRun;
 	}
 
 	private static boolean shouldAdd(IProject proj, String launcherTS, String fileSystemTS) {
-		String projTS = (String)getLastRun().get(proj.getName());
+		String projTS = (String) getLastRun().get(proj.getName());
 		if (projTS == null)
 			return true;
 		return ((projTS.compareTo(launcherTS) < 0) || (projTS.compareTo(fileSystemTS) < 0));
@@ -427,8 +385,8 @@ public class LauncherUtils {
 			if (projectID.length() > 0) {
 				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project instanceof IProject) {
-					IPluginModelBase model = PluginRegistry.findModel((IProject)project);
-					if (model != null) {							
+					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
+					if (model != null) {
 						Set plugins = DependencyManager.getSelfAndDependencies(model);
 						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$
 					}
@@ -441,19 +399,14 @@ public class LauncherUtils {
 
 	public static boolean clearWorkspaceLog(String workspace) {
 		File logFile = new File(workspace, ".metadata" + File.separator + ".log"); //$NON-NLS-1$ //$NON-NLS-2$
-		if(logFile != null && logFile.exists()) {
+		if (logFile != null && logFile.exists()) {
 			return logFile.delete();
 		}
 		return true;
 	}
 
 	public static IStatus createErrorStatus(String message) {
-		return new Status(
-				IStatus.ERROR,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				message,
-				null);
+		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
 	}
 
 }

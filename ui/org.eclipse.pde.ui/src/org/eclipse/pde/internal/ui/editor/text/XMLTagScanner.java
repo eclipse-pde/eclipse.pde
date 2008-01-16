@@ -10,23 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.MultiLineRule;
-import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class XMLTagScanner extends BasePDEScanner {
-	
+
 	private Token fStringToken;
-	
+
 	private Token fExternalizedStringToken;
-	
+
 	public XMLTagScanner(IColorManager manager) {
 		super(manager);
 	}
-	
+
 	protected void initialize() {
 		fStringToken = new Token(createTextAttribute(IPDEColorConstants.P_STRING));
 		fExternalizedStringToken = new Token(createTextAttribute(IPDEColorConstants.P_EXTERNALIZED_STRING));
@@ -41,21 +37,19 @@ public class XMLTagScanner extends BasePDEScanner {
 		setRules(rules);
 		setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_TAG)));
 	}
-	
-    protected Token getTokenAffected(PropertyChangeEvent event) {
-    	String property = event.getProperty();
-    	if (property.startsWith(IPDEColorConstants.P_STRING)) {
-    		return fStringToken;
-    	} else if (property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING)) {
-    		return fExternalizedStringToken;
-    	}
-    	return (Token)fDefaultReturnToken;
-    }
+
+	protected Token getTokenAffected(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.startsWith(IPDEColorConstants.P_STRING)) {
+			return fStringToken;
+		} else if (property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING)) {
+			return fExternalizedStringToken;
+		}
+		return (Token) fDefaultReturnToken;
+	}
 
 	public boolean affectsTextPresentation(String property) {
-		return property.startsWith(IPDEColorConstants.P_TAG) || 
-				property.startsWith(IPDEColorConstants.P_STRING) ||
-				property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING);
+		return property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_STRING) || property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING);
 	}
 
 }

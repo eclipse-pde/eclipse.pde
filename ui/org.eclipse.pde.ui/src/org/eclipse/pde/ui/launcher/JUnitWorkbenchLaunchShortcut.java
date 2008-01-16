@@ -28,15 +28,15 @@ import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
  * </p>
  * @since 3.3
  */
-public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {	
-		
+public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#getLaunchConfigurationTypeId()
 	 */
 	protected String getLaunchConfigurationTypeId() {
 		return "org.eclipse.pde.ui.JunitLaunchConfig"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#createLaunchConfiguration(org.eclipse.jdt.core.IJavaElement)
 	 */
@@ -59,9 +59,9 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 				configuration.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
 		} else {
-			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);				
+			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);
 		}
-		
+
 		// Plug-ins to launch
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 
@@ -75,21 +75,19 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 
-		
 		// configuration attributes
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
-		
+
 		// tracing option
-		configuration.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);		
+		configuration.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 
 		// source path provider
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-	            PDESourcePathProvider.ID); 	
-		
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
+
 		return configuration;
 	}
-	
+
 }

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -25,10 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 
 public class ProgramBlock {
 
@@ -39,72 +35,70 @@ public class ProgramBlock {
 	private AbstractLauncherTab fTab;
 	private Listener fListener = new Listener();
 
-	class Listener extends SelectionAdapter {		
+	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fProductButton) {
 				boolean enabled = fProductButton.getSelection();
 				fProductCombo.setEnabled(enabled);
 				fApplicationCombo.setEnabled(!enabled);
-			}			
+			}
 			fTab.updateLaunchConfigurationDialog();
 		}
 	}
-	
+
 	public ProgramBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 	}
-	
+
 	public void createControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.ProgramBlock_programToRun); 
+		group.setText(PDEUIMessages.ProgramBlock_programToRun);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
-		createProductSection(group);		
+
+		createProductSection(group);
 		createApplicationSection(group);
 	}
-	
+
 	protected void createProductSection(Composite parent) {
 		fProductButton = new Button(parent, SWT.RADIO);
-		fProductButton.setText(PDEUIMessages.ProgramBlock_runProduct); 
+		fProductButton.setText(PDEUIMessages.ProgramBlock_runProduct);
 		fProductButton.addSelectionListener(fListener);
-		
-		fProductCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
+
+		fProductCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.addSelectionListener(fListener);
 	}
-	
+
 	protected void createApplicationSection(Composite parent) {
 		fApplicationButton = new Button(parent, SWT.RADIO);
-		fApplicationButton.setText(PDEUIMessages.ProgramBlock_runApplication); 
-			
-		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
+		fApplicationButton.setText(PDEUIMessages.ProgramBlock_runApplication);
+
+		fApplicationCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fApplicationCombo.setItems(getApplicationNames());
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fApplicationCombo.addSelectionListener(fListener);
 	}
-		
+
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		initializeProductSection(config);
 		initializeApplicationSection(config);
-		
-		boolean useProduct = 
-					config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)
-					&& fProductCombo.getItemCount() > 0;
+
+		boolean useProduct = config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false) && fProductCombo.getItemCount() > 0;
 		fApplicationButton.setSelection(!useProduct);
 		fApplicationCombo.setEnabled(!useProduct);
 		fProductButton.setSelection(useProduct);
 		fProductButton.setEnabled(fProductCombo.getItemCount() > 0);
 		fProductCombo.setEnabled(useProduct);
 	}
-	
+
 	protected void initializeProductSection(ILaunchConfiguration config) throws CoreException {
 		if (fProductCombo.getItemCount() > 0) {
-			String productName = config.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+			String productName = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 			int index = productName == null ? -1 : fProductCombo.indexOf(productName);
 			if (index == -1)
 				index = 0;
@@ -113,18 +107,16 @@ public class ProgramBlock {
 	}
 
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {
-		
+
 		String attribute = getApplicationAttribute();
-		
+
 		// first see if the application name has been set on the launch config
 		String application = config.getAttribute(attribute, (String) null);
-		if (application == null
-			|| fApplicationCombo.indexOf(application) == -1) {
+		if (application == null || fApplicationCombo.indexOf(application) == -1) {
 			application = null;
-			
+
 			// check if the user has entered the -application arg in the program arg field
-			StringTokenizer tokenizer =
-				new StringTokenizer(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken();
 				if (token.equals("-application") && tokenizer.hasMoreTokens()) { //$NON-NLS-1$
@@ -132,15 +124,15 @@ public class ProgramBlock {
 					break;
 				}
 			}
-			
+
 			int index = -1;
 			if (application != null)
 				index = fApplicationCombo.indexOf(application);
-			
+
 			// use default application as specified in the install.ini of the target platform
 			if (index == -1)
 				index = fApplicationCombo.indexOf(TargetPlatform.getDefaultApplication());
-			
+
 			if (index != -1) {
 				fApplicationCombo.setText(fApplicationCombo.getItem(index));
 			} else if (fApplicationCombo.getItemCount() > 0) {
@@ -150,12 +142,12 @@ public class ProgramBlock {
 			fApplicationCombo.setText(application);
 		}
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		saveApplicationSection(config);
 		saveProductSection(config);
 	}
-	
+
 	protected void saveProductSection(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.USE_PRODUCT, fProductButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.PRODUCT, fProductCombo.getText());
@@ -169,21 +161,21 @@ public class ProgramBlock {
 		else
 			config.setAttribute(attribute, text);
 	}
-	
-	public void setDefaults(ILaunchConfigurationWorkingCopy config) {		
+
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		String product = TargetPlatform.getDefaultProduct();
 		if (product != null) {
 			config.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
-			config.setAttribute(IPDELauncherConstants.PRODUCT, product); 
+			config.setAttribute(IPDELauncherConstants.PRODUCT, product);
 		}
 	}
-	
+
 	protected String[] getApplicationNames() {
 		return TargetPlatform.getApplications();
 	}
-	
+
 	protected String getApplicationAttribute() {
 		return IPDELauncherConstants.APPLICATION;
 	}
-		
+
 }

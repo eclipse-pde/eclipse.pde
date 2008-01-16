@@ -33,12 +33,11 @@ public class BinaryProjectFilter extends ViewerFilter {
 			project = (IProject) element;
 		}
 		if (project != null) {
-			if (WorkspaceModelManager.isPluginProject(project) 
-					|| WorkspaceModelManager.isFeatureProject(project)) {
+			if (WorkspaceModelManager.isPluginProject(project) || WorkspaceModelManager.isFeatureProject(project)) {
 				return !WorkspaceModelManager.isBinaryProject(project);
 			}
 		}
 		return true;
 	}
-	
+
 }

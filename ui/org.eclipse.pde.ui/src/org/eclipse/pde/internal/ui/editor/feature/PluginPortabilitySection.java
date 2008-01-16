@@ -17,8 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class PluginPortabilitySection extends DataPortabilitySection {
 	public PluginPortabilitySection(PDEFormPage page, Composite parent) {
-		super(page, parent, PDEUIMessages.FeatureEditor_PluginPortabilitySection_title,
-				PDEUIMessages.FeatureEditor_PluginPortabilitySection_desc, SWT.NULL);
+		super(page, parent, PDEUIMessages.FeatureEditor_PluginPortabilitySection_title, PDEUIMessages.FeatureEditor_PluginPortabilitySection_desc, SWT.NULL);
 	}
 
 }

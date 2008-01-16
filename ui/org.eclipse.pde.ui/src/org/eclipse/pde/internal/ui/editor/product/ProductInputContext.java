@@ -10,36 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.product.ProductModel;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-
+import org.eclipse.ui.*;
 
 public class ProductInputContext extends UTF8InputContext {
-	
+
 	public static final String CONTEXT_ID = "product-context"; //$NON-NLS-1$
 
-	public ProductInputContext(PDEFormEditor editor, IEditorInput input,
-			boolean primary) {
+	public ProductInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
@@ -63,9 +52,8 @@ public class ProductInputContext extends UTF8InputContext {
 					model = new WorkspaceProductModel(file, true);
 					model.load();
 				} else if (input instanceof IStorageEditorInput) {
-					InputStream is = new BufferedInputStream(((IStorageEditorInput) input).getStorage()
-							.getContents());
-					model =  new ProductModel();
+					InputStream is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
+					model = new ProductModel();
 					model.load(is, false);
 				}
 			} catch (CoreException e) {
@@ -81,7 +69,7 @@ public class ProductInputContext extends UTF8InputContext {
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
 	 */

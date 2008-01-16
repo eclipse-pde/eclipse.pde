@@ -11,27 +11,14 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJarEntryResource;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -50,10 +37,8 @@ public class PluginsLabelProvider extends LabelProvider {
 	public PluginsLabelProvider() {
 		super();
 		sharedProvider = PDEPlugin.getDefault().getLabelProvider();
-		folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJ_FOLDER);
-		projectImage = PlatformUI.getWorkbench().getSharedImages().getImage(
-				IDE.SharedImages.IMG_OBJ_PROJECT);
+		folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		projectImage = PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		sharedProvider.connect(this);
 	}
 
@@ -70,20 +55,20 @@ public class PluginsLabelProvider extends LabelProvider {
 		if (obj instanceof FileAdapter) {
 			return getText((FileAdapter) obj);
 		}
-		
+
 		if (obj instanceof IPackageFragmentRoot) {
 			// use the short name
 			return ((IPackageFragmentRoot) obj).getPath().lastSegment();
 		}
-		
+
 		if (obj instanceof IJavaElement) {
 			return ((IJavaElement) obj).getElementName();
 		}
-		
+
 		if (obj instanceof IStorage) {
 			return ((IStorage) obj).getName();
 		}
-		
+
 		return super.getText(obj);
 	}
 
@@ -104,28 +89,23 @@ public class PluginsLabelProvider extends LabelProvider {
 				hasSource = root.getSourceAttachmentPath() != null;
 			} catch (JavaModelException e) {
 			}
-			return JavaUI.getSharedImages().getImage(
-							hasSource ? org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE
-									: org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
+			return JavaUI.getSharedImages().getImage(hasSource ? org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE : org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
 		}
 
 		if (obj instanceof IPackageFragment) {
-			return JavaUI.getSharedImages().getImage(
-					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
+			return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
 		}
 
 		if (obj instanceof ICompilationUnit) {
-			return JavaUI.getSharedImages().getImage(
-					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
+			return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
 		}
 
 		if (obj instanceof IClassFile) {
-			return JavaUI.getSharedImages().getImage(
-					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
+			return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
 		}
 
 		if (obj instanceof IStorage) {
-			if (obj instanceof IJarEntryResource && ! ((IJarEntryResource) obj).isFile())
+			if (obj instanceof IJarEntryResource && !((IJarEntryResource) obj).isFile())
 				return folderImage;
 			return getFileImage(((IStorage) obj).getName());
 		}
@@ -149,17 +129,14 @@ public class PluginsLabelProvider extends LabelProvider {
 			return projectImage;
 
 		if (model instanceof IPluginModel)
-			return sharedProvider.getObjectImage((IPlugin) model.getPluginBase(), true,
-					isInJavaSearch(model));
+			return sharedProvider.getObjectImage((IPlugin) model.getPluginBase(), true, isInJavaSearch(model));
 
-		return sharedProvider.getObjectImage((IFragment) model.getPluginBase(), true,
-				isInJavaSearch(model));
+		return sharedProvider.getObjectImage((IFragment) model.getPluginBase(), true, isInJavaSearch(model));
 	}
 
 	private boolean isInJavaSearch(IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
-		SearchablePluginsManager manager = PDECore.getDefault()
-				.getSearchablePluginsManager();
+		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		return manager.isInJavaSearch(id);
 	}
 
@@ -171,8 +148,7 @@ public class PluginsLabelProvider extends LabelProvider {
 	}
 
 	private Image getFileImage(String fileName) {
-		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
-				.getImageDescriptor(fileName);
+		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
 		return sharedProvider.get(desc);
 	}
 }

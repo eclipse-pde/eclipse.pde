@@ -22,15 +22,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class ProductExportWizardPage extends AbstractExportWizardPage {
-	
+
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
@@ -45,8 +41,8 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
 		fSelection = selection;
-		setTitle(PDEUIMessages.ProductExportWizardPage_title); 
-		setDescription(PDEUIMessages.ProductExportWizardPage_desc); 
+		setTitle(PDEUIMessages.ProductExportWizardPage_title);
+		setDescription(PDEUIMessages.ProductExportWizardPage_desc);
 	}
 
 	public void createControl(Composite parent) {
@@ -54,12 +50,12 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		
+
 		createConfigurationSection(container);
 		createSynchronizationSection(container);
 		createDestinationSection(container);
 		createOptionsSection(container);
-		
+
 		initialize();
 		pageChanged();
 		if (getErrorMessage() != null) {
@@ -68,38 +64,37 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		}
 		setControl(container);
 		hookHelpContext(container);
-		Dialog.applyDialogFont(container);	
-		
-		PlatformUI.getWorkbench().getHelpSystem()
-		.setHelp(container, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
+		Dialog.applyDialogFont(container);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
 	}
-	
+
 	private void createConfigurationSection(Composite parent) {
 		fConfigurationGroup = new ProductConfigurationSection(this);
 		fConfigurationGroup.createControl(parent);
 	}
-	
+
 	private void createSynchronizationSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 7;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.ProductExportWizardPage_sync); 
-		
+		group.setText(PDEUIMessages.ProductExportWizardPage_sync);
+
 		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEUIMessages.ProductExportWizardPage_syncText); 
+		label.setText(PDEUIMessages.ProductExportWizardPage_syncText);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 400;
 		label.setLayoutData(gd);
-		
+
 		fSyncButton = new Button(group, SWT.CHECK);
-		fSyncButton.setText(PDEUIMessages.ProductExportWizardPage_syncButton); 
+		fSyncButton.setText(PDEUIMessages.ProductExportWizardPage_syncButton);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fSyncButton.setLayoutData(gd);
 	}
-	
+
 	private void createDestinationSection(Composite container) {
 		fExportGroup = new ProductDestinationGroup(this);
 		fExportGroup.createControl(container);
@@ -110,10 +105,10 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		group.setText(PDEUIMessages.ProductExportWizardPage_exportOptionsGroup);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fExportSource = new Button(group, SWT.CHECK);
 		fExportSource.setText(PDEUIMessages.ExportWizard_includeSource);
-		
+
 		if (getWizard().getPages().length > 1) {
 			fMultiPlatform = new Button(group, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
@@ -128,17 +123,17 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	protected void initialize() {
 		IDialogSettings settings = getDialogSettings();
 		fConfigurationGroup.initialize(fSelection, settings);
-		
+
 		String value = settings.get(S_SYNC_PRODUCT);
 		fSyncButton.setSelection(value == null ? true : settings.getBoolean(S_SYNC_PRODUCT));
-		
+
 		fExportGroup.initialize(settings, fConfigurationGroup.getProductFile());
-		
+
 		fExportSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
 	}
-	
+
 	protected void updateProductFields() {
 		fExportGroup.updateDestination(fConfigurationGroup.getProductFile());
 	}
@@ -150,21 +145,21 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		setErrorMessage(error);
 		setPageComplete(error == null);
 	}
-	
+
 	public IWizardPage getNextPage() {
 		return doMultiPlatform() ? getWizard().getNextPage(this) : null;
 	}
-	
+
 	protected void hookHelpContext(Control control) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		fConfigurationGroup.saveSettings(settings);
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
 		fExportGroup.saveSettings(settings);
 		settings.put(S_EXPORT_SOURCE, doExportSource());
-		
+
 		if (fMultiPlatform != null)
 			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
 	}
@@ -172,11 +167,11 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	protected boolean doSync() {
 		return fSyncButton.getSelection();
 	}
-	
+
 	protected boolean doMultiPlatform() {
 		return fMultiPlatform != null && fMultiPlatform.getSelection();
 	}
-	
+
 	protected boolean doExportSource() {
 		return fExportSource.getSelection();
 	}

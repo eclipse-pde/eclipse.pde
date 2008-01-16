@@ -18,37 +18,37 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 public class CommandView extends ViewPart implements ISelectionChangedListener {
-	
+
 	private CommandComposerPart fCSP;
-	
+
 	public void createPartControl(Composite parent) {
 		fCSP = new CommandComposerPart();
 	}
-	
+
 	public FormToolkit getToolkit() {
 		return fCSP.getToolkit();
 	}
-	
+
 	public ScrolledForm getForm() {
 		return null;
 //		return fCSP.getForm();
 	}
-	
+
 	public TagManager getTagManager() {
 		return fCSP.getTagManager();
 	}
-	
+
 	public void setFocus() {
 		fCSP.setFocus();
 	}
-	
+
 	public void dispose() {
 		fCSP.dispose();
 		super.dispose();
 	}
-	
+
 	public void selectionChanged(SelectionChangedEvent event) {
 		fCSP.selectionChanged(event);
 	}
-	
+
 }

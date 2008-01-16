@@ -14,9 +14,8 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 
-public class OrganizeExportPackageResolution extends
-		AbstractManifestMarkerResolution {
-	
+public class OrganizeExportPackageResolution extends AbstractManifestMarkerResolution {
+
 	public OrganizeExportPackageResolution(int type) {
 		super(type);
 	}

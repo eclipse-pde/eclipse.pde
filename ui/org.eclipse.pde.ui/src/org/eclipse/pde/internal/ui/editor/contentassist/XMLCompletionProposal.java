@@ -13,36 +13,14 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.HashSet;
 import java.util.Stack;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
-import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -57,22 +35,22 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 public class XMLCompletionProposal implements ICompletionProposal, ICompletionProposalExtension5, ICompletionProposalExtension3 {
-	
+
 	private static final String F_DEF_ATTR_INDENT = "      "; //$NON-NLS-1$
-	
+
 	private ISchemaObject fSchemaObject;
 	private IDocumentRange fRange;
-	private int fOffset; 
+	private int fOffset;
 	private int fLen;
-	private int fSelOffset; 
+	private int fSelOffset;
 	private int fSelLen;
 	private XMLContentAssistProcessor fProcessor;
 	private String fAddInfo;
 	private IInformationControlCreator fCreator;
-	
+
 	private IPluginParent fPluginParent;
 	private ISchemaElement fSchemaElement;
-	
+
 	public XMLCompletionProposal(IDocumentRange node, ISchemaObject object, int offset, XMLContentAssistProcessor processor) {
 		fLen = -1;
 		fSelOffset = -1;
@@ -126,31 +104,31 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @return
 	 */
 	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuffer documentInsertBuffer, boolean doInternalWork) {
-		int type = ((VirtualSchemaObject)fSchemaObject).getVType();
+		int type = ((VirtualSchemaObject) fSchemaObject).getVType();
 		switch (type) {
-		case XMLContentAssistProcessor.F_ATTRIBUTE:
-			applyAttribute(documentInsertBuffer);
-			break;
-		case XMLContentAssistProcessor.F_CLOSE_TAG:
-			fOffset = sel.getOffset();
-			fLen = 0;
-			documentInsertBuffer.append(" />"); //$NON-NLS-1$
-			break;
-		case XMLContentAssistProcessor.F_EXTENSION:
-			applyExtension(document, delim, documentInsertBuffer);
-			break;
-		case XMLContentAssistProcessor.F_EXTENSION_POINT:
-			applyExtensionPoint(documentInsertBuffer);
-			break;
-		case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE:
-			doInternalWork = true; // we will want to add required child nodes/attributes
-			applyExtensionFullPoint(document, delim, documentInsertBuffer);
-			break;
-		case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-			doInternalWork = true; // we will want to add required child nodes/attributes
-		case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE:
-			applyAttributeValue(document, documentInsertBuffer);
-			break;
+			case XMLContentAssistProcessor.F_ATTRIBUTE :
+				applyAttribute(documentInsertBuffer);
+				break;
+			case XMLContentAssistProcessor.F_CLOSE_TAG :
+				fOffset = sel.getOffset();
+				fLen = 0;
+				documentInsertBuffer.append(" />"); //$NON-NLS-1$
+				break;
+			case XMLContentAssistProcessor.F_EXTENSION :
+				applyExtension(document, delim, documentInsertBuffer);
+				break;
+			case XMLContentAssistProcessor.F_EXTENSION_POINT :
+				applyExtensionPoint(documentInsertBuffer);
+				break;
+			case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE :
+				doInternalWork = true; // we will want to add required child nodes/attributes
+				applyExtensionFullPoint(document, delim, documentInsertBuffer);
+				break;
+			case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE :
+				doInternalWork = true; // we will want to add required child nodes/attributes
+			case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE :
+				applyAttributeValue(document, documentInsertBuffer);
+				break;
 		}
 		return doInternalWork;
 	}
@@ -161,7 +139,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 */
 	private void applyAttributeValue(IDocument document, StringBuffer documentInsertBuffer) {
 		if (fRange instanceof IDocumentAttributeNode) {
-			fOffset = ((IDocumentAttributeNode)fRange).getValueOffset();
+			fOffset = ((IDocumentAttributeNode) fRange).getValueOffset();
 			String value = fSchemaObject.getName();
 			try {
 				// add indentation
@@ -216,9 +194,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param delim
 	 * @param documentInsertBuffer
 	 */
-	private void applyExtensionFullPoint(IDocument document, String delim, 
-			StringBuffer documentInsertBuffer) {
-		
+	private void applyExtensionFullPoint(IDocument document, String delim, StringBuffer documentInsertBuffer) {
+
 		String pointID = fSchemaObject.getName();
 		String indent = getIndent(document, fOffset);
 		// Add extension mark-up to the buffer right up until the point 
@@ -249,7 +226,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append("extension"); //$NON-NLS-1$
 		documentInsertBuffer.append('>');
 	}
-	
+
 	/**
 	 * @param document
 	 * @param delim
@@ -257,13 +234,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 */
 	private void applyElement(String indent, String delim, StringBuffer documentInsertBuffer) {
 		documentInsertBuffer.append('<');
-		documentInsertBuffer.append(((ISchemaElement)fSchemaObject).getName());
-		documentInsertBuffer.append('>'); 
+		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
+		documentInsertBuffer.append('>');
 		documentInsertBuffer.append(delim);
 		documentInsertBuffer.append(indent);
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append('/');
-		documentInsertBuffer.append(((ISchemaElement)fSchemaObject).getName());
+		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
 		documentInsertBuffer.append('>');
 	}
 
@@ -283,65 +260,61 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		fSelOffset = fOffset + documentInsertBuffer.length();
 		String value = attName; //$NON-NLS-1$
 		if (fSchemaObject instanceof ISchemaAttribute) {
-			value = XMLInsertionComputer.generateAttributeValue(
-					(ISchemaAttribute) fSchemaObject, fProcessor.getModel(),
-					attName);
+			value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute) fSchemaObject, fProcessor.getModel(), attName);
 		}
 		documentInsertBuffer.append(value);
 		fSelLen = value.length();
 		documentInsertBuffer.append('"');
 	}
-	
+
 	private void modifyModel(IDocument document) {
 		// TODO requires
 		//  - refactoring
 		//  - better grouping of cases (if statements)
 		IBaseModel model = fProcessor.getModel();
 		if (model instanceof IReconcilingParticipant)
-			((IReconcilingParticipant)model).reconciled(document);
-		
+			((IReconcilingParticipant) model).reconciled(document);
+
 		if (model instanceof IPluginModelBase) {
-			IPluginBase base = ((IPluginModelBase)model).getPluginBase();
-			
+			IPluginBase base = ((IPluginModelBase) model).getPluginBase();
+
 			fPluginParent = null;
 			fSchemaElement = null;
-			
+
 			if (fSchemaObject instanceof VirtualSchemaObject) {
-				switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
-				case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-					if (!(fRange instanceof IDocumentAttributeNode))
-						break;
-					int offset = ((IDocumentAttributeNode)fRange).getEnclosingElement().getOffset();
-					IPluginExtension[] extensions = base.getExtensions();
-					for (int i = 0; i < extensions.length; i++) {
-						if (((IDocumentElementNode)extensions[i]).getOffset() == offset) {
-							if (extensions[i].getChildCount() != 0)
-								break; // don't modify existing extensions
-							fPluginParent = extensions[i];
-							fSchemaElement = XMLUtil.getSchemaElement(
-									(IDocumentElementNode)extensions[i],
-									extensions[i].getPoint());
+				switch (((VirtualSchemaObject) fSchemaObject).getVType()) {
+					case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE :
+						if (!(fRange instanceof IDocumentAttributeNode))
 							break;
+						int offset = ((IDocumentAttributeNode) fRange).getEnclosingElement().getOffset();
+						IPluginExtension[] extensions = base.getExtensions();
+						for (int i = 0; i < extensions.length; i++) {
+							if (((IDocumentElementNode) extensions[i]).getOffset() == offset) {
+								if (extensions[i].getChildCount() != 0)
+									break; // don't modify existing extensions
+								fPluginParent = extensions[i];
+								fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extensions[i], extensions[i].getPoint());
+								break;
+							}
 						}
-					}
-					break;
-				case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE:
-					findExtensionVirtualPointValue(base);
-					break;
+						break;
+					case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE :
+						findExtensionVirtualPointValue(base);
+						break;
 				}
 			} else if (fRange instanceof IDocumentElementNode && base instanceof IDocumentElementNode) {
 				Stack s = new Stack();
-				IDocumentElementNode node = (IDocumentElementNode)fRange;
-				IDocumentElementNode newSearch = (IDocumentElementNode)base;
+				IDocumentElementNode node = (IDocumentElementNode) fRange;
+				IDocumentElementNode newSearch = (IDocumentElementNode) base;
 				// traverse up old model, pushing all nodes onto the stack along the way
 				while (node != null && !(node instanceof IPluginBase)) {
 					s.push(node);
 					node = node.getParentNode();
 				}
-				
+
 				// traverse down new model to find new node, using stack as a guideline
 				while (!s.isEmpty()) {
-					node = (IDocumentElementNode)s.pop();
+					node = (IDocumentElementNode) s.pop();
 					int nodeIndex = 0;
 					while ((node = node.getPreviousSibling()) != null)
 						nodeIndex += 1;
@@ -350,22 +323,21 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				if (newSearch != null) {
 					IDocumentElementNode[] children = newSearch.getChildNodes();
 					for (int i = 0; i < children.length; i++) {
-						if (children[i].getOffset() == fOffset && 
-								children[i] instanceof IPluginElement) {
-							fPluginParent = (IPluginElement)children[i];
-							fSchemaElement = (ISchemaElement)fSchemaObject; 
+						if (children[i].getOffset() == fOffset && children[i] instanceof IPluginElement) {
+							fPluginParent = (IPluginElement) children[i];
+							fSchemaElement = (ISchemaElement) fSchemaObject;
 							break;
 						}
 					}
 				}
 			}
-			
+
 			if (fPluginParent != null && fSchemaElement != null) {
 				XMLInsertionComputer.computeInsertion(fSchemaElement, fPluginParent);
 				fProcessor.flushDocument();
 				if (model instanceof AbstractEditingModel) {
 					try {
-						((AbstractEditingModel)model).adjustOffsets(document);
+						((AbstractEditingModel) model).adjustOffsets(document);
 					} catch (CoreException e) {
 					}
 					setSelectionOffsets(document, fSchemaElement, fPluginParent);
@@ -373,13 +345,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			}
 		}
 	}
-	
+
 	/**
 	 * Assumption: Model already reconciled by caller
 	 * @param base
 	 */
 	private void findExtensionVirtualPointValue(IPluginBase base) {
-		
+
 		IDocumentRange range = null;
 		PDESourcePage page = fProcessor.getSourcePage();
 		// Ensure page is defined
@@ -392,55 +364,51 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		// the proper extension.
 		range = page.getRangeElement(fOffset, true);
 		// Ensure the range is an attribute
-		if ((range == null) ||
-				(range instanceof IDocumentElementNode) == false) {
+		if ((range == null) || (range instanceof IDocumentElementNode) == false) {
 			return;
 		}
 		// Get the offset of the extension element
-		int targetOffset = ((IDocumentElementNode)range).getOffset();
+		int targetOffset = ((IDocumentElementNode) range).getOffset();
 		// Search this plug-ins extensions for the proper one
 		IPluginExtension[] extensions = base.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			// Get the offset of the current extension
-			int extensionOffset = ((IDocumentElementNode)extensions[i]).getOffset();
+			int extensionOffset = ((IDocumentElementNode) extensions[i]).getOffset();
 			// If the offsets match we foudn the extension element
 			// Note: The extension element should have no children
-			if ((extensionOffset == targetOffset) &&
-					(extensions[i].getChildCount() == 0)) {
+			if ((extensionOffset == targetOffset) && (extensions[i].getChildCount() == 0)) {
 				fPluginParent = extensions[i];
 				// Get the corresponding schema element
-				fSchemaElement = XMLUtil.getSchemaElement(
-						(IDocumentElementNode)extensions[i],
-						extensions[i].getPoint());
+				fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extensions[i], extensions[i].getPoint());
 				break;
 			}
-		}		
+		}
 	}
 
 	private void setSelectionOffsets(IDocument document, ISchemaElement schemaElement, IPluginParent pluginParent) {
 		if (pluginParent instanceof IPluginExtension) {
-			String point = ((IPluginExtension)pluginParent).getPoint();
-			IPluginObject[] children = ((IPluginExtension)pluginParent).getChildren();
+			String point = ((IPluginExtension) pluginParent).getPoint();
+			IPluginObject[] children = ((IPluginExtension) pluginParent).getChildren();
 			if (children != null && children.length > 0 && children[0] instanceof IPluginParent) {
-				pluginParent = (IPluginParent)children[0];
-				schemaElement = XMLUtil.getSchemaElement((IDocumentElementNode)pluginParent, point);
+				pluginParent = (IPluginParent) children[0];
+				schemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) pluginParent, point);
 			}
 		}
-		
+
 		if (pluginParent instanceof IPluginElement) {
-			int offset = ((IDocumentElementNode)pluginParent).getOffset();
-			int len = ((IDocumentElementNode)pluginParent).getLength();
+			int offset = ((IDocumentElementNode) pluginParent).getOffset();
+			int len = ((IDocumentElementNode) pluginParent).getLength();
 			String value = null;
 			try {
 				value = document.get(offset, len);
 			} catch (BadLocationException e) {
 			}
-			if (((IPluginElement)pluginParent).getAttributeCount() > 0) {
+			if (((IPluginElement) pluginParent).getAttributeCount() > 0) {
 				// Select value of first required attribute
-				IPluginAttribute att = ((IPluginElement)pluginParent).getAttributes()[0];
+				IPluginAttribute att = ((IPluginElement) pluginParent).getAttributes()[0];
 				if (att instanceof PluginAttribute) {
-					fSelOffset = ((PluginAttribute)att).getValueOffset();
-					fSelLen = ((PluginAttribute)att).getValueLength();
+					fSelOffset = ((PluginAttribute) att).getValueOffset();
+					fSelLen = ((PluginAttribute) att).getValueLength();
 				}
 			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet()) && value != null) {
 				int ind = value.indexOf('>');
@@ -461,13 +429,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			}
 		}
 	}
-	
+
 	private String getIndent(IDocument document, int offset) {
 		StringBuffer indBuff = new StringBuffer();
 		try {
 			// add indentation
 			int line = document.getLineOfOffset(offset);
-			int lineOffset = document.getLineOffset(line); 
+			int lineOffset = document.getLineOffset(line);
 			int indent = offset - lineOffset;
 			char[] indentChars = document.get(lineOffset, indent).toCharArray();
 			// for every tab append a tab, for anything else append a space
@@ -477,7 +445,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 		return indBuff.toString();
 	}
-	
+
 	public String getAdditionalProposalInfo() {
 		if (fAddInfo == null) {
 			if (fSchemaObject == null)
@@ -505,13 +473,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	public String getDisplayString() {
 		if (fSchemaObject instanceof VirtualSchemaObject) {
-			switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
-			case XMLContentAssistProcessor.F_CLOSE_TAG:
-				return "... />"; //$NON-NLS-1$
-			case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE:
-			case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-			case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE:
-				return fSchemaObject.getName();
+			switch (((VirtualSchemaObject) fSchemaObject).getVType()) {
+				case XMLContentAssistProcessor.F_CLOSE_TAG :
+					return "... />"; //$NON-NLS-1$
+				case XMLContentAssistProcessor.F_EXTENSION_POINT_AND_VALUE :
+				case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE :
+				case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE :
+					return fSchemaObject.getName();
 			}
 		}
 		if (fSchemaObject instanceof ISchemaAttribute)
@@ -519,13 +487,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		if (fSchemaObject != null)
 			return fSchemaObject.getName();
 		if (fRange instanceof IDocumentElementNode)
-			return "...> </" + ((IDocumentElementNode)fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+			return "...> </" + ((IDocumentElementNode) fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
 	}
 
 	public Image getImage() {
 		if (fSchemaObject instanceof VirtualSchemaObject)
-			return fProcessor.getImage(((VirtualSchemaObject)fSchemaObject).getVType());
+			return fProcessor.getImage(((VirtualSchemaObject) fSchemaObject).getVType());
 		if (fSchemaObject instanceof ISchemaAttribute)
 			return fProcessor.getImage(XMLContentAssistProcessor.F_ATTRIBUTE);
 		if (fSchemaObject instanceof ISchemaElement || fSchemaObject == null)
@@ -546,7 +514,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	public IInformationControlCreator getInformationControlCreator() {
 		if (!BrowserInformationControl.isAvailable(null))
 			return null;
-		
+
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
 				public IInformationControl doCreateInformationControl(Shell parent) {
@@ -561,8 +529,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return 0;
 	}
 
-	public CharSequence getPrefixCompletionText(IDocument document,	int completionOffset) {
+	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return null;
 	}
-	
+
 }

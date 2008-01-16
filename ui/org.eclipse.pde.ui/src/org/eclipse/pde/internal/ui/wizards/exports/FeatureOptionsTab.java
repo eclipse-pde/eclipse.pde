@@ -30,48 +30,48 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	public FeatureOptionsTab(FeatureExportWizardPage page) {
 		super(page);
 	}
-	
+
 	protected void addCrossPlatformOption(Composite comp) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel model = manager.getDeltaPackFeature();
-        if (model != null) {
+		if (model != null) {
 			fMultiPlatform = new Button(comp, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
-        }		
+		}
 	}
-	
-	protected boolean getInitialJarButtonSelection(IDialogSettings settings){
-       return settings.getBoolean(S_JAR_FORMAT);
+
+	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
+		return settings.getBoolean(S_JAR_FORMAT);
 	}
 
 	protected String getJarButtonText() {
-		return PDEUIMessages.BaseExportWizardPage_fPackageJARs; 
+		return PDEUIMessages.BaseExportWizardPage_fPackageJARs;
 	}
-	
+
 	protected void initialize(IDialogSettings settings) {
 		super.initialize(settings);
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
-        if (fMultiPlatform != null)
-            settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());      
+		if (fMultiPlatform != null)
+			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
 	}
 
-    protected void hookListeners() {
-    	super.hookListeners();
-    	if (fMultiPlatform != null) {
+	protected void hookListeners() {
+		super.hookListeners();
+		if (fMultiPlatform != null) {
 			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					fPage.pageChanged();
 				}
 			});
-    	}
-    }
-    
-    protected boolean doMultiplePlatform() {
-    	return fMultiPlatform != null && fMultiPlatform.getSelection();
-    }
+		}
+	}
+
+	protected boolean doMultiplePlatform() {
+		return fMultiPlatform != null && fMultiPlatform.getSelection();
+	}
 }

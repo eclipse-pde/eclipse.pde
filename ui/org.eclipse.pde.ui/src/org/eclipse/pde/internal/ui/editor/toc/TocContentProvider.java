@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.toc;
 
 import java.util.List;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -22,8 +21,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
  * TocContentProvider
  *TODO: Comment
  */
-public class TocContentProvider extends DefaultContentProvider implements
-		ITreeContentProvider {
+public class TocContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 	/**
 	 * 
@@ -37,9 +35,9 @@ public class TocContentProvider extends DefaultContentProvider implements
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof TocModel) {
-			return new Object[]{((TocModel)parentElement).getToc()};
+			return new Object[] {((TocModel) parentElement).getToc()};
 		} else if (parentElement instanceof TocObject) {
-			List list = ((TocObject)parentElement).getChildren();
+			List list = ((TocObject) parentElement).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -53,7 +51,7 @@ public class TocContentProvider extends DefaultContentProvider implements
 	 */
 	public Object getParent(Object element) {
 		if (element instanceof TocObject) {
-			return ((TocObject)element).getParent();
+			return ((TocObject) element).getParent();
 		}
 		return null;
 	}

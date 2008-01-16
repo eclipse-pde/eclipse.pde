@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
-	
+
 	public KeyValueSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
@@ -29,10 +29,9 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	public ViewerComparator createDefaultOutlineComparator() {
 		return new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if ((e1 instanceof IDocumentKey) &&
-						(e2 instanceof IDocumentKey)) {
-					IDocumentKey key1 = (IDocumentKey)e1;
-					IDocumentKey key2 = (IDocumentKey)e2;
+				if ((e1 instanceof IDocumentKey) && (e2 instanceof IDocumentKey)) {
+					IDocumentKey key1 = (IDocumentKey) e1;
+					IDocumentKey key2 = (IDocumentKey) e2;
 					return key1.getOffset() < key2.getOffset() ? -1 : 1;
 				}
 				// Bundle manifest header elements
@@ -41,7 +40,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 			}
 		};
 	}
-	
+
 	public void setHighlightRange(IDocumentKey key) {
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
@@ -53,15 +52,14 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 
 		int offset = key.getOffset();
 		int length = key.getLength();
-		
+
 		if (offset == -1 || length == -1)
 			return;
 		setHighlightRange(offset, length, true);
-		int nameLength = PropertiesUtil.createWritableName(key.getName())
-				.length();
+		int nameLength = PropertiesUtil.createWritableName(key.getName()).length();
 		sourceViewer.setSelectedRange(offset, Math.min(nameLength, length));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
@@ -75,5 +73,5 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
-	
+
 }

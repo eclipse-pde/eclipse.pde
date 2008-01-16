@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class CallersTreeContentProvider extends CallersContentProvider
-		implements ITreeContentProvider {
+public class CallersTreeContentProvider extends CallersContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Constructor.
@@ -27,13 +27,13 @@ public class CallersTreeContentProvider extends CallersContentProvider
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IPluginBase) {
-			parentElement = ((IPluginBase)parentElement).getModel();
+			parentElement = ((IPluginBase) parentElement).getModel();
 		}
-		if (parentElement instanceof IPluginModelBase ) {
-			parentElement = ((IPluginModelBase)parentElement).getBundleDescription();
+		if (parentElement instanceof IPluginModelBase) {
+			parentElement = ((IPluginModelBase) parentElement).getBundleDescription();
 		}
 		if (parentElement instanceof BundleDescription) {
-			return findReferences((BundleDescription)parentElement).toArray();
+			return findReferences((BundleDescription) parentElement).toArray();
 		}
 		return new Object[0];
 	}
@@ -44,8 +44,7 @@ public class CallersTreeContentProvider extends CallersContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IPluginModelBase) {
-			return new Object[] { ((IPluginModelBase) inputElement)
-					.getPluginBase() };
+			return new Object[] {((IPluginModelBase) inputElement).getPluginBase()};
 		}
 		return new Object[0];
 	}

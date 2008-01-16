@@ -14,58 +14,44 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.IBuildObject;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.editor.plugin.PluginExportAction;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class BuildEditor extends MultiSourceEditor {
-	
+
 	private PluginExportAction fExportAction;
+
 	public BuildEditor() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
 	protected String getEditorID() {
 		return IPDEUIConstants.BUILD_EDITOR_ID;
 	}
-	
-	protected void createResourceContexts(InputContextManager manager,
-			IFileEditorInput input) {
+
+	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 
 		manager.putContext(input, new BuildInputContext(this, input, true));
 		manager.monitorFile(file);
 	}
-	
+
 	protected InputContextManager createInputContextManager() {
-		BuildInputContextManager manager =  new BuildInputContextManager(this);
+		BuildInputContextManager manager = new BuildInputContextManager(this);
 		manager.setUndoManager(new BuildUndoManager(this));
 		return manager;
 	}
-	
+
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
@@ -82,27 +68,27 @@ public class BuildEditor extends MultiSourceEditor {
 		//file that just got removed under us.
 		return true;
 	}
+
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
+
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
 	protected void addEditorPages() {
 		try {
 			if (getEditorInput() instanceof IFileEditorInput)
-				addPage(new BuildPage(this));			
+				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -119,21 +105,21 @@ public class BuildEditor extends MultiSourceEditor {
 		if (firstPageId == null) {
 			return BuildPage.PAGE_ID;
 		}
-		
+
 		return firstPageId;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new BuildSourcePage(editor, title, name);
 	}
-	
+
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new BuildOutlinePage(this);
 	}
-	
+
 	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
 		return null;
 	}
@@ -145,11 +131,11 @@ public class BuildEditor extends MultiSourceEditor {
 	protected boolean isModelCorrect(Object model) {
 		return model != null ? ((IBuildModel) model).isValid() : false;
 	}
+
 	protected boolean hasKnownTypes() {
 		try {
 			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers =
-				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 			for (int i = 0; i < types.length; i++) {
 				for (int j = 0; j < transfers.length; j++) {
 					if (transfers[j].isSupportedType(types[i]))
@@ -167,8 +153,8 @@ public class BuildEditor extends MultiSourceEditor {
 			return null;
 		}
 		return super.getAdapter(key);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
@@ -176,18 +162,20 @@ public class BuildEditor extends MultiSourceEditor {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
 			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
-		} 
+		}
 		return context;
 	}
-    public void contributeToToolbar(IToolBarManager manager) {
+
+	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getExportAction());
-    }
-    private PluginExportAction getExportAction() {
-    	if (fExportAction == null) {
-    		fExportAction = new PluginExportAction(this);
-    		fExportAction.setToolTipText(PDEUIMessages.PluginEditor_exportTooltip);
-    		fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PLUGIN_TOOL);
-    	}
-    	return fExportAction;
-    }
+	}
+
+	private PluginExportAction getExportAction() {
+		if (fExportAction == null) {
+			fExportAction = new PluginExportAction(this);
+			fExportAction.setToolTipText(PDEUIMessages.PluginEditor_exportTooltip);
+			fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PLUGIN_TOOL);
+		}
+		return fExportAction;
+	}
 }

@@ -11,15 +11,12 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class RemoveInternalDirectiveEntryResolution extends
-		AbstractManifestMarkerResolution {
-	
+public class RemoveInternalDirectiveEntryResolution extends AbstractManifestMarkerResolution {
+
 	private String fPackageName;
 
 	public RemoveInternalDirectiveEntryResolution(int type, String packageName) {
@@ -30,7 +27,7 @@ public class RemoveInternalDirectiveEntryResolution extends
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header instanceof ExportPackageHeader) {
-			ExportPackageObject exportedPackage = ((ExportPackageHeader)header).getPackage(fPackageName);
+			ExportPackageObject exportedPackage = ((ExportPackageHeader) header).getPackage(fPackageName);
 			if (exportedPackage != null)
 				exportedPackage.removeInternalDirective();
 		}

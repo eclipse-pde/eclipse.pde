@@ -13,58 +13,33 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public class InfoSection extends PDESection {
 	private IDocument fDocument;
-
 
 	private XMLConfiguration fSourceConfiguration;
 
@@ -88,10 +63,8 @@ public class InfoSection extends PDESection {
 
 	private Control fUrlsPage;
 
-	public InfoSection(PDEFormPage page, Composite parent,
-			IColorManager colorManager) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
-				false);
+	public InfoSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE, false);
 		String description = PDEUIMessages.FeatureEditor_InfoSection_desc;
 		getSection().setDescription(description);
 		fSourceConfiguration = new XMLConfiguration(colorManager);
@@ -106,15 +79,15 @@ public class InfoSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		GridData gd;
 
 		toolkit.createLabel(container, null);
@@ -125,9 +98,7 @@ public class InfoSection extends PDESection {
 		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
-				toolkit.getColors().getBackground() },
-				new int[] { 100 }, true);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -178,8 +149,7 @@ public class InfoSection extends PDESection {
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUrlText.setLayoutData(gd);
-		label = toolkit
-				.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_text);
+		label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_text);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
@@ -187,24 +157,21 @@ public class InfoSection extends PDESection {
 		fSourceViewer = new SourceViewer(page, null, styles);
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
-		fSourceViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						updateSelection(event.getSelection());
-					}
-				});
+		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSelection(event.getSelection());
+			}
+		});
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
-		styledText
-				.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		//
 		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(page);
 		Control[] children = page.getChildren();
 		Control control = children[children.length - 1];
-		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		gd.widthHint = 50;
 		gd.heightHint = 50;
 		control.setLayoutData(gd);
@@ -227,15 +194,10 @@ public class InfoSection extends PDESection {
 		page.setLayout(layout);
 
 		URLSection urlSection = new URLSection(getPage(), page);
-		urlSection.getSection().setLayoutData(
-				new GridData(GridData.FILL_BOTH
-						| GridData.VERTICAL_ALIGN_BEGINNING));
+		urlSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 
-		URLDetailsSection urlDetailsSection = new URLDetailsSection(getPage(),
-				page);
-		urlDetailsSection.getSection().setLayoutData(
-				new GridData(GridData.FILL_HORIZONTAL
-						| GridData.VERTICAL_ALIGN_BEGINNING));
+		URLDetailsSection urlDetailsSection = new URLDetailsSection(getPage(), page);
+		urlDetailsSection.getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
 		getManagedForm().addPart(urlSection);
 		getManagedForm().addPart(urlDetailsSection);
@@ -278,8 +240,7 @@ public class InfoSection extends PDESection {
 			updateEditorInput(input, false);
 			return true;
 		}
-		if (input instanceof IFeatureURLElement
-				|| input instanceof NamedElement) {
+		if (input instanceof IFeatureURLElement || input instanceof NamedElement) {
 			fTabFolder.setSelection(3);
 			updateEditorInput(input, false);
 			return true;
@@ -304,8 +265,7 @@ public class InfoSection extends PDESection {
 		updateTabImage(fTabFolder.getSelection());
 	}
 
-	private void applyInfoText(IFeatureInfo targetInfo, String urlText,
-			String text, int index) {
+	private void applyInfoText(IFeatureInfo targetInfo, String urlText, String text, int index) {
 		String url = null;
 
 		if (urlText.length() > 0) {
@@ -329,8 +289,7 @@ public class InfoSection extends PDESection {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	public void initialize() {
@@ -356,7 +315,7 @@ public class InfoSection extends PDESection {
 		// Dispose of the source configuration
 		if (fSourceConfiguration != null) {
 			fSourceConfiguration.dispose();
-		}		
+		}
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		if (featureModel != null)
 			featureModel.removeModelChangedListener(this);
@@ -391,12 +350,9 @@ public class InfoSection extends PDESection {
 	private void createTabs() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		addTab(PDEUIMessages.FeatureEditor_info_description, feature
-				.getFeatureInfo(0));
-		addTab(PDEUIMessages.FeatureEditor_info_copyright, feature
-				.getFeatureInfo(1));
-		addTab(PDEUIMessages.FeatureEditor_info_license, feature
-				.getFeatureInfo(2));
+		addTab(PDEUIMessages.FeatureEditor_info_description, feature.getFeatureInfo(0));
+		addTab(PDEUIMessages.FeatureEditor_info_copyright, feature.getFeatureInfo(1));
+		addTab(PDEUIMessages.FeatureEditor_info_license, feature.getFeatureInfo(2));
 		addTab(PDEUIMessages.FeatureEditor_info_discoveryUrls, null);
 	}
 
@@ -412,11 +368,9 @@ public class InfoSection extends PDESection {
 			return;
 		Object info = item.getData();
 		if (info != null) {
-			item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(
-					info));
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(info));
 		} else {
-			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_DOC_SECTION_OBJ));
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ));
 		}
 	}
 
@@ -449,9 +403,9 @@ public class InfoSection extends PDESection {
 
 	public void updateEditorInput(Object input, boolean commitPrevious) {
 		if (isDirty() && commitPrevious /*
-										 * && element != null && element !=
-										 * input
-										 */) {
+											 * && element != null && element !=
+											 * input
+											 */) {
 			commitPrevious();
 		}
 		fIgnoreChange = true;
@@ -475,8 +429,7 @@ public class InfoSection extends PDESection {
 		fElementIndex = fTabFolder.getSelectionIndex();
 
 		Control oldPage = fNotebookLayout.topControl;
-		if (input instanceof IFeatureURLElement
-				|| input instanceof NamedElement) {
+		if (input instanceof IFeatureURLElement || input instanceof NamedElement) {
 			fNotebookLayout.topControl = fUrlsPage;
 		} else {
 			fNotebookLayout.topControl = fInfoPage;

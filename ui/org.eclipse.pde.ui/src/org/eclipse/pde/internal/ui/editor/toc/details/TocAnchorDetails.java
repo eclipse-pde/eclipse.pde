@@ -27,9 +27,9 @@ import org.eclipse.ui.forms.IFormPart;
 public class TocAnchorDetails extends TocAbstractDetails {
 
 	private TocAnchor fDataTOCAnchor;
-	
+
 	private FormEntry fAnchorIdEntry;
-	
+
 	/**
 	 * @param masterSection
 	 */
@@ -39,7 +39,7 @@ public class TocAnchorDetails extends TocAbstractDetails {
 
 		fAnchorIdEntry = null;
 	}
-	
+
 	/**
 	 * @param object
 	 */
@@ -48,10 +48,9 @@ public class TocAnchorDetails extends TocAbstractDetails {
 		fDataTOCAnchor = object;
 	}
 
-	protected TocObject getDataObject()
-	{	return fDataTOCAnchor;
+	protected TocObject getDataObject() {
+		return fDataTOCAnchor;
 	}
-
 
 	protected FormEntry getPathEntryField() {
 		return null;
@@ -63,23 +62,22 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	public void createFields(Composite parent) {
 		createAnchorIdWidget(parent);
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	private void createAnchorIdWidget(Composite parent) {
-		fAnchorIdEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.TocAnchorDetails_id, SWT.NONE);
+		fAnchorIdEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.TocAnchorDetails_id, SWT.NONE);
 		// Ensure that the text field has proper width
 		fAnchorIdEntry.getText().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 	}
 
-	protected String getDetailsTitle()
-	{	return PDEUIMessages.TocAnchorDetails_title;
+	protected String getDetailsTitle() {
+		return PDEUIMessages.TocAnchorDetails_title;
 	}
-	
-	protected String getDetailsDescription()
-	{	return PDEUIMessages.TocAnchorDetails_sectionDescription;
+
+	protected String getDetailsDescription() {
+		return PDEUIMessages.TocAnchorDetails_sectionDescription;
 	}
 
 	/* (non-Javadoc)
@@ -94,23 +92,23 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	 */
 	private void createAnchorIdEntryListeners() {
 		fAnchorIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
-				public void textValueChanged(FormEntry entry) {
-					// Ensure data object is defined
-					if (fDataTOCAnchor != null) {
-					{	fDataTOCAnchor.setFieldAnchorId(fAnchorIdEntry.getValue());
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fDataTOCAnchor != null) {
+					{
+						fDataTOCAnchor.setFieldAnchorId(fAnchorIdEntry.getValue());
 					}
 				}
 			}
-		});			
+		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
 		// Ensure data object is defined
-		if (fDataTOCAnchor != null)
-		{	// Update name entry
+		if (fDataTOCAnchor != null) { // Update name entry
 			updateAnchorIdEntry(isEditableElement());
 		}
 	}
@@ -120,9 +118,9 @@ public class TocAnchorDetails extends TocAbstractDetails {
 	 */
 	private void updateAnchorIdEntry(boolean editable) {
 		fAnchorIdEntry.setValue(fDataTOCAnchor.getFieldAnchorId(), true);
-		fAnchorIdEntry.setEditable(editable);			
+		fAnchorIdEntry.setEditable(editable);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -141,7 +139,7 @@ public class TocAnchorDetails extends TocAbstractDetails {
 		// Ensure we have the right type
 		if (object != null && object instanceof TocAnchor) {
 			// Set data
-			setData((TocAnchor)object);
+			setData((TocAnchor) object);
 			// Update the UI given the new data
 			updateFields();
 		}

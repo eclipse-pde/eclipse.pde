@@ -12,25 +12,17 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
-
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class PortabilityChoicesDialog extends TrayDialog {
@@ -45,9 +37,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		}
 	}
 
-	class ChoiceLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
+	class ChoiceLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return ((Choice) obj).getLabel();
 		}
@@ -57,25 +47,18 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		}
 	}
 
-	public PortabilityChoicesDialog(
-		Shell shell,
-		Choice[] choices,
-		String value) {
+	public PortabilityChoicesDialog(Shell shell, Choice[] choices, String value) {
 		super(shell);
 		this.value = value;
 		this.choices = choices;
-		
+
 		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.FeatureEditor_PortabilityChoicesDialog_choices);
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -86,13 +69,13 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
-		
+
 		checkboxTablePart.createControl(container);
 		choiceViewer = checkboxTablePart.getTableViewer();
 		choiceViewer.setContentProvider(new ContentProvider());
 		choiceViewer.setLabelProvider(new ChoiceLabelProvider());
 
-		gd = (GridData)checkboxTablePart.getControl().getLayoutData();
+		gd = (GridData) checkboxTablePart.getControl().getLayoutData();
 		gd.widthHint = 300;
 		gd.heightHint = 350;
 
@@ -101,6 +84,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_PORTABILITY_WIZARD);
 		return container;
 	}
+
 	public String getValue() {
 		return value;
 	}
@@ -118,8 +102,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 					selected.add(choice);
 			}
 			checkboxTablePart.setSelection(selected.toArray());
-		}
-		else 
+		} else
 			checkboxTablePart.selectAll(false);
 	}
 

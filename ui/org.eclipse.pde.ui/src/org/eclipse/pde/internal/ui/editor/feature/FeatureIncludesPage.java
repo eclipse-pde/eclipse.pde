@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -52,12 +46,12 @@ public class FeatureIncludesPage extends PDEFormPage {
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/included_features.htm"; //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
-		
+
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ));
 
@@ -74,21 +68,18 @@ public class FeatureIncludesPage extends PDEFormPage {
 		right.setLayoutData(gd);
 
 		fIncludedSection = new IncludedFeaturesSection(this, left);
-		fIncludedDetailsSection = new IncludedFeaturesDetailsSection(this,
-				right);
+		fIncludedDetailsSection = new IncludedFeaturesDetailsSection(this, right);
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		alignSectionHeaders(fIncludedSection.getSection(), 
-				fIncludedDetailsSection.getSection());			
-		
-		fIncludedPortabilitySection = new IncludedFeaturesPortabilitySection(
-				this, right);
+		alignSectionHeaders(fIncludedSection.getSection(), fIncludedDetailsSection.getSection());
+
+		fIncludedPortabilitySection = new IncludedFeaturesPortabilitySection(this, right);
 
 		managedForm.addPart(fIncludedSection);
 		managedForm.addPart(fIncludedDetailsSection);
 		managedForm.addPart(fIncludedPortabilitySection);
-		form.setText(PDEUIMessages.FeatureEditor_IncludesPage_heading); 
+		form.setText(PDEUIMessages.FeatureEditor_IncludesPage_heading);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_ADVANCED);
 		// WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);

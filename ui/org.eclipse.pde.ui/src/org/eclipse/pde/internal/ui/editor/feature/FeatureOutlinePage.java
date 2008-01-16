@@ -11,22 +11,11 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.Vector;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
@@ -76,10 +65,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 
 	public FeatureOutlinePage(PDEFormEditor editor) {
 		super(editor);
-		Image folderImage = PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_DOC_SECTION_OBJ);
-		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, 
-				folderImage);
+		Image folderImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ);
+		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, folderImage);
 	}
 
 	public ITreeContentProvider createContentProvider() {
@@ -93,8 +80,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return FeatureIncludesPage.PAGE_ID;
 		if (item instanceof IFeatureImport)
 			return FeatureDependenciesPage.PAGE_ID;
-		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls)
-				|| item instanceof IFeatureURLElement)
+		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls) || item instanceof IFeatureURLElement)
 			return InfoFormPage.PAGE_ID;
 		if (item instanceof IFeatureData)
 			return FeatureAdvancedPage.PAGE_ID;
@@ -168,20 +154,14 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		if (object instanceof IFeature) {
 			if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 				String property = event.getChangedProperty();
-				if (property.equals(IFeature.P_DESCRIPTION)
-						|| property.equals(IFeature.P_COPYRIGHT)
-						|| property.equals(IFeature.P_LICENSE)) {
+				if (property.equals(IFeature.P_DESCRIPTION) || property.equals(IFeature.P_COPYRIGHT) || property.equals(IFeature.P_LICENSE)) {
 					IFormPage page = fEditor.findPage(InfoFormPage.PAGE_ID);
 					fTreeViewer.refresh(page);
 					return;
 				}
 			}
 		}
-		if (object instanceof IFeatureImport || object instanceof IFeatureInfo
-				|| object instanceof IFeaturePlugin
-				|| object instanceof IFeatureData
-				|| object instanceof IFeatureURLElement
-				|| object instanceof IFeatureChild) {
+		if (object instanceof IFeatureImport || object instanceof IFeatureInfo || object instanceof IFeaturePlugin || object instanceof IFeatureData || object instanceof IFeatureURLElement || object instanceof IFeatureChild) {
 			if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 				fTreeViewer.update(object, null);
 			} else {

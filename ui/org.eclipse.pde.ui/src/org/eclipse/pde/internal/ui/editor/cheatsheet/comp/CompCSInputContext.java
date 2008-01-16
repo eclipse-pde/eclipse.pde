@@ -11,28 +11,19 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.cheatsheet.comp.CompCSModel;
 import org.eclipse.pde.internal.core.cheatsheet.comp.CompCSWorkspaceModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 
 /**
  * CompCSInputContext
@@ -41,14 +32,13 @@ import org.eclipse.ui.IStorageEditorInput;
 public class CompCSInputContext extends UTF8InputContext {
 
 	public static final String CONTEXT_ID = "compcs-context"; //$NON-NLS-1$	
-	
+
 	/**
 	 * @param editor
 	 * @param input
 	 * @param primary
 	 */
-	public CompCSInputContext(PDEFormEditor editor, IEditorInput input,
-			boolean primary) {
+	public CompCSInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
 	}
@@ -72,9 +62,7 @@ public class CompCSInputContext extends UTF8InputContext {
 					model = new CompCSWorkspaceModel(file, true);
 					model.load();
 				} else if (input instanceof IStorageEditorInput) {
-					InputStream is = new BufferedInputStream(
-							((IStorageEditorInput) input).getStorage()
-									.getContents());
+					InputStream is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
 					model = new CompCSModel();
 					model.load(is, false);
 				}
@@ -107,7 +95,7 @@ public class CompCSInputContext extends UTF8InputContext {
 		if ((getModel() instanceof IEditable) == false) {
 			return;
 		}
-		IEditable editableModel = (IEditable)getModel();
+		IEditable editableModel = (IEditable) getModel();
 		// No need to flush the model if it is not dirty
 		if (editableModel.isDirty() == false) {
 			return;
@@ -122,6 +110,6 @@ public class CompCSInputContext extends UTF8InputContext {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-	}		
-	
+	}
+
 }

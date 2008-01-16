@@ -23,11 +23,11 @@ import org.eclipse.swt.dnd.TransferData;
 public class PDEDropAdapter extends ViewerDropAdapter {
 
 	private IPDEDropParticipant fDropParticipant;
-	
+
 	private IPDESourceParticipant fSourceParticipant;
-	
-    private int fLastValidOperation;
-	
+
+	private int fLastValidOperation;
+
 	/**
 	 * @param viewer
 	 */
@@ -44,18 +44,18 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	protected void resetLastValidOperation() {
 		fLastValidOperation = DND.DROP_NONE;
 	}
-	
+
 	/**
 	 * @param currentOperation
 	 * @return
 	 */
 	protected int getLastValidOperation(int currentOperation) {
-        if (currentOperation != DND.DROP_NONE) {
-        	fLastValidOperation = currentOperation;	
-        }		
+		if (currentOperation != DND.DROP_NONE) {
+			fLastValidOperation = currentOperation;
+		}
 		return fLastValidOperation;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
 	 */
@@ -65,13 +65,13 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		// Get the original target object to drop source objects on
 		Object targetObject = getCurrentTarget();
 		// Get the drop location relative to the target object
-		int targetLocation = getCurrentLocation();			
+		int targetLocation = getCurrentLocation();
 		// Get the serialized / deserialized source objects to drop
 		Object[] sourceObjects = null;
 		if (data instanceof Object[]) {
-			sourceObjects = (Object[])data;
+			sourceObjects = (Object[]) data;
 		} else {
-			sourceObjects = new Object[]{ data };
+			sourceObjects = new Object[] {data};
 		}
 		// Get the current operation
 		int operation = getCurrentOperation();
@@ -88,15 +88,14 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		} else {
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
-	public boolean validateDrop(Object targetObject, int operation,
-			TransferData transferType) {
+	public boolean validateDrop(Object targetObject, int operation, TransferData transferType) {
 		// Current operation listed is not set until after the drop is validated
 		// i.e. This method call
 		// Replace the current operation with the last valid operation
@@ -104,7 +103,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		// Get the original target object to drop source objects on
 		targetObject = getCurrentTarget();
 		// Get the drop location relative to the target object
-		int targetLocation = getCurrentLocation();		
+		int targetLocation = getCurrentLocation();
 		// Ensure we have a model transfer operation
 		if (ModelDataTransfer.getInstance().isSupportedType(transferType) == false) {
 			return false;
@@ -125,7 +124,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		// Ensure the target object is defined
 		if (targetObject == null) {
 			return false;
-		}		
+		}
 		// Determine whether the source objects can be dropped on the target
 		// object given the specified operation
 		if (operation == DND.DROP_COPY) {
@@ -139,7 +138,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -149,7 +148,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	protected boolean validateDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return fDropParticipant.canDropCopy(targetObject, sourceObjects, targetLocation);
 	}
-	
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -170,8 +169,8 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 			}
 		}
 		return fDropParticipant.canDropMove(targetObject, sourceObjects, targetLocation);
-	}	
-	
+	}
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -180,8 +179,8 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	 */
 	protected boolean validateDropLink(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return fDropParticipant.canDropLink(targetObject, sourceObjects, targetLocation);
-	}	
-	
+	}
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -190,6 +189,6 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	 */
 	protected boolean validateDropDefault(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return validateDropMove(targetObject, sourceObjects, targetLocation);
-	}		
-	
+	}
+
 }

@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.ConfigurationAreaBlock;
 import org.eclipse.pde.internal.ui.launcher.ConfigurationTemplateBlock;
 import org.eclipse.swt.SWT;
@@ -35,12 +33,12 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.2
  */
 public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
-	
+
 	private ConfigurationAreaBlock fConfigurationArea;
 	private ConfigurationTemplateBlock fTemplateArea;
 	private Image fImage;
 	private boolean fJUnitConfig;
-	
+
 	/**
 	 * Constructor.  Equivalent to ConfigurationTab(false).
 	 * 
@@ -49,7 +47,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	public ConfigurationTab() {
 		this(false);
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -61,7 +59,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fTemplateArea = new ConfigurationTemplateBlock(this);
 		fJUnitConfig = isJUnitConfig;
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -70,15 +68,15 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fConfigurationArea.createControl(container);
 		fTemplateArea.createControl(container);
-		
+
 		Dialog.applyDialogFont(container);
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
-	
+
 	/*
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -86,7 +84,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fConfigurationArea.setDefaults(configuration, fJUnitConfig);
 		fTemplateArea.setDefaults(configuration);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -97,7 +95,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -106,15 +104,15 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fConfigurationArea.performApply(configuration);
 		fTemplateArea.performApply(configuration);
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.ConfigurationTab_name; 
+		return PDEUIMessages.ConfigurationTab_name;
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
@@ -122,7 +120,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()

@@ -30,7 +30,7 @@ public class RegisterCompCSWizardPage extends RegisterCSWizardPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#getDataName()
 	 */
 	public String getDataCheatSheetName() {
-		return ((ICompCSModel)fCheatSheetModel).getCompCS().getFieldName();
+		return ((ICompCSModel) fCheatSheetModel).getCompCS().getFieldName();
 	}
 
 	/* (non-Javadoc)

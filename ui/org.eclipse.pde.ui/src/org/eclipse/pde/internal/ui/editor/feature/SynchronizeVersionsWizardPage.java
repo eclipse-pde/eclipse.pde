@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,17 +27,13 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
@@ -122,9 +117,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PDEPlugin.getActiveWorkbenchWindow(), operation,
-					PDEPlugin.getWorkspace().getRoot());
+			PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), operation, PDEPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
@@ -170,15 +163,15 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		if (settings.get(PROP_SYNCHRO_MODE) != null) {
 			int mode = settings.getInt(PROP_SYNCHRO_MODE);
 			switch (mode) {
-			case USE_FEATURE:
-				fUseComponentButton.setSelection(true);
-				break;
-			case USE_PLUGINS:
-				fUsePluginsButton.setSelection(true);
-				break;
-			default: // USE_PLUGINS_AT_BUILD
-				fUsePluginsAtBuildButton.setSelection(true);
-			break;
+				case USE_FEATURE :
+					fUseComponentButton.setSelection(true);
+					break;
+				case USE_PLUGINS :
+					fUsePluginsButton.setSelection(true);
+					break;
+				default : // USE_PLUGINS_AT_BUILD
+					fUsePluginsAtBuildButton.setSelection(true);
+					break;
 			}
 		} else
 			fUsePluginsAtBuildButton.setSelection(true);
@@ -205,9 +198,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		return mode;
 	}
 
-	private void synchronizeVersion(int mode, String featureVersion,
-			IFeaturePlugin ref, IProgressMonitor monitor) throws CoreException,
-			BadLocationException {
+	private void synchronizeVersion(int mode, String featureVersion, IFeaturePlugin ref, IProgressMonitor monitor) throws CoreException, BadLocationException {
 		String id = ref.getId();
 
 		if (mode == USE_PLUGINS_AT_BUILD) {

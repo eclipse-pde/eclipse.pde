@@ -30,7 +30,7 @@ public class RegisterSimpleCSWizardPage extends RegisterCSWizardPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#getDataName()
 	 */
 	public String getDataCheatSheetName() {
-		return ((ISimpleCSModel)fCheatSheetModel).getSimpleCS().getTitle();
+		return ((ISimpleCSModel) fCheatSheetModel).getSimpleCS().getTitle();
 	}
 
 	/* (non-Javadoc)
@@ -38,6 +38,6 @@ public class RegisterSimpleCSWizardPage extends RegisterCSWizardPage {
 	 */
 	public boolean isCompositeCheatSheet() {
 		return false;
-	}	
-	
+	}
+
 }

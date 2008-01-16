@@ -9,12 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -27,9 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.intro.config.IIntroAction;
-import org.eclipse.ui.intro.config.IIntroURL;
-import org.eclipse.ui.intro.config.IntroURLFactory;
+import org.eclipse.ui.intro.config.*;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.standalone.InstallCommand;
@@ -40,6 +36,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_VERSION = "3.3.0"; //$NON-NLS-1$
 	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/"; //$NON-NLS-1$
 	private String sampleId;
+
 	/**
 	 *  
 	 */
@@ -50,36 +47,34 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		sampleId = params.getProperty("id"); //$NON-NLS-1$
 		if (sampleId == null)
 			return;
-        
-         Runnable r= new Runnable() {
-                public void run() {
-		    if (!ensureSampleFeaturePresent())
-		        return;
-        
-                SampleWizard wizard = new SampleWizard();
-                try {
-                    wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
-                    wizard.setSampleEditorNeeded(false);
-                    wizard.setSwitchPerspective(false);
-                    wizard.setSelectRevealEnabled(false);
-                    wizard.setActivitiesEnabled(false);
-                    WizardDialog dialog = new WizardDialog(PDEPlugin
-                            .getActiveWorkbenchShell(), wizard);
-                    dialog.create();
-                    if (dialog.open() == Window.OK) {
-                        switchToSampleStandby(wizard);
-                    }
-                } catch (CoreException e) {
-                    PDEPlugin.logException(e);
-                }
-            }
-        };
-        
-        Shell currentShell = PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow().getShell();
-        currentShell.getDisplay().asyncExec(r);
+
+		Runnable r = new Runnable() {
+			public void run() {
+				if (!ensureSampleFeaturePresent())
+					return;
+
+				SampleWizard wizard = new SampleWizard();
+				try {
+					wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
+					wizard.setSampleEditorNeeded(false);
+					wizard.setSwitchPerspective(false);
+					wizard.setSelectRevealEnabled(false);
+					wizard.setActivitiesEnabled(false);
+					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+					dialog.create();
+					if (dialog.open() == Window.OK) {
+						switchToSampleStandby(wizard);
+					}
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		};
+
+		Shell currentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		currentShell.getDisplay().asyncExec(r);
 	}
-    
+
 	private void switchToSampleStandby(SampleWizard wizard) {
 		StringBuffer url = new StringBuffer();
 		url.append("http://org.eclipse.ui.intro/showStandby?"); //$NON-NLS-1$
@@ -95,41 +90,38 @@ public class ShowSampleAction extends Action implements IIntroAction {
 			ensureProperContext(wizard);
 		}
 	}
+
 	private void ensureProperContext(SampleWizard wizard) {
 		IConfigurationElement sample = wizard.getSelection();
 		String perspId = sample.getAttribute("perspectiveId"); //$NON-NLS-1$
-		if (perspId!=null) {
+		if (perspId != null) {
 			try {
 				wizard.enableActivities();
 				PlatformUI.getWorkbench().showPerspective(perspId, PDEPlugin.getActiveWorkbenchWindow());
 				wizard.selectReveal(PDEPlugin.getActiveWorkbenchShell());
-			}
-			catch (WorkbenchException e) {
+			} catch (WorkbenchException e) {
 				PDEPlugin.logException(e);
 			}
 		}
 		enableActivities(sample);
 	}
+
 	private void enableActivities(IConfigurationElement sample) {
 	}
+
 	private boolean ensureSampleFeaturePresent() {
 		if (checkFeature())
 			return true;
 		// the feature is not present - ask to download
-		if (MessageDialog
-				.openQuestion(
-						PDEPlugin.getActiveWorkbenchShell(),
-						PDEUIMessages.ShowSampleAction_msgTitle, 
-						PDEUIMessages.ShowSampleAction_msgDesc)) { 
+		if (MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.ShowSampleAction_msgTitle, PDEUIMessages.ShowSampleAction_msgDesc)) {
 			return downloadFeature();
 		}
 		return false;
 	}
+
 	private boolean checkFeature() {
-		IPlatformConfiguration config = ConfiguratorUtils
-				.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.IFeatureEntry [] features = config
-				.getConfiguredFeatureEntries();
+		IPlatformConfiguration config = ConfiguratorUtils.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] features = config.getConfiguredFeatureEntries();
 		Version sampleVersion = new Version(SAMPLE_FEATURE_VERSION);
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getFeatureIdentifier();
@@ -142,14 +134,12 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		}
 		return false;
 	}
+
 	private boolean downloadFeature() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					InstallCommand command = new InstallCommand(
-							SAMPLE_FEATURE_ID, SAMPLE_FEATURE_VERSION,
-							UPDATE_SITE, null, "false"); //$NON-NLS-1$
+					InstallCommand command = new InstallCommand(SAMPLE_FEATURE_ID, SAMPLE_FEATURE_VERSION, UPDATE_SITE, null, "false"); //$NON-NLS-1$
 					command.run(monitor);
 					command.applyChangesNow();
 				} catch (Exception e) {

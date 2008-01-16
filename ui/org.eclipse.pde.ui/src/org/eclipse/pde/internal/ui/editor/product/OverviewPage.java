@@ -10,42 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.ILauncherFormPageHelper;
-import org.eclipse.pde.internal.ui.editor.LaunchShortcutOverviewPage;
-import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-
+import org.eclipse.ui.forms.widgets.*;
 
 public class OverviewPage extends LaunchShortcutOverviewPage {
-	
+
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private ProductLauncherFormPageHelper fLauncherHelper;
 
 	public OverviewPage(PDELauncherFormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title); 
+		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/overview.htm"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -53,7 +41,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.OverviewPage_title);  
+		form.setText(PDEUIMessages.OverviewPage_title);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION));
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.OVERVIEW_PAGE);
@@ -64,39 +52,39 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
 		ProductInfoSection section = new ProductInfoSection(this, body);
-		
+
 		managedForm.addPart(section);
 		if (getModel().isEditable()) {
 			createTestingSection(body, toolkit);
 			createExportingSection(body, toolkit);
 		}
 	}
-	
+
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.Product_OverviewPage_testing);
-		FormText text = createClient(section, getLauncherText(getLauncherHelper().isOSGi(), PDEUIMessages.Product_overview_testing), toolkit); 
+		FormText text = createClient(section, getLauncherText(getLauncherHelper().isOSGi(), PDEUIMessages.Product_overview_testing), toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.setImage("profile", lp.get(PDEPluginImages.DESC_PROFILE_EXC)); //$NON-NLS-1$
 		section.setClient(text);
 	}
-	
+
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.OverviewPage_exportingTitle);
 		section.setClient(createClient(section, PDEUIMessages.Product_overview_exporting, toolkit));
 	}
-	
+
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		if (href.equals("action.synchronize")) { //$NON-NLS-1$
-			((ProductLauncherFormPageHelper)getLauncherHelper()).handleSynchronize(true);
+			((ProductLauncherFormPageHelper) getLauncherHelper()).handleSynchronize(true);
 		} else if (href.equals("action.export")) { //$NON-NLS-1$
 			if (getPDEEditor().isDirty())
 				getPDEEditor().doSave(null);
 			new ProductExportAction(getPDEEditor()).run();
 		} else if (href.equals("configuration")) { //$NON-NLS-1$
-			String pageId = ((ProductLauncherFormPageHelper)getLauncherHelper()).getProduct().useFeatures() ? ConfigurationPage.FEATURE_ID : ConfigurationPage.PLUGIN_ID;
+			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? ConfigurationPage.FEATURE_ID : ConfigurationPage.PLUGIN_ID;
 			getEditor().setActivePage(pageId);
 		} else
 			super.linkActivated(e);
@@ -107,9 +95,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			fLauncherHelper = new ProductLauncherFormPageHelper(getPDELauncherEditor());
 		return fLauncherHelper;
 	}
-	
+
 	protected short getIndent() {
 		return 35;
 	}
-	
+
 }

@@ -11,25 +11,26 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 
 public class SynchronizeVersionsWizard extends Wizard {
 	private FeatureEditor featureEditor;
 	private SynchronizeVersionsWizardPage mainPage;
+
 	public SynchronizeVersionsWizard(FeatureEditor featureEditor) {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
-	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-	setNeedsProgressMonitor(true);
-	setWindowTitle(PDEUIMessages.VersionSyncWizard_wtitle);
-	this.featureEditor = featureEditor;
-}
-public void addPages() {
-	mainPage = new SynchronizeVersionsWizardPage(featureEditor);
-	addPage(mainPage);
-}
-public boolean performFinish() {
-	return mainPage.finish();
-}
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
+		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
+		setNeedsProgressMonitor(true);
+		setWindowTitle(PDEUIMessages.VersionSyncWizard_wtitle);
+		this.featureEditor = featureEditor;
+	}
+
+	public void addPages() {
+		mainPage = new SynchronizeVersionsWizardPage(featureEditor);
+		addPage(mainPage);
+	}
+
+	public boolean performFinish() {
+		return mainPage.finish();
+	}
 }

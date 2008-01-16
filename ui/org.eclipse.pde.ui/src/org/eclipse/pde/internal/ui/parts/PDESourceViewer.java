@@ -12,23 +12,16 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
@@ -41,40 +34,40 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class PDESourceViewer {
 
 	private static XMLConfiguration fSourceConfiguration = null;
-	
+
 	private static IColorManager fColorManager = null;
-	
+
 	private static int fSourceViewerCount = 0;
-	
+
 	private SourceViewer fViewer;
-	
+
 	private PDEFormPage fPage;
-	
+
 	private IDocument fDocument;
-	
+
 	/**
 	 * @param page
 	 */
 	public PDESourceViewer(PDEFormPage page) {
 		// Create the underlying document
-		fDocument = new Document();	
+		fDocument = new Document();
 		fPage = page;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public IDocument getDocument() {
 		return fDocument;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public SourceViewer getViewer() {
 		return fViewer;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -83,7 +76,7 @@ public class PDESourceViewer {
 			// Get the color manager
 			fColorManager = ColorManager.getDefault();
 			// Create the source configuration
-			fSourceConfiguration = new XMLConfiguration(fColorManager);				
+			fSourceConfiguration = new XMLConfiguration(fColorManager);
 		}
 		return fSourceConfiguration;
 	}
@@ -115,7 +108,7 @@ public class PDESourceViewer {
 		// Configure the underlying styled text widget
 		configureUIStyledText(data, fViewer.getTextWidget());
 		// Create style text listeners
-		createUIListenersStyledText(fViewer.getTextWidget());	
+		createUIListenersStyledText(fViewer.getTextWidget());
 	}
 
 	/**
@@ -140,7 +133,7 @@ public class PDESourceViewer {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param textWidget
 	 */
@@ -174,9 +167,9 @@ public class PDESourceViewer {
 		if (fSourceConfiguration != null) {
 			fSourceConfiguration.dispose();
 			fSourceConfiguration = null;
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param heightHint
 	 * @param widthHint
@@ -188,8 +181,8 @@ public class PDESourceViewer {
 		// Force borders
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		styledText.setLayoutData(data);
-	}		
-	
+	}
+
 	/**
 	 * The menu set on the underlying styled text widget of the source viewer
 	 * needs to be set to null before being diposed; otherwise, the menu will
@@ -207,8 +200,8 @@ public class PDESourceViewer {
 			return;
 		}
 		styledText.setMenu(null);
-	}	
-	
+	}
+
 	/**
 	 * Utility method used to tie global actions into source viewers.
 	 * 
@@ -223,36 +216,30 @@ public class PDESourceViewer {
 		} else if (actionId.equals(ActionFactory.CUT.getId())) {
 			fViewer.doOperation(ITextOperationTarget.CUT);
 			return true;
-		} else if (
-			actionId.equals(ActionFactory.COPY.getId())) {
+		} else if (actionId.equals(ActionFactory.COPY.getId())) {
 			fViewer.doOperation(ITextOperationTarget.COPY);
 			return true;
-		} else if (
-			actionId.equals(ActionFactory.PASTE.getId())) {
+		} else if (actionId.equals(ActionFactory.PASTE.getId())) {
 			fViewer.doOperation(ITextOperationTarget.PASTE);
 			return true;
-		} else if (
-			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+		} else if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			fViewer.doOperation(ITextOperationTarget.SELECT_ALL);
 			return true;
-		} else if (
-			actionId.equals(ActionFactory.DELETE.getId())) {
+		} else if (actionId.equals(ActionFactory.DELETE.getId())) {
 			fViewer.doOperation(ITextOperationTarget.DELETE);
 			return true;
-		} else if (
-			actionId.equals(ActionFactory.UNDO.getId())) {
+		} else if (actionId.equals(ActionFactory.UNDO.getId())) {
 			// TODO: MP: Undo: Re-enable Undo
 			//fViewer.doOperation(ITextOperationTarget.UNDO);
 			return false;
-		} else if (
-			actionId.equals(ActionFactory.REDO.getId())) {
+		} else if (actionId.equals(ActionFactory.REDO.getId())) {
 			// TODO: MP: Undo: Re-enable Redo
 			//fViewer.doOperation(ITextOperationTarget.REDO);
 			return false;
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @param viewer
 	 * @return

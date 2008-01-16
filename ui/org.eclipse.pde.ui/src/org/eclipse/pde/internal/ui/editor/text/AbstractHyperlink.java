@@ -17,12 +17,12 @@ public abstract class AbstractHyperlink implements IHyperlink {
 
 	protected String fElement;
 	private IRegion fRegion;
-	
+
 	public AbstractHyperlink(IRegion region, String element) {
 		fRegion = region;
 		fElement = element;
 	}
-	
+
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}

@@ -11,18 +11,10 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.ArrayList;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -30,15 +22,10 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -51,17 +38,13 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class FeatureSection extends TableSection implements IPropertyChangeListener {
-	
+
 	private SortAction fSortAction;
 
 	class ContentProvider extends DefaultTableProvider {
@@ -73,22 +56,21 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private TableViewer fFeatureTable;
 
 	public FeatureSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, getButtonLabels()); 
+		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
 	}
 
 	private static String[] getButtonLabels() {
 		String[] labels = new String[8];
-		labels[0] = PDEUIMessages.Product_FeatureSection_add; 
-		labels[1] = PDEUIMessages.Product_FeatureSection_remove; 
+		labels[0] = PDEUIMessages.Product_FeatureSection_add;
+		labels[1] = PDEUIMessages.Product_FeatureSection_remove;
 		labels[2] = PDEUIMessages.Product_PluginSection_removeAll;
 		labels[3] = PDEUIMessages.Product_FeatureSection_up;
 		labels[4] = PDEUIMessages.Product_FeatureSection_down;
 		labels[5] = null;
 		labels[6] = null;
-		labels[7] = PDEUIMessages.Product_FeatureSection_newFeature; 
+		labels[7] = PDEUIMessages.Product_FeatureSection_newFeature;
 		return labels;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -109,7 +91,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		fFeatureTable.setContentProvider(new ContentProvider());
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fFeatureTable.setSorter(null);
-		GridData data = (GridData)tablePart.getControl().getLayoutData();
+		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 
@@ -124,13 +106,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 
-		section.setText(PDEUIMessages.Product_FeatureSection_title); 
+		section.setText(PDEUIMessages.Product_FeatureSection_title);
 		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //		
 
-		getModel().addModelChangedListener(this);	
+		getModel().addModelChangedListener(this);
 		createSectionToolbar(section, toolkit);
 	}
-	
+
 	/**
 	 * @param section
 	 * @param toolkit
@@ -143,15 +125,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});			
+		});
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(fFeatureTable, 
-				PDEUIMessages.Product_FeatureSection_sortAlpha, null, null, this);
+		fSortAction = new SortAction(fFeatureTable, PDEUIMessages.Product_FeatureSection_sortAlpha, null, null, this);
 		toolBarManager.add(fSortAction);
 		toolBarManager.update(true);
 
@@ -163,23 +143,23 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case 0:
-			handleAdd();
-			break;
-		case 1:
-			handleDelete();
-			break;
-		case 2: 
-			handleRemoveAll();
-			break;
-		case 3:
-			handleUp();
-			break;
-		case 4:
-			handleDown();
-			break;
-		case 7:
-			handleNewFeature();
+			case 0 :
+				handleAdd();
+				break;
+			case 1 :
+				handleDelete();
+				break;
+			case 2 :
+				handleRemoveAll();
+				break;
+			case 3 :
+				handleUp();
+				break;
+			case 4 :
+				handleDown();
+				break;
+			case 7 :
+				handleNewFeature();
 		}
 	}
 
@@ -201,7 +181,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		feature.setVersion(version);
 		product.addFeatures(new IProductFeature[] {feature});
 	}
-
 
 	private void handleRemoveAll() {
 		IProduct product = getProduct();
@@ -255,19 +234,18 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	protected void doPaste(Object target, Object[] objects) {
 		IProductFeature[] features;
 		if (objects instanceof IProductFeature[])
-			features = (IProductFeature[])objects;
+			features = (IProductFeature[]) objects;
 		else {
 			features = new IProductFeature[objects.length];
 			for (int i = 0; i < objects.length; i++)
 				if (objects[i] instanceof IProductFeature)
-					features[i] = (IProductFeature)objects[i];
+					features[i] = (IProductFeature) objects[i];
 		}
 		getProduct().addFeatures(features);
 	}
 
-
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IProductFeature[] features = new IProductFeature[objects.length];
@@ -280,13 +258,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
 		if (ssel == null)
 			return;
 
-		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) { 
+		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) {
 			public void run() {
-				handleDoubleClick((IStructuredSelection)fFeatureTable.getSelection());
+				handleDoubleClick((IStructuredSelection) fFeatureTable.getSelection());
 			}
 		};
 		openAction.setEnabled(isEditable() && ssel.size() == 1);
@@ -294,7 +272,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 		manager.add(new Separator());
 
-		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) { 
+		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) {
 			public void run() {
 				handleDelete();
 			}
@@ -302,7 +280,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
 
-		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) { 
+		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) {
 			public void run() {
 				handleRemoveAll();
 			}
@@ -317,7 +295,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	private void handleOpen(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
-			IProductFeature feature = (IProductFeature)selection.getFirstElement();
+			IProductFeature feature = (IProductFeature) selection.getFirstElement();
 			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
 			FeatureEditor.openFeatureEditor(model);
@@ -325,12 +303,11 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private void handleAdd() {
-		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin
-				.getActiveWorkbenchShell(), getAvailableChoices(), true);
+		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices(), true);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (int i = 0; i < models.length; i++) {
-				IFeature feature = ((IFeatureModel)models[i]).getFeature();
+				IFeature feature = ((IFeatureModel) models[i]).getFeature();
 				addFeature(feature.getId(), feature.getVersion());
 			}
 		}
@@ -346,16 +323,15 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				list.add(models[i]);
 			}
 		}
-		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);
+		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
-
 
 	private IProduct getProduct() {
 		return getModel().getProduct();
 	}
 
 	private IProductModel getModel() {
-		return (IProductModel) getPage().getPDEEditor().getAggregateModel();	
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
 	/* (non-Javadoc)
@@ -386,13 +362,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 			int count = table.getItemCount();
 
-			if ( count == 0 ) {
+			if (count == 0) {
 				// Nothing to select
-			} else if ( index < count ) {
-				table.setSelection( index );
+			} else if (index < count) {
+				table.setSelection(index);
 			} else {
-				table.setSelection( count - 1 );
-			}			
+				table.setSelection(count - 1);
+			}
 
 		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			fFeatureTable.refresh();
@@ -415,7 +391,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 		// Perform the refresh
 		refresh();
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
@@ -446,26 +422,20 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		boolean hasSelection = tableSelection.length > 0;
 		if (updateRemove) {
 			ISelection selection = getViewerSelection();
-			tablePart.setButtonEnabled(1,
-					isEditable() &&	!selection.isEmpty() && selection instanceof IStructuredSelection && 
-					((IStructuredSelection)selection).getFirstElement() instanceof IProductFeature);
+			tablePart.setButtonEnabled(1, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductFeature);
 		}
 		if (updateRemoveAll)
 			tablePart.setButtonEnabled(2, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 
 		// up/down buttons
 		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
-		tablePart.setButtonEnabled(
-				3,
-				canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(
-				4,
-				canMove
-				&& hasSelection && isEditable()
-				&& table.getSelectionIndex() < table.getItemCount() - 1);
+		tablePart.setButtonEnabled(3, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(4, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
-	protected boolean createCount() { return true; }
+	protected boolean createCount() {
+		return true;
+	}
 
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
@@ -479,13 +449,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		int index = table.getSelectionIndex();
 		if (index == table.getItemCount() - 1)
 			return;
-		swap(index, index + 1);		
+		swap(index, index + 1);
 	}
 
 	public void swap(int index1, int index2) {
 		Table table = getTablePart().getTableViewer().getTable();
-		IProductFeature feature1 = ((IProductFeature)table.getItem(index1).getData());
-		IProductFeature feature2 = ((IProductFeature)table.getItem(index2).getData());
+		IProductFeature feature1 = ((IProductFeature) table.getItem(index1).getData());
+		IProductFeature feature2 = ((IProductFeature) table.getItem(index2).getData());
 
 		IProduct product = getProduct();
 		product.swap(feature1, feature2);

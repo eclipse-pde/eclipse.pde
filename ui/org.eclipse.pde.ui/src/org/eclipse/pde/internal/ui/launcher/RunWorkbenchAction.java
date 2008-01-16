@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
+
 /**
  * Action for launching the workbench using the 
  * shortcut. This action is suitable for referencing from 
@@ -24,14 +25,11 @@ import org.eclipse.ui.PlatformUI;
 public class RunWorkbenchAction extends Action {
 	public void run() {
 		final EclipseLaunchShortcut shortcut = new EclipseLaunchShortcut();
-		BusyIndicator.showWhile(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell().getDisplay(),
-				new Runnable() {
-					public void run() {
-						shortcut.launch(new StructuredSelection(),
-								ILaunchManager.RUN_MODE);
-						notifyResult(true);
-					}
-				});
+		BusyIndicator.showWhile(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay(), new Runnable() {
+			public void run() {
+				shortcut.launch(new StructuredSelection(), ILaunchManager.RUN_MODE);
+				notifyResult(true);
+			}
+		});
 	}
 }

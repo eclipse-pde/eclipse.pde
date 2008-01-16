@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ui.editor.contentassist.display;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
-
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExtension;
@@ -22,20 +21,16 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.LineBreakingReader;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Drawable;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * InfoControlTextPresenter
  * Derived from org.eclipse.jdt.internal.ui.text.HTMLTextPresenter
  */
-public class InfoControlTextPresenter implements IInformationPresenter,
-		IInformationPresenterExtension {
+public class InfoControlTextPresenter implements IInformationPresenter, IInformationPresenterExtension {
 
-	private static final String LINE_DELIM = System.getProperty(
-			"line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String LINE_DELIM = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Used to ensure that text does not rest right against the right border and
@@ -44,11 +39,10 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 	private static final int LINE_REDUCTION = 2;
 
 	private static final String INDENT = " "; //$NON-NLS-1$
-	
+
 	private int fCounter;
 
-	protected void adaptTextPresentation(TextPresentation presentation,
-			int offset, int insertLength) {
+	protected void adaptTextPresentation(TextPresentation presentation, int offset, int insertLength) {
 
 		int yoursStart = offset;
 		int yoursEnd = offset + insertLength - 1;
@@ -72,8 +66,7 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 		}
 	}
 
-	private void append(StringBuffer buffer, String string,
-			TextPresentation presentation) {
+	private void append(StringBuffer buffer, String string, TextPresentation presentation) {
 
 		int length = string.length();
 		buffer.append(string);
@@ -90,10 +83,8 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display,
 	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
 	 */
-	public String updatePresentation(Display display, String hoverInfo,
-			TextPresentation presentation, int maxWidth, int maxHeight) {
-		return updatePresentation((Drawable) display, hoverInfo, presentation,
-				maxWidth, maxHeight);
+	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
+		return updatePresentation((Drawable) display, hoverInfo, presentation, maxWidth, maxHeight);
 	}
 
 	/*
@@ -102,9 +93,8 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExtension#updatePresentation(org.eclipse.swt.graphics.Drawable,
 	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
 	 */
-	public String updatePresentation(Drawable drawable, String hoverInfo,
-			TextPresentation presentation, int maxWidth, int maxHeight) {
-		
+	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
+
 		if (hoverInfo == null)
 			return null;
 
@@ -115,15 +105,11 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 			StringBuffer buffer = new StringBuffer();
 			// Calculate the maximum number of lines that will fit
 			// vertically
-			int maxNumberOfLines = Math.round((float) maxHeight
-					/ gc.getFontMetrics().getHeight())
-					- LINE_REDUCTION;
+			int maxNumberOfLines = Math.round((float) maxHeight / gc.getFontMetrics().getHeight()) - LINE_REDUCTION;
 			fCounter = 0;
 			// Break continuous string into a set of lines that conform
 			// to the maximum width allowed
-			LineBreakingReader reader = new LineBreakingReader(
-					new StringReader(hoverInfo), gc,
-					maxWidth - LINE_REDUCTION);
+			LineBreakingReader reader = new LineBreakingReader(new StringReader(hoverInfo), gc, maxWidth - LINE_REDUCTION);
 			boolean lastLineFormatted = false;
 			String line = reader.readLine();
 			boolean lineFormatted = reader.isFormattedLine();
@@ -160,10 +146,7 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 			// content.  Trail off with ...
 			if (line != null && buffer.length() > 0) {
 				append(buffer, LINE_DELIM, lineFormatted ? presentation : null);
-				append(
-						buffer,
-						PDEUIMessages.InfoControlTextPresenter_ContinuationChars,
-						presentation);
+				append(buffer, PDEUIMessages.InfoControlTextPresenter_ContinuationChars, presentation);
 			}
 			// Pad with a space because first line is not indented
 			return INDENT + buffer.toString(); //$NON-NLS-1$

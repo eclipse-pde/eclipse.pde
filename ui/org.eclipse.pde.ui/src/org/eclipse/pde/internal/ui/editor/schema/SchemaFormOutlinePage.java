@@ -12,13 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.IDocumentSection;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -41,7 +35,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		}
 		return super.getChildren(parent);
 	}
-	
+
 	class SchemaLabelProvider extends BasicLabelProvider {
 		public String getText(Object obj) {
 			String label = getObjectLabel(obj);
@@ -52,7 +46,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	public SchemaFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
-	
+
 	public ILabelProvider createLabelProvider() {
 		return new SchemaLabelProvider();
 	}

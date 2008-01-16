@@ -12,18 +12,11 @@
 package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -50,15 +43,15 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	public final static String F_TOC_ELEMENT_TOC = "toc"; //$NON-NLS-1$
 
 	private Button fPrimaryChkBox;
-	
+
 	protected IModel fTocModel;
-	
+
 	private ISharedExtensionsModel fExtensionsModel;
-	
+
 	private IProject fPluginProject;
-	
+
 	private boolean fDataIsPrimary;
-	
+
 	/**
 	 * @param pageName
 	 */
@@ -73,12 +66,12 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	 * 
 	 */
 	private void initialize() {
-		
+
 		setTitle(PDEUIMessages.TocWizardPage_title);
-		setDescription(PDEUIMessages.RegisterTocWizardPage_wizardPageDescription);		
-		
+		setDescription(PDEUIMessages.RegisterTocWizardPage_wizardPageDescription);
+
 		fPrimaryChkBox = null;
-		
+
 		fDataIsPrimary = true;
 
 		// Get the project the TOC is stored in
@@ -92,11 +85,11 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	 */
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
-		
+
 		if (base == null)
 			return;
 		if (base instanceof IBundlePluginModelBase)
-			fExtensionsModel = ((IBundlePluginModelBase)base).getExtensionsModel();
+			fExtensionsModel = ((IBundlePluginModelBase) base).getExtensionsModel();
 		else
 			fExtensionsModel = base;
 	}
@@ -112,7 +105,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 			// Process all TOC elements
 			processTocElements(extensions);
-		}	
+		}
 	}
 
 	/**
@@ -132,12 +125,12 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 			// Process all children
 			for (int j = 0; j < pluginObjects.length; j++) {
 				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement)pluginObjects[j];
+					IPluginElement element = (IPluginElement) pluginObjects[j];
 					if (element.getName().equals(F_TOC_ELEMENT_TOC)) {
 						// TOC element
 						processTocElement(element, getDataTocFile());
-					}					
-					
+					}
+
 				}
 			}
 		}
@@ -146,47 +139,42 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	/**
 	 * @param extensions
 	 */
-	private void processTocElement(IPluginElement parentElement,
-			String generatedID) {
+	private void processTocElement(IPluginElement parentElement, String generatedID) {
 		// Get the id attribute
-		IPluginAttribute fileAttribute = 
-			parentElement.getAttribute(RegisterTocOperation.F_TOC_ATTRIBUTE_FILE);
+		IPluginAttribute fileAttribute = parentElement.getAttribute(RegisterTocOperation.F_TOC_ATTRIBUTE_FILE);
 
 		// Check for the generated ID for this TOC
 		// If a TOC exists with the generated ID already, read its
 		// description and populate the description text accordingly		
-		if ((fileAttribute != null) && 
-				PDETextHelper.isDefined(fileAttribute.getValue()) &&
-				generatedID.equals(fileAttribute.getValue())) {
+		if ((fileAttribute != null) && PDETextHelper.isDefined(fileAttribute.getValue()) && generatedID.equals(fileAttribute.getValue())) {
 			// Matching TOC extension found
 			// Process children if any
 			if (parentElement.getChildCount() > 0) {
 				// Update the description text widget
 				updateUIPrimary(parentElement);
 			}
-		}		
+		}
 	}
-	
+
 	private void updateUIPrimary(IPluginElement parentElement) {
 		IPluginObject pluginObject = parentElement.getChildren()[0];
 		if (pluginObject instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement)pluginObject;
-			if (element.getName().equals(RegisterTocOperation.F_TOC_ATTRIBUTE_PRIMARY) &&
-					PDETextHelper.isDefinedAfterTrim(element.getText())) {
+			IPluginElement element = (IPluginElement) pluginObject;
+			if (element.getName().equals(RegisterTocOperation.F_TOC_ATTRIBUTE_PRIMARY) && PDETextHelper.isDefinedAfterTrim(element.getText())) {
 				// Triggers listener to update data description on load
 				fPrimaryChkBox.setSelection(Boolean.getBoolean(element.getText().trim()));
 			}
-		}		
+		}
 	}
 
-	public boolean getDataPrimary()
-	{	return fDataIsPrimary;
+	public boolean getDataPrimary() {
+		return fDataIsPrimary;
 	}
 
 	public String getDataTocFile() {
 		return fTocModel.getUnderlyingResource().getProjectRelativePath().toPortableString();
 	}
-	
+
 	public IProject getPluginProject() {
 		return fPluginProject;
 	}
@@ -218,8 +206,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		// Apply the dialog font to all controls using the default font
 		Dialog.applyDialogFont(container);
 		// Provide functionality for the help button
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
-				IHelpContextIds.REGISTER_TOC);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REGISTER_TOC);
 	}
 
 	/**
@@ -234,15 +221,15 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 		return container;
 	}
 
-	private void createUIPrimaryChkBox(Composite parent)
-	{	fPrimaryChkBox = new Button(parent, SWT.CHECK);
+	private void createUIPrimaryChkBox(Composite parent) {
+		fPrimaryChkBox = new Button(parent, SWT.CHECK);
 		fPrimaryChkBox.setText(PDEUIMessages.RegisterTocWizardPage_labelPrimary);
 		GridData data = new GridData();
 		data.horizontalSpan = NUM_COLUMNS;
 		fPrimaryChkBox.setLayoutData(data);
 		fPrimaryChkBox.setSelection(true);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -260,24 +247,23 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 				fDataIsPrimary = fPrimaryChkBox.getSelection();
 			}
 		});
-	}	
+	}
 
 	/**
 	 * 
 	 */
 	private void validateUI() {
 		setPageComplete(true);
-	}	
-	
+	}
+
 	/**
 	 * @param model
 	 * @param extensionPointID
 	 * @return
 	 */
-	public IPluginExtension[] findExtensions(IPluginModelBase model,
-			String extensionPointID) {
+	public IPluginExtension[] findExtensions(IPluginModelBase model, String extensionPointID) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		
+
 		ArrayList tocExtensions = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -285,7 +271,6 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 				tocExtensions.add(extensions[i]);
 			}
 		}
-		return (IPluginExtension[]) tocExtensions.toArray(
-				new IPluginExtension[tocExtensions.size()]);
-	}	
+		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
+	}
 }

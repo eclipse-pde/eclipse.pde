@@ -12,16 +12,9 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -53,23 +46,23 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class SchemaIncludesSection extends TableSection {
 
 	private TableViewer fViewer;
-	
+
 	class PDEProjectFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IProject) {
 				try {
-					return ((IProject)element).hasNature(PDE.PLUGIN_NATURE);
+					return ((IProject) element).hasNature(PDE.PLUGIN_NATURE);
 				} catch (CoreException e) {
 				}
 			} else if (element instanceof IFile) {
-				return isUnlistedInclude((IFile)element);
+				return isUnlistedInclude((IFile) element);
 			}
 			return true;
 		}
 	}
-	
+
 	public SchemaIncludesSection(SchemaOverviewPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.SchemaIncludesSection_addButton, PDEUIMessages.SchemaIncludesSection_removeButton });
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.SchemaIncludesSection_addButton, PDEUIMessages.SchemaIncludesSection_removeButton});
 		getSection().setText(PDEUIMessages.SchemaIncludesSection_title);
 		getSection().setDescription(PDEUIMessages.SchemaIncludesSection_description);
 	}
@@ -87,7 +80,7 @@ public class SchemaIncludesSection extends TableSection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		initialize();
 	}
 
@@ -97,7 +90,7 @@ public class SchemaIncludesSection extends TableSection {
 		else
 			handleRemoveInclude();
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getManagedForm().fireSelectionChanged(this, selection);
 		getPage().getPDEEditor().setSelection(selection);
@@ -106,7 +99,7 @@ public class SchemaIncludesSection extends TableSection {
 		Object object = ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		getTablePart().setButtonEnabled(1, object instanceof ISchemaInclude);
 	}
-	
+
 	public void dispose() {
 		ISchema schema = getSchema();
 		if (schema != null)
@@ -132,7 +125,7 @@ public class SchemaIncludesSection extends TableSection {
 			}
 		}
 	}
-	
+
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemoveInclude();
@@ -140,7 +133,7 @@ public class SchemaIncludesSection extends TableSection {
 		}
 		return false;
 	}
-	
+
 	private ISchema getSchema() {
 		return (ISchema) getPage().getModel();
 	}
@@ -160,10 +153,7 @@ public class SchemaIncludesSection extends TableSection {
 	}
 
 	protected void handleNewInclude() {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
-								getPage().getSite().getShell(), 
-								new WorkbenchLabelProvider(),
-								new WorkbenchContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getPage().getSite().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.ProductExportWizardPage_fileSelection);
@@ -185,16 +175,16 @@ public class SchemaIncludesSection extends TableSection {
 				((Schema) schema).addInclude(include);
 		}
 	}
-	
+
 	private void initialize() {
 		refresh();
 	}
-	
+
 	private String getIncludeLocation(IFile file) {
 		IEditorInput input = getPage().getEditorInput();
 		if (!(input instanceof IFileEditorInput))
 			return null;
-		IPath schemaPath = ((IFileEditorInput)input).getFile().getFullPath();
+		IPath schemaPath = ((IFileEditorInput) input).getFile().getFullPath();
 		IPath currPath = file.getFullPath();
 		int matchinSegments = schemaPath.matchingFirstSegments(currPath);
 		if (matchinSegments > 0) {
@@ -207,8 +197,8 @@ public class SchemaIncludesSection extends TableSection {
 				sb.append("../"); //$NON-NLS-1$
 				schemaPath = schemaPath.removeFirstSegments(1);
 			}
-			String location = sb.toString() + currPath.toString(); 
-			return location.trim().length() > 0 ? location : null;  
+			String location = sb.toString() + currPath.toString();
+			return location.trim().length() > 0 ? location : null;
 		}
 		IPluginModelBase model = PluginRegistry.findModel(file.getProject());
 		String id = model.getPluginBase().getId();
@@ -216,7 +206,7 @@ public class SchemaIncludesSection extends TableSection {
 			return "schema://" + id + "/" + file.getProjectRelativePath().toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
 	}
-	
+
 	private boolean isUnlistedInclude(IFile file) {
 		String location = getIncludeLocation(file);
 		if (location == null)
@@ -238,26 +228,23 @@ public class SchemaIncludesSection extends TableSection {
 			IEditorInput edinput = getPage().getEditorInput();
 			if (!(edinput instanceof IFileEditorInput))
 				return;
-			String path = ((ISchemaInclude)object).getLocation();
-			IPath includePath = new Path(((ISchemaInclude)object).getLocation());
+			String path = ((ISchemaInclude) object).getLocation();
+			IPath includePath = new Path(((ISchemaInclude) object).getLocation());
 			boolean result = false;
 			if (path.startsWith("schema:")) { //$NON-NLS-1$
 				result = SchemaEditor.openSchema(includePath);
 			} else {
-				IFile currSchemaFile = ((IFileEditorInput)edinput).getFile();
+				IFile currSchemaFile = ((IFileEditorInput) edinput).getFile();
 				IProject project = currSchemaFile.getProject();
 				IPath currSchemaPath = currSchemaFile.getProjectRelativePath();
 				IFile file = project.getFile(currSchemaPath.removeLastSegments(1).append(includePath));
 				result = SchemaEditor.openSchema(file);
 			}
 			if (!result)
-				MessageDialog.openWarning(
-						getPage().getSite().getShell(),
-						PDEUIMessages.SchemaIncludesSection_missingWarningTitle,
-						NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, includePath.toString()));
+				MessageDialog.openWarning(getPage().getSite().getShell(), PDEUIMessages.SchemaIncludesSection_missingWarningTitle, NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, includePath.toString()));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */

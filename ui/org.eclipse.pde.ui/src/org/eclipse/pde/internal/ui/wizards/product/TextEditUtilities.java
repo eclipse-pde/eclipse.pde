@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.*;
 
 public class TextEditUtilities {
 
@@ -31,14 +27,14 @@ public class TextEditUtilities {
 			// this is an element that was of the form <element/>
 			// it now needs to be broken up into <element><new/></element>
 			return new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
-		} 
+		}
 		// try to insert after last sibling that has an offset
 		TextEdit op = insertAfterSibling(node, doc);
-		
+
 		// insert as first child of its parent if op is null
 		return (op != null) ? op : insertAsFirstChild(node, doc);
 	}
-	
+
 	public static TextEdit addAttributeOperation(IDocumentAttributeNode attr, String newValue, IDocument doc) {
 		int offset = attr.getValueOffset();
 		if (offset > -1)
@@ -47,14 +43,14 @@ public class TextEditUtilities {
 		IDocumentElementNode node = attr.getEnclosingElement();
 		if (node.getOffset() > -1) {
 			int len = getNextPosition(doc, node.getOffset(), '>');
-			return new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(doc, node.getOffset()+ len)));
+			return new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(doc, node.getOffset() + len)));
 		}
 		return getInsertOperation(node, doc);
 	}
-	
+
 	private static boolean shouldTerminateElement(IDocument doc, int offset) {
 		try {
-			return doc.get(offset-1, 1).toCharArray()[0] == '/';
+			return doc.get(offset - 1, 1).toCharArray()[0] == '/';
 		} catch (BadLocationException e) {
 		}
 		return false;
@@ -71,7 +67,7 @@ public class TextEditUtilities {
 			} catch (BadLocationException e) {
 				return node;
 			}
-			
+
 		}
 		return getHighestNodeToBeWritten(parent, doc);
 	}
@@ -84,25 +80,25 @@ public class TextEditUtilities {
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				String sep = TextUtilities.getDefaultLineDelimiter(doc);
-				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); 
+				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true));
 			}
 			sibling = sibling.getPreviousSibling();
 		}
 		return null;
 	}
-	
+
 	private static InsertEdit insertAsFirstChild(IDocumentElementNode node, IDocument doc) {
 		int offset = node.getParentNode().getOffset();
 		int length = getNextPosition(doc, offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
 		String sep = TextUtilities.getDefaultLineDelimiter(doc);
-		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 
+		return new InsertEdit(offset + length + 1, sep + node.write(true));
 	}
-	
+
 	private static int getNextPosition(IDocument doc, int offset, char ch) {
 		int i = 0;
 		try {
-			for (i = 0; i + offset < doc.getLength() ;i++) {
+			for (i = 0; i + offset < doc.getLength(); i++) {
 				if (ch == doc.get(offset + i, 1).toCharArray()[0])
 					break;
 			}

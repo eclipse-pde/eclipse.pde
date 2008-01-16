@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
@@ -57,8 +54,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 
 	public String getDescription() {
 		if (description == null) {
-			IConfigurationElement[] children = configurationElement
-					.getChildren(TAG_DESCRIPTION);
+			IConfigurationElement[] children = configurationElement.getChildren(TAG_DESCRIPTION);
 			if (children.length > 0) {
 				description = expandDescription(children[0].getValue());
 			}
@@ -144,8 +140,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		String templateId = getTemplateId();
 		if (templateId == null)
 			return null;
-		IConfigurationElement[] templates = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
+		IConfigurationElement[] templates = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
 		for (int i = 0; i < templates.length; i++) {
 			IConfigurationElement template = templates[i];
 			String id = template.getAttribute("id"); //$NON-NLS-1$
@@ -159,12 +154,14 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		IConfigurationElement tel = getTemplateElement();
 		return (tel == null) ? null : tel.getAttribute("contributingId"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return getID();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */

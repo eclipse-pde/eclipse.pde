@@ -9,29 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Vector;
 
+import java.util.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-
 
 public class TracingPropertySource {
 	private IPluginModelBase fModel;
@@ -43,44 +30,56 @@ public class TracingPropertySource {
 	private Properties fMasterOptions;
 	private boolean fModified;
 	private TracingBlock fBlock;
+
 	private abstract class PropertyEditor {
 		private String key;
 		private String label;
+
 		public PropertyEditor(String key, String label) {
 			this.key = key;
 			this.label = label;
 		}
+
 		public String getKey() {
 			return key;
 		}
+
 		public String getLabel() {
 			return label;
 		}
+
 		abstract void create(Composite parent);
+
 		abstract void update();
+
 		abstract void initialize();
+
 		protected void valueModified(Object value) {
 			fValues.put(getKey(), value);
 			fModified = true;
 			fBlock.getTab().updateLaunchConfigurationDialog();
 		}
 	}
+
 	private class BooleanEditor extends PropertyEditor {
 		private Button checkbox;
+
 		public BooleanEditor(String key, String label) {
 			super(key, label);
 		}
+
 		public void create(Composite parent) {
-			checkbox = fBlock.getToolkit().createButton(parent, getLabel(),
-					SWT.CHECK);
+			checkbox = fBlock.getToolkit().createButton(parent, getLabel(), SWT.CHECK);
 			TableWrapData td = new TableWrapData();
 			td.colspan = 2;
 			checkbox.setLayoutData(td);
 		}
+
 		public void update() {
 			Integer value = (Integer) fValues.get(getKey());
 			checkbox.setSelection(value.intValue() == 1);
 		}
+
 		public void initialize() {
 			update();
 			checkbox.addSelectionListener(new SelectionAdapter() {
@@ -91,11 +90,14 @@ public class TracingPropertySource {
 			});
 		}
 	}
+
 	private class TextEditor extends PropertyEditor {
 		private Text text;
+
 		public TextEditor(String key, String label) {
 			super(key, label);
 		}
+
 		public void create(Composite parent) {
 			Label label = fBlock.getToolkit().createLabel(parent, getLabel());
 			TableWrapData td = new TableWrapData();
@@ -106,10 +108,12 @@ public class TracingPropertySource {
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
 		}
+
 		public void update() {
 			String value = (String) fValues.get(getKey());
 			text.setText(value);
 		}
+
 		public void initialize() {
 			update();
 			text.addModifyListener(new ModifyListener() {
@@ -119,9 +123,8 @@ public class TracingPropertySource {
 			});
 		}
 	}
-	public TracingPropertySource(IPluginModelBase model,
-			Properties masterOptions, Hashtable template,
-			TracingBlock block) {
+
+	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable template, TracingBlock block) {
 		fModel = model;
 		fMasterOptions = masterOptions;
 		fTemplate = template;
@@ -129,9 +132,11 @@ public class TracingPropertySource {
 		fValues = new Hashtable();
 		fDvalues = new Hashtable();
 	}
+
 	public IPluginModelBase getModel() {
 		return fModel;
 	}
+
 	private Object[] getSortedKeys(int size) {
 		Object[] keyArray = new Object[size];
 		int i = 0;
@@ -146,6 +151,7 @@ public class TracingPropertySource {
 		});
 		return keyArray;
 	}
+
 	private int compareKeys(Object o1, Object o2) {
 		String s1 = (String) o1;
 		String s2 = (String) o2;
@@ -158,7 +164,7 @@ public class TracingPropertySource {
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
-		boolean bordersNeeded=false;
+		boolean bordersNeeded = false;
 		Object[] sortedKeys = getSortedKeys(fTemplate.size());
 		for (int i = 0; i < sortedKeys.length; i++) {
 			String key = (String) sortedKeys[i];
@@ -171,14 +177,13 @@ public class TracingPropertySource {
 			PropertyEditor editor;
 			if (value != null)
 				lvalue = value.toLowerCase(Locale.ENGLISH);
-			if (lvalue != null
-					&& (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey);
 				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0); //$NON-NLS-1$
 				fDvalues.put(shortKey, dvalue);
 				if (masterValue != null) {
 					Integer mvalue = new Integer(masterValue.equals("true") //$NON-NLS-1$
-							? 1
+					? 1
 							: 0);
 					fValues.put(shortKey, mvalue);
 				}
@@ -188,7 +193,7 @@ public class TracingPropertySource {
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}
-				bordersNeeded=true;
+				bordersNeeded = true;
 			}
 			editor.create(parent);
 			editor.initialize();
@@ -213,8 +218,10 @@ public class TracingPropertySource {
 		}
 		fModified = false;
 	}
+
 	public void dispose() {
 	}
+
 	public boolean isModified() {
 		return fModified;
 	}

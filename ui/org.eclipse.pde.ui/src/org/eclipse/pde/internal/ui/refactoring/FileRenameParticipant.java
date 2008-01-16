@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -26,9 +25,9 @@ public class FileRenameParticipant extends PDERenameParticipant {
 
 	protected boolean initialize(Object element) {
 		if (element instanceof IFile) {
-			IProject project = ((IFile)element).getProject();
+			IProject project = ((IFile) element).getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
-				IPath path = ((IFile)element).getProjectRelativePath().removeLastSegments(1);
+				IPath path = ((IFile) element).getProjectRelativePath().removeLastSegments(1);
 				String newName = path.append(getArguments().getNewName()).toString();
 				fProject = project;
 				fElements = new HashMap();

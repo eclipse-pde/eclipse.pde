@@ -12,10 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -26,15 +23,15 @@ public class CompCSRemoveTaskObjectAction extends Action {
 
 	private ICompCSTaskObject fTaskObject;
 
-	private ICompCSObject fObjectToSelect;	
-	
+	private ICompCSObject fObjectToSelect;
+
 	/**
 	 * 
 	 */
 	public CompCSRemoveTaskObjectAction() {
 		setText(PDEUIMessages.SimpleCSRemoveSubStepAction_0);
 		fTaskObject = null;
-		fObjectToSelect = null;		
+		fObjectToSelect = null;
 	}
 
 	/**
@@ -52,7 +49,7 @@ public class CompCSRemoveTaskObjectAction extends Action {
 			ICompCSObject parent = fTaskObject.getParent();
 			if (parent.getType() == ICompCSConstants.TYPE_TASKGROUP) {
 				// Parent is a group
-				ICompCSTaskGroup group = (ICompCSTaskGroup)parent;
+				ICompCSTaskGroup group = (ICompCSTaskGroup) parent;
 				// Determine the object to select after the deletion 
 				// takes place 
 				determineItemToSelect(group);
@@ -79,12 +76,12 @@ public class CompCSRemoveTaskObjectAction extends Action {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ICompCSObject getObjectToSelect() {
 		return fObjectToSelect;
-	}	
-	
+	}
+
 }

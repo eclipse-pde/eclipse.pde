@@ -17,9 +17,7 @@ import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.WizardElement;
-import org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage;
-import org.eclipse.pde.internal.ui.wizards.WizardNode;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 
@@ -30,21 +28,24 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	private IProject fProject;
 	private IPluginBase fPluginBase;
 	private IStructuredSelection fSelection;
+
 	/**
 	 * @param categories
 	 * @param baseCategory
 	 * @param message
 	 */
 	public ExtensionEditorSelectionPage(ElementList wizards) {
-		super(wizards, PDEUIMessages.ExtensionEditorSelectionPage_message);  
-		setTitle(PDEUIMessages.ExtensionEditorSelectionPage_title); 
-		setDescription(PDEUIMessages.ExtensionEditorSelectionPage_desc); 
+		super(wizards, PDEUIMessages.ExtensionEditorSelectionPage_message);
+		setTitle(PDEUIMessages.ExtensionEditorSelectionPage_title);
+		setDescription(PDEUIMessages.ExtensionEditorSelectionPage_desc);
 	}
+
 	public void init(IProject project, IPluginBase pluginBase, IStructuredSelection selection) {
 		this.fProject = project;
 		this.fPluginBase = pluginBase;
 		this.fSelection = selection;
 	}
+
 	protected IWizardNode createWizardNode(WizardElement element) {
 		return new WizardNode(this, element) {
 			public IBasePluginWizard createWizard() throws CoreException {
@@ -52,8 +53,8 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 				wizard.init(fProject, fPluginBase.getPluginModel(), fSelection);
 				return wizard;
 			}
-			protected IExtensionEditorWizard createWizard(WizardElement element)
-				throws CoreException {
+
+			protected IExtensionEditorWizard createWizard(WizardElement element) throws CoreException {
 				return (IExtensionEditorWizard) element.createExecutableExtension();
 			}
 		};

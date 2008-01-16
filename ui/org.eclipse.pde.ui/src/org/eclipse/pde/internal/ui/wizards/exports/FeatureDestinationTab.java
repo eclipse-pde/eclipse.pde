@@ -18,12 +18,12 @@ public class FeatureDestinationTab extends ExportDestinationTab {
 	public FeatureDestinationTab(AbstractExportWizardPage page) {
 		super(page);
 	}
-	
+
 	protected void hookListeners() {
 		super.hookListeners();
 		fDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				((FeatureExportWizardPage)fPage).adjustJNLPTabVisibility();
+				((FeatureExportWizardPage) fPage).adjustJNLPTabVisibility();
 				fPage.pageChanged();
 			}
 		});

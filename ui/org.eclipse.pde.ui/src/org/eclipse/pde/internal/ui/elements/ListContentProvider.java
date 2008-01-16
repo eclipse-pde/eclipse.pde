@@ -14,13 +14,14 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 public class ListContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 
-public ListContentProvider() {
-	super();
-}
-public Object[] getElements(Object element) {
-	if (element instanceof IPDEElement) {
-		return ((IPDEElement)element).getChildren();
+	public ListContentProvider() {
+		super();
 	}
-	return null;
-}
+
+	public Object[] getElements(Object element) {
+		if (element instanceof IPDEElement) {
+			return ((IPDEElement) element).getChildren();
+		}
+		return null;
+	}
 }

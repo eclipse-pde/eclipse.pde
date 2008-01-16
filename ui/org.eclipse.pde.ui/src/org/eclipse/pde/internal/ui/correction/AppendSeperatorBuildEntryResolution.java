@@ -25,7 +25,7 @@ public class AppendSeperatorBuildEntryResolution extends BuildEntryMarkerResolut
 
 	protected void createChange(Build build) {
 		try {
-			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);
+			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
 			buildEntry.renameToken(fToken, fToken + '/');
 		} catch (CoreException e) {
 		}

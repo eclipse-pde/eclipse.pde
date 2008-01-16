@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 public abstract class AbstractPluginElementDetails extends PDEDetails {
 
 	private PDESection fMasterSection;
-	
+
 	/**
 	 * @param masterSection
 	 */

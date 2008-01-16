@@ -11,22 +11,22 @@
 package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
 
 public class PixelConverter {
-	
+
 	private FontMetrics fFontMetrics;
-	
+
 	public PixelConverter(Control control) {
 		GC gc = new GC(control);
 		gc.setFont(control.getFont());
-		fFontMetrics= gc.getFontMetrics();
+		fFontMetrics = gc.getFontMetrics();
 		gc.dispose();
 	}
-	
-		
+
 	/**
 	 * @see DialogPage#convertHeightInCharsToPixels
 	 */
@@ -47,13 +47,12 @@ public class PixelConverter {
 	public int convertVerticalDLUsToPixels(int dlus) {
 		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
-	
+
 	/**
 	 * @see DialogPage#convertWidthInCharsToPixels
 	 */
 	public int convertWidthInCharsToPixels(int chars) {
 		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
-	}	
+	}
 
 }
-

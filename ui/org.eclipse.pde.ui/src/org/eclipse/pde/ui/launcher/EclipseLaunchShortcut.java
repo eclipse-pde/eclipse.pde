@@ -10,37 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
-import org.eclipse.pde.internal.ui.launcher.LaunchAction;
-import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -53,13 +40,13 @@ import org.eclipse.ui.IEditorPart;
  * @since 3.3
  */
 public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
-	
+
 	public static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
 
 	private IPluginModelBase fModel = null;
-	
+
 	private String fApplicationName = null;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
@@ -77,17 +64,17 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	public void launch(ISelection selection, String mode) {
 		IPluginModelBase model = null;
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection)selection;
+			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (!ssel.isEmpty()) {
 				Object object = ssel.getFirstElement();
 				IProject project = null;
 				if (object instanceof IFile) {
 					// if instanceof Product model, we are launching from Product Editor.  Launch as Product
-					if ("product".equals(((IFile)object).getFileExtension())) { //$NON-NLS-1$
-						WorkspaceProductModel productModel =  new WorkspaceProductModel((IFile)object, false);
+					if ("product".equals(((IFile) object).getFileExtension())) { //$NON-NLS-1$
+						WorkspaceProductModel productModel = new WorkspaceProductModel((IFile) object, false);
 						try {
 							productModel.load();
-							new LaunchAction(productModel.getProduct(),	((IFile)object).getFullPath().toOSString(),	mode).run();
+							new LaunchAction(productModel.getProduct(), ((IFile) object).getFullPath().toOSString(), mode).run();
 						} catch (CoreException e) {
 							PDEPlugin.log(e);
 						}
@@ -95,10 +82,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 					}
 					// if it isn't a .product file, then find the project of the file inorder to launch using that project's corresponding plug-in
 					// bug 180043
-					project = ((IFile)object).getProject();
-				}
-				else if (object instanceof IAdaptable) {
-					project = (IProject)((IAdaptable)object).getAdapter(IProject.class);
+					project = ((IFile) object).getProject();
+				} else if (object instanceof IAdaptable) {
+					project = (IProject) ((IAdaptable) object).getAdapter(IProject.class);
 				}
 				if (project != null && project.isOpen())
 					model = PluginRegistry.findModel(project);
@@ -106,7 +92,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		}
 		launch(model, mode);
 	}
-	
+
 	private void launch(IPluginModelBase model, String mode) {
 		fModel = model;
 		fApplicationName = null;
@@ -114,10 +100,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			String[] applicationNames = getAvailableApplications();
 			if (applicationNames.length == 1) {
 				fApplicationName = applicationNames[0];
-			} else if (applicationNames.length > 1){		
-				ApplicationSelectionDialog dialog = new ApplicationSelectionDialog(
-						PDEPlugin.getActiveWorkbenchShell().getShell(), applicationNames,
-						mode);
+			} else if (applicationNames.length > 1) {
+				ApplicationSelectionDialog dialog = new ApplicationSelectionDialog(PDEPlugin.getActiveWorkbenchShell().getShell(), applicationNames, mode);
 				if (dialog.open() == Window.OK) {
 					fApplicationName = dialog.getSelectedApplication();
 				}
@@ -125,7 +109,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		}
 		launch(mode);
 	}
-	
+
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
 		try {
@@ -134,7 +118,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				initializePluginsList(wc);
 				return wc.doSave();
 			}
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 		}
 		return config;
 	}
@@ -144,7 +128,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		String id = plugin.getId();
 		if (id == null || id.trim().length() == 0)
 			return new String[0];
-		
+
 		IPluginExtension[] extensions = plugin.getExtensions();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
@@ -156,7 +140,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				}
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 	private String getProduct(String appName) {
@@ -169,7 +153,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				String point = ext.getPoint();
 				if ("org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
 					if (ext.getChildCount() == 1) {
-						IPluginElement prod = (IPluginElement)ext.getChildren()[0];
+						IPluginElement prod = (IPluginElement) ext.getChildren()[0];
 						if (prod.getName().equals("product")) { //$NON-NLS-1$
 							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
 							if (attr != null && appName.equals(attr.getValue())) {
@@ -196,18 +180,17 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		try {
 			if (!configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-				String configApp = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
-				return (configApp == null && fApplicationName == null)
-					   || (fApplicationName != null && fApplicationName.equals(configApp));
+				String configApp = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
+				return (configApp == null && fApplicationName == null) || (fApplicationName != null && fApplicationName.equals(configApp));
 			}
-			String thisProduct = configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+			String thisProduct = configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 			return thisProduct != null && thisProduct.equals(getProduct(fApplicationName));
-			
+
 		} catch (CoreException e) {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Initializes a new Eclipse Application launch configuration with defaults based
 	 * on the current selection:
@@ -257,19 +240,19 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		}
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 	}
-	
+
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy wc) {
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
-		if (programArgs.length()  > 0)
+		if (programArgs.length() > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 	}
-	
+
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy wc) {
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
 		if (vmArgs.length() > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
-	}	
-	
+	}
+
 	/**
 	 * Returns the Eclipse application configuration type ID as declared in the plugin.xml
 	 * 
@@ -288,8 +271,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			return super.getName(type);
 		String product = getProduct(fApplicationName);
 		return (product == null) ? fApplicationName : product;
-	}	
-	
+	}
+
 	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();

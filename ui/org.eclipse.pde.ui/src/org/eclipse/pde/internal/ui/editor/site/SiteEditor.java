@@ -12,48 +12,31 @@
  * Created on Jan 27, 2004
  */
 package org.eclipse.pde.internal.ui.editor.site;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BuildSiteJob;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SiteEditor extends MultiSourceEditor {
-	
+
 	private Action fBuildAllAction;
 
 	/* (non-Javadoc)
@@ -62,9 +45,8 @@ public class SiteEditor extends MultiSourceEditor {
 	protected String getEditorID() {
 		return IPDEUIConstants.SITE_EDITOR_ID;
 	}
-	
-	protected void createResourceContexts(InputContextManager manager,
-			IFileEditorInput input) {
+
+	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFile siteFile = null;
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
@@ -72,19 +54,18 @@ public class SiteEditor extends MultiSourceEditor {
 			siteFile = file;
 			if (siteFile.exists()) {
 				IEditorInput in = new FileEditorInput(siteFile);
-				manager.putContext(in, new SiteInputContext(this, in, file==siteFile));
+				manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
 			}
 			manager.monitorFile(siteFile);
 		}
 	}
-	
+
 	protected InputContextManager createInputContextManager() {
 		SiteInputContextManager contextManager = new SiteInputContextManager(this);
 		contextManager.setUndoManager(new SiteUndoManager(this));
 		return contextManager;
 	}
-	
-	
+
 	public void monitoredFileAdded(IFile file) {
 	}
 
@@ -94,15 +75,16 @@ public class SiteEditor extends MultiSourceEditor {
 		//file that just got removed under us.
 		return true;
 	}
+
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
+
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		File siteFile = null;
 
@@ -111,20 +93,18 @@ public class SiteEditor extends MultiSourceEditor {
 			siteFile = file;
 			if (siteFile.exists()) {
 				IEditorInput in = new SystemFileEditorInput(siteFile);
-				manager.putContext(in, new SiteInputContext(this, in,
-						file == siteFile));
+				manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
 			}
 		}
 	}
 
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.startsWith("site.xml")) { //$NON-NLS-1$
 			manager.putContext(input, new SiteInputContext(this, input, true));
 		}
 	}
-	
+
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		super.contextMenuAboutToShow(manager);
 	}
@@ -139,22 +119,21 @@ public class SiteEditor extends MultiSourceEditor {
 		addSourcePage(SiteInputContext.CONTEXT_ID);
 	}
 
-
 	protected String computeInitialPageId() {
 		return FeaturesPage.PAGE_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SiteSourcePage(editor, title, name);
 	}
-	
+
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SiteOutlinePage(this);
 	}
-		
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
@@ -162,28 +141,27 @@ public class SiteEditor extends MultiSourceEditor {
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISiteObject) {
-			context = fInputContextManager
-					.findContext(SiteInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(SiteInputContext.CONTEXT_ID);
 		}
 		return context;
 	}
-	
+
 	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getBuildAllAction());
 	}
 
 	protected Action getBuildAllAction() {
 		if (fBuildAllAction == null) {
-			fBuildAllAction = new Action(){
+			fBuildAllAction = new Action() {
 				public void run() {
-					handleBuild(((ISiteModel)getAggregateModel()).getSite().getFeatures());
+					handleBuild(((ISiteModel) getAggregateModel()).getSite().getFeatures());
 				}
 			};
 			fBuildAllAction.setToolTipText(PDEUIMessages.CategorySection_buildAll);
 			fBuildAllAction.setImageDescriptor(PDEPluginImages.DESC_BUILD_TOOL);
 			updateActionEnablement();
-			
-			((ISiteModel)getAggregateModel()).addModelChangedListener(new IModelChangedListener() {
+
+			((ISiteModel) getAggregateModel()).addModelChangedListener(new IModelChangedListener() {
 				public void modelChanged(IModelChangedEvent event) {
 					updateActionEnablement();
 				}
@@ -191,9 +169,9 @@ public class SiteEditor extends MultiSourceEditor {
 		}
 		return fBuildAllAction;
 	}
-	
+
 	private void updateActionEnablement() {
-		if (((ISiteModel)getAggregateModel()).getSite().getFeatures().length > 0)
+		if (((ISiteModel) getAggregateModel()).getSite().getFeatures().length > 0)
 			fBuildAllAction.setEnabled(true);
 		else
 			fBuildAllAction.setEnabled(false);
@@ -206,7 +184,7 @@ public class SiteEditor extends MultiSourceEditor {
 		if (models.length == 0)
 			return;
 		ensureContentSaved();
-		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) ((IModel)getAggregateModel()).getUnderlyingResource());
+		ISiteModel buildSiteModel = new WorkspaceSiteModel((IFile) ((IModel) getAggregateModel()).getUnderlyingResource());
 		try {
 			buildSiteModel.load();
 		} catch (CoreException e) {
@@ -222,9 +200,7 @@ public class SiteEditor extends MultiSourceEditor {
 	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sFeatures.length; i++) {
-			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-					.findFeatureModelRelaxed(sFeatures[i].getId(),
-							sFeatures[i].getVersion());
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(sFeatures[i].getId(), sFeatures[i].getVersion());
 			if (model != null)
 				list.add(model);
 		}
@@ -239,9 +215,7 @@ public class SiteEditor extends MultiSourceEditor {
 						doSave(monitor);
 					}
 				};
-				PlatformUI.getWorkbench().getProgressService().runInUI(
-						PDEPlugin.getActiveWorkbenchWindow(), op,
-						PDEPlugin.getWorkspace().getRoot());
+				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			} catch (InterruptedException e) {

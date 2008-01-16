@@ -56,8 +56,8 @@ public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 		} else if ((node instanceof SimpleCSObject) == false) {
 			return null;
 		}
-		SimpleCSObject csObject = (SimpleCSObject)node;
-		ISimpleCSModel model = csObject.getModel(); 
+		SimpleCSObject csObject = (SimpleCSObject) node;
+		ISimpleCSModel model = csObject.getModel();
 		// Ensure the model is editable
 		if (model.isEditable() == false) {
 			return null;
@@ -65,8 +65,7 @@ public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 		// Get the underlying model resource
 		IResource resource = model.getUnderlyingResource();
 		// Create the link region
-		IRegion linkRegion = 
-			new Region(attribute.getValueOffset(), attribute.getValueLength());
+		IRegion linkRegion = new Region(attribute.getValueOffset(), attribute.getValueLength());
 		// Create the link container
 		IHyperlink[] link = new IHyperlink[1];
 		// Create the appropriate resource hyperlink
@@ -89,5 +88,5 @@ public class SimpleCSHyperlinkDetector extends PDEHyperlinkDetector {
 		}
 		return null;
 	}
-	
+
 }

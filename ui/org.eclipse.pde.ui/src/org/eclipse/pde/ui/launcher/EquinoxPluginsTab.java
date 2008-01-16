@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-
-
 /**
  * A launch configuration tab that lets the user customize the list of plug-ins to launch with,
  * their start level and their auto-start attributes.
@@ -22,7 +20,7 @@ package org.eclipse.pde.ui.launcher;
  * @deprecated use {@link BundlesTab}
  */
 public class EquinoxPluginsTab extends BundlesTab {
-	
+
 	/**
 	 * Returns the default start level for the launch configuration
 	 * 

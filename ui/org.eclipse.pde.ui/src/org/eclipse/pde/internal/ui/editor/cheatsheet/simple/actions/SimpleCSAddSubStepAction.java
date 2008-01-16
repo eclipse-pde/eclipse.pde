@@ -12,14 +12,8 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
@@ -30,9 +24,9 @@ import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 public class SimpleCSAddSubStepAction extends Action {
 
 	private ISimpleCSItem fItem;
-	
+
 	private ISimpleCSSubItem fSubitem;
-	
+
 	/**
 	 * 
 	 */
@@ -47,13 +41,13 @@ public class SimpleCSAddSubStepAction extends Action {
 		// Determine input
 		if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			fSubitem = null;
-			fItem = (ISimpleCSItem)csObject;
+			fItem = (ISimpleCSItem) csObject;
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			fSubitem = (ISimpleCSSubItem)csObject;
+			fSubitem = (ISimpleCSSubItem) csObject;
 			ISimpleCSObject parentObject = fSubitem.getParent();
 			// Determine input's parent object
 			if (parentObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				fItem = (ISimpleCSItem)parentObject;
+				fItem = (ISimpleCSItem) parentObject;
 			} else if (parentObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
 				// Not supported by editor, action will not run
 				fItem = null;
@@ -65,7 +59,7 @@ public class SimpleCSAddSubStepAction extends Action {
 			// Invalid input, action will not run
 			fSubitem = null;
 			fItem = null;
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +71,7 @@ public class SimpleCSAddSubStepAction extends Action {
 			return;
 		}
 		// Create the new subitem
-		ISimpleCSSubItem newSubItem = createNewSubItem();		
+		ISimpleCSSubItem newSubItem = createNewSubItem();
 		// Insert the new subitem
 		insertNewSubItem(newSubItem);
 	}
@@ -89,23 +83,23 @@ public class SimpleCSAddSubStepAction extends Action {
 		ISimpleCSModelFactory factory = fItem.getModel().getFactory();
 		// Element: subitem
 		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fItem);
-		
+
 		ISimpleCSSubItemObject[] subItems = fItem.getSubItems();
 		ArrayList subItemNames = new ArrayList(subItems.length);
-		
-		for(int i = 0; i < subItems.length; ++i)
-		{	if(subItems[i].getType() == ISimpleCSConstants.TYPE_SUBITEM)
-			{	subItemNames.add(((ISimpleCSSubItem)subItems[i]).getLabel());
+
+		for (int i = 0; i < subItems.length; ++i) {
+			if (subItems[i].getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+				subItemNames.add(((ISimpleCSSubItem) subItems[i]).getLabel());
 			}
 		}
 
-		String[] names = (String[])subItemNames.toArray(new String[subItemNames.size()]);
+		String[] names = (String[]) subItemNames.toArray(new String[subItemNames.size()]);
 
 		// Set on the proper parent object
 		subitem.setLabel(PDELabelUtility.generateName(names, PDEUIMessages.SimpleCSAddSubStepAction_1));
 		return subitem;
 	}
-	
+
 	/**
 	 * @param newSubItem
 	 */
@@ -121,6 +115,6 @@ public class SimpleCSAddSubStepAction extends Action {
 			// Insert subitem as the last child subitem
 			fItem.addSubItem(newSubItem);
 		}
-	}	
-	
+	}
+
 }

@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 public class RenamePluginWizardPage extends GeneralRenameIDWizardPage {
-	
+
 	private Button fRenameProject;
-	
+
 	private static final String RENAME_PROJECT = "renameProject"; //$NON-NLS-1$
 
 	protected RenamePluginWizardPage(RefactoringInfo info) {
@@ -34,21 +34,21 @@ public class RenamePluginWizardPage extends GeneralRenameIDWizardPage {
 		createRenameProject(composite);
 		createUpdateReferences(composite);
 	}
-	
+
 	private void createRenameProject(Composite composite) {
 		fRenameProject = new Button(composite, SWT.CHECK);
 		fRenameProject.setText(PDEUIMessages.RenamePluginWizardPage_renameProject);
 		fRenameProject.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1));
 		fRenameProject.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				((RefactoringPluginInfo)fInfo).setRenameProject(fRenameProject.getSelection());
+				((RefactoringPluginInfo) fInfo).setRenameProject(fRenameProject.getSelection());
 			}
 		});
 		boolean checked = getRefactoringSettings().getBoolean(RENAME_PROJECT);
 		fRenameProject.setSelection(checked);
-		((RefactoringPluginInfo)fInfo).setRenameProject(checked);
+		((RefactoringPluginInfo) fInfo).setRenameProject(checked);
 	}
-	
+
 	public void dispose() {
 		getRefactoringSettings().put(RENAME_PROJECT, fRenameProject.getSelection());
 		super.dispose();

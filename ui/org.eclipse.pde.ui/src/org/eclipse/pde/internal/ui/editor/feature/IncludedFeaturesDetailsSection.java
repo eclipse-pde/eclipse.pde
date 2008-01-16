@@ -18,31 +18,21 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.IPartSelectionListener;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.widgets.*;
 
-public class IncludedFeaturesDetailsSection extends PDESection implements
-		IFormPart, IPartSelectionListener {
+public class IncludedFeaturesDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
 	protected IFeatureChild fInput;
 
 	private FormEntry fNameText;
-	
+
 	private FormEntry fVersionText;
 
 	private Button fOptionalButton;
@@ -56,12 +46,10 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	private boolean fBlockNotification;
 
 	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_title,
-				PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_desc, SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_title, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_desc, SWT.NULL);
 	}
 
-	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent,
-			String title, String desc, int toggleStyle) {
+	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -81,12 +69,11 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		section.setLayoutData(data);
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 2));
 
@@ -102,7 +89,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 		fNameText.setEditable(isEditable());
-		
+
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
@@ -131,8 +118,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 				}
 			}
 		});
-		Label fSearchLocationDescLabel = toolkit.createLabel(container,
-				PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_searchLocation, SWT.WRAP);
+		Label fSearchLocationDescLabel = toolkit.createLabel(container, PDEUIMessages.SiteEditor_IncludedFeaturesDetailsSection_searchLocation, SWT.WRAP);
 		gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = 2;
 		fSearchLocationDescLabel.setLayoutData(gd);
@@ -249,12 +235,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			fVersionText.setValue(fInput.getVersion(), true);
 			fOptionalButton.setSelection(fInput.isOptional());
 			int searchLocation = fInput.getSearchLocation();
-			fSearchRootButton
-					.setSelection(searchLocation == IFeatureChild.ROOT);
-			fSearchSelfButton
-					.setSelection(searchLocation == IFeatureChild.SELF);
-			fSearchBothButton
-					.setSelection(searchLocation == IFeatureChild.BOTH);
+			fSearchRootButton.setSelection(searchLocation == IFeatureChild.ROOT);
+			fSearchSelfButton.setSelection(searchLocation == IFeatureChild.SELF);
+			fSearchBothButton.setSelection(searchLocation == IFeatureChild.BOTH);
 		} else {
 			fNameText.setValue(null, true);
 			fVersionText.setValue(null, true);

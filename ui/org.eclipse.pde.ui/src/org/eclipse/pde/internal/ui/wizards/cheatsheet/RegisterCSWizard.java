@@ -12,16 +12,13 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -31,10 +28,10 @@ import org.eclipse.ui.IWorkbench;
  */
 public class RegisterCSWizard extends Wizard implements INewWizard {
 
-	private RegisterCSWizardPage fMainPage;	
-	
+	private RegisterCSWizardPage fMainPage;
+
 	private IModel fModel;
-	
+
 	/**
 	 * 
 	 */
@@ -47,14 +44,14 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 	 */
 	public void addPages() {
 		if (fModel instanceof ICompCSModel) {
-			fMainPage = new RegisterCompCSWizardPage((ICompCSModel)fModel); 
+			fMainPage = new RegisterCompCSWizardPage((ICompCSModel) fModel);
 		} else if (fModel instanceof ISimpleCSModel) {
-			fMainPage = new RegisterSimpleCSWizardPage((ISimpleCSModel)fModel); 
+			fMainPage = new RegisterSimpleCSWizardPage((ISimpleCSModel) fModel);
 		}
-		
+
 		addPage(fMainPage);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
@@ -75,16 +72,16 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 	 */
 	private IRunnableWithProgress getOperation() {
 		return new RegisterCSOperation(fMainPage, getShell());
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-        setWindowTitle(PDEUIMessages.RegisterCSWizard_registerCheatSheet);
-        // TODO: MP: LOW: CompCS: New register cheat sheet wizard image
-        setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
-        setNeedsProgressMonitor(true);
+		setWindowTitle(PDEUIMessages.RegisterCSWizard_registerCheatSheet);
+		// TODO: MP: LOW: CompCS: New register cheat sheet wizard image
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
+		setNeedsProgressMonitor(true);
 	}
-	
+
 }

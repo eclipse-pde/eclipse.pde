@@ -14,9 +14,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 
 public class SynchronizePropertiesWizard extends Wizard {
 	private SynchronizePropertiesWizardPage fMainPage;
@@ -25,8 +23,7 @@ public class SynchronizePropertiesWizard extends Wizard {
 
 	private ISiteFeature[] fSiteFeatures;
 
-	public SynchronizePropertiesWizard(ISiteFeature[] siteFeatures,
-			ISiteModel model) {
+	public SynchronizePropertiesWizard(ISiteFeature[] siteFeatures, ISiteModel model) {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());

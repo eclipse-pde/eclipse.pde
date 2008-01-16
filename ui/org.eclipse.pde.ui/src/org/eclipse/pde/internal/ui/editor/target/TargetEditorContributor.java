@@ -12,11 +12,10 @@ package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 
-
 public class TargetEditorContributor extends PDEFormEditorContributor {
 
 	public TargetEditorContributor() {
 		super("Product"); //$NON-NLS-1$
 	}
-	
+
 }

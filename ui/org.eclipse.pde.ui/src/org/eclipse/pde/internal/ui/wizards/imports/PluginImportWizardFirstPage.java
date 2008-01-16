@@ -21,76 +21,53 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.PluginPathFinder;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
-import org.eclipse.pde.internal.ui.preferences.SourceCodeLocationsPreferenceNode;
-import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferenceNode;
-import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class PluginImportWizardFirstPage extends WizardPage {
-	
+
 	private static String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
 	private static String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
 	private static String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
 	private static String SETTINGS_SCAN_ALL = "scanAll"; //$NON-NLS-1$
-	
+
 	private Button runtimeLocationButton;
 	private Button browseButton;
 	private Label otherLocationLabel;
 	private Combo dropLocation;
 	private Button changeButton;
-	
+
 	private Button importButton;
 	private Button scanButton;
 
 	private Button binaryButton;
 	private Button binaryWithLinksButton;
 	private Button sourceButton;
-	
+
 	//private String currentLocation;
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
 	private boolean canceled = false;
-	
+
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
-		setTitle(PDEUIMessages.ImportWizard_FirstPage_title); 
-		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); 
+		setTitle(PDEUIMessages.ImportWizard_FirstPage_title);
+		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -99,51 +76,50 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 15;
 		container.setLayout(layout);
-		
+
 		createDirectoryGroup(container);
 		createImportChoicesGroup(container);
 		createImportOptionsGroup(container);
-		
+
 		Dialog.applyDialogFont(container);
 		initialize();
 		setControl(container);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
 	}
-	
+
 	private void createImportChoicesGroup(Composite container) {
 		Group importChoices = new Group(container, SWT.NONE);
-		importChoices.setText(PDEUIMessages.ImportWizard_FirstPage_importGroup); 
+		importChoices.setText(PDEUIMessages.ImportWizard_FirstPage_importGroup);
 		importChoices.setLayout(new GridLayout());
 		importChoices.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
+
 		scanButton = new Button(importChoices, SWT.RADIO);
-		scanButton.setText(PDEUIMessages.ImportWizard_FirstPage_scanAll);		 
-		
+		scanButton.setText(PDEUIMessages.ImportWizard_FirstPage_scanAll);
+
 		importButton = new Button(importChoices, SWT.RADIO);
-		importButton.setText(PDEUIMessages.ImportWizard_FirstPage_importPrereqs); 
-		
+		importButton.setText(PDEUIMessages.ImportWizard_FirstPage_importPrereqs);
+
 	}
-	
+
 	private void createImportOptionsGroup(Composite container) {
 		Group options = new Group(container, SWT.NONE);
-		options.setText(PDEUIMessages.ImportWizard_FirstPage_importAs); 
+		options.setText(PDEUIMessages.ImportWizard_FirstPage_importAs);
 		options.setLayout(new GridLayout());
 		options.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		binaryButton = new Button(options, SWT.RADIO);
-		binaryButton.setText(PDEUIMessages.ImportWizard_FirstPage_binary); 
-		
+		binaryButton.setText(PDEUIMessages.ImportWizard_FirstPage_binary);
+
 		binaryWithLinksButton = new Button(options, SWT.RADIO);
-		binaryWithLinksButton.setText(PDEUIMessages.ImportWizard_FirstPage_binaryLinks); 
-		
+		binaryWithLinksButton.setText(PDEUIMessages.ImportWizard_FirstPage_binaryLinks);
+
 		sourceButton = new Button(options, SWT.RADIO);
-		sourceButton.setText(PDEUIMessages.ImportWizard_FirstPage_source); 
+		sourceButton.setText(PDEUIMessages.ImportWizard_FirstPage_source);
 	}
-	
-	
+
 	private void initialize() {
 		IDialogSettings settings = getDialogSettings();
-		
+
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
@@ -152,11 +128,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		}
 		dropLocation.setItems((String[]) items.toArray(new String[items.size()]));
-		
+
 		if (settings.getBoolean(SETTINGS_DOOTHER)) {
 			runtimeLocationButton.setSelection(false);
 			changeButton.setEnabled(false);
-			dropLocation.setText(items.get(0).toString());		
+			dropLocation.setText(items.get(0).toString());
 		} else {
 			runtimeLocationButton.setSelection(true);
 			otherLocationLabel.setEnabled(false);
@@ -165,7 +141,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			dropLocation.setText(getTargetHome());
 		}
 
-		
 		int importType = PluginImportOperation.IMPORT_BINARY;
 		try {
 			importType = settings.getInt(SETTINGS_IMPORTTYPE);
@@ -178,19 +153,19 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		} else {
 			sourceButton.setSelection(true);
 		}
-		
+
 		boolean scan = true;
 		if (settings.get(SETTINGS_SCAN_ALL) != null) {
 			scan = settings.getBoolean(SETTINGS_SCAN_ALL);
 		}
 		scanButton.setSelection(scan);
 		importButton.setSelection(!scan);
-		
+
 	}
-	
+
 	private void createDirectoryGroup(Composite parent) {
 		Group composite = new Group(parent, SWT.NONE);
-		composite.setText(PDEUIMessages.ImportWizard_FirstPage_importFrom); 
+		composite.setText(PDEUIMessages.ImportWizard_FirstPage_importFrom);
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -201,8 +176,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		runtimeLocationButton.setLayoutData(gd);
-		
-		runtimeLocationButton.setText(PDEUIMessages.ImportWizard_FirstPage_target); 
+
+		runtimeLocationButton.setText(PDEUIMessages.ImportWizard_FirstPage_target);
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = runtimeLocationButton.getSelection();
@@ -218,7 +193,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget); 
+		changeButton.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget);
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
@@ -228,7 +203,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(changeButton);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
-		otherLocationLabel.setText(PDEUIMessages.ImportWizard_FirstPage_otherFolder); 
+		otherLocationLabel.setText(PDEUIMessages.ImportWizard_FirstPage_otherFolder);
 
 		dropLocation = new Combo(composite, SWT.DROP_DOWN);
 		dropLocation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -239,7 +214,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEUIMessages.ImportWizard_FirstPage_browse); 
+		browseButton.setText(PDEUIMessages.ImportWizard_FirstPage_browse);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -251,13 +226,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(browseButton);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_source_label); 
+		label.setText(PDEUIMessages.ImportWizard_FirstPage_source_label);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		Button sourceLocations = new Button(composite, SWT.PUSH);
-		sourceLocations.setText(PDEUIMessages.ImportWizard_FirstPage_codeLocations); 
+		sourceLocations.setText(PDEUIMessages.ImportWizard_FirstPage_codeLocations);
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		sourceLocations.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -266,16 +241,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 		SWTUtil.setButtonDimensionHint(sourceLocations);
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_variables); 
+		label.setText(PDEUIMessages.ImportWizard_FirstPage_variables);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
 		Button envButton = new Button(composite, SWT.PUSH);
-		envButton.setText(PDEUIMessages.ImportWizard_FirstPage_env); 
-		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END| GridData.FILL_HORIZONTAL));
+		envButton.setText(PDEUIMessages.ImportWizard_FirstPage_env);
+		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL));
 		envButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleEnvChange();
@@ -283,32 +258,31 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 		SWTUtil.setButtonDimensionHint(envButton);
 		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 	}
-	
-	
+
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(dropLocation.getText());
-		dialog.setText(PDEUIMessages.ImportWizard_messages_folder_title); 
-		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message); 
+		dialog.setText(PDEUIMessages.ImportWizard_messages_folder_title);
+		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message);
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
 		}
 		return null;
 	}
-	
+
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell()))
 			dropLocation.setText(TargetPlatform.getLocation());
 	}
-	
+
 	private void handleSourceLocations() {
 		PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode(), getShell());
 	}
-	
+
 	private void handleEnvChange() {
 		PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode(), getShell());
 	}
@@ -317,36 +291,32 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
-	
+
 	public boolean getScanAllPlugins() {
 		return scanButton.getSelection();
 	}
-	
+
 	public int getImportType() {
 		if (binaryButton.getSelection()) {
 			return PluginImportOperation.IMPORT_BINARY;
 		}
-		
+
 		if (binaryWithLinksButton.getSelection()) {
 			return PluginImportOperation.IMPORT_BINARY_WITH_LINKS;
 		}
-		
+
 		return PluginImportOperation.IMPORT_WITH_SOURCE;
 	}
-	
+
 	public String getDropLocation() {
-		return runtimeLocationButton.getSelection()
-			? TARGET_PLATFORM
-			: dropLocation.getText().trim();
+		return runtimeLocationButton.getSelection() ? TARGET_PLATFORM : dropLocation.getText().trim();
 	}
-	
+
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		boolean other = !runtimeLocationButton.getSelection();
 		if (dropLocation.getText().length() > 0 && other) {
-			settings.put(
-				SETTINGS_DROPLOCATION + String.valueOf(0),
-				dropLocation.getText().trim());
+			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), dropLocation.getText().trim());
 			String[] items = dropLocation.getItems();
 			int nEntries = Math.min(items.length, 5);
 			for (int i = 0; i < nEntries; i++) {
@@ -357,42 +327,42 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		settings.put(SETTINGS_IMPORTTYPE, getImportType());
 		settings.put(SETTINGS_SCAN_ALL, getScanAllPlugins());
 	}
-	
+
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
-	
+
 	private void validateDropLocation() {
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing); 
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing);
 				setPageComplete(false);
 				return;
 			}
 			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid); 
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid);
 				setPageComplete(false);
 				return;
 			}
 
 			if (!curr.toFile().isDirectory()) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderMissing); 
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderMissing);
 				setPageComplete(false);
 				return;
 			}
 			if (!curr.equals(new Path(getTargetHome()))) {
 				setErrorMessage(null);
-				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, IMessageProvider.WARNING); 
+				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, IMessageProvider.WARNING);
 				setPageComplete(true);
 				return;
 			}
 		}
 		setErrorMessage(null);
 		setPageComplete(true);
-		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); 
+		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc);
 	}
-	
+
 	private void resolveTargetPlatform() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -407,7 +377,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	private void resolveArbitraryLocation(final String location) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -420,7 +390,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					all[0] = new URL("file:" + files[0].getAbsolutePath()); //$NON-NLS-1$
 					System.arraycopy(urls, 0, all, 1, urls.length);
 				} catch (MalformedURLException e) {
-					all = urls; 
+					all = urls;
 				}
 				PDEState state = new PDEState(all, false, monitor);
 				models = state.getTargetModels();
@@ -435,7 +405,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		} catch (InterruptedException e) {
 		}
 	}
-		
 
 	public IPluginModelBase[] getModels() {
 		String dropLocation = getDropLocation();
@@ -446,16 +415,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 		return models;
 	}
-	
+
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();
 	}
-	
+
 	public boolean isRefreshNeeded() {
 		if (canceled) {
 			canceled = false;
 			return true;
 		}
-		return false;	
+		return false;
 	}
 }

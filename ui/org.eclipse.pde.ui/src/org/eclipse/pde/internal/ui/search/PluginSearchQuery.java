@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.search.ui.ISearchQuery;
@@ -42,8 +40,7 @@ public class PluginSearchQuery implements ISearchQuery {
 			public void accept(Object match) {
 				if (match instanceof ISourceObject) {
 					ISourceObject object = (ISourceObject) match;
-					result.addMatch(new Match(match, Match.UNIT_LINE,
-							object.getStartLine() - 1, 1));
+					result.addMatch(new Match(match, Match.UNIT_LINE, object.getStartLine() - 1, 1));
 				}
 			}
 		};
@@ -61,7 +58,6 @@ public class PluginSearchQuery implements ISearchQuery {
 	public String getLabel() {
 		return fSearchInput.getSearchString();
 	}
-	
 
 	/*
 	 * (non-Javadoc)

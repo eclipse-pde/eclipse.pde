@@ -20,13 +20,13 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 
 	private String fId;
 	private String fVersion;
-	
+
 	public NewFeatureProjectWizard() {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setWindowTitle(PDEUIMessages.NewFeatureWizard_wtitle);
 	}
-	
+
 	public void addPages() {
 		super.addPages();
 		if (hasInterestingProjects()) {
@@ -34,11 +34,11 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 			addPage(fSecondPage);
 		}
 	}
-	
+
 	private boolean hasInterestingProjects() {
 		return PluginRegistry.getActiveModels().length > 0;
 	}
-	
+
 	protected AbstractFeatureSpecPage createFirstPage() {
 		return new FeatureSpecPage();
 	}
@@ -46,29 +46,19 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 	public String getFeatureId() {
 		return fId;
 	}
-	
+
 	public String getFeatureVersion() {
-		return fVersion;	
+		return fVersion;
 	}
 
 	protected IRunnableWithProgress getOperation() {
 		FeatureData data = fProvider.getFeatureData();
 		fId = data.id;
 		fVersion = data.version;
-		ILaunchConfiguration config= fProvider.getLaunchConfiguration();
+		ILaunchConfiguration config = fProvider.getLaunchConfiguration();
 		if (config == null)
-			return new CreateFeatureProjectOperation(
-					fProvider.getProject(),
-					fProvider.getLocationPath(),
-					data,
-					fProvider.getPluginListSelection(),
-					getShell());
-		return new CreateFeatureProjectFromLaunchOperation(
-				fProvider.getProject(),
-				fProvider.getLocationPath(),
-				data,
-				config,
-				getShell());
+			return new CreateFeatureProjectOperation(fProvider.getProject(), fProvider.getLocationPath(), data, fProvider.getPluginListSelection(), getShell());
+		return new CreateFeatureProjectFromLaunchOperation(fProvider.getProject(), fProvider.getLocationPath(), data, config, getShell());
 	}
 
 }

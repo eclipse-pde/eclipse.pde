@@ -15,6 +15,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
+
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
@@ -32,7 +33,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	public ReferenceAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -40,13 +41,12 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
-		if(!part.isEditable())
-		{	super.createLabel(parent, toolkit);
+		if (!part.isEditable()) {
+			super.createLabel(parent, toolkit);
 			return;
 		}
 
-		Hyperlink link = toolkit.createHyperlink(parent, getPropertyLabel(),
-				SWT.NULL);
+		Hyperlink link = toolkit.createHyperlink(parent, getPropertyLabel(), SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (!isReferenceModel()) {
@@ -58,12 +58,11 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 		});
 		PDETextHover.addHoverListenerToControl(fIC, link, this);
 	}
-	
+
 	protected boolean isReferenceModel() {
-		return ((IPluginModelBase) part.getPage().getModel())
-				.getUnderlyingResource() != null;
+		return ((IPluginModelBase) part.getPage().getModel()).getUnderlyingResource() != null;
 	}
-	
+
 	protected abstract void openReference();
 
 }

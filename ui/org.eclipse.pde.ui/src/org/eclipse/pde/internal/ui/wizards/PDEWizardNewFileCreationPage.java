@@ -28,8 +28,7 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 	 * @param pageName
 	 * @param selection
 	 */
-	public PDEWizardNewFileCreationPage(String pageName,
-			IStructuredSelection selection) {
+	public PDEWizardNewFileCreationPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 	}
 
@@ -52,14 +51,14 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 		// Perform default validation
 		return super.validatePage();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
 	 */
@@ -67,5 +66,4 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 		// NOOP
 	}
 
-	
 }

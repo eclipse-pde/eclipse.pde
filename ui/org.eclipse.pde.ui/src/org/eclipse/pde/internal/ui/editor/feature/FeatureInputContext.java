@@ -10,54 +10,45 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 
 /**
  * 
  */
 public class FeatureInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID="feature-context"; //$NON-NLS-1$
+	public static final String CONTEXT_ID = "feature-context"; //$NON-NLS-1$
+
 	/**
 	 * @param editor
 	 * @param input
 	 * @param primary
 	 */
-	public FeatureInputContext(PDEFormEditor editor, IEditorInput input,
-			boolean primary) {
+	public FeatureInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();
-	}	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getId()
 	 */
 	public String getId() {
 		return CONTEXT_ID;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
@@ -65,18 +56,17 @@ public class FeatureInputContext extends XMLInputContext {
 		if (input instanceof IFileEditorInput)
 			return createResourceModel((IFileEditorInput) input);
 		if (input instanceof IStorageEditorInput)
-			return createStorageModel((IStorageEditorInput)input);
-		return null;		
+			return createStorageModel((IStorageEditorInput) input);
+		return null;
 	}
-	
-	private IBaseModel createResourceModel(IFileEditorInput input)
-				throws CoreException {
+
+	private IBaseModel createResourceModel(IFileEditorInput input) throws CoreException {
 		IFile file = input.getFile();
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 		model.load();
 		return model;
 	}
-	
+
 	private IBaseModel createStorageModel(IStorageEditorInput input) throws CoreException {
 		InputStream stream = null;
 		IStorage storage = input.getStorage();
@@ -94,22 +84,21 @@ public class FeatureInputContext extends XMLInputContext {
 		} catch (CoreException e) {
 			// Errors in the file
 			return null;
-		}
-		finally {
+		} finally {
 			try {
 				stream.close();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 			}
 		}
 		return model;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
-	
+
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
@@ -130,15 +119,14 @@ public class FeatureInputContext extends XMLInputContext {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	protected boolean synchronizeModel(IDocument doc) {
 		IFeatureModel model = (IFeatureModel) getModel();
 
 		boolean cleanModel = true;
 		String text = doc.get();
 		try {
-			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
+			InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
 			try {
 				model.reload(stream, false);
 			} catch (CoreException e) {
@@ -153,11 +141,13 @@ public class FeatureInputContext extends XMLInputContext {
 		}
 		return cleanModel;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
 	protected void reorderInsertEdits(ArrayList ops) {
 	}
+
 	protected String getPartitionName() {
 		return "___feature_partition"; //$NON-NLS-1$
 	}

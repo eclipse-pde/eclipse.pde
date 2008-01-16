@@ -38,15 +38,15 @@ import org.eclipse.ui.forms.widgets.Section;
 public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 	private ISimpleCSSubItem fSubItem;
-	
+
 	private FormEntry fLabel;
-	
+
 	private Button fSkip;
-	
+
 	private Section fMainSection;
 
 	private SimpleCSCommandDetails fCommandSection;
-	
+
 	/**
 	 * @param elementSection
 	 */
@@ -57,7 +57,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fLabel = null;
 		fSkip = null;
 		fMainSection = null;
-		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);		
+		fCommandSection = new SimpleCSCommandDetails(masterTreeSection);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fSubItem = object;
 		// Set data on command section
 		fCommandSection.setData(object);
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
@@ -77,16 +77,15 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) ||
-				(object instanceof ISimpleCSSubItem) == false) {
+		if ((object == null) || (object instanceof ISimpleCSSubItem) == false) {
 			return;
 		}
 		// Set data
-		setData((ISimpleCSSubItem)object);
+		setData((ISimpleCSSubItem) object);
 		// Update the UI given the new data
-		updateFields();	
+		updateFields();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -97,15 +96,15 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// registered directly.
 		// Initialize managed form for command section
 		fCommandSection.initialize(form);
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
 
 		GridData data = null;
-		
+
 		// Create main section
 		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -114,23 +113,22 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		fMainSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fMainSection);	
-		
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fMainSection);
+
 		// Create container for main section
-		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
+		Composite mainSectionClient = getToolkit().createComposite(fMainSection);
 		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
-		
+
 		// Attribute: label
 		fLabel = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSSubItemDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 50;
 		fLabel.getText().setLayoutData(data);
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
-		fLabel.getLabel().setLayoutData(data);		
+		fLabel.getLabel().setLayoutData(data);
 
 		// Attribute: skip
 		fSkip = getToolkit().createButton(mainSectionClient, PDEUIMessages.SimpleCSSubItemDetails_3, SWT.CHECK);
@@ -145,7 +143,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 		fCommandSection.createDetails(parent);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
@@ -159,7 +157,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 				}
 				fSubItem.setLabel(fLabel.getValue());
 			}
-		});	
+		});
 		// Attribute: skip
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -169,10 +167,10 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 				fSubItem.setSkip(fSkip.getSelection());
 			}
 		});
-		
+
 		fCommandSection.hookListeners();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#updateFields()
 	 */
@@ -186,11 +184,11 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Attribute: label
 		fLabel.setValue(fSubItem.getLabel(), true);
 		fLabel.setEditable(editable);
-		
+
 		// Attribute: skip
 		fSkip.setSelection(fSubItem.getSkip());
 		fSkip.setEnabled(editable);
-		
+
 		fCommandSection.updateFields();
 	}
 

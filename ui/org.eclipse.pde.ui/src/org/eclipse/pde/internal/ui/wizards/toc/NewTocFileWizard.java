@@ -11,12 +11,9 @@
 package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IWorkbench;
 
 public class NewTocFileWizard extends TocHTMLWizard {
@@ -33,7 +30,7 @@ public class NewTocFileWizard extends TocHTMLWizard {
 
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
-		setWindowTitle(PDEUIMessages.NewTocFileWizard_title); 
+		setWindowTitle(PDEUIMessages.NewTocFileWizard_title);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -55,11 +52,11 @@ public class NewTocFileWizard extends TocHTMLWizard {
 		}
 		return true;
 	}
-	
+
 	private TocOperation getOperation() {
 		return new TocOperation(fPage.createNewFile(), fPage.getTocName());
 	}
-	
+
 	public void setInitialPath(IPath path) {
 		fInitialPath = path;
 	}

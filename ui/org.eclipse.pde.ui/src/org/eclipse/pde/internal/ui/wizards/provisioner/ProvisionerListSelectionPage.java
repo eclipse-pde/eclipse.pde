@@ -11,39 +11,28 @@
 package org.eclipse.pde.internal.ui.wizards.provisioner;
 
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.WizardElement;
-import org.eclipse.pde.internal.ui.wizards.WizardNode;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class ProvisionerListSelectionPage extends WizardSelectionPage {
-	
+
 	private TableViewer fTableViewer = null;
 	private Text fTextBox = null;
 	private ElementList fElements = null;
-	
+
 	protected ProvisionerListSelectionPage(ElementList elements) {
 		super(PDEUIMessages.ProvisionerListSelectionPage_pageName);
 		fElements = elements;
@@ -57,18 +46,18 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label label = new Label(container, SWT.None);
 		label.setText(PDEUIMessages.ProvisionerListSelectionPage_tableLabel);
 		label.setLayoutData(new GridData());
-		
+
 		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 300;
 		sashForm.setLayoutData(gd);
-			
+
 		fTableViewer = new TableViewer(sashForm, SWT.BORDER);
-		
+
 		fTableViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		fTableViewer.setContentProvider(new ArrayContentProvider());
 		fTableViewer.setInput(fElements.getChildren());
@@ -77,7 +66,7 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 				handleSelection();
 			}
 		});
-		
+
 		fTextBox = new Text(sashForm, SWT.BORDER | SWT.WRAP | SWT.READ_ONLY);
 		fTextBox.setText(new String());
 		fTextBox.setBackground(fTableViewer.getControl().getBackground());
@@ -94,11 +83,11 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 			}
 		};
 	}
-	
+
 	protected void setDescriptionText(String text) {
 		fTextBox.setText(text);
 	}
-	
+
 	protected void handleSelection() {
 		setErrorMessage(null);
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
@@ -118,7 +107,7 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 		setPageComplete(true);
 		getContainer().updateButtons();
 	}
-	
+
 	public IWizard getSelectedWizard() {
 		IWizardNode node = getSelectedNode();
 		if (node != null)

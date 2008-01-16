@@ -11,16 +11,13 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IMarkerResolution;
 import org.osgi.framework.Constants;
 
-public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution
-		implements IMarkerResolution {
-	
+public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution implements IMarkerResolution {
+
 	String fPackage;
 
 	public RemoveExportPackageResolution(int type, String pkgName) {
@@ -29,8 +26,8 @@ public class RemoveExportPackageResolution extends AbstractManifestMarkerResolut
 	}
 
 	protected void createChange(BundleModel model) {
-		Bundle bundle = (Bundle)model.getBundle();
-		ExportPackageHeader header = (ExportPackageHeader)bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+		Bundle bundle = (Bundle) model.getBundle();
+		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header != null)
 			header.removePackage(fPackage);
 	}

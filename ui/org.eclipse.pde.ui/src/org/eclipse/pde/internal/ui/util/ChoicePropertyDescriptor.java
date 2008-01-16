@@ -22,30 +22,32 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	 * The list of possible values to display in the combo box
 	 */
 	private String[] values;
-/**
- * Creates an property descriptor with the given id, display name, and list
- * of value labels to display in the combo box cell editor.
- * 
- * @param id the id of the property
- * @param displayName the name to display for the property
- * @param valuesArray the list of possible values to display in the combo box
- */
-public ChoicePropertyDescriptor(Object id, String displayName, String[] valuesArray) {
-	super(id, displayName);
-	values = valuesArray;
-}
-/**
- * The <code>ComboBoxPropertyDescriptor</code> implementation of this 
- * <code>IPropertyDescriptor</code> method creates and returns a new
- * <code>ComboBoxCellEditor</code>.
- * <p>
- * The editor is configured with the current validator if there is one.
- * </p>
- */
-public CellEditor createPropertyEditor(Composite parent) {
-	CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
-	if (getValidator() != null)
-		editor.setValidator(getValidator());
-	return editor;
-}
+
+	/**
+	 * Creates an property descriptor with the given id, display name, and list
+	 * of value labels to display in the combo box cell editor.
+	 * 
+	 * @param id the id of the property
+	 * @param displayName the name to display for the property
+	 * @param valuesArray the list of possible values to display in the combo box
+	 */
+	public ChoicePropertyDescriptor(Object id, String displayName, String[] valuesArray) {
+		super(id, displayName);
+		values = valuesArray;
+	}
+
+	/**
+	 * The <code>ComboBoxPropertyDescriptor</code> implementation of this 
+	 * <code>IPropertyDescriptor</code> method creates and returns a new
+	 * <code>ComboBoxCellEditor</code>.
+	 * <p>
+	 * The editor is configured with the current validator if there is one.
+	 * </p>
+	 */
+	public CellEditor createPropertyEditor(Composite parent) {
+		CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
+		if (getValidator() != null)
+			editor.setValidator(getValidator());
+		return editor;
+	}
 }

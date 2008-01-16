@@ -11,22 +11,15 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
@@ -35,43 +28,40 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
-	
+
 	public final static int USE_DEFAULT = 0;
 	public final static int USE_PRODUCT = 1;
 	public final static int USE_LAUNCH_CONFIG = 2;
-	
+
 	private static final String F_FILE_EXTENSION = "product"; //$NON-NLS-1$	
-	
+
 	private Button fBasicButton;
 	private Button fProductButton;
 	private Combo fProductCombo;
 	private Button fLaunchConfigButton;
 	private Combo fLaunchConfigCombo;
 	private Group fGroup;
-	
+
 	private IPluginModelBase fModel;
-	
+
 	public ProductFileWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setDescription(PDEUIMessages.ProductFileWizadPage_title);
 		setTitle(PDEUIMessages.NewProductFileWizard_title);
 		// Force the file extension to be 'product'
-		setFileExtension(F_FILE_EXTENSION);	
-		
+		setFileExtension(F_FILE_EXTENSION);
+
 		initializeModel(selection);
 	}
-	
+
 	private void initializeModel(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof IAdaptable) {
-			IResource resource = (IResource)((IAdaptable)selected).getAdapter(IResource.class);
+			IResource resource = (IResource) ((IAdaptable) selected).getAdapter(IResource.class);
 			if (resource != null) {
 				IProject project = resource.getProject();
 				fModel = PluginRegistry.findModel(project);
@@ -84,48 +74,48 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 		fGroup = new Group(parent, SWT.NONE);
-		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); 
+		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle);
 		fGroup.setLayout(new GridLayout(2, false));
 		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		fBasicButton = new Button(fGroup, SWT.RADIO);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBasicButton.setLayoutData(gd);
-		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); 
-		
+		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic);
+
 		fProductButton = new Button(fGroup, SWT.RADIO);
-		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); 
+		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct);
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fProductCombo.setEnabled(fProductButton.getSelection());
 			}
 		});
-		
-		fProductCombo = new Combo(fGroup, SWT.SINGLE|SWT.READ_ONLY);
+
+		fProductCombo = new Combo(fGroup, SWT.SINGLE | SWT.READ_ONLY);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProducts());
-		
+
 		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
-		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); 
+		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig);
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
 			}
 		});
-		
-		fLaunchConfigCombo = new Combo(fGroup, SWT.SINGLE|SWT.READ_ONLY);
+
+		fLaunchConfigCombo = new Combo(fGroup, SWT.SINGLE | SWT.READ_ONLY);
 		fLaunchConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fLaunchConfigCombo.setItems(getLaunchConfigurations());
-		
+
 		initializeState();
 	}
-	
+
 	private void initializeState() {
 		fLaunchConfigCombo.setEnabled(false);
 		if (fLaunchConfigCombo.getItemCount() > 0)
 			fLaunchConfigCombo.setText(fLaunchConfigCombo.getItem(0));
-		
+
 		if (fModel != null && fModel.getPluginBase().getId() != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
@@ -143,7 +133,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 				}
 			}
 		}
-		
+
 		fBasicButton.setSelection(true);
 
 		fProductCombo.setEnabled(false);
@@ -151,7 +141,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			fProductCombo.setText(fProductCombo.getItem(0));
 
 	}
-	
+
 	private String[] getLaunchConfigurations() {
 		ArrayList list = new ArrayList();
 		try {
@@ -164,13 +154,13 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			}
 		} catch (CoreException e) {
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
+
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
 		if (!fLaunchConfigButton.getSelection())
 			return null;
-		
+
 		String configName = fLaunchConfigCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
@@ -184,11 +174,11 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		}
 		return null;
 	}
-	
+
 	public String getSelectedProduct() {
 		return fProductButton.getSelection() ? fProductCombo.getText() : null;
 	}
-	
+
 	public int getInitializationOption() {
 		if (fBasicButton.getSelection())
 			return USE_DEFAULT;
@@ -196,12 +186,12 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			return USE_PRODUCT;
 		return USE_LAUNCH_CONFIG;
 	}
-	
+
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PRODUCT_FILE_PAGE );
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PRODUCT_FILE_PAGE);
 	}
-	
+
 }

@@ -9,43 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.IStandbyContentPart;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -62,9 +47,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	private IConfigurationElement sample;
 	// cached input.
 	private String input;
-	
+
 	private static String MEMENTO_SAMPLE_ID_ATT = "sampleId"; //$NON-NLS-1$
-	
+
 	/**
 	 *  
 	 */
@@ -72,6 +57,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		defaultShortcut = new EclipseLaunchShortcut();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -103,7 +89,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append(PDEUIMessages.SampleStandbyContent_content); 
+		buf.append(PDEUIMessages.SampleStandbyContent_content);
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -126,6 +112,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText.setImage("help", PlatformUI.getWorkbench().getSharedImages() //$NON-NLS-1$
 				.getImage(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
+
 	private void doRun(String launcher, String target, final boolean debug) {
 		ILaunchShortcut shortcut = defaultShortcut;
 		final ISelection selection;
@@ -136,12 +123,11 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		final ILaunchShortcut fshortcut = shortcut;
 		BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
 			public void run() {
-				fshortcut.launch(selection, debug
-						? ILaunchManager.DEBUG_MODE
-						: ILaunchManager.RUN_MODE);
+				fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE);
 			}
 		});
 	}
+
 	private void doBrowse() {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IProject[] projects = root.getProjects();
@@ -166,8 +152,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 					String id = prop.getProperty("id"); //$NON-NLS-1$
 					if (id != null && id.equals(sid)) {
 						//match
-						IResource res = findSelectReveal(project, prop
-								.getProperty("projectName")); //$NON-NLS-1$
+						IResource res = findSelectReveal(project, prop.getProperty("projectName")); //$NON-NLS-1$
 						if (res != null)
 							items.add(res);
 					}
@@ -181,6 +166,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		if (items.size() > 0)
 			target.selectReveal(new StructuredSelection(items));
 	}
+
 	private ISetSelectionTarget findTarget() {
 		String id = sample.getAttribute("targetViewId"); //$NON-NLS-1$
 		if (id == null)
@@ -190,6 +176,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			return null;
 		return (ISetSelectionTarget) view;
 	}
+
 	private IResource findSelectReveal(IProject project, String originalName) {
 		IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
 		for (int i = 0; i < projects.length; i++) {
@@ -204,6 +191,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		}
 		return null;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -212,6 +200,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	public Control getControl() {
 		return form;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -219,18 +208,18 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 */
 	public void init(IIntroPart introPart) {
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
 	 */
 	public void setInput(Object input) {
-	    // if the new input is null, use cached input from momento.
-        if (input != null)
-            this.input = (String) input;
+		// if the new input is null, use cached input from momento.
+		if (input != null)
+			this.input = (String) input;
 		String sampleId = this.input.toString();
-		IConfigurationElement[] samples = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
+		IConfigurationElement[] samples = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		for (int i = 0; i < samples.length; i++) {
 			IConfigurationElement sample = samples[i];
 			String id = sample.getAttribute("id"); //$NON-NLS-1$
@@ -241,6 +230,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		}
 		update(null);
 	}
+
 	private void update(IConfigurationElement sample) {
 		this.sample = sample;
 		if (form == null)
@@ -254,8 +244,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			launcher = null;
 			launchTarget = null;
 		}
-		IConfigurationElement[] descConfig = sample != null ? sample
-				.getChildren("description") : null; //$NON-NLS-1$
+		IConfigurationElement[] descConfig = sample != null ? sample.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig != null && descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
 			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$ 
@@ -272,9 +261,11 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	   * 
 	   * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setFocus()
 	   */
+
 	public void setFocus() {
 		form.setFocus();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -283,35 +274,36 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart, org.eclipse.ui.IMemento)
 	 */
 	public void init(IIntroPart introPart, IMemento memento) {
-	    // try to restore last state.
-        input = getCachedInput(memento);
+		// try to restore last state.
+		input = getCachedInput(memento);
 
 	}
-	
-	 /**
-     * Tries to create the last content part viewed, based on sample id.
-     * 
-     * @param memento
-     * @return
-     */
-    private String getCachedInput(IMemento memento) {
-        if (memento == null)
-            return null;
-        return memento.getString(MEMENTO_SAMPLE_ID_ATT);
 
-    }
-	
+	/**
+	* Tries to create the last content part viewed, based on sample id.
+	* 
+	* @param memento
+	* @return
+	*/
+	private String getCachedInput(IMemento memento) {
+		if (memento == null)
+			return null;
+		return memento.getString(MEMENTO_SAMPLE_ID_ATT);
+
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
-	    String currentSampleId = input;
-        if (input != null)
-            memento.putString(MEMENTO_SAMPLE_ID_ATT, currentSampleId);
+		String currentSampleId = input;
+		if (input != null)
+			memento.putString(MEMENTO_SAMPLE_ID_ATT, currentSampleId);
 
 	}
 }

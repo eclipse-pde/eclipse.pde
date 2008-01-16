@@ -14,16 +14,19 @@ import org.eclipse.swt.graphics.Image;
 
 public abstract class DefaultElement implements IPDEElement {
 
-public Object[] getChildren() {
-	return null;
-}
-public Image getImage() {
-	return null;
-}
-public String getLabel() {
-	return ""; //$NON-NLS-1$
-}
-public Object getParent() {
-	return null;
-}
+	public Object[] getChildren() {
+		return null;
+	}
+
+	public Image getImage() {
+		return null;
+	}
+
+	public String getLabel() {
+		return ""; //$NON-NLS-1$
+	}
+
+	public Object getParent() {
+		return null;
+	}
 }

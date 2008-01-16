@@ -19,7 +19,7 @@ public class ExtensionHyperLink extends AbstractHyperlink {
 	public ExtensionHyperLink(IRegion region, String pointID) {
 		super(region, pointID);
 	}
-	
+
 	public void open() {
 		new ShowDescriptionAction(fElement).run();
 	}

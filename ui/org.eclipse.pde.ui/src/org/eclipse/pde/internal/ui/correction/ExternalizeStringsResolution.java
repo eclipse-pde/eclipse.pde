@@ -20,11 +20,11 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 
 public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
-	
+
 	public ExternalizeStringsResolution(int type) {
 		super(type);
 	}
-	
+
 	public void run(final IMarker marker) {
 		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
 			public void run() {
@@ -35,7 +35,7 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 			}
 		});
 	}
-	
+
 	protected void createChange(IBaseModel model) {
 		// nothin to do - all handled by run
 	}
@@ -47,5 +47,5 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 	public String getLabel() {
 		return PDEUIMessages.ExternalizeStringsResolution_label;
 	}
-	
+
 }

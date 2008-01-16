@@ -14,9 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -28,9 +26,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails {
 
 	private ICSMaster fMasterSection;
-	
+
 	private String fContextID;
-	
+
 	/**
 	 * 
 	 */
@@ -38,7 +36,7 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 		fMasterSection = masterSection;
 		fContextID = contextID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -52,24 +50,24 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	 * @param parent
 	 */
 	private void configureParentLayout(Composite parent) {
-		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));	
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	public abstract void createDetails(Composite parent);
-	
+
 	/**
 	 * 
 	 */
 	public abstract void updateFields();
-	
+
 	/**
 	 * 
 	 */
 	public abstract void hookListeners();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -97,7 +95,7 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
 	 */
 	public PDEFormPage getPage() {
-		return (PDEFormPage)getManagedForm().getContainer();
+		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
 	/* (non-Javadoc)
@@ -113,40 +111,40 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	public void modelChanged(IModelChangedEvent event) {
 		// NO-OP
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean isEditableElement() {
 		return fMasterSection.isEditable();
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
 	public FormToolkit getToolkit() {
 		return getManagedForm().getToolkit();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ICSMaster getMasterSection() {
 		return fMasterSection;
 	}
-	
+
 	/**
 	 * @param selection
 	 * @return
 	 */
 	protected Object getFirstSelectedObject(ISelection selection) {
 		// Get the structured selection (obtained from the master tree viewer)
-		IStructuredSelection structuredSel = ((IStructuredSelection)selection);
+		IStructuredSelection structuredSel = ((IStructuredSelection) selection);
 		// Ensure we have a selection
 		if (structuredSel == null) {
 			return null;
 		}
 		return structuredSel.getFirstElement();
 	}
-	
+
 }

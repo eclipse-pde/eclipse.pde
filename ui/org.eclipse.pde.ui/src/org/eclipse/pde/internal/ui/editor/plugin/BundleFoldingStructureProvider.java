@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
+import java.util.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -25,33 +20,33 @@ import org.eclipse.pde.internal.ui.editor.AbstractFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.osgi.framework.Constants;
 
-public class BundleFoldingStructureProvider extends
-		AbstractFoldingStructureProvider {
+public class BundleFoldingStructureProvider extends AbstractFoldingStructureProvider {
 
 	private Map fPositionToElement = new HashMap();
-	
+
 	public BundleFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		super(editor, model);
 	}
 
-	public void addFoldingRegions(Set currentRegions, IEditingModel model)
-			throws BadLocationException {
+	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
 		IBundle bundle = ((BundleModel) model).getBundle();
 
 		IManifestHeader importPackageHeader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-		IManifestHeader exportPackageHeader = bundle.getManifestHeader(Constants.EXPORT_PACKAGE); 
+		IManifestHeader exportPackageHeader = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		IManifestHeader requireBundleHeader = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-	
+
 		try {
 			addFoldingRegions(currentRegions, importPackageHeader, model.getDocument());
 			addFoldingRegions(currentRegions, exportPackageHeader, model.getDocument());
 			addFoldingRegions(currentRegions, requireBundleHeader, model.getDocument());
-		} catch (BadLocationException e) {}
+		} catch (BadLocationException e) {
+		}
 
 	}
-	
+
 	private void addFoldingRegions(Set regions, IManifestHeader header, IDocument document) throws BadLocationException {
-		if(header == null) return;
+		if (header == null)
+			return;
 		int startLine = document.getLineOfOffset(header.getOffset());
 		int endLine = document.getLineOfOffset(header.getOffset() + header.getLength() - 1);
 		if (startLine < endLine) {

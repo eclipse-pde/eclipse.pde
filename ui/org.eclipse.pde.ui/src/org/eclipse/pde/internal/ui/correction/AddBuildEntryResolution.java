@@ -29,7 +29,7 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	protected void createChange(Build build) {
 		try {
-			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);
+			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
 			if (buildEntry == null)
 				buildEntry = new BuildEntry(fEntry, build.getModel());
 			buildEntry.addToken(fToken);

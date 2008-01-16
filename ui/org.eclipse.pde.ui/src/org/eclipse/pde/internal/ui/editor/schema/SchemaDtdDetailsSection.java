@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public class SchemaDtdDetailsSection extends AbstractFormPart {
 	private Text fDtdText;
@@ -31,17 +25,17 @@ public class SchemaDtdDetailsSection extends AbstractFormPart {
 
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		
+
 		fSection = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		fSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSection.setLayoutData(gd);
 
 		Composite client = toolkit.createComposite(fSection);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
-		
+
 		fDtdText = toolkit.createText(client, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 60;
@@ -55,10 +49,9 @@ public class SchemaDtdDetailsSection extends AbstractFormPart {
 
 		fSection.setText(PDEUIMessages.SchemaDtdDetailsSection_title);
 	}
-	
+
 	protected void updateDTDLabel(Object changeObject) {
-		if ((fDtdText == null) || 
-				(fDtdText.isDisposed())) {
+		if ((fDtdText == null) || (fDtdText.isDisposed())) {
 			return;
 		}
 		if (changeObject instanceof ISchemaAttribute) {
@@ -67,10 +60,10 @@ public class SchemaDtdDetailsSection extends AbstractFormPart {
 			while (changeObject != null) {
 				if (changeObject instanceof ISchemaElement)
 					break;
-				changeObject = ((ISchemaCompositor)changeObject).getParent();
+				changeObject = ((ISchemaCompositor) changeObject).getParent();
 			}
 		}
 		if (changeObject instanceof ISchemaElement)
-			fDtdText.setText(((ISchemaElement)changeObject).getDTDRepresentation(false));
+			fDtdText.setText(((ISchemaElement) changeObject).getDTDRepresentation(false));
 	}
 }

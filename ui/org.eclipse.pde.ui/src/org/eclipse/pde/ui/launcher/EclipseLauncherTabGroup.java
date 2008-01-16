@@ -13,10 +13,7 @@ package org.eclipse.pde.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.EnvironmentTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
@@ -35,19 +32,12 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
-		tabs = new ILaunchConfigurationTab[]{
-				new MainTab(),
-				new JavaArgumentsTab(),
-				new PluginsTab(), 
-				new ConfigurationTab(),
-				new TracingTab(), 
-				new EnvironmentTab(),
-				new CommonTab()};
+		tabs = new ILaunchConfigurationTab[] {new MainTab(), new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		super.performApply(configuration);	
+		super.performApply(configuration);
 		try {
 			// if the configuration has the GENERATED_CONFIG flag, we need to see if we should remove the flag
 			if (!(configuration.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false)))

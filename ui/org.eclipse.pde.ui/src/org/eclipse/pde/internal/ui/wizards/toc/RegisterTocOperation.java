@@ -13,43 +13,22 @@ package org.eclipse.pde.internal.ui.wizards.toc;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
@@ -61,14 +40,13 @@ import org.osgi.framework.Constants;
  *
  */
 public class RegisterTocOperation extends WorkspaceModifyOperation {
-	
-	public final static String F_TOC_EXTENSION_POINT_ID = 
-		"org.eclipse.help.toc"; //$NON-NLS-1$
+
+	public final static String F_TOC_EXTENSION_POINT_ID = "org.eclipse.help.toc"; //$NON-NLS-1$
 
 	public static final String F_HELP_EXTENSION_ID = "org.eclipse.help"; //$NON-NLS-1$
-	
+
 	public static final String F_TOC_ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
-	
+
 	public final static String F_TOC_ATTRIBUTE_PRIMARY = "primary"; //$NON-NLS-1$
 
 	public final static String F_TOC_ATTRIBUTE_EXTRADIR = "extradir"; //$NON-NLS-1$
@@ -76,9 +54,9 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	public final static String F_TOC_ATTRIBUTE_CATEGORY = "category"; //$NON-NLS-1$
 
 	private IRegisterTOCData fPage;
-	
+
 	private Shell fShell;
-	
+
 	/**
 	 * 
 	 */
@@ -97,13 +75,11 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
-		
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+
 		try {
 			boolean fragment = PluginRegistry.findModel(fPage.getPluginProject()).isFragmentModel();
-			IFile file = fPage.getPluginProject().getFile(fragment ? ICoreConstants.FRAGMENT_PATH : 
-				ICoreConstants.PLUGIN_PATH);
+			IFile file = fPage.getPluginProject().getFile(fragment ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
 			// If the plug-in exists modify it accordingly; otherwise, create
 			// a new plug-in file
 			if (file.exists()) {
@@ -113,17 +89,17 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		}		
+		}
 	}
-	
+
 	/**
 	 * FindCSExtensionResult
 	 *
 	 */
 	private static class FindTocExtensionResult {
-		
+
 		public IPluginExtension fTocExtension;
-		
+
 		public IPluginElement fTocElement;
 
 		/**
@@ -133,14 +109,14 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			fTocExtension = null;
 			fTocElement = null;
 		}
-		
+
 		/**
 		 * @return
 		 */
 		public boolean foundTocExtension() {
 			return (fTocExtension != null);
 		}
-		
+
 		/**
 		 * @return
 		 */
@@ -148,24 +124,20 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			return (fTocElement != null);
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor)
-			throws CoreException {
+	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
-        // Validate the operation
+		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file 
 		// but not the manifest.mf file
-		IStatus status = 
-			PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
+		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, 
-					IPDEUIConstants.PLUGIN_ID, IStatus.ERROR,  
-					PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fPage.getPluginProject()) {
@@ -182,17 +154,15 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void doModifyPluginModel(IBaseModel model,
-			IProgressMonitor monitor) throws CoreException {
+	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
 		}
-		IPluginModelBase modelBase = (IPluginModelBase)model;
+		IPluginModelBase modelBase = (IPluginModelBase) model;
 		// Find an existing cheat sheet extension 
 		FindTocExtensionResult result = findTocExtensionResult(modelBase);
 		// Check search results and act accordingly
-		if (result.foundTocExtension() &&
-				result.foundExactTocElement()) {
+		if (result.foundTocExtension() && result.foundExactTocElement()) {
 			// An exact match to an existing TOC element was
 			// found.  Update the element fields
 			modifyExistingElement(result.fTocElement, monitor);
@@ -207,59 +177,53 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			// extension
 			insertNewExtension(modelBase, monitor);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param modelBase
 	 */
-	private void insertNewExtension(IPluginModelBase modelBase,
-			IProgressMonitor monitor) throws CoreException {
+	private void insertNewExtension(IPluginModelBase modelBase, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_newCSExtensionExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_newCSExtensionExistingPlugin, 1);
 		// Create the new extension
 		IPluginExtension extension = createExtensionToc(modelBase);
 		modelBase.getPluginBase().add(extension);
 		// Update progress work units
-        monitor.done();			
+		monitor.done();
 	}
 
 	/**
 	 * @param extension
 	 */
-	private void modifyExistingExtension(IPluginExtension extension,
-			IProgressMonitor monitor) throws CoreException {
+	private void modifyExistingExtension(IPluginExtension extension, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSExtensionExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSExtensionExistingPlugin, 1);
 		// Create new children for existing extension
-		createExtensionChildren(extension);		
+		createExtensionChildren(extension);
 		// Update progress work units
-        monitor.done();	
-	}	
+		monitor.done();
+	}
 
 	/**
 	 * @param tocElement
 	 * @param monitor
 	 */
-	private void modifyExistingElement(IPluginElement tocElement,
-			IProgressMonitor monitor) throws CoreException {
+	private void modifyExistingElement(IPluginElement tocElement, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSElementExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSElementExistingPlugin, 1);
 
 		// Update the file
-		tocElement.setAttribute(F_TOC_ATTRIBUTE_FILE, 
-				fPage.getDataTocFile());		
+		tocElement.setAttribute(F_TOC_ATTRIBUTE_FILE, fPage.getDataTocFile());
 
 		// Update the primary attribute
 		// But only if it already exists, or if this TOC will be primary
 		boolean primary = fPage.getDataPrimary();
-		if(primary || tocElement.getAttribute(F_TOC_ATTRIBUTE_PRIMARY) != null)
-		{	tocElement.setAttribute(
-					F_TOC_ATTRIBUTE_PRIMARY,
-					Boolean.toString(primary));
+		if (primary || tocElement.getAttribute(F_TOC_ATTRIBUTE_PRIMARY) != null) {
+			tocElement.setAttribute(F_TOC_ATTRIBUTE_PRIMARY, Boolean.toString(primary));
 		}
 
 		// Update progress work units
-        monitor.done();			
+		monitor.done();
 	}
 
 	/**
@@ -270,7 +234,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 */
 	private FindTocExtensionResult findTocExtensionResult(IPluginModelBase model) {
 		// Container for result
-		FindTocExtensionResult result = new FindTocExtensionResult();		
+		FindTocExtensionResult result = new FindTocExtensionResult();
 		// Find all cheat sheet extensions within the host plug-in
 		IPluginExtension[] extensions = findTOCExtensions(model);
 		// Process all TOC extensions
@@ -293,33 +257,29 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			// Process all children
 			for (int j = 0; j < pluginObjects.length; j++) {
 				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement)pluginObjects[j];
+					IPluginElement element = (IPluginElement) pluginObjects[j];
 					// Find TOC elements
 					if (element.getName().equals(ITocConstants.ELEMENT_TOC)) {
 						// TOC element
 						// Get the file attribute
-						IPluginAttribute fileAttribute = 
-							element.getAttribute(F_TOC_ATTRIBUTE_FILE);
+						IPluginAttribute fileAttribute = element.getAttribute(F_TOC_ATTRIBUTE_FILE);
 						// Check for the filename for this TOC element
-						if ((fileAttribute != null) && 
-								PDETextHelper.isDefined(fileAttribute.getValue()) &&
-								fPage.getDataTocFile().equals(
-										fileAttribute.getValue())) {
+						if ((fileAttribute != null) && PDETextHelper.isDefined(fileAttribute.getValue()) && fPage.getDataTocFile().equals(fileAttribute.getValue())) {
 							// Matching TOC element found
 							result.fTocElement = element;
 							return result;
-						}	
-					}					
+						}
+					}
 				}
 			}
-		}	
+		}
 
 		return result;
 	}
-	
+
 	public static IPluginExtension[] findTOCExtensions(ISharedExtensionsModel model) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
-		
+
 		ArrayList tocExtensions = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -327,25 +287,22 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 				tocExtensions.add(extensions[i]);
 			}
 		}
-		return (IPluginExtension[]) tocExtensions.toArray(
-				new IPluginExtension[tocExtensions.size()]);
+		return (IPluginExtension[]) tocExtensions.toArray(new IPluginExtension[tocExtensions.size()]);
 	}
-	
+
 	/**
 	 * @param file
 	 * @param monitor
 	 */
-	private void createNewPluginFile(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		
+	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
+
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_addNewCSExtensionNewPlugin, 4); 
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_addNewCSExtensionNewPlugin, 4);
 		// Create the plug-in model
-		WorkspacePluginModelBase model = 
-			(WorkspacePluginModelBase)createModel(file);
+		WorkspacePluginModelBase model = (WorkspacePluginModelBase) createModel(file);
 		// Update progress work units
 		monitor.worked(1);
-		
+
 		IPluginBase base = model.getPluginBase();
 		// Set schema version
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
@@ -368,34 +325,29 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// to true
 		modifyExistingManifestFile(file);
 		// Update progress work units
-        monitor.done();				
+		monitor.done();
 	}
 
 	/**
 	 * @param model
 	 */
-	private void modifyExistingManifestFile(IFile file)
-			throws CoreException {
+	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file rather
 		// than the manifest file
-		IStatus status = 
-			PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
+		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, 
-						IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
 		}
 		// Perform the modification of the manifest file
-		ModelModification mod = 
-			new ModelModification(fPage.getPluginProject()) {
+		ModelModification mod = new ModelModification(fPage.getPluginProject()) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);
 				doModifyBuildModel(model);
 			}
 		};
 		PDEModelUtility.modifyModel(mod, null);
-	}		
+	}
 
 	/**
 	 * @param model
@@ -405,12 +357,12 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		if ((model instanceof IBundlePluginModelBase) == false) {
 			return;
 		}
-		IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
+		IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 		IBundle bundle = modelBase.getBundleModel().getBundle();
 		// Get the heading specifying the singleton declaration 
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader) {
-			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader)header;
+			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
 			// If the singleton declaration is false, change it to true
 			// This is required because plug-ins that specify extensions
 			// must be singletons.
@@ -421,13 +373,13 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// Add the cheat sheets plug-in to the list of required bundles
 		header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header instanceof RequireBundleHeader) {
-			RequireBundleHeader require = (RequireBundleHeader)header;
-			if (require.hasElement(F_HELP_EXTENSION_ID) == false) { 
+			RequireBundleHeader require = (RequireBundleHeader) header;
+			if (require.hasElement(F_HELP_EXTENSION_ID) == false) {
 				require.addBundle(F_HELP_EXTENSION_ID);
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param model
 	 */
@@ -436,7 +388,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
 		}
-		IPluginModelBase modelBase = (IPluginModelBase)model;
+		IPluginModelBase modelBase = (IPluginModelBase) model;
 		IBuild build = ClasspathUtilCore.getBuild(modelBase);
 		// Make sure we have a plugin.properties file
 		if (build == null) {
@@ -458,37 +410,36 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// ModelModification framework to save build.properties modifications
 		// As a result, explicitly do that here
 		if (build instanceof BuildObject) {
-			IBuildModel buildModel = ((BuildObject)build).getModel();
+			IBuildModel buildModel = ((BuildObject) build).getModel();
 			if (buildModel instanceof WorkspaceBuildModel) {
-				((WorkspaceBuildModel)buildModel).save();
+				((WorkspaceBuildModel) buildModel).save();
 			}
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @return
 	 */
 	private IPluginModelBase createModel(IFile file) {
 		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
-			return new WorkspaceFragmentModel(file, false);		
+			return new WorkspaceFragmentModel(file, false);
 		}
 		return new WorkspacePluginModel(file, false);
 	}
-	
+
 	/**
 	 * @param model
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginExtension createExtensionToc(IPluginModelBase model)
-			throws CoreException {
+	private IPluginExtension createExtensionToc(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
 		extension.setPoint(F_TOC_EXTENSION_POINT_ID);
-		
+
 		createExtensionChildren(extension);
-		
+
 		return extension;
 	}
 
@@ -496,8 +447,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 * @param extension
 	 * @throws CoreException
 	 */
-	private void createExtensionChildren(IPluginExtension extension)
-			throws CoreException {
+	private void createExtensionChildren(IPluginExtension extension) throws CoreException {
 		// TOC element
 		IPluginElement tocElement = createElementToc(extension);
 		if (tocElement != null) {
@@ -510,28 +460,23 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginElement createElementToc(IPluginExtension extension)
-			throws CoreException {
+	private IPluginElement createElementToc(IPluginExtension extension) throws CoreException {
 
-		IPluginElement element = 
-			extension.getModel().getFactory().createElement(extension);
+		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 
 		// Element: toc
 		element.setName(ITocConstants.ELEMENT_TOC);
 
 		// Attribute: file
-		element.setAttribute(F_TOC_ATTRIBUTE_FILE, 
-				fPage.getDataTocFile());
+		element.setAttribute(F_TOC_ATTRIBUTE_FILE, fPage.getDataTocFile());
 
 		// Attribute: primary
 		boolean primary = fPage.getDataPrimary();
-		
+
 		if (primary) {
-			element.setAttribute(F_TOC_ATTRIBUTE_PRIMARY, Boolean.TRUE
-					.toString());
+			element.setAttribute(F_TOC_ATTRIBUTE_PRIMARY, Boolean.TRUE.toString());
 		} else {
-			element.setAttribute(F_TOC_ATTRIBUTE_PRIMARY, Boolean.FALSE
-					.toString());
+			element.setAttribute(F_TOC_ATTRIBUTE_PRIMARY, Boolean.FALSE.toString());
 		}
 
 		return element;

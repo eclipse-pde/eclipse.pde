@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.rules.WordRule;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -46,9 +38,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private ManifestContentAssistProcessor fContentAssistantProcessor;
 	private ManifestTextHover fTextHover;
 	private String fDocumentPartitioning;
-	
+
 	class ManifestHeaderScanner extends BasePDEScanner {
-		
+
 		private Token fToken;
 
 		public ManifestHeaderScanner() {
@@ -56,16 +48,15 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		}
 
 		public boolean affectsTextPresentation(String property) {
-			return property.startsWith(IPDEColorConstants.P_HEADER_KEY)
-					|| property.startsWith(IPDEColorConstants.P_HEADER_OSGI);
+			return property.startsWith(IPDEColorConstants.P_HEADER_KEY) || property.startsWith(IPDEColorConstants.P_HEADER_OSGI);
 		}
-		
+
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			if (event.getProperty().startsWith(IPDEColorConstants.P_HEADER_OSGI))
 				return fToken;
-			return (Token)fDefaultReturnToken;
+			return (Token) fDefaultReturnToken;
 		}
-		
+
 		protected void initialize() {
 			fToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_OSGI));
 			WordRule rule = new WordRule(new KeywordDetector(), Token.UNDEFINED, true);
@@ -96,11 +87,11 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(Constants.BUNDLE_ACTIVATIONPOLICY, fToken);
 			setRules(new IRule[] {rule});
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_KEY)));
-		}	
+		}
 	}
-	
+
 	class ManifestValueScanner extends BasePDEScanner {
-		
+
 		private Token fAssignmentToken;
 		private Token fAttributeToken;
 
@@ -109,9 +100,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		}
 
 		public boolean affectsTextPresentation(String property) {
-			return property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT)
-					|| property.startsWith(IPDEColorConstants.P_HEADER_VALUE)
-					|| property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES);
+			return property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT) || property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES);
 		}
 
 		protected Token getTokenAffected(PropertyChangeEvent event) {
@@ -120,7 +109,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				return fAssignmentToken;
 			if (property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES))
 				return fAttributeToken;
-			return (Token)fDefaultReturnToken;
+			return (Token) fDefaultReturnToken;
 		}
 
 		protected void initialize() {
@@ -152,12 +141,12 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			for (int i = 0; i < ICoreConstants.EE_TOKENS.length; i++)
 				rule.addWord(ICoreConstants.EE_TOKENS[i], fAttributeToken);
 			rules[1] = rule;
-			
+
 			setRules(rules);
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_VALUE)));
-		}	
+		}
 	}
-	
+
 	class AssignmentDetector implements IWordDetector {
 		public boolean isWordStart(char c) {
 			return c == ':' || c == '=';
@@ -165,7 +154,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 		public boolean isWordPart(char c) {
 			return false;
-		}	
+		}
 	}
 
 	class KeywordDetector implements IWordDetector {
@@ -175,17 +164,17 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 		public boolean isWordPart(char c) {
 			return c != ':' && c != '=' && !Character.isSpaceChar(c);
-		}	
+		}
 	}
 
 	public ManifestConfiguration(IColorManager manager) {
 		this(manager, null, null);
 	}
-	
+
 	public ManifestConfiguration(IColorManager manager, PDESourcePage page) {
 		this(manager, page, null);
 	}
-	
+
 	public ManifestConfiguration(IColorManager manager, PDESourcePage page, String documentPartitioning) {
 		super(page, manager);
 		fPropertyKeyScanner = new ManifestHeaderScanner();
@@ -200,13 +189,13 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		System.arraycopy(partitions, 0, all, 1, partitions.length);
 		return all;
 	}
-	
+
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fAnnotationHover == null)
 			fAnnotationHover = new AnnotationHover();
 		return fAnnotationHover;
 	}
-	
+
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -221,23 +210,15 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 		return reconciler;
 	}
-	
+
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		return property.startsWith(IPDEColorConstants.P_HEADER_KEY) ||
-			property.startsWith(IPDEColorConstants.P_HEADER_OSGI) ||
-			property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || 
-			property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES) ||
-			property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT);
+		return property.startsWith(IPDEColorConstants.P_HEADER_KEY) || property.startsWith(IPDEColorConstants.P_HEADER_OSGI) || property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES) || property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		return property.equals(IPDEColorConstants.P_HEADER_KEY) ||
-			property.equals(IPDEColorConstants.P_HEADER_OSGI) ||
-			property.equals(IPDEColorConstants.P_HEADER_VALUE) ||
-			property.equals(IPDEColorConstants.P_HEADER_ATTRIBUTES) ||
-			property.equals(IPDEColorConstants.P_HEADER_ASSIGNMENT);
+		return property.equals(IPDEColorConstants.P_HEADER_KEY) || property.equals(IPDEColorConstants.P_HEADER_OSGI) || property.equals(IPDEColorConstants.P_HEADER_VALUE) || property.equals(IPDEColorConstants.P_HEADER_ATTRIBUTES) || property.equals(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
@@ -255,14 +236,14 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		}
 		return null;
 	}
-	
+
 	public void dispose() {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
 		if (fContentAssistant != null)
 			fContentAssistantProcessor.dispose();
 	}
-	
+
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
@@ -274,8 +255,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
 					public IInformationControl createInformationControl(Shell parent) {
-						return new DefaultInformationControl(parent, SWT.NONE, 
-		                		new HTMLTextPresenter(true));
+						return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
 					}
 				});
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
@@ -290,11 +270,11 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			fTextHover = new ManifestTextHover(fSourcePage);
 		return fTextHover;
 	}
-	
+
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_MANIFEST_IMP;
 	}
-	
+
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		if (fDocumentPartitioning != null)
 			return fDocumentPartitioning;

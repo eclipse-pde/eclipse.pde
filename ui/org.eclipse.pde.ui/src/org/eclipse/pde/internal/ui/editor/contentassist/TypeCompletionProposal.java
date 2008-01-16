@@ -12,15 +12,8 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
-import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -37,14 +30,14 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	protected int fLength;
 	protected String fAdditionalInfo;
 	private IInformationControlCreator fCreator;
-	
+
 	public TypeCompletionProposal(String replacementString, Image image, String displayString) {
 		this(replacementString, image, displayString, 0, 0);
 	}
-	
+
 	public TypeCompletionProposal(String replacementString, Image image, String displayString, int startOffset, int length) {
 		Assert.isNotNull(replacementString);
-		
+
 		fReplacementString = replacementString;
 		fImage = image;
 		fDisplayString = displayString;
@@ -106,7 +99,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 			return new Point(fBeginInsertPoint + 1, 0);
 		return new Point(fBeginInsertPoint + fReplacementString.length(), 0);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -117,7 +110,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		return fAdditionalInfo;
 	}
-	
+
 	public void setAdditionalProposalInfo(String info) {
 		fAdditionalInfo = info;
 	}
@@ -125,10 +118,10 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	public IInformationControlCreator getInformationControlCreator() {
 		if (!BrowserInformationControl.isAvailable(null))
 			return null;
-		
+
 		if (fCreator == null) {
-			fCreator= new AbstractReusableInformationControlCreator() {
-				
+			fCreator = new AbstractReusableInformationControlCreator() {
+
 				/*
 				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */

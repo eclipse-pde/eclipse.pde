@@ -10,41 +10,31 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class CheckboxTablePart extends StructuredViewerPart {
-	public CheckboxTablePart(String [] buttonLabels) {
+	public CheckboxTablePart(String[] buttonLabels) {
 		super(buttonLabels);
 	}
 
 	/*
 	 * @see StructuredViewerPart#createStructuredViewer(Composite, FormWidgetFactory)
 	 */
-	protected StructuredViewer createStructuredViewer(
-		Composite parent,
-		int style,
-		FormToolkit toolkit) {
+	protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 		style |= SWT.H_SCROLL | SWT.V_SCROLL;
-		if (toolkit==null) {
+		if (toolkit == null) {
 			style |= SWT.BORDER;
-		}
-		else {
+		} else {
 			style |= toolkit.getBorderStyle();
 		}
-		CheckboxTableViewer	tableViewer = CheckboxTableViewer.newCheckList(parent, style);
+		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, style);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				CheckboxTablePart.this.selectionChanged((IStructuredSelection)e.getSelection());
+				CheckboxTablePart.this.selectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
@@ -54,19 +44,20 @@ public class CheckboxTablePart extends StructuredViewerPart {
 		});
 		return tableViewer;
 	}
-	
+
 	public CheckboxTableViewer getTableViewer() {
-		return (CheckboxTableViewer)getViewer();
+		return (CheckboxTableViewer) getViewer();
 	}
-	
+
 	/*
 	 * @see SharedPartWithButtons#buttonSelected(int)
 	 */
 	protected void buttonSelected(Button button, int index) {
 	}
-	
+
 	protected void elementChecked(Object element, boolean checked) {
 	}
+
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
 }

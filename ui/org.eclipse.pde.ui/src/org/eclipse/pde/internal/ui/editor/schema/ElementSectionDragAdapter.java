@@ -12,15 +12,11 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Control;
 
 public class ElementSectionDragAdapter extends DragSourceAdapter {
@@ -48,9 +44,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 			return;
 		}
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-			event.data =
-				createTextualRepresentation(
-					(IStructuredSelection) fSelectionProvider.getSelection());
+			event.data = createTextualRepresentation((IStructuredSelection) fSelectionProvider.getSelection());
 			fDragData = null;
 			return;
 		}
@@ -65,6 +59,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		}
 		return buf.toString();
 	}
+
 	/**
 	 * All selection must be named model objects.
 	 */
@@ -107,8 +102,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	}
 
 	private ISchemaObject[] getSelectedModelObjects() {
-		return createObjectRepresentation(
-			(IStructuredSelection) fSelectionProvider.getSelection());
+		return createObjectRepresentation((IStructuredSelection) fSelectionProvider.getSelection());
 	}
 
 	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
@@ -120,13 +114,12 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 			else
 				return new ISchemaObject[0];
 		}
-		return (ISchemaObject[]) objects.toArray(
-			new ISchemaObject[objects.size()]);
+		return (ISchemaObject[]) objects.toArray(new ISchemaObject[objects.size()]);
 	}
-	
+
 	public Object[] getDragData() {
 		if (fDragData instanceof Object[])
-			return (Object[])fDragData;
-		return new Object[] { fDragData };
+			return (Object[]) fDragData;
+		return new Object[] {fDragData};
 	}
 }

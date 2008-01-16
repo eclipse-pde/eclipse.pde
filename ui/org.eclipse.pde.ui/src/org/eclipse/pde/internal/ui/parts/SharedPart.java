@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-
 
 public abstract class SharedPart {
 	private boolean enabled = true;
@@ -26,11 +26,7 @@ public abstract class SharedPart {
 		}
 	}
 
-	public abstract void createControl(
-		Composite parent,
-		int style,
-		int span,
-		FormToolkit toolkit);
+	public abstract void createControl(Composite parent, int style, int span, FormToolkit toolkit);
 
 	public boolean isEnabled() {
 		return enabled;
@@ -39,17 +35,13 @@ public abstract class SharedPart {
 	protected void updateEnabledState() {
 	}
 
-	protected Composite createComposite(
-		Composite parent,
-		FormToolkit toolkit) {
+	protected Composite createComposite(Composite parent, FormToolkit toolkit) {
 		if (toolkit == null)
 			return new Composite(parent, SWT.NULL);
 		return toolkit.createComposite(parent);
 	}
-	protected Label createEmptySpace(
-		Composite parent,
-		int span,
-		FormToolkit toolkit) {
+
+	protected Label createEmptySpace(Composite parent, int span, FormToolkit toolkit) {
 		Label label;
 		if (toolkit != null) {
 			label = toolkit.createLabel(parent, null);
@@ -57,9 +49,9 @@ public abstract class SharedPart {
 			label = new Label(parent, SWT.NULL);
 		}
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalSpan= span;
-		gd.widthHint= 0;
-		gd.heightHint= 0;
+		gd.horizontalSpan = span;
+		gd.widthHint = 0;
+		gd.heightHint = 0;
 		label.setLayoutData(gd);
 		return label;
 	}

@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import java.io.*;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
@@ -23,20 +18,17 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	/**
 	 * Singleton instance.
 	 */
-	private static final ModelDataTransfer instance =
-		new ModelDataTransfer();
+	private static final ModelDataTransfer instance = new ModelDataTransfer();
 	// Create a unique ID to make sure that different Eclipse
 	// applications use different "types" of <code>ModelDataTransfer</code>
-	
+
 	public static final String TYPE_PREFIX = "pde-model-transfer-format"; //$NON-NLS-1$
-	private static final String TYPE_NAME =
-		TYPE_PREFIX + ":" //$NON-NLS-1$
-			+ System.currentTimeMillis()
-			+ ":" //$NON-NLS-1$
+	private static final String TYPE_NAME = TYPE_PREFIX + ":" //$NON-NLS-1$
+			+ System.currentTimeMillis() + ":" //$NON-NLS-1$
 			+ instance.hashCode();
 
 	private static final int TYPEID = registerType(TYPE_NAME);
-	
+
 	public static ModelDataTransfer getInstance() {
 		return instance;
 	}
@@ -52,16 +44,18 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	 * Method declared on Transfer.
 	 */
 	protected int[] getTypeIds() {
-		return new int[] { TYPEID };
+		return new int[] {TYPEID};
 	}
+
 	/* (non-Javadoc)
 	 * Returns the type names.
 	 *
 	 * @return the list of type names
 	 */
 	protected String[] getTypeNames() {
-		return new String[] { TYPE_NAME };
+		return new String[] {TYPE_NAME};
 	}
+
 	/* (non-Javadoc)
 		* Method declared on Transfer.
 		*/
@@ -71,7 +65,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 		}
 		Object[] objects = (Object[]) data;
 		int count = objects.length;
-		
+
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ObjectOutputStream objectOut = new ObjectOutputStream(out);
@@ -93,8 +87,9 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 			//it's best to send nothing if there were problems
 			System.out.println(e);
 		}
-			
+
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on Transfer.
 	 */

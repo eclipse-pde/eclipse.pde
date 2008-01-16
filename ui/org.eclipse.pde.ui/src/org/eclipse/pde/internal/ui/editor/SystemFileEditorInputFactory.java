@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.io.File;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -25,8 +24,8 @@ public class SystemFileEditorInputFactory implements IElementFactory {
 	 */
 	public SystemFileEditorInputFactory() {
 	}
-	
-	public IAdaptable createElement (IMemento memento) {
+
+	public IAdaptable createElement(IMemento memento) {
 		String path = memento.getString("path"); //$NON-NLS-1$
 		File file = new File(path);
 		SystemFileEditorInput input = new SystemFileEditorInput(file);

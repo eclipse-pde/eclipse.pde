@@ -11,51 +11,18 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.ArrayList;
-
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.osgi.service.resolver.BundleDelta;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.ResolverError;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.StateDelta;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.IStateDeltaListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -63,10 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -74,33 +38,32 @@ import org.eclipse.ui.part.Page;
 import org.osgi.framework.Version;
 
 public class StateViewPage extends Page implements IStateDeltaListener, IPluginModelListener {
-	
+
 	private IPropertyChangeListener fPropertyListener;
 	private FilteredTree fFilteredTree = null;
 	private TreeViewer fTreeViewer = null;
 	private DependenciesView fView;
 	private Composite fComposite;
 	private Action fOpenAction;
-	
+
 	private static final String HIDE_RESOLVED = "hideResolved"; //$NON-NLS-1$
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
-	
+
 	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			return ((element instanceof BundleDescription && !((BundleDescription)element).isResolved()) ||
-				parentElement instanceof BundleDescription && !((BundleDescription)parentElement).isResolved());
-		}	
+			return ((element instanceof BundleDescription && !((BundleDescription) element).isResolved()) || parentElement instanceof BundleDescription && !((BundleDescription) parentElement).isResolved());
+		}
 	};
-	
+
 	private ViewerFilter fShowLeaves = new ViewerFilter() {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof BundleDescription) {
-				return ((BundleDescription)element).getDependents().length == 0;
+				return ((BundleDescription) element).getDependents().length == 0;
 			}
 			return true;
-		}	
+		}
 	};
-	
+
 	class FocusOnAction extends Action {
 		public FocusOnAction(String text) {
 			super(text);
@@ -111,31 +74,30 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		public void run() {
 			setFocusOnSelection();
 		}
-		
+
 	}
 
 	class DependencyGroup {
-		Object [] dependencies;
-		
+		Object[] dependencies;
+
 		public DependencyGroup(Object[] constraints) {
 			dependencies = constraints;
 		}
-		
+
 		public Object[] getChildren() {
 			return dependencies;
 		}
-		
+
 		public String toString() {
-			return (dependencies[0] instanceof BundleSpecification) ? PDEUIMessages.StateViewPage_requiredBundles 
-					: PDEUIMessages.StateViewPage_importedPackages;
+			return (dependencies[0] instanceof BundleSpecification) ? PDEUIMessages.StateViewPage_requiredBundles : PDEUIMessages.StateViewPage_importedPackages;
 		}
 	}
-	
+
 	class StateContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof BundleDescription) {
-				BundleDescription desc = (BundleDescription)parentElement;
+				BundleDescription desc = (BundleDescription) parentElement;
 				if (desc.isResolved()) {
 					Object[] required = getResolvedDependencies(desc.getRequiredBundles());
 					Object[] imported = getResolvedDependencies(desc.getImportPackages());
@@ -148,7 +110,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				}
 				return desc.getContainingState().getResolverErrors(desc);
 			} else if (parentElement instanceof DependencyGroup) {
-				return ((DependencyGroup)parentElement).getChildren();
+				return ((DependencyGroup) parentElement).getChildren();
 			}
 			return new Object[0];
 		}
@@ -163,48 +125,46 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof State)
-				return ((State)inputElement).getBundles();
+				return ((State) inputElement).getBundles();
 			return new Object[0];
 		}
-		
+
 		private Object[] getResolvedDependencies(VersionConstraint[] constraints) {
 			ArrayList list = new ArrayList(constraints.length);
-			for (int i = 0; i < constraints.length; i++) 
+			for (int i = 0; i < constraints.length; i++)
 				if (constraints[i].isResolved())
 					list.add(constraints[i]);
 			return list.toArray();
 		}
-		
+
 	}
-	
+
 	class StateLabelProvider extends LabelProvider {
 		private PDELabelProvider fSharedProvider;
-		
+
 		public StateLabelProvider() {
 			fSharedProvider = PDEPlugin.getDefault().getLabelProvider();
 			fSharedProvider.connect(this);
 		}
-		
+
 		public void dispose() {
 			fSharedProvider.disconnect(this);
 			super.dispose();
 		}
-		
+
 		public Image getImage(Object element) {
-			if (element instanceof DependencyGroup) 
-				element = ((DependencyGroup)element).getChildren()[0];
-			if (element instanceof BundleSpecification) 
-				element = ((BundleSpecification)element).getSupplier();
+			if (element instanceof DependencyGroup)
+				element = ((DependencyGroup) element).getChildren()[0];
+			if (element instanceof BundleSpecification)
+				element = ((BundleSpecification) element).getSupplier();
 			if (element instanceof BundleDescription) {
-				int flags = ((BundleDescription)element).isResolved() ? 0 : SharedLabelProvider.F_ERROR;
-				return (((BundleDescription)element).getHost() == null) ? 
-						fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags) :
-						fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+				int flags = ((BundleDescription) element).isResolved() ? 0 : SharedLabelProvider.F_ERROR;
+				return (((BundleDescription) element).getHost() == null) ? fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags) : fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 			}
 			if (element instanceof ImportPackageSpecification)
 				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 			if (element instanceof ResolverError) {
-				if (((ResolverError)element).getType() == ResolverError.PLATFORM_FILTER)
+				if (((ResolverError) element).getType() == ResolverError.PLATFORM_FILTER)
 					return fSharedProvider.get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ);
 				return fSharedProvider.getImage(element);
 			}
@@ -223,24 +183,24 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				buffer.append(PDEUIMessages.StateViewPage_suppliedBy);
 			}
 			if (element instanceof BundleSpecification)
-				element = ((BundleSpecification)element).getSupplier();
+				element = ((BundleSpecification) element).getSupplier();
 			if (element instanceof BundleDescription) {
-				buffer.append(fSharedProvider.getObjectText((BundleDescription)element));
-				Version version = ((BundleDescription)element).getVersion();
+				buffer.append(fSharedProvider.getObjectText((BundleDescription) element));
+				Version version = ((BundleDescription) element).getVersion();
 				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
 				// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
 				return buffer.append(' ').append(PDELabelProvider.formatVersion(version.toString())).toString();
 			}
 			return element.toString();
 		}
-		
+
 	}
-	
+
 	private boolean isJREPackage(ExportPackageDescription supplier) {
 		// check for runtime's non-API directive.  This may change in the future
 		return (((Integer) supplier.getDirective("x-equinox-ee")).intValue() > 0); //$NON-NLS-1$
 	}
-	
+
 	public StateViewPage(DependenciesView view) {
 		fView = view;
 		fPropertyListener = new IPropertyChangeListener() {
@@ -258,18 +218,18 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		fComposite.setLayout(layout);
-		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));	
-		
+		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter());
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		
+
 		// need to give filter Textbox some space from the border
 		Layout filterLayout = fFilteredTree.getFilterControl().getParent().getLayout();
 		if (filterLayout instanceof GridLayout) {
-			((GridLayout)filterLayout).marginHeight = 4;
-			((GridLayout)filterLayout).marginWidth = 3;
+			((GridLayout) filterLayout).marginHeight = 4;
+			((GridLayout) filterLayout).marginWidth = 3;
 		}
-		
+
 		fTreeViewer = fFilteredTree.getViewer();
 		fTreeViewer.setContentProvider(new StateContentProvider());
 		fTreeViewer.setLabelProvider(new StateLabelProvider());
@@ -279,16 +239,15 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick();
 			}
-			
+
 		});
-		
+
 		if (getSettings().getBoolean(HIDE_RESOLVED))
 			fTreeViewer.addFilter(fHideResolvedFilter);
 		if (getSettings().getBoolean(SHOW_NONLEAF))
 			fTreeViewer.addFilter(fShowLeaves);
-		
-		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
-				fPropertyListener);
+
+		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 		getSite().setSelectionProvider(fTreeViewer);
 		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 	}
@@ -305,26 +264,26 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 		}
 	}
-	
+
 	protected void handleDoubleClick() {
-		StructuredSelection selection = (StructuredSelection)fTreeViewer.getSelection();
+		StructuredSelection selection = (StructuredSelection) fTreeViewer.getSelection();
 		if (selection.size() == 1) {
 			BundleDescription desc = getBundleDescription(selection.getFirstElement());
 			if (desc != null)
 				ManifestEditor.openPluginEditor(desc.getSymbolicName());
 		}
 	}
-	
+
 	private BundleDescription getBundleDescription(Object obj) {
 		if (obj instanceof BundleSpecification)
-			obj = ((BundleSpecification)obj).getSupplier();
+			obj = ((BundleSpecification) obj).getSupplier();
 		else if (obj instanceof ImportPackageSpecification)
-			obj = ((ExportPackageDescription)((ImportPackageSpecification)obj).getSupplier()).getSupplier();
+			obj = ((ExportPackageDescription) ((ImportPackageSpecification) obj).getSupplier()).getSupplier();
 		if (obj instanceof BundleDescription)
-			return (BundleDescription)obj;
+			return (BundleDescription) obj;
 		return null;
 	}
-	
+
 	protected void setActive(boolean active) {
 		if (active) {
 			fView.updateTitle(PDEUIMessages.StateViewPage_title);
@@ -336,9 +295,8 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		}
 	}
-	
-	public void makeContributions(IMenuManager menuManager,
-			IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+
+	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 		Action filterResolved = new Action(PDEUIMessages.StateViewPage_showOnlyUnresolved_label, IAction.AS_CHECK_BOX) {
 			public void run() {
@@ -358,23 +316,22 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 					fTreeViewer.removeFilter(fShowLeaves);
 			}
 		};
-		
+
 		filterResolved.setChecked(getSettings().getBoolean(HIDE_RESOLVED));
 		filterLeaves.setChecked(getSettings().getBoolean(SHOW_NONLEAF));
 		menuManager.add(filterResolved);
 		menuManager.add(filterLeaves);
-		
+
 		Action action = new FocusOnAction(PDEUIMessages.StateViewPage_focusOnTitle);
 		action.setImageDescriptor(PDEPluginImages.DESC_FOCUS_ON);
 		if (toolBarManager.find(DependenciesView.TREE_ACTION_GROUP) != null)
-			toolBarManager.prependToGroup(DependenciesView.TREE_ACTION_GROUP,
-					action);
+			toolBarManager.prependToGroup(DependenciesView.TREE_ACTION_GROUP, action);
 		else
 			toolBarManager.add(action);
-				
+
 		hookContextMenu();
 	}
-	
+
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
@@ -388,9 +345,9 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 		getSite().registerContextMenu(fView.getSite().getId(), menuMgr, fTreeViewer);
 	}
-	
+
 	private void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection)fTreeViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		BundleDescription desc = getBundleDescription(selection.getFirstElement());
 		if (desc != null) {
 			if (fOpenAction == null) {
@@ -402,14 +359,14 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 			menu.add(fOpenAction);
 			menu.add(new Separator());
-			String name = ((LabelProvider)fTreeViewer.getLabelProvider()).getText(desc);
+			String name = ((LabelProvider) fTreeViewer.getLabelProvider()).getText(desc);
 			menu.add(new FocusOnAction(NLS.bind(PDEUIMessages.StateViewPage_focusOnSelection, name)));
-			
+
 			menu.add(new Separator());
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 	}
-	
+
 	public void dispose() {
 		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		super.dispose();
@@ -421,14 +378,13 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			return;
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (delta == null) {	
+				if (delta == null) {
 					fTreeViewer.refresh();
 				} else {
 					BundleDelta[] deltas = delta.getChanges();
 					for (int i = 0; i < deltas.length; i++) {
 						int type = deltas[i].getType();
-						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED 
-								|| type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
+						if (type == BundleDelta.REMOVED || type == BundleDelta.RESOLVED || type == BundleDelta.ADDED || type == BundleDelta.UNRESOLVED) {
 							fTreeViewer.refresh();
 							break;
 						}
@@ -437,7 +393,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 		});
 	}
-	
+
 	public void stateChanged(final State newState) {
 		if (!fView.getCurrentPage().equals(this) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			// if this page is not active, then wait until we call refresh on next activation
@@ -448,19 +404,19 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 		});
 	}
-	
+
 	// Changes State view to dependencies view and sets the input as the corresponding selected item in the tree viewer.
 	private void setFocusOnSelection() {
 		// first, find the Show State Action from the toolbar
 		IContributionItem item = getSite().getActionBars().getToolBarManager().find(DependenciesView.SHOW_STATE_ACTION_ID);
 		if (item != null && item instanceof ActionContributionItem) {
 			// then get selection item
-			IStructuredSelection selection = (IStructuredSelection)fTreeViewer.getSelection();
+			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 			if (selection.isEmpty())
 				return;
 			BundleDescription desc = getBundleDescription(selection.getFirstElement());
 			if (desc != null) {
-				IAction action = ((ActionContributionItem)item).getAction();
+				IAction action = ((ActionContributionItem) item).getAction();
 				// deselect the action to show the state
 				action.setChecked(false);
 				// run the action to change the view back to traditional dependencies view
@@ -470,20 +426,20 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 		}
 	}
-	
+
 	private IDialogSettings getSettings() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("dependenciesView");  //$NON-NLS-1$
+		IDialogSettings section = master.getSection("dependenciesView"); //$NON-NLS-1$
 		if (section == null) {
-			section = master.addNewSection("dependenciesView");  //$NON-NLS-1$
+			section = master.addNewSection("dependenciesView"); //$NON-NLS-1$
 		}
 		return section;
 	}
-	
+
 	public void modelsChanged(PluginModelDelta delta) {
 		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			return;
-		if (delta.getAddedEntries().length > 0 || delta.getChangedEntries().length > 0 || delta.getRemovedEntries().length > 0) 
+		if (delta.getAddedEntries().length > 0 || delta.getChangedEntries().length > 0 || delta.getRemovedEntries().length > 0)
 			fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					fTreeViewer.refresh();

@@ -16,29 +16,27 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class QueryControl {
-	
+
 	protected final CommandComposerPart fCSP;
 	protected final FormToolkit fToolkit;
 	protected Button fRadioButton;
 	protected Group fGroup;
-	
+
 	protected QueryControl(CommandComposerPart csp, Composite parent) {
 		fCSP = csp;
 		fToolkit = csp.getToolkit();
 		createGroup(parent);
 	}
-	
+
 	protected ICommandService getCommandService() {
 		return fCSP.getCommandService();
 	}
-	
+
 	private Group createGroup(Composite parent) {
 		fRadioButton = fToolkit.createButton(parent, "", SWT.RADIO); //$NON-NLS-1$
 		fRadioButton.addSelectionListener(new SelectionAdapter() {
@@ -60,13 +58,13 @@ public abstract class QueryControl {
 		fRadioButton.setSelection(select);
 		return this;
 	}
-	
+
 	protected abstract void createGroupContents(Group parent);
-	
+
 	protected abstract String getName();
-	
+
 	protected abstract void enable(boolean enable);
-	
+
 	protected abstract Command[] getCommands();
-	
+
 }

@@ -9,40 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.BooleanAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ClassAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ResourceAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.TextAttributeRow;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.TranslatableAttributeRow;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
-
+import org.eclipse.ui.forms.widgets.*;
 
 public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private IPluginElement input;
@@ -50,31 +32,33 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private ArrayList rows;
 	private Section section;
 
-	
 	/**
 	 * @param masterSection
 	 * @param schemaElement
 	 */
-	public ExtensionElementDetails(PDESection masterSection, 
-			ISchemaElement schemaElement) {
+	public ExtensionElementDetails(PDESection masterSection, ISchemaElement schemaElement) {
 		super(masterSection);
 		this.schemaElement = schemaElement;
 		rows = new ArrayList();
 	}
-	
+
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
+
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
+
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
+
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -83,31 +67,28 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR
-				| Section.DESCRIPTION);
+		section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(PDEUIMessages.ExtensionElementDetails_title); 
-		section.setDescription("");  //$NON-NLS-1$
+		section.setText(PDEUIMessages.ExtensionElementDetails_title);
+		section.setDescription(""); //$NON-NLS-1$
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				section);		
-		
+		getPage().alignSectionHeaders(getMasterSection().getSection(), section);
+
 		Composite client = toolkit.createComposite(section);
 		int span = 2;
 		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
 		client.setLayout(glayout);
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		if (schemaElement != null) {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
 			// Compute horizontal span
 			for (int i = 0; i < atts.length; i++) {
-				if (isEditable() && (atts[i].getKind() == IMetaAttribute.JAVA
-						|| atts[i].getKind() == IMetaAttribute.RESOURCE)) {
+				if (isEditable() && (atts[i].getKind() == IMetaAttribute.JAVA || atts[i].getKind() == IMetaAttribute.RESOURCE)) {
 					span = 3;
 					break;
 				}
@@ -116,20 +97,15 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			// Add required attributes first
 			for (int i = 0; i < atts.length; i++) {
 				if (atts[i].getUse() == ISchemaAttribute.REQUIRED)
-					rows
-							.add(createAttributeRow(atts[i], client, toolkit,
-									span));
+					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
 			// Add the rest
 			for (int i = 0; i < atts.length; i++) {
 				if (atts[i].getUse() != ISchemaAttribute.REQUIRED)
-					rows
-							.add(createAttributeRow(atts[i], client, toolkit,
-									span));
+					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
 			createSpacer(toolkit, client, span);
-		}
-		else {
+		} else {
 			// no schema - delay until input is set
 		}
 		toolkit.paintBordersFor(client);
@@ -137,13 +113,13 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		// Dynamically add focus listeners to all the section client's 
 		// children in order to track the last focus control
 		getPage().addLastFocusListeners(client);
-		
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 		markDetailsPart(section);
 	}
-	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att,
-			Composite parent, FormToolkit toolkit, int span) {
+
+	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att, Composite parent, FormToolkit toolkit, int span) {
 		ExtensionAttributeRow row;
 		if (att.getKind() == IMetaAttribute.JAVA)
 			row = new ClassAttributeRow(this, att);
@@ -166,15 +142,14 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		row.createContents(parent, toolkit, span);
 		return row;
 	}
-	
-	private ExtensionAttributeRow createAttributeRow(IPluginAttribute att,
-			Composite parent, FormToolkit toolkit, int span) {
+
+	private ExtensionAttributeRow createAttributeRow(IPluginAttribute att, Composite parent, FormToolkit toolkit, int span) {
 		ExtensionAttributeRow row;
 		row = new TextAttributeRow(this, att);
 		row.createContents(parent, toolkit, span);
 		return row;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -190,7 +165,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
 			if (obj.equals(input)) {
 				// do smart update (update only the row whose property changed
@@ -210,58 +185,62 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 							row.setInput(input);
 						}
 					}
-				} else 
+				} else
 					refresh();
 			}
 		}
 	}
-	
+
 	private void update() {
 		updateDescription();
-		if (schemaElement==null)
+		if (schemaElement == null)
 			updateRows();
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
 			row.setInput(input);
 		}
 	}
+
 	private void updateRows() {
-		if (input==null) return;
-		IPluginAttribute [] atts = input.getAttributes();
+		if (input == null)
+			return;
+		IPluginAttribute[] atts = input.getAttributes();
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		boolean rowsAdded=false;
-		for (int i=0; i<atts.length; i++) {
+		boolean rowsAdded = false;
+		for (int i = 0; i < atts.length; i++) {
 			if (!hasAttribute(atts[i].getName())) {
-				rows.add(createAttributeRow(atts[i], (Composite)section.getClient(), 
-						toolkit, 2)); 
-				rowsAdded=true;
+				rows.add(createAttributeRow(atts[i], (Composite) section.getClient(), toolkit, 2));
+				rowsAdded = true;
 			}
 		}
 		if (rowsAdded) {
-			((Composite)section.getClient()).layout(true);
+			((Composite) section.getClient()).layout(true);
 			section.layout(true);
 			section.getParent().layout(true);
 			reflow();
 		}
 	}
+
 	private void reflow() {
 		Composite parent = section.getParent();
-		while (parent!=null) {
+		while (parent != null) {
 			if (parent instanceof SharedScrolledComposite) {
-				((SharedScrolledComposite)parent).reflow(true);
+				((SharedScrolledComposite) parent).reflow(true);
 				return;
 			}
 			parent = parent.getParent();
 		}
 	}
+
 	private boolean hasAttribute(String attName) {
-		for (int i=0; i<rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow)rows.get(i);
+		for (int i = 0; i < rows.size(); i++) {
+			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
 			if (row.getName().equals(attName))
 				return true;
 		}
 		return false;
 	}
+
 	private void updateDescription() {
 		if (input != null) {
 			if (0 == input.getAttributeCount()) {
@@ -276,6 +255,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		}
 		section.layout();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -288,6 +268,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		}
 		super.commit(onSave);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -297,6 +278,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		if (rows.size() > 0)
 			((ExtensionAttributeRow) rows.get(0)).setFocus();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -307,11 +289,12 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
 			row.dispose();
 		}
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-		if (model!=null)
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

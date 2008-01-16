@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.ui.correction.java;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
@@ -36,23 +34,22 @@ public class ForbiddenAccessProposal implements IJavaCompletionProposal {
 
 	private IProject fProject;
 	private IPackageFragment fFragment;
-	
+
 	public ForbiddenAccessProposal(IPackageFragment fragment, IProject project) {
 		fProject = project;
 		fFragment = fragment;
 	}
 
 	public void apply(IDocument document) {
-		ModelModification mod = new ModelModification(fProject){
-			protected void modifyModel(IBaseModel model,
-					IProgressMonitor monitor) throws CoreException {
+		ModelModification mod = new ModelModification(fProject) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
-					IBundle bundle = ((IBundlePluginModelBase)model).getBundleModel().getBundle();
+					IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
 
-					ExportPackageHeader header = (ExportPackageHeader)bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+					ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 					if (header == null) {
 						bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
-						header = (ExportPackageHeader)bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+						header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 					}
 					header.addPackage(new ExportPackageObject(header, fFragment, Constants.VERSION_ATTRIBUTE));
 				}
@@ -60,25 +57,27 @@ public class ForbiddenAccessProposal implements IJavaCompletionProposal {
 		};
 		PDEModelUtility.modifyModel(mod, new NullProgressMonitor());
 	}
-	
+
 	public String getDisplayString() {
 		return NLS.bind(PDEUIMessages.ForbiddenAccessProposal_quickfixMessage, new String[] {fFragment.getElementName(), fProject.getName()});
 	}
-	
+
 	public Image getImage() {
 		return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 	}
-	
+
 	public int getRelevance() {
 		return 100;
 	}
-	
+
 	public String getAdditionalProposalInfo() {
 		return null;
 	}
+
 	public IContextInformation getContextInformation() {
 		return null;
 	}
+
 	public Point getSelection(IDocument document) {
 		return null;
 	}

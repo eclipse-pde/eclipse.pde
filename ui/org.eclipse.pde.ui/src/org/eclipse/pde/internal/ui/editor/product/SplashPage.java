@@ -11,11 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -37,7 +33,7 @@ public class SplashPage extends PDEFormPage {
 	 * @param editor
 	 */
 	public SplashPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.SplashPage_splashName); 
+		super(editor, PAGE_ID, PDEUIMessages.SplashPage_splashName);
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +42,7 @@ public class SplashPage extends PDEFormPage {
 	protected String getHelpResource() {
 		// TODO: MP: SPLASH: Update help document reference in header
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/splash.htm"; //$NON-NLS-1$
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
@@ -61,7 +57,7 @@ public class SplashPage extends PDEFormPage {
 		// TODO: MP: SPLASH: Update help context ID
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SPLASH_PAGE);
 	}
-	
+
 	/**
 	 * @param managedForm
 	 * @param toolkit
@@ -70,8 +66,8 @@ public class SplashPage extends PDEFormPage {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		// Sections
-		managedForm.addPart(new SplashLocationSection(this, body));	
-		managedForm.addPart(new SplashConfigurationSection(this, body));	
-	}	
-	
+		managedForm.addPart(new SplashLocationSection(this, body));
+		managedForm.addPart(new SplashConfigurationSection(this, body));
+	}
+
 }

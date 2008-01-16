@@ -24,7 +24,7 @@ import org.eclipse.ui.PartInitException;
 public class PackageHyperlink extends ManifestElementHyperlink {
 
 	BasePackageHeader fHeader;
-	
+
 	public PackageHyperlink(IRegion region, String pack, BasePackageHeader header) {
 		super(region, pack);
 		fHeader = header;

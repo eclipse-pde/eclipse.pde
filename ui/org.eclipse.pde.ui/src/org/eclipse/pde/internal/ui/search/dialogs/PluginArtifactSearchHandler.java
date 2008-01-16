@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.window.Window;
@@ -39,11 +37,9 @@ public class PluginArtifactSearchHandler extends AbstractHandler {
 			IEditorPart editorPart = ManifestEditor.open(object, true);
 			if (editorPart != null && editorPart instanceof ManifestEditor) {
 				ManifestEditor editor = (ManifestEditor) editorPart;
-				InputContext context = 
-					editor.getContextManager().findContext(PluginInputContext.CONTEXT_ID);
+				InputContext context = editor.getContextManager().findContext(PluginInputContext.CONTEXT_ID);
 				IDocument document = context.getDocumentProvider().getDocument(context.getInput());
-				IRegion region = 
-					ManifestEditorOpener.getAttributeMatch(editor, (IPluginObject) object, document);	
+				IRegion region = ManifestEditorOpener.getAttributeMatch(editor, (IPluginObject) object, document);
 				editor.openToSourcePage(object, region.getOffset(), region.getLength());
 			} else {
 				ManifestEditor.openPluginEditor((IPluginModelBase) object);

@@ -12,31 +12,24 @@ package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.ui.IContainmentAdapter;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.*;
 
+public class PersistablePluginObject extends PlatformObject implements IPersistableElement, IElementFactory {
 
-public class PersistablePluginObject extends PlatformObject implements
-		IPersistableElement, IElementFactory {
-	
 	public static final String FACTORY_ID = "org.eclipse.pde.ui.elementFactory"; //$NON-NLS-1$	
 	public static final String KEY = "org.eclipse.pde.workingSetKey"; //$NON-NLS-1$
 	private static PluginContainmentAdapter fgContainmentAdapter;
-	
+
 	private String fPluginID;
 
 	public PersistablePluginObject() {
 	}
-	
+
 	public PersistablePluginObject(String pluginID) {
 		fPluginID = pluginID;
 	}
@@ -61,7 +54,7 @@ public class PersistablePluginObject extends PlatformObject implements
 	public IAdaptable createElement(IMemento memento) {
 		return new PersistablePluginObject(memento.getString(KEY));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
@@ -85,17 +78,17 @@ public class PersistablePluginObject extends PlatformObject implements
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	public IResource getResource() {
 		IPluginModelBase model = PluginRegistry.findModel(fPluginID);
 		IResource resource = (model != null) ? model.getUnderlyingResource() : null;
 		return resource == null ? null : resource.getProject();
 	}
-	
+
 	public String getPluginID() {
 		return fPluginID;
 	}
-	
+
 	private static IContainmentAdapter getPluginContainmentAdapter() {
 		if (fgContainmentAdapter == null)
 			fgContainmentAdapter = new PluginContainmentAdapter();
@@ -104,7 +97,7 @@ public class PersistablePluginObject extends PlatformObject implements
 
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof PersistablePluginObject) {
-			String id = ((PersistablePluginObject)arg0).fPluginID;
+			String id = ((PersistablePluginObject) arg0).fPluginID;
 			return (fPluginID != null) ? fPluginID.equals(id) : id == null;
 		}
 		return false;

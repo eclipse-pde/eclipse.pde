@@ -12,18 +12,10 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.editor.*;
 
 public class SiteOutlinePage extends FormOutlinePage {
 	private LabelProvider fLabelProvider;
@@ -43,17 +35,14 @@ public class SiteOutlinePage extends FormOutlinePage {
 				ISite site = model.getSite();
 				if (page.getId().equals(FeaturesPage.PAGE_ID)) {
 					ArrayList result = new ArrayList();
-					ISiteCategoryDefinition[] catDefs = site
-							.getCategoryDefinitions();
+					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
 					for (int i = 0; i < catDefs.length; i++) {
 						result.add(catDefs[i]);
 					}
 					ISiteFeature[] features = site.getFeatures();
 					for (int i = 0; i < features.length; i++) {
 						if (features[i].getCategories().length == 0)
-							result
-									.add(new SiteFeatureAdapter(null,
-											features[i]));
+							result.add(new SiteFeatureAdapter(null, features[i]));
 					}
 					return result.toArray();
 				}
@@ -71,10 +60,8 @@ public class SiteOutlinePage extends FormOutlinePage {
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {
-						if (cats[j].getDefinition() != null
-								&& cats[j].getDefinition().equals(catDef)) {
-							result.add(new SiteFeatureAdapter(
-									cats[j].getName(), features[i]));
+						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
+							result.add(new SiteFeatureAdapter(cats[j].getName(), features[i]));
 						}
 					}
 				}
@@ -86,8 +73,7 @@ public class SiteOutlinePage extends FormOutlinePage {
 
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof ISiteCategoryDefinition
-				|| item instanceof SiteFeatureAdapter)
+		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter)
 			pageId = FeaturesPage.PAGE_ID;
 		else if (item instanceof ISiteArchive)
 			pageId = ArchivePage.PAGE_ID;

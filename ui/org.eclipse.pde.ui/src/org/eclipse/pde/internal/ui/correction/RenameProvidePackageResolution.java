@@ -33,5 +33,5 @@ public class RenameProvidePackageResolution extends AbstractManifestMarkerResolu
 	protected void createChange(BundleModel model) {
 		model.getBundle().renameHeader(ICoreConstants.PROVIDE_PACKAGE, Constants.EXPORT_PACKAGE);
 	}
-	
+
 }

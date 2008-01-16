@@ -11,11 +11,8 @@
 
 package org.eclipse.pde.internal.ui.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-
 import com.ibm.icu.text.BreakIterator;
+import java.io.*;
 import org.eclipse.swt.graphics.GC;
 
 /**
@@ -131,8 +128,7 @@ public class LineBreakingReader {
 	}
 
 	private int findWordBegin(int idx) {
-		while (idx < fLine.length()
-				&& Character.isWhitespace(fLine.charAt(idx))) {
+		while (idx < fLine.length() && Character.isWhitespace(fLine.charAt(idx))) {
 			idx++;
 		}
 		return idx;

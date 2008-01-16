@@ -12,14 +12,8 @@ package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
 import org.eclipse.pde.internal.ui.views.plugins.JavaSearchActionGroup;
@@ -27,7 +21,6 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
-
 
 public class PluginSearchResultPage extends AbstractSearchResultPage {
 
@@ -38,44 +31,44 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object object) {
 			if (object instanceof IPluginBase)
-				return ((IPluginBase)object).getId();
-			
+				return ((IPluginBase) object).getId();
+
 			if (object instanceof IPluginImport) {
-				IPluginImport dep = (IPluginImport)object;
-				return dep.getId() 
-					+ " - " //$NON-NLS-1$
-					+ dep.getPluginBase().getId();
-			} 
-			
+				IPluginImport dep = (IPluginImport) object;
+				return dep.getId() + " - " //$NON-NLS-1$
+						+ dep.getPluginBase().getId();
+			}
+
 			if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension)object;
+				IPluginExtension extension = (IPluginExtension) object;
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
-			
+
 			if (object instanceof IPluginExtensionPoint)
-				return ((IPluginExtensionPoint)object).getFullId();
+				return ((IPluginExtensionPoint) object).getFullId();
 
 			return PDEPlugin.getDefault().getLabelProvider().getText(object);
 		}
 	}
-	
+
 	public PluginSearchResultPage() {
 		super();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
-		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
 		ActionContext context = new ActionContext(selection);
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(context);
@@ -87,7 +80,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 			importActionGroup.fillContextMenu(mgr);
 		}
 		mgr.add(new Separator());
-		
+
 		JavaSearchActionGroup jsActionGroup = new JavaSearchActionGroup();
 		jsActionGroup.setContext(new ActionContext(selection));
 		jsActionGroup.fillContextMenu(mgr);
@@ -106,12 +99,11 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	protected ViewerComparator createViewerComparator() {
 		return new ViewerComparator();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 	 */
-	protected void showMatch(Match match, int currentOffset, int currentLength,
-			boolean activate) throws PartInitException {
+	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		ManifestEditorOpener.open(match, activate);
 	}
 

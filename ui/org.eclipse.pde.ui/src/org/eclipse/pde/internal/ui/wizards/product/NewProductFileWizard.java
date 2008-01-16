@@ -11,19 +11,15 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-
 public class NewProductFileWizard extends BasicNewResourceWizard {
-	
+
 	private ProductFileWizardPage fMainPage;
 
 	/* (non-Javadoc)
@@ -48,9 +44,9 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 		}
 		return true;
 	}
-	
+
 	private IRunnableWithProgress getOperation() {
-        IFile file = fMainPage.createNewFile();
+		IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getInitializationOption();
 		if (option == ProductFileWizardPage.USE_LAUNCH_CONFIG)
 			return new ProductFromConfigOperation(file, fMainPage.getSelectedLaunchConfiguration());
@@ -58,16 +54,16 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 			return new ProductFromExtensionOperation(file, fMainPage.getSelectedProduct());
 		return new BaseProductCreationOperation(file);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
-		setWindowTitle(PDEUIMessages.NewProductFileWizard_windowTitle); 
+		setWindowTitle(PDEUIMessages.NewProductFileWizard_windowTitle);
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#initializeDefaultPageImageDescriptor()
 	 */

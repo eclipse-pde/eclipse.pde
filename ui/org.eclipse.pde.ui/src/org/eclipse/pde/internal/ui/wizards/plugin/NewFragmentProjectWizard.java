@@ -11,16 +11,10 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.ui.IWorkingSet;
@@ -33,46 +27,49 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	private FragmentFieldData fFragmentData;
 	private IProjectProvider fProjectProvider;
 	private IConfigurationElement fConfig;
-	
+
 	public NewFragmentProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
-		setWindowTitle(PDEUIMessages.NewFragmentProjectWizard_title); 
+		setWindowTitle(PDEUIMessages.NewFragmentProjectWizard_title);
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fFragmentData = new FragmentFieldData();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fFragmentData, true, getSelection()); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_ftitle); 
-		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_fdesc); 
+		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_ftitle);
+		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_fdesc);
 		addPage(fMainPage);
-		
+
 		fProjectProvider = new IProjectProvider() {
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
+
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
+
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
 		};
-		fContentPage = new FragmentContentPage("page2", fProjectProvider,  fMainPage, fFragmentData); //$NON-NLS-1$
+		fContentPage = new FragmentContentPage("page2", fProjectProvider, fMainPage, fFragmentData); //$NON-NLS-1$
 		addPage(fContentPage);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return (page.isPageComplete() && page!=fMainPage);
+		return (page.isPageComplete() && page != fMainPage);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -83,12 +80,10 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 			fMainPage.updateData();
 			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
-			getContainer().run(false, true,
-					new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));
-			
+			getContainer().run(false, true, new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));
+
 			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
-			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(),
-					workingSets);
+			getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
 
 			return true;
 		} catch (InvocationTargetException e) {
@@ -97,7 +92,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()
 	 */
@@ -112,7 +107,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}
-	
+
 	public String getFragmentId() {
 		return fFragmentData.getId();
 	}

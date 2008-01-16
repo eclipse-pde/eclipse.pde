@@ -10,18 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.jface.text.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.search.ui.text.Match;
@@ -34,7 +24,7 @@ public class ManifestEditorOpener {
 		IEditorPart editorPart = null;
 		editorPart = ManifestEditor.open(match.getElement(), true);
 		if (editorPart != null && editorPart instanceof ManifestEditor) {
-			ManifestEditor editor = (ManifestEditor)editorPart;
+			ManifestEditor editor = (ManifestEditor) editorPart;
 			IDocument doc = editor.getDocument(match);
 			if (doc != null) {
 				Match exact = findExactMatch(doc, match, editor);
@@ -43,37 +33,37 @@ public class ManifestEditorOpener {
 		}
 		return editorPart;
 	}
-	
+
 	public static Match findExactMatch(IDocument document, Match match, IEditorPart editor) {
 		if (match.getOffset() == -1 && match.getBaseUnit() == Match.UNIT_LINE)
-			return new Match(match.getElement(), Match.UNIT_CHARACTER, 0,0);
-		IPluginObject element = (IPluginObject)match.getElement();
+			return new Match(match.getElement(), Match.UNIT_CHARACTER, 0, 0);
+		IPluginObject element = (IPluginObject) match.getElement();
 		String name = null;
 		String value = null;
 		IRegion region = null;
 		// since Extenion and Extension point matches don't contain line #'s, we need handle them differently (by trying to find matches in UI model)
 		if (editor instanceof ManifestEditor && (element instanceof IPluginExtension || element instanceof IPluginExtensionPoint)) {
-			region = getAttributeMatch((ManifestEditor)editor, element, document);
+			region = getAttributeMatch((ManifestEditor) editor, element, document);
 		} else {
 			if (element instanceof IPluginImport) {
 				name = "plugin"; //$NON-NLS-1$
-				value = ((IPluginImport)element).getId();
+				value = ((IPluginImport) element).getId();
 			} else if (element instanceof IPlugin) {
 				name = "id"; //$NON-NLS-1$
-				value = ((IPlugin)element).getId();
+				value = ((IPlugin) element).getId();
 			} else if (element instanceof IFragment) {
 				name = "id"; //$NON-NLS-1$
-				value = ((IFragment)element).getId();
+				value = ((IFragment) element).getId();
 			}
 
-			region  = getAttributeRegionForLine(document, name, value, match.getOffset());
+			region = getAttributeRegionForLine(document, name, value, match.getOffset());
 		}
 		if (region != null) {
 			return new Match(element, Match.UNIT_CHARACTER, region.getOffset(), region.getLength());
-		}	
+		}
 		return match;
 	}
-	
+
 	private static IRegion getAttributeRegionForLine(IDocument document, String name, String value, int line) {
 		try {
 			int offset = document.getLineOffset(line) + document.getLineLength(line);
@@ -82,11 +72,11 @@ public class ManifestEditorOpener {
 		}
 		return null;
 	}
-	
+
 	private static IRegion getAttributeRegion(IDocument document, String name, String value, int offset) {
 		try {
 			FindReplaceDocumentAdapter findReplaceAdapter = new FindReplaceDocumentAdapter(document);
-			IRegion nameRegion = findReplaceAdapter.find(offset, name+"\\s*=\\s*\""+value, false, false, false, true); //$NON-NLS-1$
+			IRegion nameRegion = findReplaceAdapter.find(offset, name + "\\s*=\\s*\"" + value, false, false, false, true); //$NON-NLS-1$
 			if (nameRegion != null) {
 				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value))
 					return new Region(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length());
@@ -95,23 +85,23 @@ public class ManifestEditorOpener {
 		}
 		return null;
 	}
-	
+
 	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
 	public static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
 		IPluginObject[] elements = null;
 		// find equivalent models in UI text model
 		if (object instanceof IPluginExtension)
-			elements =  ((IPluginModelBase)editor.getAggregateModel()).getPluginBase().getExtensions();
+			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensions();
 		else
-			elements = ((IPluginModelBase)editor.getAggregateModel()).getPluginBase().getExtensionPoints();
-		
+			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensionPoints();
+
 		// iterate through the UI text models to find a match for a Search object.
 		for (int i = 0; i < elements.length; i++) {
 			if (object.equals(elements[i])) {
-				int offset = ((PluginObjectNode)elements[i]).getOffset();
-				offset += ((PluginObjectNode)elements[i]).getLength();
-				String name = (object instanceof IPluginExtension) ? "point": "id"; //$NON-NLS-1$ //$NON-NLS-2$
-				String value = (object instanceof IPluginExtension) ? ((IPluginExtension)object).getPoint() : ((IPluginExtensionPoint)object).getId();
+				int offset = ((PluginObjectNode) elements[i]).getOffset();
+				offset += ((PluginObjectNode) elements[i]).getLength();
+				String name = (object instanceof IPluginExtension) ? "point" : "id"; //$NON-NLS-1$ //$NON-NLS-2$
+				String value = (object instanceof IPluginExtension) ? ((IPluginExtension) object).getPoint() : ((IPluginExtensionPoint) object).getId();
 				return getAttributeRegion(document, name, value, offset);
 			}
 		}

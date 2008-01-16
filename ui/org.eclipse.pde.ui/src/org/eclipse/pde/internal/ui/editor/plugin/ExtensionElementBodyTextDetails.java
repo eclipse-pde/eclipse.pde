@@ -22,50 +22,37 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
-import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
-import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * ExtensionElementBodyTextDetails
  *
  */
-public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetails implements
-		IControlHoverContentProvider {
+public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetails implements IControlHoverContentProvider {
 
 	private IPluginElement fPluginElement;
-	
+
 	private ISchemaElement fSchemaElement;
-	
+
 	private FormEntry fTextBody;
-	
+
 	private Section fSectionElementDetails;
-	
+
 	private FormToolkit fToolkit;
-	
+
 	private Hyperlink fHyperlinkBody;
-	
+
 	private IInformationControl fInfoControlHover;
-	
+
 	/**
 	 * 
 	 */
@@ -114,8 +101,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 			}
 		});
 		// Listen to mouse hovers
-		PDETextHover.addHoverListenerToControl(fInfoControlHover,
-				fHyperlinkBody, this);				
+		PDETextHover.addHoverListenerToControl(fInfoControlHover, fHyperlinkBody, this);
 	}
 
 	/**
@@ -142,21 +128,18 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 			return false;
 		}
 		// Create the link
-		TranslationHyperlink link = new TranslationHyperlink(
-				null, 
-				fTextBody.getValue(),
-				fPluginElement.getModel());		
+		TranslationHyperlink link = new TranslationHyperlink(null, fTextBody.getValue(), fPluginElement.getModel());
 		// Open the link
 		link.open();
-		
+
 		return link.getOpened();
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
 	private void createListenersModel() {
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 	}
 
@@ -169,10 +152,9 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 			public void textValueChanged(FormEntry entry) {
 				handleTextBodyValueChanged();
 			}
-		});	
+		});
 		// Listen to mouse hovers
-		PDETextHover.addHoverListenerToControl(fInfoControlHover, fTextBody
-				.getText(), this);				
+		PDETextHover.addHoverListenerToControl(fInfoControlHover, fTextBody.getText(), this);
 	}
 
 	/**
@@ -191,7 +173,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	/**
 	 * @param parent
 	 */
@@ -215,7 +197,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		// Create the client container for the section
 		Composite client = createUISectionContainer(fSectionElementDetails);
 		// Create the info hover control for the body text field and hyperlink
-		createUIInfoHoverControl(client);		
+		createUIInfoHoverControl(client);
 		// Create the body text label
 		createUIHyperlinkBody(client);
 		// Create the body text field 
@@ -232,40 +214,35 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	 */
 	private void createUIInfoHoverControl(Composite client) {
 		// Shared between the body text field and body text hyperlink / label
-		fInfoControlHover = 
-			PDETextHover.getInformationControlCreator().createInformationControl(
-					client.getShell());
+		fInfoControlHover = PDETextHover.getInformationControlCreator().createInformationControl(client.getShell());
 		fInfoControlHover.setSizeConstraints(300, 600);
 	}
-	
+
 	/**
 	 * @param client
 	 */
 	private void createUIHyperlinkBody(Composite client) {
-		fHyperlinkBody = fToolkit.createHyperlink(client,
-				PDEUIMessages.ExtensionElementBodyTextDetails_labelBodyText,
-				SWT.NULL);
+		fHyperlinkBody = fToolkit.createHyperlink(client, PDEUIMessages.ExtensionElementBodyTextDetails_labelBodyText, SWT.NULL);
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private boolean isReferenceModel() {
 		// If the model has no underlying resource, then it is a reference
 		// model
-		if ((fPluginElement == null) ||
-				(fPluginElement.getModel().getUnderlyingResource() == null)) {
+		if ((fPluginElement == null) || (fPluginElement.getModel().getUnderlyingResource() == null)) {
 			return true;
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @param section
 	 * @return
 	 */
 	private Composite createUISectionContainer(Section section) {
-		Composite client = fToolkit.createComposite(section);	
+		Composite client = fToolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		return client;
 	}
@@ -275,8 +252,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	 */
 	private void createUISectionElementDetails(Composite parent) {
 		int section_style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fSectionElementDetails = fToolkit.createSection(parent,
-				section_style);
+		fSectionElementDetails = fToolkit.createSection(parent, section_style);
 		fSectionElementDetails.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSectionElementDetails.setText(PDEUIMessages.ExtensionElementDetails_title);
 		fSectionElementDetails.setDescription(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
@@ -284,11 +260,10 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		int layout_style = GridData.FILL_HORIZONTAL;
 		GridData data = new GridData(layout_style);
 		fSectionElementDetails.setLayoutData(data);
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fSectionElementDetails);		
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fSectionElementDetails);
 	}
 
 	/**
@@ -308,11 +283,10 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the structured selection
-		IStructuredSelection structured_selection = 
-			(IStructuredSelection)selection;
+		IStructuredSelection structured_selection = (IStructuredSelection) selection;
 		// The selection from the master tree viewer is our plugin element data
 		if (structured_selection.size() == 1) {
-			fPluginElement = (IPluginElement)structured_selection.getFirstElement();
+			fPluginElement = (IPluginElement) structured_selection.getFirstElement();
 		} else {
 			fPluginElement = null;
 		}
@@ -337,13 +311,9 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		// Set the general or specifc section description depending if whether
 		// the plugin element data is defined
 		if (fPluginElement == null) {
-			fSectionElementDetails.setDescription(
-					PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
+			fSectionElementDetails.setDescription(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
 		} else {
-			fSectionElementDetails.setDescription(
-					NLS.bind(
-							PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementSpecific, 
-							fPluginElement.getName()));
+			fSectionElementDetails.setDescription(NLS.bind(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementSpecific, fPluginElement.getName()));
 		}
 		// Re-layout the section to properly wrap the new section description
 		fSectionElementDetails.layout();
@@ -363,7 +333,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 			fTextBody.setValue(fPluginElement.getText(), true);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#fireSaveNeeded()
 	 */
@@ -383,7 +353,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
 	 */
 	public PDEFormPage getPage() {
-		return (PDEFormPage)getManagedForm().getContainer();
+		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
 	/* (non-Javadoc)
@@ -413,7 +383,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		updateUI();
 		super.refresh();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#cancelEdit()
 	 */
@@ -421,7 +391,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fTextBody.cancelEdit();
 		super.cancelEdit();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -429,19 +399,19 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fTextBody.commit();
 		super.commit(onSave);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		// Remove the model listener
 		if (model != null) {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFocus()
 	 */
@@ -455,16 +425,15 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	public String getHoverContent(Control control) {
 		// Retrieve either the hyperlink, label or text description as the 
 		// hover content
-		if ((control instanceof Hyperlink) ||
-				(control instanceof Label)) {
+		if ((control instanceof Hyperlink) || (control instanceof Label)) {
 			return getHyperlinkDescription();
 		} else if (control instanceof Text) {
-			return getTextDescription((Text)control);
+			return getTextDescription((Text) control);
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -485,13 +454,13 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		// Ensure there is an associated schema
 		if (fSchemaElement == null) {
 			return null;
-		}		
+		}
 		String bodyText = text.getText();
 		String translatedBodyText = null;
 		// If the text represents a translated string key, retrieve its 
 		// associated value
 		if ((bodyText.startsWith("%")) && //$NON-NLS-1$
-				fSchemaElement.hasTranslatableContent()) { 
+				fSchemaElement.hasTranslatableContent()) {
 			translatedBodyText = fPluginElement.getResourceString(bodyText);
 			// If the value does not equal the key, a value was found
 			if (bodyText.equals(translatedBodyText) == false) {
@@ -501,12 +470,12 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 
 		return null;
 	}
-	
+
 	/**
 	 * @param schemaElement
 	 */
 	public void setSchemaElement(ISchemaElement schemaElement) {
 		fSchemaElement = schemaElement;
 	}
-	
+
 }

@@ -14,13 +14,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 
-
 public abstract class BaseSearchAction extends Action {
 
 	public BaseSearchAction(String text) {
 		setText(text);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -28,7 +27,7 @@ public abstract class BaseSearchAction extends Action {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInBackground(createSearchQuery());
 	}
-	
+
 	protected abstract ISearchQuery createSearchQuery();
 
 }

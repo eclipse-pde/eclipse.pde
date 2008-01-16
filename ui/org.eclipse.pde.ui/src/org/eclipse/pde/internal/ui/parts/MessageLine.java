@@ -11,25 +11,21 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 
 /**
  * A message line displaying a status.
  */
 public class MessageLine extends CLabel {
-	
+
 	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
-	
+
 	private Color fNormalMsgAreaBackground;
-	private Color fErrorMsgAreaBackground;	
+	private Color fErrorMsgAreaBackground;
 
 	/**
 	 * Creates a new message line as a child of the given parent.
@@ -43,11 +39,10 @@ public class MessageLine extends CLabel {
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
-		fNormalMsgAreaBackground= getBackground();
-		fErrorMsgAreaBackground= null;
+		fNormalMsgAreaBackground = getBackground();
+		fErrorMsgAreaBackground = null;
 	}
 
-	
 	private Image findImage(IStatus status) {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		if (status.isOK()) {
@@ -68,31 +63,30 @@ public class MessageLine extends CLabel {
 	 */
 	public void setErrorStatus(IStatus status) {
 		if (status != null) {
-			String message= status.getMessage();
+			String message = status.getMessage();
 			if (message != null && message.length() > 0) {
 				setText(message);
 				setImage(findImage(status));
 				if (fErrorMsgAreaBackground == null) {
-					fErrorMsgAreaBackground= new Color(getDisplay(), ERROR_BACKGROUND_RGB);
+					fErrorMsgAreaBackground = new Color(getDisplay(), ERROR_BACKGROUND_RGB);
 				}
 				setBackground(fErrorMsgAreaBackground);
 				return;
 			}
-		}		
+		}
 		setText(""); //$NON-NLS-1$	
 		setImage(null);
-		setBackground(fNormalMsgAreaBackground);	
+		setBackground(fNormalMsgAreaBackground);
 	}
-	
+
 	/*
 	 * @see Widget#dispose()
 	 */
 	public void dispose() {
 		if (fErrorMsgAreaBackground != null) {
 			fErrorMsgAreaBackground.dispose();
-			fErrorMsgAreaBackground= null;
+			fErrorMsgAreaBackground = null;
 		}
 		super.dispose();
 	}
 }
-

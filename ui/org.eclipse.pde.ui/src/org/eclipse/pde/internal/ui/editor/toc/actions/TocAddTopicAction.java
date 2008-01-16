@@ -25,11 +25,9 @@ public class TocAddTopicAction extends TocAddObjectAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (fParentObject != null)
-		{	//Create a new topic object
-			TocTopic topic = 
-				fParentObject.getModel().getFactory().createTocTopic(); 
-			
+		if (fParentObject != null) { //Create a new topic object
+			TocTopic topic = fParentObject.getModel().getFactory().createTocTopic();
+
 			//Generate the name for the topic
 			String name = PDELabelUtility.generateName(getChildNames(), PDEUIMessages.TocPage_TocTopic);
 			topic.setFieldLabel(name);

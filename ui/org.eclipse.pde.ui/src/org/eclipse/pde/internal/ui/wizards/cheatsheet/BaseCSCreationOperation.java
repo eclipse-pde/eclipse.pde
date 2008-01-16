@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,10 +21,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -34,11 +30,10 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * BaseCheatSheetCreationOperation
  *
  */
-public abstract class BaseCSCreationOperation extends
-		WorkspaceModifyOperation {
+public abstract class BaseCSCreationOperation extends WorkspaceModifyOperation {
 
 	protected IFile fFile;
-	
+
 	/**
 	 * 
 	 */
@@ -56,20 +51,19 @@ public abstract class BaseCSCreationOperation extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEUIMessages.BaseCheatSheetCreationOperation_0, 2); 
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+		monitor.beginTask(PDEUIMessages.BaseCheatSheetCreationOperation_0, 2);
 		createContent();
 		monitor.worked(1);
-        openFile();
-        monitor.done();
+		openFile();
+		monitor.done();
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected abstract void createContent() throws CoreException;
-	
+
 	/**
 	 * 
 	 */
@@ -81,8 +75,7 @@ public abstract class BaseCSCreationOperation extends
 					return;
 				}
 				IWorkbenchPage page = window.getActivePage();
-				if ((page == null) || 
-						!fFile.exists()) {
+				if ((page == null) || !fFile.exists()) {
 					return;
 				}
 				IWorkbenchPart focusPart = page.getActivePart();
@@ -97,8 +90,8 @@ public abstract class BaseCSCreationOperation extends
 				}
 			}
 		});
-	}	
-	
+	}
+
 	/**
 	 * @param text
 	 * @return

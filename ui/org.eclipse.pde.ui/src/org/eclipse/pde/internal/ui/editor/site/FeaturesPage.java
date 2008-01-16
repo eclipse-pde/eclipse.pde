@@ -9,24 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
+
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.DetailsPart;
-import org.eclipse.ui.forms.IDetailsPage;
-import org.eclipse.ui.forms.IDetailsPageProvider;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+
 /**
  * 
  * Features page.
@@ -35,15 +26,17 @@ public class FeaturesPage extends PDEFormPage {
 	public static final String PAGE_ID = "features"; //$NON-NLS-1$
 	private CategorySection fCategorySection;
 	private SiteFeaturesBlock fBlock;
+
 	public class SiteFeaturesBlock extends PDEMasterDetailsBlock {
 		public SiteFeaturesBlock() {
 			super(FeaturesPage.this);
 		}
-		protected PDESection createMasterSection(IManagedForm managedForm,
-				Composite parent) {
+
+		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 			fCategorySection = new CategorySection(getPage(), parent);
 			return fCategorySection;
 		}
+
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
 				public Object getPageKey(Object object) {
@@ -53,6 +46,7 @@ public class FeaturesPage extends PDEFormPage {
 						return ISiteCategoryDefinition.class;
 					return object.getClass();
 				}
+
 				public IDetailsPage getPage(Object key) {
 					if (key.equals(SiteFeatureAdapter.class))
 						return createFeatureDetails();
@@ -63,32 +57,29 @@ public class FeaturesPage extends PDEFormPage {
 			});
 		}
 	}
-	
+
 	public FeaturesPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.FeaturesPage_title); 
+		super(editor, PAGE_ID, PDEUIMessages.FeaturesPage_title);
 		fBlock = new SiteFeaturesBlock();
 	}
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.FeaturesPage_header); 
+		form.setText(PDEUIMessages.FeaturesPage_header);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_XML_OBJ));
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_FEATURES);
 	}
+
 	/**
 	 * @return
 	 */
 	private IDetailsPage createFeatureDetails() {
 		return new PDEDetailsSections() {
-			protected PDESection[] createSections(
-					PDEFormPage page, Composite parent) {
-				return new PDESection[] {
-						new FeatureDetailsSection(getPage(),
-								parent),
-						new PortabilitySection(getPage(),
-								parent) };
+			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
+				return new PDESection[] {new FeatureDetailsSection(getPage(), parent), new PortabilitySection(getPage(), parent)};
 			}
 
 			public String getContextId() {
@@ -99,10 +90,8 @@ public class FeaturesPage extends PDEFormPage {
 
 	private IDetailsPage createCategoryDetails() {
 		return new PDEDetailsSections() {
-			protected PDESection[] createSections(
-					PDEFormPage page, Composite parent) {
-				return new PDESection[] { new CategoryDetailsSection(
-						getPage(), parent) };
+			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
+				return new PDESection[] {new CategoryDetailsSection(getPage(), parent)};
 			}
 
 			public String getContextId() {
@@ -110,7 +99,7 @@ public class FeaturesPage extends PDEFormPage {
 			}
 		};
 	}
-	
+
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/site_map.htm"; //$NON-NLS-1$
 	}

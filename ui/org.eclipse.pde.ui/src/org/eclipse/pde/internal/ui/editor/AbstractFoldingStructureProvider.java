@@ -10,17 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
+import java.util.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
@@ -28,8 +19,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 
-public abstract class AbstractFoldingStructureProvider implements
-IFoldingStructureProvider, IModelChangedListener {
+public abstract class AbstractFoldingStructureProvider implements IFoldingStructureProvider, IModelChangedListener {
 
 	private PDESourcePage fEditor;
 	private IEditingModel fModel;
@@ -40,8 +30,7 @@ IFoldingStructureProvider, IModelChangedListener {
 	}
 
 	public void update() {
-		ProjectionAnnotationModel annotationModel = 
-			(ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel annotationModel = (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
 		if (annotationModel == null)
 			return;
 
@@ -49,7 +38,8 @@ IFoldingStructureProvider, IModelChangedListener {
 		try {
 			addFoldingRegions(currentRegions, fModel);
 			updateFoldingRegions(annotationModel, currentRegions);
-		} catch (BadLocationException e) {}
+		} catch (BadLocationException e) {
+		}
 	}
 
 	public void updateFoldingRegions(ProjectionAnnotationModel model, Set currentRegions) {
@@ -89,8 +79,8 @@ IFoldingStructureProvider, IModelChangedListener {
 	public void modelChanged(IModelChangedEvent event) {
 		update();
 	}
-	
-	public void reconciled(IDocument document){
+
+	public void reconciled(IDocument document) {
 		update();
 	}
 

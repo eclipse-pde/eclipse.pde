@@ -20,9 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.*;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 
 public class PluginStructureCreator extends StructureCreator {
@@ -32,19 +30,19 @@ public class PluginStructureCreator extends StructureCreator {
 	public static final int IMPORT = 2;
 	public static final int EXTENSION_POINT = 3;
 	public static final int EXTENSION = 4;
-	
+
 	static class PluginNode extends DocumentRangeNode implements ITypedElement {
-		
+
 		private final Image image;
 
-		public PluginNode(DocumentRangeNode parent, int type, String id , Image image, IDocument doc, int start, int length) {
+		public PluginNode(DocumentRangeNode parent, int type, String id, Image image, IDocument doc, int start, int length) {
 			super(parent, type, id, doc, start, length);
 			this.image = image;
 			if (parent != null) {
 				parent.addChild(PluginNode.this);
 			}
 		}
-		
+
 		public String getName() {
 			return this.getId();
 		}
@@ -52,24 +50,22 @@ public class PluginStructureCreator extends StructureCreator {
 		public String getType() {
 			return "PLUGIN2"; //$NON-NLS-1$
 		}
-		
+
 		public Image getImage() {
 			return image;
 		}
 	}
-	
+
 	public PluginStructureCreator() {
 		// Nothing to do
 	}
-	
-	protected IStructureComparator createStructureComparator(Object input,
-			IDocument document, ISharedDocumentAdapter adapter,
-			IProgressMonitor monitor) throws CoreException {
+
+	protected IStructureComparator createStructureComparator(Object input, IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
 		final boolean isEditable;
 		if (input instanceof IEditableContent)
-			isEditable= ((IEditableContent) input).isEditable();
-		else 
-			isEditable= false;
+			isEditable = ((IEditableContent) input).isEditable();
+		else
+			isEditable = false;
 
 		// Create a label provider to provide the text of the elements
 		final PDELabelProvider labelProvider = new PDELabelProvider();
@@ -82,6 +78,7 @@ public class PluginStructureCreator extends StructureCreator {
 			public boolean isEditable() {
 				return isEditable;
 			}
+
 			public void dispose() {
 				// Dispose the label provider and the local resource manager
 				labelProvider.dispose();
@@ -96,7 +93,7 @@ public class PluginStructureCreator extends StructureCreator {
 				adapter.disconnect(input);
 			throw ex;
 		}
-		
+
 		return rootNode;
 	}
 
@@ -115,25 +112,21 @@ public class PluginStructureCreator extends StructureCreator {
 		return PDEUIMessages.PluginStructureCreator_name;
 	}
 
-	
-	private void parsePlugin(Object input, DocumentRangeNode rootNode, IDocument document,
-			PDELabelProvider labelProvider, ResourceManager resources, IProgressMonitor monitor) throws CoreException {
+	private void parsePlugin(Object input, DocumentRangeNode rootNode, IDocument document, PDELabelProvider labelProvider, ResourceManager resources, IProgressMonitor monitor) throws CoreException {
 		boolean isFragment = isFragment(input);
 		PluginModelBase model = createModel(input, document, isFragment);
 		try {
 			String id = isFragment ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 			ImageDescriptor icon = isFragment ? PDEPluginImages.DESC_FRAGMENT_MF_OBJ : PDEPluginImages.DESC_PLUGIN_MF_OBJ;
-			PluginNode parent = new PluginNode(rootNode, ROOT, id,
-					resources.createImage(icon), document, 0, document.getLength());
+			PluginNode parent = new PluginNode(rootNode, ROOT, id, resources.createImage(icon), document, 0, document.getLength());
 			createChildren(parent, model, labelProvider, resources);
 		} finally {
 			model.dispose();
 		}
 	}
-	
+
 	private boolean isFragment(Object input) {
-		if (input instanceof ITypedElement &&
-				((ITypedElement)input).getName().equals("fragment.xml")) //$NON-NLS-1$
+		if (input instanceof ITypedElement && ((ITypedElement) input).getName().equals("fragment.xml")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -145,17 +138,17 @@ public class PluginStructureCreator extends StructureCreator {
 		} else {
 			model = new PluginModel(document, false /* isReconciling */);
 		}
-		model.setCharset(getCharset(input));	
+		model.setCharset(getCharset(input));
 		model.load();
 		return model;
 	}
 
 	private String getCharset(Object input) throws CoreException {
 		if (input instanceof IEncodedStreamContentAccessor)
-			return ((IEncodedStreamContentAccessor)input).getCharset();
+			return ((IEncodedStreamContentAccessor) input).getCharset();
 		return ResourcesPlugin.getEncoding();
 	}
-	
+
 	private void createChildren(DocumentRangeNode rootNode, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		createLibraries(rootNode, model, labelProvider, resources);
 		createImports(rootNode, model, labelProvider, labelProvider, resources);
@@ -163,8 +156,7 @@ public class PluginStructureCreator extends StructureCreator {
 		createExtensions(rootNode, model, labelProvider, resources);
 	}
 
-	private void createLibraries(DocumentRangeNode parent,
-			PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
+	private void createLibraries(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		int type = LIBRARY;
 		for (int i = 0; i < libraries.length; i++) {
@@ -182,8 +174,7 @@ public class PluginStructureCreator extends StructureCreator {
 		}
 	}
 
-	private void createExtensionPoints(DocumentRangeNode parent,
-			PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
+	private void createExtensionPoints(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
 		int type = EXTENSION_POINT;
 		for (int i = 0; i < extensionPoints.length; i++) {
@@ -192,8 +183,7 @@ public class PluginStructureCreator extends StructureCreator {
 		}
 	}
 
-	private void createExtensions(DocumentRangeNode parent,
-			PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
+	private void createExtensions(DocumentRangeNode parent, PluginModelBase model, PDELabelProvider labelProvider, ResourceManager resources) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		int type = EXTENSION;
 		for (int i = 0; i < extensions.length; i++) {
@@ -202,8 +192,7 @@ public class PluginStructureCreator extends StructureCreator {
 		}
 	}
 
-	private void createNode(DocumentRangeNode parent, int type,
-			Object element, PDELabelProvider labelProvider, ResourceManager resources) {
+	private void createNode(DocumentRangeNode parent, int type, Object element, PDELabelProvider labelProvider, ResourceManager resources) {
 		if (element instanceof IDocumentElementNode) {
 			IDocumentElementNode node = (IDocumentElementNode) element;
 			ImageDescriptor imageDescriptor = getImageDescriptor(element);
@@ -214,7 +203,7 @@ public class PluginStructureCreator extends StructureCreator {
 			new PluginNode(parent, type, labelProvider.getText(element), image, parent.getDocument(), node.getOffset(), node.getLength());
 		}
 	}
-	
+
 	private ImageDescriptor getImageDescriptor(Object element) {
 		if (element instanceof IPluginImport) {
 			return PDEPluginImages.DESC_REQ_PLUGIN_OBJ;

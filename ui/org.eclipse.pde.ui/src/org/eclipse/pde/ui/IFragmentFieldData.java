@@ -24,12 +24,14 @@ public interface IFragmentFieldData extends IFieldData {
 	 * @return the id of the fragment's plug-in
 	 */
 	String getPluginId();
+
 	/**
 	 * Referenced plug-in version field
 	 * 
 	 * @return the version of the fragment's plug-in
 	 */
 	String getPluginVersion();
+
 	/**
 	 * Referenced plug-in version match choice
 	 * 

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -19,13 +18,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -35,17 +28,13 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
-	
+
 	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments"; //$NON-NLS-1$
 	protected static final String SETTINGS_AUTOBUILD = "autobuild"; //$NON-NLS-1$
-	
+
 	protected PluginImportWizardFirstPage fPage1;
 	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
 	private String fLocation;
@@ -54,14 +43,12 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected TableViewer fImportListViewer;
 	private boolean fRefreshNeeded = true;
 
-	class ContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object element) {
 			return new Object[0];
 		}
 	}
-	
+
 	public BaseImportWizardSecondPage(String pageName, PluginImportWizardFirstPage page) {
 		super(pageName);
 		fPage1 = page;
@@ -76,9 +63,9 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		layout.marginHeight = 0;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_DetailedPage_importList); 
+		label.setText(PDEUIMessages.ImportWizard_DetailedPage_importList);
 
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -92,22 +79,22 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		fImportListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		return container;
 	}
-	
+
 	protected Composite createComputationsOption(Composite parent, int span) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(GridLayoutFactory.swtDefaults().margins(5, 0).create());
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		composite.setLayoutData(gd);
-		
+
 		fAddFragmentsButton = new Button(composite, SWT.CHECK);
-		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments); 
+		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments);
 		fAddFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
 			fAddFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
-		else 
+		else
 			fAddFragmentsButton.setSelection(true);
-		
+
 		if (!PDEPlugin.getWorkspace().isAutoBuilding()) {
 			fAutoBuildButton = new Button(composite, SWT.CHECK);
 			fAutoBuildButton.setText(PDEUIMessages.BaseImportWizardSecondPage_autobuild);
@@ -115,14 +102,14 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			fAutoBuildButton.setSelection(getDialogSettings().getBoolean(SETTINGS_AUTOBUILD));
 		}
 		return composite;
-		
+
 	}
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		PDECore.getDefault().getModelManager().getExternalModelManager().removeModelProviderListener(this);
 	}
-	
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible && isRefreshNeeded()) {
@@ -137,8 +124,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		if (fRefreshNeeded) {
 			fRefreshNeeded = false;
 			fLocation = fPage1.getDropLocation();
-			return true;	
-		}			
+			return true;
+		}
 		String currLocation = fPage1.getDropLocation();
 		if (fLocation == null || !fLocation.equals(currLocation)) {
 			fLocation = fPage1.getDropLocation();
@@ -146,7 +133,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		}
 		return fPage1.isRefreshNeeded();
 	}
-	
+
 	private IPluginModelBase findModel(String id) {
 		for (int i = 0; i < fModels.length; i++) {
 			String modelId = fModels[i].getPluginBase().getId();
@@ -169,11 +156,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
-	protected void addPluginAndDependencies(
-		IPluginModelBase model,
-		ArrayList selected,
-		boolean addFragments) {
-			
+	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+
 		boolean containsVariable = false;
 		if (!selected.contains(model)) {
 			selected.add(model);
@@ -190,12 +174,9 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			addDependencies(model, selected, addFragments || containsVariable || hasextensibleAPI);
 		}
 	}
-	
-	protected void addDependencies(
-		IPluginModelBase model,
-		ArrayList selected,
-		boolean addFragments) {
-		
+
+	protected void addDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
 			for (int i = 0; i < required.length; i++) {
@@ -205,10 +186,10 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 				}
 			}
 		}
-		
+
 		if (addFragments) {
-			if (model instanceof IPluginModel) {	
-				IFragmentModel[] fragments = findFragments(((IPluginModel)model).getPlugin());
+			if (model instanceof IPluginModel) {
+				IFragmentModel[] fragments = findFragments(((IPluginModel) model).getPlugin());
 				for (int i = 0; i < fragments.length; i++) {
 					addPluginAndDependencies(fragments[i], selected, addFragments);
 				}
@@ -221,7 +202,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			}
 		}
 	}
-	
+
 	public IPluginModelBase[] getModelsToImport() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 		ArrayList result = new ArrayList();
@@ -230,21 +211,21 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		}
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
-	
+
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_ADD_FRAGMENTS, fAddFragmentsButton.getSelection());
 		if (fAutoBuildButton != null)
 			settings.put(SETTINGS_AUTOBUILD, fAutoBuildButton.getSelection());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
 	 */
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;
 	}
-	
+
 	public boolean forceAutoBuild() {
 		return fAutoBuildButton != null && getDialogSettings().getBoolean(SETTINGS_AUTOBUILD);
 	}

@@ -13,9 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 
@@ -25,32 +23,33 @@ public class NewExtensionPointWizard extends NewWizard {
 	private IProject project;
 	private IPluginExtensionPoint point;
 	private ManifestEditor editor;
+
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {
-		this(project, model, (IPluginExtensionPoint)null);
+		this(project, model, (IPluginExtensionPoint) null);
 		this.editor = editor;
 	}
 
-	public NewExtensionPointWizard(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
+	public NewExtensionPointWizard(IProject project, IPluginModelBase model, IPluginExtensionPoint point) {
 		initialize();
 		this.project = project;
 		this.model = model;
 		this.point = point;
 	}
 
-	public void initialize(){
+	public void initialize() {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
 		setWindowTitle(PDEUIMessages.NewExtensionPointWizard_wtitle);
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	public void addPages() {
 		mainPage = new NewExtensionPointMainPage(project, model, point);
 		addPage(mainPage);
 	}
 
 	public boolean performFinish() {
-		if (editor!=null)
+		if (editor != null)
 			editor.ensurePluginContextPresence();
 		return mainPage.finish();
 	}

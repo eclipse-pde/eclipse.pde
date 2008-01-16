@@ -11,39 +11,27 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
-import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ltk.core.refactoring.*;
+import org.eclipse.ltk.core.refactoring.participants.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ExternalizeStringsProcessor extends RefactoringProcessor {
 
 	Object[] fChangeFiles = null;
-	
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
-			CheckConditionsContext context) throws CoreException,
-			OperationCanceledException {
+
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		if (fChangeFiles == null)
 			status.addFatalError(PDEUIMessages.ExternalizeStringsProcessor_errorMessage);
 		return status;
 	}
 
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
-	public Change createChange(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(""); //$NON-NLS-1$
 		change.markAsSynthetic();
 		ExternalizeStringsOperation op = new ExternalizeStringsOperation(fChangeFiles, change);
@@ -71,8 +59,7 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 		return true;
 	}
 
-	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
-			SharableParticipants sharedParticipants) throws CoreException {
+	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		return new RefactoringParticipant[0];
 	}
 

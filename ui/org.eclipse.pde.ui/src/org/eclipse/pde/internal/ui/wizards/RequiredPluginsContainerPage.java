@@ -11,27 +11,17 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPageExtension;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.swt.SWT;
@@ -43,9 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-public class RequiredPluginsContainerPage
-	extends WizardPage
-	implements IClasspathContainerPage, IClasspathContainerPageExtension {
+public class RequiredPluginsContainerPage extends WizardPage implements IClasspathContainerPage, IClasspathContainerPageExtension {
 	private IClasspathEntry entry;
 	private TableViewer viewer;
 	private Image projectImage;
@@ -54,9 +42,7 @@ public class RequiredPluginsContainerPage
 	private IClasspathEntry[] realEntries;
 	private IJavaProject javaProject;
 
-	class EntryContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	class EntryContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (realEntries != null)
 				return realEntries;
@@ -73,9 +59,7 @@ public class RequiredPluginsContainerPage
 //		}
 //	}
 
-	class EntryLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
+	class EntryLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getText(Object obj) {
 			IClasspathEntry entry = (IClasspathEntry) obj;
 			int kind = entry.getEntryKind();
@@ -83,9 +67,8 @@ public class RequiredPluginsContainerPage
 				return entry.getPath().segment(0);
 			IPath path = entry.getPath();
 			String name = path.lastSegment();
-			return name
-				+ " - " //$NON-NLS-1$
-				+ path.uptoSegment(path.segmentCount() - 1).toOSString();
+			return name + " - " //$NON-NLS-1$
+					+ path.uptoSegment(path.segmentCount() - 1).toOSString();
 		}
 
 		public Image getImage(Object obj) {
@@ -95,34 +78,31 @@ public class RequiredPluginsContainerPage
 				return projectImage;
 			else if (kind == IClasspathEntry.CPE_LIBRARY) {
 				IPath sourceAtt = entry.getSourceAttachmentPath();
-				return sourceAtt!=null?slibraryImage:libraryImage;
+				return sourceAtt != null ? slibraryImage : libraryImage;
 			}
 			return null;
 		}
+
 		public String getColumnText(Object obj, int col) {
 			return getText(obj);
 		}
+
 		public Image getColumnImage(Object obj, int col) {
 			return getImage(obj);
 		}
 	}
+
 	/**
 	 * The constructor.
 	 */
 	public RequiredPluginsContainerPage() {
 		super("requiredPluginsContainerPage"); //$NON-NLS-1$
-		setTitle(PDEUIMessages.RequiredPluginsContainerPage_title); 
-		setDescription(PDEUIMessages.RequiredPluginsContainerPage_desc); 
-		projectImage =
-			PlatformUI.getWorkbench().getSharedImages().getImage(
-				IDE.SharedImages.IMG_OBJ_PROJECT);
+		setTitle(PDEUIMessages.RequiredPluginsContainerPage_title);
+		setDescription(PDEUIMessages.RequiredPluginsContainerPage_desc);
+		projectImage = PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		//libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
-		libraryImage =
-			JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
-		slibraryImage =
-				JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE);
+		libraryImage = JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
+		slibraryImage = JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE);
 		setImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 	}
 
@@ -134,11 +114,8 @@ public class RequiredPluginsContainerPage
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.RequiredPluginsContainerPage_label); 
-		viewer =
-			new TableViewer(
-				container,
-				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		label.setText(PDEUIMessages.RequiredPluginsContainerPage_label);
+		viewer = new TableViewer(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		viewer.setContentProvider(new EntryContentProvider());
 		viewer.setLabelProvider(new EntryLabelProvider());
 		viewer.setComparator(new ViewerComparator());
@@ -147,15 +124,13 @@ public class RequiredPluginsContainerPage
 		gd.widthHint = 400;
 		gd.heightHint = 300;
 		viewer.getTable().setLayoutData(gd);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(
-			container,
-			IHelpContextIds.PLUGINS_CONTAINER_PAGE);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		if (realEntries != null)
 			initializeView();
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REQUIRED_PLUINGS_CONTAINER);
 	}
 
@@ -175,9 +150,7 @@ public class RequiredPluginsContainerPage
 		return entry;
 	}
 
-	public void initialize(
-		IJavaProject project,
-		IClasspathEntry[] currentEntries) {
+	public void initialize(IJavaProject project, IClasspathEntry[] currentEntries) {
 		javaProject = project;
 	}
 
@@ -204,15 +177,12 @@ public class RequiredPluginsContainerPage
 			IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
 			if (model != null) {
 				IClasspathContainer container = new RequiredPluginsClasspathContainer(model);
-				if (container!=null)
+				if (container != null)
 					realEntries = container.getClasspathEntries();
 			}
 		} else {
 			try {
-				IClasspathContainer container =
-					JavaCore.getClasspathContainer(
-						entry.getPath(),
-						javaProject);
+				IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), javaProject);
 				if (container != null)
 					realEntries = container.getClasspathEntries();
 			} catch (JavaModelException e) {

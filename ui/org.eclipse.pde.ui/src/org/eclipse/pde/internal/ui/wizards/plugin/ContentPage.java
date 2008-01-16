@@ -41,9 +41,9 @@ public abstract class ContentPage extends WizardPage {
 	protected IProjectProvider fProjectProvider;
 
 	protected final static int PROPERTIES_GROUP = 1;
-	
+
 	protected int fChangedGroups = 0;
-	
+
 	protected ModifyListener propertiesListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			if (fInitialized)
@@ -51,8 +51,8 @@ public abstract class ContentPage extends WizardPage {
 			validatePage();
 		}
 	};
-	public ContentPage(String pageName, IProjectProvider provider,
-			NewProjectCreationPage page, AbstractFieldData data) {
+
+	public ContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName);
 		fMainPage = page;
 		fProjectProvider = provider;
@@ -65,8 +65,8 @@ public abstract class ContentPage extends WizardPage {
 		text.addModifyListener(listener);
 		return text;
 	}
-	
-	protected Text createText(Composite parent, ModifyListener listener, int horizSpan){
+
+	protected Text createText(Composite parent, ModifyListener listener, int horizSpan) {
 		Text text = new Text(parent, SWT.BORDER | SWT.SINGLE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = horizSpan;
@@ -74,41 +74,41 @@ public abstract class ContentPage extends WizardPage {
 		text.addModifyListener(listener);
 		return text;
 	}
-	
+
 	protected abstract void validatePage();
 
 	protected String validateProperties() {
-		
+
 		if (!fInitialized) {
-			if (!fIdText.getText().trim().equals(fProjectProvider.getProjectName())) { 
+			if (!fIdText.getText().trim().equals(fProjectProvider.getProjectName())) {
 				setMessage(PDEUIMessages.ContentPage_illegalCharactersInID, INFORMATION);
 			} else {
 				setMessage(null);
 			}
 			return null;
 		}
-		
+
 		setMessage(null);
 		String errorMessage = null;
-		
+
 		// Validate ID
 		errorMessage = validateId();
 		if (errorMessage != null) {
 			return errorMessage;
 		}
-		
+
 		// Validate Version
 		errorMessage = validateVersion(fVersionText);
 		if (errorMessage != null) {
 			return errorMessage;
 		}
-		
+
 		// Validate Name
 		errorMessage = validateName();
 		if (errorMessage != null) {
 			return errorMessage;
 		}
-		
+
 		return null;
 	}
 
@@ -118,11 +118,9 @@ public abstract class ContentPage extends WizardPage {
 	 */
 	protected String validateVersion(Text text) {
 		if (text.getText().trim().length() == 0) {
-			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), 
-				PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
+			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
 		} else if (!isVersionValid(text.getText().trim())) {
-			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), 
-				PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
+			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
 		}
 		return null;
 	}
@@ -132,18 +130,18 @@ public abstract class ContentPage extends WizardPage {
 	 */
 	private String validateName() {
 		if (fNameText.getText().trim().length() == 0) {
-			return PDEUIMessages.ContentPage_noname; 
-		}		
+			return PDEUIMessages.ContentPage_noname;
+		}
 		return null;
 	}
-	
+
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)
-			return PDEUIMessages.ContentPage_noid; 
+			return PDEUIMessages.ContentPage_noid;
 
 		if (!IdUtil.isValidCompositeID(id)) {
-			return PDEUIMessages.ContentPage_invalidId; 
+			return PDEUIMessages.ContentPage_invalidId;
 		}
 		return null;
 	}
@@ -151,7 +149,7 @@ public abstract class ContentPage extends WizardPage {
 	protected boolean isVersionValid(String version) {
 		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
 	}
-	
+
 	public IWizardPage getNextPage() {
 		updateData();
 		return super.getNextPage();
@@ -163,11 +161,11 @@ public abstract class ContentPage extends WizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if (visible) {		
+		if (visible) {
 			String id = computeId();
 			// properties group
 			if ((fChangedGroups & PROPERTIES_GROUP) == 0) {
-				int oldfChanged = fChangedGroups;				
+				int oldfChanged = fChangedGroups;
 				fIdText.setText(id);
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
 				fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
@@ -178,10 +176,10 @@ public abstract class ContentPage extends WizardPage {
 				validatePage();
 			else
 				fInitialized = true;
-		} 
+		}
 		super.setVisible(visible);
 	}
-	
+
 	protected String computeId() {
 		return IdUtil.getValidId(fProjectProvider.getProjectName());
 	}

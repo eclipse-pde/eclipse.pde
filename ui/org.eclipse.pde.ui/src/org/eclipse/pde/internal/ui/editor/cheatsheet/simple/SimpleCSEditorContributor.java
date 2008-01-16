@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPrev
 public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 
 	private SimpleCSPreviewAction fPreviewAction;
-	
+
 	/**
 	 * @param menuName
 	 */
@@ -41,13 +41,13 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 		// Make the preview action
 		fPreviewAction = new SimpleCSPreviewAction();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager, boolean)
 	 */
 	public void contextMenuAboutToShow(IMenuManager manager, boolean addClipboard) {
 		// Get the model
-		ISimpleCSModel model = (ISimpleCSModel)getEditor().getAggregateModel();
+		ISimpleCSModel model = (ISimpleCSModel) getEditor().getAggregateModel();
 		// Set the cheat sheet object
 		fPreviewAction.setDataModelObject(model.getSimpleCS());
 		// Set the editor input
@@ -56,20 +56,20 @@ public class SimpleCSEditorContributor extends PDEFormTextEditorContributor {
 		manager.add(fPreviewAction);
 		manager.add(new Separator());
 		super.contextMenuAboutToShow(manager, addClipboard);
-	}	
+	}
 
 	/**
 	 * @return
 	 */
 	public SimpleCSPreviewAction getPreviewAction() {
 		return fPreviewAction;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor#supportsHyperlinking()
 	 */
 	public boolean supportsHyperlinking() {
 		return true;
 	}
-	
+
 }

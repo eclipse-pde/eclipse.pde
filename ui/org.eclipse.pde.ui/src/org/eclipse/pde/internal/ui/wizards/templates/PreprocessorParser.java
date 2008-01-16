@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.Hashtable;
 import java.util.Stack;
-
 import org.eclipse.pde.ui.templates.IVariableProvider;
 
 public class PreprocessorParser {
@@ -37,24 +36,28 @@ public class PreprocessorParser {
 	private static final int OP_NEQ = 4;
 	private static final int OP_NOT = 5;
 	//private static final int OP_DEFER = 55;
-	
+
 	private IVariableProvider provider;
 	private String line;
-	private Stack exprStack;	
+	private Stack exprStack;
 	private int loc;
 	private String tvalue;
 
 	abstract class Node {
 		abstract Object getValue();
 	}
+
 	class LeafNode extends Node {
 		Object value;
+
 		LeafNode(Object value) {
 			this.value = value;
 		}
+
 		public Object getValue() {
 			return value;
 		}
+
 		public String toString() {
 			if (value != null)
 				return "leaf[" + value.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -114,6 +117,7 @@ public class PreprocessorParser {
 			}
 			return result ? Boolean.TRUE : Boolean.FALSE;
 		}
+
 		public String toString() {
 			String lstring = left != null ? left.toString() : "*"; //$NON-NLS-1$
 			String rstring = right != null ? right.toString() : "*"; //$NON-NLS-1$
@@ -124,16 +128,16 @@ public class PreprocessorParser {
 	class RootEntry {
 		Node root;
 	}
+
 	public PreprocessorParser() {
 		this(null);
 	}
-	
+
 	public PreprocessorParser(IVariableProvider provider) {
 		this.provider = provider;
 		exprStack = new Stack();
 	}
 
-	
 	public void setVariableProvider(IVariableProvider provider) {
 		this.provider = provider;
 	}
@@ -150,7 +154,7 @@ public class PreprocessorParser {
 		});
 		try {
 			boolean value = parser.parseAndEvaluate("!a || (b==\"2\" && c)"); //$NON-NLS-1$
-			System.out.println("Result: "+value); //$NON-NLS-1$
+			System.out.println("Result: " + value); //$NON-NLS-1$
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -164,22 +168,21 @@ public class PreprocessorParser {
 		//printExpression();
 		return evaluate();
 	}
-	
+
 	private boolean evaluate() {
 		boolean result = false;
-		if (exprStack.isEmpty()==false) {
-			RootEntry entry = (RootEntry)exprStack.peek();
+		if (exprStack.isEmpty() == false) {
+			RootEntry entry = (RootEntry) exprStack.peek();
 			if (entry.root != null) {
 				Object value = entry.root.getValue();
-				if (value!=null && value instanceof Boolean) {
-					if (((Boolean)value).equals(Boolean.TRUE)) 
+				if (value != null && value instanceof Boolean) {
+					if (((Boolean) value).equals(Boolean.TRUE))
 						result = true;
 				}
 			}
 		}
 		return result;
 	}
-
 
 	private void reset() {
 		loc = 0;
@@ -200,7 +203,7 @@ public class PreprocessorParser {
 				continue;
 			}
 			if (token == T_TRUE || token == T_FALSE) {
-				Object value = token==T_TRUE?Boolean.TRUE:Boolean.FALSE;
+				Object value = token == T_TRUE ? Boolean.TRUE : Boolean.FALSE;
 				Node node = new LeafNode(value);
 				pushNode(node);
 				continue;
@@ -296,12 +299,10 @@ public class PreprocessorParser {
 		pushNode(entry.root);
 	}
 
-	private void throwUnexpectedToken(String expected, int token)
-		throws Exception {
+	private void throwUnexpectedToken(String expected, int token) throws Exception {
 		String message = "Expected " + expected + ", found " + token; //$NON-NLS-1$ //$NON-NLS-2$
 		throw new Exception(message);
 	}
-
 
 	private int getNextToken() {
 		boolean string = false;
@@ -336,10 +337,10 @@ public class PreprocessorParser {
 					tvalue = line.substring(vloc, loc - 1);
 					string = false;
 					return T_STRING;
-				} 
+				}
 				vloc = loc;
 				string = true;
-				continue;				
+				continue;
 			} else if (string)
 				continue;
 
@@ -358,7 +359,7 @@ public class PreprocessorParser {
 					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
 						return T_TRUE;
 					return T_VAR;
-				} 
+				}
 				continue;
 			}
 
@@ -382,6 +383,7 @@ public class PreprocessorParser {
 			return T_ERROR;
 		}
 	}
+
 	private boolean testSingleToken(char c, char expected) {
 		if (c == expected) {
 			tvalue = "" + expected; //$NON-NLS-1$
@@ -389,6 +391,7 @@ public class PreprocessorParser {
 		}
 		return false;
 	}
+
 	private boolean testDoubleToken(char c1, String pattern) {
 		if (c1 != pattern.charAt(0))
 			return false;

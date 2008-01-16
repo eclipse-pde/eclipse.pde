@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.*;
 import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IRegion;
@@ -25,7 +22,7 @@ import org.eclipse.ui.ide.IDE;
 public class ResourceHyperlink extends AbstractHyperlink {
 
 	private IResource fResource;
-	
+
 	public ResourceHyperlink(IRegion region, String element, IResource res) {
 		super(region, element);
 		fResource = res;
@@ -43,9 +40,9 @@ public class ResourceHyperlink extends AbstractHyperlink {
 		}
 		try {
 			if (resource instanceof IFile) {
-				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
 			} else if (resource != null) {
-				IPackagesViewPart part = (IPackagesViewPart)PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
+				IPackagesViewPart part = (IPackagesViewPart) PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
 				part.selectAndReveal(resource);
 			} else {
 				Display.getDefault().beep();
@@ -63,7 +60,7 @@ public class ResourceHyperlink extends AbstractHyperlink {
 		if (fElement.startsWith("/") == false) { //$NON-NLS-1$
 			// Not an absolute path
 			return null;
-		}	
+		}
 		// Absolute path
 		// Format:  /<project-name>/<path-to-file>
 		// Remove the '/'
@@ -88,5 +85,5 @@ public class ResourceHyperlink extends AbstractHyperlink {
 		// Find the file
 		return project.findMember(fileName);
 	}
-	
+
 }

@@ -18,17 +18,16 @@ import org.eclipse.pde.internal.ui.editor.plugin.BundleFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.plugin.PluginFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.toc.TocFoldingStructureProvider;
 
-
 public class FoldingStructureProviderFactory {
-	
+
 	public static IFoldingStructureProvider createProvider(PDESourcePage editor, IEditingModel model) {
-		if(model instanceof PluginModel) {
+		if (model instanceof PluginModel) {
 			return new PluginFoldingStructureProvider(editor, model);
 		}
-		if(model instanceof BundleModel) {
+		if (model instanceof BundleModel) {
 			return new BundleFoldingStructureProvider(editor, model);
 		}
-		if(model instanceof TocModel) {
+		if (model instanceof TocModel) {
 			return new TocFoldingStructureProvider(editor, model);
 		}
 		return null;

@@ -38,6 +38,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 		else
 			fSize = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
+
 	protected void drawBottomLeft(ImageDescriptor[] overlays) {
 		if (overlays == null)
 			return;
@@ -51,6 +52,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 			}
 		}
 	}
+
 	protected void drawBottomRight(ImageDescriptor[] overlays) {
 		if (overlays == null)
 			return;
@@ -84,6 +86,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 				drawTopLeft(fOverlays[3]);
 		}
 	}
+
 	protected void drawTopLeft(ImageDescriptor[] overlays) {
 		if (overlays == null)
 			return;
@@ -97,6 +100,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 			}
 		}
 	}
+
 	protected void drawTopRight(ImageDescriptor[] overlays) {
 		if (overlays == null)
 			return;

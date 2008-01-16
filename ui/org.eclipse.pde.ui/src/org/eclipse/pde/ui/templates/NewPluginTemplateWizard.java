@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 /**
  * This wizard should be used as a base class for wizards that generate plug-in
  * content using a closed set of templates. These wizards are loaded during new
@@ -21,16 +22,16 @@ package org.eclipse.pde.ui.templates;
  * 
  * @since 2.0
  */
-public abstract class NewPluginTemplateWizard
-		extends
-			AbstractNewPluginTemplateWizard {
+public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateWizard {
 	private ITemplateSection[] sections;
+
 	/**
 	 * Creates a new template wizard.
 	 */
 	public NewPluginTemplateWizard() {
 		sections = createTemplateSections();
 	}
+
 	/**
 	 * Subclasses are required to implement this method by creating templates
 	 * that will appear in this wizard.
@@ -38,6 +39,7 @@ public abstract class NewPluginTemplateWizard
 	 * @return an array of template sections that will appear in this wizard.
 	 */
 	public abstract ITemplateSection[] createTemplateSections();
+
 	/**
 	 * Returns templates that appear in this section.
 	 * 
@@ -46,6 +48,7 @@ public abstract class NewPluginTemplateWizard
 	public final ITemplateSection[] getTemplateSections() {
 		return sections;
 	}
+
 	/**
 	 * Implemented by asking templates in this wizard to contribute pages.
 	 *  

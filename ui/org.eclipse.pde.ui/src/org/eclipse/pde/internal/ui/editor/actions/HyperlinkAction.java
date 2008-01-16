@@ -18,17 +18,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ExtensionHyperLink;
-import org.eclipse.pde.internal.ui.editor.text.BundleHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.PackageHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -82,20 +74,19 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 
 	public void setTextEditor(ITextEditor editor) {
-		StyledText newText = editor instanceof PDESourcePage ? 
-				((PDESourcePage)editor).getViewer().getTextWidget() : null;
-				if (fStyledText != null && fStyledText.equals(newText))
-					return;
+		StyledText newText = editor instanceof PDESourcePage ? ((PDESourcePage) editor).getViewer().getTextWidget() : null;
+		if (fStyledText != null && fStyledText.equals(newText))
+			return;
 
-				// remove the previous listeners if there were any
-				removeListeners();
-				fStyledText = newText;
-				fDetector = editor instanceof PDESourcePage ? (IHyperlinkDetector)((PDESourcePage)editor).getAdapter(IHyperlinkDetector.class) : null;
-				// Add new listeners, if hyperlinks are present
-				addListeners();
+		// remove the previous listeners if there were any
+		removeListeners();
+		fStyledText = newText;
+		fDetector = editor instanceof PDESourcePage ? (IHyperlinkDetector) ((PDESourcePage) editor).getAdapter(IHyperlinkDetector.class) : null;
+		// Add new listeners, if hyperlinks are present
+		addListeners();
 
-				setEnabled(detectHyperlink());
-				generateActionText();
+		setEnabled(detectHyperlink());
+		generateActionText();
 	}
 
 	protected boolean hasDetector() {
@@ -124,7 +115,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 			text = PDEUIMessages.HyperlinkActionOpenTranslation;
 		setText(text);
 		setToolTipText(text);
-	}	
+	}
 
 	public void mouseDoubleClick(MouseEvent e) {
 		// Ignore

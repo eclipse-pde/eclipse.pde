@@ -11,13 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.core.runtime.ListenerList;
-
 
 /**
  * SimpleCSCommandManager
@@ -26,13 +21,13 @@ import org.eclipse.core.runtime.ListenerList;
 public class SimpleCSCommandManager {
 
 	private ListenerList fListeners;
-	
+
 	private static SimpleCSCommandManager fPinstance;
-	
+
 	private Map fCommandMap;
-	
+
 	private boolean fBlockEvents;
-	
+
 	/**
 	 * 
 	 */
@@ -41,21 +36,21 @@ public class SimpleCSCommandManager {
 		fBlockEvents = false;
 		fListeners = null;
 	}
-	
+
 	/**
 	 * @param block
 	 */
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -64,8 +59,8 @@ public class SimpleCSCommandManager {
 			fPinstance = new SimpleCSCommandManager();
 		}
 		return fPinstance;
-	}		
-	
+	}
+
 	/**
 	 * @param key
 	 * @param value
@@ -74,13 +69,11 @@ public class SimpleCSCommandManager {
 	public synchronized boolean put(String key, String value) {
 		// Do not add the key-value pair if it is already in the map
 		if (fCommandMap.containsKey(key)) {
-			String presentValue = (String)fCommandMap.get(key);
-			if ((presentValue == null) &&
-					(value == null)) {
+			String presentValue = (String) fCommandMap.get(key);
+			if ((presentValue == null) && (value == null)) {
 				// Key-value pair not added
 				return false;
-			} else if ((presentValue != null) && 
-					(presentValue.equals(value))) {
+			} else if ((presentValue != null) && (presentValue.equals(value))) {
 				// Key-value pair not added
 				return false;
 			}
@@ -92,15 +85,15 @@ public class SimpleCSCommandManager {
 		// Key-value pair added
 		return true;
 	}
-	
+
 	/**
 	 * @param key
 	 * @return
 	 */
 	public String get(String key) {
-		return (String)fCommandMap.get(key);
+		return (String) fCommandMap.get(key);
 	}
-	
+
 	/**
 	 * @param key
 	 * @return
@@ -108,21 +101,21 @@ public class SimpleCSCommandManager {
 	public boolean hasKey(String key) {
 		return fCommandMap.containsKey(key);
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public Set getKeys() {
 		return fCommandMap.keySet();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public int getSize() {
 		return fCommandMap.size();
 	}
-	
+
 	/**
 	 * @param listener
 	 */
@@ -150,9 +143,7 @@ public class SimpleCSCommandManager {
 	private void fireNewCommandKeyEvent(String key, String value) {
 		// Do not fire the event if there are no listeners or we are blocking
 		// events
-		if ((fBlockEvents == true) ||
-				(fListeners == null) ||
-				(fListeners.size() == 0)) {
+		if ((fBlockEvents == true) || (fListeners == null) || (fListeners.size() == 0)) {
 			return;
 		}
 		// Create the event
@@ -160,9 +151,9 @@ public class SimpleCSCommandManager {
 		// Notify all listeners
 		Object[] listenerList = fListeners.getListeners();
 		for (int i = 0; i < fListeners.size(); i++) {
-			ISimpleCSCommandKeyListener listener = (ISimpleCSCommandKeyListener)listenerList[i];
+			ISimpleCSCommandKeyListener listener = (ISimpleCSCommandKeyListener) listenerList[i];
 			listener.newCommandKey(event);
 		}
-	}	
+	}
 
 }

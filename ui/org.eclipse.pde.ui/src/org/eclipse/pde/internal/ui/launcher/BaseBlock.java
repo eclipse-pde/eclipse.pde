@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
@@ -26,42 +21,35 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 public abstract class BaseBlock {
-	
+
 	protected AbstractLauncherTab fTab;
 
 	private Button fVariablesButton;
 	private Button fFileSystemButton;
 	private Button fWorkspaceButton;
-	
+
 	protected Text fLocationText;
-	
+
 	protected Listener fListener = new Listener();
 
 	protected Label fLocationLabel;
 
-	class Listener extends SelectionAdapter implements ModifyListener {		
+	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
-			Object source= e.getSource();
-			if (source == fFileSystemButton) { 
+			Object source = e.getSource();
+			if (source == fFileSystemButton) {
 				handleBrowseFileSystem();
 			} else if (source == fWorkspaceButton) {
 				handleBrowseWorkspace();
 			} else if (source == fVariablesButton) {
 				handleInsertVariable();
-			} else {			
+			} else {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		}
@@ -70,11 +58,11 @@ public abstract class BaseBlock {
 			fTab.updateLaunchConfigurationDialog();
 		}
 	}
-	
+
 	public BaseBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 	}
-	
+
 	protected void createText(Composite parent, String text, int indent) {
 		fLocationLabel = new Label(parent, SWT.NONE);
 		fLocationLabel.setText(text);
@@ -84,19 +72,19 @@ public abstract class BaseBlock {
 			fLocationLabel.setLayoutData(gd);
 		}
 
-		fLocationText = new Text(parent, SWT.SINGLE|SWT.BORDER);
+		fLocationText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 400;
 		fLocationText.setLayoutData(gd);
 		fLocationText.addModifyListener(fListener);
 	}
-	
+
 	protected void createButtons(Composite parent, String[] buttonLabels) {
 		fWorkspaceButton = createButton(parent, buttonLabels[0]);
 		fFileSystemButton = createButton(parent, buttonLabels[1]);
 		fVariablesButton = createButton(parent, buttonLabels[2]);
 	}
-	
+
 	protected Button createButton(Composite parent, String text) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(text);
@@ -105,76 +93,68 @@ public abstract class BaseBlock {
 		SWTUtil.setButtonDimensionHint(button);
 		return button;
 	}
-		
+
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(fTab.getControl().getShell());
 		dialog.setFilterPath(getLocation());
-		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
-		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
+		dialog.setText(PDEUIMessages.BaseBlock_dirSelection);
+		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose);
 		String result = dialog.open();
 		if (result != null)
 			fLocationText.setText(result);
 	}
-	
+
 	protected void handleBrowseWorkspace() {
-		ContainerSelectionDialog dialog = 
-			new ContainerSelectionDialog(
-					fTab.getControl().getShell(),
-					getContainer(), 
-					true,
-					PDEUIMessages.BaseBlock_relative); 
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(fTab.getControl().getShell(), getContainer(), true, PDEUIMessages.BaseBlock_relative);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 0)
 				return;
-			IPath path = (IPath)result[0];
+			IPath path = (IPath) result[0];
 			fLocationText.setText("${workspace_loc:" + path.makeRelative().toString() + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	protected IContainer getContainer() {
 		String path = getLocation();
 		if (path.length() > 0) {
-		    IResource res = null;
-		    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		    if (path.startsWith("${workspace_loc:")) { //$NON-NLS-1$
-		        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			    try {
-                    path = manager.performStringSubstitution(path, false);
-                    IContainer[] containers = root.findContainersForLocation(new Path(path));
-                    if (containers.length > 0)
-                        res = containers[0];
-                } catch (CoreException e) {
-                }
-			} else {	    
+			IResource res = null;
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			if (path.startsWith("${workspace_loc:")) { //$NON-NLS-1$
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				try {
+					path = manager.performStringSubstitution(path, false);
+					IContainer[] containers = root.findContainersForLocation(new Path(path));
+					if (containers.length > 0)
+						res = containers[0];
+				} catch (CoreException e) {
+				}
+			} else {
 				res = root.findMember(path);
 			}
 			if (res instanceof IContainer) {
-				return (IContainer)res;
+				return (IContainer) res;
 			}
 		}
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
 	private void handleInsertVariable() {
-		StringVariableSelectionDialog dialog = 
-					new StringVariableSelectionDialog(fTab.getControl().getShell());
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(fTab.getControl().getShell());
 		if (dialog.open() == Window.OK)
 			fLocationText.insert(dialog.getVariableExpression());
 	}
-	
+
 	protected String getLocation() {
 		return fLocationText.getText().trim();
 	}
-	
+
 	public String validate() {
-		return (fLocationText.isEnabled() && getLocation().length() == 0)
-					? NLS.bind(PDEUIMessages.BaseBlock_errorMessage, getName())
-					: null;
+		return (fLocationText.isEnabled() && getLocation().length() == 0) ? NLS.bind(PDEUIMessages.BaseBlock_errorMessage, getName()) : null;
 	}
-	
+
 	protected abstract String getName();
-	
+
 	protected void enableBrowseSection(boolean enabled) {
 		fLocationLabel.setEnabled(enabled);
 		fLocationText.setEnabled(enabled);
@@ -183,5 +163,5 @@ public abstract class BaseBlock {
 		fVariablesButton.setEnabled(enabled);
 		fTab.updateLaunchConfigurationDialog();
 	}
-	
+
 }

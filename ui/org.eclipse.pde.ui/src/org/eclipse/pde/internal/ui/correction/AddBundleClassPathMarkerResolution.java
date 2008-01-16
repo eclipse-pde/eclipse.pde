@@ -12,14 +12,11 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class AddBundleClassPathMarkerResolution extends
-AbstractManifestMarkerResolution {
+public class AddBundleClassPathMarkerResolution extends AbstractManifestMarkerResolution {
 
 	private String fValue;
 
@@ -35,7 +32,7 @@ AbstractManifestMarkerResolution {
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {
-			BundleClasspathHeader header = (BundleClasspathHeader)bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			BundleClasspathHeader header = (BundleClasspathHeader) bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if (header != null)
 				header.addLibrary(fValue);
 			else

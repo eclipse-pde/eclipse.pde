@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
+
 import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.swt.dnd.Clipboard;
 
@@ -17,14 +18,15 @@ public class BuildEditorContributor extends PDEFormTextEditorContributor {
 	public BuildEditorContributor() {
 		super("&Build"); //$NON-NLS-1$
 	}
+
 	protected boolean hasKnownTypes(Clipboard clipboard) {
 		return true;
 	}
-	
+
 	public boolean supportsHyperlinking() {
 		return true;
 	}
-	
+
 	public boolean supportsCorrectionAssist() {
 		return true;
 	}

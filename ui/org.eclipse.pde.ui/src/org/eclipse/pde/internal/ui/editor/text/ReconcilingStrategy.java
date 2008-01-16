@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -19,18 +18,20 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 
 public class ReconcilingStrategy implements IReconcilingStrategy {
-	
+
 	private IDocument fDocument;
 	private ArrayList fParticipants = new ArrayList();
-	
-	public ReconcilingStrategy () {
+
+	public ReconcilingStrategy() {
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
 		fDocument = document;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
@@ -38,6 +39,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 		if (fDocument != null)
 			notifyParticipants();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
@@ -45,17 +47,17 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 		if (fDocument != null)
 			notifyParticipants();
 	}
-	
+
 	private synchronized void notifyParticipants() {
 		for (int i = 0; i < fParticipants.size(); i++) {
-			((IReconcilingParticipant)fParticipants.get(i)).reconciled(fDocument);
+			((IReconcilingParticipant) fParticipants.get(i)).reconciled(fDocument);
 		}
 	}
-	
+
 	public void addParticipant(IReconcilingParticipant participant) {
 		fParticipants.add(participant);
 	}
-	
+
 	public void removeParticipant(IReconcilingParticipant participant) {
 		fParticipants.remove(participant);
 	}

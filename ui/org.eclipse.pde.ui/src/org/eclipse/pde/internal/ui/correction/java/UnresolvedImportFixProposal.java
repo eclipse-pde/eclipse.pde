@@ -11,10 +11,7 @@
 package org.eclipse.pde.internal.ui.correction.java;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -39,11 +36,11 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
  * @see UnresolvedImportFixProcessor
  * @see UnresolvedImportDependencyChange
  */
-public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
-		
+public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal {
+
 	private IProject fProject;
 	private ExportPackageDescription fDependency;
-	
+
 	/**
 	 * Constructor
 	 * @param project The project that needs the new required bundle
@@ -58,7 +55,7 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 		fProject = project;
 		fDependency = packageDependency;
 	}
-	
+
 	/**
 	 * Returns the label to use for the proposal and change.
 	 * Label can be different if this is the undo change and
@@ -68,7 +65,7 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	 * @return label to use for the proposal and change
 	 */
 	public abstract String getLabel(boolean isAdd);
-	
+
 	/**
 	 * Return the description that will be displayed for this
 	 * proposal in the 'Additional Information' area of the 
@@ -77,7 +74,7 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	 * @return description to use for this proposal
 	 */
 	public abstract String getDescription();
-	
+
 	/**
 	 * Implementors must handle the addition or removal of the given package
 	 * as a dependency for the given model in this method.
@@ -94,7 +91,7 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		return new UnresolvedImportDependencyChange(fProject,fDependency, true);
+		return new UnresolvedImportDependencyChange(fProject, fDependency, true);
 	}
 
 	/* (non-Javadoc)
@@ -103,7 +100,7 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	public String getAdditionalProposalInfo() {
 		return getDescription();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getDisplayString()
 	 */
@@ -117,18 +114,18 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	public int getRelevance() {
 		return 16;
 	}
-	
+
 	/**
 	 * @return the project this proposal will change with the new dependency
 	 */
-	public IProject getProject(){
+	public IProject getProject() {
 		return fProject;
 	}
-	
+
 	/**
 	 * @return the package dependency this proposal is offering add
 	 */
-	public ExportPackageDescription getDependency(){
+	public ExportPackageDescription getDependency() {
 		return fDependency;
 	}
 
@@ -138,12 +135,12 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 	 * @see UnresolvedImportFixProposal 
 	 * @see UnresolvedImportFixProcessor
 	 */
-	private class UnresolvedImportDependencyChange extends Change{
+	private class UnresolvedImportDependencyChange extends Change {
 
 		private IProject fBaseProject;
 		private ExportPackageDescription fDependency;
 		private boolean fIsAdd;
-		
+
 		/**
 		 * Constructor
 		 * @param project the project to change dependency on
@@ -153,17 +150,17 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 		public UnresolvedImportDependencyChange(IProject project, ExportPackageDescription packageDescription, boolean isAdd) {
 			fBaseProject = project;
 			fDependency = packageDescription;
-			fIsAdd= isAdd;
+			fIsAdd = isAdd;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public Change perform(IProgressMonitor pm) throws CoreException {
-			ModelModification modelMod = new ModelModification(fBaseProject){
+			ModelModification modelMod = new ModelModification(fBaseProject) {
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 					if (model instanceof IPluginModelBase) {
-						handleDependencyChange(monitor, (IPluginModelBase)model, fDependency, fIsAdd);
+						handleDependencyChange(monitor, (IPluginModelBase) model, fDependency, fIsAdd);
 					}
 				}
 			};
@@ -171,27 +168,27 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 			// Return the undo action to do the opposite
 			return new UnresolvedImportDependencyChange(fBaseProject, fDependency, !fIsAdd);
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,	OperationCanceledException {
+		public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return RefactoringStatus.create(Status.OK_STATUS);
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void initializeValidationData(IProgressMonitor pm) {
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 		 */
 		public String getName() {
 			return getLabel(fIsAdd);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 		 */
@@ -199,5 +196,5 @@ public abstract class UnresolvedImportFixProposal extends ClasspathFixProposal{
 			return fBaseProject;
 		}
 	}
-	
+
 }

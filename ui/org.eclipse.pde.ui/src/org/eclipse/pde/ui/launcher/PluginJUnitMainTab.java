@@ -29,7 +29,7 @@ public class PluginJUnitMainTab extends MainTab {
 	protected void createProgramBlock() {
 		fProgramBlock = new JUnitProgramBlock(this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -39,6 +39,5 @@ public class PluginJUnitMainTab extends MainTab {
 		fProgramBlock.setDefaults(config);
 		fJreBlock.setDefaults(config);
 	}
-	
 
 }

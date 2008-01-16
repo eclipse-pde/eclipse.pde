@@ -10,26 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class PDEPreferencesUtil {
-	
+
 	public static boolean showPreferencePage(String[] pageIds, final Shell shell) {
 		final PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell, pageIds[0], pageIds, null);
 		return dialog.open() == Window.OK;
 	}
-	
+
 	public static boolean showPreferencePage(final IPreferenceNode targetNode, Shell shell) {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
-		final boolean[] result = new boolean[] { false };
+		final boolean[] result = new boolean[] {false};
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();
@@ -40,6 +38,5 @@ public class PDEPreferencesUtil {
 		});
 		return result[0];
 	}
-
 
 }

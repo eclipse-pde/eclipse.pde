@@ -18,16 +18,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class FeatureSpecPage extends AbstractFeatureSpecPage {
 
 	private Text fFeatureProviderText;
 	private Text fFeatureIdText;
-	
+
 	public FeatureSpecPage() {
 		super();
 		setTitle(PDEUIMessages.NewFeatureWizard_SpecPage_title);
@@ -43,7 +40,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		fFeatureVersionText.setText("1.0.0"); //$NON-NLS-1$
 		setMessage(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 	}
-	
+
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = fFeatureIdText.getText();
@@ -58,44 +55,43 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		setMessage(null);
 		return null;
 	}
-	
+
 	protected String getHelpId() {
 		return IHelpContextIds.NEW_FEATURE_DATA;
 	}
-	
+
 	protected void createContents(Composite container) {
 		Group group = new Group(container, SWT.NULL);
 		group.setLayout(new GridLayout(2, false));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalIndent = 10;
 		group.setLayoutData(gd);
-		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
-		
+		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title);
+
 		Label label = new Label(group, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
 		fFeatureIdText = new Text(group, SWT.BORDER);
 		fFeatureIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		createCommonInput(group);
-		
+
 		label = new Label(group, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_provider);
 		fFeatureProviderText = new Text(group, SWT.BORDER);
 		fFeatureProviderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		createInstallHandlerText(group);
 	}
-	
+
 	protected void attachListeners(ModifyListener listener) {
 		fFeatureProviderText.addModifyListener(listener);
 		fFeatureIdText.addModifyListener(listener);
 	}
-	
+
 	protected String getFeatureId() {
 		return fFeatureIdText.getText();
 	}
-	
-	
+
 	protected void updateNameRelativeFields() {
 		if (fFeatureIdText == null || fFeatureNameText == null)
 			return;

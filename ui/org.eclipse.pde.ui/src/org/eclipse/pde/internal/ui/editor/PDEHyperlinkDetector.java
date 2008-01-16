@@ -15,10 +15,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
 /**
@@ -27,7 +24,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
  */
 public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;	
+	private PDESourcePage fSourcePage;
 
 	/**
 	 * @param page
@@ -39,8 +36,7 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer,
-			IRegion region, boolean canShowMultipleHyperlinks) {
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 
 		if (region == null || canShowMultipleHyperlinks)
 			return null;
@@ -48,14 +44,14 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
 		if (!XMLUtil.withinRange(element, region.getOffset()))
 			return null;
-		
+
 		if (element instanceof IDocumentAttributeNode)
-			return detectAttributeHyperlink((IDocumentAttributeNode)element);
+			return detectAttributeHyperlink((IDocumentAttributeNode) element);
 		if (element instanceof IDocumentElementNode)
-			return detectNodeHyperlink((IDocumentElementNode)element);
+			return detectNodeHyperlink((IDocumentElementNode) element);
 		if (element instanceof IDocumentTextNode)
-			return detectTextNodeHyperlink((IDocumentTextNode)element);
-		return null;		
+			return detectTextNodeHyperlink((IDocumentTextNode) element);
+		return null;
 	}
 
 	/**
@@ -65,7 +61,7 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		return null;
 	}
-	
+
 	/**
 	 * @param node
 	 * @return
@@ -73,7 +69,7 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	protected IHyperlink[] detectNodeHyperlink(IDocumentElementNode node) {
 		return null;
 	}
-	
+
 	/**
 	 * @param node
 	 * @return
@@ -81,5 +77,5 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
 		return null;
 	}
-	
+
 }

@@ -23,14 +23,13 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 public class TypeFieldAssistDisposer {
 
 	private ContentAssistCommandAdapter fAdapter;
-	
+
 	private TypeContentProposalListener fListener;
-	
+
 	/**
 	 * 
 	 */
-	public TypeFieldAssistDisposer(ContentAssistCommandAdapter adapter,
-			TypeContentProposalListener listener) {
+	public TypeFieldAssistDisposer(ContentAssistCommandAdapter adapter, TypeContentProposalListener listener) {
 		fAdapter = adapter;
 		fListener = listener;
 	}
@@ -50,11 +49,9 @@ public class TypeFieldAssistDisposer {
 		}
 		// Remove the listeners
 		if (fListener != null) {
-			fAdapter.removeContentProposalListener(
-					(IContentProposalListener) fListener);
-			fAdapter.removeContentProposalListener(
-					(IContentProposalListener2) fListener);
+			fAdapter.removeContentProposalListener((IContentProposalListener) fListener);
+			fAdapter.removeContentProposalListener((IContentProposalListener2) fListener);
 		}
 	}
-	
+
 }

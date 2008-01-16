@@ -13,11 +13,7 @@ package org.eclipse.pde.internal.ui.util;
 
 import java.util.HashSet;
 import java.util.Locale;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -29,7 +25,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 public class FileExtensionsFilter extends ViewerFilter {
 
 	private HashSet fExtensions;
-	
+
 	/**
 	 * 
 	 */
@@ -44,10 +40,10 @@ public class FileExtensionsFilter extends ViewerFilter {
 		// Select based on type
 		if (element instanceof IFile) {
 			// Files (IFile)
-			return processFile((IFile)element);
-		} else if (element instanceof IContainer) { 
+			return processFile((IFile) element);
+		} else if (element instanceof IContainer) {
 			// Projects (IProject), Folders (IFolder)
-			return processContainer((IContainer)element, viewer, parentElement);
+			return processContainer((IContainer) element, viewer, parentElement);
 		}
 		return false;
 	}
@@ -58,14 +54,13 @@ public class FileExtensionsFilter extends ViewerFilter {
 	 */
 	private boolean processContainer(IContainer container, Viewer viewer, Object parentElement) {
 		// Skip closed projects
-		if ((container instanceof IProject) && 
-				(((IProject)container).isOpen() == false)) {
+		if ((container instanceof IProject) && (((IProject) container).isOpen() == false)) {
 			return false;
 		}
 		// Process the container's members
 		try {
 			IResource[] resources = container.members();
-			for (int i = 0; i < resources.length; i++){
+			for (int i = 0; i < resources.length; i++) {
 				if (select(viewer, parentElement, resources[i])) {
 					return true;
 				}
@@ -94,7 +89,7 @@ public class FileExtensionsFilter extends ViewerFilter {
 		// Get the file's extension (remove dot)
 		String extension = fileName.substring(lastDotIndex + 1);
 		// Check to see if the extension should be filtered
-		return fExtensions.contains(extension); 
+		return fExtensions.contains(extension);
 	}
 
 	/**
@@ -103,5 +98,5 @@ public class FileExtensionsFilter extends ViewerFilter {
 	public void addFileExtension(String extension) {
 		fExtensions.add(extension);
 	}
-	
+
 }

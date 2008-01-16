@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,24 +26,21 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.update.core.Utilities;
 
-
 public class ShowDescriptionAction extends Action {
 	private String fPointID;
 	private ISchema fSchema;
 	private File fPreviewFile;
 	private boolean fForceExternal;
-	
+
 	private static File fTempWorkingDir;
-	
+
 	public ShowDescriptionAction(String pointID) {
 		fPointID = pointID;
 		initialize();
@@ -57,39 +49,39 @@ public class ShowDescriptionAction extends Action {
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		this(point, false);
 	}
-	
+
 	public ShowDescriptionAction(IPluginExtensionPoint point, boolean forceExternal) {
 		setExtensionPoint(point.getFullId());
 		fForceExternal = forceExternal;
 		initialize();
 	}
-	
+
 	public ShowDescriptionAction(IPluginExtensionPoint point, String pointID) {
 		setExtensionPoint(pointID);
 		fForceExternal = false;
 		initialize();
 	}
-	
+
 	public ShowDescriptionAction(ISchema schema) {
 		setSchema(schema);
 		initialize();
 	}
-	
+
 	private void initialize() {
 		setImageDescriptor(PDEPluginImages.DESC_DOC_SECTION_OBJ);
 	}
-	
+
 	public void setSchema(ISchema schema) {
 		fSchema = schema;
 		fPointID = schema.getQualifiedPointId();
 	}
-	
+
 	public void setExtensionPoint(String pointID) {
 		fPointID = pointID;
-		setText(PDEUIMessages.ShowDescriptionAction_label); 
+		setText(PDEUIMessages.ShowDescriptionAction_label);
 		fSchema = null;
 	}
-	
+
 	public void run() {
 		if (fSchema == null) {
 			IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(fPointID);
@@ -101,16 +93,16 @@ public class ShowDescriptionAction extends Action {
 					fSchema = desc.getSchema(false);
 				}
 			}
-			if (point == null|| url == null || fSchema == null) {
+			if (point == null || url == null || fSchema == null) {
 				showNoSchemaMessage();
 				return;
 			}
-		} 
+		}
 		showSchemaDocument();
 	}
-	
+
 	private void showNoSchemaMessage() {
-		String title = PDEUIMessages.ShowDescriptionAction_title; 
+		String title = PDEUIMessages.ShowDescriptionAction_title;
 		String message;
 		if (fPointID == null || fPointID.startsWith("null")) //$NON-NLS-1$
 			message = PDEUIMessages.ShowDescriptionAction_schemaNotAvail;
@@ -128,7 +120,7 @@ public class ShowDescriptionAction extends Action {
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(fPreviewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(fSchema, printWriter); 
+			transformer.transform(fSchema, printWriter);
 			os.flush();
 			os.close();
 			showURL(fPreviewFile, fForceExternal);
@@ -139,7 +131,7 @@ public class ShowDescriptionAction extends Action {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	/**
 	 * @return
 	 * @throws IOException
@@ -149,28 +141,25 @@ public class ShowDescriptionAction extends Action {
 			fTempWorkingDir = Utilities.createWorkingDirectory();
 		}
 		return fTempWorkingDir;
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
-	private File getTempPreviewFile(){
+	private File getTempPreviewFile() {
 		// Get the temporary working directory
 		File tempWorkingDir = null;
 		try {
 			tempWorkingDir = getTempWorkingDir();
 		} catch (IOException e) {
 			return null;
-		}	
+		}
 		// Generate a consistent unique preview file name for this schema
 		StringBuffer previewFileName = new StringBuffer();
 		previewFileName.append("pde_schema_"); //$NON-NLS-1$
 		previewFileName.append(fSchema.getQualifiedPointId().replace('.', '-'));
-		previewFileName.append("_preview.html");			 //$NON-NLS-1$
-		File previewFile = new File(
-			tempWorkingDir.getPath() + 
-			File.separatorChar + 
-			previewFileName.toString());
+		previewFileName.append("_preview.html"); //$NON-NLS-1$
+		File previewFile = new File(tempWorkingDir.getPath() + File.separatorChar + previewFileName.toString());
 		// If the file does not exist yet, create it within the temporary
 		// working diretory
 		if (previewFile.exists() == false) {
@@ -182,10 +171,10 @@ public class ShowDescriptionAction extends Action {
 			// Mark file for deletion on VM exit
 			previewFile.deleteOnExit();
 		}
-		
+
 		return previewFile;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -207,13 +196,12 @@ public class ShowDescriptionAction extends Action {
 		// This is handled in
 		// org.eclipse.pde.internal.core.WorkspacePluginModelManager.handleEclipseSchemaDelta(IFile, IResourceDelta)
 		try {
-			schemaFile.setSessionProperty(
-					PDECore.SCHEMA_PREVIEW_FILE, fPreviewFile);
+			schemaFile.setSessionProperty(PDECore.SCHEMA_PREVIEW_FILE, fPreviewFile);
 		} catch (CoreException e) {
 			// Ignore
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -225,35 +213,29 @@ public class ShowDescriptionAction extends Action {
 		// Get the Java schema file
 		File javaSchemaFile = new File(fSchema.getURL().getFile());
 		// Get the Eclipse schema file
-		IFile[] eclipseSchemaFiles = 
-			ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
-				javaSchemaFile.toURI());
+		IFile[] eclipseSchemaFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(javaSchemaFile.toURI());
 		// Ensure the file was found in the workspace
 		if (eclipseSchemaFiles.length == 0) {
 			return null;
 		}
 		return eclipseSchemaFiles[0];
 	}
-	
+
 	private void showURL(File file, boolean forceExternal) {
 		try {
 			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 			URL url = file.toURL();
-			
+
 			if (forceExternal) {
 				IWebBrowser browser = support.getExternalBrowser();
-				browser.openURL(url); 
+				browser.openURL(url);
 			} else {
-				IWebBrowser browser = support.createBrowser(
-						IWorkbenchBrowserSupport.AS_EDITOR
-								| IWorkbenchBrowserSupport.STATUS,
-						"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
-				browser.openURL(url); 
+				IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR | IWorkbenchBrowserSupport.STATUS, "org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
+				browser.openURL(url);
 			}
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
-		}
-		catch (PartInitException e) {
+		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}

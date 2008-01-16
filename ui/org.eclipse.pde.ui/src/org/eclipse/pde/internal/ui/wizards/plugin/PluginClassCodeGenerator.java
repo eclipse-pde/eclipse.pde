@@ -9,18 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 
+import java.io.*;
+import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.ui.templates.PluginReference;
@@ -31,8 +25,7 @@ public class PluginClassCodeGenerator {
 	private String fQualifiedClassName;
 	private boolean fGenerateTemplate;
 
-	public PluginClassCodeGenerator(IProject project, String qualifiedClassName,
-			PluginFieldData data, boolean generateTemplate) {
+	public PluginClassCodeGenerator(IProject project, String qualifiedClassName, PluginFieldData data, boolean generateTemplate) {
 		fProject = project;
 		fQualifiedClassName = qualifiedClassName;
 		fPluginData = data;
@@ -41,8 +34,7 @@ public class PluginClassCodeGenerator {
 
 	public IFile generate(IProgressMonitor monitor) throws CoreException {
 		int nameloc = fQualifiedClassName.lastIndexOf('.');
-		String packageName = (nameloc == -1)
-				? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
+		String packageName = (nameloc == -1) ? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
 		String className = fQualifiedClassName.substring(nameloc + 1);
 
 		IPath path = new Path(packageName.replace('.', '/'));
@@ -54,7 +46,7 @@ public class PluginClassCodeGenerator {
 		IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		if (fPluginData.getOSGiFramework() != null){ 
+		if (fPluginData.getOSGiFramework() != null) {
 			generateActivatorClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);
@@ -62,8 +54,7 @@ public class PluginClassCodeGenerator {
 		writer.flush();
 		try {
 			swriter.close();
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString()
-					.getBytes(fProject.getDefaultCharset()));
+			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes(fProject.getDefaultCharset()));
 			if (file.exists())
 				file.setContents(stream, false, true, monitor);
 			else
@@ -75,8 +66,7 @@ public class PluginClassCodeGenerator {
 		return file;
 	}
 
-	private void generatePluginClass(String packageName, String className,
-			PrintWriter writer) {
+	private void generatePluginClass(String packageName, String className, PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
 			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
@@ -148,21 +138,20 @@ public class PluginClassCodeGenerator {
 		writer.println();
 		if (fPluginData.isUIPlugin() && fGenerateTemplate) {
 			writer.println("\t/**"); //$NON-NLS-1$
-		    writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
-		    writer.println("\t * plug-in relative path"); //$NON-NLS-1$
-		    writer.println("\t *"); //$NON-NLS-1$
-		    writer.println("\t * @param path the path"); //$NON-NLS-1$
-		    writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
-		    writer.println("\t */"); //$NON-NLS-1$
-		    writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
-		    writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ //$NON-NLS-2$
-		    writer.println("\t}"); //$NON-NLS-1$
+			writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
+			writer.println("\t * plug-in relative path"); //$NON-NLS-1$
+			writer.println("\t *"); //$NON-NLS-1$
+			writer.println("\t * @param path the path"); //$NON-NLS-1$
+			writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
+			writer.println("\t */"); //$NON-NLS-1$
+			writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
+			writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$
 	}
 
-	private void generateActivatorClass(String packageName, String className,
-			PrintWriter writer) {
+	private void generateActivatorClass(String packageName, String className, PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
 			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
@@ -197,11 +186,10 @@ public class PluginClassCodeGenerator {
 			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
-	
+
 	public String[] getImportPackages() {
-		return fPluginData.getOSGiFramework() != null 
-					? new String[] {"org.osgi.framework;version=\"1.3.0\""}  //$NON-NLS-1$
-					: new String[0]; 
+		return fPluginData.getOSGiFramework() != null ? new String[] {"org.osgi.framework;version=\"1.3.0\""} //$NON-NLS-1$
+				: new String[0];
 	}
 
 }

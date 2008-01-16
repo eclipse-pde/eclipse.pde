@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
-
 /**
  * NewSimpleCheatSheetFileWizard
  *
@@ -29,8 +28,8 @@ public class NewSimpleCSFileWizard extends NewCSFileWizard {
 	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new SimpleCSFileWizardPage(getSelection()); 
+		fMainPage = new SimpleCSFileWizardPage(getSelection());
 		addPage(fMainPage);
 	}
-	
+
 }

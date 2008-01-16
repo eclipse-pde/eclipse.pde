@@ -15,7 +15,6 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
-
 public class TargetInputContextManager extends InputContextManager {
 
 	/**
@@ -24,7 +23,7 @@ public class TargetInputContextManager extends InputContextManager {
 	public TargetInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
 	 */

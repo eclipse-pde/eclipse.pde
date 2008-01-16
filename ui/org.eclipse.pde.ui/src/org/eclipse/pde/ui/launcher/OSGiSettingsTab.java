@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.ConfigurationAreaBlock;
 import org.eclipse.pde.internal.ui.launcher.JREBlock;
 import org.eclipse.swt.SWT;
@@ -35,12 +33,12 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  */
 public class OSGiSettingsTab extends AbstractLauncherTab {
-	
+
 	private JREBlock fJREBlock;
 	private ConfigurationAreaBlock fConfigurationBlock;
 	private Image fImage;
 	private boolean fInitializing = false;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -50,7 +48,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		fJREBlock = new JREBlock(this);
 		fConfigurationBlock = new ConfigurationAreaBlock(this);
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -59,15 +57,15 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fJREBlock.createControl(container);
 		fConfigurationBlock.createControl(container);
-		
+
 		Dialog.applyDialogFont(container);
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -75,7 +73,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		fJREBlock.setDefaults(configuration);
 		fConfigurationBlock.setDefaults(configuration, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -88,7 +86,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		} catch (CoreException e) {
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -96,15 +94,15 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		fJREBlock.performApply(configuration);
 		fConfigurationBlock.performApply(configuration);
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.EquinoxSettingsTab_name; 
+		return PDEUIMessages.EquinoxSettingsTab_name;
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
@@ -112,7 +110,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
@@ -128,7 +126,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	 */
 	public void validateTab() {
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#updateLaunchConfigurationDialog()

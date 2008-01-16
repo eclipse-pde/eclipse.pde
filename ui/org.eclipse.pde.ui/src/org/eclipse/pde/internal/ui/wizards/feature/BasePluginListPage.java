@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class BasePluginListPage extends WizardPage {
 	protected WizardCheckboxTablePart tablePart;
+
 	/**
 	 * @param pageName
 	 */
@@ -33,8 +34,7 @@ public class BasePluginListPage extends WizardPage {
 	 * @param title
 	 * @param titleImage
 	 */
-	public BasePluginListPage(String pageName, String title,
-			ImageDescriptor titleImage) {
+	public BasePluginListPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 		tablePart = new WizardCheckboxTablePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -46,12 +46,12 @@ public class BasePluginListPage extends WizardPage {
 	public void createControl(Composite parent) {
 
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
-	
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {

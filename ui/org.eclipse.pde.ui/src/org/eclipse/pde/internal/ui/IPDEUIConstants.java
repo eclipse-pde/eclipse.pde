@@ -28,29 +28,24 @@ public interface IPDEUIConstants {
 	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView"; //$NON-NLS-1$
 	String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView"; //$NON-NLS-1$
 	String PERSPECTIVE_ID = "org.eclipse.pde.ui.PDEPerspective"; //$NON-NLS-1$
-	
+
 	String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
 	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
-	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath"; //$NON-NLS-1$ //$NON-NLS-2$
+	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "." + "systemFilePath"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	QualifiedName PROPERTY_EDITOR_PAGE_KEY =
-		new QualifiedName(PLUGIN_ID, "editor-page-key");	 //$NON-NLS-1$
-	QualifiedName PROPERTY_MANIFEST_EDITOR_PAGE_KEY =
-		new QualifiedName(PLUGIN_ID, "manifest-editor-page-key");	 //$NON-NLS-1$
-	QualifiedName DEFAULT_PRODUCT_EXPORT_LOCATION =
-		new QualifiedName(PLUGIN_ID, "product-export-location");	 //$NON-NLS-1$
-	QualifiedName DEFAULT_PRODUCT_EXPORT_DIR =
-		new QualifiedName(PLUGIN_ID, "product-export-type");	 //$NON-NLS-1$
-	QualifiedName DEFAULT_PRODUCT_EXPORT_ROOT =
-		new QualifiedName(PLUGIN_ID, "product-export-root");	 //$NON-NLS-1$
+	QualifiedName PROPERTY_EDITOR_PAGE_KEY = new QualifiedName(PLUGIN_ID, "editor-page-key"); //$NON-NLS-1$
+	QualifiedName PROPERTY_MANIFEST_EDITOR_PAGE_KEY = new QualifiedName(PLUGIN_ID, "manifest-editor-page-key"); //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_LOCATION = new QualifiedName(PLUGIN_ID, "product-export-location"); //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_DIR = new QualifiedName(PLUGIN_ID, "product-export-type"); //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_ROOT = new QualifiedName(PLUGIN_ID, "product-export-root"); //$NON-NLS-1$
 
 	String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
-		
+
 	// JUnit application identifiers
 	String LEGACY_UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
 	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
-	
+
 	/**
 	 * Launch configuration attribute key.  The value is a boolean specifies
 	 * whether the launch configuration is being restarted.  This does not need to 
@@ -69,5 +64,5 @@ public interface IPDEUIConstants {
 	String LAUNCHER_PDE_VERSION = "pde.version"; //$NON-NLS-1$
 	String APPEND_ARGS_EXPLICITLY = "append.args"; //$NON-NLS-1$
 	String GENERATED_CONFIG = "pde.generated.config"; //$NON-NLS-1$
-	
+
 }

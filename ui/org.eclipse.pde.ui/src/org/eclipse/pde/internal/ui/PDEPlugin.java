@@ -13,21 +13,14 @@ package org.eclipse.pde.internal.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Hashtable;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
-import org.eclipse.pde.internal.ui.launcher.LaunchListener;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -43,14 +36,14 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	// Shared instance
 	private static PDEPlugin fInstance;
-	
+
 	// Launches listener
 	private LaunchListener fLaunchListener;
-	
+
 	private BundleContext fBundleContext;
 
 	private java.util.Hashtable fCounters;
-	
+
 	// Shared colors for all forms
 	private FormColors fFormColors;
 	private PDELabelProvider fLabelProvider;
@@ -67,14 +60,15 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	public PDEPlugin() {
 		fInstance = this;
 	}
-	
+
 	public URL getInstallURL() {
 		return getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 	}
-	
+
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
+
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
@@ -82,25 +76,29 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		}
 		return null;
 	}
+
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
+
 	public static PDEPlugin getDefault() {
 		return fInstance;
 	}
+
 	public Hashtable getDefaultNameCounters() {
 		if (fCounters == null)
 			fCounters = new Hashtable();
 		return fCounters;
 	}
+
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
 	}
-	
+
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
@@ -113,10 +111,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
 	}
 
-	public static void logException(
-		Throwable e,
-		final String title,
-		String message) {
+	public static void logException(Throwable e, final String title, String message) {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
@@ -151,11 +146,10 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (e instanceof CoreException)
 			status = ((CoreException) e).getStatus();
 		else
-			status =
-				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
-	
+
 	public FormColors getFormColors(Display display) {
 		if (fFormColors == null) {
 			fFormColors = new FormColors(display);
@@ -173,11 +167,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		fLaunchConfigurationListener = new LaunchConfigurationListener();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
 	}
-	
+
 	public BundleContext getBundleContext() {
 		return fBundleContext;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
@@ -205,24 +199,24 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			fLabelProvider = new PDELabelProvider();
 		return fLabelProvider;
 	}
-	
+
 	public LaunchListener getLaunchListener() {
 		if (fLaunchListener == null)
 			fLaunchListener = new LaunchListener();
 		return fLaunchListener;
 	}
-	
+
 	public OSGiFrameworkManager getOSGiFrameworkManager() {
 		if (fOSGiFrameworkManager == null)
 			fOSGiFrameworkManager = new OSGiFrameworkManager();
 		return fOSGiFrameworkManager;
 	}
-	
+
 	public static boolean isFullNameModeEnabled() {
 		IPreferenceStore store = getDefault().getPreferenceStore();
 		return store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_NAMES);
 	}
-	
+
 	/**
 	 * Returns the shared text file document provider for this plug-in.
 	 * 

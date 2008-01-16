@@ -26,9 +26,9 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  * @since 3.3
  */
 public class OSGiLaunchConfigurationInitializer {
-	
+
 	protected static final String DEFAULT = "default"; //$NON-NLS-1$
-	
+
 	/**
 	 * Initializes some attributes on a newly-created launch configuration
 	 * 
@@ -40,7 +40,7 @@ public class OSGiLaunchConfigurationInitializer {
 		initializeBundleState(configuration);
 		initializeSourcePathProvider(configuration);
 	}
-	
+
 	/**
 	 * Sets the source provider ID
 	 * 
@@ -48,8 +48,7 @@ public class OSGiLaunchConfigurationInitializer {
 	 * 			the launch configuration
 	 */
 	protected void initializeSourcePathProvider(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, 
-									PDESourcePathProvider.ID);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class OSGiLaunchConfigurationInitializer {
 		configuration.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
 		configuration.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 	}
-	
+
 	/**
 	 * Initializes the checked/unchecked state of bundles
 	 * 
@@ -76,13 +75,13 @@ public class OSGiLaunchConfigurationInitializer {
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			boolean inWorkspace = models[i].getUnderlyingResource() != null;
-			appendBundle(inWorkspace ? wsplugins : explugins, id);			
+			appendBundle(inWorkspace ? wsplugins : explugins, id);
 		}
 		configuration.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
 		configuration.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 	}
-	
+
 	private void appendBundle(StringBuffer buffer, String bundleID) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
@@ -90,9 +89,9 @@ public class OSGiLaunchConfigurationInitializer {
 		buffer.append("@"); //$NON-NLS-1$
 		buffer.append(getStartLevel(bundleID));
 		buffer.append(":"); //$NON-NLS-1$
-		buffer.append(getAutoStart(bundleID));	
+		buffer.append(getAutoStart(bundleID));
 	}
-	
+
 	/**
 	 * Returns the bundle's start level
 	 * 
@@ -103,7 +102,7 @@ public class OSGiLaunchConfigurationInitializer {
 	protected String getStartLevel(String bundleID) {
 		return DEFAULT;
 	}
-	
+
 	/**
 	 * Returns whether the bundle should be started automatically
 	 * @param bundleID

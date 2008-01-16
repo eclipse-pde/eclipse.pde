@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
@@ -27,8 +25,8 @@ public class RemoveRequireBundleResolution extends AbstractManifestMarkerResolut
 	}
 
 	protected void createChange(BundleModel model) {
-		Bundle bundle = (Bundle)model.getBundle();
-		RequireBundleHeader header = (RequireBundleHeader)bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
+		Bundle bundle = (Bundle) model.getBundle();
+		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null)
 			header.removeBundle(fBundleId);
 	}

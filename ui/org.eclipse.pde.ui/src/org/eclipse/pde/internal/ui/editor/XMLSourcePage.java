@@ -28,18 +28,15 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 		if (!cleanModel) {
 			Display.getCurrent().beep();
 			String title = getEditor().getSite().getRegisteredName();
-			MessageDialog.openError(
-					PDEPlugin.getActiveWorkbenchShell(),
-					title,
-					PDEUIMessages.SourcePage_errorMessage);
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, PDEUIMessages.SourcePage_errorMessage);
 		}
 		return cleanModel;
 	}
 
 	protected String[] collectContextMenuPreferencePages() {
-		String[] ids= super.collectContextMenuPreferencePages();
-		String[] more= new String[ids.length + 1];
-		more[0]= "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
+		String[] ids = super.collectContextMenuPreferencePages();
+		String[] more = new String[ids.length + 1];
+		more[0] = "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
 		System.arraycopy(ids, 0, more, 1, ids.length);
 		return more;
 	}

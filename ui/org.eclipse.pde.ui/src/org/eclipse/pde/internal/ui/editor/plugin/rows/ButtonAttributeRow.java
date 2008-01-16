@@ -38,9 +38,9 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 	}
 
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
-		super.createContents(parent, toolkit, span);		
-		if(part.isEditable())
-		{	Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH); 
+		super.createContents(parent, toolkit, span);
+		if (part.isEditable()) {
+			Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH);
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (!isReferenceModel())
@@ -49,15 +49,15 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 			});
 			//button.setEnabled(part.isEditable());
 		}
-	}	
+	}
 
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;
 		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		return gd;
-	}	
-	
+	}
+
 	protected abstract void browse();
 
 }

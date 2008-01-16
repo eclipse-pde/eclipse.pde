@@ -24,6 +24,7 @@ public interface IPluginFieldData extends IFieldData {
 	 * @return the name of the plug-in class
 	 */
 	String getClassname();
+
 	/**
 	 * UI plug-in selection.
 	 * 
@@ -31,6 +32,7 @@ public interface IPluginFieldData extends IFieldData {
 	 *         extensions, <code>false</code> otherwise.
 	 */
 	boolean isUIPlugin();
+
 	/**
 	 * Plug-in class generation selection.
 	 * 
@@ -38,5 +40,5 @@ public interface IPluginFieldData extends IFieldData {
 	 *         the plug-in wizard, <code>false</code> otherwise.
 	 */
 	boolean doGenerateClass();
-	
+
 }

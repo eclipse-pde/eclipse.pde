@@ -12,33 +12,17 @@ package org.eclipse.pde.internal.ui.wizards.provisioner.update;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class UpdateSiteProvisionerPage extends WizardPage {
@@ -52,14 +36,16 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	class UpdateSiteContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			if(inputElement instanceof List)
+			if (inputElement instanceof List)
 				return ((List) inputElement).toArray();
 			return null;
 		}
 
-		public void dispose() {}
+		public void dispose() {
+		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 
 	}
 
@@ -94,8 +80,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 			}
 
 			public String getText(Object element) {
-				IUpdateSiteProvisionerEntry entry =
-					(IUpdateSiteProvisionerEntry) element;
+				IUpdateSiteProvisionerEntry entry = (IUpdateSiteProvisionerEntry) element;
 				return entry.getSiteLocation();
 			}
 
@@ -105,7 +90,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		gd.verticalSpan = 3;
 		fViewer.getControl().setLayoutData(gd);
 
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener () {
+		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -115,17 +100,15 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 
 		fViewer.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
-				if (event.character == SWT.DEL && 
-						event.stateMask == 0) {
-					if(fViewer.getSelection() != null) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					if (fViewer.getSelection() != null) {
 						handleRemove();
 					}
 				}
 			}
 		});
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(client,
-				IHelpContextIds.UPDATE_SITE_PROVISIONING_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, IHelpContextIds.UPDATE_SITE_PROVISIONING_PAGE);
 		createButtons(client);
 		setControl(client);
 	}
@@ -147,8 +130,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(fEditButton);
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IUpdateSiteProvisionerEntry entry = 
-					(IUpdateSiteProvisionerEntry) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
+				IUpdateSiteProvisionerEntry entry = (IUpdateSiteProvisionerEntry) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 				handleEdit(entry);
 			}
 		});
@@ -162,11 +144,11 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 				handleRemove();
 			}
 		});
-		updateButtons();		
+		updateButtons();
 	}
 
 	protected void handleRemove() {
-		Object[] elements = ((IStructuredSelection)fViewer.getSelection()).toArray();
+		Object[] elements = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		for (int i = 0; i < elements.length; i++)
 			fElements.remove(elements[i]);
 
@@ -177,12 +159,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	}
 
 	protected void handleAdd() {
-		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(
-				getShell(),
-				null,
-				null,
-				PDEUIMessages.UpdateSiteProvisionerDialog_addTitle
-		);
+		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(getShell(), null, null, PDEUIMessages.UpdateSiteProvisionerDialog_addTitle);
 		int status = dialog.open();
 		if (status == Window.OK) {
 			fElements.add(dialog.getEntry());
@@ -194,12 +171,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	}
 
 	protected void handleEdit(IUpdateSiteProvisionerEntry entry) {
-		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(
-				getShell(),
-				entry.getInstallLocation(),
-				entry.getSiteLocation(),
-				PDEUIMessages.UpdateSiteProvisionerDialog_editTitle
-		);
+		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(getShell(), entry.getInstallLocation(), entry.getSiteLocation(), PDEUIMessages.UpdateSiteProvisionerDialog_editTitle);
 		int status = dialog.open();
 		if (status == Window.OK) {
 			fElements.remove(entry);

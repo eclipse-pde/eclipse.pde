@@ -22,128 +22,123 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 
 // TODO this needs a rewrite along with PluginVersionPart
 public class DependencyPropertiesDialog extends StatusDialog {
 
-    private Button fReexportButton;
-    private Button fOptionalButton;
-    private boolean fEditable;
-    private boolean fShowReexport;
-    
-    private boolean fExported;
-    private boolean fOptional;
+	private Button fReexportButton;
+	private Button fOptionalButton;
+	private boolean fEditable;
+	private boolean fShowReexport;
 
-    private PluginVersionPart fVersionPart;
-    
-    private boolean fShowOptional;
+	private boolean fExported;
+	private boolean fOptional;
+
+	private PluginVersionPart fVersionPart;
+
+	private boolean fShowOptional;
 	private String fVersion;
 	private String fPluginId;
 
-    public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
-        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true, plugin.getId());
-    }
-    
-    public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
-        this (editable, false, false, object.isOptional(), object.getVersion(), true, true, null);
-    }
+	public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
+		this(editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true, plugin.getId());
+	}
 
-    public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
-        this (editable, false, false, false, object.getVersion(), false, false, null);
-    }
+	public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
+		this(editable, false, false, object.isOptional(), object.getVersion(), true, true, null);
+	}
 
-    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport, String pluginId) {
-        super(PDEPlugin.getActiveWorkbenchShell());
-        fEditable = editable;
-        fShowReexport = showReexport;
-        fExported = export;
-        fOptional = optional;
-        fShowOptional = showOptional;
-        fPluginId = pluginId;
-        if (isImport)
-        	fVersionPart = new PluginVersionPart(true);
-        else 
-        	fVersionPart = new PluginVersionPart(false) {
+	public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
+		this(editable, false, false, false, object.getVersion(), false, false, null);
+	}
+
+	public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport, String pluginId) {
+		super(PDEPlugin.getActiveWorkbenchShell());
+		fEditable = editable;
+		fShowReexport = showReexport;
+		fExported = export;
+		fOptional = optional;
+		fShowOptional = showOptional;
+		fPluginId = pluginId;
+		if (isImport)
+			fVersionPart = new PluginVersionPart(true);
+		else
+			fVersionPart = new PluginVersionPart(false) {
 				protected String getGroupText() {
 					return PDEUIMessages.DependencyPropertiesDialog_exportGroupText;
-				}        		
-        	};
-        fVersionPart.setVersion(version);
-    }
-
+				}
+			};
+		fVersionPart.setVersion(version);
+	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-        super.createButtonsForButtonBar(parent);
-    }
-    
-    protected Control createDialogArea(Composite parent) {
-        Composite comp = (Composite)super.createDialogArea(parent);
-        
-        if (fShowOptional || fShowReexport) {
-		    Group container = new Group(comp, SWT.NONE);
-		    container.setText(PDEUIMessages.DependencyPropertiesDialog_properties);
-		    container.setLayout(new GridLayout());
-		    container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
-	        if (fShowOptional) {
-	            fOptionalButton = new Button(container, SWT.CHECK);
-	            fOptionalButton.setText(PDEUIMessages.DependencyPropertiesDialog_optional);
-	            GridData gd = new GridData();
-	            gd.horizontalSpan = 2;
-	            fOptionalButton.setLayoutData(gd); 
-	            fOptionalButton.setEnabled(fEditable);
-	            fOptionalButton.setSelection(fOptional);
-	        }
-	        
-	        if (fShowReexport) {
-	            fReexportButton = new Button(container, SWT.CHECK);
-	            fReexportButton.setText(PDEUIMessages.DependencyPropertiesDialog_reexport);
-	            GridData gd = new GridData();
-	            gd.horizontalSpan = 2;
-	            fReexportButton.setLayoutData(gd);
-	            fReexportButton.setEnabled(fEditable);
-	            fReexportButton.setSelection(fExported);
-	        }
-        }
-        
-        fVersionPart.createVersionFields(comp, true, fEditable);
-        ModifyListener ml = new ModifyListener() {
+		super.createButtonsForButtonBar(parent);
+	}
+
+	protected Control createDialogArea(Composite parent) {
+		Composite comp = (Composite) super.createDialogArea(parent);
+
+		if (fShowOptional || fShowReexport) {
+			Group container = new Group(comp, SWT.NONE);
+			container.setText(PDEUIMessages.DependencyPropertiesDialog_properties);
+			container.setLayout(new GridLayout());
+			container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			if (fShowOptional) {
+				fOptionalButton = new Button(container, SWT.CHECK);
+				fOptionalButton.setText(PDEUIMessages.DependencyPropertiesDialog_optional);
+				GridData gd = new GridData();
+				gd.horizontalSpan = 2;
+				fOptionalButton.setLayoutData(gd);
+				fOptionalButton.setEnabled(fEditable);
+				fOptionalButton.setSelection(fOptional);
+			}
+
+			if (fShowReexport) {
+				fReexportButton = new Button(container, SWT.CHECK);
+				fReexportButton.setText(PDEUIMessages.DependencyPropertiesDialog_reexport);
+				GridData gd = new GridData();
+				gd.horizontalSpan = 2;
+				fReexportButton.setLayoutData(gd);
+				fReexportButton.setEnabled(fEditable);
+				fReexportButton.setSelection(fExported);
+			}
+		}
+
+		fVersionPart.createVersionFields(comp, true, fEditable);
+		ModifyListener ml = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateStatus(fVersionPart.validateFullVersionRangeText(true));
 			}
-        };
-        fVersionPart.addListeners(ml, ml);
-        
-        // we need a better way to do this
-        if(fPluginId != null && !fPluginId.equals("system.bundle"))  //$NON-NLS-1$
-        	fVersionPart.createVersionSelectionField(comp, fPluginId);
-        
-        return comp;
-    }
-    
+		};
+		fVersionPart.addListeners(ml, ml);
 
-    public boolean isReexported() {
-        return fExported;
-    }
-    
-    public boolean isOptional() {
-        return fOptional;
-    }
-    
-    public String getVersion() {
-    	return fVersion;
-    }
-    
-    protected void okPressed() {
-        fOptional = (fOptionalButton == null) ? false : fOptionalButton.getSelection();
-        fExported = (fReexportButton == null) ? false : fReexportButton.getSelection();
-        
-        fVersion = fVersionPart.getVersion();
-        
-        super.okPressed();
-    }
+		// we need a better way to do this
+		if (fPluginId != null && !fPluginId.equals("system.bundle")) //$NON-NLS-1$
+			fVersionPart.createVersionSelectionField(comp, fPluginId);
+
+		return comp;
+	}
+
+	public boolean isReexported() {
+		return fExported;
+	}
+
+	public boolean isOptional() {
+		return fOptional;
+	}
+
+	public String getVersion() {
+		return fVersion;
+	}
+
+	protected void okPressed() {
+		fOptional = (fOptionalButton == null) ? false : fOptionalButton.getSelection();
+		fExported = (fReexportButton == null) ? false : fReexportButton.getSelection();
+
+		fVersion = fVersionPart.getVersion();
+
+		super.okPressed();
+	}
 }

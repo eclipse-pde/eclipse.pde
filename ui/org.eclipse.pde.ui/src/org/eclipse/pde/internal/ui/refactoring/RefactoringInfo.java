@@ -13,15 +13,15 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public abstract class RefactoringInfo {
-	
+
 	private boolean fUpdateReferences = true;
-	
+
 	private String fNewID;
-	
+
 	protected Object fSelection;
 
 	public abstract IPluginModelBase getBase();
-	
+
 	public Object getSelection() {
 		return fSelection;
 	}
@@ -45,7 +45,7 @@ public abstract class RefactoringInfo {
 	public void setNewValue(String newName) {
 		fNewID = newName;
 	}
-	
+
 	public abstract String getCurrentValue();
 
 }

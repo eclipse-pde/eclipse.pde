@@ -14,34 +14,13 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -51,30 +30,10 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ModelProviderEvent;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEExtensionRegistry;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.PluginPathFinder;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.TargetPlatformResetJob;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetFeature;
-import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.itarget.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.target.TargetErrorDialog;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.SharedPartWithButtons;
@@ -88,14 +47,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.PageBook;
@@ -107,7 +60,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * content. Unchecked plug-ins are ignored by PDE. By default, all plug-ins 
  * in the target are checked. 
  */
-public class TargetPluginsTab extends SharedPartWithButtons{
+public class TargetPluginsTab extends SharedPartWithButtons {
 	private CheckboxTableViewer fPluginListViewer;
 	private TargetPlatformPreferencePage fPage;
 	private boolean fReloaded;
@@ -122,40 +75,39 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	private int fCounter;
 	private Map fCurrentFeatures;
 	private ArrayList fAdditionalLocations = new ArrayList();
-	
+
 	class ReloadOperation implements IRunnableWithProgress {
 		private String location;
-		
+
 		public ReloadOperation(String platformPath) {
 			this.location = platformPath;
 		}
-		
+
 		private URL[] computePluginURLs() {
-			URL[] base  = PluginPathFinder.getPluginPaths(location);		
+			URL[] base = PluginPathFinder.getPluginPaths(location);
 			if (fAdditionalLocations.size() == 0)
 				return base;
-			
+
 			File[] extraLocations = new File[fAdditionalLocations.size() * 2];
 			for (int i = 0; i < extraLocations.length; i++) {
-				String location = fAdditionalLocations.get(i/2).toString();
+				String location = fAdditionalLocations.get(i / 2).toString();
 				File dir = new File(location);
 				extraLocations[i] = dir;
 				dir = new File(dir, "plugins"); //$NON-NLS-1$
 				extraLocations[++i] = dir;
 			}
 
-			URL[] additional = PluginPathFinder.scanLocations(extraLocations);			
+			URL[] additional = PluginPathFinder.scanLocations(extraLocations);
 			if (additional.length == 0)
 				return base;
-			
+
 			URL[] result = new URL[base.length + additional.length];
 			System.arraycopy(base, 0, result, 0, base.length);
-			System.arraycopy(additional, 0, result, base.length, additional.length);			
+			System.arraycopy(additional, 0, result, base.length, additional.length);
 			return result;
 		}
-			
-		public void run(IProgressMonitor monitor)
-			throws InvocationTargetException, InterruptedException {	
+
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingPlatform, 10);
 			SubProgressMonitor parsePluginMonitor = new SubProgressMonitor(monitor, 9);
 			fCurrentState = new PDEState(computePluginURLs(), true, parsePluginMonitor);
@@ -167,12 +119,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				fCurrentRegistry.dispose();
 			fCurrentRegistry = null;
 		}
-		
+
 		private void loadFeatures(IProgressMonitor monitor) {
 			IFeatureModel[] externalModels = ExternalFeatureModelManager.createModels(location, fAdditionalLocations, monitor);
 			IFeatureModel[] workspaceModels = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 			int numFeatures = externalModels.length + workspaceModels.length;
-			fCurrentFeatures = new HashMap((4/3) * (numFeatures) + 1);
+			fCurrentFeatures = new HashMap((4 / 3) * (numFeatures) + 1);
 			for (int i = 0; i < externalModels.length; i++) {
 				String id = externalModels[i].getFeature().getId();
 				if (id != null)
@@ -185,26 +137,23 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			monitor.done();
 		}
-		
+
 	}
-	
-	public class PluginContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+
+	public class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getCurrentModels();
 		}
 	}
-	
+
 	/**
 	 * Content provider for the tree that will display plug-ins.
 	 */
-	public class TreePluginContentProvider extends DefaultContentProvider 
-		implements ITreeContentProvider{
-		
+	public class TreePluginContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof File) {
-				Set files = (Set)fTreeViewerContents.get(parentElement);
+				Set files = (Set) fTreeViewerContents.get(parentElement);
 				if (files != null) {
 					Object[] result = files.toArray();
 					return result;
@@ -236,24 +185,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param page The page this tab will be added to
 	 */
 	public TargetPluginsTab(TargetPlatformPreferencePage page) {
-		super(new String[]{ PDEUIMessages.ExternalPluginsBlock_reload,
-			  PDEUIMessages.TargetPluginsTab_add,
-			  null,
-			  null,
-			  PDEUIMessages.TargetPluginsTab_enableSelected,
-			  PDEUIMessages.TargetPluginsTab_disableSelected,
-			  PDEUIMessages.TargetPluginsTab_enableAll,
-			  PDEUIMessages.TargetPluginsTab_disableAll,
-			  null,
-			  null,
-			  PDEUIMessages.ExternalPluginsBlock_workingSet, 
-			  PDEUIMessages.ExternalPluginsBlock_addRequired});
+		super(new String[] {PDEUIMessages.ExternalPluginsBlock_reload, PDEUIMessages.TargetPluginsTab_add, null, null, PDEUIMessages.TargetPluginsTab_enableSelected, PDEUIMessages.TargetPluginsTab_disableSelected, PDEUIMessages.TargetPluginsTab_enableAll, PDEUIMessages.TargetPluginsTab_disableAll, null, null, PDEUIMessages.ExternalPluginsBlock_workingSet, PDEUIMessages.ExternalPluginsBlock_addRequired});
 		this.fPage = page;
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
@@ -273,15 +211,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		fChangedModels.clear();
 		if (type != 0) {
-			ExternalModelManager registry =
-				PDECore.getDefault().getModelManager().getExternalModelManager();
-			ModelProviderEvent event =
-				new ModelProviderEvent(
-					registry,
-					type,
-					null,
-					null,
-					changedArray);
+			ExternalModelManager registry = PDECore.getDefault().getModelManager().getExternalModelManager();
+			ModelProviderEvent event = new ModelProviderEvent(registry, type, null, null, changedArray);
 			registry.fireModelProviderEvent(event);
 		}
 	}
@@ -299,12 +230,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 5;
 		container.setLayout(layout);
-		
+
 		super.createControl(container, SWT.NONE, 2, null);
-		
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		
-		fGroupPlugins = new Button (container, SWT.CHECK);
+
+		fGroupPlugins = new Button(container, SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fGroupPlugins.setLayoutData(gd);
@@ -314,25 +245,25 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				handleSwitchView();
 			}
 		});
-		
+
 		initializeView();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLUGINS_PREFERENCE_PAGE);
 		return container;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.parts.SharedPartWithButtons#createButtons(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createButtons(Composite parent, FormToolkit toolkit) {
 		super.createButtons(parent, toolkit);
-		
+
 		fCounterLabel = new Label(fButtonContainer, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessVerticalSpace = true;
 		gd.verticalAlignment = SWT.BOTTOM;
 		fCounterLabel.setLayoutData(gd);
 	}
-	
+
 	/**
 	 * Initializes the tab from the preference store
 	 */
@@ -342,12 +273,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fGroupPlugins.setSelection(groupPlugins);
 		if (groupPlugins) {
 			fBook.showPage(fPluginTreeViewer.getControl());
-		}
-		else {
+		} else {
 			fBook.showPage(fPluginListViewer.getControl());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.parts.SharedPartWithButtons#createMainControl(org.eclipse.swt.widgets.Composite, int, int, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
@@ -360,7 +290,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		createTableViewer(fBook);
 		createTreeViewer(fBook);
 	}
-	
+
 	/**
 	 * Creates a table viewer to display the plugins as a list.  Must
 	 * be kept in sync with the tree viewer.
@@ -385,7 +315,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				} else if (model.isEnabled() != checked) {
 					fChangedModels.add(model);
 				}
-				
+
 				// handle checking the TreeViewer
 				fPluginTreeViewer.setChecked(model, checked);
 				String path = model.getInstallLocation();
@@ -397,24 +327,24 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					} else
 						handleGrayChecked(parent, true);
 				}
-				
+
 				// update the counter
-				if (checked) 
+				if (checked)
 					setCounter(fCounter + 1);
 				else
 					setCounter(fCounter - 1);
 			}
-			
+
 		});
 	}
-	
+
 	/**
 	 * Creates a tree viewer to display the plugins.  Must be
 	 * kept in sync with the table viewer.
 	 * @param container parent composite
 	 */
 	private void createTreeViewer(Composite container) {
-		fPluginTreeViewer = new CheckboxTreeViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER );
+		fPluginTreeViewer = new CheckboxTreeViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 250;
@@ -422,7 +352,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fPluginTreeViewer.setContentProvider(new TreePluginContentProvider());
 		fPluginTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fPluginTreeViewer.setLabelProvider(new PDELabelProvider() {
-			
+
 			public Image getImage(Object obj) {
 				if (obj instanceof File) {
 					return get(PDEPluginImages.DESC_SITE_OBJ);
@@ -435,7 +365,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				boolean checked = event.getChecked();
-				
+
 				// if user selected a plugin in the TreeViewer
 				if (element instanceof IPluginModelBase) {
 					IPluginModelBase model = (IPluginModelBase) event.getElement();
@@ -446,7 +376,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					}
 					// update Table Viewer
 					fPluginListViewer.setChecked(model, checked);
-					
+
 					// update parent in tree
 					String path = model.getInstallLocation();
 					if (path != null) {
@@ -454,24 +384,23 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 						if (checked) {
 							fPluginTreeViewer.setChecked(parent, true);
 							handleGrayChecked(parent, false);
-						}
-						else 
+						} else
 							handleGrayChecked(parent, true);
 					}
-					
+
 					// update table
-					if (checked) 
+					if (checked)
 						setCounter(fCounter + 1);
 					else
 						setCounter(fCounter - 1);
-					
-				// else if the user selected and eclipse directory in the TreeViewer
+
+					// else if the user selected and eclipse directory in the TreeViewer
 				} else if (element instanceof File) {
 					int changedCount = 0;
 					Set plugins = (Set) fTreeViewerContents.get(element);
 					// iterator through plugins from selected eclipse directory
-					IPluginModelBase [] models = (IPluginModelBase[]) plugins.toArray( new IPluginModelBase[ plugins.size()]);
-					for (int i  = 0 ; i < models.length; i++) {
+					IPluginModelBase[] models = (IPluginModelBase[]) plugins.toArray(new IPluginModelBase[plugins.size()]);
+					for (int i = 0; i < models.length; i++) {
 						if (fChangedModels.contains(models[i]) && models[i].isEnabled() == checked) {
 							fChangedModels.remove(models[i]);
 						} else if (models[i].isEnabled() != checked) {
@@ -490,11 +419,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					setCounter(fCounter + changedCount);
 				}
 			}
-			
+
 		});
 		fPluginTreeViewer.setAutoExpandLevel(2);
 	}
-	
+
 	/**
 	 * Disposes this tab.  Disconnects the label provider.
 	 */
@@ -515,13 +444,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		Set optional = new HashSet();
 		ITargetFeature[] targetFeatures = target.getFeatures();
 		Stack features = new Stack();
-		
+
 		FeatureModelManager featureManager = null;
 		if (fCurrentFeatures == null)
 			featureManager = PDECore.getDefault().getFeatureModelManager();
-		for (int i = 0 ; i < targetFeatures.length; i++) {
-			IFeatureModel model = (featureManager != null) ? featureManager.findFeatureModel(targetFeatures[i].getId()) :
-				(IFeatureModel)fCurrentFeatures.get(targetFeatures[i].getId());
+		for (int i = 0; i < targetFeatures.length; i++) {
+			IFeatureModel model = (featureManager != null) ? featureManager.findFeatureModel(targetFeatures[i].getId()) : (IFeatureModel) fCurrentFeatures.get(targetFeatures[i].getId());
 			if (model != null)
 				features.push(model.getFeature());
 			else if (!targetFeatures[i].isOptional()) {
@@ -530,7 +458,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			while (!features.isEmpty()) {
 				IFeature feature = (IFeature) features.pop();
-				IFeaturePlugin [] plugins = feature.getPlugins();
+				IFeaturePlugin[] plugins = feature.getPlugins();
 				for (int j = 0; j < plugins.length; j++) {
 					if (target.isValidFeatureObject(plugins[j])) {
 						if (targetFeatures[i].isOptional() || plugins[j].isFragment())
@@ -543,11 +471,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				for (int j = 0; j < children.length; j++) {
 					if (!target.isValidFeatureObject(children[j]))
 						continue;
-					model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
-						(IFeatureModel)fCurrentFeatures.get(children[j].getId());
+					model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) : (IFeatureModel) fCurrentFeatures.get(children[j].getId());
 					if (model != null)
 						features.push(model.getFeature());
-					else if (!targetFeatures[i].isOptional() && !missingFeatures.containsKey(children[j].getId())){
+					else if (!targetFeatures[i].isOptional() && !missingFeatures.containsKey(children[j].getId())) {
 						// create dummy feature to display feature is missing
 						ITargetFeature missingFeature = target.getModel().getFactory().createFeature();
 						missingFeature.setId(children[j].getId());
@@ -558,19 +485,19 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 
 		ITargetPlugin[] plugins = target.getPlugins();
-		for (int i = 0 ; i < plugins.length; i++) {
+		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].isOptional())
 				optional.add(plugins[i].getId());
 			else
 				required.put(plugins[i].getId(), plugins[i]);
 		}
-		
+
 		IPluginModelBase workspacePlugins[] = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		for (int i = 0; i < workspacePlugins.length; i++) {
 			if (workspacePlugins[i].isEnabled())
 				required.remove(workspacePlugins[i].getPluginBase().getId());
 		}
-		
+
 		IPluginModelBase[] models = getCurrentModels();
 		int counter = 0;
 		for (int i = 0; i < models.length; i++) {
@@ -591,7 +518,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 						fPluginTreeViewer.setChecked(parent, true);
 						handleGrayChecked(parent, false);
 					}
-					
+
 				}
 				required.remove(id);
 			} else {
@@ -607,14 +534,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 						handleGrayChecked(parent, true);
 					}
 				}
-			}		
+			}
 		}
 		setCounter(counter);
-		if (!required.isEmpty() || !missingFeatures.isEmpty()) 
-			TargetErrorDialog.showDialog(fPage.getShell(), missingFeatures.values().toArray(),
-					required.values().toArray());
+		if (!required.isEmpty() || !missingFeatures.isEmpty())
+			TargetErrorDialog.showDialog(fPage.getShell(), missingFeatures.values().toArray(), required.values().toArray());
 	}
-	
+
 	/**
 	 * Handles when the "reload" button is pressed.  Resets the contents of the
 	 * tab.
@@ -630,7 +556,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
-			fPluginTreeViewer.setSubtreeChecked(fPluginTreeViewer.getInput(),true);
+			fPluginTreeViewer.setSubtreeChecked(fPluginTreeViewer.getInput(), true);
 			fPluginTreeViewer.setGrayedElements(new Object[0]);
 			fChangedModels.clear();
 			handleSelectAll(true);
@@ -640,7 +566,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			fPage.getSourceBlock().resetExtensionLocations(getCurrentModels());
 		}
 		fPage.resetNeedsReload();
-	}	
+	}
 
 	/**
 	 * Sets the given locations as additional locations to check, then handles the reload.
@@ -658,7 +584,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() == 0)
 			return;
-		
+
 		fPluginTreeViewer.setUseHashlookup(true);
 		ExternalModelManager manager = PDECore.getDefault().getModelManager().getExternalModelManager();
 		fPluginListViewer.setInput(manager);
@@ -674,7 +600,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			// if model is to be selected, add parent to list of parents to be updated
 			String path = model.getInstallLocation();
-			if (path != null ) {
+			if (path != null) {
 				File installFile = new File(path);
 				File parentFile = installFile.getParentFile();
 				if (model.isEnabled())
@@ -682,34 +608,34 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 		}
 		Object[] elements = selection.toArray();
-		fPluginListViewer.setCheckedElements(elements);	
-		
+		fPluginListViewer.setCheckedElements(elements);
+
 		// handle checking for the TreeViewer
 		Object[] parents = parentsToCheck.toArray();
-		Object[] checkedValues= new Object[parents.length + elements.length];
+		Object[] checkedValues = new Object[parents.length + elements.length];
 		System.arraycopy(parents, 0, checkedValues, 0, parents.length);
 		System.arraycopy(elements, 0, checkedValues, parents.length, elements.length);
 		fPluginTreeViewer.setCheckedElements(checkedValues);
 		for (int i = 0; i < parents.length; i++) {
-			handleGrayChecked((File)parents[i], false);
+			handleGrayChecked((File) parents[i], false);
 		}
 		setCounter(elements.length);
 	}
-	
+
 	// returns a Set which contains all the new File objects representing a new location
 	public Set initializeTreeContents(IPluginModelBase[] allModels) {
 		HashSet parents = new HashSet();
-		if (fTreeViewerContents == null) 
+		if (fTreeViewerContents == null)
 			fTreeViewerContents = new HashMap();
 		else
 			fTreeViewerContents.clear();
 		for (int i = 0; i < allModels.length; i++) {
 			IPluginModelBase model = allModels[i];
 			String path = model.getInstallLocation();
-			if (path != null ) {
+			if (path != null) {
 				File installFile = new File(path);
 				File parentFile = installFile.getParentFile();
-				Set models = (Set)fTreeViewerContents.get(parentFile);
+				Set models = (Set) fTreeViewerContents.get(parentFile);
 				if (models == null) {
 					models = new HashSet();
 					models.add(model);
@@ -722,7 +648,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		return parents;
 	}
-	
+
 	/**
 	 * Called when the user clicks ok on the dialog.  Updates the models with changes.
 	 */
@@ -738,9 +664,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		} else {
 			updateModels();
 			computeDelta();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Saves the settings in the tab to the preference store.
 	 */
@@ -748,37 +674,34 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		IPath newPath = new Path(fPage.getPlatformPath());
 		IPath defaultPath = new Path(org.eclipse.pde.core.plugin.TargetPlatform.getDefaultLocation());
-		String mode =
-			newPath.equals(defaultPath)
-				? ICoreConstants.VALUE_USE_THIS
-				: ICoreConstants.VALUE_USE_OTHER;
+		String mode = newPath.equals(defaultPath) ? ICoreConstants.VALUE_USE_THIS : ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
 		preferences.setValue(ICoreConstants.PLATFORM_PATH, fPage.getPlatformPath());
 
 		if (fCounter == 0) {
 			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 		} else if (fCounter == fPluginListViewer.getTable().getItemCount()) {
-			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);		
+			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 		} else {
 			StringBuffer saved = new StringBuffer();
 			TableItem[] models = fPluginListViewer.getTable().getItems();
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getChecked())
 					continue;
-				IPluginModelBase model = (IPluginModelBase)models[i].getData();
-				if (saved.length() > 0) 
+				IPluginModelBase model = (IPluginModelBase) models[i].getData();
+				if (saved.length() > 0)
 					saved.append(" "); //$NON-NLS-1$
-				saved.append(model.getPluginBase().getId());	
+				saved.append(model.getPluginBase().getId());
 			}
-			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, saved.toString());					
+			preferences.setValue(ICoreConstants.CHECKED_PLUGINS, saved.toString());
 		}
-		
+
 		String[] locations = fPage.getPlatformLocations();
 		for (int i = 0; i < locations.length && i < 5; i++) {
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
 		}
 		preferences.setValue(ICoreConstants.GROUP_PLUGINS_VIEW, fGroupPlugins.getSelection());
-		
+
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fAdditionalLocations.size(); i++) {
 			if (buffer.length() > 0)
@@ -788,7 +711,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		preferences.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
 		PDECore.getDefault().savePluginPreferences();
 	}
-	
+
 	/**
 	 * Updates the models that have been changed by the user.
 	 */
@@ -799,7 +722,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			model.setEnabled(fPluginListViewer.getChecked(model));
 		}
 	}
-	
+
 	/**
 	 * Enables or disables all of the plugins.
 	 * @param selected whether to enable or disable the plugins
@@ -807,7 +730,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	public void handleSelectAll(boolean selected) {
 		fPluginListViewer.setAllChecked(selected);
 		fPluginTreeViewer.setAllChecked(selected);
-		
+
 		IPluginModelBase[] allModels = getCurrentModels();
 		for (int i = 0; i < allModels.length; i++) {
 			IPluginModelBase model = allModels[i];
@@ -822,7 +745,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		} else
 			setCounter(0);
 	}
-	
+
 	/**
 	 * Allows the user to create/select working sets.
 	 */
@@ -856,12 +779,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					set.remove(id);
 				}
 				if (set.isEmpty())
-					break;				
+					break;
 			}
 			setCounter(fCounter + counter);
 		}
 	}
-	
+
 	/**
 	 * Sets the parent object to the right state.  This includes the checked state 
 	 * and/or the gray state.
@@ -873,7 +796,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		// added the second boolean because many time I know the parent will be checked.  
 		// Therefore I didn't want to waste time calling .setChecked() again.
 		boolean gray = false, check = false, allChecked = true;
-		Set models = (Set)fTreeViewerContents.get(parent);
+		Set models = (Set) fTreeViewerContents.get(parent);
 		Iterator it = models.iterator();
 		while (it.hasNext()) {
 			Object model = it.next();
@@ -885,11 +808,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			} else if (gray && !checked) {
 				allChecked = false;
 				break;
-			}	
+			}
 		}
-		if (!allChecked && gray) 
+		if (!allChecked && gray)
 			fPluginTreeViewer.setGrayed(parent, true);
-		else 
+		else
 			fPluginTreeViewer.setGrayed(parent, false);
 		if (handleCheck) {
 			if (check)
@@ -898,7 +821,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				fPluginTreeViewer.setChecked(parent, false);
 		}
 	}
-	
+
 	/**
 	 * Gets all of the models in the given working sets.
 	 * @param workingSets working sets to check
@@ -911,12 +834,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			for (int j = 0; j < elements.length; j++) {
 				Object element = elements[j];
 				if (element instanceof PersistablePluginObject) {
-					set.add(((PersistablePluginObject)element).getPluginID());
+					set.add(((PersistablePluginObject) element).getPluginID());
 				} else {
 					if (element instanceof IJavaProject)
-						element = ((IJavaProject)element).getProject();
+						element = ((IJavaProject) element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = PluginRegistry.findModel((IProject)element);
+						IPluginModelBase model = PluginRegistry.findModel((IProject) element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}
@@ -925,7 +848,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		return set;
 	}
-	
+
 	/**
 	 * Checks for dependencies among the enabled plugins and attempts
 	 * to add any plugins that are required.
@@ -953,12 +876,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 		}
 		Iterator it = parents.iterator();
-		while (it.hasNext()) 
-			handleGrayChecked((File)it.next(), true);
-		
+		while (it.hasNext())
+			handleGrayChecked((File) it.next(), true);
+
 		setCounter(fCounter + counter);
 	}
-	
+
 	/**
 	 * @return array of current models
 	 */
@@ -967,14 +890,14 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			return fCurrentState.getTargetModels();
 		return PDECore.getDefault().getModelManager().getExternalModels();
 	}
-	
+
 	/**
 	 * @return the current state
 	 */
 	protected PDEState getCurrentState() {
 		return (fCurrentState != null) ? fCurrentState : TargetPlatformHelper.getPDEState();
 	}
-	
+
 	/**
 	 * Switches between the list and tree views for plugins
 	 */
@@ -983,14 +906,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			ISelection selection = fPluginListViewer.getSelection();
 			fBook.showPage(fPluginTreeViewer.getControl());
 			fPluginTreeViewer.setSelection(selection);
-		}
-		else {
+		} else {
 			ISelection selection = fPluginTreeViewer.getSelection();
 			fBook.showPage(fPluginListViewer.getControl());
 			fPluginListViewer.setSelection(selection);
 		}
 	}
-	
+
 	/**
 	 * Sets the counter for the number of enabled plugins
 	 * @param value new value for the counter
@@ -998,8 +920,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	private void setCounter(int value) {
 		fCounter = value;
 		int total = fPluginListViewer.getTable().getItemCount();
-		String message =
-			NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, (new String[] { Integer.toString(fCounter), Integer.toString(total) }));
+		String message = NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, (new String[] {Integer.toString(fCounter), Integer.toString(total)}));
 		fCounterLabel.setText(message);
 	}
 
@@ -1008,55 +929,55 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	 */
 	protected void buttonSelected(Button button, int index) {
 		switch (index) {
-		case 0:
-			// Upon hitting 'Reload', erase the additional directories and load just the main path
-			handleReload(new ArrayList());
-			fPage.resetTargetProfile();
-			break;
-		case 1:
-			handleAdd();
-			break;
-		case 4:
-			handleEnableSelection(true);
-			break;
-		case 5:
-			handleEnableSelection(false);
-			break;
-		case 6:
-			handleSelectAll(true);
-			break;
-		case 7:
-			handleSelectAll(false);
-			break;
-		case 10:
-			handleWorkingSets();
-			break;
-		case 11:
-			handleAddRequired();
-			break;
+			case 0 :
+				// Upon hitting 'Reload', erase the additional directories and load just the main path
+				handleReload(new ArrayList());
+				fPage.resetTargetProfile();
+				break;
+			case 1 :
+				handleAdd();
+				break;
+			case 4 :
+				handleEnableSelection(true);
+				break;
+			case 5 :
+				handleEnableSelection(false);
+				break;
+			case 6 :
+				handleSelectAll(true);
+				break;
+			case 7 :
+				handleSelectAll(false);
+				break;
+			case 10 :
+				handleWorkingSets();
+				break;
+			case 11 :
+				handleAddRequired();
+				break;
 		}
 	}
-	
+
 	/**
 	 * Handle when the "enable selection" and "disable selection" buttons are pressed.
 	 * @param enable whether to enable (vs disable) the selected models.
 	 */
 	private void handleEnableSelection(boolean enable) {
 		ISelection selection = null;
-		if (fGroupPlugins.getSelection()){ 
+		if (fGroupPlugins.getSelection()) {
 			selection = fPluginTreeViewer.getSelection();
 		} else {
 			selection = fPluginListViewer.getSelection();
 		}
 
-		if (selection instanceof IStructuredSelection){
-			Object[] elements = ((IStructuredSelection)selection).toArray();
-			for (int i=0; i<elements.length; i++){
-				if (elements[i] instanceof IPluginModelBase){
-					IPluginModelBase model = (IPluginModelBase)elements[i];
+		if (selection instanceof IStructuredSelection) {
+			Object[] elements = ((IStructuredSelection) selection).toArray();
+			for (int i = 0; i < elements.length; i++) {
+				if (elements[i] instanceof IPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase) elements[i];
 					fPluginListViewer.setChecked(model, enable);
 					fPluginTreeViewer.setChecked(model, enable);
-					
+
 					// Handle tree viewer gray selection
 					String path = model.getInstallLocation();
 					if (path != null) {
@@ -1067,7 +988,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 						} else
 							handleGrayChecked(parent, true);
 					}
-					
+
 					// Update changed model set
 					if (fChangedModels.contains(model) && model.isEnabled() == enable) {
 						fChangedModels.remove(model);
@@ -1077,10 +998,10 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					// File would represent a parent folder containing plug-is in the fPluginTreeViewer
 				} else if (elements[i] instanceof File) {
 					fPluginTreeViewer.setSubtreeChecked(elements[i], enable);
-					Set pluginSet = (Set)fTreeViewerContents.get(elements[i]);
+					Set pluginSet = (Set) fTreeViewerContents.get(elements[i]);
 					Iterator it = pluginSet.iterator();
 					while (it.hasNext()) {
-						IPluginModelBase model = (IPluginModelBase)it.next();
+						IPluginModelBase model = (IPluginModelBase) it.next();
 						fPluginListViewer.setChecked(model, enable);
 						if (fChangedModels.contains(model) && model.isEnabled() == enable) {
 							fChangedModels.remove(model);
@@ -1093,7 +1014,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 
 		setCounter(fPluginListViewer.getCheckedElements().length);
-		
+
 	}
 
 	/**
@@ -1105,7 +1026,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 450);
 		dialog.open();
-		
+
 		File[] dirs = wizard.getDirectories();
 		if (dirs.length == 0) {
 			// no new URLs found/to add
@@ -1113,27 +1034,27 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		addDirectoriesToState(dirs);
 	}
-	
+
 	private void addDirectoriesToState(File[] dirs) {
 		for (int i = 0; i < dirs.length; i++) {
 			fAdditionalLocations.add(dirs[i].getPath());
 			File temp = new File(dirs[i], "plugins"); //$NON-NLS-1$
 			if (temp.exists())
 				dirs[i] = temp;
-		}		
-		
+		}
+
 		URL[] pluginLocs = PluginPathFinder.scanLocations(dirs);
 		ArrayList itemsToCheck = null;
 		if (fCurrentState == null) {
 			// create copy of current state
 			fCurrentState = new PDEState(TargetPlatformHelper.getPDEState());
-			
+
 			// create a map between install location and new model.  Install location of old model should match new model
 			IPluginModelBase[] newModels = fCurrentState.getTargetModels();
-			HashMap installLocationsToNewModel = new HashMap((4/3) * newModels.length + 1);
+			HashMap installLocationsToNewModel = new HashMap((4 / 3) * newModels.length + 1);
 			for (int i = 0; i < newModels.length; i++)
 				installLocationsToNewModel.put(newModels[i].getInstallLocation(), newModels[i]);
-			
+
 			updateChangedModels(installLocationsToNewModel);
 			itemsToCheck = getItemsToCheck(installLocationsToNewModel);
 		}
@@ -1143,7 +1064,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			fCurrentRegistry.dispose();
 		fCurrentRegistry = null;
 	}
-		
+
 	private void updateChangedModels(Map installLocationsToNewModel) {
 		HashSet temp = new HashSet();
 		Iterator iter = fChangedModels.iterator();
@@ -1156,7 +1077,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		fChangedModels = temp;
 	}
-	
+
 	private ArrayList getItemsToCheck(Map installLocationsToNewModel) {
 		ArrayList itemsToCheck = new ArrayList();
 		Object[] checkeditems = fPluginTreeViewer.getCheckedElements();
@@ -1164,22 +1085,22 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		for (int i = 0; i < checkeditems.length; i++) {
 			if (!(checkeditems[i] instanceof IPluginModelBase))
 				continue;
-			Object obj = installLocationsToNewModel.get(((IPluginModelBase)checkeditems[i]).getInstallLocation());
+			Object obj = installLocationsToNewModel.get(((IPluginModelBase) checkeditems[i]).getInstallLocation());
 			if (obj != null)
 				itemsToCheck.add(obj);
 		}
 		return itemsToCheck;
 	}
-	
+
 	private void addNewBundles(BundleDescription[] descriptions, ArrayList checkedItems) {
 		if (descriptions.length > 0) {
 			IPluginModelBase[] models = fCurrentState.createTargetModels(descriptions);
 			// add new models to tree viewer
 			Set parents = initializeTreeContents(fCurrentState.getTargetModels());
-			
+
 			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
-			
+
 			if (checkedItems == null) {
 				for (int i = 0; i < models.length; i++) {
 					fPluginListViewer.setChecked(models[i], true);
@@ -1204,11 +1125,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			fReloaded = true;
 		}
 	}
-	
+
 	// store Extension Registry info in TargetPluginsTab because we need to know when fCurrentState == null.  Could store it in TargetSourceTab
 	// and call .getCurrentState, but would have to compare States.  Simply by putting it here will save time otherwise spent comparing States.
 	protected PDEExtensionRegistry getCurrentExtensionRegistry() {
-		if (fCurrentState == null) 
+		if (fCurrentState == null)
 			return PDECore.getDefault().getExtensionsRegistry();
 		if (fCurrentRegistry == null)
 			fCurrentRegistry = new PDEExtensionRegistry(getCurrentModels());

@@ -37,5 +37,5 @@ public abstract class CSAbstractSubDetails extends CSAbstractDetails {
 		// To create the contents for a the subset of the main details pages,
 		// calls to the ICSDetails methods are made directly
 	}
-	
+
 }

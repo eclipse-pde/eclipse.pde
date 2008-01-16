@@ -11,33 +11,19 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.*;
 
-public class CreateManifestOperation implements IRunnableWithProgress{
-	
+public class CreateManifestOperation implements IRunnableWithProgress {
+
 	private IPluginModelBase fModel;
 
 	public CreateManifestOperation(IPluginModelBase model) {
@@ -52,24 +38,23 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 			throw new InvocationTargetException(e);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		}	
+		}
 	}
 
 	private void handleConvert() throws CoreException {
 		IProject project = fModel.getUnderlyingResource().getProject();
 		String target = TargetPlatformHelper.getTargetVersionString();
-		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); 		
+		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor());
 	}
-	
+
 	private void trimOldManifest() throws BadLocationException, CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		String filename = fModel.isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR 
-				: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+		String filename = fModel.isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		IFile file = fModel.getUnderlyingResource().getProject().getFile(filename);
 		try {
 			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);
-			IDocument doc =  buffer.getDocument();
+			IDocument doc = buffer.getDocument();
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
 			MultiTextEdit multiEdit = new MultiTextEdit();
 			TextEdit edit = editRootElement(fModel.isFragmentModel() ? "fragment" : "plugin", adapter, doc, 0); //$NON-NLS-1$ //$NON-NLS-2$
@@ -81,7 +66,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 			edit = removeElement("runtime", adapter, doc, 0); //$NON-NLS-1$
 			if (edit != null)
 				multiEdit.addChild(edit);
-			
+
 			if (multiEdit.hasChildren()) {
 				multiEdit.apply(doc);
 				buffer.commit(null, true);
@@ -90,7 +75,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 		}
 	}
-	
+
 	private TextEdit editRootElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) throws BadLocationException {
 		IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (region != null) {
@@ -101,13 +86,13 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 		}
 		return null;
 	}
-	
+
 	private TextEdit removeElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) throws BadLocationException {
 		IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (region != null) {
 			if (doc.getChar(region.getOffset() + region.getLength()) == '/')
 				return new DeleteEdit(region.getOffset(), region.getLength() + 1);
-			IRegion endRegion = adapter.find(0, "</" + elementName +">", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+			IRegion endRegion = adapter.find(0, "</" + elementName + ">", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			if (endRegion != null) {
 				int lastPos = endRegion.getOffset() + endRegion.getLength() + 1;
 				while (Character.isWhitespace(doc.getChar(lastPos))) {
@@ -119,5 +104,5 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 		}
 		return null;
 	}
-	
+
 }

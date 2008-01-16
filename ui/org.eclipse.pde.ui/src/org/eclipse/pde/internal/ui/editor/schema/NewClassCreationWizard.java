@@ -12,11 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.jdt.ui.wizards.NewInterfaceWizardPage;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -26,11 +22,11 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 public class NewClassCreationWizard extends JavaAttributeWizard {
 
 	private boolean fIsInterface;
-	
+
 	private IPackageFragment packageName = null;
 	private String className = null;
 	private IPackageFragmentRoot packageRoot = null;
-	
+
 	public NewClassCreationWizard(IProject project, boolean isInterface, String value) {
 		super(project, null, null, null);
 		try {
@@ -48,22 +44,21 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 			fMainPage = new NewClassWizardPage();
 		addPage(fMainPage);
 		if (fIsInterface) {
-			((NewInterfaceWizardPage)fMainPage).init(StructuredSelection.EMPTY);
+			((NewInterfaceWizardPage) fMainPage).init(StructuredSelection.EMPTY);
 			if (className != null)
-				((NewInterfaceWizardPage)fMainPage).setTypeName(className, true);
+				((NewInterfaceWizardPage) fMainPage).setTypeName(className, true);
 			if (packageRoot != null)
-				((NewInterfaceWizardPage)fMainPage).setPackageFragmentRoot(packageRoot, true);
+				((NewInterfaceWizardPage) fMainPage).setPackageFragmentRoot(packageRoot, true);
 			if (packageName != null)
-				((NewInterfaceWizardPage)fMainPage).setPackageFragment(packageName, true);
-		}
-		else {
-			((NewClassWizardPage)fMainPage).init(StructuredSelection.EMPTY);
+				((NewInterfaceWizardPage) fMainPage).setPackageFragment(packageName, true);
+		} else {
+			((NewClassWizardPage) fMainPage).init(StructuredSelection.EMPTY);
 			if (className != null)
-				((NewClassWizardPage)fMainPage).setTypeName(className, true);
+				((NewClassWizardPage) fMainPage).setTypeName(className, true);
 			if (packageRoot != null)
-				((NewClassWizardPage)fMainPage).setPackageFragmentRoot(packageRoot, true);
+				((NewClassWizardPage) fMainPage).setPackageFragmentRoot(packageRoot, true);
 			if (packageName != null)
-				((NewClassWizardPage)fMainPage).setPackageFragment(packageName, true);
+				((NewClassWizardPage) fMainPage).setPackageFragment(packageName, true);
 		}
 	}
 
@@ -82,14 +77,14 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 			packageRoot = srcEntryDft;
 		else
 			packageRoot = javaProject.getPackageFragmentRoot(javaProject.getResource());
-		
+
 		String packageNameString = null;
 		int index = value.lastIndexOf("."); //$NON-NLS-1$
 		if (index == -1) {
 			className = value;
 		} else {
-			className = value.substring(index+1);
-			packageNameString = value.substring(0,index);
+			className = value.substring(index + 1);
+			packageNameString = value.substring(0, index);
 		}
 		if (packageNameString != null && packageRoot != null) {
 			IFolder packageFolder = project.getFolder(packageNameString);

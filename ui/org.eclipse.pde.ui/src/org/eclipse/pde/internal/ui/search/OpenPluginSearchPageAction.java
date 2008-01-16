@@ -18,9 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class OpenPluginSearchPageAction implements
-		IWorkbenchWindowActionDelegate {
-	
+public class OpenPluginSearchPageAction implements IWorkbenchWindowActionDelegate {
+
 	private static final String PLUGIN_SEARCH_PAGE_ID = "org.eclipse.pde.internal.ui.search.SearchPage"; //$NON-NLS-1$
 	private IWorkbenchWindow fWindow;
 
@@ -43,11 +42,11 @@ public class OpenPluginSearchPageAction implements
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing since the action isn't selection dependent.
 	}
-	
+
 	protected void beep() {
-		Shell shell= PDEPlugin.getActiveWorkbenchShell();
+		Shell shell = PDEPlugin.getActiveWorkbenchShell();
 		if (shell != null && shell.getDisplay() != null)
 			shell.getDisplay().beep();
-	}	
+	}
 
 }

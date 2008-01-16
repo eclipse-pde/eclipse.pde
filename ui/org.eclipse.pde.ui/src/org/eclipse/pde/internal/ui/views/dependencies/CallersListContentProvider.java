@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class CallersListContentProvider extends CallersContentProvider
-		implements IStructuredContentProvider {
+public class CallersListContentProvider extends CallersContentProvider implements IStructuredContentProvider {
 
 	public CallersListContentProvider(DependenciesView view) {
 		super(view);
@@ -32,10 +28,9 @@ public class CallersListContentProvider extends CallersContentProvider
 		// input IPluginModelBase
 		BundleDescription desc = null;
 		if (inputElement instanceof IPluginModelBase) {
-			desc = ((IPluginModelBase) inputElement)
-					.getBundleDescription();
+			desc = ((IPluginModelBase) inputElement).getBundleDescription();
 		} else if (inputElement instanceof BundleDescription) {
-			desc = (BundleDescription)inputElement;
+			desc = (BundleDescription) inputElement;
 		}
 		if (desc != null) {
 			Set callers = new HashSet();

@@ -12,37 +12,21 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
-import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.util.ModelModification;
-import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.pde.internal.ui.util.TemplateFileGenerator;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
 
@@ -51,13 +35,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String fProductId;
 	private String fApplication;
 	private IProduct fProduct;
-	
+
 	protected IProject fProject;
-	
+
 	private UpdateSplashHandlerAction fUpdateSplashAction;
-	
+
 	private RemoveSplashHandlerBindingAction fRemoveSplashAction;
-	
+
 	private UpdateSplashProgressOperation fUpdateSplashProgressOperation;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
@@ -76,8 +60,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	 * @param shell
 	 * @param project
 	 */
-	public ProductDefinitionOperation(IProduct product, String pluginId,
-			String productId, String application, Shell shell, IProject project) {
+	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell, IProject project) {
 		super(shell, pluginId);
 		fProductId = productId;
 		fApplication = application;
@@ -85,12 +68,12 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Needed for splash handler updates (file copying)
 		fProject = project;
 	}
-	
+
 	/**
 	 * @param id
 	 * @return
 	 */
-	protected String getFormattedPackageName(String id){
+	protected String getFormattedPackageName(String id) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < id.length(); i++) {
 			char ch = id.charAt(i);
@@ -103,8 +86,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			}
 		}
 		return buffer.toString().toLowerCase(Locale.ENGLISH);
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
@@ -118,8 +101,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		// Qualified
 		return packageName + '.' + ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
-	}		
-	
+	}
+
 	/**
 	 * @return fully-qualified class (with package)
 	 */
@@ -130,12 +113,11 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		if (targetClass == null) {
 			return null;
 		}
-		
-		return targetPackage + 
-			   "." +  //$NON-NLS-1$
-			   targetClass;
-	}	
-	
+
+		return targetPackage + "." + //$NON-NLS-1$
+				targetClass;
+	}
+
 	/**
 	 * @return unqualified class
 	 */
@@ -155,16 +137,15 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return splash screen type qualified with package name
 	 */
 	private String createAttributeValueID() {
 		// Create the ID based on the splash screen type
-		return createTargetPackage() + 
-				"." +  //$NON-NLS-1$
+		return createTargetPackage() + "." + //$NON-NLS-1$
 				getSplashHandlerType();
-	}	
+	}
 
 	/**
 	 * @return
@@ -177,14 +158,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return fUpdateSplashProgressOperation;
 	}
-	
+
 	/**
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void updateSplashProgress(IPluginModelBase model, 
-			IProgressMonitor monitor) throws CoreException {
+	private void updateSplashProgress(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Sanity checks
 		if (fProject == null) {
 			return;
@@ -203,7 +183,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Execute the action
 		operation.run(monitor);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -231,17 +211,16 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Ensure splash type was defined
 		if (info.isDefinedSplashHandlerType() == false) {
 			return null;
-		} 
-		return info.getFieldSplashHandlerType();	
+		}
+		return info.getFieldSplashHandlerType();
 	}
-	
+
 	/**
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void updateSplashHandler(IPluginModelBase model, 
-			IProgressMonitor monitor) throws CoreException {
+	private void updateSplashHandler(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Copy the applicable splash handler artifacts and perform parameter
 		// substitution (like in templates plug-in)
 		// Artifacts may include code, images and extension point schemas
@@ -250,14 +229,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// and extension point related mark-up
 		updateSplashHandlerModel(model, monitor);
 	}
-	
+
 	/**
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void updateSplashHandlerFiles(IPluginModelBase model, 
-			IProgressMonitor monitor) throws CoreException {
+	private void updateSplashHandlerFiles(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// If the project is not defined, abort this operation
 		if (fProject == null) {
 			return;
@@ -272,20 +250,17 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Note: Plug-in ID must be passed in separately from model, because
 		// the underlying model does not contain the ID (even when it is
 		// a workspace model)
-		TemplateFileGenerator generator = new TemplateFileGenerator(
-				fProject, model, fPluginId, createTargetPackage(), 
-				createTargetClass(), splashHandlerType);
+		TemplateFileGenerator generator = new TemplateFileGenerator(fProject, model, fPluginId, createTargetPackage(), createTargetClass(), splashHandlerType);
 		// Generate the necessary files
 		generator.generateFiles(monitor);
 	}
-	
+
 	/**
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void updateSplashHandlerModel(IPluginModelBase model, 
-			IProgressMonitor monitor) throws CoreException {
+	private void updateSplashHandlerModel(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Get the splash handler type
 		String splashHandlerType = getSplashHandlerType();
 		// If the splash handler type is not defined, abort this operation
@@ -300,20 +275,19 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	 * @param model
 	 * @param monitor
 	 */
-	private void runRemoveSplashAction(IPluginModelBase model,
-			IProgressMonitor monitor) throws CoreException {
+	private void runRemoveSplashAction(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Create the remove splash handler action
 		fRemoveSplashAction = new RemoveSplashHandlerBindingAction();
 		// Configure the action
 		fRemoveSplashAction.setFieldProductID(fProduct.getId());
 		fRemoveSplashAction.setFieldTargetPackage(createTargetPackage());
-		
+
 		fRemoveSplashAction.setModel(model);
 		fRemoveSplashAction.setMonitor(monitor);
 		// Execute the action
 		fRemoveSplashAction.run();
 		// If an core exception was thrown and caught, release it
-		fRemoveSplashAction.hasException();		
+		fRemoveSplashAction.hasException();
 	}
 
 	/**
@@ -322,11 +296,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	 * @param splashHandlerType
 	 * @throws CoreException
 	 */
-	private void runUpdateSplashAction(IPluginModelBase model,
-			IProgressMonitor monitor, String splashHandlerType)
-			throws CoreException {
+	private void runUpdateSplashAction(IPluginModelBase model, IProgressMonitor monitor, String splashHandlerType) throws CoreException {
 		// Create the update splash handler action
-		fUpdateSplashAction =  new UpdateSplashHandlerAction();
+		fUpdateSplashAction = new UpdateSplashHandlerAction();
 		// Configure the action
 		String id = createAttributeValueID();
 		fUpdateSplashAction.setFieldID(id);
@@ -343,9 +315,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// If an core exception was thrown and caught, release it
 		fUpdateSplashAction.hasException();
 	}
-	
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
+
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			IFile file = getFile();
 			if (!file.exists()) {
@@ -358,9 +329,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			throw new InvocationTargetException(e);
 		}
 	}
-	
+
 	private void createNewFile(IFile file, IProgressMonitor monitor) throws CoreException {
-		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
+		WorkspacePluginModelBase model = (WorkspacePluginModelBase) getModel(file);
 		IPluginBase base = model.getPluginBase();
 		base.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		base.add(createExtension(model));
@@ -368,19 +339,19 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		updateSplashHandler(model, monitor);
 		// Update splash progress.  Update plug-in model and copy files
 		updateSplashProgress(model, monitor);
-		
+
 		model.save();
 	}
-	
-	private IPluginExtension createExtension(IPluginModelBase model) throws CoreException{
+
+	private IPluginExtension createExtension(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		extension.setPoint("org.eclipse.core.runtime.products"); //$NON-NLS-1$
 		extension.setId(fProductId);
 		extension.add(createExtensionContent(extension));
 		return extension;
 	}
-	
-	private IPluginElement createExtensionContent(IPluginExtension extension) throws CoreException  {
+
+	private IPluginElement createExtensionContent(IPluginExtension extension) throws CoreException {
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
@@ -389,30 +360,30 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		IPluginElement child = createElement(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
 		if (child != null)
 			element.add(child);
-		
+
 		child = createElement(element, IProductConstants.ABOUT_TEXT, getAboutText());
 		if (child != null)
 			element.add(child);
-			
+
 		child = createElement(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
 		if (child != null)
-			element.add(child);		
-		
+			element.add(child);
+
 		child = createElement(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
 		if (child != null)
-			element.add(child);	
-		
+			element.add(child);
+
 		child = createElement(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
 		if (child != null)
-			element.add(child);	
-		
+			element.add(child);
+
 		child = createElement(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		if (child != null)
-			element.add(child);	
-		
+			element.add(child);
+
 		return element;
 	}
-	
+
 	private IPluginElement createElement(IPluginElement parent, String name, String value) throws CoreException {
 		IPluginElement element = null;
 		if (value != null && value.length() > 0) {
@@ -423,7 +394,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return element;
 	}
-	
+
 	private String getAboutText() {
 		IAboutInfo info = fProduct.getAboutInfo();
 		if (info != null) {
@@ -432,12 +403,12 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return null;
 	}
-	
+
 	private String getAboutImage() {
 		IAboutInfo info = fProduct.getAboutInfo();
 		return info != null ? getURL(info.getImagePath()) : null;
 	}
-	
+
 	private String getURL(String location) {
 		if (location == null || location.trim().length() == 0)
 			return null;
@@ -457,7 +428,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return location;
 	}
-	
+
 	private String getWindowImagesString() {
 		IWindowImages images = fProduct.getWindowImages();
 		StringBuffer buffer = new StringBuffer();
@@ -469,50 +440,50 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 						buffer.append(","); //$NON-NLS-1$
 					buffer.append(image);
 				}
-				
+
 			}
 		}
 		return buffer.length() == 0 ? null : buffer.toString(); //$NON-NLS-1$
 	}
-	
+
 	private String getForegroundColor() {
 		ISplashInfo info = fProduct.getSplashInfo();
 		return info != null ? info.getForegroundColor() : null;
 	}
-	
+
 	private String getProgressRect() {
 		ISplashInfo info = fProduct.getSplashInfo();
 		return info != null ? SplashInfo.getGeometryString(info.getProgressGeometry()) : null;
 	}
-	
+
 	private String getMessageRect() {
 		ISplashInfo info = fProduct.getSplashInfo();
 		return info != null ? SplashInfo.getGeometryString(info.getMessageGeometry()) : null;
 	}
-	
+
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
 		if (status.getSeverity() != IStatus.OK)
 			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
-		
+
 		ModelModification mod = new ModelModification(file) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IPluginModelBase))
 					return;
-				IPluginExtension extension = findProductExtension((IPluginModelBase)model);
+				IPluginExtension extension = findProductExtension((IPluginModelBase) model);
 				if (extension == null)
-					insertNewExtension((IPluginModelBase)model);
+					insertNewExtension((IPluginModelBase) model);
 				else
 					modifyExistingExtension(extension);
 				// Update the splash handler.  Update plug-in model and copy files
-				updateSplashHandler((IPluginModelBase)model, monitor);
+				updateSplashHandler((IPluginModelBase) model, monitor);
 				// Update splash progress.  Update plug-in model and copy files
-				updateSplashProgress((IPluginModelBase)model, monitor);
+				updateSplashProgress((IPluginModelBase) model, monitor);
 			}
 		};
 		PDEModelUtility.modifyModel(mod, monitor);
 	}
-	
+
 	private IPluginExtension findProductExtension(IPluginModelBase model) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
@@ -524,43 +495,43 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return null;
 	}
-	
+
 	private void insertNewExtension(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = createExtension(model);
 		model.getPluginBase().add(extension);
 	}
-	
+
 	private void modifyExistingExtension(IPluginExtension extension) throws CoreException {
 		if (extension.getChildCount() == 0) {
 			insertNewProductElement(extension);
 			return;
 		}
-		
-		PluginElementNode element = (PluginElementNode)extension.getChildren()[0];
-		
+
+		PluginElementNode element = (PluginElementNode) extension.getChildren()[0];
+
 		if (!"product".equals(element.getName())) { //$NON-NLS-1$
 			insertNewProductElement(extension);
 			return;
 		}
-		
+
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
 		synchronizeChild(element, IProductConstants.APP_NAME, fProduct.getName());
-		
+
 		synchronizeChild(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
 		synchronizeChild(element, IProductConstants.ABOUT_TEXT, getAboutText());
 		synchronizeChild(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
 		synchronizeChild(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
-		
+
 	}
-	
+
 	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
 		IPluginElement child = null;
 		IPluginObject[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			IPluginElement candidate = (IPluginElement)children[i];
+			IPluginElement candidate = (IPluginElement) children[i];
 			if (candidate.getName().equals("property")) { //$NON-NLS-1$
 				IPluginAttribute attr = candidate.getAttribute("name"); //$NON-NLS-1$
 				if (attr != null && attr.getValue().equals(propertyName)) {
@@ -571,10 +542,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		if (child != null && value == null)
 			element.remove(child);
-		
+
 		if (value == null)
 			return;
-		
+
 		if (child == null) {
 			child = element.getModel().getFactory().createElement(element);
 			child.setName("property"); //$NON-NLS-1$
@@ -583,10 +554,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		child.setAttribute("value", value); //$NON-NLS-1$
 		child.setAttribute("name", propertyName); //$NON-NLS-1$
 	}
-	
+
 	private void insertNewProductElement(IPluginExtension extension) throws CoreException {
 		IPluginElement element = createExtensionContent(extension);
 		extension.add(element);
 	}
-	
+
 }

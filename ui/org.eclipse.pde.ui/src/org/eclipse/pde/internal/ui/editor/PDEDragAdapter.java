@@ -11,21 +11,11 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import java.io.*;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * PDEDragAdapter
@@ -34,18 +24,18 @@ import org.eclipse.swt.widgets.Tree;
 public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant {
 
 	private IPDEDragParticipant fParticipant;
-	
+
 	// Needs to be static to allow dragging objects from one viewer to another
 	private static Object[] fSourceObjects;
 
 	private static int fTransferType;
 
 	public static final int F_TRANSFER_TYPE_NONE = 0x00;
-	
+
 	public static final int F_TRANSFER_TYPE_MODEL = 0x01;
 
 	public static final int F_TRANSFER_TYPE_TEXT = 0x02;
-	
+
 	/**
 	 * @param participant
 	 */
@@ -60,14 +50,14 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	protected void setSourceObjects(Object[] objects) {
 		fSourceObjects = objects;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IPDESourceParticipant#getSourceObjects()
 	 */
 	public Object[] getSourceObjects() {
 		return fSourceObjects;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -75,37 +65,37 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		fSourceObjects = null;
 		fTransferType = F_TRANSFER_TYPE_NONE;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	protected boolean isCopyOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_COPY) == DND.DROP_COPY) {
 			return true;
-		} 
+		}
 		return false;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	protected boolean isMoveOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_MOVE) == DND.DROP_MOVE) {
 			return true;
-		} 
+		}
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @return
 	 */
 	protected boolean isLinkOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_LINK) == DND.DROP_LINK) {
 			return true;
-		} 
+		}
 		return false;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
@@ -127,7 +117,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		// Remove the original source objects
 		fParticipant.doDragRemove(getSourceObjects());
 	}
-	
+
 	/**
 	 * @param event
 	 */
@@ -143,38 +133,38 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		// Ensure we have a drag source
 		if ((source instanceof DragSource) == false) {
 			event.doit = false;
-			return;			
+			return;
 		}
 		// Get the control of the source
-		Control control = ((DragSource)source).getControl();
+		Control control = ((DragSource) source).getControl();
 		// Get the items selected in the tree or table
 		Item[] items = null;
 		if (control instanceof Tree) {
 			// Get the tree's selection
-			items = ((Tree)control).getSelection();
+			items = ((Tree) control).getSelection();
 		} else if (control instanceof Table) {
 			// Get the table's selection
-			items = ((Table)control).getSelection();
+			items = ((Table) control).getSelection();
 		} else {
 			event.doit = false;
-			return;		
+			return;
 		}
 		// Ensure there are selected objects
 		if (items.length == 0) {
 			event.doit = false;
-			return;			
+			return;
 		}
 		// Create the container for the source objects
 		Object[] sourceObjects = new Object[items.length];
 		// Store all source objects
 		for (int i = 0; i < items.length; i++) {
 			sourceObjects[i] = items[i].getData();
-		}		
+		}
 		// Store the source objects for later use
 		setSourceObjects(sourceObjects);
 		// event.doit is true by default
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
@@ -210,17 +200,16 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		for (int i = 0; i < sourceObjects.length; i++) {
 			Object object = sourceObjects[i];
 			if (object instanceof IWritable) {
-				if ((firstIteration == false) &&
-						(object instanceof IWritableDelimiter)) {
+				if ((firstIteration == false) && (object instanceof IWritableDelimiter)) {
 					// Add a customized delimiter in between all serialized
 					// objects to format the text representation
-					((IWritableDelimiter)object).writeDelimeter(printWriter);
+					((IWritableDelimiter) object).writeDelimeter(printWriter);
 				}
 				// Write the textual representation of the object
-				((IWritable)object).write("", printWriter); //$NON-NLS-1$
+				((IWritable) object).write("", printWriter); //$NON-NLS-1$
 			} else if (object instanceof String) {
 				// Delimiter is always a newline
-				printWriter.println((String)object);
+				printWriter.println((String) object);
 			}
 			firstIteration = false;
 		}
@@ -255,24 +244,21 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		// TODO: MP: DND: Want to support some operations for some items - not all or nothing
 		// Disable the drag event if the copy operation is supported; but, the
 		// selection cannot be copied
-		if (isCopyOperationSupported() && 
-				(fParticipant.canDragCopy(getSourceObjects()) == false)) {
+		if (isCopyOperationSupported() && (fParticipant.canDragCopy(getSourceObjects()) == false)) {
 			event.doit = false;
-			return;			
+			return;
 		}
 		// Disable the drag event if the move operation is supported; but, the
 		// selection cannot be cut
-		if (isMoveOperationSupported() && 
-				(fParticipant.canDragMove(getSourceObjects()) == false)) {
+		if (isMoveOperationSupported() && (fParticipant.canDragMove(getSourceObjects()) == false)) {
 			event.doit = false;
-			return;			
+			return;
 		}
 		// Disable the drag event if the link operation is supported; but, the
 		// selection cannot be linked
-		if (isLinkOperationSupported() && 
-				(fParticipant.canDragLink(getSourceObjects()) == false)) {
+		if (isLinkOperationSupported() && (fParticipant.canDragLink(getSourceObjects()) == false)) {
 			event.doit = false;
-			return;			
+			return;
 		}
 		// Drag event is enabled
 	}

@@ -19,17 +19,10 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,8 +33,7 @@ import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class FeatureDetailsSection extends PDESection implements IFormPart,
-		IPartSelectionListener {
+public class FeatureDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
 
 	private static final String PROPERTY_TYPE = "type"; //$NON-NLS-1$
 
@@ -54,12 +46,10 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	private FormEntry fUrlText;
 
 	public FeatureDetailsSection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.FeatureDetailsSection_title,
-				PDEUIMessages.FeatureDetailsSection_desc, SWT.NULL);
+		this(page, parent, PDEUIMessages.FeatureDetailsSection_title, PDEUIMessages.FeatureDetailsSection_desc, SWT.NULL);
 	}
 
-	public FeatureDetailsSection(PDEFormPage page, Composite parent,
-			String title, String desc, int toggleStyle) {
+	public FeatureDetailsSection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -88,8 +78,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -120,7 +109,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -128,18 +117,14 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		section.setLayoutData(data);
-		
+
 		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureDetailsSection_url, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0) {
 						setValue(PROPERTY_URL);
-						MessageDialog
-								.openError(
-										PDEPlugin.getActiveWorkbenchShell(),
-										PDEUIMessages.FeatureDetailsSection_requiredURL_title, 
-												PDEUIMessages.FeatureDetailsSection_requiredURL);
+						MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureDetailsSection_requiredURL_title, PDEUIMessages.FeatureDetailsSection_requiredURL);
 					} else {
 						applyValue(PROPERTY_URL, text.getValue());
 					}
@@ -150,7 +135,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		});
 		limitTextWidth(fUrlText);
 		fUrlText.getText().setEnabled(false);
-		
+
 		createPatchButton(toolkit, container);
 
 		toolkit.paintBordersFor(container);

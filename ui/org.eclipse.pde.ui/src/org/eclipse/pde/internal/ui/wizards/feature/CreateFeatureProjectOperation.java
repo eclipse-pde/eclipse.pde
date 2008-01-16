@@ -25,8 +25,7 @@ public class CreateFeatureProjectOperation extends AbstractCreateFeatureOperatio
 
 	protected IPluginBase[] fPlugins;
 
-	public CreateFeatureProjectOperation(IProject project, IPath location,
-			FeatureData featureData, IPluginBase[] plugins, Shell shell) {
+	public CreateFeatureProjectOperation(IProject project, IPath location, FeatureData featureData, IPluginBase[] plugins, Shell shell) {
 		super(project, location, featureData, shell);
 		fPlugins = plugins != null ? plugins : new IPluginBase[0];
 	}

@@ -11,26 +11,21 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.Set;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 
-
 public class ProductFromExtensionOperation extends BaseProductCreationOperation {
-	
+
 	private String fId;
 
 	public ProductFromExtensionOperation(IFile file, String productId) {
 		super(file);
 		fId = productId;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation#initializeProduct(org.eclipse.pde.internal.core.iproduct.IProduct)
 	 */
@@ -42,18 +37,18 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		addPlugins(factory, product, getPlugins());
 		super.initializeProduct(product);
 	}
-	
+
 	private String[] getPlugins() {
 		int lastDot = fId.lastIndexOf('.');
 		if (lastDot == -1)
 			return new String[0];
-		
+
 		DependencyCalculator calculator = new DependencyCalculator(false);
 		// add plugin declaring product and its pre-reqs
 		IPluginModelBase model = PluginRegistry.findModel(fId.substring(0, lastDot));
 		if (model != null)
 			calculator.findDependency(model);
-		
+
 		// add plugin declaring product application and its pre-reqs
 		IPluginElement element = getProductExtension(fId);
 		if (element != null) {
@@ -70,7 +65,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 			}
 		}
 		Set ids = calculator.getBundleIDs();
-		return (String[])ids.toArray(new String[ids.size()]);
+		return (String[]) ids.toArray(new String[ids.size()]);
 	}
 
 }

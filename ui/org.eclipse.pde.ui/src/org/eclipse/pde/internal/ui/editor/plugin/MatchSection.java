@@ -13,45 +13,33 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class MatchSection extends PDESection implements IPartSelectionListener {
-	
+
 	private Button fReexportButton;
 	private Button fOptionalButton;
-	
+
 	private FormEntry fVersionText;
 
 	private ComboPart fMatchCombo;
 	protected IPluginReference fCurrentImport;
-	
+
 	private boolean fBlockChanges = false;
 	private boolean fAddReexport = true;
 
@@ -60,7 +48,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		fAddReexport = addReexport;
 		createClient(getSection(), formPage.getEditor().getToolkit());
 	}
-	
+
 	public void commit(boolean onSave) {
 		if (isDirty() == false)
 			return;
@@ -76,12 +64,12 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		super.commit(onSave);
 	}
-	
+
 	public void cancelEdit() {
 		fVersionText.cancelEdit();
 		super.cancelEdit();
 	}
-	
+
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -89,12 +77,13 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			createOptionalButton(toolkit, container);
 			createReexportButton(toolkit, container);
 		}
-		
+
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.ManifestEditor_MatchSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
 				applyVersion(text.getValue());
 			}
+
 			public void textDirty(FormEntry text) {
 				if (fBlockChanges)
 					return;
@@ -104,7 +93,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				fBlockChanges = false;
 			}
 		});
-		
+
 		Label matchLabel = toolkit.createLabel(container, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
 		matchLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
@@ -126,14 +115,14 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		toolkit.paintBordersFor(container);
 		initialize();
 		update((IPluginReference) null);
-		
-		section.setClient(container);		
-		section.setText(PDEUIMessages.MatchSection_title); 
-		section.setDescription(PDEUIMessages.MatchSection_desc); 
+
+		section.setClient(container);
+		section.setText(PDEUIMessages.MatchSection_title);
+		section.setDescription(PDEUIMessages.MatchSection_desc);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 	}
-	
+
 	private void createReexportButton(FormToolkit toolkit, Composite container) {
 		fReexportButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_reexport, SWT.CHECK);
 		fReexportButton.addSelectionListener(new SelectionAdapter() {
@@ -152,7 +141,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		gd.horizontalSpan = 2;
 		fReexportButton.setLayoutData(gd);
 	}
-	
+
 	private void createOptionalButton(FormToolkit toolkit, Composite container) {
 		fOptionalButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_optional, SWT.CHECK);
 		fOptionalButton.addSelectionListener(new SelectionAdapter() {
@@ -173,17 +162,17 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		gd.horizontalSpan = 2;
 		fOptionalButton.setLayoutData(gd);
 	}
-	
+
 	private void applyVersion(String version) {
 		try {
 			if (fCurrentImport != null) {
 				fCurrentImport.setVersion(version);
-			} 
+			}
 		} catch (CoreException ex) {
 			PDEPlugin.logException(ex);
 		}
 	}
-	
+
 	private void applyMatch(int match) {
 		try {
 			if (fCurrentImport != null) {
@@ -193,24 +182,24 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			PDEPlugin.logException(ex);
 		}
 	}
-	
+
 	private int getMatch() {
 		return fMatchCombo.getSelectionIndex();
 	}
-	
+
 	public void dispose() {
 		IModel model = (IModel) getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		super.dispose();
 	}
-	
+
 	private void initialize() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
-	
+
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object obj = e.getChangedObjects()[0];
@@ -224,12 +213,12 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 		}
 	}
-	
+
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection)selection;
-		if (ssel.size()==1) {
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (ssel.size() == 1) {
 			Object changeObject = ((IStructuredSelection) selection).getFirstElement();
-			IPluginReference input = null;			
+			IPluginReference input = null;
 			if (changeObject instanceof ImportObject)
 				input = ((ImportObject) changeObject).getImport();
 			else if (changeObject instanceof IPluginReference)
@@ -239,16 +228,16 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			update(null);
 		}
 	}
-	
+
 	private void resetMatchCombo(IPluginReference iimport) {
 		fMatchCombo.getControl().setEnabled(isEditable() && fVersionText.getText().getText().length() > 0);
 		setMatchCombo(iimport);
 	}
-	
+
 	private void setMatchCombo(IPluginReference iimport) {
 		fMatchCombo.select(iimport != null ? iimport.getMatch() : IMatchRules.NONE);
 	}
-	
+
 	protected void update(IPluginReference iimport) {
 		fBlockChanges = true;
 		if (iimport == null) {
@@ -266,12 +255,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			fBlockChanges = false;
 			return;
 		}
-		
-		if (fCurrentImport != null && !iimport.equals(fCurrentImport)
-				&& isEditable()) {
+
+		if (fCurrentImport != null && !iimport.equals(fCurrentImport) && isEditable()) {
 			commit(false);
 		}
-		
+
 		fCurrentImport = iimport;
 		if (fCurrentImport instanceof IPluginImport) {
 			IPluginImport pimport = (IPluginImport) fCurrentImport;

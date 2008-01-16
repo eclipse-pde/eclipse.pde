@@ -13,32 +13,16 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.FeatureURLElement;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
-import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
@@ -48,9 +32,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public class URLSection extends TableSection {
 	private TableViewer fUrlViewer;
@@ -61,8 +43,7 @@ public class URLSection extends TableSection {
 
 	private Image fUrlImage;
 
-	class URLContentProvider extends DefaultContentProvider implements
-			IStructuredContentProvider {
+	class URLContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object input) {
 			IFeature feature = (IFeature) input;
 			IFeatureURL featureUrl = feature.getURL();
@@ -85,8 +66,7 @@ public class URLSection extends TableSection {
 	}
 
 	public URLSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE,
-				false, new String[] { PDEUIMessages.FeatureEditor_URLSection_new });
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE, false, new String[] {PDEUIMessages.FeatureEditor_URLSection_new});
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		fUrlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
 		createClient(getSection(), page.getManagedForm().getToolkit());
@@ -140,8 +120,7 @@ public class URLSection extends TableSection {
 		}
 
 		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleNew() {
@@ -158,8 +137,7 @@ public class URLSection extends TableSection {
 			}
 		}
 		try {
-			IFeatureURLElement element = model.getFactory().createURLElement(
-					url, IFeatureURLElement.DISCOVERY);
+			IFeatureURLElement element = model.getFactory().createURLElement(url, IFeatureURLElement.DISCOVERY);
 			element.setLabel(PDEUIMessages.FeatureEditor_URLSection_newDiscoverySite);
 			element.setURL(new URL(PDEUIMessages.FeatureEditor_URLSection_newURL));
 			url.addDiscovery(element);
@@ -173,16 +151,14 @@ public class URLSection extends TableSection {
 	}
 
 	private void handleSelectAll() {
-		IStructuredContentProvider provider = (IStructuredContentProvider) fUrlViewer
-				.getContentProvider();
+		IStructuredContentProvider provider = (IStructuredContentProvider) fUrlViewer.getContentProvider();
 		Object[] elements = provider.getElements(fUrlViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
 		fUrlViewer.setSelection(ssel);
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fUrlViewer
-				.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fUrlViewer.getSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -209,12 +185,11 @@ public class URLSection extends TableSection {
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleDelete();
-						}
-					});
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -228,12 +203,11 @@ public class URLSection extends TableSection {
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleSelectAll();
-						}
-					});
+			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
 			return true;
 		}
 		return false;
@@ -291,12 +265,11 @@ public class URLSection extends TableSection {
 
 		fDeleteAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(),
-						new Runnable() {
-							public void run() {
-								handleDelete();
-							}
-						});
+				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handleDelete();
+					}
+				});
 			}
 		};
 		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);

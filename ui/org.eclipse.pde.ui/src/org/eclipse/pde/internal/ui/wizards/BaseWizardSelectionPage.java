@@ -20,9 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public abstract class BaseWizardSelectionPage extends WizardSelectionPage
-		implements
-			ISelectionChangedListener {
+public abstract class BaseWizardSelectionPage extends WizardSelectionPage implements ISelectionChangedListener {
 	private String label;
 	private FormBrowser descriptionBrowser;
 
@@ -32,6 +30,7 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage
 		descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 		descriptionBrowser.setText(""); //$NON-NLS-1$
 	}
+
 	public void createDescriptionIn(Composite composite) {
 		descriptionBrowser.createControl(composite);
 		Control c = descriptionBrowser.getControl();
@@ -41,17 +40,20 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage
 	}
 
 	protected abstract IWizardNode createWizardNode(WizardElement element);
+
 	public String getLabel() {
 		return label;
 	}
+
 	public void setDescriptionText(String text) {
 		if (text == null)
 			text = PDEUIMessages.BaseWizardSelectionPage_noDesc;
 		descriptionBrowser.setText(text);
 	}
+
 	public void setDescriptionEnabled(boolean enabled) {
 		Control dcontrol = descriptionBrowser.getControl();
-		if (dcontrol!=null)
+		if (dcontrol != null)
 			dcontrol.setEnabled(enabled);
 	}
 }

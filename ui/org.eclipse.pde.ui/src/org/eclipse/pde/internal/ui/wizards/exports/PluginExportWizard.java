@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
+import javax.xml.parsers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.build.PluginExportJob;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 public class PluginExportWizard extends AntGeneratingExportWizard {
 	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
@@ -74,9 +69,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			String filename = fPage.getFileName();
 			if (filename != null)
 				export.setAttribute("filename", filename); //$NON-NLS-1$
-			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
-			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat()));  //$NON-NLS-1$
-			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource()));  //$NON-NLS-1$
+			export.setAttribute("exportType", getExportOperation()); //$NON-NLS-1$
+			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
+			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
 			String qualifier = fPage.getQualifier();
 			if (qualifier != null)
 				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
@@ -95,9 +90,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IPluginModelBase) {
-				buffer.append(((IPluginModelBase)object).getPluginBase().getId());
+				buffer.append(((IPluginModelBase) object).getPluginBase().getId());
 				if (i < objects.length - 1)
-					buffer.append(",");					 //$NON-NLS-1$
+					buffer.append(","); //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();

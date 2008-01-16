@@ -27,12 +27,7 @@ public class NewFeaturePatchWizard extends AbstractNewFeatureWizard {
 	}
 
 	protected IRunnableWithProgress getOperation() {
-		return new CreateFeaturePatchOperation(
-				fProvider.getProject(),
-				fProvider.getLocationPath(),
-				fProvider.getFeatureData(),
-				fProvider.getFeatureToPatch(),
-				getShell());
+		return new CreateFeaturePatchOperation(fProvider.getProject(), fProvider.getLocationPath(), fProvider.getFeatureData(), fProvider.getFeatureToPatch(), getShell());
 	}
 
 }

@@ -14,10 +14,7 @@ package org.eclipse.pde.internal.ui.editor.actions;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,28 +26,26 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 /**
  * OpenSchemaAction
  *
  */
-public class OpenSchemaAction extends Action  {
+public class OpenSchemaAction extends Action {
 
 	private ISchema fSchema;
-	
+
 	private String fFullPointID;
-	
+
 	/**
 	 * 
 	 */
 	public OpenSchemaAction() {
 		fSchema = null;
 		fFullPointID = null;
-		
+
 		initialize();
 	}
 
@@ -63,7 +58,7 @@ public class OpenSchemaAction extends Action  {
 		setToolTipText(PDEUIMessages.HyperlinkActionOpenSchema);
 		setEnabled(false);
 	}
-	
+
 	/**
 	 * @param schema
 	 */
@@ -94,9 +89,9 @@ public class OpenSchemaAction extends Action  {
 			return;
 		}
 		// Find the schema
-		fSchema = findSchema(point);		
+		fSchema = findSchema(point);
 	}
-	
+
 	/**
 	 * @param fullPointID
 	 */
@@ -106,7 +101,7 @@ public class OpenSchemaAction extends Action  {
 			fSchema = null;
 			fFullPointID = PDEUIMessages.OpenSchemaAction_msgUnknown;
 			return;
-		}		
+		}
 		fFullPointID = fullPointID;
 		// Find the corresponding extension point
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(fFullPointID);
@@ -118,7 +113,7 @@ public class OpenSchemaAction extends Action  {
 		// Find the schema
 		fSchema = findSchema(point);
 	}
-	
+
 	/**
 	 * @param extension
 	 */
@@ -154,8 +149,7 @@ public class OpenSchemaAction extends Action  {
 			return null;
 		}
 		// Create a schema descriptor
-		ISchemaDescriptor descriptor = 
-			new SchemaDescriptor(fFullPointID, url);
+		ISchemaDescriptor descriptor = new SchemaDescriptor(fFullPointID, url);
 		// Get the schema
 		ISchema schema = descriptor.getSchema(false);
 		// Ensure schema is defined
@@ -164,18 +158,16 @@ public class OpenSchemaAction extends Action  {
 		}
 		return schema;
 	}
-	
+
 	/**
 	 * @param fullPointID
 	 */
 	private void displayErrorDialog() {
-		String title = PDEUIMessages.OpenSchemaAction_titleExtensionPointSchema; 
-		String message = 
-			NLS.bind(PDEUIMessages.OpenSchemaAction_errorMsgSchemaNotFound, fFullPointID);
-		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), 
-				title, message);
-	}	
-	
+		String title = PDEUIMessages.OpenSchemaAction_titleExtensionPointSchema;
+		String message = NLS.bind(PDEUIMessages.OpenSchemaAction_errorMsgSchemaNotFound, fFullPointID);
+		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -218,7 +210,7 @@ public class OpenSchemaAction extends Action  {
 				String relativeLocation = path.substring(workspaceLoc.length());
 				IResource res = root.findMember(relativeLocation);
 				if (res != null && res instanceof IFile && res.getProject().isOpen()) {
-					SchemaEditor.openSchema((IFile)res);
+					SchemaEditor.openSchema((IFile) res);
 					return;
 				}
 			}
@@ -234,7 +226,7 @@ public class OpenSchemaAction extends Action  {
 		// Remove the 'file:' qualifier
 		if (path.startsWith("file:") == false) { //$NON-NLS-1$
 			displayErrorDialog();
-			return;			
+			return;
 		}
 		path = path.substring(5);
 		// An exclaimation point separates the jar filename from the
@@ -243,10 +235,9 @@ public class OpenSchemaAction extends Action  {
 		int exclPointIndex = path.indexOf('!');
 		// Ensure there is an '!' and that the schema file entry is defined
 		// and the jar file name is defined
-		if ((exclPointIndex <= 0) ||
-				((exclPointIndex + 1) >= path.length())) {
+		if ((exclPointIndex <= 0) || ((exclPointIndex + 1) >= path.length())) {
 			displayErrorDialog();
-			return;				
+			return;
 		}
 		// Extract the jar file name - not including '!'
 		String jarFileName = path.substring(0, exclPointIndex);

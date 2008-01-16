@@ -12,34 +12,19 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureData;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
@@ -61,8 +46,7 @@ public class DataSection extends TableSection {
 
 	private Action fDeleteAction;
 
-	class PluginContentProvider extends DefaultContentProvider implements
-			IStructuredContentProvider {
+	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				return ((IFeature) parent).getData();
@@ -72,7 +56,7 @@ public class DataSection extends TableSection {
 	}
 
 	public DataSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEUIMessages.FeatureEditor_DataSection_new });
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_DataSection_new});
 		getSection().setText(PDEUIMessages.FeatureEditor_DataSection_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_DataSection_desc);
 		getTablePart().setEditable(false);
@@ -83,11 +67,11 @@ public class DataSection extends TableSection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		Composite container = createClientContainer(section, 2, toolkit);
 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -131,8 +115,7 @@ public class DataSection extends TableSection {
 		manager.add(fNewAction);
 		manager.add(fDeleteAction);
 		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleNew() {
@@ -140,20 +123,17 @@ public class DataSection extends TableSection {
 		IResource resource = model.getUnderlyingResource();
 		final IContainer folder = resource.getParent();
 
-		BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(),
-				new Runnable() {
-					public void run() {
-						ResourceSelectionDialog dialog = new ResourceSelectionDialog(
-								fDataViewer.getTable().getShell(), folder, null);
-						dialog.open();
-						Object[] result = dialog.getResult();
-						processNewResult(model, folder, result);
-					}
-				});
+		BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				ResourceSelectionDialog dialog = new ResourceSelectionDialog(fDataViewer.getTable().getShell(), folder, null);
+				dialog.open();
+				Object[] result = dialog.getResult();
+				processNewResult(model, folder, result);
+			}
+		});
 	}
 
-	private void processNewResult(IFeatureModel model, IContainer folder,
-			Object[] result) {
+	private void processNewResult(IFeatureModel model, IContainer folder, Object[] result) {
 		if (result == null || result.length == 0)
 			return;
 		IPath folderPath = folder.getProjectRelativePath();
@@ -186,7 +166,7 @@ public class DataSection extends TableSection {
 			}
 		}
 	}
-	
+
 	private boolean canAdd(IFeatureModel model, String path) {
 		if ("feature.xml".equals(path)) //$NON-NLS-1$
 			return false;
@@ -200,16 +180,14 @@ public class DataSection extends TableSection {
 	}
 
 	private void handleSelectAll() {
-		IStructuredContentProvider provider = (IStructuredContentProvider) fDataViewer
-				.getContentProvider();
+		IStructuredContentProvider provider = (IStructuredContentProvider) fDataViewer.getContentProvider();
 		Object[] elements = provider.getElements(fDataViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
 		fDataViewer.setSelection(ssel);
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fDataViewer
-				.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fDataViewer.getSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -234,21 +212,19 @@ public class DataSection extends TableSection {
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleDelete();
-						}
-					});
+			BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleSelectAll();
-						}
-					});
+			BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -304,12 +280,11 @@ public class DataSection extends TableSection {
 
 		fDeleteAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(),
-						new Runnable() {
-							public void run() {
-								handleDelete();
-							}
-						});
+				BusyIndicator.showWhile(fDataViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handleDelete();
+					}
+				});
 			}
 		};
 		fDeleteAction.setEnabled(model.isEditable());
@@ -335,8 +310,7 @@ public class DataSection extends TableSection {
 	 */
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof FeaturePlugin
-					|| !(objects[i] instanceof FeatureData))
+			if (objects[i] instanceof FeaturePlugin || !(objects[i] instanceof FeatureData))
 				return false;
 		}
 		return true;
@@ -367,8 +341,7 @@ public class DataSection extends TableSection {
 		FeatureData[] fData = new FeatureData[objects.length];
 		try {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeatureData
-						&& !(objects[i] instanceof FeaturePlugin)) {
+				if (objects[i] instanceof FeatureData && !(objects[i] instanceof FeaturePlugin)) {
 					FeatureData fd = (FeatureData) objects[i];
 					fd.setModel(model);
 					fd.setParent(feature);
@@ -386,8 +359,7 @@ public class DataSection extends TableSection {
 		if (!sel.isEmpty()) {
 			fDataViewer.setSelection(fDataViewer.getSelection());
 		} else if (fDataViewer.getElementAt(0) != null) {
-			fDataViewer.setSelection(new StructuredSelection(fDataViewer
-					.getElementAt(0)));
+			fDataViewer.setSelection(new StructuredSelection(fDataViewer.getElementAt(0)));
 		}
 	}
 }

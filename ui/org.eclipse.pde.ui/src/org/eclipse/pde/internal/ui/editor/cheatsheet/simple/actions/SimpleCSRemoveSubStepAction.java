@@ -12,13 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -29,8 +23,8 @@ public class SimpleCSRemoveSubStepAction extends Action {
 
 	private ISimpleCSSubItemObject fSubItem;
 
-	private ISimpleCSObject fObjectToSelect;	
-	
+	private ISimpleCSObject fObjectToSelect;
+
 	/**
 	 * 
 	 */
@@ -40,7 +34,7 @@ public class SimpleCSRemoveSubStepAction extends Action {
 //		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 		fSubItem = null;
-		fObjectToSelect = null;		
+		fObjectToSelect = null;
 	}
 
 	/**
@@ -59,27 +53,25 @@ public class SimpleCSRemoveSubStepAction extends Action {
 			ISimpleCSObject parent = fSubItem.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Parent is an item
-				ISimpleCSItem item = (ISimpleCSItem)parent;
+				ISimpleCSItem item = (ISimpleCSItem) parent;
 				// Determine the item to select after the deletion takes place 
 				determineItemToSelect(item);
 				// Remove the subitem
 				item.removeSubItem(fSubItem);
-			} else if ((parent.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) &&
-					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+			} else if ((parent.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) && (fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
 				// Parent is a repeated subitem
-				ISimpleCSRepeatedSubItem subitem = (ISimpleCSRepeatedSubItem)parent;
+				ISimpleCSRepeatedSubItem subitem = (ISimpleCSRepeatedSubItem) parent;
 				// Determine the item to select after the deletion takes place 
 				determineItemToSelect(subitem);
 				// Remove the subitem
 				subitem.setSubItem(null);
-			} else if ((parent.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) &&
-					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+			} else if ((parent.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) && (fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
 				// Parent is a conditional subitem
-				ISimpleCSConditionalSubItem subitem = (ISimpleCSConditionalSubItem)parent;
+				ISimpleCSConditionalSubItem subitem = (ISimpleCSConditionalSubItem) parent;
 				// Determine the item to select after the deletion takes place 
 				determineItemToSelect(subitem);
 				// Remove the subitem
-				subitem.removeSubItem((ISimpleCSSubItem)fSubItem);
+				subitem.removeSubItem((ISimpleCSSubItem) fSubItem);
 			}
 		}
 	}
@@ -101,7 +93,7 @@ public class SimpleCSRemoveSubStepAction extends Action {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param item
 	 */
@@ -109,12 +101,12 @@ public class SimpleCSRemoveSubStepAction extends Action {
 		// The parent itself
 		fObjectToSelect = object;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ISimpleCSObject getObjectToSelect() {
 		return fObjectToSelect;
-	}	
-	
+	}
+
 }

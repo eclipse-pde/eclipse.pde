@@ -11,13 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.provisioner;
 
 import java.io.File;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -29,15 +23,15 @@ import org.eclipse.pde.ui.IProvisionerWizard;
 import org.eclipse.swt.graphics.Image;
 
 public class AddTargetPluginsWizard extends NewWizard {
-	
+
 	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
 	private ProvisionerListSelectionPage fSelectionPage = null;
 	private File[] fDirs = null;
 	private IProvisionerWizard fWizard = null;
-	
+
 	public AddTargetPluginsWizard() {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.AddTargetPluginsWizard_windowTitle); 
+		setWindowTitle(PDEUIMessages.AddTargetPluginsWizard_windowTitle);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -46,12 +40,9 @@ public class AddTargetPluginsWizard extends NewWizard {
 		ElementList list = getAvailableProvisioners();
 		if (list.size() == 1) {
 			try {
-				fWizard = (IProvisionerWizard)((WizardElement)list.getChildren()[0]).createExecutableExtension();
+				fWizard = (IProvisionerWizard) ((WizardElement) list.getChildren()[0]).createExecutableExtension();
 			} catch (CoreException e) {
-				MessageDialog.openError(
-						getContainer().getShell(), 
-						PDEUIMessages.Errors_CreationError, 
-						PDEUIMessages.Errors_CreationError_NoWizard); 
+				MessageDialog.openError(getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);
 			}
 			fWizard.addPages();
 			IWizardPage[] pages = fWizard.getPages();
@@ -63,7 +54,7 @@ public class AddTargetPluginsWizard extends NewWizard {
 		}
 		super.addPages();
 	}
-	
+
 	private ElementList getAvailableProvisioners() {
 		ElementList list = new ElementList(PROVISIONER_POINT);
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -72,8 +63,7 @@ public class AddTargetPluginsWizard extends NewWizard {
 			return list;
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements =
-				extensions[i].getConfigurationElements();
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
 				WizardElement element = createWizardElement(elements[j]);
 				if (element != null) {
@@ -83,20 +73,19 @@ public class AddTargetPluginsWizard extends NewWizard {
 		}
 		return list;
 	}
-	
+
 	protected WizardElement createWizardElement(IConfigurationElement config) {
 		String name = config.getAttribute(WizardElement.ATT_NAME);
 		String id = config.getAttribute(WizardElement.ATT_ID);
 		if (name == null || id == null)
 			return null;
 		WizardElement element = new WizardElement(config);
-		
+
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		Image image = null;
 		if (imageName != null) {
 			String pluginID = config.getNamespaceIdentifier();
-			image =
-				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
+			image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
 		}
 		element.setImage(image);
 		return element;
@@ -107,14 +96,13 @@ public class AddTargetPluginsWizard extends NewWizard {
 	}
 
 	public boolean performFinish() {
-		IProvisionerWizard wizard = (fSelectionPage != null) ? (IProvisionerWizard)fSelectionPage.getSelectedWizard() :
-			fWizard;
+		IProvisionerWizard wizard = (fSelectionPage != null) ? (IProvisionerWizard) fSelectionPage.getSelectedWizard() : fWizard;
 		if (wizard == null)
 			return true;
 		fDirs = wizard.getLocations();
 		return super.performFinish();
 	}
-	
+
 	public File[] getDirectories() {
 		return (fDirs == null) ? new File[0] : fDirs;
 	}

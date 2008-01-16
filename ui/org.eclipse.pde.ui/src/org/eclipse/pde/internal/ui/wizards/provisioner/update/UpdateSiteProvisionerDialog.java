@@ -19,19 +19,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class UpdateSiteProvisionerDialog extends StatusDialog {
 
@@ -51,7 +42,7 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fInstallLocation = installLocation;
 		fSiteLocation = siteLocation;
-		setTitle(title); 
+		setTitle(title);
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -87,17 +78,17 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSiteLocationText.setLayoutData(gd);
-		if(fSiteLocation != null)
+		if (fSiteLocation != null)
 			fSiteLocationText.setText(fSiteLocation);
 
 		fInstallLocationLabel = new Label(container, SWT.NULL);
-		fInstallLocationLabel.setText(PDEUIMessages.UpdateSiteProvisionerDialog_installLocation); 
+		fInstallLocationLabel.setText(PDEUIMessages.UpdateSiteProvisionerDialog_installLocation);
 
 		fInstallLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		fInstallLocationText.setLayoutData(gd);
-		if(fInstallLocation != null)
+		if (fInstallLocation != null)
 			fInstallLocationText.setText(fInstallLocation);
 
 		Button fs = new Button(container, SWT.PUSH);
@@ -112,13 +103,12 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 	}
 
 	private IStatus createErrorStatus(String message) {
-		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK,
-				message, null);
+		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
 	}
 
 	private void dialogChanged() {
 		IStatus status = null;
-		if(fInstallLocationText.getText().length() == 0 && fSiteLocationText.getText().length() == 0)
+		if (fInstallLocationText.getText().length() == 0 && fSiteLocationText.getText().length() == 0)
 			status = getEmptyErrorStatus();
 
 		if (status == null)
@@ -128,15 +118,14 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 
 	private IStatus getOKStatus() {
 		if (fOkStatus == null)
-			fOkStatus = new Status(IStatus.OK, PDEPlugin.getPluginId(),
-					IStatus.OK, "", //$NON-NLS-1$
+			fOkStatus = new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
 					null);
 		return fOkStatus;
 	}
 
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus(PDEUIMessages.UpdateSiteProvisionerDialog_missBothErrorMessage); 
+			fErrorStatus = createErrorStatus(PDEUIMessages.UpdateSiteProvisionerDialog_missBothErrorMessage);
 		return fErrorStatus;
 	}
 
@@ -144,13 +133,13 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 
 		String text = fInstallLocationText.getText();
-		if(text == null || text.length() == 0) {
+		if (text == null || text.length() == 0) {
 			dialog.setFilterPath(TargetPlatform.getLocation());
 		} else {
 			dialog.setFilterPath(fInstallLocationText.getText());
 		}
-		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
-		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
+		dialog.setText(PDEUIMessages.BaseBlock_dirSelection);
+		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose);
 		String result = dialog.open();
 		if (result != null) {
 			fInstallLocationText.setText(result);
@@ -158,9 +147,7 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 	}
 
 	protected void okPressed() {
-		fEntry = new UpdateSiteProvisionerEntry(
-				fInstallLocationText.getText(), 
-				fSiteLocationText.getText());
+		fEntry = new UpdateSiteProvisionerEntry(fInstallLocationText.getText(), fSiteLocationText.getText());
 		super.okPressed();
 	}
 

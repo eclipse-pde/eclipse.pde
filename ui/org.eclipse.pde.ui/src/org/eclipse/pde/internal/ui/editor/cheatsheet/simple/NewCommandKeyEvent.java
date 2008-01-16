@@ -22,7 +22,7 @@ public class NewCommandKeyEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
 
 	private String fKey;
-	
+
 	private String fValue;
 
 	/**
@@ -49,5 +49,5 @@ public class NewCommandKeyEvent extends EventObject {
 	public String getValue() {
 		return fValue;
 	}
-	
+
 }

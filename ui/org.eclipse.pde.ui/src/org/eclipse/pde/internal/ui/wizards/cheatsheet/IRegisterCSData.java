@@ -23,17 +23,17 @@ public interface IRegisterCSData {
 	 * @return
 	 */
 	public String getDataDescription();
-	
+
 	/**
 	 * @return
 	 */
 	public String getDataCategoryName();
-	
+
 	/**
 	 * @return
 	 */
 	public String getDataCategoryID();
-	
+
 	/**
 	 * @return
 	 */
@@ -43,22 +43,22 @@ public interface IRegisterCSData {
 	 * @return
 	 */
 	public String getDataContentFile();
-	
+
 	/**
 	 * @return
 	 */
 	public String getDataCheatSheetID();
-	
+
 	/**
 	 * @return
 	 */
 	public String getDataCheatSheetName();
-	
+
 	/**
 	 * @return
 	 */
-	public boolean isCompositeCheatSheet();	
-	
+	public boolean isCompositeCheatSheet();
+
 	/**
 	 * @return
 	 */

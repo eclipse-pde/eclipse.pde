@@ -25,14 +25,14 @@ public class BlankField extends TemplateOption {
 	private final static int DEFAULT_HEIGHT = 20;
 	private final static String OPTION_NAME = "blankField"; //$NON-NLS-1$
 	private static int NUM_CREATED = 0;
-	
+
 	private static String getUniqueName() {
 		return OPTION_NAME + Integer.toString(NUM_CREATED++);
 	}
-	
+
 	private Label fblankLabel;
 	private int fheight;
-	
+
 	/**
 	 * The default constructor. 
 	 * 
@@ -43,7 +43,7 @@ public class BlankField extends TemplateOption {
 		super(section, getUniqueName(), ""); //$NON-NLS-1$
 		fheight = DEFAULT_HEIGHT;
 	}
-	
+
 	/**
 	 * Overloaded constructor to specify the height of the blank field. 
 	 * 
@@ -66,7 +66,7 @@ public class BlankField extends TemplateOption {
 	 *            the number of columns that the widget should span
 	 */
 	public void createControl(Composite parent, int span) {
-		fblankLabel = createLabel(parent,span);
+		fblankLabel = createLabel(parent, span);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = fheight;
 		gd.horizontalSpan = span;

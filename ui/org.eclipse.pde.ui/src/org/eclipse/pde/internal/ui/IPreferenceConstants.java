@@ -11,13 +11,13 @@
 package org.eclipse.pde.internal.ui;
 
 public interface IPreferenceConstants {
-	
+
 	// Main preference page	
 	public static final String PROP_SHOW_OBJECTS = "Preferences.MainPage.showObjects"; //$NON-NLS-1$
 	public static final String VALUE_USE_IDS = "useIds"; //$NON-NLS-1$
 	public static final String VALUE_USE_NAMES = "useNames"; //$NON-NLS-1$
 	public static final String PROP_AUTO_MANAGE = "Preferences.MainPage.automanageDependencies"; //$NON-NLS-1$
-	
+
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$
 
@@ -28,7 +28,7 @@ public interface IPreferenceConstants {
 	public static final String DEPS_VIEW_SHOW_CALLERS = "DependenciesView.show.callers"; //$NON-NLS-1$
 	public static final String DEPS_VIEW_SHOW_LIST = "DependenciesView.show.list"; //$NON-NLS-1$
 	public static final String DEPS_VIEW_SHOW_STATE = "DependenciesView.show.state"; //$NON-NLS-1$
-	
+
 	// OSGi Frameworks
 	public static final String DEFAULT_OSGI_FRAMEOWRK = "Preference.default.osgi.framework"; //$NON-NLS-1$
 }

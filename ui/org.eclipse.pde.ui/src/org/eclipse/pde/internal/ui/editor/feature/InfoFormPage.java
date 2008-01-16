@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.ui.PlatformUI;
@@ -29,43 +23,46 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * 
  */
 public class InfoFormPage extends PDEFormPage {
-	public static final String PAGE_ID = "info";	 //$NON-NLS-1$
+	public static final String PAGE_ID = "info"; //$NON-NLS-1$
 	private IColorManager colorManager = ColorManager.getDefault();
 	private InfoSection infoSection;
-/**
- * 
- * @param editor
- * @param title
- */
+
+	/**
+	 * 
+	 * @param editor
+	 * @param title
+	 */
 	public InfoFormPage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/information.htm"; //$NON-NLS-1$
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
-		
+
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ));
-		
+
 		infoSection = new InfoSection(this, form.getBody(), colorManager);
 		managedForm.addPart(infoSection);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_INFO);
 		initialize();
 	}
+
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
 	}
+
 	public void initialize() {
 		getManagedForm().getForm().setText(PDEUIMessages.FeatureEditor_InfoPage_heading);
 	}

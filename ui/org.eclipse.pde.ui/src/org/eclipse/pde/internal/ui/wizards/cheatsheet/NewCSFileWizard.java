@@ -12,13 +12,10 @@
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
@@ -30,7 +27,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewWizard {
 
 	protected CSFileWizardPage fMainPage;
-	
+
 	/**
 	 * 
 	 */
@@ -50,18 +47,18 @@ public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewW
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        super.init(workbench, currentSelection);
-        setWindowTitle(PDEUIMessages.NewCheatSheetFileWizard_0);
-        setNeedsProgressMonitor(true);
+		super.init(workbench, currentSelection);
+		setWindowTitle(PDEUIMessages.NewCheatSheetFileWizard_0);
+		setNeedsProgressMonitor(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#initializeDefaultPageImageDescriptor()
 	 */
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
 	 */
@@ -76,13 +73,13 @@ public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewW
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private IRunnableWithProgress getOperation() {
-		
-        IFile file = fMainPage.createNewFile();
+
+		IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getCheatSheetType();
 		if (option == CSFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
 			return new SimpleCSCreationOperation(file);
@@ -92,5 +89,5 @@ public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewW
 		// This can never happen
 		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
 		return null;
-	}	
+	}
 }

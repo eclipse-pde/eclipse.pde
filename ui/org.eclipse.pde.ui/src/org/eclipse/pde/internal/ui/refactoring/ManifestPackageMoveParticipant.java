@@ -11,16 +11,9 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -30,8 +23,8 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 
 	protected boolean initialize(Object element) {
 		if (element instanceof IPackageFragment) {
-			IPackageFragment fragment = (IPackageFragment)element;
-			IJavaProject javaProject = (IJavaProject)fragment.getAncestor(IJavaElement.JAVA_PROJECT);
+			IPackageFragment fragment = (IPackageFragment) element;
+			IJavaProject javaProject = (IJavaProject) fragment.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
 			if (project.exists(ICoreConstants.MANIFEST_PATH)) {
 				fProject = javaProject.getProject();
@@ -52,17 +45,12 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 		if (file.exists()) {
 			IProject destProject = getDestinationProject();
 			if (destProject != null && !fProject.equals(destProject)) {
-				MoveFromChange change = BundleManifestChange.createMovePackageChange(file, 
-						fElements.keySet().toArray(), 
-						pm);
+				MoveFromChange change = BundleManifestChange.createMovePackageChange(file, fElements.keySet().toArray(), pm);
 				if (change != null) {
 					result.add(change);
 					IFile dest = destProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 					if (dest.exists()) {
-						Change second = BundleManifestChange.createMoveToPackageChange(
-								dest,  
-								change, 
-								pm);
+						Change second = BundleManifestChange.createMoveToPackageChange(dest, change, pm);
 						if (second != null)
 							result.add(second);
 					}
@@ -70,15 +58,15 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			}
 		}
 	}
-	
+
 	private IProject getDestinationProject() {
 		Object dest = getArguments().getDestination();
 		if (dest instanceof IAdaptable) {
-			IResource resource = (IResource)((IAdaptable)dest).getAdapter(IResource.class);
-			if (resource != null) 
+			IResource resource = (IResource) ((IAdaptable) dest).getAdapter(IResource.class);
+			if (resource != null)
 				return resource.getProject();
 		}
-		return null;		
+		return null;
 	}
 
 	protected boolean isInterestingForExtensions() {

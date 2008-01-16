@@ -15,14 +15,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.*;
 
 /**
  * TocDragAdapter implements the drag behaviour for the TOC tree section.
@@ -32,7 +28,7 @@ public class TocDragAdapter implements DragSourceListener {
 	private TocTreeSection fSection;
 	//The dragged items
 	private ArrayList fDraggedItems;
-	
+
 	/**
 	 * Constructs a new Drag Adapter with the specified selection
 	 * provider and TocTreeSection
@@ -48,8 +44,7 @@ public class TocDragAdapter implements DragSourceListener {
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
-		if(event.doit)
-		{	//The event should only be enabled if there is a selection to drag
+		if (event.doit) { //The event should only be enabled if there is a selection to drag
 			event.doit = !fSection.getSelection().isEmpty();
 		}
 	}
@@ -59,21 +54,20 @@ public class TocDragAdapter implements DragSourceListener {
 	 */
 	public void dragSetData(DragSourceEvent event) {
 		//Check if the drag is still enabled
-		if(event.doit)
-		{	IStructuredSelection sel = (IStructuredSelection)fSection.getSelection();
+		if (event.doit) {
+			IStructuredSelection sel = (IStructuredSelection) fSection.getSelection();
 
-			if(TextTransfer.getInstance().isSupportedType(event.dataType))
-			{	//If the expected data is text, then write out the selection
+			if (TextTransfer.getInstance().isSupportedType(event.dataType)) { //If the expected data is text, then write out the selection
 				//into its XML representation
 
 				StringWriter sw = new StringWriter();
 				PrintWriter writer = new PrintWriter(sw);
 
 				//Write the XML representation of each selected object
-				for(Iterator iter = sel.iterator(); iter.hasNext();)
-				{	Object obj = iter.next();
-					if(obj instanceof TocObject)
-					{	((TocObject)obj).write("", writer); //$NON-NLS-1$
+				for (Iterator iter = sel.iterator(); iter.hasNext();) {
+					Object obj = iter.next();
+					if (obj instanceof TocObject) {
+						((TocObject) obj).write("", writer); //$NON-NLS-1$
 					}
 				}
 
@@ -82,21 +76,17 @@ public class TocDragAdapter implements DragSourceListener {
 				//Set the array of dragged items to null,
 				//since we are dragging a String
 				fDraggedItems = null;
-			}
-			else if (ModelDataTransfer.getInstance().isSupportedType(event.dataType)) {
+			} else if (ModelDataTransfer.getInstance().isSupportedType(event.dataType)) {
 				//If we are dragging items from the model
-				fDraggedItems = getSelectedObjects(sel); 
-				TocObject[] selectedObjects = (TocObject[])fDraggedItems.toArray(new TocObject[fDraggedItems.size()]);
-				if(selectedObjects.length == 0)
-				{	//disable the drag if there are no items selected
+				fDraggedItems = getSelectedObjects(sel);
+				TocObject[] selectedObjects = (TocObject[]) fDraggedItems.toArray(new TocObject[fDraggedItems.size()]);
+				if (selectedObjects.length == 0) { //disable the drag if there are no items selected
 					event.doit = false;
-				}
-				else
-				{	//set the event's drag object to the selection
+				} else { //set the event's drag object to the selection
 					event.data = selectedObjects;
 				}
 			}
-		}	
+		}
 	}
 
 	/**
@@ -107,12 +97,9 @@ public class TocDragAdapter implements DragSourceListener {
 		ArrayList objects = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (obj instanceof TocObject && ((TocObject)obj).canBeRemoved())
-			{	//If the object is a removable TocObject, add it
+			if (obj instanceof TocObject && ((TocObject) obj).canBeRemoved()) { //If the object is a removable TocObject, add it
 				objects.add(obj);
-			}
-			else
-			{	//If the object is not a removable TocObject,
+			} else { //If the object is not a removable TocObject,
 				//we don't want to permit the drag, so return an empty list
 				return new ArrayList();
 			}
@@ -124,9 +111,9 @@ public class TocDragAdapter implements DragSourceListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
-	public void dragFinished(DragSourceEvent event)
-	{	if(event.detail == DND.DROP_MOVE && fDraggedItems != null)
-		{	fSection.handleDrag(fDraggedItems);
+	public void dragFinished(DragSourceEvent event) {
+		if (event.detail == DND.DROP_MOVE && fDraggedItems != null) {
+			fSection.handleDrag(fDraggedItems);
 		}
 
 		fDraggedItems = null;

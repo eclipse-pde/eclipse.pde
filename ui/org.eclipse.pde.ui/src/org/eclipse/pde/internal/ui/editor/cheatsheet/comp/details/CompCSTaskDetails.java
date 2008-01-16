@@ -12,20 +12,14 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
 import java.util.StringTokenizer;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -47,9 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
@@ -64,21 +56,21 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class CompCSTaskDetails extends CSAbstractDetails {
 
 	private Section fDefinitionSection;
-	
+
 	private FormEntry fNameEntry;
 
 	private FormEntry fPathEntry;
-	
-	private Button fSkip;	
-	
+
+	private Button fSkip;
+
 	private ICompCSTask fDataTask;
-	
-	private CompCSEnclosingTextDetails fEnclosingTextSection;		
-	
+
+	private CompCSEnclosingTextDetails fEnclosingTextSection;
+
 	private final static String F_PATH_SEPARATOR = "/"; //$NON-NLS-1$
-	
+
 	private final static String F_DOT_DOT = ".."; //$NON-NLS-1$
-	
+
 	/**
 	 * @param section
 	 */
@@ -91,10 +83,9 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fSkip = null;
 
 		fDefinitionSection = null;
-		fEnclosingTextSection = 
-			new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASK, section);
+		fEnclosingTextSection = new CompCSEnclosingTextDetails(ICompCSConstants.TYPE_TASK, section);
 	}
-	
+
 	/**
 	 * @param object
 	 */
@@ -103,8 +94,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fDataTask = object;
 		// Set data on the enclosing text section
 		fEnclosingTextSection.setData(object);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -116,7 +107,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Initialize managed form for enclosing text section
 		fEnclosingTextSection.initialize(form);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -124,14 +115,12 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
-			PDEUIMessages.CompCSTaskDetails_SectionDescription, style);
+		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, PDEUIMessages.CompCSTaskDetails_SectionDescription, style);
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fDefinitionSection);	
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fDefinitionSection);
 		// Create the container for the main section
-		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 3);		
+		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 3);
 		// Create the name entry
 		createUINameEntry(sectionClient);
 		// Create the kind combo
@@ -143,37 +132,35 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
-		markDetailsPart(fDefinitionSection);			
+		markDetailsPart(fDefinitionSection);
 	}
 
 	/**
 	 * @param parent
 	 */
 	private void createUINameEntry(Composite parent) {
-		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.CompCSTaskDetails_Name, SWT.NONE);		
-	}	
+		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.CompCSTaskDetails_Name, SWT.NONE);
+	}
 
 	/**
 	 * @param parent
 	 */
 	private void createUIPathEntry(Composite parent) {
-		fPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.CompCSTaskDetails_Path, PDEUIMessages.GeneralInfoSection_browse, isEditable());	
-	}	
-	
+		fPathEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.CompCSTaskDetails_Path, PDEUIMessages.GeneralInfoSection_browse, isEditable());
+	}
+
 	/**
 	 * @param parent
 	 */
 	private void createUISkipButton(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		fSkip = getToolkit().createButton(parent, PDEUIMessages.CompCSTaskDetails_SkipLabel, SWT.CHECK);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		fSkip.setLayoutData(data);
 		fSkip.setForeground(foreground);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
 	 */
@@ -197,11 +184,11 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTask == null) {
 					return;
-				}				
+				}
 				fDataTask.setFieldName(fNameEntry.getValue());
 			}
-		});			
-	}		
+		});
+	}
 
 	/**
 	 * 
@@ -212,59 +199,51 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTask == null) {
 					return;
-				}				
+				}
 				handleButtonEventPathEntry(entry);
 			}
+
 			public void linkActivated(HyperlinkEvent e) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
 					return;
-				}				
-				handleLinkEventPathEntry(convertPathRelativeToAbs(fPathEntry
-						.getValue(), fDataTask.getModel()
-						.getUnderlyingResource().getFullPath()
-						.toPortableString()));
+				}
+				handleLinkEventPathEntry(convertPathRelativeToAbs(fPathEntry.getValue(), fDataTask.getModel().getUnderlyingResource().getFullPath().toPortableString()));
 			}
+
 			public void textValueChanged(FormEntry entry) {
 				// Ensure data object is defined
 				if (fDataTask == null) {
 					return;
-				}				
+				}
 				// TODO: MP: LOW: CompCS: Could validate manual input
 				handleTextEventPathEntry(entry.getValue());
 			}
 		});
-	}	
-	
+	}
+
 	/**
 	 * @param entry
 	 */
 	private void handleButtonEventPathEntry(FormEntry entry) {
 		// Create the dialog
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-				getManagedForm().getForm().getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
-				
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getManagedForm().getForm().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+
 		dialog.setValidator(new CompCSFileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.CompCSTaskDetails_simpleCSWizardTitle);  
-		dialog.setMessage(PDEUIMessages.CompCSTaskDetails_simpleCSWizardDescription); 
-		dialog.addFilter(new FileExtensionFilter("xml"));  //$NON-NLS-1$
-		dialog.setInput(PDEPlugin.getWorkspace().getRoot().getProject(
-			fDataTask.getModel().getUnderlyingResource().getProject().getName()));
+		dialog.setTitle(PDEUIMessages.CompCSTaskDetails_simpleCSWizardTitle);
+		dialog.setMessage(PDEUIMessages.CompCSTaskDetails_simpleCSWizardDescription);
+		dialog.addFilter(new FileExtensionFilter("xml")); //$NON-NLS-1$
+		dialog.setInput(PDEPlugin.getWorkspace().getRoot().getProject(fDataTask.getModel().getUnderlyingResource().getProject().getName()));
 
 		if (dialog.open() == Window.OK) {
-			IFile file = (IFile)dialog.getFirstResult();
-			String newValue = convertPathAbsToRelative(file.getFullPath()
-					.toPortableString(), fDataTask.getModel()
-					.getUnderlyingResource().getFullPath().toPortableString());
+			IFile file = (IFile) dialog.getFirstResult();
+			String newValue = convertPathAbsToRelative(file.getFullPath().toPortableString(), fDataTask.getModel().getUnderlyingResource().getFullPath().toPortableString());
 			entry.setValue(newValue);
 			handleTextEventPathEntry(newValue);
-		}	
+		}
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
@@ -274,18 +253,16 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		while (tokenizer.countTokens() > 1) {
 			tokenizer.nextToken();
 		}
-		return tokenizer.nextToken();		
+		return tokenizer.nextToken();
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
 	 */
 	private String convertPathAbsToRelative(String relativePath, String basePath) {
-		StringTokenizer convertPathTokenizer 
-			= new StringTokenizer(relativePath, F_PATH_SEPARATOR);
-		StringTokenizer basePathTokenizer 
-			= new StringTokenizer(basePath, F_PATH_SEPARATOR);
+		StringTokenizer convertPathTokenizer = new StringTokenizer(relativePath, F_PATH_SEPARATOR);
+		StringTokenizer basePathTokenizer = new StringTokenizer(basePath, F_PATH_SEPARATOR);
 		// First entry is the project name
 		String convertPathToken = convertPathTokenizer.nextToken();
 		String basePathToken = basePathTokenizer.nextToken();
@@ -295,9 +272,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			return ""; //$NON-NLS-1$
 		}
 		// Process base and convert path segments to make a relative path
-		while (basePathTokenizer.hasMoreTokens() &&
-				convertPathTokenizer.hasMoreTokens()) {
-			
+		while (basePathTokenizer.hasMoreTokens() && convertPathTokenizer.hasMoreTokens()) {
+
 			if (basePathTokenizer.countTokens() == 1) {
 				// Only the base file name is left
 				// No ".." required
@@ -309,8 +285,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				// Calculate required ".."
 				// No last base path segment is required since we did not
 				// get the next base path segment token
-				return createRelativePath(basePathTokenizer.countTokens() - 1, 
-						null, convertPathTokenizer);
+				return createRelativePath(basePathTokenizer.countTokens() - 1, null, convertPathTokenizer);
 			} else {
 				// Compare the next path segment
 				convertPathToken = convertPathTokenizer.nextToken();
@@ -320,23 +295,20 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 					// Calculate required ".."
 					// Last base path segment needs to be included in the 
 					// relative path
-					return createRelativePath(basePathTokenizer.countTokens(), 
-							convertPathToken, convertPathTokenizer);
+					return createRelativePath(basePathTokenizer.countTokens(), convertPathToken, convertPathTokenizer);
 				}
 			}
 		}
 		// This should never happen
 		return ""; //$NON-NLS-1$
 	}
-	
-	
+
 	/**
 	 * @param dotDotCount
 	 * @param tokenizer
 	 * @return
 	 */
-	private String createRelativePath(int dotDotCount, String lastToken, 
-			StringTokenizer tokenizer) {
+	private String createRelativePath(int dotDotCount, String lastToken, StringTokenizer tokenizer) {
 		StringBuffer relativePath = new StringBuffer();
 		// Prepend with the number of specified ".."
 		for (int i = 0; i < dotDotCount; i++) {
@@ -355,7 +327,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 		// Append the file itself
 		relativePath.append(tokenizer.nextToken());
-		
+
 		return relativePath.toString();
 	}
 
@@ -375,8 +347,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// If the simple cheat sheet is found open the simple cheat sheet 
 		// editor using it as input; otherwise, opne the simple cheat sheet
 		// wizard
-		if ((resource != null) && 
-				(resource instanceof IFile)) {
+		if ((resource != null) && (resource instanceof IFile)) {
 			try {
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
 			} catch (PartInitException e) {
@@ -385,28 +356,25 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		} else {
 			handleLinkWizardPathEntry();
 		}
-	}	
+	}
 
 	/**
 	 * 
 	 */
 	private void handleLinkWizardPathEntry() {
-		NewSimpleCSFileWizard wizard = 
-			new NewSimpleCSFileWizard();
+		NewSimpleCSFileWizard wizard = new NewSimpleCSFileWizard();
 		// Select in the tree view the directory this composite cheat sheet is 
 		// stored in
-		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(
-				fDataTask.getModel().getUnderlyingResource()));
+		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(fDataTask.getModel().getUnderlyingResource()));
 		// Create the dialog for the wizard
-		WizardDialog dialog = 
-			new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		// Get the wizard page
 		IWizardPage wizardPage = wizard.getPage(SimpleCSFileWizardPage.F_PAGE_NAME);
 		if ((wizardPage instanceof SimpleCSFileWizardPage) == false) {
 			return;
 		}
-		SimpleCSFileWizardPage page = (SimpleCSFileWizardPage)wizardPage;
+		SimpleCSFileWizardPage page = (SimpleCSFileWizardPage) wizardPage;
 		// Set the initial file name
 		String initialValue = fPathEntry.getValue().trim();
 		if (initialValue.length() > 0) {
@@ -415,27 +383,22 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		}
 		// Restrict user choices of where to store the new simple cheat sheet
 		// to only the project name this composite cheat sheet is stored in
-		page.setProjectName(fDataTask.getModel().getUnderlyingResource()
-				.getProject().getName());
+		page.setProjectName(fDataTask.getModel().getUnderlyingResource().getProject().getName());
 		// Check the result
 		if (dialog.open() == Window.OK) {
-			String newValue = convertPathAbsToRelative(page
-					.getAbsoluteFileName(), fDataTask.getModel()
-					.getUnderlyingResource().getFullPath().toPortableString());
+			String newValue = convertPathAbsToRelative(page.getAbsoluteFileName(), fDataTask.getModel().getUnderlyingResource().getFullPath().toPortableString());
 			fPathEntry.setValue(newValue, true);
 			handleTextEventPathEntry(newValue);
-		}			
+		}
 	}
-	
+
 	/**
 	 * @param relativePath
 	 * @return
 	 */
 	private String convertPathRelativeToAbs(String relativePath, String basePath) {
-		StringTokenizer convertPathTokenizer 
-			= new StringTokenizer(relativePath, F_PATH_SEPARATOR);
-		StringTokenizer basePathTokenizer 
-			= new StringTokenizer(basePath, F_PATH_SEPARATOR);
+		StringTokenizer convertPathTokenizer = new StringTokenizer(relativePath, F_PATH_SEPARATOR);
+		StringTokenizer basePathTokenizer = new StringTokenizer(basePath, F_PATH_SEPARATOR);
 		// Accumulate the non ".." path segments excluding the file name
 		// and count the number of ".." path segments
 		StringBuffer endPath = new StringBuffer();
@@ -454,8 +417,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			endPath.append(convertPathTokenizer.nextToken());
 		}
 		// Calculate the number of base path segments to accumulate 
-		int baseSegementCount = basePathTokenizer.countTokens() - dotDotCount -
-			1;
+		int baseSegementCount = basePathTokenizer.countTokens() - dotDotCount - 1;
 		// Check to see if the relative path is bogus
 		if (baseSegementCount < 0) {
 			return ""; //$NON-NLS-1$
@@ -464,13 +426,13 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		StringBuffer startPath = new StringBuffer(F_PATH_SEPARATOR);
 		for (int i = 0; i < baseSegementCount; i++) {
 			startPath.append(basePathTokenizer.nextToken());
-			startPath.append(F_PATH_SEPARATOR);			
+			startPath.append(F_PATH_SEPARATOR);
 		}
 		// Concatenate the start and end paths together to get the absolute
 		// paths
 		return startPath.toString() + endPath.toString();
 	}
-	
+
 	/**
 	 * @param newValue
 	 */
@@ -479,14 +441,13 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		if (fDataTask.hasFieldParams()) {
 			// There are existing parameters
 			// Check for an existing "path" parameter
-			ICompCSParam parameter = 
-				fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
+			ICompCSParam parameter = fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
 			if (parameter != null) {
 				parameter.setFieldValue(newValue);
 			} else {
 				// No suitable parameter found
 				// Create a new "path" parameter
-				createTaskParamPathEntry(newValue);	
+				createTaskParamPathEntry(newValue);
 			}
 		} else {
 			// No existing parameters
@@ -508,7 +469,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Add parameter to the task
 		fDataTask.addFieldParam(parameter);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -518,12 +479,12 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataTask == null) {
 					return;
-				}				
+				}
 				fDataTask.setFieldSkip(fSkip.getSelection());
 			}
-		});		
-	}		
-	
+		});
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
@@ -531,7 +492,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Ensure data object is defined
 		if (fDataTask == null) {
 			return;
-		}				
+		}
 		boolean editable = isEditableElement();
 		// Update name entry
 		updateNameEntry(editable);
@@ -548,30 +509,29 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataTask.getFieldName(), true);
-		fNameEntry.setEditable(editable);			
-	}	
+		fNameEntry.setEditable(editable);
+	}
 
 	/**
 	 * @param editable
 	 */
 	private void updatePathEntry(boolean editable) {
-		ICompCSParam parameter = 
-			fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
+		ICompCSParam parameter = fDataTask.getFieldParam(ICompCSConstants.ATTRIBUTE_VALUE_PATH);
 		if (parameter != null) {
 			fPathEntry.setValue(parameter.getFieldValue(), true);
 		} else {
 			fPathEntry.setValue("", true); //$NON-NLS-1$
 		}
-	}	
+	}
 
 	/**
 	 * @param editable
 	 */
 	private void updateSkipButton(boolean editable) {
 		fSkip.setSelection(fDataTask.getFieldSkip());
-		fSkip.setEnabled(editable);	
-	}		
-	
+		fSkip.setEnabled(editable);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -590,16 +550,15 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) ||
-				(object instanceof ICompCSTask) == false) {
+		if ((object == null) || (object instanceof ICompCSTask) == false) {
 			return;
 		}
 		// Set data
-		setData((ICompCSTask)object);
+		setData((ICompCSTask) object);
 		// Update the UI given the new data
 		updateFields();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */

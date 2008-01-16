@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -21,11 +20,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -40,19 +35,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerService;
 
@@ -65,19 +53,19 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	private ISimpleCSRun fRun;
 
 	private Table fCommandTable;
-	
+
 	private SimpleCSCommandComboPart fCommandCombo;
-	
+
 	private ControlDecoration fCommandInfoDecoration;
-	
+
 	private Button fCommandBrowse;
 
-	private Button fCommandOptional;	
-	
+	private Button fCommandOptional;
+
 	private static final String F_NO_COMMAND = PDEUIMessages.SimpleCSCommandDetails_6;
-	
+
 	private static final int F_COMMAND_INSERTION_INDEX = 1;
-	
+
 	/**
 	 * @param section
 	 */
@@ -91,15 +79,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		fCommandBrowse = null;
 		fCommandOptional = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
 	 */
 	public void setData(ISimpleCSRun object) {
 		// Set data
 		fRun = object;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
@@ -111,7 +99,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		GridData data = null;
 		Label label = null;
-		
+
 		// Create command section
 		commandSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		commandSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -120,9 +108,9 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		commandSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		commandSection.setLayoutData(data);
-		
+
 		// Create container for command section		
-		Composite commandSectionClient = toolkit.createComposite(commandSection);	
+		Composite commandSectionClient = toolkit.createComposite(commandSection);
 		commandSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columnSpan));
 
 		// Element:  command
@@ -146,11 +134,11 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Limit the combo box to the 11 most recent entries (includes no 
 		// command entry)
 		fCommandCombo.setComboEntryLimit(11);
-		
+
 		createCommandInfoDecoration();
 		// Button
 		fCommandBrowse = toolkit.createButton(commandSectionClient, PDEUIMessages.GeneralInfoSection_browse, SWT.PUSH);
-		
+
 		// Element: command
 		// Label for parameters
 		label = toolkit.createLabel(commandSectionClient, PDEUIMessages.SimpleCSItemDetails_8, SWT.WRAP);
@@ -158,7 +146,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = columnSpan;
 		label.setLayoutData(data);
-		
+
 		fCommandTable = toolkit.createTable(commandSectionClient, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 25;
@@ -171,17 +159,14 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		tableColumn1.setText(PDEUIMessages.SimpleCSItemDetails_9);
 		TableColumn tableColumn2 = new TableColumn(fCommandTable, SWT.LEFT);
 		tableColumn2.setText(PDEUIMessages.SimpleCSItemDetails_10);
-	
+
 		// Attribute: required
-		fCommandOptional = 
-			getToolkit().createButton(commandSectionClient,
-				PDEUIMessages.SimpleCSCommandDetails_UICheckBoxOptionalCommand,
-				SWT.CHECK);
+		fCommandOptional = getToolkit().createButton(commandSectionClient, PDEUIMessages.SimpleCSCommandDetails_UICheckBoxOptionalCommand, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = columnSpan;
 		fCommandOptional.setLayoutData(data);
 		fCommandOptional.setForeground(foreground);
-		
+
 		// Bind widgets
 		toolkit.paintBordersFor(commandSectionClient);
 		commandSection.setClient(commandSectionClient);
@@ -195,14 +180,11 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	private void createCommandInfoDecoration() {
 		// Command info decoration
 		int bits = SWT.TOP | SWT.LEFT;
-		fCommandInfoDecoration = 
-			new ControlDecoration(fCommandCombo.getControl(), bits);
+		fCommandInfoDecoration = new ControlDecoration(fCommandCombo.getControl(), bits);
 		fCommandInfoDecoration.setMarginWidth(1);
 		fCommandInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSCommandDetails_msgFieldDisabledCommand);
 		updateCommandInfoDecoration(false);
-		fCommandInfoDecoration.setImage(
-			FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_INFORMATION).getImage());
+		fCommandInfoDecoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 	}
 
 	/* (non-Javadoc)
@@ -218,18 +200,17 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					return;
 				}
 				String selection = fCommandCombo.getSelection();
-				if (selection.equals(F_NO_COMMAND) ==  false) {
+				if (selection.equals(F_NO_COMMAND) == false) {
 					// Get the associated serialization stored as data against the 
 					// command name
 					String serialization = fCommandCombo.getValue(selection);
 					if (PDETextHelper.isDefined(serialization)) {
 						// Create the new command in the model
 						createCommandInModel(serialization);
-						
-						ParameterizedCommand result = 
-							getParameterizedCommand(serialization);
+
+						ParameterizedCommand result = getParameterizedCommand(serialization);
 						if (result != null) {
-							updateCommandTable(result.getParameterMap());	
+							updateCommandTable(result.getParameterMap());
 						}
 					}
 				} else {
@@ -244,20 +225,16 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				updateUICommandOptional();
 			}
 		});
-		
+
 		fCommandBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
 				if (fRun == null) {
 					return;
-				}				
+				}
 				// Open the command composer dialog using the input from the
 				// currently selected command
-				CommandComposerDialog dialog = new CommandComposerDialog(
-						fCommandBrowse.getShell(),
-						CommandComposerPart.F_CHEATSHEET_FILTER,
-						getParameterizedCommand(fRun),
-						getSnapshotContext());
+				CommandComposerDialog dialog = new CommandComposerDialog(fCommandBrowse.getShell(), CommandComposerPart.F_CHEATSHEET_FILTER, getParameterizedCommand(fRun), getSnapshotContext());
 				// Check result of dialog
 				if (dialog.open() == Window.OK) {
 					// Command composer exited successfully
@@ -267,10 +244,10 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					getMasterSection().updateButtons();
 					// Update the optional command checkbox
 					updateUICommandOptional();
-				}						
+				}
 			}
-		});	
-		
+		});
+
 		// Attribute: required
 		fCommandOptional.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -288,9 +265,9 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				boolean isRequired = (fCommandOptional.getSelection() == false);
 				commandObject.setRequired(isRequired);
 			}
-		});			
+		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#updateFields()
 	 */
@@ -309,7 +286,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			updateCommandCombo(command, false);
 		}
 		// Update the optional command checkbox
-		updateUICommandOptional();		
+		updateUICommandOptional();
 		// Update command UI enablement
 		updateCommandEnablement();
 	}
@@ -347,8 +324,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		} else if (executable.getType() != ISimpleCSConstants.TYPE_COMMAND) {
 			// Not a command
 			return null;
-		}		
-		return (ISimpleCSCommand)executable;
+		}
+		return (ISimpleCSCommand) executable;
 	}
 
 	/**
@@ -360,7 +337,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Clear the command table
 		fCommandTable.clearAll();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -370,9 +347,9 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			return;
 		}
 		boolean editable = isEditableElement();
-		
+
 		if (fRun.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem item = (ISimpleCSItem)fRun;
+			ISimpleCSItem item = (ISimpleCSItem) fRun;
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a subitem and any of the following
 			// together:  perform-when, command, action			
@@ -380,15 +357,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				editable = false;
 				updateCommandInfoDecoration(true);
 			} else {
-				updateCommandInfoDecoration(false);			
+				updateCommandInfoDecoration(false);
 			}
 		}
-		
+
 		fCommandCombo.setEnabled(editable);
 		fCommandTable.setEnabled(true);
 		fCommandBrowse.setEnabled(editable);
 	}
-	
+
 	/**
 	 * @param serialization
 	 */
@@ -397,19 +374,17 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		if (fRun == null) {
 			return;
 		}
-		ISimpleCSCommand command = 
-			fRun.getModel().getFactory().createSimpleCSCommand(fRun);
+		ISimpleCSCommand command = fRun.getModel().getFactory().createSimpleCSCommand(fRun);
 		command.setSerialization(serialization);
 		command.setRequired(false);
-		fRun.setExecutable(command);		
+		fRun.setExecutable(command);
 	}
-	
+
 	/**
 	 * @param result
 	 * @param createInModel
 	 */
-	private void updateCommandCombo(ParameterizedCommand result,
-			boolean createInModel) {
+	private void updateCommandCombo(ParameterizedCommand result, boolean createInModel) {
 
 		if (result == null) {
 			return;
@@ -426,8 +401,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Get command ID
 		String commandId = result.getId();
 
-		if (PDETextHelper.isDefined(serialization)
-				&& PDETextHelper.isDefined(commandId)) {
+		if (PDETextHelper.isDefined(serialization) && PDETextHelper.isDefined(commandId)) {
 			if (createInModel) {
 				// Create the new command in the model
 				createCommandInModel(serialization);
@@ -443,8 +417,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			// Add new selection to the combo box if it is not already there
 			// Associate the serialization with the command name
 			// in the widget to retrieve for later use
-			fCommandCombo.putValue(nameToUse, serialization, 
-					F_COMMAND_INSERTION_INDEX);
+			fCommandCombo.putValue(nameToUse, serialization, F_COMMAND_INSERTION_INDEX);
 			// Select it
 			fCommandCombo.setText(nameToUse);
 			// Update the command table parameters
@@ -455,7 +428,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		}
 
 	}
-	
+
 	/**
 	 * @param serialization
 	 * @return
@@ -467,21 +440,15 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 				try {
 					return service.deserialize(serialization);
 				} catch (NotDefinedException e) {
-					PDEPlugin.logException(e,
-							PDEUIMessages.SimpleCSCommandDetails_DFErrorTitle,
-							PDEUIMessages.SimpleCSCommandDetails_DFErrorBody
-									+ serialization);
+					PDEPlugin.logException(e, PDEUIMessages.SimpleCSCommandDetails_DFErrorTitle, PDEUIMessages.SimpleCSCommandDetails_DFErrorBody + serialization);
 				} catch (SerializationException e) {
-					PDEPlugin.logException(e,
-							PDEUIMessages.SimpleCSCommandDetails_DFErrorTitle,
-							PDEUIMessages.SimpleCSCommandDetails_DFErrorBody
-									+ serialization);
+					PDEPlugin.logException(e, PDEUIMessages.SimpleCSCommandDetails_DFErrorTitle, PDEUIMessages.SimpleCSCommandDetails_DFErrorBody + serialization);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param run
 	 * @return
@@ -491,9 +458,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			return null;
 		}
 		ISimpleCSRunContainerObject object = run.getExecutable();
-		if ((object != null) && 
-				(object.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
-			ISimpleCSCommand command = (ISimpleCSCommand)object;
+		if ((object != null) && (object.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+			ISimpleCSCommand command = (ISimpleCSCommand) object;
 			return getParameterizedCommand(command.getSerialization());
 		}
 		return null;
@@ -505,51 +471,49 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	private void updateCommandTable(Map parameters) {
 		// Clear the table contents
 		fCommandTable.clearAll();
-		
-		if ((parameters != null) && 
-				(parameters.isEmpty() == false)) {
+
+		if ((parameters != null) && (parameters.isEmpty() == false)) {
 			// Iterate over the keys in the map
-		    Iterator it = parameters.keySet().iterator();
-	    	int rowCount = 0;
-		    while (it.hasNext()) {
-		    	// Track number of keys / rows processed
-		    	TableItem item = null;
-		    	// Determine if there is an existing row already at that index
-		    	if (rowCount < fCommandTable.getItemCount()) {
-		    		// There is, reuse it
-		    		item = fCommandTable.getItem(rowCount);
-		    	} else {
-		    		// There isn't, create a new one
-		    		item = new TableItem (fCommandTable, SWT.NONE);
-		    	}
-		        // Get key
-		        Object key = it.next();
-		        if (key instanceof String) {
-		        	String keyString = (String)key;
-		        	// If present, remove the fully qualified ID from the
-		        	// paramater key
-		        	// i.e. "org.eclipse.ui.perspective" becomes just 
-		        	// "perspective" 
-		        	int dotIndex = keyString.lastIndexOf('.');
-		        	if ((dotIndex != -1) &&
-		        			(dotIndex != (keyString.length() - 1))) {
-		        		keyString = keyString.substring(dotIndex + 1);
-		        	}
-		        	// Set parameter key in first column
-		        	item.setText(0, keyString);
-		        }
-		        Object value = parameters.get(key);
-		        if (value instanceof String) {
-		        	// Set parameter value in second column
-		        	item.setText(1, (String)value);
-		        }
-		        rowCount++;
-		    }
-		    // Pack the columns with the new data
+			Iterator it = parameters.keySet().iterator();
+			int rowCount = 0;
+			while (it.hasNext()) {
+				// Track number of keys / rows processed
+				TableItem item = null;
+				// Determine if there is an existing row already at that index
+				if (rowCount < fCommandTable.getItemCount()) {
+					// There is, reuse it
+					item = fCommandTable.getItem(rowCount);
+				} else {
+					// There isn't, create a new one
+					item = new TableItem(fCommandTable, SWT.NONE);
+				}
+				// Get key
+				Object key = it.next();
+				if (key instanceof String) {
+					String keyString = (String) key;
+					// If present, remove the fully qualified ID from the
+					// paramater key
+					// i.e. "org.eclipse.ui.perspective" becomes just 
+					// "perspective" 
+					int dotIndex = keyString.lastIndexOf('.');
+					if ((dotIndex != -1) && (dotIndex != (keyString.length() - 1))) {
+						keyString = keyString.substring(dotIndex + 1);
+					}
+					// Set parameter key in first column
+					item.setText(0, keyString);
+				}
+				Object value = parameters.get(key);
+				if (value instanceof String) {
+					// Set parameter value in second column
+					item.setText(1, (String) value);
+				}
+				rowCount++;
+			}
+			// Pack the columns with the new data
 			for (int i = 0; i < fCommandTable.getColumnCount(); i++) {
 				TableColumn tableColumn = fCommandTable.getColumn(i);
 				tableColumn.pack();
-			}						
+			}
 		}
 	}
 
@@ -558,17 +522,16 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	 */
 	private static ICommandService getCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		return (ICommandService)workbench.getAdapter(ICommandService.class);
+		return (ICommandService) workbench.getAdapter(ICommandService.class);
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private static IHandlerService getGlobalHandlerService() {
-		return (IHandlerService) PlatformUI.getWorkbench().getService(
-				IHandlerService.class);
+		return (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -576,11 +539,11 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		IHandlerService service = getGlobalHandlerService();
 		// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
 		if (service instanceof HandlerService) {
-			return ((HandlerService)service).getContextSnapshot();
+			return ((HandlerService) service).getContextSnapshot();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -600,5 +563,5 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		super.commit(onSave);
 		// NO-OP
 		// No form entries
-	}		
+	}
 }

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
@@ -23,12 +21,13 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 
 public class ManifestEditorContributor extends PDEFormTextEditorContributor {
-	
+
 	private ExternalizeAction fExternalizeAction;
 
 	class ExternalizeAction extends Action {
 		public ExternalizeAction() {
 		}
+
 		public void run() {
 			if (getEditor() != null) {
 				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
@@ -42,7 +41,7 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 			}
 		}
 	}
-	
+
 	public ManifestEditorContributor() {
 		super("&Plugin"); //$NON-NLS-1$
 	}
@@ -59,21 +58,21 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 	protected void makeActions() {
 		super.makeActions();
 		fExternalizeAction = new ExternalizeAction();
-		fExternalizeAction.setText(PDEUIMessages.ManifestEditorContributor_externStringsActionName); 
+		fExternalizeAction.setText(PDEUIMessages.ManifestEditorContributor_externStringsActionName);
 	}
-	
+
 	public boolean supportsContentAssist() {
 		return true;
 	}
-	
+
 	public boolean supportsFormatAction() {
 		return true;
 	}
-	
+
 	public boolean supportsCorrectionAssist() {
 		return true;
 	}
-	
+
 	public boolean supportsHyperlinking() {
 		return true;
 	}

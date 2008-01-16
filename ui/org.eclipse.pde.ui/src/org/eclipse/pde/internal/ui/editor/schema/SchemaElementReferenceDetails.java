@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
+
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -31,32 +32,32 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	private SchemaElementReference fElement;
 	private Hyperlink fReferenceLink;
 	private Label fRefLabel;
-	
+
 	public SchemaElementReferenceDetails(ElementSection section) {
 		super(section, true, false);
 	}
 
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		
+
 		createMinOccurComp(parent, toolkit);
 		createMaxOccurComp(parent, toolkit);
-		
+
 		fRefLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference);
 		fRefLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fReferenceLink = toolkit.createHyperlink(parent, new String(), SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fReferenceLink.setLayoutData(gd);
-		
+
 		setText(PDEUIMessages.SchemaElementReferenceDetails_title);
 	}
 
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaElementReference))
 			return;
-		fElement = (SchemaElementReference)object;
-		
+		fElement = (SchemaElementReference) object;
+
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementReferenceDetails_description, fElement.getName()));
 		fReferenceLink.setText(fElement.getName());
 		updateMinOccur(fElement.getMinOccurs());
@@ -90,7 +91,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */

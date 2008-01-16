@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
@@ -22,21 +19,21 @@ public class ProductOutlinePage extends FormOutlinePage {
 	public ProductOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
-	
+
 	public void sort(boolean sorting) {
 	}
-	
+
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof ConfigurationPage) {
-			ConfigurationPage page = (ConfigurationPage)parent;
-			IProduct product = ((IProductModel)page.getModel()).getProduct();
+			ConfigurationPage page = (ConfigurationPage) parent;
+			IProduct product = ((IProductModel) page.getModel()).getProduct();
 			if (product.useFeatures())
 				return product.getFeatures();
 			return product.getPlugins();
 		}
 		return new Object[0];
 	}
-	
+
 	protected String getParentPageId(Object item) {
 		if (item instanceof IProductPlugin)
 			return ConfigurationPage.PLUGIN_ID;
@@ -44,5 +41,5 @@ public class ProductOutlinePage extends FormOutlinePage {
 			return ConfigurationPage.FEATURE_ID;
 		return super.getParentPageId(item);
 	}
-	
+
 }

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,30 +22,20 @@ import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.feature.Choice;
 import org.eclipse.pde.internal.ui.editor.feature.PortabilityChoicesDialog;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PortabilitySection extends PDESection implements IFormPart,
-		IPartSelectionListener {
+public class PortabilitySection extends PDESection implements IFormPart, IPartSelectionListener {
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(Platform.knownOSArchValues());
 	}
@@ -64,8 +53,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		Choice[] choices = new Choice[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			choices[i] = new Choice(locale.toString(), locale.toString()
-					+ " - " + locale.getDisplayName()); //$NON-NLS-1$
+			choices[i] = new Choice(locale.toString(), locale.toString() + " - " + locale.getDisplayName()); //$NON-NLS-1$
 		}
 		return choices;
 	}
@@ -89,12 +77,10 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	private FormEntry fWsText;
 
 	public PortabilitySection(PDEFormPage page, Composite parent) {
-		this(page, parent, PDEUIMessages.SiteEditor_PortabilitySection_title,
-				PDEUIMessages.SiteEditor_PortabilitySection_desc, SWT.NULL);
+		this(page, parent, PDEUIMessages.SiteEditor_PortabilitySection_title, PDEUIMessages.SiteEditor_PortabilitySection_desc, SWT.NULL);
 	}
 
-	public PortabilitySection(PDEFormPage page, Composite parent, String title,
-			String desc, int toggleStyle) {
+	public PortabilitySection(PDEFormPage page, Composite parent, String title, String desc, int toggleStyle) {
 		super(page, parent, Section.DESCRIPTION | toggleStyle);
 		getSection().setText(title);
 		getSection().setDescription(desc);
@@ -124,8 +110,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -177,14 +162,12 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		fOsText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fOsText.getText().getDisplay(),
-						new Runnable() {
-							public void run() {
-								Choice[] choices = getOSChoices();
-								openPortabilityChoiceDialog(IEnvironment.P_OS,
-										fOsText, choices);
-							}
-						});
+				BusyIndicator.showWhile(fOsText.getText().getDisplay(), new Runnable() {
+					public void run() {
+						Choice[] choices = getOSChoices();
+						openPortabilityChoiceDialog(IEnvironment.P_OS, fOsText, choices);
+					}
+				});
 			}
 
 			public void textValueChanged(FormEntry text) {
@@ -202,14 +185,12 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		fWsText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fWsText.getText().getDisplay(),
-						new Runnable() {
-							public void run() {
-								Choice[] choices = getWSChoices();
-								openPortabilityChoiceDialog(IEnvironment.P_WS,
-										fWsText, choices);
-							}
-						});
+				BusyIndicator.showWhile(fWsText.getText().getDisplay(), new Runnable() {
+					public void run() {
+						Choice[] choices = getWSChoices();
+						openPortabilityChoiceDialog(IEnvironment.P_WS, fWsText, choices);
+					}
+				});
 			}
 
 			public void textValueChanged(FormEntry text) {
@@ -228,14 +209,12 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		fNlText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fNlText.getText().getDisplay(),
-						new Runnable() {
-							public void run() {
-								Choice[] choices = getNLChoices();
-								openPortabilityChoiceDialog(IEnvironment.P_NL,
-										fNlText, choices);
-							}
-						});
+				BusyIndicator.showWhile(fNlText.getText().getDisplay(), new Runnable() {
+					public void run() {
+						Choice[] choices = getNLChoices();
+						openPortabilityChoiceDialog(IEnvironment.P_NL, fNlText, choices);
+					}
+				});
 			}
 
 			public void textValueChanged(FormEntry text) {
@@ -253,14 +232,12 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		fArchText.setFormEntryListener(new FormEntryAdapter(this) {
 
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fArchText.getText().getDisplay(),
-						new Runnable() {
-							public void run() {
-								Choice[] choices = getArchChoices();
-								openPortabilityChoiceDialog(
-										IEnvironment.P_ARCH, fArchText, choices);
-							}
-						});
+				BusyIndicator.showWhile(fArchText.getText().getDisplay(), new Runnable() {
+					public void run() {
+						Choice[] choices = getArchChoices();
+						openPortabilityChoiceDialog(IEnvironment.P_ARCH, fArchText, choices);
+					}
+				});
 			}
 
 			public void textValueChanged(FormEntry text) {
@@ -307,12 +284,10 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		markStale();
 	}
 
-	private void openPortabilityChoiceDialog(String property, FormEntry text,
-			Choice[] choices) {
+	private void openPortabilityChoiceDialog(String property, FormEntry text, Choice[] choices) {
 		String value = text.getValue();
 
-		PortabilityChoicesDialog dialog = new PortabilityChoicesDialog(
-				PDEPlugin.getActiveWorkbenchShell(), choices, value);
+		PortabilityChoicesDialog dialog = new PortabilityChoicesDialog(PDEPlugin.getActiveWorkbenchShell(), choices, value);
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.SiteEditor_PortabilityChoicesDialog_title);
 

@@ -11,9 +11,7 @@
 package org.eclipse.pde.internal.ui.samples;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -21,14 +19,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 public class ShowTargetPlatformAction extends Action {
-	
+
 	// Bring up Target Platform prefrences page
 	public void run() {
 		final IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		final PreferenceDialog dialog =	new PreferenceDialog(shell, manager);
+		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				dialog.create();
@@ -37,5 +35,5 @@ public class ShowTargetPlatformAction extends Action {
 			}
 		});
 	}
-	
+
 }

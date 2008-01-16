@@ -32,7 +32,7 @@ public class TypeProposalLabelProvider extends LabelProvider {
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof TypeContentProposal) {
-			return ((TypeContentProposal)element).getImage();
+			return ((TypeContentProposal) element).getImage();
 		}
 		return null;
 	}

@@ -15,7 +15,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 
 public class OrganizeRequireBundleResolution extends AbstractManifestMarkerResolution {
-	
+
 	private boolean fRemoveImports;
 
 	public OrganizeRequireBundleResolution(int type, boolean removeImports) {

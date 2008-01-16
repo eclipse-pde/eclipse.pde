@@ -20,12 +20,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 public abstract class BasePDEScanner extends BufferedRuleBasedScanner {
-	
+
 	private IColorManager fColorManager;
-	
+
 	protected BasePDEScanner() {
 	}
-	
+
 	public void setColorManager(IColorManager manager) {
 		fColorManager = manager;
 	}
@@ -34,50 +34,50 @@ public abstract class BasePDEScanner extends BufferedRuleBasedScanner {
 		fColorManager = manager;
 		initialize();
 	}
-	
-    public void adaptToPreferenceChange(PropertyChangeEvent event) {
-    	String property= event.getProperty();
-    	if (affectsTextPresentation(property)) {
-    		Token token = getTokenAffected(event);
-    		if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX))
-    			adaptToStyleChange(event, token, SWT.BOLD);
-    		else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX))
-    			adaptToStyleChange(event, token, SWT.ITALIC);
-    		else
-    			adaptToColorChange(event, token);
-    	}
-    }
-    
-    public abstract boolean affectsTextPresentation(String property);
-    
-    protected abstract Token getTokenAffected(PropertyChangeEvent event);
-    
-    protected abstract void initialize();
+
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (affectsTextPresentation(property)) {
+			Token token = getTokenAffected(event);
+			if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX))
+				adaptToStyleChange(event, token, SWT.BOLD);
+			else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX))
+				adaptToStyleChange(event, token, SWT.ITALIC);
+			else
+				adaptToColorChange(event, token);
+		}
+	}
+
+	public abstract boolean affectsTextPresentation(String property);
+
+	protected abstract Token getTokenAffected(PropertyChangeEvent event);
+
+	protected abstract void initialize();
 
 	protected void adaptToStyleChange(PropertyChangeEvent event, Token token, int styleAttribute) {
-	 	if (token == null)
+		if (token == null)
 			return;
-	 	
+
 		boolean eventValue = false;
 		Object value = event.getNewValue();
 		if (value instanceof Boolean)
-			eventValue = ((Boolean)value).booleanValue();
-		
+			eventValue = ((Boolean) value).booleanValue();
+
 		TextAttribute attr = (TextAttribute) token.getData();
 		boolean activeValue = (attr.getStyle() & styleAttribute) == styleAttribute;
-		if (activeValue != eventValue) { 
+		if (activeValue != eventValue) {
 			Color foreground = attr.getForeground();
 			Color background = attr.getBackground();
 			int style = eventValue ? attr.getStyle() | styleAttribute : attr.getStyle() & ~styleAttribute;
 			token.setData(new TextAttribute(foreground, background, style));
 		}
 	}
-	
+
 	protected void adaptToColorChange(PropertyChangeEvent event, Token token) {
-		TextAttribute attr= (TextAttribute) token.getData();
-		token.setData(new TextAttribute(fColorManager.getColor(event.getProperty()), attr.getBackground(), attr.getStyle()));	
+		TextAttribute attr = (TextAttribute) token.getData();
+		token.setData(new TextAttribute(fColorManager.getColor(event.getProperty()), attr.getBackground(), attr.getStyle()));
 	}
-	
+
 	protected TextAttribute createTextAttribute(String property) {
 		return createTextAttribute(fColorManager, property);
 	}

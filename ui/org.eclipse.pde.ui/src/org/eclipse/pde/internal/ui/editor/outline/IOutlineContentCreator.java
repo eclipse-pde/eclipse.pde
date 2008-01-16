@@ -11,9 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.outline;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 
 /**
  * IContentOutlineCreator
@@ -25,25 +23,25 @@ public interface IOutlineContentCreator {
 	 * @return
 	 */
 	public ViewerComparator createOutlineComparator();
-	
+
 	/**
 	 * @return
 	 */
 	public ViewerComparator createDefaultOutlineComparator();
-	
+
 	/**
 	 * @return
 	 */
 	public ILabelProvider createOutlineLabelProvider();
-	
+
 	/**
 	 * @return
 	 */
 	public ITreeContentProvider createOutlineContentProvider();
-	
+
 	/**
 	 * @return
 	 */
 	public Object getOutlineInput();
-	
+
 }

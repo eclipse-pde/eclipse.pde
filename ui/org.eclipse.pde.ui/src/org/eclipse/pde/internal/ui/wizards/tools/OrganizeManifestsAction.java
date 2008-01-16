@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
@@ -24,12 +23,10 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
-	
+
 	private ISelection fSelection;
 
 	public OrganizeManifestsAction() {
@@ -43,10 +40,10 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void run(IAction action) {
-		
+
 		if (!PlatformUI.getWorkbench().saveAllEditors(true))
 			return;
-		
+
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) fSelection;
 			Iterator it = ssel.iterator();
@@ -55,7 +52,7 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 				Object element = it.next();
 				IProject proj = null;
 				if (element instanceof IFile)
-					proj = ((IFile)element).getProject();
+					proj = ((IFile) element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
 				if (proj != null && proj.exists(ICoreConstants.MANIFEST_PATH))
@@ -65,17 +62,14 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
 				PDERefactor refactor = new PDERefactor(processor);
 				OrganizeManifestsWizard wizard = new OrganizeManifestsWizard(refactor);
-				RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );
-				
-			    try {
-			      op.run( PDEPlugin.getActiveWorkbenchShell(), "" ); //$NON-NLS-1$
-			    } catch( final InterruptedException irex ) {
-			    }
+				RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
+
+				try {
+					op.run(PDEPlugin.getActiveWorkbenchShell(), ""); //$NON-NLS-1$
+				} catch (final InterruptedException irex) {
+				}
 			} else
-				MessageDialog.openInformation(
-						PDEPlugin.getActiveWorkbenchShell(),
-						PDEUIMessages.OrganizeManifestsWizardPage_title,
-						PDEUIMessages.OrganizeManifestsWizardPage_errorMsg);
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OrganizeManifestsWizardPage_title, PDEUIMessages.OrganizeManifestsWizardPage_errorMsg);
 		}
 	}
 

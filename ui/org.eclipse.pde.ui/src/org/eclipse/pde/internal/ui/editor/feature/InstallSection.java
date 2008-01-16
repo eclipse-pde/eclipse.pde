@@ -16,22 +16,14 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -51,8 +43,7 @@ public class InstallSection extends PDESection {
 
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(),
-				RTFTransfer.getInstance() };
+		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -68,11 +59,11 @@ public class InstallSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		section.setLayoutData(data);
-		
+
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -95,8 +86,7 @@ public class InstallSection extends PDESection {
 			}
 		});
 
-		Label colocationDescLabel = toolkit.createLabel(container,
-				PDEUIMessages.FeatureEditor_InstallSection_colocation_desc, SWT.WRAP);
+		Label colocationDescLabel = toolkit.createLabel(container, PDEUIMessages.FeatureEditor_InstallSection_colocation_desc, SWT.WRAP);
 		gd = new GridData(GridData.FILL);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 250;
@@ -151,9 +141,7 @@ public class InstallSection extends PDESection {
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		fColocationText.setValue(
-				feature.getColocationAffinity() != null ? feature
-						.getColocationAffinity() : "", true); //$NON-NLS-1$
+		fColocationText.setValue(feature.getColocationAffinity() != null ? feature.getColocationAffinity() : "", true); //$NON-NLS-1$
 		fBlockNotification = true;
 		fExclusiveButton.setSelection(feature.isExclusive());
 		fBlockNotification = false;

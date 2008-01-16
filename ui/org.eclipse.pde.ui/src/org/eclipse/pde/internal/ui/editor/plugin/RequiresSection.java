@@ -10,47 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-
+import java.io.*;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
-import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -70,36 +43,29 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class RequiresSection
-	extends TableSection
-	implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
-    
-    private static final int ADD_INDEX = 0;
-    private static final int REMOVE_INDEX = 1;
-    private static final int UP_INDEX = 2;
-    private static final int DOWN_INDEX = 3;
-    private static final int PROPERTIES_INDEX = 4;
-    
+public class RequiresSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
+
+	private static final int ADD_INDEX = 0;
+	private static final int REMOVE_INDEX = 1;
+	private static final int UP_INDEX = 2;
+	private static final int DOWN_INDEX = 3;
+	private static final int PROPERTIES_INDEX = 4;
+
 	private TableViewer fImportViewer;
 	private Vector fImports;
 	private Action fOpenAction;
 	private Action fAddAction;
 	private Action fRemoveAction;
-    private Action fPropertiesAction;
-    private Action fSortAction;
-    
-    private int fImportInsertIndex;
+	private Action fPropertiesAction;
+	private Action fSortAction;
+
+	private int fImportInsertIndex;
 
 	class ImportContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -111,12 +77,12 @@ public class RequiresSection
 
 	public RequiresSection(DependenciesPage page, Composite parent, String[] labels) {
 		super(page, parent, Section.DESCRIPTION, labels);
-		getSection().setText(PDEUIMessages.RequiresSection_title); 
-		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
+		getSection().setText(PDEUIMessages.RequiresSection_title);
+		boolean fragment = ((IPluginModelBase) getPage().getModel()).isFragmentModel();
 		if (fragment)
-			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc); 
+			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc);
 		else
-			getSection().setDescription(PDEUIMessages.RequiresSection_desc); 
+			getSection().setDescription(PDEUIMessages.RequiresSection_desc);
 		getTablePart().setEditable(false);
 		resetImportInsertIndex();
 	}
@@ -141,7 +107,7 @@ public class RequiresSection
 		createSectionToolbar(section, toolkit);
 		initialize();
 	}
-	
+
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
@@ -150,18 +116,16 @@ public class RequiresSection
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});	
-		
+		});
+
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(fImportViewer, 
-				PDEUIMessages.RequiresSection_sortAlpha, null, null, this);
+		fSortAction = new SortAction(fImportViewer, PDEUIMessages.RequiresSection_sortAlpha, null, null, this);
 		toolBarManager.add(fSortAction);
-		
+
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
@@ -171,19 +135,19 @@ public class RequiresSection
 		getPage().getPDEEditor().setSelection(sel);
 		updateButtons();
 	}
-	
+
 	private void updateButtons() {
 		Table table = getTablePart().getTableViewer().getTable();
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
 		TablePart tablePart = getTablePart();
-        tablePart.setButtonEnabled(ADD_INDEX, isEditable());
-        updateUpDownButtons();
-        if (isBundle())
-            tablePart.setButtonEnabled(PROPERTIES_INDEX, selection.length == 1);
-        tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
+		tablePart.setButtonEnabled(ADD_INDEX, isEditable());
+		updateUpDownButtons();
+		if (isBundle())
+			tablePart.setButtonEnabled(PROPERTIES_INDEX, selection.length == 1);
+		tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
 	}
-	
+
 	private void updateUpDownButtons() {
 		TablePart tablePart = getTablePart();
 		if (fSortAction.isChecked()) {
@@ -195,15 +159,9 @@ public class RequiresSection
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
 		boolean canMove = table.getItemCount() > 1 && selection.length == 1;
-		
-		tablePart.setButtonEnabled(
-				UP_INDEX,
-				canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(
-				DOWN_INDEX,
-				canMove
-					&& hasSelection && isEditable()
-					&& table.getSelectionIndex() < table.getItemCount() - 1);
+
+		tablePart.setButtonEnabled(UP_INDEX, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(DOWN_INDEX, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	protected void handleDoubleClick(IStructuredSelection sel) {
@@ -212,60 +170,60 @@ public class RequiresSection
 
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_INDEX:
+			case ADD_INDEX :
 				handleAdd();
 				break;
-            case REMOVE_INDEX:
-                handleRemove();
-                break;
- 			case UP_INDEX:
+			case REMOVE_INDEX :
+				handleRemove();
+				break;
+			case UP_INDEX :
 				handleUp();
 				break;
-			case DOWN_INDEX:
+			case DOWN_INDEX :
 				handleDown();
-                break;
-            case PROPERTIES_INDEX:
-                handleOpenProperties();
-                break;
-		} 
+				break;
+			case PROPERTIES_INDEX :
+				handleOpenProperties();
+				break;
+		}
 	}
-    
-    private void handleOpenProperties() {
-        Object changeObject = ((IStructuredSelection)fImportViewer.getSelection()).getFirstElement();
-        IPluginImport importObject = ((ImportObject) changeObject).getImport();
 
-        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(
-                                            isEditable(),
-                                            importObject);
-        dialog.create();
-        SWTUtil.setDialogSize(dialog, 400, -1);
-        dialog.setTitle(importObject.getId());
-        if (dialog.open() == Window.OK && isEditable()) {
-            try {
-                importObject.setOptional(dialog.isOptional());
-                importObject.setReexported(dialog.isReexported());
-                importObject.setVersion(dialog.getVersion());
-            } catch (CoreException e) {
-               PDEPlugin.logException(e);
-            }
-         }
-    }
+	private void handleOpenProperties() {
+		Object changeObject = ((IStructuredSelection) fImportViewer.getSelection()).getFirstElement();
+		IPluginImport importObject = ((ImportObject) changeObject).getImport();
+
+		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), importObject);
+		dialog.create();
+		SWTUtil.setDialogSize(dialog, 400, -1);
+		dialog.setTitle(importObject.getId());
+		if (dialog.open() == Window.OK && isEditable()) {
+			try {
+				importObject.setOptional(dialog.isOptional());
+				importObject.setReexported(dialog.isReexported());
+				importObject.setVersion(dialog.getVersion());
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
 
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model!=null)
+		if (model != null)
 			model.removeModelChangedListener(this);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
 
-		if (!isEditable()) { return false; }
-		
+		if (!isEditable()) {
+			return false;
+		}
+
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
@@ -282,7 +240,7 @@ public class RequiresSection
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -290,26 +248,25 @@ public class RequiresSection
 		HashSet existingImportsSet = null;
 		// Only import objects that are not already existing imports can be
 		// pasted
-	   	for (int i = 0; i < sourceObjects.length; i++) {
-	   		// Only import objects allowed
+		for (int i = 0; i < sourceObjects.length; i++) {
+			// Only import objects allowed
 			if ((sourceObjects[i] instanceof ImportObject) == false) {
 				return false;
 			}
 			// Get the current import objects and store them for searching
 			// purposes
 			if (existingImportsSet == null) {
-				existingImportsSet = 
-					PluginSelectionDialog.getExistingImports(getModel(), false);
+				existingImportsSet = PluginSelectionDialog.getExistingImports(getModel(), false);
 			}
 			// Only import object that do not exist are allowed
-			ImportObject importObject = (ImportObject)sourceObjects[i];
+			ImportObject importObject = (ImportObject) sourceObjects[i];
 			if (existingImportsSet.contains(importObject.getImport().getId())) {
 				return false;
 			}
-	   	}
+		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -344,9 +301,9 @@ public class RequiresSection
 	 * @return
 	 */
 	private IPluginModelBase getModel() {
-		return (IPluginModelBase)getPage().getModel();
+		return (IPluginModelBase) getPage().getModel();
 	}
-	
+
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginImport) {
 			ImportObject iobj = new ImportObject((IPluginImport) object);
@@ -364,72 +321,67 @@ public class RequiresSection
 		}
 		manager.add(new Separator());
 		getPage().contextMenuAboutToShow(manager);
-		
+
 		if (!selection.isEmpty())
 			manager.add(fRemoveAction);
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-			manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
-		
+
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
-		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) {
+		if (((IModel) getPage().getModel()).getUnderlyingResource() != null) {
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
-        if (fPropertiesAction != null && !fImportViewer.getSelection().isEmpty()) {
-            manager.add(new Separator());
-            manager.add(fPropertiesAction);
-        }
+		if (fPropertiesAction != null && !fImportViewer.getSelection().isEmpty()) {
+			manager.add(new Separator());
+			manager.add(fPropertiesAction);
+		}
 	}
 
 	private void handleOpen(ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
-                Object obj = ssel.getFirstElement();
-                if (obj instanceof ImportObject) {
-                    IPlugin plugin = ((ImportObject) obj).getPlugin();
-                    if (plugin != null)
-                         ManifestEditor.open(plugin, false);
-                }
+				Object obj = ssel.getFirstElement();
+				if (obj instanceof ImportObject) {
+					IPlugin plugin = ((ImportObject) obj).getPlugin();
+					if (plugin != null)
+						ManifestEditor.open(plugin, false);
+				}
 			}
 		}
 	}
-	
+
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fImportViewer.getSelection();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase pluginBase = model.getPluginBase();
 		IPluginImport[] imports = new IPluginImport[ssel.size()];
 		int i = 0;
-		for (Iterator iter = ssel.iterator(); iter.hasNext();i++) 
+		for (Iterator iter = ssel.iterator(); iter.hasNext(); i++)
 			imports[i] = ((ImportObject) iter.next()).getImport();
 
-		try {			
+		try {
 			removeImports(pluginBase, imports);
 		} catch (CoreException e) {
-            PDEPlugin.logException(e);
+			PDEPlugin.logException(e);
 		}
-        updateButtons();
+		updateButtons();
 	}
-	
-	private void removeImports(IPluginBase base, IPluginImport[] imports) throws CoreException{
+
+	private void removeImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
 		if (base instanceof BundlePluginBase)
-			((BundlePluginBase)base).remove(imports);
-		else if (base instanceof PluginBase) 
-			((PluginBase)base).remove(imports);
-		else if (base instanceof PluginBaseNode) 
-			((PluginBaseNode)base).remove(imports);
+			((BundlePluginBase) base).remove(imports);
+		else if (base instanceof PluginBase)
+			((PluginBase) base).remove(imports);
+		else if (base instanceof PluginBaseNode)
+			((PluginBaseNode) base).remove(imports);
 	}
-    
+
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		PluginSelectionDialog dialog =
-			new PluginSelectionDialog(
-				PDEPlugin.getActiveWorkbenchShell(),
-				getAvailablePlugins(model),
-				true);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailablePlugins(model), true);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
@@ -439,8 +391,7 @@ public class RequiresSection
 					IPluginModel candidate = (IPluginModel) models[i];
 					String pluginId = candidate.getPlugin().getId();
 					IPluginImport importNode = createImport(model.getPluginFactory(), pluginId);
-					String version = VersionUtil.computeInitialPluginVersion(
-							candidate.getPlugin().getVersion());
+					String version = VersionUtil.computeInitialPluginVersion(candidate.getPlugin().getVersion());
 					importNode.setVersion(version);
 					imports[i] = importNode;
 				}
@@ -449,45 +400,45 @@ public class RequiresSection
 			}
 		}
 	}
-	
+
 	private IPluginImport createImport(IPluginModelFactory factory, String id) {
-		if (factory instanceof AbstractPluginModelBase) 
-			return ((AbstractPluginModelBase)factory).createImport(id);
+		if (factory instanceof AbstractPluginModelBase)
+			return ((AbstractPluginModelBase) factory).createImport(id);
 		else if (factory instanceof BundlePluginModelBase)
-			return ((BundlePluginModelBase)factory).createImport(id);
+			return ((BundlePluginModelBase) factory).createImport(id);
 		else if (factory instanceof PluginDocumentNodeFactory)
-			return ((PluginDocumentNodeFactory)factory).createImport(id);
+			return ((PluginDocumentNodeFactory) factory).createImport(id);
 		return null;
 	}
-	
+
 	private void addImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
 		if (base instanceof BundlePluginBase)
-			((BundlePluginBase)base).add(imports);
-		else if (base instanceof PluginBase) 
-			((PluginBase)base).add(imports);
-		else if (base instanceof PluginBaseNode) 
-			((PluginBaseNode)base).add(imports);
+			((BundlePluginBase) base).add(imports);
+		else if (base instanceof PluginBase)
+			((PluginBase) base).add(imports);
+		else if (base instanceof PluginBaseNode)
+			((PluginBaseNode) base).add(imports);
 	}
-	
+
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
 		if (index < 1)
 			return;
 		swap(index, index - 1);
 	}
-	
+
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
 		if (index == table.getItemCount() - 1)
 			return;
-		swap(index, index + 1);		
+		swap(index, index + 1);
 	}
-	
+
 	public void swap(int index1, int index2) {
 		Table table = getTablePart().getTableViewer().getTable();
-		IPluginImport dep1 = ((ImportObject)table.getItem(index1).getData()).getImport();
-		IPluginImport dep2 = ((ImportObject)table.getItem(index2).getData()).getImport();
+		IPluginImport dep1 = ((ImportObject) table.getItem(index1).getData()).getImport();
+		IPluginImport dep2 = ((ImportObject) table.getItem(index2).getData()).getImport();
 
 		try {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -495,9 +446,9 @@ public class RequiresSection
 			pluginBase.swap(dep1, dep2);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
 	}
-	
+
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
 		HashSet existingImports = PluginSelectionDialog.getExistingImports(model, false);
@@ -510,37 +461,36 @@ public class RequiresSection
 
 		if (!existingImports.contains("system.bundle")) //$NON-NLS-1$
 			addSystemBundle(result);
-		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
-	
+
 	private void addSystemBundle(java.util.List list) {
 		try {
 			ExternalPluginModel model = new ExternalPluginModel();
-			
+
 			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
 			IPluginModelBase osgi = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
 			if (osgi == null)
 				return;
 			model.setInstallLocation(osgi.getInstallLocation());
-			
+
 			// Load model from a String representing the contents of an equivalent plugin.xml file
 			String pluginInfo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plugin id=\"system.bundle\" name=\"System Bundle\"></plugin>"; //$NON-NLS-1$
 			InputStream is = new BufferedInputStream(new ByteArrayInputStream(pluginInfo.getBytes()));
 			model.load(is, false);
-			
+
 			list.add(model);
-			
+
 		} catch (CoreException e) {
 		}
 	}
-
 
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model == null)
 			return;
 		fImportViewer.setInput(model.getPluginBase());
-        updateButtons();
+		updateButtons();
 		model.addModelChangedListener(this);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		fAddAction.setEnabled(model.isEditable());
@@ -548,30 +498,30 @@ public class RequiresSection
 	}
 
 	private void makeActions() {
-		fAddAction = new Action(PDEUIMessages.RequiresSection_add) { 
+		fAddAction = new Action(PDEUIMessages.RequiresSection_add) {
 			public void run() {
 				handleAdd();
 			}
 		};
-		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) { 
+		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) {
 			public void run() {
 				handleOpen(fImportViewer.getSelection());
 			}
 		};
-		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
+		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
 			public void run() {
 				handleRemove();
 			}
 		};
-        if (isBundle()) {
-            fPropertiesAction = new Action(PDEUIMessages.RequiresSection_properties) { 
-                public void run() {
-                    handleOpenProperties();
-                }
-            };
-        }
+		if (isBundle()) {
+			fPropertiesAction = new Action(PDEUIMessages.RequiresSection_properties) {
+				public void run() {
+					handleOpenProperties();
+				}
+			};
+		}
 	}
-	
+
 	public void refresh() {
 		fImports = null;
 		fImportViewer.refresh();
@@ -619,8 +569,8 @@ public class RequiresSection
 								createImportObjects();
 							else
 								fImports.remove(iobj);
-	                        Table table = fImportViewer.getTable();
-	                        index = table.getSelectionIndex();
+							Table table = fImportViewer.getTable();
+							index = table.getSelectionIndex();
 							fImportViewer.remove(iobj);
 						} else {
 							fImportViewer.update(iobj, null);
@@ -633,7 +583,7 @@ public class RequiresSection
 					// Refresh the viewer
 					fImportViewer.refresh();
 					// Get the last import added to the viewer
-					IPluginImport lastImport = (IPluginImport)changedObjects[changedObjects.length - 1];
+					IPluginImport lastImport = (IPluginImport) changedObjects[changedObjects.length - 1];
 					// Find the corresponding bundle object for the plug-in import
 					ImportObject lastImportObject = findImportObject(lastImport);
 					if (lastImportObject != null) {
@@ -643,10 +593,10 @@ public class RequiresSection
 				}
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				Table table = fImportViewer.getTable();
-				table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
+				table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 			}
 		} else {
-			fImportViewer.update(((IStructuredSelection)fImportViewer.getSelection()).toArray(), null);
+			fImportViewer.update(((IStructuredSelection) fImportViewer.getSelection()).toArray(), null);
 		}
 	}
 
@@ -683,49 +633,51 @@ public class RequiresSection
 			fImports.add(new ImportObject(iimport));
 		}
 	}
-	
+
 	public void setFocus() {
 		if (fImportViewer != null)
 			fImportViewer.getTable().setFocus();
 	}
-	
+
 	private boolean isBundle() {
 		return getPage().getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
 	}
 
-	protected boolean createCount() { return true; }
+	protected boolean createCount() {
+		return true;
+	}
 
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateUpDownButtons();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-     */
-    public boolean canDragMove(Object[] sourceObjects) {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
+	 */
+	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
 		} else if (isTreeViewerSorted()) {
 			return false;
 		}
-    	return true;
-    }
-    
-    /**
-     * @param sourceObjects
-     * @return
-     */
-    private boolean validateDragMoveSanity(Object[] sourceObjects) {
-    	// Validate source
+		return true;
+	}
+
+	/**
+	 * @param sourceObjects
+	 * @return
+	 */
+	private boolean validateDragMoveSanity(Object[] sourceObjects) {
+		// Validate source
 		if (sourceObjects == null) {
 			// No objects
 			return false;
@@ -735,10 +687,10 @@ public class RequiresSection
 		} else if ((sourceObjects[0] instanceof ImportObject) == false) {
 			// Must be the right type
 			return false;
-		}    	
+		}
 		return true;
-    }    
-	
+	}
+
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
@@ -754,8 +706,8 @@ public class RequiresSection
 			return false;
 		}
 		return true;
-	}    
-    
+	}
+
 	/**
 	 * @param sourceImportObject
 	 * @param targetImportObject
@@ -764,27 +716,26 @@ public class RequiresSection
 	private boolean validateDropMoveModel(ImportObject sourceImportObject, ImportObject targetImportObject) {
 		// Objects have to be from the same model
 		IPluginModelBase sourceModel = sourceImportObject.getImport().getPluginModel();
-		IPluginModelBase targetModel = targetImportObject.getImport().getPluginModel();	
+		IPluginModelBase targetModel = targetImportObject.getImport().getPluginModel();
 		if (sourceModel.equals(targetModel) == false) {
 			return false;
 		} else if ((getModel().getPluginBase() instanceof BundlePluginBase) == false) {
 			return false;
 		}
 		return true;
-	}  	
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-     */
-    public boolean canDropMove(Object targetObject, Object[] sourceObjects,
-    		int targetLocation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			return false;
 		}
 		// Multiple selection not supported
-		ImportObject sourceImportObject = (ImportObject)sourceObjects[0];
-		ImportObject targetImportObject = (ImportObject)targetObject;
+		ImportObject sourceImportObject = (ImportObject) sourceObjects[0];
+		ImportObject targetImportObject = (ImportObject) targetObject;
 		IPluginImport sourcePluginImport = sourceImportObject.getImport();
 		IPluginImport targetPluginImport = targetImportObject.getImport();
 		// Validate model
@@ -792,12 +743,11 @@ public class RequiresSection
 			return false;
 		}
 		// Get the bundle plug-in base
-		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Validate move
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// Get the previous import of the target 
-			IPluginImport previousImport = 
-				bundlePluginBase.getPreviousImport(targetPluginImport);
+			IPluginImport previousImport = bundlePluginBase.getPreviousImport(targetPluginImport);
 			// Ensure the previous element is not the source
 			if (sourcePluginImport.equals(previousImport)) {
 				return false;
@@ -805,8 +755,7 @@ public class RequiresSection
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			// Get the next import of the target 
-			IPluginImport nextImport = 
-				bundlePluginBase.getNextImport(targetPluginImport);
+			IPluginImport nextImport = bundlePluginBase.getNextImport(targetPluginImport);
 			// Ensure the next import is not the source
 			if (sourcePluginImport.equals(nextImport)) {
 				return false;
@@ -816,34 +765,31 @@ public class RequiresSection
 			// Not supported
 			return false;
 		}
-    	return false;    	
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-     */
-    public void doDropMove(Object targetObject, Object[] sourceObjects,
-    		int targetLocation) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
+	 */
+	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
 			Display.getDefault().beep();
 			return;
 		}
 		// Multiple selection not supported
-		ImportObject sourceImportObject = (ImportObject)sourceObjects[0];
-		ImportObject targetImportObject = (ImportObject)targetObject;
+		ImportObject sourceImportObject = (ImportObject) sourceObjects[0];
+		ImportObject targetImportObject = (ImportObject) targetObject;
 		IPluginImport sourcePluginImport = sourceImportObject.getImport();
-		IPluginImport targetPluginImport = targetImportObject.getImport();		
+		IPluginImport targetPluginImport = targetImportObject.getImport();
 		// Validate move
-		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) ||
-				(targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
+		if ((targetLocation == ViewerDropAdapter.LOCATION_BEFORE) || (targetLocation == ViewerDropAdapter.LOCATION_AFTER)) {
 			// Do move
-			doDropMove(sourceImportObject, sourcePluginImport,
-					targetPluginImport, targetLocation);
+			doDropMove(sourceImportObject, sourcePluginImport, targetPluginImport, targetLocation);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			// Not supported
 		}
-    }
+	}
 
 	/**
 	 * @param sourceImportObject
@@ -851,9 +797,7 @@ public class RequiresSection
 	 * @param targetPluginImport
 	 * @param targetLocation
 	 */
-	private void doDropMove(ImportObject sourceImportObject,
-			IPluginImport sourcePluginImport, IPluginImport targetPluginImport,
-			int targetLocation) {
+	private void doDropMove(ImportObject sourceImportObject, IPluginImport sourcePluginImport, IPluginImport targetPluginImport, int targetLocation) {
 		// Remove the original source object
 		// Normally we remove the original source object after inserting the
 		// serialized source object; however, the imports are removed via ID
@@ -861,7 +805,7 @@ public class RequiresSection
 		// the remove operation
 		doDragRemove();
 		// Get the bundle plug-in base
-		BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Get the index of the target
 		int index = bundlePluginBase.getIndexOf(targetPluginImport);
 		// Ensure the target index was found
@@ -880,53 +824,52 @@ public class RequiresSection
 		// the table viewer
 		setImportInsertIndex(targetIndex);
 		// Add source as sibling of target	
-		bundlePluginBase.add(sourcePluginImport, targetIndex);	
+		bundlePluginBase.add(sourcePluginImport, targetIndex);
 		// Reset the index
 		resetImportInsertIndex();
 	}
-    
-    /**
-     * 
-     */
-    private void resetImportInsertIndex() {
-    	fImportInsertIndex = -1;
-    }
-    
-    /**
-     * @param index
-     */
-    private void setImportInsertIndex(int index) {
-    	fImportInsertIndex = index;
-    }
-    
-    /**
-     * @return
-     */
-    private int getImportInsertIndex() {
-    	return fImportInsertIndex;
-    }
 
-    /**
-     * 
-     */
-    private void doDragRemove() {
+	/**
+	 * 
+	 */
+	private void resetImportInsertIndex() {
+		fImportInsertIndex = -1;
+	}
+
+	/**
+	 * @param index
+	 */
+	private void setImportInsertIndex(int index) {
+		fImportInsertIndex = index;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getImportInsertIndex() {
+		return fImportInsertIndex;
+	}
+
+	/**
+	 * 
+	 */
+	private void doDragRemove() {
 		// Get the bundle plug-in base
-    	BundlePluginBase bundlePluginBase = (BundlePluginBase)getModel().getPluginBase();
+		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();
 		// Retrieve the original non-serialized source objects dragged initially
 		Object[] sourceObjects = getDragSourceObjects();
 		// Validate source objects
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return;
 		}
-		IPluginImport sourcePluginImport = 
-			((ImportObject)sourceObjects[0]).getImport();
+		IPluginImport sourcePluginImport = ((ImportObject) sourceObjects[0]).getImport();
 		try {
 			bundlePluginBase.remove(sourcePluginImport);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}    	
-    }
-    
+		}
+	}
+
 	/**
 	 * @return
 	 */
@@ -935,6 +878,6 @@ public class RequiresSection
 			return false;
 		}
 		return fSortAction.isChecked();
-	}    
-    
+	}
+
 }

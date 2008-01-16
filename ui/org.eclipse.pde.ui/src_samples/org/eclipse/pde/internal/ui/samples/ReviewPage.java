@@ -27,40 +27,42 @@ import org.eclipse.ui.forms.widgets.ScrolledFormText;
 public class ReviewPage extends WizardPage {
 	private SampleWizard wizard;
 	private ScrolledFormText formText;
+
 	/**
 	 * @param pageName
 	 */
 	public ReviewPage(SampleWizard wizard) {
 		super("last"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEUIMessages.ReviewPage_title); 
-		setDescription(PDEUIMessages.ReviewPage_desc); 
+		setTitle(PDEUIMessages.ReviewPage_title);
+		setDescription(PDEUIMessages.ReviewPage_desc);
 	}
+
 	public void setVisible(boolean visible) {
-		setPageComplete(wizard.getSelection()!=null);			
-		if (formText!=null)
+		setPageComplete(wizard.getSelection() != null);
+		if (formText != null)
 			updateContent();
 		super.setVisible(visible);
 	}
-	
+
 	private void updateContent() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>"); //$NON-NLS-1$
 		IConfigurationElement selection = wizard.getSelection();
-		if (selection!=null) {
+		if (selection != null) {
 			setMessage(null);
-			IConfigurationElement [] desc = selection.getChildren("description");  //$NON-NLS-1$
-			if (desc.length==1)
-				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[]{selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ 
+			IConfigurationElement[] desc = selection.getChildren("description"); //$NON-NLS-1$
+			if (desc.length == 1)
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[] {selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ 
 			else
 				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ 
-		}
-		else {
-			setMessage(PDEUIMessages.ReviewPage_noSampleFound, IMessageProvider.WARNING); 
+		} else {
+			setMessage(PDEUIMessages.ReviewPage_noSampleFound, IMessageProvider.WARNING);
 		}
 		buf.append("</form>"); //$NON-NLS-1$
 		formText.setText(buf.toString());
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -78,7 +80,7 @@ public class ReviewPage extends WizardPage {
 		formText.getFormText().setHyperlinkSettings(settings);
 		setControl(container);
 		updateContent();
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REVIEW);
 	}
 }

@@ -14,24 +14,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -47,21 +36,16 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionPointWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public class ExtensionPointsSection extends TableSection {
 	private TableViewer pointTable;
 
-	class TableContentProvider extends DefaultContentProvider implements
-			IStructuredContentProvider {
+	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginBase pluginBase = model.getPluginBase();
@@ -72,7 +56,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public ExtensionPointsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
+		super(page, parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION, new String[] {PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new});
 		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_title);
 		getSection().setDescription(PDEUIMessages.ExtensionPointsSection_sectionDescAllExtensionPoints);
 		fHandleDefaultButton = false;
@@ -118,9 +102,11 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		
-		if (!isEditable()) { return false; }
-		
+
+		if (!isEditable()) {
+			return false;
+		}
+
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
@@ -166,9 +152,7 @@ public class ExtensionPointsSection extends TableSection {
 		if (changeObject instanceof IPluginExtensionPoint) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				pointTable.add(changeObject);
-				pointTable.setSelection(
-					new StructuredSelection(changeObject),
-					true);
+				pointTable.setSelection(new StructuredSelection(changeObject), true);
 				pointTable.getTable().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				pointTable.remove(changeObject);
@@ -188,7 +172,7 @@ public class ExtensionPointsSection extends TableSection {
 		};
 		newAction.setEnabled(isEditable());
 		manager.add(newAction);
-		
+
 		if (selection.isEmpty()) {
 			getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 			return;
@@ -200,13 +184,13 @@ public class ExtensionPointsSection extends TableSection {
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		manager.add(new Separator());
-		if (isEditable() && selection instanceof IStructuredSelection && ((IStructuredSelection)selection).size() == 1) {
+		if (isEditable() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
 			PDERefactoringAction action = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ExtensionPointsSection_rename_label);
-			action.setSelection(((IStructuredSelection)selection).getFirstElement());
+			action.setSelection(((IStructuredSelection) selection).getFirstElement());
 			manager.add(action);
 			manager.add(new Separator());
 		}
-		
+
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 			public void run() {
 				handleDelete();
@@ -223,8 +207,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	private void handleDelete() {
-		Object[] selection = ((IStructuredSelection) pointTable
-				.getSelection()).toArray();
+		Object[] selection = ((IStructuredSelection) pointTable.getSelection()).toArray();
 		for (int i = 0; i < selection.length; i++) {
 			Object object = selection[i];
 			if (object != null && object instanceof IPluginExtensionPoint) {
@@ -234,18 +217,14 @@ public class ExtensionPointsSection extends TableSection {
 				IPluginExtensionPoint[] points = plugin.getExtensionPoints();
 				int index = getNewSelectionIndex(getArrayIndex(points, ep), points.length);
 				if (index != -1)
-						newSelection = new StructuredSelection(points[index]);
+					newSelection = new StructuredSelection(points[index]);
 				try {
 					String schema = ep.getSchema();
-					IProject project = ep.getModel().getUnderlyingResource()
-							.getProject();
+					IProject project = ep.getModel().getUnderlyingResource().getProject();
 					IFile schemaFile = project.getFile(schema);
 					if (schemaFile.exists())
-						if (MessageDialog.openQuestion(getSection().getShell(),
-								PDEUIMessages.ExtensionPointsSection_title,
-								NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
-							schemaFile.delete(true, true,
-									new NullProgressMonitor());
+						if (MessageDialog.openQuestion(getSection().getShell(), PDEUIMessages.ExtensionPointsSection_title, NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
+							schemaFile.delete(true, true, new NullProgressMonitor());
 					plugin.remove(ep);
 					if (newSelection != null)
 						pointTable.setSelection(newSelection);
@@ -258,23 +237,17 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	private void handleNew() {
-		IFile file = ((IFileEditorInput) getPage().getPDEEditor()
-				.getEditorInput()).getFile();
+		IFile file = ((IFileEditorInput) getPage().getPDEEditor().getEditorInput()).getFile();
 		final IProject project = file.getProject();
-		BusyIndicator.showWhile(pointTable.getTable().getDisplay(),
-				new Runnable() {
-					public void run() {
-						NewExtensionPointWizard wizard = new NewExtensionPointWizard(
-								project, (IPluginModelBase) getPage()
-										.getModel(), (ManifestEditor) getPage()
-										.getPDEEditor());
-						WizardDialog dialog = new WizardDialog(PDEPlugin
-								.getActiveWorkbenchShell(), wizard);
-						dialog.create();
-						SWTUtil.setDialogSize(dialog, 400, 450);
-						dialog.open();
-					}
-				});
+		BusyIndicator.showWhile(pointTable.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				NewExtensionPointWizard wizard = new NewExtensionPointWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor());
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 450);
+				dialog.open();
+			}
+		});
 	}
 
 	private IPluginModelBase getPluginModelBase() {
@@ -287,16 +260,14 @@ public class ExtensionPointsSection extends TableSection {
 			return null;
 		}
 		// Get the extension model
-		ISharedExtensionsModel extensionModel = 
-			((IBundlePluginModelBase)model).getExtensionsModel();
+		ISharedExtensionsModel extensionModel = ((IBundlePluginModelBase) model).getExtensionsModel();
 		// Ensure the extension model is defined
-		if ((extensionModel == null) || 
-				((extensionModel instanceof IPluginModelBase) == false)) {
+		if ((extensionModel == null) || ((extensionModel instanceof IPluginModelBase) == false)) {
 			return null;
 		}
-		return ((IPluginModelBase)extensionModel);
-	}	
-	
+		return ((IPluginModelBase) extensionModel);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -305,7 +276,7 @@ public class ExtensionPointsSection extends TableSection {
 		// or extension point is created.  
 		// Ensure the file exists before pasting because the model will be 
 		// null and the paste will fail if it does not exist
-		((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
+		((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure an editable model was actually retrieved
@@ -319,22 +290,20 @@ public class ExtensionPointsSection extends TableSection {
 			// the target object is not needed
 			for (int i = 0; i < sourceObjects.length; i++) {
 				Object sourceObject = sourceObjects[i];
-				
-				if ((sourceObject instanceof IPluginExtensionPoint) &&
-						(pluginBase instanceof IDocumentElementNode)) {
+
+				if ((sourceObject instanceof IPluginExtensionPoint) && (pluginBase instanceof IDocumentElementNode)) {
 					// Extension point object
-					IDocumentElementNode extensionPoint = 
-						(IDocumentElementNode)sourceObject;
+					IDocumentElementNode extensionPoint = (IDocumentElementNode) sourceObject;
 					// Adjust all the source object transient field values to
 					// acceptable values
-					extensionPoint.reconnect((IDocumentElementNode)pluginBase, model);
+					extensionPoint.reconnect((IDocumentElementNode) pluginBase, model);
 					// Add the extension point to the plug-in
-					pluginBase.add((IPluginExtensionPoint)extensionPoint);
+					pluginBase.add((IPluginExtensionPoint) extensionPoint);
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -350,7 +319,7 @@ public class ExtensionPointsSection extends TableSection {
 		}
 		return true;
 	}
-	
+
 	protected void selectExtensionPoint(ISelection selection) {
 		pointTable.setSelection(selection, true);
 	}

@@ -13,10 +13,7 @@ package org.eclipse.pde.internal.ui;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 public class OpenPDEPerspectiveAction extends Action {
 	public OpenPDEPerspectiveAction() {
@@ -31,12 +28,10 @@ public class OpenPDEPerspectiveAction extends Action {
 		else
 			input = ResourcesPlugin.getWorkspace().getRoot();
 		try {
-			PlatformUI.getWorkbench().showPerspective(
-				"org.eclipse.pde.ui.PDEPerspective", //$NON-NLS-1$
-				window,
-				input);
+			PlatformUI.getWorkbench().showPerspective("org.eclipse.pde.ui.PDEPerspective", //$NON-NLS-1$
+					window, input);
 			notifyResult(true);
-			
+
 		} catch (WorkbenchException e) {
 			PDEPlugin.logException(e);
 			notifyResult(false);

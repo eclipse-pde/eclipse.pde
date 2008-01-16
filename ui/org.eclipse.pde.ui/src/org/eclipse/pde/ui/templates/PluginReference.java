@@ -24,11 +24,11 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * @since 3.4
  */
 public class PluginReference implements IPluginReference {
-	
+
 	private String id;
 	private String version;
 	private int match = IMatchRules.NONE;
-	
+
 	/**
 	 * 
 	 * Constructs a plug-in reference to be used in the PDE template framework
@@ -45,16 +45,19 @@ public class PluginReference implements IPluginReference {
 		this.version = version;
 		this.match = match;
 	}
-	
+
 	/*
 	 * @see IPluginReference#equals(Object) 
 	 */
 	public boolean equals(Object object) {
 		if (object instanceof IPluginReference) {
-			IPluginReference source = (IPluginReference)object;
-			if (id==null) return false;
-			if (id.equals(source.getId())==false) return false;
-			if (version==null && source.getVersion()==null) return true;
+			IPluginReference source = (IPluginReference) object;
+			if (id == null)
+				return false;
+			if (id.equals(source.getId()) == false)
+				return false;
+			if (version == null && source.getVersion() == null)
+				return true;
 			return version.equals(source.getVersion());
 		}
 		return false;

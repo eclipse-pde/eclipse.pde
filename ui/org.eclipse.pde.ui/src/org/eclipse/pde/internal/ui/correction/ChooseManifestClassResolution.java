@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 public class ChooseManifestClassResolution extends AbstractManifestMarkerResolution {
 
 	private String fHeader;
-	
+
 	public ChooseManifestClassResolution(int type, String headerName) {
 		super(type);
 		fHeader = headerName;

@@ -11,12 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.TreeSet;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
@@ -27,21 +23,14 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -50,15 +39,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
-
 
 public class IntroSection extends PDESection {
 
@@ -72,62 +58,63 @@ public class IntroSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
-	
+
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		section.setLayoutData(data);		
-		
-		section.setText(PDEUIMessages.IntroSection_sectionText); 
-		section.setDescription(PDEUIMessages.IntroSection_sectionDescription); 
-		
+		section.setLayoutData(data);
+
+		section.setText(PDEUIMessages.IntroSection_sectionText);
+		section.setDescription(PDEUIMessages.IntroSection_sectionDescription);
+
 		boolean canCreateNew = TargetPlatformHelper.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
-		
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, canCreateNew ? 3 : 2));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Label label = toolkit.createLabel(client, PDEUIMessages.IntroSection_introLabel, SWT.WRAP);
 		GridData td = new GridData();
 		td.horizontalSpan = canCreateNew ? 3 : 2;
 		label.setLayoutData(td);
-		
-		Label introLabel = toolkit.createLabel(client, PDEUIMessages.IntroSection_introInput); 
+
+		Label introLabel = toolkit.createLabel(client, PDEUIMessages.IntroSection_introInput);
 		introLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		
+
 		fIntroCombo = new ComboPart();
 		fIntroCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		td = new GridData(GridData.FILL_HORIZONTAL);
 		fIntroCombo.getControl().setLayoutData(td);
 		loadManifestAndIntroIds(false);
-		if (fAvailableIntroIds != null ) fIntroCombo.setItems(fAvailableIntroIds);
+		if (fAvailableIntroIds != null)
+			fIntroCombo.setItems(fAvailableIntroIds);
 		fIntroCombo.add(""); //$NON-NLS-1$
 		fIntroCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSelection();
 			}
 		});
-		
+
 		if (canCreateNew) {
-			Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH); 
+			Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH);
 			button.setEnabled(isEditable());
 			button.setLayoutData(new GridData(GridData.FILL));
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleNewIntro();
 				}
-			});	
+			});
 		}
-		
+
 		fIntroCombo.getControl().setEnabled(isEditable());
-		
+
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		// Register to be notified when the model changes
-		getModel().addModelChangedListener(this);			
+		getModel().addModelChangedListener(this);
 	}
-	
+
 	private void handleSelection() {
 		if (!productDefined()) {
 			fIntroCombo.setText(""); //$NON-NLS-1$
@@ -151,7 +138,7 @@ public class IntroSection extends PDESection {
 							IPluginModelBase base = PluginRegistry.findModel(extensions[i].getContributor().getName());
 							if (base == null)
 								continue;
-							fManifest = (IFile)base.getUnderlyingResource();
+							fManifest = (IFile) base.getUnderlyingResource();
 						}
 						if (onlyLoadManifest)
 							return;
@@ -162,19 +149,16 @@ public class IntroSection extends PDESection {
 				}
 			}
 		}
-		fAvailableIntroIds = (String[])result.toArray(new String[result.size()]);
+		fAvailableIntroIds = (String[]) result.toArray(new String[result.size()]);
 	}
-	
+
 	private void handleNewIntro() {
 		boolean needNewProduct = false;
 		if (!productDefined()) {
 			needNewProduct = true;
-			MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(),
-					PDEUIMessages.IntroSection_undefinedProductId, null, 
-					PDEUIMessages.IntroSection_undefinedProductIdMessage,
-					MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
-	        if (mdiag.open() != Window.OK)
-	        	return;
+			MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.IntroSection_undefinedProductId, null, PDEUIMessages.IntroSection_undefinedProductIdMessage, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			if (mdiag.open() != Window.OK)
+				return;
 		}
 		ProductIntroWizard wizard = new ProductIntroWizard(getProduct(), needNewProduct);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
@@ -197,7 +181,7 @@ public class IntroSection extends PDESection {
 		}
 		super.refresh();
 	}
-	
+
 	private IIntroInfo getIntroInfo() {
 		IIntroInfo info = getProduct().getIntroInfo();
 		if (info == null) {
@@ -206,20 +190,20 @@ public class IntroSection extends PDESection {
 		}
 		return info;
 	}
-	
+
 	private IProduct getProduct() {
 		return getModel().getProduct();
 	}
-	
+
 	private IProductModel getModel() {
-		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
-	
+
 	private boolean productDefined() {
 		String id = getProduct().getId();
 		return id != null && !id.equals(""); //$NON-NLS-1$
 	}
-	
+
 	private void addDependenciesAndPlugins() {
 		IProduct product = getProduct();
 		if (!product.useFeatures()) {
@@ -230,27 +214,29 @@ public class IntroSection extends PDESection {
 			boolean includeOptional = false;
 			IFormPage page = getPage().getEditor().findPage(ConfigurationPage.PLUGIN_ID);
 			if (page != null)
-					includeOptional = ((ConfigurationPage)page).includeOptionalDependencies();
+				includeOptional = ((ConfigurationPage) page).includeOptionalDependencies();
 			PluginSection.handleAddRequired(new IProductPlugin[] {plugin}, includeOptional);
 		}
-		if (fManifest == null) loadManifestAndIntroIds(true);
-		if (fManifest != null) addRequiredBundle();
+		if (fManifest == null)
+			loadManifestAndIntroIds(true);
+		if (fManifest != null)
+			addRequiredBundle();
 	}
-	
-	private void addRequiredBundle(){
+
+	private void addRequiredBundle() {
 		ModelModification mod = new ModelModification(fManifest) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;
-				IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
+				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 				IBundle bundle = modelBase.getBundleModel().getBundle();
 				IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {
-					RequireBundleObject[] requires = ((RequireBundleHeader)header).getRequiredBundles();
+					RequireBundleObject[] requires = ((RequireBundleHeader) header).getRequiredBundles();
 					for (int i = 0; i < requires.length; i++)
 						if (requires[i].getId().equals(INTRO_PLUGIN_ID))
 							return;
-					((RequireBundleHeader)header).addBundle(INTRO_PLUGIN_ID);
+					((RequireBundleHeader) header).addBundle(INTRO_PLUGIN_ID);
 				} else
 					bundle.setHeader(Constants.REQUIRE_BUNDLE, INTRO_PLUGIN_ID);
 			}
@@ -263,9 +249,9 @@ public class IntroSection extends PDESection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 		}		
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+		}
 	}
 
 	/**
@@ -273,8 +259,8 @@ public class IntroSection extends PDESection {
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -284,6 +270,6 @@ public class IntroSection extends PDESection {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}		
-	
+	}
+
 }

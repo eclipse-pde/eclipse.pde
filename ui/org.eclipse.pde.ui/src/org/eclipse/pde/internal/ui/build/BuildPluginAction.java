@@ -26,14 +26,13 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class BuildPluginAction extends BaseBuildAction {
 
-	protected void makeScripts(IProgressMonitor monitor)
-		throws InvocationTargetException, CoreException {
-	
+	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
+
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 		AbstractScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
 		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
-		
+
 		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
@@ -43,14 +42,11 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		generator.setBuildingOSGi(true);
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		if(model != null && model.getPluginBase().getId() != null) {
+		if (model != null && model.getPluginBase().getId() != null) {
 			generator.setBundles(new BundleDescription[] {model.getBundleDescription()});
 			generator.generate();
-		}
-		else
-		{	MessageDialog.openError(null,
-					PDEUIMessages.BuildPluginAction_ErrorDialog_Title, 
-					PDEUIMessages.BuildPluginAction_ErrorDialog_Message); 
+		} else {
+			MessageDialog.openError(null, PDEUIMessages.BuildPluginAction_ErrorDialog_Title, PDEUIMessages.BuildPluginAction_ErrorDialog_Message);
 		}
 	}
 

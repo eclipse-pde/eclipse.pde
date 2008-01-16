@@ -12,27 +12,28 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.Schema;
-import org.eclipse.pde.internal.core.schema.SchemaElement;
-import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
 public class NewElementAction extends Action {
 	private Schema schema;
+
 	public NewElementAction() {
 		setText(PDEUIMessages.SchemaEditor_NewElement_label);
 		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
+
 	private String getInitialName() {
 		return PDELabelUtility.generateName(schema.getElementNames(), PDEUIMessages.SchemaEditor_NewElement_initialName, false);
 	}
+
 	public org.eclipse.pde.internal.core.schema.Schema getSchema() {
 		return schema;
 	}
+
 	public void run() {
 		String name = getInitialName();
 		SchemaElement element;
@@ -44,6 +45,7 @@ public class NewElementAction extends Action {
 		schema.addElement(element);
 		schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
 	}
+
 	public void setSchema(Schema newSchema) {
 		schema = newSchema;
 	}

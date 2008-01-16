@@ -11,17 +11,14 @@
 
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.WordPatternRule;
+import org.eclipse.jface.text.rules.*;
 
 /**
  * ExternalizedStringRule
  *
  */
 public class ExternalizedStringRule extends WordPatternRule {
-	
+
 	/**
 	 * ExternalizedStringDetector
 	 *
@@ -34,7 +31,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 		public ExternalizedStringDetector() {
 			super();
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 		 */
@@ -60,7 +57,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 			}
 			return false;
 		}
-	}	
+	}
 
 	/**
 	 * @param token
@@ -74,7 +71,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 	 */
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		// Read the next character
-		char character = (char)scanner.read();
+		char character = (char) scanner.read();
 		// Detect end character
 		if (Character.isWhitespace(character)) {
 			return true;

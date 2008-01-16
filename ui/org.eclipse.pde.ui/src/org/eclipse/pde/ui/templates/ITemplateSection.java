@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
-import java.net.URL;
 
+import java.net.URL;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,6 +46,7 @@ public interface ITemplateSection {
 	 * @return a template location URL
 	 */
 	public URL getTemplateLocation();
+
 	/**
 	 * Returns a presentable label the section.
 	 * 
@@ -78,6 +79,7 @@ public interface ITemplateSection {
 	 *         found.
 	 */
 	public String getReplacementString(String fileName, String key);
+
 	/**
 	 * Adds template-related pages to the wizard. A typical section
 	 * implementation contributes one page, but complex sections may span
@@ -154,8 +156,7 @@ public interface ITemplateSection {
 	 * @param monitor
 	 *            progress monitor to indicate execution progress
 	 */
-	public void execute(IProject project, IPluginModelBase model,
-			IProgressMonitor monitor) throws CoreException;
+	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of tokens representing new files and folders created by

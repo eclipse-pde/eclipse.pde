@@ -17,9 +17,8 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IMarkerResolution;
 
-public class RemoveImportExportServicesResolution extends AbstractManifestMarkerResolution
-		implements IMarkerResolution {
-	
+public class RemoveImportExportServicesResolution extends AbstractManifestMarkerResolution implements IMarkerResolution {
+
 	String fServiceHeader;
 
 	public RemoveImportExportServicesResolution(int type, String serviceHeader) {
@@ -28,7 +27,7 @@ public class RemoveImportExportServicesResolution extends AbstractManifestMarker
 	}
 
 	protected void createChange(BundleModel model) {
-		Bundle bundle = (Bundle)model.getBundle();
+		Bundle bundle = (Bundle) model.getBundle();
 		IManifestHeader header = bundle.getManifestHeader(fServiceHeader);
 		if (header != null)
 			bundle.setHeader(fServiceHeader, null);

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -40,10 +39,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	public void run(IAction action) {
 		IPluginModelBase[] fUnupdated = getModelsToUpdate();
 		if (fUnupdated.length == 0) {
-			MessageDialog.openInformation(
-					PDEPlugin.getActiveWorkbenchShell(),
-					PDEUIMessages.UpdateClasspathAction_find,  
-					PDEUIMessages.UpdateClasspathAction_none); 
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.UpdateClasspathAction_find, PDEUIMessages.UpdateClasspathAction_none);
 			return;
 		}
 		if (fSelection instanceof IStructuredSelection) {
@@ -62,9 +58,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				try {
-					if (project != null
-							&& WorkspaceModelManager.isPluginProject(project)
-							&& project.hasNature(JavaCore.NATURE_ID)) {
+					if (project != null && WorkspaceModelManager.isPluginProject(project) && project.hasNature(JavaCore.NATURE_ID)) {
 						IPluginModelBase model = PluginRegistry.findModel(project);
 						if (model != null) {
 							models.add(model);
@@ -75,14 +69,11 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				}
 			}
 
-			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models
-					.toArray(new IPluginModelBase[models.size()]);
+			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
 
 			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(fUnupdated, modelArray);
-			final WizardDialog dialog = new WizardDialog(PDEPlugin
-					.getActiveWorkbenchShell(), wizard);
-			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
-					.getDisplay(), new Runnable() {
+			final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 				public void run() {
 					dialog.open();
 				}
@@ -102,8 +93,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-	
-	private IPluginModelBase[] getModelsToUpdate(){
+
+	private IPluginModelBase[] getModelsToUpdate() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList modelArray = new ArrayList();
 		try {
@@ -114,7 +105,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return (IPluginModelBase[])modelArray.toArray(new IPluginModelBase[modelArray.size()]);
+		return (IPluginModelBase[]) modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
-	
+
 }

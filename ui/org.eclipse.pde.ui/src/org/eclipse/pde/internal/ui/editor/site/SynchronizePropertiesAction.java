@@ -23,18 +23,15 @@ public class SynchronizePropertiesAction extends Action {
 
 	private ISiteFeature[] fSiteFeatures;
 
-	public SynchronizePropertiesAction(ISiteFeature[] siteFeatures,
-			ISiteModel model) {
+	public SynchronizePropertiesAction(ISiteFeature[] siteFeatures, ISiteModel model) {
 		setText(PDEUIMessages.SynchronizePropertiesAction_label);
 		fSiteFeatures = siteFeatures;
 		fModel = model;
 	}
 
 	public void run() {
-		SynchronizePropertiesWizard wizard = new SynchronizePropertiesWizard(
-				fSiteFeatures, fModel);
-		WizardDialog dialog = new WizardDialog(PDEPlugin
-				.getActiveWorkbenchShell(), wizard);
+		SynchronizePropertiesWizard wizard = new SynchronizePropertiesWizard(fSiteFeatures, fModel);
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.open();
 	}
 }

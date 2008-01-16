@@ -16,14 +16,13 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 	private ISelection fSelection;
+
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -36,19 +35,19 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 
 	private void openDependencies(Object el) {
 		if (el instanceof IFile) {
-			el = ((IFile)el).getProject();
+			el = ((IFile) el).getProject();
 		}
 		if (el instanceof IJavaProject) {
-			el = ((IJavaProject)el).getProject();
+			el = ((IJavaProject) el).getProject();
 		}
 		if (el instanceof IProject) {
 			el = PluginRegistry.findModel((IProject) el);
 		}
 		if (el instanceof IPluginObject) {
-			el = ((IPluginObject)el).getModel();
+			el = ((IPluginObject) el).getModel();
 		}
 		if (el instanceof IPluginModelBase) {
-			new OpenPluginDependenciesAction((IPluginModelBase)el).run();
+			new OpenPluginDependenciesAction((IPluginModelBase) el).run();
 		}
 	}
 

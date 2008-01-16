@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.toc;
 
 import java.util.List;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.internal.core.text.toc.TocModel;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
@@ -24,23 +23,22 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
  * TocFormOutlinePage
  *
  */
-public class TocFormOutlinePage extends FormOutlinePage
-{
+public class TocFormOutlinePage extends FormOutlinePage {
 	/**
 	 * @param editor
 	 */
-	public TocFormOutlinePage(PDEFormEditor editor)
-	{	super(editor);
+	public TocFormOutlinePage(PDEFormEditor editor) {
+		super(editor);
 	}
-	
+
 	/**
 	 * TocLabelProvider
 	 *
 	 */
-	private class TocLabelProvider extends BasicLabelProvider
-	{	public String getText(Object obj)
-		{	if (obj instanceof TocObject)
-			{	return getObjectText((TocObject)obj);
+	private class TocLabelProvider extends BasicLabelProvider {
+		public String getText(Object obj) {
+			if (obj instanceof TocObject) {
+				return getObjectText((TocObject) obj);
 			}
 			return super.getText(obj);
 		}
@@ -50,24 +48,23 @@ public class TocFormOutlinePage extends FormOutlinePage
 	 * @param obj
 	 * @return
 	 */
-	protected String getObjectText(TocObject obj)
-	{	return PDETextHelper.translateReadText(obj.getName());
+	protected String getObjectText(TocObject obj) {
+		return PDETextHelper.translateReadText(obj.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getChildren(java.lang.Object)
 	 */
-	protected Object[] getChildren(Object parent)
-	{	if (parent instanceof TocPage)
-		{	TocModel toc = (TocModel)fEditor.getAggregateModel();
+	protected Object[] getChildren(Object parent) {
+		if (parent instanceof TocPage) {
+			TocModel toc = (TocModel) fEditor.getAggregateModel();
 			if (toc != null && toc.isLoaded()) {
 				Object[] list = new Object[1];
 				list[0] = toc.getToc();
 				return list;
 			}
-		}
-		else if (parent instanceof TocObject)
-		{	List list = ((TocObject)parent).getChildren();
+		} else if (parent instanceof TocObject) {
+			List list = ((TocObject) parent).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -80,14 +77,14 @@ public class TocFormOutlinePage extends FormOutlinePage
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
 	 */
-	public ILabelProvider createLabelProvider()
-	{	return new TocLabelProvider();
+	public ILabelProvider createLabelProvider() {
+		return new TocLabelProvider();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#getParentPageId(java.lang.Object)
 	 */
-	protected String getParentPageId(Object item)
-	{	return TocPage.PAGE_ID;
+	protected String getParentPageId(Object item) {
+		return TocPage.PAGE_ID;
 	}
 }

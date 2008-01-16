@@ -11,9 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.toc;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -34,8 +32,7 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 	 * @param pageName
 	 * @param selection
 	 */
-	public TocHTMLWizardPage(String pageName,
-			IStructuredSelection selection) {
+	public TocHTMLWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 	}
 
@@ -58,11 +55,9 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 			return false;
 		}
 
-		if(!TocExtensionUtil.hasValidPageExtension(new Path(fLastFilename)))
-		{	String message = NLS.bind(
-				PDEUIMessages.TocHTMLWizardPage_badExtension, 
-				TocExtensionUtil.getPageExtensionList());
-		
+		if (!TocExtensionUtil.hasValidPageExtension(new Path(fLastFilename))) {
+			String message = NLS.bind(PDEUIMessages.TocHTMLWizardPage_badExtension, TocExtensionUtil.getPageExtensionList());
+
 			setErrorMessage(message);
 			return false;
 		}
@@ -70,14 +65,14 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 		// Perform default validation
 		return super.validatePage();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
 	 */
@@ -90,8 +85,8 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 	}
 
 	public String getFileName() {
-		if(getControl() != null && getControl().isDisposed())
-		{	return fLastFilename;
+		if (getControl() != null && getControl().isDisposed()) {
+			return fLastFilename;
 		}
 
 		return super.getFileName();

@@ -11,16 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -30,9 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -48,7 +39,7 @@ public class ArgumentsSection extends PDESection {
 		TAB_LABELS[IArgumentsInfo.L_ARGS_SOLAR] = "solaris"; //$NON-NLS-1$
 		TAB_LABELS[IArgumentsInfo.L_ARGS_WIN32] = "win32"; //$NON-NLS-1$
 	}
-	
+
 	private FormEntry fVMArgs;
 	private FormEntry fProgramArgs;
 	private CTabFolder fTabFolder;
@@ -58,20 +49,20 @@ public class ArgumentsSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
-	
+
 	protected void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
-		section.setLayoutData(data);			
-		
-		section.setText(PDEUIMessages.ArgumentsSection_title); 
-		section.setDescription(PDEUIMessages.ArgumentsSection_desc); 
-		
+		section.setLayoutData(data);
+
+		section.setText(PDEUIMessages.ArgumentsSection_title);
+		section.setDescription(PDEUIMessages.ArgumentsSection_desc);
+
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
-		client.setLayoutData(new GridData(GridData.FILL_BOTH));		
-		
+		client.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -79,25 +70,23 @@ public class ArgumentsSection extends PDESection {
 		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
-				toolkit.getColors().getBackground() },
-				new int[] { 100 }, true);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fProgramArgs.isDirty())
-					fProgramArgs.commit();			
+					fProgramArgs.commit();
 				if (fVMArgs.isDirty())
-					fVMArgs.commit();					
+					fVMArgs.commit();
 				refresh();
 			}
 		});
 		fTabFolder.setUnselectedImageVisible(false);
-		
+
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		
-		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI|SWT.WRAP); 
-		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
+
+		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI | SWT.WRAP);
+		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
@@ -105,9 +94,9 @@ public class ArgumentsSection extends PDESection {
 			}
 		});
 		fProgramArgs.setEditable(isEditable());
-		
-		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI|SWT.WRAP); 
-		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
+
+		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI | SWT.WRAP);
+		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
@@ -115,44 +104,43 @@ public class ArgumentsSection extends PDESection {
 			}
 		});
 		fVMArgs.setEditable(isEditable());
-		
+
 		createTabs();
 		toolkit.paintBordersFor(client);
-		section.setClient(client);	
+		section.setClient(client);
 		// Register to be notified when the model changes
-		getModel().addModelChangedListener(this);		
+		getModel().addModelChangedListener(this);
 	}
-	
+
 	private void createTabs() {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 			item.setText(TAB_LABELS[i]);
-			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
 	}
-	
+
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
 		fProgramArgs.setValue(getLauncherArguments().getProgramArguments(fLastTab), true);
 		fVMArgs.setValue(getLauncherArguments().getVMArguments(fLastTab), true);
 		super.refresh();
 	}
-	
+
 	public void commit(boolean onSave) {
 		fProgramArgs.commit();
 		fVMArgs.commit();
 		super.commit(onSave);
 	}
-	
+
 	public void cancelEdit() {
 		fProgramArgs.cancelEdit();
 		fVMArgs.cancelEdit();
 		super.cancelEdit();
 	}
-	
+
 	private IArgumentsInfo getLauncherArguments() {
 		IArgumentsInfo info = getProduct().getLauncherArguments();
 		if (info == null) {
@@ -165,24 +153,24 @@ public class ArgumentsSection extends PDESection {
 	private IProduct getProduct() {
 		return getModel().getProduct();
 	}
-	
+
 	private IProductModel getModel() {
-		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return d.getFocusControl() instanceof Text;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 		}		
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+		}
 	}
 
 	/**
@@ -190,8 +178,8 @@ public class ArgumentsSection extends PDESection {
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -201,6 +189,6 @@ public class ArgumentsSection extends PDESection {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}	
-		
+	}
+
 }

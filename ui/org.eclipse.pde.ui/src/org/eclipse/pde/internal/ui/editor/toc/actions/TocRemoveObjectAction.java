@@ -23,7 +23,7 @@ public class TocRemoveObjectAction extends Action {
 
 	//The next object to be selected after the
 	//selected object is removed
-	private TocObject fObjectToSelect;	
+	private TocObject fObjectToSelect;
 
 	public TocRemoveObjectAction() {
 		// Adds the 'Delete' keybinding to the action when displayed
@@ -32,7 +32,7 @@ public class TocRemoveObjectAction extends Action {
 
 		setText(PDEUIMessages.TocPage_remove);
 		fTocObjects = null;
-		fObjectToSelect = null;		
+		fObjectToSelect = null;
 	}
 
 	/**
@@ -46,24 +46,25 @@ public class TocRemoveObjectAction extends Action {
 	 * @param tocObject the object to remove
 	 */
 	public void setToRemove(TocObject tocObject) {
-		fTocObjects = new TocObject[] { tocObject };
+		fTocObjects = new TocObject[] {tocObject};
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (fTocObjects == null) return;
+		if (fTocObjects == null)
+			return;
 
-		for(int i = 0; i < fTocObjects.length; ++i)
-		{	if (fTocObjects[i] != null && fTocObjects[i].canBeRemoved()) {
+		for (int i = 0; i < fTocObjects.length; ++i) {
+			if (fTocObjects[i] != null && fTocObjects[i].canBeRemoved()) {
 				TocObject parent = fTocObjects[i].getParent();
 				if (parent != null && parent.canBeParent()) {
 					// Determine the object to select after the deletion 
 					// takes place 
 					determineNextSelection(parent, i);
 					// Remove the TOC object
-					((TocTopic)parent).removeChild(fTocObjects[i]);
+					((TocTopic) parent).removeChild(fTocObjects[i]);
 				}
 			}
 		}
@@ -89,12 +90,12 @@ public class TocRemoveObjectAction extends Action {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return the object that should be selected
 	 * after the current one is removed
 	 */
 	public TocObject getNextSelection() {
 		return fObjectToSelect;
-	}	
+	}
 }

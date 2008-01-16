@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import java.util.HashMap;
 
 public class ExtensionPointMappings {
-	
+
 	private static HashMap fMap = new HashMap();
-	
+
 	private static void initialize() {
 		fMap.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
 		fMap.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -31,23 +31,23 @@ public class ExtensionPointMappings {
 		fMap.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp"); //$NON-NLS-1$ //$NON-NLS-2$
 		fMap.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	public static boolean isDeprecated(String id) {
 		if (fMap.isEmpty())
 			initialize();
 		return fMap.containsKey(id);
 	}
-	
+
 	public static boolean hasMovedFromHelpToBase(String key) {
 		return key.equals("org.eclipse.help.browser") //$NON-NLS-1$
-			|| key.equals("org.eclipse.help.luceneAnalyzer") //$NON-NLS-1$
-			|| key.equals("org.eclipse.help.webapp"); //$NON-NLS-1$
+				|| key.equals("org.eclipse.help.luceneAnalyzer") //$NON-NLS-1$
+				|| key.equals("org.eclipse.help.webapp"); //$NON-NLS-1$
 	}
-	
+
 	public static boolean hasMovedFromHelpToUI(String key) {
 		return key.equals("org.eclipse.help.support"); //$NON-NLS-1$
 	}
-	
+
 	public static String getNewId(String oldId) {
 		if (fMap.isEmpty())
 			initialize();

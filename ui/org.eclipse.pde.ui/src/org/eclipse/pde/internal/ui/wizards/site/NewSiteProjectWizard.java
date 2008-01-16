@@ -11,16 +11,10 @@
 package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
@@ -30,26 +24,24 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 
 	private NewSiteProjectCreationPage fMainPage;
 	private IConfigurationElement fConfig;
-	
 
 	public NewSiteProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWSITEPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEUIMessages.NewSiteWizard_wtitle); 
+		setWindowTitle(PDEUIMessages.NewSiteWizard_wtitle);
 	}
-	
+
 	public void addPages() {
 		fMainPage = new NewSiteProjectCreationPage("main"); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewSiteWizard_MainPage_title); 
-		fMainPage.setDescription(PDEUIMessages.NewSiteWizard_MainPage_desc); 
+		fMainPage.setTitle(PDEUIMessages.NewSiteWizard_MainPage_title);
+		fMainPage.setDescription(PDEUIMessages.NewSiteWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname!=null)
+		if (pname != null)
 			fMainPage.setInitialProjectName(pname);
 		addPage(fMainPage);
 	}
 
-	
 	public boolean performFinish() {
 		try {
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
@@ -67,11 +59,7 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		return true;
 	}
 
-	public void setInitializationData(
-		IConfigurationElement config,
-		String property,
-		Object data)
-		throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String property, Object data) throws CoreException {
 		this.fConfig = config;
 	}
 }

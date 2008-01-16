@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-
 /**
  * A launch configuration tab that displays and edits the VM install 
  * launch configuration attributes.
@@ -21,5 +20,5 @@ package org.eclipse.pde.ui.launcher;
  * @deprecated use {@link OSGiSettingsTab}
  */
 public class EquinoxSettingsTab extends OSGiSettingsTab {
-	
+
 }

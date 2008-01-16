@@ -11,16 +11,12 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
-import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class OptionalRequireBundleResolution extends
-		AbstractManifestMarkerResolution {
-	
+public class OptionalRequireBundleResolution extends AbstractManifestMarkerResolution {
+
 	private String fBundleId;
 
 	public OptionalRequireBundleResolution(int type, String bundleId) {
@@ -29,12 +25,12 @@ public class OptionalRequireBundleResolution extends
 	}
 
 	protected void createChange(BundleModel model) {
-		Bundle bundle = (Bundle)model.getBundle();
-		RequireBundleHeader header = (RequireBundleHeader)bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
+		Bundle bundle = (Bundle) model.getBundle();
+		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
 			RequireBundleObject[] required = header.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				if (fBundleId.equals(required[i].getId())) 
+				if (fBundleId.equals(required[i].getId()))
 					required[i].setOptional(true);
 			}
 		}

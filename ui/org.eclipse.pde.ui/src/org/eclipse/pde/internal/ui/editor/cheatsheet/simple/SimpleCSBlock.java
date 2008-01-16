@@ -14,41 +14,29 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSIntroDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSItemDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSSubItemDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.DetailsPart;
-import org.eclipse.ui.forms.IDetailsPage;
-import org.eclipse.ui.forms.IDetailsPageProvider;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 
 /**
  * SimpleCSBlock
  *
  */
-public class SimpleCSBlock extends PDEMasterDetailsBlock implements
-		IDetailsPageProvider, IModelChangedListener {
+public class SimpleCSBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider, IModelChangedListener {
 
 	private SimpleCSMasterTreeSection fMasterSection;
 
 	private SimpleCSItemDetails fItemDetails;
-	
+
 	private SimpleCSSubItemDetails fSubItemDetails;
-	
+
 	private SimpleCSDetails fCheatSheetDetails;
-	
+
 	private SimpleCSIntroDetails fIntroDetails;
-	
+
 	/**
 	 * @param page
 	 */
@@ -59,8 +47,7 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock#createMasterSection(org.eclipse.ui.forms.IManagedForm, org.eclipse.swt.widgets.Composite)
 	 */
-	protected PDESection createMasterSection(IManagedForm managedForm,
-			Composite parent) {
+	protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 		fMasterSection = new SimpleCSMasterTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
@@ -70,19 +57,19 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
 		// Only static pages to be defined.  Do not cache pages
-		detailsPart.setPageLimit(0); 
+		detailsPart.setPageLimit(0);
 		// Register static page:  item
 		fItemDetails = new SimpleCSItemDetails(fMasterSection);
-		detailsPart.registerPage(SimpleCSItemDetails.class, fItemDetails);		
+		detailsPart.registerPage(SimpleCSItemDetails.class, fItemDetails);
 		// Register static page:  subitem
 		fSubItemDetails = new SimpleCSSubItemDetails(fMasterSection);
-		detailsPart.registerPage(SimpleCSSubItemDetails.class, fSubItemDetails);		
+		detailsPart.registerPage(SimpleCSSubItemDetails.class, fSubItemDetails);
 		// Register static page:  cheatsheet
 		fCheatSheetDetails = new SimpleCSDetails(fMasterSection);
-		detailsPart.registerPage(SimpleCSDetails.class, fCheatSheetDetails);		
+		detailsPart.registerPage(SimpleCSDetails.class, fCheatSheetDetails);
 		// Register static page:  intro
 		fIntroDetails = new SimpleCSIntroDetails(fMasterSection);
-		detailsPart.registerPage(SimpleCSIntroDetails.class, fIntroDetails);		
+		detailsPart.registerPage(SimpleCSIntroDetails.class, fIntroDetails);
 		// Set this class as the page provider
 		detailsPart.setPageProvider(this);
 	}
@@ -104,11 +91,11 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 		} else if (object instanceof ISimpleCSIntro) {
 			// Static page:  intro
 			return SimpleCSIntroDetails.class;
-		}	
+		}
 		// Should never reach here
 		return object.getClass();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPageProvider#getPage(java.lang.Object)
 	 */
@@ -131,7 +118,7 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 		//	fCurrentDetailsSection.modelChanged(event);
 		//}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -147,6 +134,6 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 			return fMasterSection.getSelection();
 		}
 		return null;
-	}	
-	
+	}
+
 }

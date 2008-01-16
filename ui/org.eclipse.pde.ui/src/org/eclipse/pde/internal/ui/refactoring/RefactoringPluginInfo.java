@@ -15,9 +15,9 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RefactoringPluginInfo extends RefactoringInfo {
-	
+
 	private boolean fRenameProject;
-	
+
 	public boolean isRenameProject() {
 		return fRenameProject;
 	}
@@ -25,7 +25,7 @@ public class RefactoringPluginInfo extends RefactoringInfo {
 	public void setRenameProject(boolean renameProject) {
 		fRenameProject = renameProject;
 	}
-	
+
 	public String getCurrentValue() {
 		IPluginModelBase base = getBase();
 		if (base == null)
@@ -38,7 +38,7 @@ public class RefactoringPluginInfo extends RefactoringInfo {
 	}
 
 	public IPluginModelBase getBase() {
-		return (fSelection instanceof IPluginModelBase) ? (IPluginModelBase)fSelection : null; 
+		return (fSelection instanceof IPluginModelBase) ? (IPluginModelBase) fSelection : null;
 	}
 
 }

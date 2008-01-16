@@ -11,16 +11,9 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Comparator;
-
 import org.eclipse.jface.util.Policy;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -28,43 +21,44 @@ import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.nls.ModelChange;
 import org.eclipse.swt.graphics.Image;
 
-
 public class ListUtil {
-	
+
 	private static final Comparator stringComparator = new Comparator() {
 
 		public int compare(Object arg0, Object arg1) {
 			if (arg0 instanceof String && arg1 instanceof String)
-				return ((String)arg0).compareToIgnoreCase((String)arg1);
+				return ((String) arg0).compareToIgnoreCase((String) arg1);
 			// if not two Strings like we expect, then use default comparator
 			return Policy.getComparator().compare(arg0, arg1);
 		}
-		
+
 	};
-	
+
 	static class NameComparator extends ViewerComparator {
 		public NameComparator() {
 			// when comparing names, always use the comparator above to do a String comparison
 			super(stringComparator);
 		}
-		
+
 		public boolean isSorterProperty(Object element, Object propertyId) {
 			return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 		}
 	}
+
 	static class FeatureComparator extends NameComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 instanceof IFeatureModel && e2 instanceof IFeatureModel) {
-				IFeature feature1 = ((IFeatureModel)e1).getFeature();
-				IFeature feature2 = ((IFeatureModel)e2).getFeature();
-				int result = getComparator().compare(feature1.getId(),feature2.getId());
+				IFeature feature1 = ((IFeatureModel) e1).getFeature();
+				IFeature feature2 = ((IFeatureModel) e2).getFeature();
+				int result = getComparator().compare(feature1.getId(), feature2.getId());
 				if (result != 0) {
 					return result;
 				}
 			}
-			return super.compare(viewer,e1,e2);
+			return super.compare(viewer, e1, e2);
 		}
 	}
+
 	public static class PluginComparator extends NameComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int result = 0;
@@ -76,40 +70,35 @@ public class ListUtil {
 		}
 
 		private String getName(Object object) {
-			
+
 			if (object instanceof IPluginBase)
 				return getPluginName((IPluginBase) object);
 			if (object instanceof IPluginModelBase)
-				return getPluginName(
-					((IPluginModelBase) object).getPluginBase());
+				return getPluginName(((IPluginModelBase) object).getPluginBase());
 			if (object instanceof ModelEntry) {
-				return getPluginName(
-					((ModelEntry) object).getModel().getPluginBase());
+				return getPluginName(((ModelEntry) object).getModel().getPluginBase());
 			}
 			if (object instanceof ModelChange)
-				return getPluginName(
-						((ModelChange)object).getParentModel().getPluginBase());
+				return getPluginName(((ModelChange) object).getParentModel().getPluginBase());
 			return null;
 		}
 
 		private String getPluginName(IPluginBase pluginBase) {
-			return PDEPlugin.isFullNameModeEnabled()
-				? pluginBase.getTranslatedName()
-				: pluginBase.getId();
+			return PDEPlugin.isFullNameModeEnabled() ? pluginBase.getTranslatedName() : pluginBase.getId();
 		}
 	}
-	
 
 	public static final ViewerComparator NAME_COMPARATOR = new NameComparator();
-	
+
 	public static final ViewerComparator PLUGIN_COMPARATOR = new PluginComparator();
-	
+
 	public static final ViewerComparator FEATURE_COMPARATOR = new FeatureComparator();
 
 	static class TableLabelProvider extends ElementLabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object o, int index) {
 			return getText(o);
 		}
+
 		public Image getColumnImage(Object o, int index) {
 			return getImage(o);
 		}
@@ -117,7 +106,7 @@ public class ListUtil {
 
 	public static final ILabelProvider TABLE_LABEL_PROVIDER = new TableLabelProvider();
 
-public ListUtil() {
-	super();
-}
+	public ListUtil() {
+		super();
+	}
 }

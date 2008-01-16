@@ -25,7 +25,7 @@ public class ManifestDocumentSetupParticipant implements IDocumentSetupParticipa
 			document.setDocumentPartitioner(partitioner);
 		}
 	}
-	
+
 	private IDocumentPartitioner createDocumentPartitioner() {
 		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}

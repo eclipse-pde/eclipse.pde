@@ -32,11 +32,11 @@ import org.eclipse.ui.forms.widgets.Section;
 public class CompCSDetails extends CSAbstractDetails {
 
 	private ICompCS fDataCheatSheet;
-	
+
 	private Section fMainSection;
-	
+
 	private FormEntry fNameEntry;
-	
+
 	/**
 	 * @param masterSection
 	 */
@@ -47,43 +47,40 @@ public class CompCSDetails extends CSAbstractDetails {
 		fNameEntry = null;
 		fMainSection = null;
 	}
-	
+
 	/**
 	 * @param object
 	 */
 	public void setData(ICompCS object) {
 		// Set data
 		fDataCheatSheet = object;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fMainSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
-			PDEUIMessages.CompCSDetails_sectionDescription, style);
+		fMainSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, PDEUIMessages.CompCSDetails_sectionDescription, style);
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		getPage().alignSectionHeaders(getMasterSection().getSection(), 
-				fMainSection);
+		getPage().alignSectionHeaders(getMasterSection().getSection(), fMainSection);
 		// Create the container for the main section
-		Composite sectionClient = getPage().createUISectionContainer(fMainSection, 2);		
+		Composite sectionClient = getPage().createUISectionContainer(fMainSection, 2);
 		// Create the name widget
 		createUINameEntry(sectionClient);
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fMainSection.setClient(sectionClient);
-		markDetailsPart(fMainSection);				
+		markDetailsPart(fMainSection);
 	}
-	
+
 	/**
 	 * @param parent
 	 */
 	private void createUINameEntry(Composite parent) {
-		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
-				PDEUIMessages.CompCSDetails_Name, SWT.NONE);
+		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), PDEUIMessages.CompCSDetails_Name, SWT.NONE);
 	}
 
 	/* (non-Javadoc)
@@ -103,10 +100,10 @@ public class CompCSDetails extends CSAbstractDetails {
 				// Ensure data object is defined
 				if (fDataCheatSheet == null) {
 					return;
-				}				
+				}
 				fDataCheatSheet.setFieldName(fNameEntry.getValue());
 			}
-		});			
+		});
 	}
 
 	/* (non-Javadoc)
@@ -116,7 +113,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Ensure data object is defined
 		if (fDataCheatSheet == null) {
 			return;
-		}				
+		}
 		// Update name entry
 		updateNameEntry(isEditableElement());
 	}
@@ -126,9 +123,9 @@ public class CompCSDetails extends CSAbstractDetails {
 	 */
 	private void updateNameEntry(boolean editable) {
 		fNameEntry.setValue(fDataCheatSheet.getFieldName(), true);
-		fNameEntry.setEditable(editable);			
+		fNameEntry.setEditable(editable);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -146,12 +143,11 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Get the first selected object
 		Object object = getFirstSelectedObject(selection);
 		// Ensure we have the right type
-		if ((object == null) ||
-				(object instanceof ICompCS) == false) {
+		if ((object == null) || (object instanceof ICompCS) == false) {
 			return;
 		}
 		// Set data
-		setData((ICompCS)object);
+		setData((ICompCS) object);
 		// Update the UI given the new data
 		updateFields();
 	}

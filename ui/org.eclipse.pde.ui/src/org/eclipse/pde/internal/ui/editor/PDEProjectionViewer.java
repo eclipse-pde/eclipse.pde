@@ -12,9 +12,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.swt.widgets.Composite;
@@ -28,12 +26,12 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	/**
 	 * Text operation code for requesting the quick outline for the current input.
 	 */
-	public static final int QUICK_OUTLINE = 513;		
-	
+	public static final int QUICK_OUTLINE = 513;
+
 	private IInformationPresenter fOutlinePresenter;
-	
+
 	private boolean fIsQuickOutlineEnabled;
-	
+
 	/**
 	 * @param parent
 	 * @param ruler
@@ -41,11 +39,9 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	 * @param showsAnnotationOverview
 	 * @param styles
 	 */
-	public PDEProjectionViewer(Composite parent, IVerticalRuler ruler,
-			IOverviewRuler overviewRuler, boolean showsAnnotationOverview,
-			int styles, boolean isQuickOutlineEnabled) {
+	public PDEProjectionViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles, boolean isQuickOutlineEnabled) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
-		
+
 		fIsQuickOutlineEnabled = isQuickOutlineEnabled;
 	}
 
@@ -54,8 +50,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	 */
 	public void doOperation(int operation) {
 		// Ensure underlying text widget is defined
-		if ((getTextWidget() == null) || 
-				getTextWidget().isDisposed()) {
+		if ((getTextWidget() == null) || getTextWidget().isDisposed()) {
 			return;
 		}
 		// Handle quick outline operation
@@ -66,9 +61,9 @@ public class PDEProjectionViewer extends ProjectionViewer {
 			return;
 		}
 		// Handle default operations
-		super.doOperation(operation);		
+		super.doOperation(operation);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
 	 */
@@ -83,31 +78,28 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		// Verfify default operations
 		return super.canDoOperation(operation);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
 	 */
 	public void configure(SourceViewerConfiguration configuration) {
 		// Ensure underlying text widget is defined
-		if ((getTextWidget() == null) || 
-				getTextWidget().isDisposed()) {
+		if ((getTextWidget() == null) || getTextWidget().isDisposed()) {
 			return;
 		}
 		// Configure default operations
 		super.configure(configuration);
 		// Configure quick outline operation for the source viewer only if the
 		// given source viewer supports it
-		if (fIsQuickOutlineEnabled && 
-				configuration instanceof ChangeAwareSourceViewerConfiguration) {
-			ChangeAwareSourceViewerConfiguration sourceConfiguration = 
-				(ChangeAwareSourceViewerConfiguration)configuration;
+		if (fIsQuickOutlineEnabled && configuration instanceof ChangeAwareSourceViewerConfiguration) {
+			ChangeAwareSourceViewerConfiguration sourceConfiguration = (ChangeAwareSourceViewerConfiguration) configuration;
 			fOutlinePresenter = sourceConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null) {
 				fOutlinePresenter.install(this);
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewer#unconfigure()
 	 */
@@ -116,9 +108,9 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		if (fOutlinePresenter != null) {
 			fOutlinePresenter.uninstall();
 			fOutlinePresenter = null;
-		}		
+		}
 		// Unconfigure default operations
 		super.unconfigure();
 	}
-	
+
 }

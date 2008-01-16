@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,9 +32,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.site.SiteEditor;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.progress.IProgressConstants;
 
 public class BuildSiteAction implements IObjectActionDelegate {
@@ -74,8 +71,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			BuildSiteJob job = new BuildSiteJob(models, fModel);
 			job.setUser(true);
 			job.schedule();
-			job.setProperty(IProgressConstants.ICON_PROPERTY,
-					PDEPluginImages.DESC_SITE_OBJ);
+			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_SITE_OBJ);
 		}
 	}
 
@@ -83,9 +79,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sFeatures.length; i++) {
 			ISiteFeature siteFeature = sFeatures[i];
-			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
-			.findFeatureModelRelaxed(siteFeature.getId(),
-					siteFeature.getVersion());
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(siteFeature.getId(), siteFeature.getVersion());
 			if (model != null)
 				list.add(model);
 		}
@@ -101,7 +95,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 				try {
 					fModel.load();
 					ISiteFeature[] features = fModel.getSite().getFeatures();
-					if(features.length <= 0 )
+					if (features.length <= 0)
 						action.setEnabled(false);
 				} catch (CoreException e) {
 					action.setEnabled(false);
@@ -111,10 +105,9 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	}
 
 	private void ensureContentSaved() {
-		if(fModel != null && fModel.getUnderlyingResource() != null) {
+		if (fModel != null && fModel.getUnderlyingResource() != null) {
 			IProject project = fModel.getUnderlyingResource().getProject();
-			final SiteEditor editor = 
-				PDEModelUtility.getOpenUpdateSiteEditor(project);
+			final SiteEditor editor = PDEModelUtility.getOpenUpdateSiteEditor(project);
 			if (editor != null && editor.isDirty()) {
 				try {
 					IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -122,9 +115,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 							editor.doSave(monitor);
 						}
 					};
-					PlatformUI.getWorkbench().getProgressService().runInUI(
-							PDEPlugin.getActiveWorkbenchWindow(), op,
-							PDEPlugin.getWorkspace().getRoot());
+					PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 				} catch (InvocationTargetException e) {
 					PDEPlugin.logException(e);
 				} catch (InterruptedException e) {

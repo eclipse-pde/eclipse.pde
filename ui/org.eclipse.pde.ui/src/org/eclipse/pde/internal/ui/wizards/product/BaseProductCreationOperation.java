@@ -13,46 +13,27 @@ package org.eclipse.pde.internal.ui.wizards.product;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
-import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
-import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-
 public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
 	private IFile fFile;
-	
+
 	public BaseProductCreationOperation(IFile file) {
 		fFile = file;
 	}
@@ -60,22 +41,21 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEUIMessages.BaseProductCreationOperation_taskName, 2); 
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+		monitor.beginTask(PDEUIMessages.BaseProductCreationOperation_taskName, 2);
 		createContent();
 		monitor.worked(1);
-        openFile();
-        monitor.done();
+		openFile();
+		monitor.done();
 	}
-	
+
 	private void createContent() {
-        WorkspaceProductModel model = new WorkspaceProductModel(fFile, false);
-        initializeProduct(model.getProduct());
-        model.save();
-        model.dispose();
+		WorkspaceProductModel model = new WorkspaceProductModel(fFile, false);
+		initializeProduct(model.getProduct());
+		model.save();
+		model.dispose();
 	}
-	
+
 	protected void initializeProduct(IProduct product) {
 		IProductModelFactory factory = product.getModel().getFactory();
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
@@ -86,12 +66,12 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		args.setVMArguments("-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts", IArgumentsInfo.L_ARGS_MACOS); //$NON-NLS-1$
 		product.setLauncherArguments(args);
 	}
-	
+
 	private Properties getProductProperties(IPluginElement element) {
 		Properties prop = new Properties();
 		IPluginObject[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement)children[i];
+			IPluginElement child = (IPluginElement) children[i];
 			if (child.getName().equals("property")) { //$NON-NLS-1$
 				String name = null;
 				String value = null;
@@ -107,7 +87,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 		return prop;
 	}
-	
+
 	protected IPluginElement getProductExtension(String productId) {
 		int lastDot = productId.lastIndexOf('.');
 		if (lastDot == -1)
@@ -117,11 +97,11 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
-				if ("org.eclipse.core.runtime.products".equals(extensions[i].getPoint())  //$NON-NLS-1$
-						&& productId.substring(lastDot+1).equals(extensions[i].getId())) {
+				if ("org.eclipse.core.runtime.products".equals(extensions[i].getPoint()) //$NON-NLS-1$
+						&& productId.substring(lastDot + 1).equals(extensions[i].getId())) {
 					IPluginObject[] children = extensions[i].getChildren();
 					if (children.length > 0) {
-						IPluginElement object = (IPluginElement)children[0];
+						IPluginElement object = (IPluginElement) children[0];
 						if (object.getName().equals("product")) //$NON-NLS-1$
 							return object;
 					}
@@ -130,7 +110,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 		return null;
 	}
-	
+
 	protected void initializeProductInfo(IProductModelFactory factory, IProduct product, String id) {
 		product.setId(id);
 		IPluginElement element = getProductExtension(id);
@@ -164,7 +144,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				}
 			}
 			product.setWindowImages(winImages);
-			
+
 			ISplashInfo splashInfo = factory.createSplashInfo();
 			splashInfo.setForegroundColor(prop.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR), true);
 			int[] barGeo = SplashInfo.getGeometryArray(prop.getProperty(IProductConstants.STARTUP_PROGRESS_RECT));
@@ -174,24 +154,24 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			product.setSplashInfo(splashInfo);
 		}
 	}
-	
+
 	protected void addPlugins(IProductModelFactory factory, IProduct product, IPluginModelBase[] plugins) {
 		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
 			IProductPlugin pplugin = factory.createPlugin();
 			pplugin.setId(plugins[i].getPluginBase().getId());
-			pplugins[i] = pplugin;			
-		}		
+			pplugins[i] = pplugin;
+		}
 		product.addPlugins(pplugins);
 	}
-	
+
 	protected void addPlugins(IProductModelFactory factory, IProduct product, String[] plugins) {
 		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
 			IProductPlugin pplugin = factory.createPlugin();
 			pplugin.setId(plugins[i]);
-			pplugins[i] = pplugin;			
-		}		
+			pplugins[i] = pplugin;
+		}
 		product.addPlugins(pplugins);
 	}
 

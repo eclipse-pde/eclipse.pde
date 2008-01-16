@@ -21,8 +21,7 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class SystemFileMarkerAnnotationModel
-	extends AbstractMarkerAnnotationModel {
+public class SystemFileMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
 
 	protected IMarker[] retrieveMarkers() throws CoreException {
 		return null;

@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.WordPatternRule;
+import org.eclipse.jface.text.rules.*;
 
 public class ArgumentRule extends WordPatternRule {
-
 
 	private static class ArgumentDetector implements IWordDetector {
 
@@ -35,8 +31,7 @@ public class ArgumentRule extends WordPatternRule {
 		}
 	}
 
-
-	private int fCount= 0;
+	private int fCount = 0;
 
 	/**
 	 * Creates an argument rule for the given <code>token</code>.
@@ -64,7 +59,7 @@ public class ArgumentRule extends WordPatternRule {
 	 * @see org.eclipse.jface.text.rules.PatternRule#sequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner, char[], boolean)
 	 */
 	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
-		fCount= 0;
+		fCount = 0;
 		return super.sequenceDetected(scanner, sequence, eofAllowed);
 	}
 }

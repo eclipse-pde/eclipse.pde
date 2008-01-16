@@ -11,31 +11,21 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.ILauncherFormPageHelper;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PartInitException;
-
+import org.eclipse.ui.*;
 
 public class ProductEditor extends PDELauncherFormEditor {
 
 	private ProductExportAction fExportAction;
 	private ILauncherFormPageHelper fLauncherHelper;
+
 	/**
 	 * 
 	 */
@@ -49,21 +39,21 @@ public class ProductEditor extends PDELauncherFormEditor {
 	protected String getEditorID() {
 		return IPDEUIConstants.PRODUCT_EDITOR_ID;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
 	public String getContextIDForSaveAs() {
 		return ProductInputContext.CONTEXT_ID;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
@@ -82,12 +72,11 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
-			if (name.endsWith(".product")) {  //$NON-NLS-1$
+			if (name.endsWith(".product")) { //$NON-NLS-1$
 				IEditorInput in = new SystemFileEditorInput(file);
 				manager.putContext(in, new ProductInputContext(this, in, true));
 			}
@@ -97,8 +86,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
 	 */
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		if (input.getName().endsWith(".product")) { //$NON-NLS-1$
 			manager.putContext(input, new ProductInputContext(this, input, true));
 		}
@@ -132,7 +120,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	public void updateConfigurationPage() {
 		try {
 			removePage(1);
@@ -140,10 +128,10 @@ public class ProductEditor extends PDELauncherFormEditor {
 		} catch (PartInitException e) {
 		}
 	}
-	
+
 	public boolean useFeatures() {
 		IBaseModel model = getAggregateModel();
-		return ((IProductModel)model).getProduct().useFeatures();
+		return ((IProductModel) model).getProduct().useFeatures();
 	}
 
 	/* (non-Javadoc)
@@ -171,18 +159,21 @@ public class ProductEditor extends PDELauncherFormEditor {
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
+
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
 	}
-    private ProductExportAction getExportAction() {
-    	if (fExportAction == null) {
-    		fExportAction = new ProductExportAction(this);
-    		fExportAction.setToolTipText(PDEUIMessages.ProductEditor_exportTooltip);
-    		fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PRODUCT_TOOL);
-    	}
-    	return fExportAction;
-    }
+
+	private ProductExportAction getExportAction() {
+		if (fExportAction == null) {
+			fExportAction = new ProductExportAction(this);
+			fExportAction.setToolTipText(PDEUIMessages.ProductEditor_exportTooltip);
+			fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PRODUCT_TOOL);
+		}
+		return fExportAction;
+	}
+
 	protected ILauncherFormPageHelper getLauncherHelper() {
 		if (fLauncherHelper == null)
 			fLauncherHelper = new ProductLauncherFormPageHelper(this);

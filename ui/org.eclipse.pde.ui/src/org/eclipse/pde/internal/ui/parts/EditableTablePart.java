@@ -9,12 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.RenameDialog;
@@ -24,11 +22,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class EditableTablePart extends TablePart {
 	private boolean editable;
 	private Action renameAction;
-	
+
 	class RenameAction extends Action {
 		public RenameAction() {
-			super(PDEUIMessages.EditableTablePart_renameAction); 
+			super(PDEUIMessages.EditableTablePart_renameAction);
 		}
+
 		public void run() {
 			doRename();
 		}
@@ -38,13 +37,16 @@ public class EditableTablePart extends TablePart {
 		public boolean canModify(Object object, String property) {
 			return true;
 		}
+
 		public void modify(Object object, String property, Object value) {
 			entryModified(object, value.toString());
 		}
+
 		public Object getValue(Object object, String property) {
 			return object.toString();
 		}
 	}
+
 	/**
 	 * Constructor for EditableTablePart.
 	 * @param buttonLabels
@@ -60,37 +62,34 @@ public class EditableTablePart extends TablePart {
 	public void setEditable(boolean editable) {
 		this.editable = editable;
 	}
-	
+
 	public IAction getRenameAction() {
-		if (renameAction==null) renameAction = new RenameAction();
+		if (renameAction == null)
+			renameAction = new RenameAction();
 		return renameAction;
 	}
 
-	protected StructuredViewer createStructuredViewer(
-		Composite parent,
-		int style,
-		FormToolkit toolkit) {
-		TableViewer tableViewer =
-			(TableViewer) super.createStructuredViewer(parent, style, toolkit);
+	protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
+		TableViewer tableViewer = (TableViewer) super.createStructuredViewer(parent, style, toolkit);
 		return tableViewer;
 	}
 
 	private void doRename() {
 		TableViewer viewer = getTableViewer();
-		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-		if (selection.size()==1 && isEditable()) {
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		if (selection.size() == 1 && isEditable()) {
 			Object obj = selection.getFirstElement();
 			String oldName = obj.toString();
 			RenameDialog dialog = new RenameDialog(getControl().getShell(), oldName);
 			dialog.create();
-			dialog.getShell().setText(PDEUIMessages.EditableTablePart_renameTitle); 
+			dialog.getShell().setText(PDEUIMessages.EditableTablePart_renameTitle);
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open() == Window.OK) {
 				entryModified(obj, dialog.getNewName());
 			}
 		}
 	}
-	
+
 	protected void entryModified(Object entry, String value) {
 	}
 }

@@ -14,9 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 
 public class ExtensionEditorWizard extends Wizard {
@@ -26,7 +24,7 @@ public class ExtensionEditorWizard extends Wizard {
 	private IProject project;
 	private IStructuredSelection selection;
 	private ElementList wizards;
-	
+
 	public ExtensionEditorWizard(IProject project, IPluginModelBase model, IStructuredSelection selection) {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
@@ -38,18 +36,16 @@ public class ExtensionEditorWizard extends Wizard {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		loadWizardCollection();
 	}
+
 	public void addPages() {
-		pointPage =
-			new ExtensionEditorSelectionPage(wizards);
+		pointPage = new ExtensionEditorSelectionPage(wizards);
 		pointPage.init(project, model.getPluginBase(), selection);
 		addPage(pointPage);
 	}
+
 	private void loadWizardCollection() {
 		NewExtensionRegistryReader reader = new NewExtensionRegistryReader(true);
-		wizards = reader.readRegistry(
-				PDEPlugin.getPluginId(),
-				PLUGIN_POINT,
-				true);
+		wizards = reader.readRegistry(PDEPlugin.getPluginId(), PLUGIN_POINT, true);
 	}
 
 	public boolean performFinish() {

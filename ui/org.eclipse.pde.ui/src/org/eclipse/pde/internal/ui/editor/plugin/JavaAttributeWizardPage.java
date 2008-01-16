@@ -9,23 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
+import java.util.ArrayList;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -41,7 +31,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private IPluginModelBase model;
 	private InitialClassProperties initialValues;
 	private IJavaProject javaProject;
-	
+
 	class InitialClassProperties {
 		// populate new wizard page
 		IType superClassType;
@@ -53,6 +43,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		String packageName;
 		IPackageFragmentRoot packageFragmentRoot;
 		IPackageFragment packageFragment;
+
 		public InitialClassProperties() {
 			this.superClassType = null;
 			this.superClassName = ""; //$NON-NLS-1$
@@ -65,8 +56,8 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			this.packageFragmentRoot = null;
 		}
 	}
-	public JavaAttributeWizardPage(IProject project, IPluginModelBase model,
-			ISchemaAttribute attInfo, String className) {
+
+	public JavaAttributeWizardPage(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 		super();
 		this.className = className;
 		this.model = model;
@@ -87,10 +78,12 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	public Object getValue() {
 		return new JavaAttributeValue(project, model, attInfo, className);
 	}
+
 	public void init() {
 		initializeExpectedValues();
 		initializeWizardPage();
 	}
+
 	protected void initializeWizardPage() {
 		setPackageFragmentRoot(initialValues.packageFragmentRoot, true);
 		setPackageFragment(initialValues.packageFragment, true);
@@ -103,13 +96,11 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			interfaces.add(initialValues.interfaceName);
 			setSuperInterfaces(interfaces, true);
 		}
-		boolean hasSuperClass = initialValues.superClassName != null
-				&& initialValues.superClassName.length() > 0;
-		boolean hasInterface = initialValues.interfaceName != null
-				&& initialValues.interfaceName.length() > 0;
-		setMethodStubSelection(false, hasSuperClass, hasInterface
-				|| hasSuperClass, true);
+		boolean hasSuperClass = initialValues.superClassName != null && initialValues.superClassName.length() > 0;
+		boolean hasInterface = initialValues.interfaceName != null && initialValues.interfaceName.length() > 0;
+		setMethodStubSelection(false, hasSuperClass, hasInterface || hasSuperClass, true);
 	}
+
 	private IType findTypeForName(String typeName) throws JavaModelException {
 		if (typeName == null || typeName.length() == 0)
 			return null;
@@ -126,15 +117,14 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		}
 		return type;
 	}
+
 	private void initializeExpectedValues() {
-		
-		
+
 		//			source folder name, package name, class name
 		int loc = className.indexOf(":"); //$NON-NLS-1$
 		if (loc != -1) {
 			if (loc < className.length()) {
-				initialValues.classArgs = className.substring(loc + 1,
-						className.length());
+				initialValues.classArgs = className.substring(loc + 1, className.length());
 				className = className.substring(0, loc);
 			}
 			if (loc > 0)
@@ -142,7 +132,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			else if (loc == 0)
 				initialValues.className = ""; //$NON-NLS-1$
 		}
-		
+
 		loc = className.lastIndexOf('.');
 		if (loc != -1) {
 			initialValues.packageName = className.substring(0, loc);
@@ -153,8 +143,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		try {
 			if (initialValues.packageFragmentRoot == null) {
 				IPackageFragmentRoot srcEntryDft = null;
-				IPackageFragmentRoot[] roots = javaProject
-				.getPackageFragmentRoots();
+				IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						srcEntryDft = roots[i];
@@ -166,15 +155,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				else {
 					initialValues.packageFragmentRoot = javaProject.getPackageFragmentRoot(javaProject.getResource());
 				}
-				if (initialValues.packageFragment == null
-						&& initialValues.packageFragmentRoot != null
-						&& initialValues.packageName != null
-						&& initialValues.packageName.length() > 0) {
-					IFolder packageFolder = project
-					.getFolder(initialValues.packageName);
-					initialValues.packageFragment = initialValues.packageFragmentRoot
-					.getPackageFragment(packageFolder
-							.getProjectRelativePath().toOSString());
+				if (initialValues.packageFragment == null && initialValues.packageFragmentRoot != null && initialValues.packageName != null && initialValues.packageName.length() > 0) {
+					IFolder packageFolder = project.getFolder(initialValues.packageName);
+					initialValues.packageFragment = initialValues.packageFragmentRoot.getPackageFragment(packageFolder.getProjectRelativePath().toOSString());
 				}
 			}
 			//			superclass and interface
@@ -206,25 +189,24 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			int del = schemaBasedOn.indexOf(':');
 			if (del != -1) {
-				if(del == 0)
-				{	initialValues.superClassName = "java.lang.Object";				 //$NON-NLS-1$
-				}
-				else
-				{	initialValues.superClassName = schemaBasedOn.substring(0, del); //$NON-NLS-1$
+				if (del == 0) {
+					initialValues.superClassName = "java.lang.Object"; //$NON-NLS-1$
+				} else {
+					initialValues.superClassName = schemaBasedOn.substring(0, del); //$NON-NLS-1$
 				}
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
-				if(del < schemaBasedOn.length() - 1)
-				{	initialValues.interfaceName = schemaBasedOn.substring(del + 1);
+				if (del < schemaBasedOn.length() - 1) {
+					initialValues.interfaceName = schemaBasedOn.substring(del + 1);
 					initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 				}
 			} else {
 				int schemaLoc = schemaBasedOn.lastIndexOf("."); //$NON-NLS-1$
 				if (schemaLoc != -1 && schemaLoc < schemaBasedOn.length()) {
 					IType type = findTypeForName(schemaBasedOn);
-					if (type!=null && type.isInterface()){
+					if (type != null && type.isInterface()) {
 						initialValues.interfaceName = schemaBasedOn;
 						initialValues.interfaceType = type;
-					} else if (type!=null && type.isClass()) {
+					} else if (type != null && type.isClass()) {
 						initialValues.superClassName = schemaBasedOn;
 						initialValues.superClassType = type;
 					}
@@ -235,8 +217,8 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			PDEPlugin.logException(e);
 		}
 	}
-	
-	public String getClassArgs(){
+
+	public String getClassArgs() {
 		if (initialValues.classArgs == null)
 			return ""; //$NON-NLS-1$
 		return initialValues.classArgs;

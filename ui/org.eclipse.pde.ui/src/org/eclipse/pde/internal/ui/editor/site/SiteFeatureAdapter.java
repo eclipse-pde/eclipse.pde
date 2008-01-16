@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 
@@ -52,19 +51,19 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 				String version2 = adapter.feature.getVersion();
 				sameFeature = version != null && version2 != null && version.equals(version2);
 			}
-			boolean sameCategory = adapter.category != null && category != null 
-										? adapter.category.equals(category) : true;
+			boolean sameCategory = adapter.category != null && category != null ? adapter.category.equals(category) : true;
 			return sameFeature && sameCategory;
 		}
 		return super.equals(obj);
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		int code = feature.getId().hashCode()+feature.getVersion().hashCode();
-		if(category!=null){
-			code+=category.hashCode();
+		int code = feature.getId().hashCode() + feature.getVersion().hashCode();
+		if (category != null) {
+			code += category.hashCode();
 		}
 		return code;
 	}

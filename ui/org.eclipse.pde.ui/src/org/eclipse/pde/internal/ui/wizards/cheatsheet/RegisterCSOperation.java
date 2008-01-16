@@ -13,44 +13,23 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
@@ -62,20 +41,19 @@ import org.osgi.framework.Constants;
  *
  */
 public class RegisterCSOperation extends WorkspaceModifyOperation {
-	
-	public final static String F_CS_EXTENSION_POINT_ID = 
-		"org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
+
+	public final static String F_CS_EXTENSION_POINT_ID = "org.eclipse.ui.cheatsheets.cheatSheetContent"; //$NON-NLS-1$
 
 	public static final String F_CS_EXTENSION_ID = "org.eclipse.ui.cheatsheets"; //$NON-NLS-1$
-	
+
 	public static final String F_CS_ATTRIBUTE_CONTENT_FILE = "contentFile"; //$NON-NLS-1$
-	
+
 	public static final String F_CS_ATTRIBUTE_COMPOSITE = "composite"; //$NON-NLS-1$
-	
+
 	private IRegisterCSData fRegisterCSData;
-	
+
 	private Shell fShell;
-	
+
 	/**
 	 * 
 	 */
@@ -94,9 +72,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
-		
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+
 		try {
 			boolean fragment = PluginRegistry.findModel(fRegisterCSData.getPluginProject()).isFragmentModel();
 			IFile file = fRegisterCSData.getPluginProject().getFile(fragment ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
@@ -109,17 +86,17 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		}		
+		}
 	}
-	
+
 	/**
 	 * FindCSExtensionResult
 	 *
 	 */
 	private static class FindCSExtensionResult {
-		
+
 		public IPluginExtension fCSExtension;
-		
+
 		public IPluginElement fCSElement;
 
 		/**
@@ -129,14 +106,14 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			fCSExtension = null;
 			fCSElement = null;
 		}
-		
+
 		/**
 		 * @return
 		 */
 		public boolean foundCSExtension() {
 			return (fCSExtension != null);
 		}
-		
+
 		/**
 		 * @return
 		 */
@@ -144,24 +121,20 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			return (fCSElement != null);
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor)
-			throws CoreException {
+	private void modifyExistingPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
 
-        // Validate the operation
+		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file 
 		// but not the manifest.mf file
-		IStatus status = 
-			PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
+		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, 
-					IPDEUIConstants.PLUGIN_ID, IStatus.ERROR,  
-					PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
@@ -178,17 +151,15 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void doModifyPluginModel(IBaseModel model,
-			IProgressMonitor monitor) throws CoreException {
+	private void doModifyPluginModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
 		}
-		IPluginModelBase modelBase = (IPluginModelBase)model;
+		IPluginModelBase modelBase = (IPluginModelBase) model;
 		// Find an existing cheat sheet extension 
 		FindCSExtensionResult result = findCSExtensionResult(modelBase);
 		// Check search results and act accordingly
-		if (result.foundCSExtension() &&
-				result.foundExactCSElement()) {
+		if (result.foundCSExtension() && result.foundExactCSElement()) {
 			// An exact match to an existing cheat sheet element was
 			// found.  Update the elements description and category
 			// fields
@@ -198,7 +169,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			IPluginElement categoryElement = createElementCategory(result.fCSExtension);
 			if (categoryElement != null) {
 				result.fCSExtension.add(categoryElement);
-			}	
+			}
 		} else if (result.foundCSExtension()) {
 			// No exact match to an existing cheat sheet element found within
 			// the existing cheat sheet extension.  Update the 
@@ -210,48 +181,44 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			// extension
 			insertNewExtension(modelBase, monitor);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param modelBase
 	 */
-	private void insertNewExtension(IPluginModelBase modelBase,
-			IProgressMonitor monitor) throws CoreException {
+	private void insertNewExtension(IPluginModelBase modelBase, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_newCSExtensionExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_newCSExtensionExistingPlugin, 1);
 		// Create the new extension
 		IPluginExtension extension = createExtensionCheatSheet(modelBase);
 		modelBase.getPluginBase().add(extension);
 		// Update progress work units
-        monitor.done();			
+		monitor.done();
 	}
 
 	/**
 	 * @param extension
 	 */
-	private void modifyExistingExtension(IPluginExtension extension,
-			IProgressMonitor monitor) throws CoreException {
+	private void modifyExistingExtension(IPluginExtension extension, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSExtensionExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSExtensionExistingPlugin, 1);
 		// Create new children for existing extension
-		createExtensionChildren(extension);		
+		createExtensionChildren(extension);
 		// Update progress work units
-        monitor.done();	
-	}	
+		monitor.done();
+	}
 
 	/**
 	 * @param csElement
 	 * @param monitor
 	 */
-	private void modifyExistingElement(IPluginElement csElement,
-			IProgressMonitor monitor) throws CoreException {
+	private void modifyExistingElement(IPluginElement csElement, IProgressMonitor monitor) throws CoreException {
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSElementExistingPlugin, 1); 	
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_modCSElementExistingPlugin, 1);
 		// Leave id attribute the same
 		// Update the name
 		// Attribute: name
-		csElement.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, 
-				fRegisterCSData.getDataCheatSheetName());		
+		csElement.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, fRegisterCSData.getDataCheatSheetName());
 		// Attribute: category
 		// Update the category.
 		// if "<none>" was selected, clear the entry
@@ -259,8 +226,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		if (categoryID == null) {
 			categoryID = ""; //$NON-NLS-1$
 		}
-		csElement.setAttribute(RegisterCSWizardPage.F_CS_ELEMENT_CATEGORY, 
-			categoryID);	
+		csElement.setAttribute(RegisterCSWizardPage.F_CS_ELEMENT_CATEGORY, categoryID);
 		// Leave contentFile attribute the same
 		// Leave composite attribute the same
 		// Element: description
@@ -271,8 +237,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			// Create a new description element
 			descriptionElement = createElementDescription(csElement);
 			if (descriptionElement != null) {
-				csElement.add(descriptionElement);		
-			}		
+				csElement.add(descriptionElement);
+			}
 		} else {
 			// Modify the existing description element
 			boolean modified = modifyExistingDescription(descriptionElement);
@@ -283,7 +249,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			}
 		}
 		// Update progress work units
-        monitor.done();			
+		monitor.done();
 	}
 
 	/**
@@ -303,20 +269,19 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @param csElement
 	 * @throws CoreException
 	 */
-	private IPluginElement findExistingDescription(IPluginElement csElement)
-			throws CoreException {
-		
+	private IPluginElement findExistingDescription(IPluginElement csElement) throws CoreException {
+
 		if (csElement.getChildCount() > 0) {
 			IPluginObject pluginObject = csElement.getChildren()[0];
 			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement)pluginObject;
+				IPluginElement element = (IPluginElement) pluginObject;
 				if (element.getName().equals(RegisterCSWizardPage.F_CS_ELEMENT_DESCRIPTION)) {
 					return element;
 				}
 			}
 		}
 		return null;
-	}	
+	}
 
 	/**
 	 * @param model
@@ -326,7 +291,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 */
 	private FindCSExtensionResult findCSExtensionResult(IPluginModelBase model) {
 		// Container for result
-		FindCSExtensionResult result = new FindCSExtensionResult();		
+		FindCSExtensionResult result = new FindCSExtensionResult();
 		// Find all cheat sheet extensions within the host plug-in
 		IPluginExtension[] extensions = findCheatSheetExtensions(model);
 		// Process all cheat sheet extensions
@@ -348,34 +313,30 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			// Process all children
 			for (int j = 0; j < pluginObjects.length; j++) {
 				if (pluginObjects[j] instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement)pluginObjects[j];
+					IPluginElement element = (IPluginElement) pluginObjects[j];
 					// Find cheat sheet elements
 					if (element.getName().equals(RegisterCSWizardPage.F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
 						// Get the id attribute
-						IPluginAttribute idAttribute = 
-							element.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
+						IPluginAttribute idAttribute = element.getAttribute(ICompCSConstants.ATTRIBUTE_ID);
 						// Check for the generated ID for this cheat sheet
 						// element
-						if ((idAttribute != null) && 
-								PDETextHelper.isDefined(idAttribute.getValue()) &&
-								fRegisterCSData.getDataCheatSheetID().equals(
-										idAttribute.getValue())) {
+						if ((idAttribute != null) && PDETextHelper.isDefined(idAttribute.getValue()) && fRegisterCSData.getDataCheatSheetID().equals(idAttribute.getValue())) {
 							// Matching cheat sheet element found
 							result.fCSElement = element;
 							return result;
-						}	
-					}					
-					
+						}
+					}
+
 				}
 			}
-		}	
+		}
 		return result;
 	}
-	
+
 	public static IPluginExtension[] findCheatSheetExtensions(ISharedExtensionsModel model) {
 		IPluginExtension[] extensions = model.getExtensions().getExtensions();
-		
+
 		ArrayList csExtensions = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -383,25 +344,22 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 				csExtensions.add(extensions[i]);
 			}
 		}
-		return (IPluginExtension[]) csExtensions.toArray(
-				new IPluginExtension[csExtensions.size()]);
-	}	
-	
+		return (IPluginExtension[]) csExtensions.toArray(new IPluginExtension[csExtensions.size()]);
+	}
+
 	/**
 	 * @param file
 	 * @param monitor
 	 */
-	private void createNewPluginFile(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		
+	private void createNewPluginFile(IFile file, IProgressMonitor monitor) throws CoreException {
+
 		// Update progress work units
-		monitor.beginTask(PDEUIMessages.RegisterCSOperation_addNewCSExtensionNewPlugin, 4); 
+		monitor.beginTask(PDEUIMessages.RegisterCSOperation_addNewCSExtensionNewPlugin, 4);
 		// Create the plug-in model
-		WorkspacePluginModelBase model = 
-			(WorkspacePluginModelBase)createModel(file);
+		WorkspacePluginModelBase model = (WorkspacePluginModelBase) createModel(file);
 		// Update progress work units
 		monitor.worked(1);
-		
+
 		IPluginBase base = model.getPluginBase();
 		// Set schema version
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
@@ -424,34 +382,29 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// to true
 		modifyExistingManifestFile(file);
 		// Update progress work units
-        monitor.done();				
+		monitor.done();
 	}
 
 	/**
 	 * @param model
 	 */
-	private void modifyExistingManifestFile(IFile file)
-			throws CoreException {
+	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file rather
 		// than the manifest file
-		IStatus status = 
-			PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
+		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, 
-						IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, PDEUIMessages.RegisterCSOperation_errorManifestReadOnly, null));
 		}
 		// Perform the modification of the manifest file
-		ModelModification mod = 
-			new ModelModification(fRegisterCSData.getPluginProject()) {
+		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				doModifyManifestModel(model);
 				doModifyBuildModel(model);
 			}
 		};
 		PDEModelUtility.modifyModel(mod, null);
-	}		
+	}
 
 	/**
 	 * @param model
@@ -461,12 +414,12 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		if ((model instanceof IBundlePluginModelBase) == false) {
 			return;
 		}
-		IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
+		IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 		IBundle bundle = modelBase.getBundleModel().getBundle();
 		// Get the heading specifying the singleton declaration 
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader) {
-			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader)header;
+			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
 			// If the singleton declaration is false, change it to true
 			// This is required because plug-ins that specify extensions
 			// must be singletons.
@@ -477,13 +430,13 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Add the cheat sheets plug-in to the list of required bundles
 		header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header instanceof RequireBundleHeader) {
-			RequireBundleHeader require = (RequireBundleHeader)header;
-			if (require.hasElement(F_CS_EXTENSION_ID) == false) { 
+			RequireBundleHeader require = (RequireBundleHeader) header;
+			if (require.hasElement(F_CS_EXTENSION_ID) == false) {
 				require.addBundle(F_CS_EXTENSION_ID);
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * @param model
 	 */
@@ -492,7 +445,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		if ((model instanceof IPluginModelBase) == false) {
 			return;
 		}
-		IPluginModelBase modelBase = (IPluginModelBase)model;
+		IPluginModelBase modelBase = (IPluginModelBase) model;
 		IBuild build = ClasspathUtilCore.getBuild(modelBase);
 		// Make sure we have a plugin.properties file
 		if (build == null) {
@@ -514,39 +467,38 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// ModelModification framework to save build.properties modifications
 		// As a result, explicitly do that here
 		if (build instanceof BuildObject) {
-			IBuildModel buildModel = ((BuildObject)build).getModel();
+			IBuildModel buildModel = ((BuildObject) build).getModel();
 			if (buildModel instanceof WorkspaceBuildModel) {
-				((WorkspaceBuildModel)buildModel).save();
+				((WorkspaceBuildModel) buildModel).save();
 			}
 		}
 	}
-	
+
 	/**
 	 * @param file
 	 * @return
 	 */
 	private IPluginModelBase createModel(IFile file) {
 		if (file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)) {
-			return new WorkspaceFragmentModel(file, false);		
+			return new WorkspaceFragmentModel(file, false);
 		}
 		return new WorkspacePluginModel(file, false);
 	}
-	
+
 	/**
 	 * @param model
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginExtension createExtensionCheatSheet(IPluginModelBase model)
-			throws CoreException {
+	private IPluginExtension createExtensionCheatSheet(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = model.getFactory().createExtension();
 		// Point
 		extension.setPoint(F_CS_EXTENSION_POINT_ID);
 		// NO id
 		// NO name 
-		
+
 		createExtensionChildren(extension);
-		
+
 		return extension;
 	}
 
@@ -554,8 +506,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @param extension
 	 * @throws CoreException
 	 */
-	private void createExtensionChildren(IPluginExtension extension)
-			throws CoreException {
+	private void createExtensionChildren(IPluginExtension extension) throws CoreException {
 		// Category element
 		IPluginElement categoryElement = createElementCategory(extension);
 		if (categoryElement != null) {
@@ -573,8 +524,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginElement createElementCategory(IPluginExtension extension)
-			throws CoreException {
+	private IPluginElement createElementCategory(IPluginExtension extension) throws CoreException {
 		// Do not create the category if "<none>" was selected
 		String categoryID = fRegisterCSData.getDataCategoryID();
 		if (categoryID == null) {
@@ -586,18 +536,15 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			return null;
 		}
 		// Create the element
-		IPluginElement element = 
-			extension.getModel().getFactory().createElement(extension);
+		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 		// Element: category
 		element.setName(RegisterCSWizardPage.F_CS_ELEMENT_CATEGORY);
 		// Attribute: id
-		element.setAttribute(ICompCSConstants.ATTRIBUTE_ID, 
-				categoryID);
+		element.setAttribute(ICompCSConstants.ATTRIBUTE_ID, categoryID);
 		// Attribute: name
 		// Already trimmed
-		element.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, 
-				fRegisterCSData.getDataCategoryName());
-		
+		element.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, fRegisterCSData.getDataCategoryName());
+
 		return element;
 	}
 
@@ -606,38 +553,31 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginElement createElementCheatSheet(IPluginExtension extension)
-			throws CoreException {
+	private IPluginElement createElementCheatSheet(IPluginExtension extension) throws CoreException {
 
-		IPluginElement element = 
-			extension.getModel().getFactory().createElement(extension);
+		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 		// Element: cheatsheet
 		element.setName(RegisterCSWizardPage.F_CS_ELEMENT_CHEATSHEET);
 		// Attribute: id
-		element.setAttribute(ICompCSConstants.ATTRIBUTE_ID, 
-				fRegisterCSData.getDataCheatSheetID());
+		element.setAttribute(ICompCSConstants.ATTRIBUTE_ID, fRegisterCSData.getDataCheatSheetID());
 		// Attribute: name
-		element.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, 
-				fRegisterCSData.getDataCheatSheetName());
+		element.setAttribute(ICompCSConstants.ATTRIBUTE_NAME, fRegisterCSData.getDataCheatSheetName());
 		// Attribute: category
 		// Create the category only if "<none>" was not selected
 		String categoryID = fRegisterCSData.getDataCategoryID();
 		if (categoryID != null) {
-			element.setAttribute(RegisterCSWizardPage.F_CS_ELEMENT_CATEGORY, 
-					categoryID);			
+			element.setAttribute(RegisterCSWizardPage.F_CS_ELEMENT_CATEGORY, categoryID);
 		}
 		// Attribute: contentFile
-		element.setAttribute(F_CS_ATTRIBUTE_CONTENT_FILE, 
-				fRegisterCSData.getDataContentFile());		
+		element.setAttribute(F_CS_ATTRIBUTE_CONTENT_FILE, fRegisterCSData.getDataContentFile());
 		// Attribute: composite
-		element.setAttribute(F_CS_ATTRIBUTE_COMPOSITE,  
-				Boolean.toString(fRegisterCSData.isCompositeCheatSheet()));
+		element.setAttribute(F_CS_ATTRIBUTE_COMPOSITE, Boolean.toString(fRegisterCSData.isCompositeCheatSheet()));
 		// Element: description
 		IPluginElement descriptionElement = createElementDescription(element);
 		if (descriptionElement != null) {
-			element.add(descriptionElement);		
+			element.add(descriptionElement);
 		}
-		
+
 		return element;
 	}
 
@@ -646,8 +586,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	 * @return
 	 * @throws CoreException
 	 */
-	private IPluginElement createElementDescription(IPluginElement parentElement)
-			throws CoreException {
+	private IPluginElement createElementDescription(IPluginElement parentElement) throws CoreException {
 		// Define the description element only if description text was 
 		// specified 
 		String descriptionText = fRegisterCSData.getDataDescription();
@@ -655,15 +594,13 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			return null;
 		}
 		// Create the element
-		IPluginElement element = 
-			parentElement.getModel().getFactory().createElement(parentElement);		
+		IPluginElement element = parentElement.getModel().getFactory().createElement(parentElement);
 		// Element: description
 		element.setName(ISimpleCSConstants.ELEMENT_DESCRIPTION);
 		// Content
 		element.setText(descriptionText.trim());
-		
+
 		return element;
-	}	
-	
+	}
 
 }

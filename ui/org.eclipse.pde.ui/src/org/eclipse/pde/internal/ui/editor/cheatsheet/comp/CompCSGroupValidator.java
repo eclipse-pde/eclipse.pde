@@ -13,12 +13,8 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.forms.widgets.Form;
@@ -32,19 +28,18 @@ public class CompCSGroupValidator {
 	private Form fForm;
 
 	private HashSet fGroups;
-	
+
 	private String fErrorCategory;
-	
+
 	// TODO: MP: LOW: CompCS: Can augment the model to have isValid() methods to simplify validation
-	
+
 	/**
 	 * 
 	 */
-	public CompCSGroupValidator(ICompCS cheatsheet, Form form, 
-			String errorCategory) {
+	public CompCSGroupValidator(ICompCS cheatsheet, Form form, String errorCategory) {
 		fForm = form;
 		fErrorCategory = errorCategory;
-		
+
 		fGroups = new HashSet();
 		populateGroups(cheatsheet);
 	}
@@ -55,9 +50,8 @@ public class CompCSGroupValidator {
 	private void populateGroups(ICompCS cheatsheet) {
 		// Register all existing groups in the present workspace model to be
 		// validated
-		if (cheatsheet.getFieldTaskObject().getType() == 
-			ICompCSConstants.TYPE_TASKGROUP) {
-			addGroup((ICompCSTaskGroup)cheatsheet.getFieldTaskObject());
+		if (cheatsheet.getFieldTaskObject().getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			addGroup((ICompCSTaskGroup) cheatsheet.getFieldTaskObject());
 		}
 	}
 
@@ -74,11 +68,11 @@ public class CompCSGroupValidator {
 		ICompCSTaskObject[] taskObjects = group.getFieldTaskObjects();
 		for (int i = 0; i < taskObjects.length; i++) {
 			if (taskObjects[i].getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				addGroup((ICompCSTaskGroup)taskObjects[i]);
+				addGroup((ICompCSTaskGroup) taskObjects[i]);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param group
 	 */
@@ -92,11 +86,11 @@ public class CompCSGroupValidator {
 		ICompCSTaskObject[] taskObjects = group.getFieldTaskObjects();
 		for (int i = 0; i < taskObjects.length; i++) {
 			if (taskObjects[i].getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				removeGroup((ICompCSTaskGroup)taskObjects[i]);
+				removeGroup((ICompCSTaskGroup) taskObjects[i]);
 			}
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -109,7 +103,7 @@ public class CompCSGroupValidator {
 		Iterator iterator = fGroups.iterator();
 		// Validate all registered groups
 		while (iterator.hasNext()) {
-			ICompCSTaskGroup group = (ICompCSTaskGroup)iterator.next();
+			ICompCSTaskGroup group = (ICompCSTaskGroup) iterator.next();
 			if (validate(group) == false) {
 				return false;
 			}
@@ -117,26 +111,18 @@ public class CompCSGroupValidator {
 		fForm.setMessage(null);
 		return true;
 	}
-	
+
 	/**
 	 * @param group
 	 * @return
 	 */
 	private boolean validate(ICompCSTaskGroup group) {
 		if (group.getFieldTaskObjectCount() == 0) {
-			String message = '[' + 
-							 fErrorCategory + 
-							 ']' + 
-							 ' ' + 
-							 PDETextHelper.translateReadText(
-									 group.getFieldName()) + 
-							 ':' + 
-							 ' ' +
-							 PDEUIMessages.CompCSGroupValidator_errorChildlessGroup;
+			String message = '[' + fErrorCategory + ']' + ' ' + PDETextHelper.translateReadText(group.getFieldName()) + ':' + ' ' + PDEUIMessages.CompCSGroupValidator_errorChildlessGroup;
 			fForm.setMessage(message, IMessageProvider.INFORMATION);
 			return false;
 		}
 		return true;
 	}
-	
+
 }

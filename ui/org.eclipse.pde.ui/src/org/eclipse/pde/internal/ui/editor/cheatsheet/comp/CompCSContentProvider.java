@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import java.util.List;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
@@ -22,8 +21,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
  * CompCSContentProvider
  *
  */
-public class CompCSContentProvider extends DefaultContentProvider implements
-		ITreeContentProvider {
+public class CompCSContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 	/**
 	 * 
@@ -37,9 +35,9 @@ public class CompCSContentProvider extends DefaultContentProvider implements
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ICompCSModel) {
-			return new Object[]{((ICompCSModel)parentElement).getCompCS()};
+			return new Object[] {((ICompCSModel) parentElement).getCompCS()};
 		} else if (parentElement instanceof ICompCSObject) {
-			List list = ((ICompCSObject)parentElement).getChildren();
+			List list = ((ICompCSObject) parentElement).getChildren();
 			// List is never null
 			if (list.size() > 0) {
 				return list.toArray();
@@ -53,7 +51,7 @@ public class CompCSContentProvider extends DefaultContentProvider implements
 	 */
 	public Object getParent(Object element) {
 		if (element instanceof ICompCSObject) {
-			return ((ICompCSObject)element).getParent();
+			return ((ICompCSObject) element).getParent();
 		}
 		return null;
 	}

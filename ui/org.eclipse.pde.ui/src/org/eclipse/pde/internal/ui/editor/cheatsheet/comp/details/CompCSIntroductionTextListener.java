@@ -11,12 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.jface.text.*;
+import org.eclipse.pde.internal.core.icheatsheet.comp.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 /**
@@ -25,10 +21,10 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
  */
 public class CompCSIntroductionTextListener implements IDocumentListener {
 
-	private ICompCSTaskObject fDataTaskObject;	
-	
+	private ICompCSTaskObject fDataTaskObject;
+
 	private boolean fBlockEvents;
-	
+
 	/**
 	 * 
 	 */
@@ -43,29 +39,29 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 	public void setBlockEvents(boolean block) {
 		fBlockEvents = block;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean getBlockEvents() {
 		return fBlockEvents;
 	}
-	
+
 	/**
 	 * @param object
 	 */
 	public void setData(ICompCSTaskObject object) {
 		// Set data
 		fDataTaskObject = object;
-	}		
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		// NO-OP
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
@@ -92,9 +88,9 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		} else {
 			// No introduction was specified, remove any existing one
 			removeIntroductionText(text);
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param text
 	 */
@@ -112,9 +108,8 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 	 * @param text
 	 */
 	private void addIntroductionText(String text) {
-		ICompCSModelFactory factory = 
-			fDataTaskObject.getModel().getFactory(); 
-		ICompCSIntro intro = factory.createCompCSIntro(fDataTaskObject); 
+		ICompCSModelFactory factory = fDataTaskObject.getModel().getFactory();
+		ICompCSIntro intro = factory.createCompCSIntro(fDataTaskObject);
 		intro.setFieldContent(text);
 		fDataTaskObject.setFieldIntro(intro);
 	}
@@ -135,6 +130,6 @@ public class CompCSIntroductionTextListener implements IDocumentListener {
 		if (intro != null) {
 			fDataTaskObject.setFieldIntro(null);
 		}
-	}	
-	
+	}
+
 }

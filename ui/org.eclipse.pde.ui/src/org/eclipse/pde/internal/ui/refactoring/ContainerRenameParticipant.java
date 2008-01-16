@@ -11,18 +11,10 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
-
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -30,9 +22,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -48,9 +38,9 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 
 	protected boolean initialize(Object element) {
 		if (element instanceof IContainer) {
-			IProject project = ((IContainer)element).getProject();
+			IProject project = ((IContainer) element).getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
-				IPath path = ((IContainer)element).getProjectRelativePath().removeLastSegments(1);
+				IPath path = ((IContainer) element).getProjectRelativePath().removeLastSegments(1);
 				String newName = path.append(getArguments().getNewName()).toString();
 				fProject = project;
 				fElements = new HashMap();
@@ -60,9 +50,8 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		}
 		return false;
 	}
-	
-	public Change createChange(IProgressMonitor pm) throws CoreException,
-	OperationCanceledException {
+
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		// for the special case of a project rename, we need to only check the manifest for changes
 		if (fElements.size() == 1 && fElements.keySet().iterator().next() instanceof IProject) {
 			if (!getArguments().getUpdateReferences())
@@ -77,18 +66,18 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		if (manifest.exists()) {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 			try {
-				String newText = (String)fElements.get(fProject);
+				String newText = (String) fElements.get(fProject);
 				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
 				IBundle bundle = BundleManifestChange.getBundle(manifest, new SubProgressMonitor(monitor, 1));
 				if (bundle != null) {
-					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel)bundle.getModel()).getDocument());
+					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel) bundle.getModel()).getDocument());
 					bundle.getModel().addModelChangedListener(listener);
-					
-					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-					if ( header != null ) {
+
+					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader) bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					if (header != null) {
 						// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
 						String calcProjectId = IdUtil.getValidId(fProject.getName());
-						
+
 						String oldText = header.getId();
 						// don't update Bundle-SymbolicName if the id and project name don't match
 						if (!oldText.equals(calcProjectId))
@@ -99,7 +88,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						header.setId(newId);
 						// at this point, neither the project or file will exist.  
 						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
-						IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
+						IProject newProject = ((IWorkspaceRoot) manifest.getProject().getParent()).getProject(newText);
 
 						MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$ //$NON-NLS-2$
 						MultiTextEdit edit = new MultiTextEdit();
@@ -107,7 +96,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						change.setEdit(edit);
 						PDEModelUtility.setChangeTextType(change, manifest);
 						result.add(change);
-						
+
 						// find all the references to the changing Bundle-SymbolicName and update all references to it
 						FindReferenceOperation op = new FindReferenceOperation(PluginRegistry.findModel(fProject).getBundleDescription(), newId);
 						op.run(new SubProgressMonitor(monitor, 2));
@@ -125,5 +114,5 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		}
 		return null;
 	}
-	
+
 }

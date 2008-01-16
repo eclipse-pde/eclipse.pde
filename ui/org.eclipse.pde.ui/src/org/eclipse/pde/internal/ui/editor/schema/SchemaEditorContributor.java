@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -25,11 +23,11 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 	class PreviewAction extends Action {
 		public PreviewAction() {
 		}
+
 		public void run() {
 			if (getEditor() != null) {
 				final SchemaEditor schemaEditor = (SchemaEditor) getEditor();
-				BusyIndicator
-					.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
+				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
 					public void run() {
 						schemaEditor.previewReferenceDocument();
 					}
@@ -51,7 +49,7 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 		mm.add(new Separator());
 		mm.add(fPreviewAction);
 	}
-	
+
 	public Action getPreviewAction() {
 		return fPreviewAction;
 	}
@@ -59,6 +57,6 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 	protected void makeActions() {
 		super.makeActions();
 		fPreviewAction = new PreviewAction();
-		fPreviewAction.setText(PDEUIMessages.SchemaEditorContributor_previewAction); 
+		fPreviewAction.setText(PDEUIMessages.SchemaEditorContributor_previewAction);
 	}
 }

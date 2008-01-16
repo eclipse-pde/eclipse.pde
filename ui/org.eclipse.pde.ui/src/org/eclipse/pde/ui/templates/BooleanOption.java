@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class BooleanOption extends TemplateOption {
 	private Button button;
+
 	/**
 	 * The constructor of the option.
 	 * 
@@ -35,10 +37,10 @@ public class BooleanOption extends TemplateOption {
 	 * @param label
 	 *            the presentable label of the option
 	 */
-	public BooleanOption(BaseOptionTemplateSection section, String name,
-			String label) {
+	public BooleanOption(BaseOptionTemplateSection section, String name, String label) {
 		super(section, name, label);
 	}
+
 	/**
 	 * Returns the current state of the option.
 	 * 
@@ -47,6 +49,7 @@ public class BooleanOption extends TemplateOption {
 	public boolean isSelected() {
 		return getValue() != null && getValue().equals(Boolean.TRUE);
 	}
+
 	/**
 	 * Changes the current state of the option to the provided state.
 	 * 
@@ -56,6 +59,7 @@ public class BooleanOption extends TemplateOption {
 	public void setSelected(boolean selected) {
 		setValue(selected ? Boolean.TRUE : Boolean.FALSE);
 	}
+
 	/**
 	 * Implementation of the superclass method that updates the option's widget
 	 * with the new value.
@@ -68,6 +72,7 @@ public class BooleanOption extends TemplateOption {
 		if (button != null)
 			button.setSelection(isSelected());
 	}
+
 	/**
 	 * Creates the boolean option control. Option reserves the right to modify
 	 * the actual widget used as long as the user can modify its boolean state.
@@ -86,14 +91,13 @@ public class BooleanOption extends TemplateOption {
 		button.setSelection(isSelected());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				BooleanOption.super.setValue(button.getSelection()
-						? Boolean.TRUE
-						: Boolean.FALSE);
+				BooleanOption.super.setValue(button.getSelection() ? Boolean.TRUE : Boolean.FALSE);
 				getSection().validateOptions(BooleanOption.this);
 			}
 		});
 		button.setEnabled(isEnabled());
 	}
+
 	/**
 	 * Implementatin of the superclass method that updates the option widget
 	 * with the new enabled state.

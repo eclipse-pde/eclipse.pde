@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -20,20 +19,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -43,8 +36,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	public static final int SELECTED_FEATURES = 1;
 
-	private static final String PREFIX = PDEPlugin.getPluginId()
-			+ ".synchronizeFeatueEnvironment."; //$NON-NLS-1$
+	private static final String PREFIX = PDEPlugin.getPluginId() + ".synchronizeFeatueEnvironment."; //$NON-NLS-1$
 
 	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode"; //$NON-NLS-1$
 
@@ -61,8 +53,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	 * @param siteFeatures
 	 *            selected feature or null
 	 */
-	public SynchronizePropertiesWizardPage(ISiteFeature[] siteFeatures,
-			ISiteModel model) {
+	public SynchronizePropertiesWizardPage(ISiteFeature[] siteFeatures, ISiteModel model) {
 		super("featureSelection"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.SynchronizePropertiesWizardPage_title);
 		setDescription(PDEUIMessages.SynchronizePropertiesWizardPage_desc);
@@ -96,8 +87,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		loadSettings();
 		// TODO add own F1 context
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,
-				IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 	}
 
 	public boolean finish() {
@@ -133,10 +123,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	 * @return IFeatureModel or null
 	 */
 	private IFeature getFeature(ISiteFeature siteFeature) {
-		IFeatureModel model = PDECore
-				.getDefault()
-				.getFeatureModelManager()
-				.findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
 		if (model != null)
 			return model.getFeature();
 		return null;
@@ -171,14 +158,12 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		});
 	}
 
-	private void importEnvironment(ISiteFeature[] siteFeatures,
-			IProgressMonitor monitor) {
+	private void importEnvironment(ISiteFeature[] siteFeatures, IProgressMonitor monitor) {
 		for (int i = 0; i < siteFeatures.length; i++) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			monitor.subTask(siteFeatures[i].getId()
-					+ "_" + siteFeatures[i].getVersion()); //$NON-NLS-1$
+			monitor.subTask(siteFeatures[i].getId() + "_" + siteFeatures[i].getVersion()); //$NON-NLS-1$
 			importEnvironment(siteFeatures[i]);
 			monitor.worked(1);
 		}
@@ -190,14 +175,14 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			if (settings.get(PROP_SYNCHRO_MODE) != null) {
 				int mode = settings.getInt(PROP_SYNCHRO_MODE);
 				switch (mode) {
-				case SELECTED_FEATURES:
-					fSelectedFeaturesButton.setSelection(true);
-					break;
-				case ALL_FEATURES:
-					fAllFeaturesButton.setSelection(true);
-					break;
-				default:
-					fSelectedFeaturesButton.setSelection(true);
+					case SELECTED_FEATURES :
+						fSelectedFeaturesButton.setSelection(true);
+						break;
+					case ALL_FEATURES :
+						fAllFeaturesButton.setSelection(true);
+						break;
+					default :
+						fSelectedFeaturesButton.setSelection(true);
 				}
 			} else
 				fSelectedFeaturesButton.setSelection(true);
@@ -207,8 +192,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		}
 	}
 
-	private void runOperation(int mode, IProgressMonitor monitor)
-			throws CoreException, InvocationTargetException {
+	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		ISiteFeature[] siteFeatures;
 		if (mode == SELECTED_FEATURES) {
 			siteFeatures = fSiteFeatures;

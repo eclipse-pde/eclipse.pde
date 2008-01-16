@@ -28,21 +28,21 @@ public class OpenTargetProfileAction extends Action {
 		fTargetModel = model;
 		fTargetName = targetName;
 	}
-	
+
 	public void run() {
 		if (fTargetModel == null) {
 			MessageDialog.openError(fShell, PDEUIMessages.OpenTargetProfileAction_title, PDEUIMessages.OpenTargetProfileAction_missingProfile);
 			return;
 		}
-		
+
 		if (!fTargetModel.isLoaded()) {
 			MessageDialog.openError(fShell, PDEUIMessages.OpenTargetProfileAction_title, PDEUIMessages.OpenTargetProfileAction_invalidProfile);
 			return;
 		}
-		
+
 		ApplicationWindow appWindow = new TargetProfileWindow(fShell, fTargetModel, fTargetName);
 		appWindow.create();
-		appWindow.open();		
+		appWindow.open();
 	}
 
 }

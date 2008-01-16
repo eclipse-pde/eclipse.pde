@@ -12,38 +12,20 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -56,15 +38,12 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PluginSection extends TableSection implements
-		IPluginModelListener {
+public class PluginSection extends TableSection implements IPluginModelListener {
 	private OpenReferenceAction fOpenAction;
 
 	private TableViewer fPluginViewer;
@@ -73,10 +52,9 @@ public class PluginSection extends TableSection implements
 
 	private Action fDeleteAction;
 
-	private SortAction fSortAction;	
-	
-	class PluginContentProvider extends DefaultContentProvider implements
-			IStructuredContentProvider {
+	private SortAction fSortAction;
+
+	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				return ((IFeature) parent).getPlugins();
@@ -86,9 +64,7 @@ public class PluginSection extends TableSection implements
 	}
 
 	public PluginSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {
-				PDEUIMessages.FeatureEditor_PluginSection_new, null,
-				PDEUIMessages.FeatureEditor_SpecSection_synchronize });
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_PluginSection_new, null, PDEUIMessages.FeatureEditor_SpecSection_synchronize});
 		getSection().setText(PDEUIMessages.FeatureEditor_PluginSection_pluginTitle);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_PluginSection_pluginDesc);
 		getTablePart().setEditable(false);
@@ -99,19 +75,18 @@ public class PluginSection extends TableSection implements
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
+
 		Composite container = createClientContainer(section, 2, toolkit);
 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPluginViewer = tablePart.getTableViewer();
 		fPluginViewer.setContentProvider(new PluginContentProvider());
-		fPluginViewer.setLabelProvider(PDEPlugin.getDefault()
-				.getLabelProvider());
+		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		toolkit.paintBordersFor(container);
 		makeActions();
@@ -125,7 +100,7 @@ public class PluginSection extends TableSection implements
 	 * @param toolkit
 	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
-		
+
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
@@ -133,27 +108,21 @@ public class PluginSection extends TableSection implements
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});			
+		});
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(
-				getStructuredViewerPart().getViewer(), 
-				PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
-				ListUtil.NAME_COMPARATOR,
-				null,
-				null);
-		
+		fSortAction = new SortAction(getStructuredViewerPart().getViewer(), PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, ListUtil.NAME_COMPARATOR, null, null);
+
 		toolBarManager.add(fSortAction);
 
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
-	}		
-	
+	}
+
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		fOpenAction.run();
 	}
@@ -168,7 +137,7 @@ public class PluginSection extends TableSection implements
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
-		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+			PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
 
@@ -188,35 +157,30 @@ public class PluginSection extends TableSection implements
 		manager.add(fDeleteAction);
 		// add delete
 
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleNew() {
-		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
-				new Runnable() {
-					public void run() {
-						IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-						ArrayList newModels = new ArrayList();
-						for (int i = 0; i < allModels.length; i++) {
-							if (canAdd(allModels[i]))
-								newModels.add(allModels[i]);
-						}
-						IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels
-								.toArray(new IPluginModelBase[newModels.size()]);
-						PluginSelectionDialog dialog = new PluginSelectionDialog(
-								fPluginViewer.getTable().getShell(),
-								candidateModels, true);
-						if (dialog.open() == Window.OK) {
-							Object[] models = dialog.getResult();
-							try {
-								doAdd(models);
-							} catch (CoreException e) {
-								PDEPlugin.log(e);
-							}
-						}
+		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
+				ArrayList newModels = new ArrayList();
+				for (int i = 0; i < allModels.length; i++) {
+					if (canAdd(allModels[i]))
+						newModels.add(allModels[i]);
+				}
+				IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels.toArray(new IPluginModelBase[newModels.size()]);
+				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
+				if (dialog.open() == Window.OK) {
+					Object[] models = dialog.getResult();
+					try {
+						doAdd(models);
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
 					}
-				});
+				}
+			}
+		});
 	}
 
 	private void doAdd(Object[] candidates) throws CoreException {
@@ -225,17 +189,15 @@ public class PluginSection extends TableSection implements
 		IFeaturePlugin[] added = new IFeaturePlugin[candidates.length];
 		for (int i = 0; i < candidates.length; i++) {
 			IPluginModelBase candidate = (IPluginModelBase) candidates[i];
-			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory()
-					.createPlugin();
+			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
 			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
-			fplugin.setUnpack(CoreUtility.guessUnpack(candidate
-					.getBundleDescription()));
+			fplugin.setUnpack(CoreUtility.guessUnpack(candidate.getBundleDescription()));
 			added[i] = fplugin;
 		}
 		feature.addPlugins(added);
 	}
-    
+
 	private boolean canAdd(IPluginModelBase candidate) {
 		IPluginBase plugin = candidate.getPluginBase();
 
@@ -248,18 +210,16 @@ public class PluginSection extends TableSection implements
 		}
 		return true;
 	}
-	
+
 	private void handleSelectAll() {
-		IStructuredContentProvider provider = (IStructuredContentProvider) fPluginViewer
-				.getContentProvider();
+		IStructuredContentProvider provider = (IStructuredContentProvider) fPluginViewer.getContentProvider();
 		Object[] elements = provider.getElements(fPluginViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
 		fPluginViewer.setSelection(ssel);
 	}
 
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) fPluginViewer
-				.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fPluginViewer.getSelection();
 
 		if (ssel.isEmpty())
 			return;
@@ -283,24 +243,21 @@ public class PluginSection extends TableSection implements
 	}
 
 	private void handleSynchronize() {
-		final FeatureEditorContributor contributor = (FeatureEditorContributor) getPage()
-				.getPDEEditor().getContributor();
-		BusyIndicator.showWhile(fPluginViewer.getControl().getDisplay(),
-				new Runnable() {
-					public void run() {
-						contributor.getSynchronizeAction().run();
-					}
-				});
+		final FeatureEditorContributor contributor = (FeatureEditorContributor) getPage().getPDEEditor().getContributor();
+		BusyIndicator.showWhile(fPluginViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				contributor.getSynchronizeAction().run();
+			}
+		});
 	}
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleDelete();
-						}
-					});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -314,12 +271,11 @@ public class PluginSection extends TableSection implements
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
-					new Runnable() {
-						public void run() {
-							handleSelectAll();
-						}
-					});
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
 			return true;
 		}
 		return false;
@@ -350,8 +306,7 @@ public class PluginSection extends TableSection implements
 			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 				fPluginViewer.add(e.getChangedObjects());
 				if (e.getChangedObjects().length > 0) {
-					fPluginViewer.setSelection(new StructuredSelection(e
-							.getChangedObjects()[0]));
+					fPluginViewer.setSelection(new StructuredSelection(e.getChangedObjects()[0]));
 				}
 			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 				fPluginViewer.remove(e.getChangedObjects());
@@ -371,12 +326,11 @@ public class PluginSection extends TableSection implements
 
 		fDeleteAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
-						new Runnable() {
-							public void run() {
-								handleDelete();
-							}
-						});
+				BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+					public void run() {
+						handleDelete();
+					}
+				});
 			}
 		};
 		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
@@ -393,8 +347,7 @@ public class PluginSection extends TableSection implements
 				ModelEntry[] added = delta.getAddedEntries();
 				ModelEntry[] removed = delta.getRemovedEntries();
 				ModelEntry[] changed = delta.getChangedEntries();
-				if (hasPluginModels(added) || hasPluginModels(removed)
-						|| hasPluginModels(changed))
+				if (hasPluginModels(added) || hasPluginModels(removed) || hasPluginModels(changed))
 					markStale();
 			}
 		});
@@ -422,8 +375,7 @@ public class PluginSection extends TableSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer
-				.getInstance());
+		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && objects.length > 0) {
 			return canPaste(null, objects);
 		}
@@ -447,8 +399,7 @@ public class PluginSection extends TableSection implements
 	 */
 	protected void doPaste() {
 		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
-		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer
-				.getInstance());
+		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && canPaste(null, objects))
 			doPaste(null, objects);
 	}
@@ -482,11 +433,12 @@ public class PluginSection extends TableSection implements
 		if (!sel.isEmpty()) {
 			fPluginViewer.setSelection(fPluginViewer.getSelection());
 		} else if (fPluginViewer.getElementAt(0) != null) {
-			fPluginViewer.setSelection(new StructuredSelection(fPluginViewer
-					.getElementAt(0)));
+			fPluginViewer.setSelection(new StructuredSelection(fPluginViewer.getElementAt(0)));
 		}
 	}
-	
-	protected boolean createCount() { return true; }
+
+	protected boolean createCount() {
+		return true;
+	}
 
 }

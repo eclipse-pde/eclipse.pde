@@ -14,5 +14,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 
 public interface ILinkLabelProvider extends ILabelProvider {
 	String getStatusText(Object object);
+
 	String getToolTipText(Object object);
 }

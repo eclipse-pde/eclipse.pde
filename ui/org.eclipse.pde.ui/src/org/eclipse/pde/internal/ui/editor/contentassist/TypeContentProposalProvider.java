@@ -11,12 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.ListIterator;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -26,21 +21,20 @@ import org.eclipse.swt.graphics.Image;
  * TypeContentProposalProvider
  *
  */
-public class TypeContentProposalProvider extends TypePackageCompletionProcessor
-		implements IContentProposalProvider {
+public class TypeContentProposalProvider extends TypePackageCompletionProcessor implements IContentProposalProvider {
 
 	public static final char F_DOT = '.';
-	
+
 	private IProject fProject;
-	
-	private int fTypeScope;	
-	
+
+	private int fTypeScope;
+
 	private ArrayList fInitialContentProposals;
 
-	private String fInitialContent;	
-	
+	private String fInitialContent;
+
 	private Comparator fComparator;
-	
+
 	/**
 	 * 
 	 */
@@ -48,7 +42,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 		fProject = project;
 		fTypeScope = scope;
 		fComparator = new TypeComparator();
-		
+
 		reset();
 	}
 
@@ -57,24 +51,24 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 	 *
 	 */
 	private static class TypeComparator implements Comparator {
-		
+
 		/**
 		 * 
 		 */
 		public TypeComparator() {
 			// NO-OP
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object arg0, Object arg1) {
-			String proposalSortKey1 = ((IContentProposal)arg0).getLabel();
-			String proposalSortKey2 = ((IContentProposal)arg1).getLabel();
+			String proposalSortKey1 = ((IContentProposal) arg0).getLabel();
+			String proposalSortKey2 = ((IContentProposal) arg1).getLabel();
 			return proposalSortKey1.compareToIgnoreCase(proposalSortKey2);
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String, int)
 	 */
@@ -88,10 +82,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 			// because all classes and interfaces (depending on the specified scope)
 			// will need to be resolved as proposals
 			currentContentProposals = null;
-		} else if (
-			(fInitialContentProposals == null) ||
-			(contents.length() < fInitialContent.length()) ||
-			(endsWithDot(contents))) {
+		} else if ((fInitialContentProposals == null) || (contents.length() < fInitialContent.length()) || (endsWithDot(contents))) {
 			// Generate new proposals if the content assist session was just
 			// started
 			// Or generate new proposals if the current contents of the field
@@ -108,7 +99,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 			// the initial field contents
 			currentContentProposals = filterContentProposals(contents);
 		}
-		
+
 		return convertResultsToSortedProposals(currentContentProposals);
 	}
 
@@ -118,16 +109,14 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 	public void reset() {
 		fInitialContentProposals = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor#addProposalToCollection(java.util.Collection, int, int, java.lang.String, java.lang.String, org.eclipse.swt.graphics.Image)
 	 */
-	protected void addProposalToCollection(Collection collection, int startOffset,
-			int length, String label, String content, Image image) {
+	protected void addProposalToCollection(Collection collection, int startOffset, int length, String label, String content, Image image) {
 		// Create content proposals for field assist
 		// start offset and length not required
-		IContentProposal proposal = 
-			new TypeContentProposal(label, content, null, image);
+		IContentProposal proposal = new TypeContentProposal(label, content, null, image);
 		// Add the proposal to the list of proposals
 		collection.add(proposal);
 	}
@@ -137,13 +126,13 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 	 * @return
 	 */
 	private boolean endsWithDot(String string) {
-    	int index = string.lastIndexOf(F_DOT);
-    	if ((index + 1) == string.length()) {
-    		return true;
-    	}
-    	return false;
-	}	
-	
+		int index = string.lastIndexOf(F_DOT);
+		if ((index + 1) == string.length()) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * @param currentContent
 	 * @return
@@ -153,9 +142,8 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 		// Store the initial field contents to determine if we need to
 		// widen the scope later
 		fInitialContent = currentContent;
-		generateTypePackageProposals(currentContent, fProject,
-				fInitialContentProposals, 0, fTypeScope, true);
-	    return fInitialContentProposals;
+		generateTypePackageProposals(currentContent, fProject, fInitialContentProposals, 0, fTypeScope, true);
+		return fInitialContentProposals;
 	}
 
 	/**
@@ -164,8 +152,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 	 */
 	private IContentProposal[] convertResultsToSortedProposals(ArrayList list) {
 		IContentProposal[] proposals = null;
-		if ((list != null) && 
-				(list.size() != 0)) {
+		if ((list != null) && (list.size() != 0)) {
 			// Convert the results array list into an array of completion
 			// proposals
 			proposals = (IContentProposal[]) list.toArray(new IContentProposal[list.size()]);
@@ -188,8 +175,8 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 		ArrayList filteredContentProposals = new ArrayList();
 		// Iterate over the initial search results
 		while (iterator.hasNext()) {
-			Object object = iterator.next();		
-			IContentProposal proposal = (IContentProposal)object;
+			Object object = iterator.next();
+			IContentProposal proposal = (IContentProposal) object;
 			String compareString = null;
 			if (lowerCaseCurrentContent.indexOf(F_DOT) == -1) {
 				// Use only the type name
@@ -206,6 +193,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor
 			}
 		}
 		return filteredContentProposals;
-	}	
-	
+	}
+
 }

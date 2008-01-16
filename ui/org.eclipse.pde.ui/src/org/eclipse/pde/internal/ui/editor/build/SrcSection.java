@@ -20,9 +20,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 
-public class SrcSection extends BuildContentsSection
-		implements
-			IModelChangedListener {
+public class SrcSection extends BuildContentsSection implements IModelChangedListener {
 
 	public SrcSection(BuildPage page, Composite parent) {
 		super(page, parent);
@@ -35,10 +33,8 @@ public class SrcSection extends BuildContentsSection
 
 		super.initializeCheckState();
 		IBuild build = fBuildModel.getBuild();
-		IBuildEntry srcIncl = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry srcExcl = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
+		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 
 		if (srcIncl == null)
 			return;
@@ -48,12 +44,9 @@ public class SrcSection extends BuildContentsSection
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = fBuildModel.getBuild();
-		IBuildEntry srcIncl = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry srcExcl = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
-		String parentFolder = getResourceFolderName(folder
-				.getProjectRelativePath().toString());
+		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
+		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
 
 		removeChildren(srcIncl, parentFolder);
 		removeChildren(srcExcl, parentFolder);
@@ -61,23 +54,17 @@ public class SrcSection extends BuildContentsSection
 
 	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
 		IResource resource = fParentResource;
-		String resourceName = fParentResource.getFullPath()
-				.removeFirstSegments(1).toString();
+		String resourceName = fParentResource.getFullPath().removeFirstSegments(1).toString();
 		IBuild build = fBuildModel.getBuild();
-		IBuildEntry includes = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
-		IBuildEntry excludes = build
-				.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
+		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 
 		resourceName = handleResourceFolder(resource, resourceName);
 
 		if (isChecked)
-			handleCheck(includes, excludes, resourceName, resource,
-					wasTopParentChecked,
-					IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
+			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		else
-			handleUncheck(includes, excludes, resourceName, resource,
-					IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
+			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 
 		deleteEmptyEntries();
 	}

@@ -12,33 +12,15 @@
  * Created on Sep 29, 2003
  */
 package org.eclipse.pde.internal.ui.editor.site;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -48,15 +30,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+
 /**
  * 
  */
@@ -79,17 +58,15 @@ public class ArchiveSection extends PDESection {
 			return false;
 		}
 	}
-	class ContentProvider extends DefaultContentProvider
-			implements
-				IStructuredContentProvider {
+
+	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			ISiteModel model = (ISiteModel) parent;
 			return model.getSite().getArchives();
 		}
 	}
-	class ArchiveLabelProvider extends LabelProvider
-			implements
-				ITableLabelProvider {
+
+	class ArchiveLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			ISiteArchive archive = (ISiteArchive) obj;
 			switch (index) {
@@ -100,22 +77,22 @@ public class ArchiveSection extends PDESection {
 			}
 			return ""; //$NON-NLS-1$
 		}
+
 		public Image getColumnImage(Object obj, int index) {
 			return null;
 		}
 	}
+
 	/**
 	 * @param formPage
 	 */
 	public ArchiveSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION);
-		getSection()
-				.setText(
-						PDEUIMessages.SiteEditor_ArchiveSection_header); 
-		getSection().setDescription(
-				PDEUIMessages.SiteEditor_ArchiveSection_instruction); 
+		getSection().setText(PDEUIMessages.SiteEditor_ArchiveSection_header);
+		getSection().setDescription(PDEUIMessages.SiteEditor_ArchiveSection_instruction);
 		createClient(getSection(), formPage.getManagedForm().getToolkit());
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,8 +102,7 @@ public class ArchiveSection extends PDESection {
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
-		
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -134,8 +110,7 @@ public class ArchiveSection extends PDESection {
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
-		
-		
+
 		createTable(container, toolkit);
 		createTableViewer();
 		createButtons(container, toolkit);
@@ -151,14 +126,14 @@ public class ArchiveSection extends PDESection {
 		fModel.removeModelChangedListener(this);
 		super.dispose();
 	}
+
 	private void createButtons(Composite parent, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 10;
 		container.setLayout(layout);
-		container
-				.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		fAddButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_add, SWT.PUSH); 
+		container.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		fAddButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_add, SWT.PUSH);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -166,17 +141,16 @@ public class ArchiveSection extends PDESection {
 			}
 		});
 		fAddButton.setEnabled(isEditable());
-		fEditButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_edit, SWT.PUSH); 
+		fEditButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_edit, SWT.PUSH);
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection ssel = (IStructuredSelection) fViewer
-						.getSelection();
+				IStructuredSelection ssel = (IStructuredSelection) fViewer.getSelection();
 				if (ssel != null && ssel.size() == 1)
 					showDialog((ISiteArchive) ssel.getFirstElement());
 			}
 		});
-		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH); 
+		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -187,15 +161,16 @@ public class ArchiveSection extends PDESection {
 		fEditButton.setEnabled(false);
 		toolkit.paintBordersFor(container);
 	}
+
 	private void createTable(Composite container, FormToolkit toolkit) {
 		fTable = toolkit.createTable(container, SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		fTable.setLayoutData(gd);
 		TableColumn col1 = new TableColumn(fTable, SWT.NULL);
-		col1.setText(PDEUIMessages.SiteEditor_ArchiveSection_col1); 
+		col1.setText(PDEUIMessages.SiteEditor_ArchiveSection_col1);
 		TableColumn col2 = new TableColumn(fTable, SWT.NULL);
-		col2.setText(PDEUIMessages.SiteEditor_ArchiveSection_col2); 
+		col2.setText(PDEUIMessages.SiteEditor_ArchiveSection_col2);
 		TableLayout tlayout = new TableLayout();
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
@@ -203,6 +178,7 @@ public class ArchiveSection extends PDESection {
 		fTable.setHeaderVisible(true);
 		createContextMenu(fTable);
 	}
+
 	private void createTableViewer() {
 		fViewer = new TableViewer(fTable);
 		fViewer.setContentProvider(new ContentProvider());
@@ -214,6 +190,7 @@ public class ArchiveSection extends PDESection {
 			}
 		});
 	}
+
 	private void handleSelectionChanged() {
 		ISelection selection = fViewer.getSelection();
 		getManagedForm().fireSelectionChanged(this, selection);
@@ -230,26 +207,26 @@ public class ArchiveSection extends PDESection {
 			fEditButton.setEnabled(false);
 		}
 	}
+
 	private void showDialog(final ISiteArchive archive) {
 		final ISiteModel model = (ISiteModel) getPage().getModel();
 		BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
 			public void run() {
-				NewArchiveDialog dialog = new NewArchiveDialog(fTable
-						.getShell(), model, archive);
+				NewArchiveDialog dialog = new NewArchiveDialog(fTable.getShell(), model, archive);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, -1);
 				dialog.open();
 			}
 		});
 	}
+
 	private void handleDelete() {
 		try {
 			ISelection selection = fViewer.getSelection();
 			if (selection != null && selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				if (ssel.size() > 0) {
-					ISiteArchive[] array = (ISiteArchive[]) ssel.toList()
-							.toArray(new ISiteArchive[ssel.size()]);
+					ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
 					ISite site = ((ISiteModel) getPage().getModel()).getSite();
 					site.removeArchives(array);
 				}
@@ -257,6 +234,7 @@ public class ArchiveSection extends PDESection {
 		} catch (CoreException e) {
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -273,21 +251,25 @@ public class ArchiveSection extends PDESection {
 		}
 		return false;
 	}
+
 	public void refresh() {
 		fViewer.refresh();
 		super.refresh();
 	}
+
 	public void initialize() {
 		refresh();
 	}
+
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
+
 	private void createContextMenu(Control control) {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
-				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) { 
+				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) {
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}
@@ -295,8 +277,7 @@ public class ArchiveSection extends PDESection {
 				removeAction.setEnabled(isEditable());
 				mng.add(removeAction);
 				mng.add(new Separator());
-				PDEFormEditorContributor contributor = getPage().getPDEEditor()
-						.getContributor();
+				PDEFormEditorContributor contributor = getPage().getPDEEditor().getContributor();
 				contributor.contextMenuAboutToShow(mng);
 			}
 		};
@@ -304,11 +285,12 @@ public class ArchiveSection extends PDESection {
 		popupMenuManager.setRemoveAllWhenShown(true);
 		control.setMenu(popupMenuManager.createContextMenu(control));
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object input) {
-		if (input instanceof ISiteArchive){
+		if (input instanceof ISiteArchive) {
 			fViewer.setSelection(new StructuredSelection(input), true);
 			return true;
 		}

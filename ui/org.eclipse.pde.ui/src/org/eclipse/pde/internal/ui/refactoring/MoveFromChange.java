@@ -17,13 +17,13 @@ import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.osgi.framework.BundleException;
 
 public class MoveFromChange extends TextFileChange {
-	
+
 	PDEManifestElement[] fElements;
 
 	public MoveFromChange(String name, IFile file) {
 		super(name, file);
 	}
-	
+
 	public ManifestElement[] getMovedElements() {
 		ManifestElement[] result = new ManifestElement[fElements.length];
 		try {
@@ -36,15 +36,15 @@ public class MoveFromChange extends TextFileChange {
 		}
 		return result;
 	}
-	
+
 	public String getMovedText(int index) {
 		return fElements[index].write();
 	}
-	
+
 	public void setMovedElements(PDEManifestElement[] elements) {
 		fElements = elements;
 	}
-	
+
 	public String getPackageName(int index) {
 		return fElements[index].getValue();
 	}

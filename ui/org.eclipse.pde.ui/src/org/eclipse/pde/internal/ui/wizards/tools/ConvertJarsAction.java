@@ -12,20 +12,11 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarFile;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,10 +25,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 
 public class ConvertJarsAction implements IObjectActionDelegate {
 
@@ -79,16 +67,14 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 					String pathStr = path.toString();
 					JarFile file = new JarFile(pathStr);
 					if (!filesMap.containsKey(file.getManifest())) {
-						filesMap.put(file.getManifest(), new File(file
-								.getName()));
+						filesMap.put(file.getManifest(), new File(file.getName()));
 					}
 				}
 			} catch (Exception e) {
 				PDEPlugin.logException(e);
 			}
 		}
-		NewLibraryPluginProjectWizard wizard = new NewLibraryPluginProjectWizard(
-		filesMap.values(), projectSelection);
+		NewLibraryPluginProjectWizard wizard = new NewLibraryPluginProjectWizard(filesMap.values(), projectSelection);
 		wizard.init(workbench, selection);
 		WizardDialog dialog = new WizardDialog(Display.getDefault().getActiveShell(), wizard);
 		dialog.open();
@@ -110,10 +96,8 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 					try {
 						IPackageFragmentRoot packageFragment = (IPackageFragmentRoot) obj;
 						if (packageFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
-							if (PDE.hasPluginNature(packageFragment
-									.getJavaProject().getProject())) {
-								if (packageFragment.getRawClasspathEntry()
-										.getEntryKind() == IClasspathEntry.CPE_LIBRARY)
+							if (PDE.hasPluginNature(packageFragment.getJavaProject().getProject())) {
+								if (packageFragment.getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY)
 									continue;
 							}
 						}

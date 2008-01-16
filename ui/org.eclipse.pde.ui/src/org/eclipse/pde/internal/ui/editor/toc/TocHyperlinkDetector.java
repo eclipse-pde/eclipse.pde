@@ -26,36 +26,34 @@ public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
 			return null;
-		
+
 		IDocumentElementNode node = attr.getEnclosingElement();
-		if (node == null 
-				|| !(node instanceof TocObject) 
-				|| !((TocObject)node).getModel().isEditable())
-		{	return null;
+		if (node == null || !(node instanceof TocObject) || !((TocObject) node).getModel().isEditable()) {
+			return null;
 		}
 
-		TocObject tocObject = (TocObject)node;
+		TocObject tocObject = (TocObject) node;
 		TocModel model = tocObject.getModel();
 		IResource res = model.getUnderlyingResource();
 		IRegion linkRegion = new Region(attr.getValueOffset(), attr.getValueLength());
 
 		IHyperlink[] link = new IHyperlink[1];
 		if (tocObject.getType() == ITocConstants.TYPE_TOC) {
-			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_TOPIC))
-			{	link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
+			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_TOPIC)) {
+				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			}
 		} else if (tocObject.getType() == ITocConstants.TYPE_TOPIC) {
-			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_HREF))
-			{	link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
+			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_HREF)) {
+				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			}
 		} else if (tocObject.getType() == ITocConstants.TYPE_LINK) {
-			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_TOC))
-			{	link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
+			if (attr.getAttributeName().equals(ITocConstants.ATTRIBUTE_TOC)) {
+				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			}
 		}
 
-		if (link[0] != null)
-		{	return link;
+		if (link[0] != null) {
+			return link;
 		}
 
 		return null;

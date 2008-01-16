@@ -19,14 +19,7 @@ import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Caret;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Utility class to simplify access to some SWT resources. 
@@ -75,8 +68,8 @@ public class SWTUtil {
 	public static int getButtonWidthHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
 			button.setFont(JFaceResources.getDialogFont());
-		PixelConverter converter= new PixelConverter(button);
-		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		PixelConverter converter = new PixelConverter(button);
+		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
@@ -97,8 +90,7 @@ public class SWTUtil {
 	}
 
 	public static void setDialogSize(Dialog dialog, int width, int height) {
-		Point computedSize =
-			dialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point computedSize = dialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		width = Math.max(computedSize.x, width);
 		height = Math.max(computedSize.y, height);
 		dialog.getShell().setSize(width, height);

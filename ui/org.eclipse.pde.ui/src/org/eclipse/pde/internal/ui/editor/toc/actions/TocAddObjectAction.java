@@ -33,8 +33,8 @@ public abstract class TocAddObjectAction extends Action {
 	 * 
 	 * @param parent The new parent object for this action
 	 */
-	public void setParentObject(TocObject parent)
-	{	fParentObject = parent;
+	public void setParentObject(TocObject parent) {
+		fParentObject = parent;
 	}
 
 	/**
@@ -50,17 +50,16 @@ public abstract class TocAddObjectAction extends Action {
 	/**
 	 * @return The names of the children of this TOC object
 	 */
-	public String[] getChildNames()
-	{	int numChildren = fParentObject.getChildren().size();
-		TocObject[] tocObjects = 
-			(TocObject[])fParentObject.getChildren().toArray(new TocObject[numChildren]);
-		
+	public String[] getChildNames() {
+		int numChildren = fParentObject.getChildren().size();
+		TocObject[] tocObjects = (TocObject[]) fParentObject.getChildren().toArray(new TocObject[numChildren]);
+
 		String[] tocObjectNames = new String[tocObjects.length];
-		
-		for(int i = 0; i < numChildren; ++i)
-		{	tocObjectNames[i] = tocObjects[i].getName();
+
+		for (int i = 0; i < numChildren; ++i) {
+			tocObjectNames[i] = tocObjects[i].getName();
 		}
-		
+
 		return tocObjectNames;
 	}
 
@@ -70,12 +69,11 @@ public abstract class TocAddObjectAction extends Action {
 	 * 
 	 * @param child The object to add to the parent
 	 */
-	protected void addChild(TocObject child)
-	{	if(fTargetObject == null)
-		{	((TocTopic)fParentObject).addChild(child);
-		}
-		else
-		{	((TocTopic)fParentObject).addChild(child, fTargetObject, false);
+	protected void addChild(TocObject child) {
+		if (fTargetObject == null) {
+			((TocTopic) fParentObject).addChild(child);
+		} else {
+			((TocTopic) fParentObject).addChild(child, fTargetObject, false);
 			fTargetObject = null;
 		}
 	}

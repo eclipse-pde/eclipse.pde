@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -24,9 +20,8 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-
 public class ConfigurationPage extends PDEFormPage {
-	
+
 	public static final String PLUGIN_ID = "plugin-configuration"; //$NON-NLS-1$
 	public static final String FEATURE_ID = "feature-configuration"; //$NON-NLS-1$
 
@@ -34,17 +29,17 @@ public class ConfigurationPage extends PDEFormPage {
 	private PluginSection fPluginSection = null;
 
 	public ConfigurationPage(FormEditor editor, boolean useFeatures) {
-		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_ConfigurationPage_title); 
+		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_ConfigurationPage_title);
 		fUseFeatures = useFeatures;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/configuration.htm"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -53,7 +48,7 @@ public class ConfigurationPage extends PDEFormPage {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ));
-		form.setText(PDEUIMessages.Product_ConfigurationPage_title);  
+		form.setText(PDEUIMessages.Product_ConfigurationPage_title);
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CONFIGURATION_PAGE);
 	}
@@ -66,11 +61,11 @@ public class ConfigurationPage extends PDEFormPage {
 		if (fUseFeatures)
 			managedForm.addPart(new FeatureSection(this, body));
 		else
-			managedForm.addPart(fPluginSection = new PluginSection(this, body));	
+			managedForm.addPart(fPluginSection = new PluginSection(this, body));
 		managedForm.addPart(new ConfigurationSection(this, body));
 	}
-	
+
 	public boolean includeOptionalDependencies() {
-		return (fPluginSection != null) ? fPluginSection.includeOptionalDependencies(): false;
+		return (fPluginSection != null) ? fPluginSection.includeOptionalDependencies() : false;
 	}
 }

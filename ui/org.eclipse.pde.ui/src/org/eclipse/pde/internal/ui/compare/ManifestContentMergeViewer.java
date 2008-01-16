@@ -18,10 +18,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -38,29 +35,29 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 		if (textViewer instanceof SourceViewer) {
 			if (fColorManager == null)
 				fColorManager = ColorManager.getDefault();
-			((SourceViewer)textViewer).configure(new ManifestConfiguration(fColorManager, null, getDocumentPartitioning()));
+			((SourceViewer) textViewer).configure(new ManifestConfiguration(fColorManager, null, getDocumentPartitioning()));
 			Font font = JFaceResources.getFont(ManifestContentMergeViewer.class.getName());
 			if (font != null)
-				((SourceViewer)textViewer).getTextWidget().setFont(font);
+				((SourceViewer) textViewer).getTextWidget().setFont(font);
 		}
 	}
 
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}
-	
+
 	protected String getDocumentPartitioning() {
 		return ManifestPartitionScanner.MANIFEST_FILE_PARTITIONING;
 	}
-	
+
 	public String getTitle() {
-		return PDEUIMessages.ManifestContentMergeViewer_title; 
+		return PDEUIMessages.ManifestContentMergeViewer_title;
 	}
-	
+
 	protected void handleDispose(DisposeEvent event) {
 		if (fColorManager != null)
 			fColorManager.dispose();
 		super.handleDispose(event);
 	}
-	
+
 }

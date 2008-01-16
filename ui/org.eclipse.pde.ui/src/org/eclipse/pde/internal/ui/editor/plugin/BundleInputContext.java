@@ -13,39 +13,27 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
-import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
-import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.text.edits.*;
+import org.eclipse.ui.*;
 
 public class BundleInputContext extends UTF8InputContext {
 	public static final String CONTEXT_ID = "bundle-context"; //$NON-NLS-1$
-	
+
 	private HashMap fOperationTable = new HashMap();
+
 	/**
 	 * @param editor
 	 * @param input
@@ -54,6 +42,7 @@ public class BundleInputContext extends UTF8InputContext {
 		super(editor, input, primary);
 		create();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
@@ -64,20 +53,20 @@ public class BundleInputContext extends UTF8InputContext {
 			IDocument document = getDocumentProvider().getDocument(input);
 			model = new BundleModel(document, isReconciling);
 			if (input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput)input).getFile();
+				IFile file = ((IFileEditorInput) input).getFile();
 				model.setUnderlyingResource(file);
 				model.setCharset(file.getCharset());
-			} else if (input instanceof SystemFileEditorInput){
-				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
+			} else if (input instanceof SystemFileEditorInput) {
+				File file = (File) ((SystemFileEditorInput) input).getAdapter(File.class);
 				IPath path = new Path(file.getAbsolutePath()).removeLastSegments(2);
 				model.setInstallLocation(path.addTrailingSeparator().toString());
 				model.setCharset(getDefaultCharset());
-			} else if (input instanceof JarEntryEditorInput){
-				File file = (File)((JarEntryEditorInput)input).getAdapter(File.class);
+			} else if (input instanceof JarEntryEditorInput) {
+				File file = (File) ((JarEntryEditorInput) input).getAdapter(File.class);
 				model.setInstallLocation(file.toString());
 				model.setCharset(getDefaultCharset());
 			} else {
-				model.setCharset(getDefaultCharset());				
+				model.setCharset(getDefaultCharset());
 			}
 			model.load();
 		}
@@ -90,6 +79,7 @@ public class BundleInputContext extends UTF8InputContext {
 	public String getId() {
 		return CONTEXT_ID;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -98,21 +88,21 @@ public class BundleInputContext extends UTF8InputContext {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
-                if (object instanceof PDEManifestElement)
-                    object = ((PDEManifestElement)object).getHeader();
-                else if (object instanceof PackageFriend)
-                    object = ((PackageFriend)object).getHeader();
-                
+				if (object instanceof PDEManifestElement)
+					object = ((PDEManifestElement) object).getHeader();
+				else if (object instanceof PackageFriend)
+					object = ((PackageFriend) object).getHeader();
+
 				if (object instanceof ManifestHeader) {
-					ManifestHeader header = (ManifestHeader)object;
-					TextEdit op = (TextEdit)fOperationTable.get(header);
+					ManifestHeader header = (ManifestHeader) object;
+					TextEdit op = (TextEdit) fOperationTable.get(header);
 					if (op != null) {
 						fOperationTable.remove(header);
 						ops.remove(op);
 					}
 					String value = header.getValue();
 					if (value == null || value.trim().length() == 0) {
-						deleteKey(header, ops);						
+						deleteKey(header, ops);
 					} else {
 						modifyKey(header, ops);
 					}
@@ -120,21 +110,21 @@ public class BundleInputContext extends UTF8InputContext {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
 	 */
 	protected TextEdit[] getMoveOperations() {
 		return new TextEdit[0];
 	}
-	
+
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write()); 
+		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write());
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
-	
+
 	private void deleteKey(IDocumentKey key, ArrayList ops) {
 		if (key.getOffset() > 0) {
 			TextEdit op = new DeleteEdit(key.getOffset(), key.getLength());
@@ -142,26 +132,28 @@ public class BundleInputContext extends UTF8InputContext {
 			ops.add(op);
 		}
 	}
-	
-	private void modifyKey(IDocumentKey key, ArrayList ops) {		
+
+	private void modifyKey(IDocumentKey key, ArrayList ops) {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write()); 
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
 			fOperationTable.put(key, op);
 			ops.add(op);
-		}	
+		}
 	}
+
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();
-		AbstractEditingModel model = (AbstractEditingModel)getModel();
+		AbstractEditingModel model = (AbstractEditingModel) getModel();
 		model.reconciled(model.getDocument());
 	}
+
 	protected String getPartitionName() {
 		return "___bundle_partition"; //$NON-NLS-1$
 	}
-	
+
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
 		return new ManifestDocumentSetupParticipant();
 	}

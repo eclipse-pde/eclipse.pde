@@ -10,41 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.site;
 
-import java.io.ByteArrayInputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
-
 
 public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	private Display fDisplay;
 	private IProject fProject;
 	private IPath fPath;
 	private String fWebLocation;
-	
+
 	public NewSiteProjectCreationOperation(Display display, IProject project, IPath path, String webLocation) {
 		fDisplay = display;
 		fProject = project;
@@ -55,49 +44,49 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor) throws CoreException,
-			InvocationTargetException, InterruptedException {
+	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		int numUnits = fWebLocation == null ? 3 : 4;
-		
-		monitor.beginTask(PDEUIMessages.NewSiteWizard_creatingProject, numUnits); 
 
-		CoreUtility.createProject(fProject, fPath, monitor);		
+		monitor.beginTask(PDEUIMessages.NewSiteWizard_creatingProject, numUnits);
+
+		CoreUtility.createProject(fProject, fPath, monitor);
 		fProject.open(monitor);
 		CoreUtility.addNatureToProject(fProject, PDE.SITE_NATURE, monitor);
 		monitor.worked(1);
-		
-		if (fWebLocation != null){
+
+		if (fWebLocation != null) {
 			CoreUtility.createFolder(fProject.getFolder(fWebLocation));
 			createXSLFile();
 			createCSSFile();
 			createHTMLFile();
 			monitor.worked(1);
 		}
-	
-		monitor.subTask(PDEUIMessages.NewSiteWizard_creatingManifest); 
+
+		monitor.subTask(PDEUIMessages.NewSiteWizard_creatingManifest);
 		IFile file = createSiteManifest();
 		monitor.worked(1);
-		
+
 		openFile(file);
 		monitor.worked(1);
-		
+
 	}
 
 	private IFile createSiteManifest() throws CoreException {
 		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
-		if (file.exists()) return file;
-		
+		if (file.exists())
+			return file;
+
 		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		model.getSite();
 		// Save the model
 		model.save();
-		model.dispose();			
+		model.dispose();
 		// Set the default editor
 		IDE.setDefaultEditor(file, IPDEUIConstants.SITE_EDITOR_ID);
 		return file;
 	}
-	
-    private void openFile(final IFile file) {
+
+	private void openFile(final IFile file) {
 		fDisplay.asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
@@ -113,23 +102,22 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					page.openEditor(new FileEditorInput(file),
-							IPDEUIConstants.SITE_EDITOR_ID);
+					page.openEditor(new FileEditorInput(file), IPDEUIConstants.SITE_EDITOR_ID);
 				} catch (PartInitException e) {
 				}
 			}
 		});
 	}
 
-	private void createHTMLFile(){
+	private void createHTMLFile() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		
+
 		writer.println("<html>"); //$NON-NLS-1$
 		writer.println("<head>"); //$NON-NLS-1$
-		writer.println("<title>"+fProject.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<title>" + fProject.getName() + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
-		writer.println("<style>@import url(\""+fWebLocation+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<style>@import url(\"" + fWebLocation + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("<script type=\"text/javascript\">"); //$NON-NLS-1$
 		writer.println("	var returnval = 0;"); //$NON-NLS-1$
 		writer.println("	var stylesheet, xmlFile, cache, doc;"); //$NON-NLS-1$
@@ -141,7 +129,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("			stylesheet = document.implementation.createDocument(\"\", \"\", null);"); //$NON-NLS-1$
 		writer.println("			if (xmlFile.load){"); //$NON-NLS-1$
 		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
-		writer.println("				stylesheet.load(\""+fWebLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("				stylesheet.load(\"" + fWebLocation + "/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			} else {"); //$NON-NLS-1$
 		writer.println("				alert(\"" + PDEUIMessages.SiteHTML_loadError + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ 
 		writer.println("			}"); //$NON-NLS-1$
@@ -155,7 +143,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("			xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
 		writer.println("			stylesheet = new ActiveXObject(\"msxml2.FreeThreadedDOMDocument.3.0\");"); //$NON-NLS-1$
 		writer.println("			stylesheet.async = false;"); //$NON-NLS-1$
-		writer.println("			stylesheet.load(\""+fWebLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("			stylesheet.load(\"" + fWebLocation + "/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			cache = new ActiveXObject(\"msxml2.XSLTemplate.3.0\");"); //$NON-NLS-1$
 		writer.println("			cache.stylesheet = stylesheet;"); //$NON-NLS-1$
 		writer.println("			transformData();"); //$NON-NLS-1$
@@ -189,8 +177,8 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.flush();
 		writeFile(fProject.getFile("index.html"), swriter); //$NON-NLS-1$
 	}
-		
-	private void createCSSFile(){
+
+	private void createCSSFile() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
 		writer.println("<STYLE type=\"text/css\">"); //$NON-NLS-1$
@@ -210,7 +198,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writeFile(fProject.getFile(fWebLocation + "/site.css"), swriter); //$NON-NLS-1$
 	}
 
-	private void createXSLFile(){
+	private void createXSLFile() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
 		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\">"); //$NON-NLS-1$
@@ -220,11 +208,11 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("<xsl:for-each select=\"site\">"); //$NON-NLS-1$
 		writer.println("	<html>"); //$NON-NLS-1$
 		writer.println("	<head>"); //$NON-NLS-1$
-		writer.println("	<title>"+fProject.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<title>" + fProject.getName() + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	<style>@import url(\"" + fWebLocation + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	</head>"); //$NON-NLS-1$
 		writer.println("	<body>"); //$NON-NLS-1$
-		writer.println("	<h1 class=\"title\">" + fProject.getName() +"</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<h1 class=\"title\">" + fProject.getName() + "</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	<p class=\"bodyText\"><xsl:value-of select=\"description\"/></p>"); //$NON-NLS-1$
 		writer.println("	<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">"); //$NON-NLS-1$
 		writer.println("	<xsl:for-each select=\"category-def\">"); //$NON-NLS-1$
@@ -431,11 +419,10 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.flush();
 		writeFile(fProject.getFile(fWebLocation + "/site.xsl"), swriter); //$NON-NLS-1$
 	}
-	
+
 	private void writeFile(IFile file, StringWriter swriter) {
 		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter
-					.toString().getBytes("UTF8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {

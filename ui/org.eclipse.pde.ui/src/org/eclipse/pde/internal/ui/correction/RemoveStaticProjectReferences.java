@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -34,9 +32,11 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 	public void run(IMarker marker) {
 		try {
 			IProject project = marker.getResource().getProject();
-			if (project == null) return;
+			if (project == null)
+				return;
 			IProjectDescription projDesc = project.getDescription();
-			if (projDesc == null) return;
+			if (projDesc == null)
+				return;
 			projDesc.setReferencedProjects(new IProject[0]);
 			project.setDescription(projDesc, null);
 		} catch (CoreException e) {

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,89 +30,86 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
-	
+
 	protected static final int USE_DEFAULT = 0;
 	protected static final int USE_CURRENT_TP = 1;
 	protected static final int USE_EXISTING_TARGET = 2;
-	
+
 	private Button fDefaultButton;
 	private Button fCurrentTPButton;
 	private Button fExistingTargetButton;
 	private Combo fTargets;
 	private String[] fTargetIds;
 	private Button fPreviewButton;
-	
+
 	private static String EXTENSION = "target"; //$NON-NLS-1$
-	
+
 	public TargetDefinitionWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.TargetProfileWizardPage_title);
 		setDescription(PDEUIMessages.TargetProfileWizardPage_description);
 		// Force the file extension to be 'target'
-		setFileExtension(EXTENSION);		
+		setFileExtension(EXTENSION);
 	}
-	
+
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE);
 	}
-	
-    protected void createAdvancedControls(Composite parent) {
-    	Group group = new Group(parent, SWT.NONE);
-    	group.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
-    	group.setLayout(new GridLayout(3, false));
-    	group.setLayoutData(new GridData(GridData.FILL_BOTH));
-    	
-    	fDefaultButton = new Button(group, SWT.RADIO);
-    	fDefaultButton.setText(PDEUIMessages.TargetProfileWizardPage_blankTarget);
-    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = 3;
-    	fDefaultButton.setLayoutData(gd);
-    	fDefaultButton.setSelection(true);
-    	
-    	fCurrentTPButton = new Button(group, SWT.RADIO);
-    	fCurrentTPButton.setText(PDEUIMessages.TargetProfileWizardPage_currentPlatform);
-    	gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = 3;
-    	fCurrentTPButton.setLayoutData(gd);
-    	
-    	fExistingTargetButton = new Button(group, SWT.RADIO);
-    	fExistingTargetButton.setText(PDEUIMessages.TargetProfileWizardPage_existingTarget);
-    	fExistingTargetButton.setLayoutData(new GridData());
-    	fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
-    		public void widgetSelected(SelectionEvent e) {
-    			boolean enabled = fExistingTargetButton.getSelection();
-    			fTargets.setEnabled(enabled);
-    			fPreviewButton.setEnabled(enabled);
-    		}
-    	});
-    	
-    	fTargets = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
-    	fTargets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    	fTargets.setEnabled(false);
-    	initializeTargetCombo();
-    	
-    	fPreviewButton = new Button(group, SWT.PUSH);
-    	fPreviewButton.setText(PDEUIMessages.TargetProfileWizardPage_viewProfile);
-    	fPreviewButton.setLayoutData(new GridData());
-    	SWTUtil.setButtonDimensionHint(fPreviewButton);
-    	fPreviewButton.setEnabled(false);
-    	fPreviewButton.addSelectionListener(new SelectionAdapter() {
-    		public void widgetSelected(SelectionEvent e) {
+
+	protected void createAdvancedControls(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
+		group.setLayout(new GridLayout(3, false));
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fDefaultButton = new Button(group, SWT.RADIO);
+		fDefaultButton.setText(PDEUIMessages.TargetProfileWizardPage_blankTarget);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		fDefaultButton.setLayoutData(gd);
+		fDefaultButton.setSelection(true);
+
+		fCurrentTPButton = new Button(group, SWT.RADIO);
+		fCurrentTPButton.setText(PDEUIMessages.TargetProfileWizardPage_currentPlatform);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		fCurrentTPButton.setLayoutData(gd);
+
+		fExistingTargetButton = new Button(group, SWT.RADIO);
+		fExistingTargetButton.setText(PDEUIMessages.TargetProfileWizardPage_existingTarget);
+		fExistingTargetButton.setLayoutData(new GridData());
+		fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = fExistingTargetButton.getSelection();
+				fTargets.setEnabled(enabled);
+				fPreviewButton.setEnabled(enabled);
+			}
+		});
+
+		fTargets = new Combo(group, SWT.SINGLE | SWT.READ_ONLY);
+		fTargets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fTargets.setEnabled(false);
+		initializeTargetCombo();
+
+		fPreviewButton = new Button(group, SWT.PUSH);
+		fPreviewButton.setText(PDEUIMessages.TargetProfileWizardPage_viewProfile);
+		fPreviewButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(fPreviewButton);
+		fPreviewButton.setEnabled(false);
+		fPreviewButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				InputStream stream = null;
 				try {
 					URL url = getExternalTargetURL();
 					if (url != null)
 						stream = new BufferedInputStream(url.openStream());
- 					if (stream != null) {
+					if (stream != null) {
 						ITargetModel model = new TargetModel();
 						model.load(stream, false);
 						new OpenTargetProfileAction(getShell(), model, fTargets.getText()).run();
@@ -129,37 +123,36 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 					} catch (IOException e3) {
 					}
 				}
-    		}
-    	});
-    	
-    	Dialog.applyDialogFont(group);
-    }
-    
+			}
+		});
+
+		Dialog.applyDialogFont(group);
+	}
+
 	private URL getExternalTargetURL() {
 		TargetDefinitionManager manager = PDECore.getDefault().getTargetProfileManager();
 		IConfigurationElement elem = manager.getTarget(fTargetIds[fTargets.getSelectionIndex()]);
 		if (elem != null) {
-			String path = elem.getAttribute("definition");  //$NON-NLS-1$
+			String path = elem.getAttribute("definition"); //$NON-NLS-1$
 			String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
 			return TargetDefinitionManager.getResourceURL(symbolicName, path);
 		}
 		return null;
 	}
 
-    
-    protected void initializeTargetCombo() {
-    	IConfigurationElement[] elements = PDECore.getDefault().getTargetProfileManager().getSortedTargets();
-    	fTargetIds = new String[elements.length];
-    	for (int i = 0; i < elements.length; i++) {
-    		String name =elements[i].getAttribute("name"); //$NON-NLS-1$
+	protected void initializeTargetCombo() {
+		IConfigurationElement[] elements = PDECore.getDefault().getTargetProfileManager().getSortedTargets();
+		fTargetIds = new String[elements.length];
+		for (int i = 0; i < elements.length; i++) {
+			String name = elements[i].getAttribute("name"); //$NON-NLS-1$
 			if (fTargets.indexOf(name) == -1)
 				fTargets.add(name);
 			fTargetIds[i] = elements[i].getAttribute("id"); //$NON-NLS-1$
-    	}
-    	if (elements.length > 0)
-    		fTargets.select(0);
-    }
-    
+		}
+		if (elements.length > 0)
+			fTargets.select(0);
+	}
+
 	protected int getInitializationOption() {
 		if (fDefaultButton.getSelection())
 			return USE_DEFAULT;
@@ -167,9 +160,9 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 			return USE_CURRENT_TP;
 		return USE_EXISTING_TARGET;
 	}
-	
+
 	protected String getTargetId() {
 		return fTargetIds[fTargets.getSelectionIndex()];
 	}
-    
+
 }

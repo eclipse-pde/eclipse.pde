@@ -21,8 +21,7 @@ import org.eclipse.ui.forms.IFormPart;
 public abstract class PDEDetailsSections extends PDEDetails {
 	private PDESection sections[];
 
-	protected abstract PDESection[] createSections(PDEFormPage page,
-			Composite parent);
+	protected abstract PDESection[] createSections(PDEFormPage page, Composite parent);
 
 	/*
 	 * (non-Javadoc)

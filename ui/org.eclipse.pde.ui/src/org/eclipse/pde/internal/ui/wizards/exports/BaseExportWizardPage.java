@@ -11,18 +11,14 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -33,18 +29,12 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
-	
+
 	protected ExportPart fExportPart;
 	private IStructuredSelection fSelection;
 	protected ExportDestinationTab fDestinationTab;
@@ -52,8 +42,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected JARSigningTab fJARSiginingTab;
 	protected TabFolder fTabFolder;
 
-	class ExportListProvider extends DefaultContentProvider implements
-			IStructuredContentProvider {
+	class ExportListProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getListElements();
 		}
@@ -71,14 +60,14 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
-			case 0:
-				handleSelectAll(true);
-				break;
-			case 1:
-				handleSelectAll(false);
-				break;
-			case 2:
-				handleWorkingSets();
+				case 0 :
+					handleSelectAll(true);
+					break;
+				case 1 :
+					handleSelectAll(false);
+					break;
+				case 2 :
+					handleWorkingSets();
 			}
 		}
 	}
@@ -86,28 +75,22 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	public BaseExportWizardPage(IStructuredSelection selection, String name, String choiceLabel) {
 		super(name);
 		fSelection = selection;
-		fExportPart =
-			new ExportPart(
-				choiceLabel,
-				new String[] {
-					PDEUIMessages.WizardCheckboxTablePart_selectAll,
-					PDEUIMessages.WizardCheckboxTablePart_deselectAll,
-					PDEUIMessages.ExportWizard_workingSet }); 
-		setDescription(PDEUIMessages.ExportWizard_Plugin_description); 
+		fExportPart = new ExportPart(choiceLabel, new String[] {PDEUIMessages.WizardCheckboxTablePart_selectAll, PDEUIMessages.WizardCheckboxTablePart_deselectAll, PDEUIMessages.ExportWizard_workingSet});
+		setDescription(PDEUIMessages.ExportWizard_Plugin_description);
 	}
-	
+
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.verticalSpacing = 10;
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		
+
 		createViewer(container);
-		
+
 		fTabFolder = new TabFolder(container, SWT.NONE);
 		fTabFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createTabs(fTabFolder, getDialogSettings());
-		
+
 		initializeViewer();
 		if (getErrorMessage() != null) {
 			setMessage(getErrorMessage());
@@ -115,13 +98,13 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		}
 		setControl(container);
 		hookHelpContext(container);
-		Dialog.applyDialogFont(container);		
+		Dialog.applyDialogFont(container);
 	}
-	
+
 	protected void createTabs(TabFolder folder, IDialogSettings settings) {
 		createDestinationTab(folder);
 		fDestinationTab.initialize(settings);
-		
+
 		createOptionsTab(folder);
 		fOptionsTab.initialize(settings);
 
@@ -130,28 +113,28 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			fJARSiginingTab.initialize(settings);
 		}
 	}
-	
+
 	protected void createDestinationTab(TabFolder folder) {
 		fDestinationTab = new ExportDestinationTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fDestinationTab.createControl(folder));
-		item.setText(PDEUIMessages.ExportWizard_destination); 
+		item.setText(PDEUIMessages.ExportWizard_destination);
 	}
-	
+
 	protected void createOptionsTab(TabFolder folder) {
 		fOptionsTab = new ExportOptionsTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fOptionsTab.createControl(folder));
-		item.setText(PDEUIMessages.ExportWizard_options); 		
+		item.setText(PDEUIMessages.ExportWizard_options);
 	}
-	
+
 	protected void createJARSigningTab(TabFolder folder) {
 		fJARSiginingTab = new JARSigningTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fJARSiginingTab.createControl(folder));
 		item.setText(PDEUIMessages.AdvancedPluginExportPage_signJar);
 	}
-   
+
 	protected void createViewer(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -160,12 +143,12 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fExportPart.createControl(composite);
 		GridData gd = (GridData) fExportPart.getControl().getLayoutData();
 		gd.heightHint = 125;
 		gd.widthHint = 150;
-		gd.horizontalSpan = 2;		
+		gd.horizontalSpan = 2;
 
 		TableViewer viewer = fExportPart.getTableViewer();
 		viewer.setContentProvider(new ExportListProvider());
@@ -173,9 +156,9 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fExportPart.getTableViewer().setInput(getInput());
 	}
-	
+
 	protected abstract Object getInput();
-	
+
 	protected void initializeViewer() {
 		Object[] elems = fSelection.toArray();
 		ArrayList checked = new ArrayList(elems.length);
@@ -215,18 +198,18 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 				for (int j = 0; j < elements.length; j++) {
 					IModel model = findModelFor(elements[j]);
 					if (isValidModel(model)) {
-						models.add(model);						
+						models.add(model);
 					}
 				}
 			}
 			fExportPart.setSelection(models.toArray());
 		}
 	}
-	
+
 	public Object[] getSelectedItems() {
 		return fExportPart.getSelection();
 	}
-	
+
 	protected void pageChanged() {
 		if (getMessage() != null)
 			setMessage(null);
@@ -237,14 +220,13 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
 			setMessage(warningMessage, IMessageProvider.WARNING);
 		}
-		String error = fExportPart.getSelectionCount() > 0 ? null
-				: PDEUIMessages.ExportWizard_status_noselection;
+		String error = fExportPart.getSelectionCount() > 0 ? null : PDEUIMessages.ExportWizard_status_noselection;
 		if (error == null)
 			error = validateTabs();
 		setErrorMessage(error);
 		setPageComplete(error == null);
 	}
-	
+
 	protected String validateTabs() {
 		String message = fDestinationTab.validate();
 		if (message == null)
@@ -255,13 +237,13 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected abstract void hookHelpContext(Control control);
-	
+
 	protected abstract boolean isValidModel(IModel model);
-	
+
 	public abstract Object[] getListElements();
-	
+
 	protected abstract IModel findModelFor(IAdaptable object);
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		fDestinationTab.saveSettings(settings);
 		fOptionsTab.saveSettings(settings);
@@ -296,7 +278,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected String getAntBuildFileName() {
 		return fOptionsTab.getAntBuildFileName();
 	}
-	
+
 	protected String getQualifier() {
 		return fOptionsTab.getQualifier();
 	}
@@ -308,7 +290,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected abstract void adjustAdvancedTabsVisibility();
-	
+
 	protected void adjustJARSigningTabVisibility() {
 		IDialogSettings settings = getDialogSettings();
 		if (useJARFormat()) {
@@ -320,7 +302,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			if (fTabFolder.getItemCount() >= 3) {
 				fJARSiginingTab.saveSettings(settings);
 				fTabFolder.getItem(2).dispose();
-			}			
+			}
 		}
 	}
 

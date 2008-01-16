@@ -11,15 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -41,11 +35,11 @@ public class BuildPage extends PDEFormPage {
 	private BuildContentsSection fSrcSection;
 	private BuildContentsSection fBinSection;
 	private RuntimeInfoSection fRuntimeSection;
-	
+
 	private Button fCustomButton;
-	
+
 	public BuildPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  
+		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);
 	}
 
 	/* (non-Javadoc)
@@ -53,8 +47,8 @@ public class BuildPage extends PDEFormPage {
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/build.htm"; //$NON-NLS-1$
-	}	
-	
+	}
+
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		FormToolkit toolkit = mform.getToolkit();
@@ -63,16 +57,12 @@ public class BuildPage extends PDEFormPage {
 		form.setText(PDEUIMessages.BuildEditor_BuildPage_title);
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 
-		fCustomButton =
-			toolkit.createButton(
-				form.getBody(),
-				getCustomText(),
-				SWT.CHECK);
+		fCustomButton = toolkit.createButton(form.getBody(), getCustomText(), SWT.CHECK);
 		fCustomButton.setAlignment(SWT.LEFT);
-		
+
 		Label label = toolkit.createLabel(form.getBody(), null);
-		label.setLayoutData(new GridData (GridData.FILL_HORIZONTAL));
-		
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		fCustomButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isCustom = fCustomButton.getSelection();
@@ -81,9 +71,9 @@ public class BuildPage extends PDEFormPage {
 				handleCustomCheckState(isCustom);
 			}
 		});
-		
+
 		fRuntimeSection = new RuntimeInfoSection(this, form.getBody());
-		
+
 		fBinSection = new BinSection(this, form.getBody());
 		fBinSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -91,7 +81,7 @@ public class BuildPage extends PDEFormPage {
 		fSrcSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fClasspathSection = new BuildClasspathSection(this, form.getBody());
-		
+
 		mform.addPart(fRuntimeSection);
 		mform.addPart(fSrcSection);
 		mform.addPart(fBinSection);
@@ -102,51 +92,48 @@ public class BuildPage extends PDEFormPage {
 	}
 
 	private IBuildModel getBuildModel() {
-		InputContext context = getPDEEditor().getContextManager()
-				.findContext(BuildInputContext.CONTEXT_ID);
+		InputContext context = getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
 		return (IBuildModel) context.getModel();
 	}
 
-	private IBuildEntry getCustomBuildEntry(){
+	private IBuildEntry getCustomBuildEntry() {
 		IBuildModel buildModel = getBuildModel();
-		IBuildEntry customEntry =
-			buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
-			
-		if (customEntry!=null)
+		IBuildEntry customEntry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
+
+		if (customEntry != null)
 			return customEntry;
-							
+
 		try {
-			customEntry =
-				buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
+			customEntry = buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 			buildModel.getBuild().add(customEntry);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 		return customEntry;
 	}
-	
-	private boolean getCustomSelection(){
+
+	private boolean getCustomSelection() {
 		IBuildModel model = getBuildModel();
 		IBuild build = model.getBuild();
 		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
-		if (customEntry ==null || customEntry.getTokens().length ==0)
+		if (customEntry == null || customEntry.getTokens().length == 0)
 			return false;
-		return customEntry.getTokens()[0].equals("true");  //$NON-NLS-1$
+		return customEntry.getTokens()[0].equals("true"); //$NON-NLS-1$
 	}
-	
-	private void handleCustomCheckState(boolean isCustom){
+
+	private void handleCustomCheckState(boolean isCustom) {
 		fCustomButton.setSelection(isCustom);
 		enableAllSections(!isCustom);
 	}
-	
-	public void enableAllSections(boolean enable){
+
+	public void enableAllSections(boolean enable) {
 		fRuntimeSection.enableSection(enable);
 		fBinSection.enableSection(enable);
 		fSrcSection.enableSection(enable);
 		fClasspathSection.enableSection(enable);
 	}
 
-	private void setCustomEntryValue(IBuildEntry customEntry, boolean isCustom){
+	private void setCustomEntryValue(IBuildEntry customEntry, boolean isCustom) {
 		String[] tokens = customEntry.getTokens();
 		try {
 			if (tokens.length != 0) {
@@ -159,11 +146,11 @@ public class BuildPage extends PDEFormPage {
 				getBuildModel().getBuild().remove(customEntry);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		}	
+		}
 	}
-	
+
 	private String getCustomText() {
-		return PDEUIMessages.BuildPage_custom; 
+		return PDEUIMessages.BuildPage_custom;
 	}
 
 }

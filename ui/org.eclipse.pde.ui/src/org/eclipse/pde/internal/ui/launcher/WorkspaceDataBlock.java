@@ -22,9 +22,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 
 public class WorkspaceDataBlock extends BaseBlock {
 
@@ -32,21 +30,21 @@ public class WorkspaceDataBlock extends BaseBlock {
 	private Button fAskClearCheck;
 	private Button fClearWorkspaceRadio;
 	private Button fClearWorkspaceLogRadio;
-	
+
 	public WorkspaceDataBlock(AbstractLauncherTab tab) {
 		super(tab);
 	}
-	
+
 	public void createControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.WorkspaceDataBlock_workspace); 
+		group.setText(PDEUIMessages.WorkspaceDataBlock_workspace);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createText(group, PDEUIMessages.WorkspaceDataBlock_location, 0);
-		
+
 		Composite buttons = new Composite(group, SWT.NONE);
 		layout = new GridLayout(7, false);
 		layout.marginHeight = layout.marginWidth = 0;
@@ -54,9 +52,9 @@ public class WorkspaceDataBlock extends BaseBlock {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		buttons.setLayoutData(gd);
-		
+
 		fClearWorkspaceCheck = new Button(buttons, SWT.CHECK);
-		fClearWorkspaceCheck.setText(PDEUIMessages.WorkspaceDataBlock_clear);	
+		fClearWorkspaceCheck.setText(PDEUIMessages.WorkspaceDataBlock_clear);
 		fClearWorkspaceCheck.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		fClearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -66,9 +64,9 @@ public class WorkspaceDataBlock extends BaseBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fClearWorkspaceRadio = new Button(buttons, SWT.RADIO);
-		fClearWorkspaceRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearWorkspace);	
+		fClearWorkspaceRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearWorkspace);
 		fClearWorkspaceRadio.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		fClearWorkspaceRadio.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -76,18 +74,16 @@ public class WorkspaceDataBlock extends BaseBlock {
 			}
 		});
 		fClearWorkspaceLogRadio = new Button(buttons, SWT.RADIO);
-		fClearWorkspaceLogRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearLog);	
+		fClearWorkspaceLogRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearLog);
 		fClearWorkspaceLogRadio.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fClearWorkspaceLogRadio.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
-		
-		createButtons(buttons, new String[] {
-				PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables
-		});
-		
+
+		createButtons(buttons, new String[] {PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables});
+
 		fAskClearCheck = new Button(group, SWT.CHECK);
 		fAskClearCheck.setText(PDEUIMessages.WorkspaceDataBlock_askClear);
 		gd = new GridData();
@@ -95,17 +91,16 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fAskClearCheck.setLayoutData(gd);
 		fAskClearCheck.addSelectionListener(fListener);
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.LOCATION, getLocation());
 		config.setAttribute(IPDELauncherConstants.DOCLEAR, fClearWorkspaceCheck.getSelection());
 		config.setAttribute(IPDELauncherConstants.ASKCLEAR, fAskClearCheck.getSelection());
 		config.setAttribute(IPDEUIConstants.DOCLEARLOG, fClearWorkspaceLogRadio.getSelection());
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
-		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, 
-														LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())));
+		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())));
 		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
 		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
@@ -114,14 +109,12 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
 		fClearWorkspaceRadio.setSelection(!configuration.getAttribute(IPDEUIConstants.DOCLEARLOG, false));
 	}
-		
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {		
+
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {
 		if (isJUnit) {
-			configuration.setAttribute(IPDELauncherConstants.LOCATION, 
-										LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
+			configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 		} else {
-			configuration.setAttribute(IPDELauncherConstants.LOCATION, 
-										LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())); 
+			configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName()));
 		}
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit);
@@ -131,19 +124,19 @@ public class WorkspaceDataBlock extends BaseBlock {
 	protected String getName() {
 		return PDEUIMessages.WorkspaceDataBlock_name;
 	}
-	
+
 	protected void handleBrowseWorkspace() {
 		super.handleBrowseWorkspace();
 		if (fClearWorkspaceCheck.getSelection())
 			fClearWorkspaceCheck.setSelection(false);
 	}
-	
+
 	protected void handleBrowseFileSystem() {
 		super.handleBrowseFileSystem();
 		if (fClearWorkspaceCheck.getSelection())
 			fClearWorkspaceCheck.setSelection(false);
 	}
-	
+
 	public String validate() {
 		int length = getLocation().length();
 		fClearWorkspaceCheck.setEnabled(length > 0);
@@ -152,5 +145,5 @@ public class WorkspaceDataBlock extends BaseBlock {
 			fClearWorkspaceCheck.setSelection(false);
 		return null;
 	}
-	
+
 }

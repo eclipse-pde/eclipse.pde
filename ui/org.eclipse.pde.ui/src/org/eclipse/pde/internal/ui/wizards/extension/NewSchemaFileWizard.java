@@ -17,9 +17,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -28,21 +26,25 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private IContainer container;
 	private IPluginExtensionPoint point;
 	private boolean isPluginIdFinal;
+
 	public NewSchemaFileWizard() {
 		this(null, null, false);
 	}
-	public NewSchemaFileWizard(IProject project, IPluginExtensionPoint point, boolean isFinalPluginId){
+
+	public NewSchemaFileWizard(IProject project, IPluginExtensionPoint point, boolean isFinalPluginId) {
 		initialize();
 		this.container = project;
 		this.point = point;
 		this.isPluginIdFinal = isFinalPluginId;
 	}
-	public void initialize(){
+
+	public void initialize() {
 		setDialogSettings(getSettingsSection());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_EXT_POINT_SCHEMA_WIZ);
 		setWindowTitle(PDEUIMessages.NewSchemaFileWizard_wtitle);
 		setNeedsProgressMonitor(true);
 	}
+
 	public void addPages() {
 		mainPage = new NewSchemaFileMainPage(container, point, isPluginIdFinal);
 		addPage(mainPage);
@@ -55,6 +57,7 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 			section = root.addNewSection("newExtensionPointWizard"); //$NON-NLS-1$
 		return section;
 	}
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		Object sel = selection.getFirstElement();
 		if (sel instanceof IJavaProject) {

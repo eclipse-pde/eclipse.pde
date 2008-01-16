@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -22,22 +21,21 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
 
-
 public class ModelChange {
-	
+
 	private static final String DEFAULT_LOCALIZATION_PREFIX = "plugin"; //$NON-NLS-1$
 	public static final String LOCALIZATION_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
-	
+
 	private ModelChangeFile fXMLCoupling;
 	private ModelChangeFile fMFCoupling;
-	
+
 	private IPluginModelBase fParent;
 	private boolean fPreSelected;
-	
+
 	private String fBundleLocalization;
 	private Properties fProperties;
 	private boolean fReloadProperties = true;
-	
+
 	protected static boolean modelLoaded(IModel model) {
 		try {
 			model.load();
@@ -45,7 +43,7 @@ public class ModelChange {
 		}
 		return (model.isLoaded());
 	}
-	
+
 	public ModelChange(IPluginModelBase parent, boolean preSelected) {
 		fParent = parent;
 		fPreSelected = preSelected;
@@ -53,7 +51,7 @@ public class ModelChange {
 		if (fBundleLocalization == null)
 			fBundleLocalization = DEFAULT_LOCALIZATION_PREFIX;
 	}
-	
+
 	public void addChange(IFile file, ModelChangeElement change) {
 		if (change == null || file == null)
 			return;
@@ -65,7 +63,7 @@ public class ModelChange {
 		else
 			return;
 	}
-	
+
 	private void addXMLChange(IFile file, ModelChangeElement change) {
 		if (fXMLCoupling == null) {
 			fXMLCoupling = new ModelChangeFile(file, this);
@@ -75,14 +73,14 @@ public class ModelChange {
 		}
 		fXMLCoupling.add(change);
 	}
-	
+
 	private void addMFChange(IFile file, ModelChangeElement change) {
 		if (fMFCoupling == null) {
 			fMFCoupling = new ModelChangeFile(file, this);
 		}
 		fMFCoupling.add(change);
 	}
-	
+
 	public IFile[] getChangeFiles() {
 		IFile xmlFile = fXMLCoupling != null ? fXMLCoupling.getFile() : null;
 		IFile mfFile = fMFCoupling != null ? fMFCoupling.getFile() : null;
@@ -94,12 +92,12 @@ public class ModelChange {
 			return new IFile[] {mfFile};
 		return new IFile[0];
 	}
-	
+
 	public IFile getPropertiesFile() {
 		IProject project = fParent.getUnderlyingResource().getProject();
 		return project.getFile(getBundleLocalization() + LOCALIZATION_FILE_SUFFIX);
 	}
-	
+
 	public Properties getProperties() {
 		if (fProperties == null || fReloadProperties) {
 			try {
@@ -117,7 +115,7 @@ public class ModelChange {
 		}
 		return fProperties;
 	}
-	
+
 	public ArrayList getChangesInFile(IFile file) {
 		if (fXMLCoupling != null && file == fXMLCoupling.getFile())
 			return fXMLCoupling.getChanges();
@@ -125,7 +123,7 @@ public class ModelChange {
 			return fMFCoupling.getChanges();
 		return null;
 	}
-	
+
 	public int getNumberOfChangesInFile(IFile file) {
 		if (fXMLCoupling != null && file == fXMLCoupling.getFile())
 			return fXMLCoupling.getNumChanges();
@@ -133,11 +131,11 @@ public class ModelChange {
 			return fMFCoupling.getNumChanges();
 		return 0;
 	}
-	
+
 	public boolean wasPreSelected() {
 		return fPreSelected;
 	}
-	
+
 	public IPluginModelBase getParentModel() {
 		return fParent;
 	}
@@ -151,7 +149,7 @@ public class ModelChange {
 			return new ModelChangeFile[] {fMFCoupling};
 		return new ModelChangeFile[0];
 	}
-	
+
 	public void setBundleLocalization(String bundleLocalization) {
 		if (bundleLocalization == null || bundleLocalization.endsWith(LOCALIZATION_FILE_SUFFIX))
 			throw new IllegalArgumentException();
@@ -160,10 +158,11 @@ public class ModelChange {
 		fBundleLocalization = bundleLocalization;
 		fReloadProperties = true;
 	}
+
 	public String getBundleLocalization() {
 		return fBundleLocalization;
 	}
-	
+
 	public boolean localizationSet() {
 		String localization = PDEManager.getBundleLocalization(fParent);
 		return localization != null && localization.length() > 0;

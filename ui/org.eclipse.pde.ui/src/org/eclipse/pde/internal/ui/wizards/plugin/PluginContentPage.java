@@ -13,15 +13,13 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.Locale;
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -29,20 +27,10 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -58,15 +46,15 @@ public class PluginContentPage extends ContentPage {
 	private Combo fEEChoice;
 
 	private Label fLabel;
-    private Button fYesButton;
-    private Button fNoButton;
-    
-    private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
-    private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
-    private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
-    
-    private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
-    
+	private Button fYesButton;
+	private Button fNoButton;
+
+	private final static String S_GENERATE_ACTIVATOR = "generateActivator"; //$NON-NLS-1$
+	private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
+	private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
+
+	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
+
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			if (fInitialized)
@@ -74,29 +62,28 @@ public class PluginContentPage extends ContentPage {
 			validatePage();
 		}
 	};
-	
+
 	private Group fRCPGroup;
 
-	public PluginContentPage(String pageName, IProjectProvider provider,
-			NewProjectCreationPage page,AbstractFieldData data) {
+	public PluginContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
-		setTitle(PDEUIMessages.ContentPage_title); 
-		setDescription(PDEUIMessages.ContentPage_desc); 
+		setTitle(PDEUIMessages.ContentPage_title);
+		setDescription(PDEUIMessages.ContentPage_desc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		
+
 		createPluginPropertiesGroup(container);
 		createPluginClassGroup(container);
 		createRCPGroup(container);
-		
+
 		Dialog.applyDialogFont(container);
-		setControl(container);	
+		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_REQUIRED_DATA);
 	}
 
@@ -104,74 +91,72 @@ public class PluginContentPage extends ContentPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(3, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup); 
+		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pid); 
+		label.setText(PDEUIMessages.ContentPage_pid);
 		fIdText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pversion); 
+		label.setText(PDEUIMessages.ContentPage_pversion);
 		fVersionText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pname); 
+		label.setText(PDEUIMessages.ContentPage_pname);
 		fNameText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pprovider); 
+		label.setText(PDEUIMessages.ContentPage_pprovider);
 		fProviderText = createText(propertiesGroup, propertiesListener, 2);
-		
+
 		createExecutionEnvironmentControls(propertiesGroup);
 	}
-	
+
 	private void createExecutionEnvironmentControls(Composite container) {
 		// Create label
-		fEELabel = new Label(container, SWT.NONE);	
+		fEELabel = new Label(container, SWT.NONE);
 		fEELabel.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
 
 		// Create combo
 		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		// Gather EEs 
 		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
-		TreeSet availableEEs = new TreeSet();		
+		TreeSet availableEEs = new TreeSet();
 		for (int i = 0; i < exeEnvs.length; i++) {
-			availableEEs.add(exeEnvs[i].getId());		
+			availableEEs.add(exeEnvs[i].getId());
 		}
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
-		
+
 		// Set data 
-		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size()-1]));
-		fEEChoice.addSelectionListener(new SelectionAdapter(){
+		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
+		fEEChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();
 			}
 		});
-		
+
 		// Set default EE based on strict match to default VM
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
 		String[] EEChoices = fEEChoice.getItems();
 		for (int i = 0; i < EEChoices.length; i++) {
-			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)){
-				if(VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
-						fEEChoice.select(i);
-						break;							
+			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
+				if (VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+					fEEChoice.select(i);
+					break;
 				}
 			}
 		}
-		
+
 		// Create button
 		fExeEnvButton = new Button(container, SWT.PUSH);
 		fExeEnvButton.setLayoutData(new GridData());
-		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);		
+		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
 		fExeEnvButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(
-						getShell(), 
-						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
 			}
 		});
 	}
@@ -182,12 +167,12 @@ public class PluginContentPage extends ContentPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		classGroup.setLayoutData(gd);
-		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup); 
-		
+		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup);
+
 		IDialogSettings settings = getDialogSettings();
 
 		fGenerateClass = new Button(classGroup, SWT.CHECK);
-		fGenerateClass.setText(PDEUIMessages.ContentPage_generate); 
+		fGenerateClass.setText(PDEUIMessages.ContentPage_generate);
 		fGenerateClass.setSelection((settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -202,14 +187,14 @@ public class PluginContentPage extends ContentPage {
 		});
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
-		fClassLabel.setText(PDEUIMessages.ContentPage_classname); 
+		fClassLabel.setText(PDEUIMessages.ContentPage_classname);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fClassLabel.setLayoutData(gd);
 		fClassText = createText(classGroup, classListener);
 
 		fUIPlugin = new Button(classGroup, SWT.CHECK);
-		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); 
+		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution);
 		fUIPlugin.setSelection((settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -224,148 +209,144 @@ public class PluginContentPage extends ContentPage {
 
 	public void updateData() {
 		super.updateData();
-		PluginFieldData data = (PluginFieldData)fData;
+		PluginFieldData data = (PluginFieldData) fData;
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
-		if(fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
+		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
 			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 		} else {
 			fData.setExecutionEnvironment(null);
 		}
 	}
-	
-	private void createRCPGroup(Composite container){
-	    fRCPGroup = new Group(container, SWT.NONE);
-	    fRCPGroup.setLayout(new GridLayout(2, false));
-	    fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup); 
-	    
-	    createRCPQuestion(fRCPGroup, 2);
+
+	private void createRCPGroup(Composite container) {
+		fRCPGroup = new Group(container, SWT.NONE);
+		fRCPGroup.setLayout(new GridLayout(2, false));
+		fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup);
+
+		createRCPQuestion(fRCPGroup, 2);
 	}
-	
+
 	private void createRCPQuestion(Composite parent, int horizontalSpan) {
-	    Composite comp = new Composite(parent, SWT.NONE);
-	    GridLayout layout = new GridLayout(3, false);
-	    layout.marginHeight = layout.marginWidth = 0;
-	    comp.setLayout(layout);
-	    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-	    gd.horizontalSpan = horizontalSpan;
-	    comp.setLayoutData(gd);
-	    
-	    fLabel = new Label(comp, SWT.NONE);
-	    fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion); 
-	    fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    
-	    IDialogSettings settings = getDialogSettings();
-	    boolean rcpApp = (settings != null) ? settings.getBoolean(S_RCP_PLUGIN) : false;
-	    
-	    fYesButton = new Button(comp, SWT.RADIO);
-	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); 
-	    fYesButton.setSelection(rcpApp);
-	    gd = new GridData();
-	    gd.widthHint = getButtonWidthHint(fYesButton);
-	    fYesButton.setLayoutData(gd);
-	    fYesButton.addSelectionListener(new SelectionAdapter() {
-	    	public void widgetSelected(SelectionEvent e) {
-	    		updateData();
-	    		getContainer().updateButtons();
-	    	}
-	    });
-	    
-	    fNoButton = new Button(comp, SWT.RADIO);
-	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); 
-	    fNoButton.setSelection(!rcpApp);
-	    gd = new GridData();
-	    gd.widthHint = getButtonWidthHint(fNoButton);
-	    fNoButton.setLayoutData(gd);		
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		comp.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = horizontalSpan;
+		comp.setLayoutData(gd);
+
+		fLabel = new Label(comp, SWT.NONE);
+		fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion);
+		fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		IDialogSettings settings = getDialogSettings();
+		boolean rcpApp = (settings != null) ? settings.getBoolean(S_RCP_PLUGIN) : false;
+
+		fYesButton = new Button(comp, SWT.RADIO);
+		fYesButton.setText(PDEUIMessages.PluginContentPage_yes);
+		fYesButton.setSelection(rcpApp);
+		gd = new GridData();
+		gd.widthHint = getButtonWidthHint(fYesButton);
+		fYesButton.setLayoutData(gd);
+		fYesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateData();
+				getContainer().updateButtons();
+			}
+		});
+
+		fNoButton = new Button(comp, SWT.RADIO);
+		fNoButton.setText(PDEUIMessages.PluginContentPage_no);
+		fNoButton.setSelection(!rcpApp);
+		gd = new GridData();
+		gd.widthHint = getButtonWidthHint(fNoButton);
+		fNoButton.setLayoutData(gd);
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
-     */
-    public void setVisible(boolean visible) {
-    	if (visible) {
-    		fMainPage.updateData();
-    		fGenerateClass.setEnabled(!fData.isSimple());
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		if (visible) {
+			fMainPage.updateData();
+			fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
 			fUIPlugin.setEnabled(!fData.isSimple() && !isPureOSGi());
 			// if fUIPlugin is disabled, set selection to false
-			if (!fUIPlugin.isEnabled())
-			{	fUIPlugin.setSelection(false);
+			if (!fUIPlugin.isEnabled()) {
+				fUIPlugin.setSelection(false);
 			}
 			// if the fUIPlugin was disabled and is now enabled, then set the selection to true
-			else if(!wasUIPluginEnabled)
-			{	fUIPlugin.setSelection(true);
+			else if (!wasUIPluginEnabled) {
+				fUIPlugin.setSelection(true);
 			}
 
 			// plugin class group
-			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
+			if (((fChangedGroups & P_CLASS_GROUP) == 0)) {
 				int oldfChanged = fChangedGroups;
 				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
-			}	
-			
+			}
+
 			boolean allowEESelection = !fData.isSimple() && fData.hasBundleStructure();
 			fEELabel.setEnabled(allowEESelection);
 			fEEChoice.setEnabled(allowEESelection);
 			fExeEnvButton.setEnabled(allowEESelection);
-			
+
 			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());
-    	}
-        super.setVisible(visible);
-    }
+		}
+		super.setVisible(visible);
+	}
 
 	private boolean isPureOSGi() {
-		return ((PluginFieldData)fData).getOSGiFramework() != null;
+		return ((PluginFieldData) fData).getOSGiFramework() != null;
 	}
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
-			IStatus status = JavaConventions.validateJavaTypeName(
-					fClassText.getText().trim(), 
-					PDEJavaHelper.getJavaSourceLevel(null), 
-					PDEJavaHelper.getJavaComplianceLevel(null));
+			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(), PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null));
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
 			} else if (status.getSeverity() == IStatus.WARNING) {
 				setMessage(status.getMessage(), IMessageProvider.WARNING);
 			}
 		}
-		if (errorMessage == null){
+		if (errorMessage == null) {
 			String eeid = fEEChoice.getText();
-	    	if(fEEChoice.isEnabled()) {
-	    		IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
-	    		if(ee != null && ee.getCompatibleVMs().length == 0) {
-	    			errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
-	    		}
-	    	}
+			if (fEEChoice.isEnabled()) {
+				IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
+				if (ee != null && ee.getCompatibleVMs().length == 0) {
+					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
+				}
+			}
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
 	 */
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_plugin; 
+		return PDEUIMessages.ContentPage_plugin;
 	}
-	
+
 	private static int getButtonWidthHint(Button button) {
 		if (button.getFont().equals(JFaceResources.getDefaultFont()))
 			button.setFont(JFaceResources.getDialogFont());
-		return Math.max(50,
-				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		return Math.max(50, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_GENERATE_ACTIVATOR, !fGenerateClass.getSelection());
 		if (fUIPlugin.isEnabled())

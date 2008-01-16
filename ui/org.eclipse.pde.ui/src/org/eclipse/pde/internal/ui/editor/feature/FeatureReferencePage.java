@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -51,8 +45,8 @@ public class FeatureReferencePage extends PDEFormPage {
 	 */
 	protected String getHelpResource() {
 		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/plugins.htm"; //$NON-NLS-1$
-	}           
-	
+	}
+
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -60,7 +54,7 @@ public class FeatureReferencePage extends PDEFormPage {
 
 		// Set form header image
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGINS_FRAGMENTS));
-		
+
 		GridData gd;
 
 		Composite left = toolkit.createComposite(form.getBody());
@@ -76,15 +70,13 @@ public class FeatureReferencePage extends PDEFormPage {
 		fPluginSection = new PluginSection(this, left);
 
 		fPluginDetailsSection = new PluginDetailsSection(this, right);
-		
+
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
-		alignSectionHeaders(fPluginSection.getSection(), 
-				fPluginDetailsSection.getSection());		
+		alignSectionHeaders(fPluginSection.getSection(), fPluginDetailsSection.getSection());
 
 		fPluginPortabilitySection = new PluginPortabilitySection(this, right);
-		gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fPluginPortabilitySection.getSection().setLayoutData(gd);
 
 		managedForm.addPart(fPluginSection);
@@ -98,7 +90,7 @@ public class FeatureReferencePage extends PDEFormPage {
 		fPluginSection.fireSelection();
 		super.createFormContent(managedForm);
 	}
-	
+
 	public void setFocus() {
 		fPluginSection.setFocus();
 	}

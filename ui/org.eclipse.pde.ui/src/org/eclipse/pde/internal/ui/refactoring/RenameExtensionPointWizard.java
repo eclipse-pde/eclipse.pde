@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class RenameExtensionPointWizard extends RefactoringWizard {
-	
+
 	RefactoringInfo fInfo;
 
 	public RenameExtensionPointWizard(Refactoring refactoring, RefactoringInfo info) {
@@ -25,8 +25,8 @@ public class RenameExtensionPointWizard extends RefactoringWizard {
 	}
 
 	protected void addUserInputPages() {
-		setDefaultPageTitle( getRefactoring().getName() );
-		addPage( new GeneralRenameIDWizardPage(PDEUIMessages.RenameExtensionPointWizard_pageTitle, fInfo) {
+		setDefaultPageTitle(getRefactoring().getName());
+		addPage(new GeneralRenameIDWizardPage(PDEUIMessages.RenameExtensionPointWizard_pageTitle, fInfo) {
 
 			protected String validateId(String id) {
 				String schemaVersion = fInfo.getBase().getPluginBase().getSchemaVersion();
@@ -37,7 +37,7 @@ public class RenameExtensionPointWizard extends RefactoringWizard {
 					return PDEUIMessages.BaseExtensionPointMainPage_invalidSimpleID;
 				return null;
 			}
-			
+
 		});
 	}
 

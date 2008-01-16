@@ -25,7 +25,7 @@ public class RemoveSeperatorBuildEntryResolution extends BuildEntryMarkerResolut
 
 	protected void createChange(Build build) {
 		try {
-			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);
+			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
 			buildEntry.renameToken(fToken, fToken.substring(0, fToken.length() - 1));
 		} catch (CoreException e) {
 		}

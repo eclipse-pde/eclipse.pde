@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-
 /**
  * IPDEDragParticipant
  *
@@ -23,27 +22,27 @@ public interface IPDEDragParticipant {
 	 * @return
 	 */
 	public boolean canDragCopy(Object[] sourceObjects);
-	
+
 	/**
 	 * @param sourceObjects The original source objects
 	 * @return
 	 */
 	public boolean canDragMove(Object[] sourceObjects);
-	
+
 	/**
 	 * @param sourceObjects The original source objects
 	 * @return
 	 */
 	public boolean canDragLink(Object[] sourceObjects);
-	
+
 	/**
 	 * @param sourceObjects The serialized / deserialized source objects (need to be reconnected)
 	 */
 	public void doDragRemove(Object[] sourceObjects);
-	
+
 	/**
 	 * @return
 	 */
 	public int getSupportedDNDOperations();
-	
+
 }

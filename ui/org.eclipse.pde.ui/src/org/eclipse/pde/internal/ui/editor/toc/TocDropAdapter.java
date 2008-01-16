@@ -18,10 +18,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
@@ -33,53 +30,53 @@ import org.eclipse.swt.widgets.Item;
  */
 public class TocDropAdapter extends ViewerDropAdapter {
 	private TocTreeSection fSection;
-	
-    /**
-     * Constant describing the position of the cursor relative 
-     * to the target object.  This means the mouse is positioned
-     * slightly after the target, but not after its children if it is
-     * expanded.
-     * @see #getCurrentLocation()
-     */
-    public static final int LOCATION_JUST_AFTER = 5;
-	
-	public TocDropAdapter(TreeViewer tocTree, TocTreeSection section)
-	{	super(tocTree);
+
+	/**
+	 * Constant describing the position of the cursor relative 
+	 * to the target object.  This means the mouse is positioned
+	 * slightly after the target, but not after its children if it is
+	 * expanded.
+	 * @see #getCurrentLocation()
+	 */
+	public static final int LOCATION_JUST_AFTER = 5;
+
+	public TocDropAdapter(TreeViewer tocTree, TocTreeSection section) {
+		super(tocTree);
 		fSection = section;
 	}
 
-    /**
-     * Returns the position of the given event's coordinates relative to its target.
-     * The position is determined to be before, after, or on the item, based on
-     * some threshold value.
-     *
-     * @param event the event
-     * @return one of the <code>LOCATION_* </code>constants defined in this class
-     */
-    protected int determineLocation(DropTargetEvent event) {
-        if (!(event.item instanceof Item)) {
-            return LOCATION_NONE;
-        }
-        Item item = (Item) event.item;
-        Point coordinates = new Point(event.x, event.y);
-        coordinates = getViewer().getControl().toControl(coordinates);
-        if (item != null) {
-            Rectangle bounds = getBounds(item);
-            if (bounds == null) {
-                return LOCATION_NONE;
-            }
-            if ((coordinates.y - bounds.y) < 5) {
-                return LOCATION_BEFORE;
-            }
-            if ((bounds.y + bounds.height - coordinates.y) < 5) {
-                if ((bounds.y - coordinates.y) < 5) {
-                	return LOCATION_JUST_AFTER;
-                }
-            	return LOCATION_AFTER;
-            }
-        }
-        return LOCATION_ON;
-    }
+	/**
+	 * Returns the position of the given event's coordinates relative to its target.
+	 * The position is determined to be before, after, or on the item, based on
+	 * some threshold value.
+	 *
+	 * @param event the event
+	 * @return one of the <code>LOCATION_* </code>constants defined in this class
+	 */
+	protected int determineLocation(DropTargetEvent event) {
+		if (!(event.item instanceof Item)) {
+			return LOCATION_NONE;
+		}
+		Item item = (Item) event.item;
+		Point coordinates = new Point(event.x, event.y);
+		coordinates = getViewer().getControl().toControl(coordinates);
+		if (item != null) {
+			Rectangle bounds = getBounds(item);
+			if (bounds == null) {
+				return LOCATION_NONE;
+			}
+			if ((coordinates.y - bounds.y) < 5) {
+				return LOCATION_BEFORE;
+			}
+			if ((bounds.y + bounds.height - coordinates.y) < 5) {
+				if ((bounds.y - coordinates.y) < 5) {
+					return LOCATION_JUST_AFTER;
+				}
+				return LOCATION_AFTER;
+			}
+		}
+		return LOCATION_ON;
+	}
 
 	/* (non-Javadoc)
 	 * A new drag has entered the widget. Do file validation if necessary,
@@ -97,23 +94,22 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	public void dragOver(DropTargetEvent event) {
 		int currentLocation = determineLocation(event);
 		switch (currentLocation) {
-        case LOCATION_BEFORE:
-            event.feedback = DND.FEEDBACK_INSERT_BEFORE;
-            break;
-        case LOCATION_AFTER:
-        case LOCATION_JUST_AFTER:
-            event.feedback = DND.FEEDBACK_INSERT_AFTER;
-            break;
-        case LOCATION_ON:
-        default:
-            event.feedback = DND.FEEDBACK_SELECT;
-            break;
-        }
-		
+			case LOCATION_BEFORE :
+				event.feedback = DND.FEEDBACK_INSERT_BEFORE;
+				break;
+			case LOCATION_AFTER :
+			case LOCATION_JUST_AFTER :
+				event.feedback = DND.FEEDBACK_INSERT_AFTER;
+				break;
+			case LOCATION_ON :
+			default :
+				event.feedback = DND.FEEDBACK_SELECT;
+				break;
+		}
+
 		event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
 	}
 
-	
 	/* (non-Javadoc)
 	 * The Drag and Drop operation changed. Change the operation to a valid one
 	 * if necessary.
@@ -133,23 +129,18 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * @param event The drop event to change.
 	 */
 	private void setDNDMode(DropTargetEvent event) {
-		if (FileTransfer.getInstance().isSupportedType(event.currentDataType))
-		{	//If a file is being dragged
-			if(event.detail == DND.DROP_DEFAULT)
-			{	//If no modifier key is pressed
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) { //If a file is being dragged
+			if (event.detail == DND.DROP_DEFAULT) { //If no modifier key is pressed
 				//set the operation to DROP_COPY if available
 				//DROP_NONE otherwise
 				event.detail = (event.operations & DND.DROP_COPY);
-			}
-			else
-			{	//If a modifier key is pressed for a file and the operation isn't a copy,
+			} else { //If a modifier key is pressed for a file and the operation isn't a copy,
 				//disallow it
 				event.detail &= DND.DROP_COPY;
 			}
 		}
 		//The only other transfer type allowed is a Model Data Transfer
-		else if(!ModelDataTransfer.getInstance().isSupportedType(event.currentDataType))
-		{	//disallow drag if the transfer is not Model Data or Files
+		else if (!ModelDataTransfer.getInstance().isSupportedType(event.currentDataType)) { //disallow drag if the transfer is not Model Data or Files
 			event.detail = DND.DROP_NONE;
 		}
 	}
@@ -163,27 +154,26 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * @param event The drop event containing the transfer.
 	 */
 	private void validateFileDrop(DropTargetEvent event) {
-		if (FileTransfer.getInstance().isSupportedType(event.currentDataType))
-		{	IBaseModel model = fSection.getPage().getModel();
-			String[] fileNames = (String[])FileTransfer.getInstance().nativeToJava(event.currentDataType);
-			for(int i = 0; i < fileNames.length; i++)
-			{	IPath path = new Path(fileNames[i]);
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+			IBaseModel model = fSection.getPage().getModel();
+			String[] fileNames = (String[]) FileTransfer.getInstance().nativeToJava(event.currentDataType);
+			for (int i = 0; i < fileNames.length; i++) {
+				IPath path = new Path(fileNames[i]);
 
 				// Make sure that the file is in the workspace
-				if(ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) == null)
-				{	event.detail = DND.DROP_NONE;
+				if (ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) == null) {
+					event.detail = DND.DROP_NONE;
 					return;
 				}
 
-				if(!TocExtensionUtil.hasValidPageExtension(path)
-					&& !TocExtensionUtil.isTOCFile(path))
-				{	event.detail = DND.DROP_NONE;
+				if (!TocExtensionUtil.hasValidPageExtension(path) && !TocExtensionUtil.isTOCFile(path)) {
+					event.detail = DND.DROP_NONE;
 					return;
 				}
 
 				// Make sure that the user isn't dropping a TOC into itself
-				if(TocExtensionUtil.isCurrentResource(path, model))
-				{	event.detail = DND.DROP_NONE;
+				if (TocExtensionUtil.isCurrentResource(path, model)) {
+					event.detail = DND.DROP_NONE;
 					return;
 				}
 			}
@@ -193,21 +183,20 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * Override the drop behaviour in order to directly manage the drop event
 	 */
-	public void drop(DropTargetEvent event)
-	{	Object target = determineTarget(event);
+	public void drop(DropTargetEvent event) {
+		Object target = determineTarget(event);
 		int location = determineLocation(event);
-		if(!fSection.performDrop(target, event.data, location))
-		{	event.detail = DND.DROP_NONE;
+		if (!fSection.performDrop(target, event.data, location)) {
+			event.detail = DND.DROP_NONE;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * Override the behaviour of ViewerDropAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 * 
 	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
-	public void dragLeave(DropTargetEvent event) 
-	{	//NO-OP
+	public void dragLeave(DropTargetEvent event) { //NO-OP
 	}
 
 	/* (non-Javadoc)
@@ -215,8 +204,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 * 
 	 * @see org.eclipse.swt.dnd.DropTargetAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
-	public void dropAccept(DropTargetEvent event)
-	{	//NO-OP
+	public void dropAccept(DropTargetEvent event) { //NO-OP
 	}
 
 	//These methods are never called because much of ViewerDropAdapter's
@@ -232,9 +220,8 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
-	public boolean validateDrop(Object target, int operation,
-			TransferData transferType) {
+	public boolean validateDrop(Object target, int operation, TransferData transferType) {
 		return false;
 	}
-		
+
 }

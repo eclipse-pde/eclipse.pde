@@ -10,32 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.pde.internal.ui.editor.actions.FormatAction;
-import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
-import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorActionBarContributor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.SubActionBars;
+import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.ui.editor.actions.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.RetargetTextEditorAction;
+import org.eclipse.ui.texteditor.*;
 
 public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 
@@ -43,10 +27,10 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	private HyperlinkAction fHyperlinkAction;
 	private FormatAction fFormatAction;
 	private RetargetTextEditorAction fContentAssist;
-	
+
 	private TextEditorActionContributor fSourceContributor;
 	private SubActionBars fSourceActionBars;
-	
+
 	class PDETextEditorActionContributor extends TextEditorActionContributor {
 		public void contributeToMenu(IMenuManager mm) {
 			super.contributeToMenu(mm);
@@ -58,10 +42,10 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 				if (fCorrectionAssist != null)
 					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fCorrectionAssist);
 				if (fContentAssist != null)
-					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);					
+					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
 			}
 		}
-		
+
 		public void contributeToToolBar(IToolBarManager toolBarManager) {
 			super.contributeToToolBar(toolBarManager);
 			if (fHyperlinkAction != null)
@@ -107,19 +91,19 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			fContentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		}
 	}
-	
+
 	public boolean supportsCorrectionAssist() {
 		return false;
 	}
-	
+
 	public boolean supportsContentAssist() {
 		return false;
 	}
-	
+
 	public boolean supportsFormatAction() {
 		return false;
 	}
-	
+
 	public boolean supportsHyperlinking() {
 		return false;
 	}
@@ -127,7 +111,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	public IEditorActionBarContributor getSourceContributor() {
 		return fSourceContributor;
 	}
-	
+
 	public void init(IActionBars bars) {
 		super.init(bars);
 		fSourceActionBars = new SubActionBars(bars);
@@ -139,7 +123,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		fSourceContributor.dispose();
 		super.dispose();
 	}
-	
+
 	protected void setSourceActionBarsActive(boolean active) {
 		IActionBars rootBars = getActionBars();
 		rootBars.clearGlobalActionHandlers();
@@ -162,7 +146,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		rootBars.setGlobalActionHandler(PDEActionConstants.FORMAT, active ? fFormatAction : null);
 		// Register the revert action
 		rootBars.setGlobalActionHandler(ActionFactory.REVERT.getId(), getRevertAction());
-		
+
 		rootBars.updateActionBars();
 	}
 
@@ -185,27 +169,27 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	public void setActivePage(IEditorPart newEditor) {
 		if (fEditor == null)
 			return;
-		
+
 		IFormPage oldPage = fPage;
 		fPage = fEditor.getActivePageInstance();
 		if (fPage == null)
 			return;
 		// Update the quick outline action to the navigate menu
 		updateQuickOutlineMenuEntry();
-		
+
 		updateActions();
 		if (oldPage != null && !oldPage.isEditor() && !fPage.isEditor()) {
 			getActionBars().updateActionBars();
 			return;
 		}
-		
+
 		boolean isSourcePage = fPage instanceof PDESourcePage;
 		if (isSourcePage && fPage.equals(oldPage))
 			return;
 		fSourceContributor.setActiveEditor(fPage);
 		setSourceActionBarsActive(isSourcePage);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -214,8 +198,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		IActionBars actionBars = getActionBars();
 		IMenuManager menuManager = actionBars.getMenuManager();
 		// Get the navigate menu
-		IMenuManager navigateMenu = 
-			menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
+		IMenuManager navigateMenu = menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		// Ensure there is a navigate menu
 		if (navigateMenu == null) {
 			return;
@@ -231,15 +214,14 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		if ((fPage instanceof PDEProjectionSourcePage) == false) {
 			return;
 		}
-		PDEProjectionSourcePage page = (PDEProjectionSourcePage)fPage;
+		PDEProjectionSourcePage page = (PDEProjectionSourcePage) fPage;
 		// Only add the action if the source page supports it
 		if (page.isQuickOutlineEnabled() == false) {
 			return;
 		}
 		// Get the appropriate quick outline action associated with the active
 		// source page
-		IAction quickOutlineAction = page.getAction(
-				PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		IAction quickOutlineAction = page.getAction(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
 		// Ensure it is defined
 		if (quickOutlineAction == null) {
 			return;
@@ -257,10 +239,11 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	protected TextEditorActionContributor createSourceContributor() {
 		return new PDETextEditorActionContributor();
 	}
-	
+
 	protected HyperlinkAction getHyperlinkAction() {
 		return fHyperlinkAction;
 	}
+
 	protected FormatAction getFormatAction() {
 		return fFormatAction;
 	}

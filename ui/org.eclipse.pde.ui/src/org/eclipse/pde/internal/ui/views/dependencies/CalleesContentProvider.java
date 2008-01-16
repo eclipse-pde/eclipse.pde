@@ -11,23 +11,17 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.HashMap;
-
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
 
 public class CalleesContentProvider extends DependenciesViewPageContentProvider {
 	private BundleDescription fFragmentDescription;
-	
+
 	public CalleesContentProvider(DependenciesView view) {
 		super(view);
 	}
-	
+
 	protected Object[] findCallees(IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null)
@@ -39,21 +33,21 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 			Object[] fragmentDependencies = getDependencies(desc);
 			BaseDescription host = spec.getSupplier();
 			if (host instanceof BundleDescription) {
-				BundleDescription hostDesc = (BundleDescription)host;
+				BundleDescription hostDesc = (BundleDescription) host;
 				// check to see if the host is already included as a dependency.  If so, we don't need to include the host manually.
 				for (int i = 0; i < fragmentDependencies.length; i++) {
 					BundleDescription dependency = null;
 					if (fragmentDependencies[i] instanceof BundleSpecification)
-						dependency = ((BundleSpecification)fragmentDependencies[i]).getBundle();
+						dependency = ((BundleSpecification) fragmentDependencies[i]).getBundle();
 					else if (fragmentDependencies[i] instanceof ImportPackageSpecification) {
-						ExportPackageDescription epd = (ExportPackageDescription)((ImportPackageSpecification)fragmentDependencies[i]).getSupplier();
+						ExportPackageDescription epd = (ExportPackageDescription) ((ImportPackageSpecification) fragmentDependencies[i]).getSupplier();
 						if (epd != null)
 							dependency = epd.getSupplier();
 					}
 					if (dependency != null && dependency.equals(hostDesc))
 						return fragmentDependencies;
 				}
-				
+
 				// host not included as dependency, include it manually.
 				Object[] result = new Object[fragmentDependencies.length + 1];
 				result[0] = hostDesc;
@@ -64,13 +58,13 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		}
 		return getDependencies(desc);
 	}
-	
+
 	protected Object[] findCallees(BundleDescription desc) {
 		if (desc == null)
 			return new Object[0];
 		return getDependencies(desc);
 	}
-	
+
 	private Object[] getDependencies(BundleDescription desc) {
 		// use map to store dependencies so if Import-Package is supplied by same BundleDescription as supplier of Require-Bundle, it only shows up once
 		// Also, have to use BundleSpecficiation instead of BundleDescroption to show re-exported icon on re-exported Required-Bundles
@@ -88,16 +82,14 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		for (int i = 0; i < importedPkgs.length; i++) {
 			BaseDescription bd = importedPkgs[i].getSupplier();
 			if (bd != null && bd instanceof ExportPackageDescription) {
-				BundleDescription exporter = ((ExportPackageDescription)bd).getExporter();
+				BundleDescription exporter = ((ExportPackageDescription) bd).getExporter();
 				if (exporter != null) {
 					Object obj = dependencies.get(exporter);
 					if (obj == null) {
 						dependencies.put(exporter, importedPkgs[i]);
-					} else if (!Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE))
-							&& obj instanceof ImportPackageSpecification &&
-							Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification)obj).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
-					// if we have a non-optional Import-Package dependency on a bundle which we already depend on, check to make sure our
-					// current dependency is not optional.  If it is, replace the optional dependency with the non-optional one
+					} else if (!Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE)) && obj instanceof ImportPackageSpecification && Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) obj).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
+						// if we have a non-optional Import-Package dependency on a bundle which we already depend on, check to make sure our
+						// current dependency is not optional.  If it is, replace the optional dependency with the non-optional one
 						dependencies.put(exporter, importedPkgs[i]);
 					}
 				}

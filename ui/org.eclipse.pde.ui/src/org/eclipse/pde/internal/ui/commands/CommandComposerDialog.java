@@ -14,27 +14,21 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class CommandComposerDialog extends FormDialog {
-	
+
 	private CommandComposerPart fCCP;
 	private ParameterizedCommand fPC;
 	private Button fOKButton;
-	
-	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand,
-			IEvaluationContext snapshot) {
+
+	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand, IEvaluationContext snapshot) {
 		super(parentShell);
 		setShellStyle(SWT.MODELESS | SWT.SHELL_TRIM | SWT.BORDER);
 		fCCP = new CommandComposerPart();
@@ -42,7 +36,7 @@ public class CommandComposerDialog extends FormDialog {
 		fCCP.setPresetCommand(preselectedCommand);
 		fCCP.setSnapshotContext(snapshot);
 	}
-	
+
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
 		mform.getToolkit().decorateFormHeading(form.getForm());
@@ -54,7 +48,7 @@ public class CommandComposerDialog extends FormDialog {
 		});
 		applyDialogFont(form);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -62,7 +56,7 @@ public class CommandComposerDialog extends FormDialog {
 		super.createButtonsForButtonBar(parent);
 		// Update the button enablement only after the button is created
 		fOKButton = getButton(IDialogConstants.OK_ID);
-		
+
 		CommandList list = fCCP.getCommandList();
 		// Ensure the tree viewer was created
 		if (list == null) {
@@ -74,7 +68,7 @@ public class CommandComposerDialog extends FormDialog {
 		// Update the OK button based on the current selection
 		updateOkButtonEnablement(selection);
 	}
-	
+
 	/**
 	 * @param selection
 	 */
@@ -89,7 +83,7 @@ public class CommandComposerDialog extends FormDialog {
 			updateOkButtonEnablement(false);
 			return;
 		}
-		IStructuredSelection sSelection = (IStructuredSelection)selection;
+		IStructuredSelection sSelection = (IStructuredSelection) selection;
 		// Ensure the selection is a command
 		if (sSelection.getFirstElement() instanceof Command) {
 			// Enable button
@@ -97,9 +91,9 @@ public class CommandComposerDialog extends FormDialog {
 			return;
 		}
 		// Disable button
-		updateOkButtonEnablement(false);		
+		updateOkButtonEnablement(false);
 	}
-	
+
 	/**
 	 * @param enabled
 	 */
@@ -108,22 +102,22 @@ public class CommandComposerDialog extends FormDialog {
 			fOKButton.setEnabled(enabled);
 		}
 	}
-	
+
 	protected void configureShell(Shell newShell) {
 		newShell.setText(PDEUIMessages.CommandSerializerPart_name);
 		super.configureShell(newShell);
 	}
-	
+
 	public void okPressed() {
 		fPC = fCCP.getParameterizedCommand();
 		super.okPressed();
 	}
-	
+
 	public boolean close() {
 		fCCP.dispose();
 		return super.close();
 	}
-	
+
 	public ParameterizedCommand getCommand() {
 		return fPC;
 	}

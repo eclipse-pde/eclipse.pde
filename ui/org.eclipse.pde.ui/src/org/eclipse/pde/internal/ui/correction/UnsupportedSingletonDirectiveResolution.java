@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
@@ -35,10 +33,10 @@ public class UnsupportedSingletonDirectiveResolution extends AbstractManifestMar
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {
-			Bundle bun = (Bundle)bundle;
+			Bundle bun = (Bundle) bundle;
 			IManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header instanceof BundleSymbolicNameHeader) {
-				((BundleSymbolicNameHeader)header).fixUnsupportedDirective();
+				((BundleSymbolicNameHeader) header).fixUnsupportedDirective();
 			}
 		}
 	}

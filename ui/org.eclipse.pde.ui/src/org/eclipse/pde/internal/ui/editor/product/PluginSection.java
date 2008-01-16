@@ -10,47 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PluginModelDelta;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -63,24 +40,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+public class PluginSection extends TableSection implements IPluginModelListener {
 
-public class PluginSection extends TableSection implements IPluginModelListener{
-	
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			return getProduct().getPlugins();
@@ -94,18 +63,18 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	public PluginSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
 	}
-	
+
 	private static String[] getButtonLabels() {
 		String[] labels = new String[9];
-		labels[0] = PDEUIMessages.Product_PluginSection_add; 
-		labels[1] = PDEUIMessages.Product_PluginSection_working; 
-		labels[2] = PDEUIMessages.Product_PluginSection_required; 
-		labels[3] = PDEUIMessages.PluginSection_remove; 
-		labels[4] = PDEUIMessages.Product_PluginSection_removeAll; 
+		labels[0] = PDEUIMessages.Product_PluginSection_add;
+		labels[1] = PDEUIMessages.Product_PluginSection_working;
+		labels[2] = PDEUIMessages.Product_PluginSection_required;
+		labels[3] = PDEUIMessages.PluginSection_remove;
+		labels[4] = PDEUIMessages.Product_PluginSection_removeAll;
 		labels[5] = null;
 		labels[6] = null;
-		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin; 
-		labels[8] = PDEUIMessages.Product_PluginSection_newFragment; 
+		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin;
+		labels[8] = PDEUIMessages.Product_PluginSection_newFragment;
 		return labels;
 	}
 
@@ -113,16 +82,16 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		
+
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData sectionData = new GridData(GridData.FILL_BOTH);
 		sectionData.verticalSpan = 2;
-		section.setLayoutData(sectionData);		
-		
+		section.setLayoutData(sectionData);
+
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		createOptionalDependenciesButton(container);
 
 		TablePart tablePart = getTablePart();
@@ -131,32 +100,32 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		fPluginTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginTable.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				IProductPlugin p1 = (IProductPlugin)e1;
-				IProductPlugin p2 = (IProductPlugin)e2;
+				IProductPlugin p1 = (IProductPlugin) e1;
+				IProductPlugin p2 = (IProductPlugin) e2;
 				return super.compare(viewer, p1.getId(), p2.getId());
 			}
 		});
-		GridData data = (GridData)tablePart.getControl().getLayoutData();
+		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
 		fPluginTable.setInput(getProduct());
-		
+
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable());
 		tablePart.setButtonEnabled(2, isEditable());
-		
+
 		// remove buttons will be updated on refresh
-		
+
 		tablePart.setButtonEnabled(7, isEditable());
 		tablePart.setButtonEnabled(8, isEditable());
-		
+
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		
-		section.setText(PDEUIMessages.Product_PluginSection_title); 
-		section.setDescription(PDEUIMessages.Product_PluginSection_desc); 
+
+		section.setText(PDEUIMessages.Product_PluginSection_title);
+		section.setDescription(PDEUIMessages.Product_PluginSection_desc);
 		getModel().addModelChangedListener(this);
 	}
-	
+
 	private void createOptionalDependenciesButton(Composite container) {
 		if (isEditable()) {
 			fIncludeOptionalButton = new Button(container, SWT.CHECK);
@@ -164,7 +133,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			// initialize value
 			IEditorInput input = getPage().getEditorInput();
 			if (input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput)input).getFile();
+				IFile file = ((IFileEditorInput) input).getFile();
 				try {
 					fIncludeOptionalButton.setSelection("true".equals(file.getPersistentProperty(OPTIONAL_PROPERTY))); //$NON-NLS-1$
 				} catch (CoreException e) {
@@ -175,7 +144,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 				public void widgetSelected(SelectionEvent e) {
 					IEditorInput input = getPage().getEditorInput();
 					if (input instanceof IFileEditorInput) {
-						IFile file = ((IFileEditorInput)input).getFile();
+						IFile file = ((IFileEditorInput) input).getFile();
 						try {
 							file.setPersistentProperty(OPTIONAL_PROPERTY, fIncludeOptionalButton.getSelection() ? "true" : null); //$NON-NLS-1$
 						} catch (CoreException e1) {
@@ -185,35 +154,35 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			});
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case 0:
-			handleAdd();
-			break;
-		case 1:
-			handleAddWorkingSet();
-			break;
-		case 2:
-			handleAddRequired(getProduct().getPlugins(), fIncludeOptionalButton.getSelection());
-			break;
-		case 3:
-			handleDelete();
-			break;
-		case 4:
-			handleRemoveAll();
-			break;
-		case 7:
-			handleNewPlugin();
-			break;
-		case 8:
-			handleNewFragment();
+			case 0 :
+				handleAdd();
+				break;
+			case 1 :
+				handleAddWorkingSet();
+				break;
+			case 2 :
+				handleAddRequired(getProduct().getPlugins(), fIncludeOptionalButton.getSelection());
+				break;
+			case 3 :
+				handleDelete();
+				break;
+			case 4 :
+				handleRemoveAll();
+				break;
+			case 7 :
+				handleNewPlugin();
+				break;
+			case 8 :
+				handleNewFragment();
 		}
 	}
-	
+
 	private void handleNewFragment() {
 		NewFragmentProjectWizard wizard = new NewFragmentProjectWizard();
 		wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), null);
@@ -242,7 +211,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleOpen(selection);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
@@ -252,7 +221,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
@@ -260,7 +229,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
-		} 	
+		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			handleDelete();
 			return false;
@@ -271,7 +240,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 		return false;
 	}
-	
+
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IProductPlugin)
@@ -279,34 +248,34 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = (IStructuredSelection)fPluginTable.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
 		if (ssel == null)
 			return;
-		
-		Action openAction = new Action(PDEUIMessages.PluginSection_open) { 
+
+		Action openAction = new Action(PDEUIMessages.PluginSection_open) {
 			public void run() {
-				handleDoubleClick((IStructuredSelection)fPluginTable.getSelection());
+				handleDoubleClick((IStructuredSelection) fPluginTable.getSelection());
 			}
 		};
 		openAction.setEnabled(isEditable() && ssel.size() == 1);
 		manager.add(openAction);
-		
+
 		manager.add(new Separator());
-		
-		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) { 
+
+		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) {
 			public void run() {
 				handleDelete();
 			}
 		};
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
-		
-		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) { 
+
+		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) {
 			public void run() {
 				handleRemoveAll();
 			}
@@ -315,39 +284,39 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		manager.add(removeAll);
 
 		manager.add(new Separator());
-		
+
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleOpen(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
 		if (object instanceof IProductPlugin) {
-			ManifestEditor.openPluginEditor(((IProductPlugin)object).getId());
+			ManifestEditor.openPluginEditor(((IProductPlugin) object).getId());
 		}
 	}
-	
+
 	public static void handleAddRequired(IProductPlugin[] plugins, boolean includeOptional) {
 		if (plugins.length == 0)
 			return;
-		
+
 		ArrayList list = new ArrayList(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
 			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
 		DependencyCalculator calculator = new DependencyCalculator(includeOptional);
 		calculator.findDependencies(list.toArray());
-		
+
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			HostSpecification host = bundles[i].getHost();
-			if (host != null && !("org.eclipse.ui.workbench.compatibility".equals(bundles[i].getSymbolicName()))  //$NON-NLS-1$
+			if (host != null && !("org.eclipse.ui.workbench.compatibility".equals(bundles[i].getSymbolicName())) //$NON-NLS-1$
 					&& calculator.containsPluginId(host.getName())) { //$NON-NLS-1$
 				calculator.findDependency(bundles[i]);
 			}
 		}
-		
+
 		Collection dependencies = calculator.getBundleIDs();
-		
+
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin[] requiredPlugins = new IProductPlugin[dependencies.size()];
@@ -361,7 +330,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 		product.addPlugins(requiredPlugins);
 	}
-	
+
 	private void handleAddWorkingSet() {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), true);
@@ -376,23 +345,23 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					IPluginModelBase model = findModel(elements[j]);
 					if (model != null) {
 						IProductPlugin plugin = factory.createPlugin();
-						IPluginBase base = model.getPluginBase(); 
+						IPluginBase base = model.getPluginBase();
 						plugin.setId(base.getId());
-						pluginList.add(plugin);					
+						pluginList.add(plugin);
 					}
 				}
 			}
-			product.addPlugins((IProductPlugin[]) pluginList.toArray(new IProductPlugin[pluginList.size()]));	
+			product.addPlugins((IProductPlugin[]) pluginList.toArray(new IProductPlugin[pluginList.size()]));
 		}
 	}
-	
+
 	private void handleRemoveAll() {
 		IProduct product = getProduct();
 		product.removePlugins(product.getPlugins());
 	}
-	
+
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection)fPluginTable.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
 			IProductPlugin[] plugins = new IProductPlugin[objects.length];
@@ -402,21 +371,19 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-				PDEPlugin.getActiveWorkbenchShell(), 
-				PDEPlugin.getDefault().getLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
 		dialog.setElements(getBundles());
-		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title); 
+		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == Window.OK) {
 			Object[] bundles = dialog.getResult();
 			for (int i = 0; i < bundles.length; i++) {
-				addPlugin(((BundleDescription)bundles[i]).getSymbolicName());
+				addPlugin(((BundleDescription) bundles[i]).getSymbolicName());
 			}
 		}
 	}
-	
+
 	private BundleDescription[] getBundles() {
 		TreeMap map = new TreeMap();
 		IProduct product = getProduct();
@@ -427,9 +394,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 				map.put(id, bundles[i]);
 			}
 		}
-		return (BundleDescription[])map.values().toArray(new BundleDescription[map.size()]);
+		return (BundleDescription[]) map.values().toArray(new BundleDescription[map.size()]);
 	}
-	
+
 	private void addPlugin(String id) {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
@@ -438,13 +405,13 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		product.addPlugins(new IProductPlugin[] {plugin});
 		fPluginTable.setSelection(new StructuredSelection(plugin));
 	}
-	
+
 	private IProduct getProduct() {
 		return getModel().getProduct();
 	}
-	
+
 	private IProductModel getModel() {
-		return (IProductModel) getPage().getPDEEditor().getAggregateModel();	
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
 	/* (non-Javadoc)
@@ -452,10 +419,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
- 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
- 			handleModelEventWorldChanged(e);
- 			return;
- 		}
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(e);
+			return;
+		}
 		Object[] objects = e.getChangedObjects();
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			for (int i = 0; i < objects.length; i++) {
@@ -463,27 +430,27 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					fPluginTable.add(objects[i]);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-			
+
 			Table table = fPluginTable.getTable();
 			int index = table.getSelectionIndex();
-			
+
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof IProductPlugin)
 					fPluginTable.remove(objects[i]);
 			}
-			
+
 			// Update Selection
 
 			int count = table.getItemCount();
-				
-			if ( count == 0 ) {
+
+			if (count == 0) {
 				// Nothing to select
-			} else if ( index < count ) {
-				table.setSelection( index );
+			} else if (index < count) {
+				table.setSelection(index);
 			} else {
-				table.setSelection( count - 1 );
+				table.setSelection(count - 1);
 			}
-			
+
 		}
 		updateRemoveButtons(false, true);
 	}
@@ -498,13 +465,13 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		// refresh		
 		if (fPluginTable.getTable().isDisposed()) {
 			return;
-		}		
+		}
 		// Reload the input
 		fPluginTable.setInput(getProduct());
 		// Perform the refresh
 		refresh();
-	}	
-		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
@@ -530,23 +497,23 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			});
 		}
 	}
-	
+
 	private IPluginModelBase findModel(IAdaptable object) {
 		if (object instanceof IJavaProject)
-			object = ((IJavaProject)object).getProject();
+			object = ((IJavaProject) object).getProject();
 		if (object instanceof IProject)
-			return PluginRegistry.findModel((IProject)object);
+			return PluginRegistry.findModel((IProject) object);
 		if (object instanceof PersistablePluginObject) {
-			return PluginRegistry.findModel(((PersistablePluginObject)object).getPluginID());
+			return PluginRegistry.findModel(((PersistablePluginObject) object).getPluginID());
 		}
 		return null;
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateRemoveButtons(true, false);
 	}
-	
+
 	public boolean setFormInput(Object input) {
 		if (input instanceof IProductPlugin) {
 			fPluginTable.setSelection(new StructuredSelection(input), true);
@@ -554,36 +521,36 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 		return super.setFormInput(input);
 	}
-	
+
 	protected void doPaste(Object target, Object[] objects) {
 		IProductPlugin[] plugins;
 		if (objects instanceof IProductPlugin[])
-			plugins = (IProductPlugin[])objects;
+			plugins = (IProductPlugin[]) objects;
 		else {
 			plugins = new IProductPlugin[objects.length];
 			for (int i = 0; i < objects.length; i++)
 				if (objects[i] instanceof IProductPlugin)
-					plugins[i] = (IProductPlugin)objects[i];
+					plugins[i] = (IProductPlugin) objects[i];
 		}
 		getProduct().addPlugins(plugins);
 	}
-	
+
 	private void updateRemoveButtons(boolean updateRemove, boolean updateRemoveAll) {
 		TablePart tablePart = getTablePart();
 		if (updateRemove) {
 			ISelection selection = getViewerSelection();
-			tablePart.setButtonEnabled(3,
-					isEditable() &&	!selection.isEmpty() && selection instanceof IStructuredSelection && 
-					((IStructuredSelection)selection).getFirstElement() instanceof IProductPlugin);
+			tablePart.setButtonEnabled(3, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductPlugin);
 		}
 		int count = fPluginTable.getTable().getItemCount();
 		if (updateRemoveAll)
 			tablePart.setButtonEnabled(4, isEditable() && count > 0);
 		tablePart.setButtonEnabled(2, isEditable() && count > 0);
 	}
-	
-	protected boolean createCount() { return true; }
-	
+
+	protected boolean createCount() {
+		return true;
+	}
+
 	public boolean includeOptionalDependencies() {
 		return fIncludeOptionalButton.getSelection();
 	}

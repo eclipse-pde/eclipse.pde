@@ -9,70 +9,56 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
 
-public class SampleWizard extends Wizard
-		implements
-			INewWizard,
-			IExecutableExtension {
+public class SampleWizard extends Wizard implements INewWizard, IExecutableExtension {
 	private IConfigurationElement[] samples;
 	private IConfigurationElement selection;
 	private ProjectNamesPage namesPage;
 	private ReviewPage lastPage;
-	
-	private boolean sampleEditorNeeded=true;
-	private boolean switchPerspective=true;
-	private boolean selectRevealEnabled=true;
-	private boolean activitiesEnabled=true;
-	
+
+	private boolean sampleEditorNeeded = true;
+	private boolean switchPerspective = true;
+	private boolean selectRevealEnabled = true;
+	private boolean activitiesEnabled = true;
+
 	private class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
 			String[] returnCodes = {YES, NO, ALL, CANCEL};
 			int returnVal = openDialog(file);
 			return returnVal < 0 ? CANCEL : returnCodes[returnVal];
 		}
+
 		private int openDialog(final String file) {
 			final int[] result = {IDialogConstants.CANCEL_ID};
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					String title = PDEUIMessages.SampleWizard_title; 
-					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file); 
-					String[] options = {IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL,
-							IDialogConstants.YES_TO_ALL_LABEL,
-							IDialogConstants.CANCEL_LABEL};
-					MessageDialog dialog = new MessageDialog(getShell(), title,
-							null, msg, MessageDialog.QUESTION, options, 0);
+					String title = PDEUIMessages.SampleWizard_title;
+					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file);
+					String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
+					MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, options, 0);
 					result[0] = dialog.open();
 				}
 			});
 			return result[0];
 		}
 	}
+
 	/**
 	 * The default constructor.
 	 *  
@@ -80,20 +66,22 @@ public class SampleWizard extends Wizard
 	public SampleWizard() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
-		samples = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.pde.ui.samples"); //$NON-NLS-1$
-		namesPage= new ProjectNamesPage(this);
+		samples = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
+		namesPage = new ProjectNamesPage(this);
 		lastPage = new ReviewPage(this);
 		setNeedsProgressMonitor(true);
-        setWindowTitle(PDEUIMessages.ShowSampleAction_title); 
+		setWindowTitle(PDEUIMessages.ShowSampleAction_title);
 	}
+
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
+
 	public IConfigurationElement[] getSamples() {
 		return samples;
 	}
+
 	/**
 	 *  
 	 */
@@ -104,6 +92,7 @@ public class SampleWizard extends Wizard
 		addPage(namesPage);
 		addPage(lastPage);
 	}
+
 	/**
 	 *  
 	 */
@@ -114,9 +103,7 @@ public class SampleWizard extends Wizard
 			if (perspId != null && switchPerspective) {
 				PlatformUI.getWorkbench().showPerspective(perspId, page.getWorkbenchWindow());
 			}
-			SampleOperation op = new SampleOperation(selection,
-					namesPage.getProjectNames(),
-					new ImportOverwriteQuery());
+			SampleOperation op = new SampleOperation(selection, namesPage.getProjectNames(), new ImportOverwriteQuery());
 			getContainer().run(true, true, op);
 			IFile sampleManifest = op.getSampleManifest();
 			if (selectRevealEnabled) {
@@ -184,27 +171,27 @@ public class SampleWizard extends Wizard
 	}
 	*/
 	public void enableActivities() {
-		IConfigurationElement [] elements = selection.getChildren("activity"); //$NON-NLS-1$
-		HashSet activitiesToEnable=new HashSet();
+		IConfigurationElement[] elements = selection.getChildren("activity"); //$NON-NLS-1$
+		HashSet activitiesToEnable = new HashSet();
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		
-		for (int i=0; i<elements.length; i++) {
+
+		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			String id=element.getAttribute("id"); //$NON-NLS-1$
-			if (id==null) continue;
+			String id = element.getAttribute("id"); //$NON-NLS-1$
+			if (id == null)
+				continue;
 			activitiesToEnable.add(id);
 		}
 		HashSet set = new HashSet(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
 		set.addAll(activitiesToEnable);
 		workbenchActivitySupport.setEnabledActivityIds(set);
 	}
+
 	/**
 	 *  
 	 */
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-		String variable = data != null && data instanceof String ? data
-				.toString() : null;
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		String variable = data != null && data instanceof String ? data.toString() : null;
 		if (variable != null) {
 			for (int i = 0; i < samples.length; i++) {
 				IConfigurationElement element = samples[i];
@@ -216,14 +203,17 @@ public class SampleWizard extends Wizard
 			}
 		}
 	}
+
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
+
 	/**
 	 * @return Returns the selection.
 	 */
 	public IConfigurationElement getSelection() {
 		return selection;
 	}
+
 	/**
 	 * @param selection
 	 *            The selection to set.
@@ -231,12 +221,14 @@ public class SampleWizard extends Wizard
 	public void setSelection(IConfigurationElement selection) {
 		this.selection = selection;
 	}
+
 	/**
 	 * @return Returns the sampleEditorNeeded.
 	 */
 	public boolean isSampleEditorNeeded() {
 		return sampleEditorNeeded;
 	}
+
 	/**
 	 * @param sampleEditorNeeded
 	 *            The sampleEditorNeeded to set.
@@ -244,6 +236,7 @@ public class SampleWizard extends Wizard
 	public void setSampleEditorNeeded(boolean sampleEditorNeeded) {
 		this.sampleEditorNeeded = sampleEditorNeeded;
 	}
+
 	/**
 	 * @return Returns the switchPerspective.
 	 * @todo Generated comment
@@ -251,6 +244,7 @@ public class SampleWizard extends Wizard
 	public boolean isSwitchPerspective() {
 		return switchPerspective;
 	}
+
 	/**
 	 * @param switchPerspective The switchPerspective to set.
 	 * @todo Generated comment
@@ -258,6 +252,7 @@ public class SampleWizard extends Wizard
 	public void setSwitchPerspective(boolean switchPerspective) {
 		this.switchPerspective = switchPerspective;
 	}
+
 	/**
 	 * @return Returns the selectRevealEnabled.
 	 * @todo Generated comment
@@ -265,6 +260,7 @@ public class SampleWizard extends Wizard
 	public boolean isSelectRevealEnabled() {
 		return selectRevealEnabled;
 	}
+
 	/**
 	 * @param selectRevealEnabled The selectRevealEnabled to set.
 	 * @todo Generated comment
@@ -272,6 +268,7 @@ public class SampleWizard extends Wizard
 	public void setSelectRevealEnabled(boolean selectRevealEnabled) {
 		this.selectRevealEnabled = selectRevealEnabled;
 	}
+
 	/**
 	 * @return Returns the activitiesEnabled.
 	 * @todo Generated comment
@@ -279,6 +276,7 @@ public class SampleWizard extends Wizard
 	public boolean getActivitiesEnabled() {
 		return activitiesEnabled;
 	}
+
 	/**
 	 * @param activitiesEnabled The activitiesEnabled to set.
 	 * @todo Generated comment

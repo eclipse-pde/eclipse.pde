@@ -11,24 +11,16 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
-
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.*;
 
 public class ExportDestinationTab extends AbstractExportTab {
 
@@ -59,7 +51,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fDirectoryButton.setLayoutData(gd);
-		
+
 		fDirectoryCombo = new Combo(composite, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 15;
@@ -155,19 +147,17 @@ public class ExportDestinationTab extends AbstractExportTab {
 			fDirectoryCombo.setText(res);
 		}
 	}
-	
+
 	protected void saveSettings(IDialogSettings settings) {
-		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());		
+		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());
 		saveCombo(settings, S_DESTINATION, fDirectoryCombo);
 		saveCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
 	}
 
 	protected String validate() {
-		if (fArchiveFileButton.getSelection()
-				&& fArchiveCombo.getText().trim().length() == 0)
+		if (fArchiveFileButton.getSelection() && fArchiveCombo.getText().trim().length() == 0)
 			return PDEUIMessages.ExportWizard_status_nofile;
-		if (fDirectoryButton.getSelection()
-				&& fDirectoryCombo.getText().trim().length() == 0)
+		if (fDirectoryButton.getSelection() && fDirectoryCombo.getText().trim().length() == 0)
 			return PDEUIMessages.ExportWizard_status_nodirectory;
 		return null;
 	}

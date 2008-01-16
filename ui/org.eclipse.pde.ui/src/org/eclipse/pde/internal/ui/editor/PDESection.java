@@ -13,18 +13,13 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
-public abstract class PDESection extends SectionPart implements IModelChangedListener,
-		IContextPart, IAdaptable {
+public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart, IAdaptable {
 
 	private PDEFormPage fPage;
 
@@ -33,8 +28,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	}
 
 	public PDESection(PDEFormPage page, Composite parent, int style, boolean titleBar) {
-		super(parent, page.getManagedForm().getToolkit(),
-				titleBar ? (ExpandableComposite.TITLE_BAR | style) : style);
+		super(parent, page.getManagedForm().getToolkit(), titleBar ? (ExpandableComposite.TITLE_BAR | style) : style);
 		fPage = page;
 		initialize(page.getManagedForm());
 		getSection().clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
@@ -92,8 +86,8 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public boolean canCut(ISelection selection) {
 		// Sub-classes to override
 		return false;
-	}	
-	
+	}
+
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}

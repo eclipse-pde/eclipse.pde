@@ -1,8 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.toc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -17,8 +15,8 @@ public class TocHTMLTitleUtil {
 
 	private static Pattern titlePattern = null;
 
-	private static void initPattern()
-	{	StringBuffer buf = new StringBuffer();
+	private static void initPattern() {
+		StringBuffer buf = new StringBuffer();
 		buf.append('<');
 		buf.append(whitespace);
 		buf.append(titleTag);
@@ -34,29 +32,27 @@ public class TocHTMLTitleUtil {
 		titlePattern = Pattern.compile(buf.toString());
 	}
 
-	public static String findTitle(File f)
-	{	if(titlePattern == null)
-		{	initPattern();
+	public static String findTitle(File f) {
+		if (titlePattern == null) {
+			initPattern();
 		}
 
-		try
-		{	FileChannel fc = new FileInputStream(f).getChannel();
-		
-		    MappedByteBuffer bb = 
-		        fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-		    
-		    CharBuffer cb = Charset.forName("8859_1").newDecoder().decode(bb); //$NON-NLS-1$
+		try {
+			FileChannel fc = new FileInputStream(f).getChannel();
 
-		    Matcher m = titlePattern.matcher(cb);
-		    String title = null;
-		    if(m.find())
-		    {	title = m.group(1);
-		    }
+			MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
-		    return title;
-		}
-		catch (IOException e)
-		{	return null;
+			CharBuffer cb = Charset.forName("8859_1").newDecoder().decode(bb); //$NON-NLS-1$
+
+			Matcher m = titlePattern.matcher(cb);
+			String title = null;
+			if (m.find()) {
+				title = m.group(1);
+			}
+
+			return title;
+		} catch (IOException e) {
+			return null;
 		}
 	}
 }

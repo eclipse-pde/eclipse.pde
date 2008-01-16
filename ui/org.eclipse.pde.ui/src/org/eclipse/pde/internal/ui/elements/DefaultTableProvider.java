@@ -12,6 +12,5 @@ package org.eclipse.pde.internal.ui.elements;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 
-public abstract class DefaultTableProvider extends DefaultContentProvider implements
-		IStructuredContentProvider {
+public abstract class DefaultTableProvider extends DefaultContentProvider implements IStructuredContentProvider {
 }

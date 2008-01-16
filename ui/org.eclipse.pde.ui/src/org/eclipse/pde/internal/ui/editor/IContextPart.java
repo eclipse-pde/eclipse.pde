@@ -14,8 +14,12 @@ import org.eclipse.pde.core.IModelChangedListener;
 
 public interface IContextPart extends IModelChangedListener {
 	boolean isEditable();
+
 	PDEFormPage getPage();
+
 	String getContextId();
+
 	void fireSaveNeeded();
+
 	void cancelEdit();
 }

@@ -22,8 +22,7 @@ public class NewReferenceAction extends Action {
 
 	private ISchemaElement referencedElement;
 
-	public NewReferenceAction(ISchemaElement source, Object object,
-			ISchemaElement referencedElement) {
+	public NewReferenceAction(ISchemaElement source, Object object, ISchemaElement referencedElement) {
 		this.object = object;
 		this.referencedElement = referencedElement;
 		setText(referencedElement.getName());
@@ -35,8 +34,7 @@ public class NewReferenceAction extends Action {
 	public void run() {
 		if (object != null && object instanceof SchemaCompositor) {
 			SchemaCompositor parent = (SchemaCompositor) object;
-			SchemaElementReference reference = new SchemaElementReference(parent,
-					referencedElement.getName());
+			SchemaElementReference reference = new SchemaElementReference(parent, referencedElement.getName());
 			reference.setReferencedObject(referencedElement);
 			parent.addChild(reference);
 		}

@@ -12,13 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCSCreationOperation;
@@ -30,11 +24,11 @@ import org.eclipse.pde.internal.ui.wizards.cheatsheet.BaseCSCreationOperation;
 public class SimpleCSAddStepAction extends Action {
 
 	private ISimpleCS fCheatsheet;
-	
+
 	private ISimpleCSItem fItem;
-	
+
 	private ISimpleCSIntro fIntro;
-	
+
 	/**
 	 * 
 	 */
@@ -50,13 +44,13 @@ public class SimpleCSAddStepAction extends Action {
 		if (csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 			fIntro = null;
 			fItem = null;
-			fCheatsheet = (ISimpleCS)csObject;
+			fCheatsheet = (ISimpleCS) csObject;
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			fIntro = null;
-			fItem = (ISimpleCSItem)csObject;
+			fItem = (ISimpleCSItem) csObject;
 			fCheatsheet = fItem.getSimpleCS();
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_INTRO) {
-			fIntro = (ISimpleCSIntro)csObject;
+			fIntro = (ISimpleCSIntro) csObject;
 			fItem = null;
 			fCheatsheet = fIntro.getSimpleCS();
 		} else {
@@ -76,7 +70,7 @@ public class SimpleCSAddStepAction extends Action {
 			return;
 		}
 		// Create the new item
-		ISimpleCSItem newItem = createNewItem();		
+		ISimpleCSItem newItem = createNewItem();
 		// Insert the new item
 		insertNewItem(newItem);
 	}
@@ -115,16 +109,14 @@ public class SimpleCSAddStepAction extends Action {
 		ISimpleCSItem[] items = fCheatsheet.getItems();
 		String[] itemNames = new String[items.length];
 
-		for(int i = 0; i < items.length; ++i)
-		{	itemNames[i] = items[i].getTitle();
+		for (int i = 0; i < items.length; ++i) {
+			itemNames[i] = items[i].getTitle();
 		}
 
 		item.setTitle(PDELabelUtility.generateName(itemNames, PDEUIMessages.SimpleCheatSheetCreationOperation_1));
 		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription(item);
-		description.setContent(
-				BaseCSCreationOperation.formatTextBold(
-						PDEUIMessages.SimpleCheatSheetCreationOperation_2));
+		description.setContent(BaseCSCreationOperation.formatTextBold(PDEUIMessages.SimpleCheatSheetCreationOperation_2));
 		item.setDescription(description);
 		return item;
 	}

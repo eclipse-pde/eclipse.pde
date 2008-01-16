@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.actions;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
 public class ActionMenu extends Action implements IMenuCreator {
-	
+
 	Action[] fActions;
 	Menu fMenu;
-	
+
 	public ActionMenu(Action[] actions) {
 		fActions = actions;
 		if (fActions.length > 0) {
@@ -35,7 +33,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 		if (fActions.length > 0)
 			fActions[0].run();
 	}
-	
+
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -57,7 +55,6 @@ public class ActionMenu extends Action implements IMenuCreator {
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
-
 
 	protected void addActionToMenu(Menu parent, Action action) {
 		ActionContributionItem item = new ActionContributionItem(action);

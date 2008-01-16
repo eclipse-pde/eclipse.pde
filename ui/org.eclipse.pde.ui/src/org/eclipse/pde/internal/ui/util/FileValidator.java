@@ -20,19 +20,11 @@ public class FileValidator implements ISelectionStatusValidator {
 
 	public IStatus validate(Object[] selection) {
 		if (selection.length > 0 && selection[0] instanceof IFile) {
-			return new Status(
-				IStatus.OK,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				"", //$NON-NLS-1$
-				null);
+			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
+					null);
 		}
-		return new Status(
-			IStatus.ERROR,
-			PDEPlugin.getPluginId(),
-			IStatus.ERROR,
-			"", //$NON-NLS-1$
-			null);
+		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", //$NON-NLS-1$
+				null);
 	}
 
 }

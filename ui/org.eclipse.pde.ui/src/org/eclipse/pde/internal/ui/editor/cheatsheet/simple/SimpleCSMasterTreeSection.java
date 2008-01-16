@@ -11,50 +11,25 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSPreviewAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveRunObjectAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveStepAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.*;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -63,43 +38,42 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSElementSection
  *
  */
-public class SimpleCSMasterTreeSection extends TreeSection implements
-		ICSMaster {
+public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private static final int F_BUTTON_ADD_STEP = 0;
 
 	private static final int F_BUTTON_ADD_SUBSTEP = 1;
-	
+
 	private static final int F_BUTTON_REMOVE = 4;
-	
+
 	private static final int F_BUTTON_UP = 5;
-	
+
 	private static final int F_BUTTON_DOWN = 6;
 
 	private static final int F_BUTTON_PREVIEW = 9;
-	
+
 	private static final int F_UP_FLAG = -1;
 
 	private static final int F_DOWN_FLAG = 1;
-	
+
 	private TreeViewer fTreeViewer;
-	
+
 	private ISimpleCSModel fModel;
-	
+
 	private SimpleCSAddStepAction fAddStepAction;
-	
+
 	private SimpleCSRemoveStepAction fRemoveStepAction;
 
 	private SimpleCSRemoveSubStepAction fRemoveSubStepAction;
-	
+
 	private SimpleCSAddSubStepAction fAddSubStepAction;
-	
+
 	private SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
-	
+
 	private CollapseAction fCollapseAction;
-	
+
 	private ControlDecoration fSubStepInfoDecoration;
-	
+
 	/**
 	 * @param formPage
 	 * @param parent
@@ -107,17 +81,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @param buttonLabels
 	 */
 	public SimpleCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, new String[] {
-				PDEUIMessages.SimpleCSElementSection_0,
-				PDEUIMessages.SimpleCSElementSection_6,
-				null,
-				null,
-				PDEUIMessages.SimpleCSElementSection_7,
-				PDEUIMessages.SimpleCSElementSection_1, 
-				PDEUIMessages.SimpleCSElementSection_2,
-				null,
-				null,
-				PDEUIMessages.SimpleCSElementSection_3});
+		super(formPage, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.SimpleCSElementSection_0, PDEUIMessages.SimpleCSElementSection_6, null, null, PDEUIMessages.SimpleCSElementSection_7, PDEUIMessages.SimpleCSElementSection_1, PDEUIMessages.SimpleCSElementSection_2, null, null, PDEUIMessages.SimpleCSElementSection_3});
 
 		// Create actions
 		fAddStepAction = new SimpleCSAddStepAction();
@@ -127,13 +91,13 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
 		fCollapseAction = null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
-		fModel = (ISimpleCSModel)getPage().getModel();
+		fModel = (ISimpleCSModel) getPage().getModel();
 		// Set section title 
 		section.setText(PDEUIMessages.SimpleCSElementSection_4);
 		// Set section description
@@ -152,7 +116,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @param toolkit
 	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
-		
+
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
@@ -160,29 +124,25 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) &&
-						(handCursor.isDisposed() == false)) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
 					handCursor.dispose();
 				}
 			}
-		});		
+		});
 		// Add collapse action to the tool bar
-		fCollapseAction = new CollapseAction(fTreeViewer, 
-				PDEUIMessages.ExtensionsPage_collapseAll, 
-				1, 
-				fModel.getSimpleCS());
+		fCollapseAction = new CollapseAction(fTreeViewer, PDEUIMessages.ExtensionsPage_collapseAll, 1, fModel.getSimpleCS());
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
 	private void initializeTreeViewer() {
-		
+
 		if (fModel == null) {
 			return;
 		}
@@ -198,7 +158,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Set to false because initial node selected is the root cheatsheet node
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
-		
+
 		ISimpleCS cheatsheet = fModel.getSimpleCS();
 		// Select the cheatsheet node in the tree
 		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
@@ -216,7 +176,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fTreeViewer.setContentProvider(new SimpleCSContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		createTreeListeners();		
+		createTreeListeners();
 		createSubStepInfoDecoration();
 	}
 
@@ -226,7 +186,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
@@ -238,7 +198,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		ISelection selection = new StructuredSelection(sourceObjects);
 		return canCut(selection);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
@@ -248,8 +208,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return false;
 		}
 		// Multi-select not supported
-		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
-		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject) sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject) targetObject;
 		// Objects have to be from the same model
 		ISimpleCSModel sourceModel = sourceCSObject.getModel();
 		ISimpleCSModel targetModel = targetCSObject.getModel();
@@ -258,41 +218,40 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		}
 		// Validate move
 		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem sourceItem = (ISimpleCSItem)sourceCSObject;
+			ISimpleCSItem sourceItem = (ISimpleCSItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 				// Source:  Item
 				// Target:  Cheat Sheet
-				ISimpleCS targetCheatSheet = (ISimpleCS)targetCSObject;
+				ISimpleCS targetCheatSheet = (ISimpleCS) targetCSObject;
 				return canDropMove(targetCheatSheet, sourceItem, targetLocation);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Source:  Item
 				// Target:  Item
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				return canDropMove(targetItem, sourceItem, targetLocation);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_INTRO) {
 				// Source:  Item
 				// Target:  Intro
-				ISimpleCSIntro targetIntro = (ISimpleCSIntro)targetCSObject;
+				ISimpleCSIntro targetIntro = (ISimpleCSIntro) targetCSObject;
 				return canDropMove(targetIntro, sourceItem, targetLocation);
 			}
 		} else if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			ISimpleCSSubItem sourceSubItem = (ISimpleCSSubItem)sourceCSObject;
+			ISimpleCSSubItem sourceSubItem = (ISimpleCSSubItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Source:  SubItem
 				// Target:  Item
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				return canDropMove(targetItem, sourceSubItem, targetLocation);
-			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) &&
-					(targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
+			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) && (targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
 				// Source:  SubItem
 				// Target:  SubItem
-				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem)targetCSObject;
+				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem) targetCSObject;
 				return canDropMove(targetSubItem, sourceSubItem, targetLocation);
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param targetCheatSheet
 	 * @param sourceItem
@@ -323,24 +282,21 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private boolean canDropMove(ISimpleCSItem targetItem, ISimpleCSItem sourceItem, int targetLocation) {
 		ISimpleCS parent = targetItem.getSimpleCS();
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				parent.getPreviousSibling(targetItem, ISimpleCSItem.class);
+			IDocumentElementNode previousNode = parent.getPreviousSibling(targetItem, ISimpleCSItem.class);
 			if (sourceItem.equals(previousNode)) {
 				return false;
 			}
 			// Paste item as sibling of item (before)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetItem, ISimpleCSItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetItem, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				return false;
 			}
 			// Paste item as sibling of item (after)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetItem, ISimpleCSItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetItem, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				return false;
 			}
@@ -361,16 +317,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			return false;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetIntro, ISimpleCSItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetIntro, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				return false;
 			}
 			// Paste item as sibling of intro (first item child of cheat sheet after intro)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetIntro, ISimpleCSItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetIntro, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				return false;
 			}
@@ -405,7 +359,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			}
 			// Paste subitem as the last child of item 
 			return true;
-		}		
+		}
 		return false;
 	}
 
@@ -416,35 +370,32 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 * @return
 	 */
 	private boolean canDropMove(ISimpleCSSubItem targetSubItem, ISimpleCSSubItem sourceSubItem, int targetLocation) {
-		ISimpleCSItem parent = (ISimpleCSItem)targetSubItem.getParent();
+		ISimpleCSItem parent = (ISimpleCSItem) targetSubItem.getParent();
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				parent.getPreviousSibling(targetSubItem, ISimpleCSSubItem.class);
+			IDocumentElementNode previousNode = parent.getPreviousSibling(targetSubItem, ISimpleCSSubItem.class);
 			if (sourceSubItem.equals(previousNode)) {
 				return false;
-			}					
+			}
 			// Paste subitem as sibling of subitem (before)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);
 			if (sourceSubItem.equals(nextNode)) {
 				return false;
-			}					
+			}
 			// Paste subitem as sibling of subitem (after)
 			return true;
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);					
+			IDocumentElementNode nextNode = parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);
 			if (sourceSubItem.equals(nextNode)) {
 				return false;
-			}					
+			}
 			// Paste subitem as sibling of subitem (after)
 			return true;
-		}		
+		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
@@ -455,44 +406,43 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return;
 		}
 		// Multi-select not supported
-		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
-		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject) sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject) targetObject;
 		// Validate move
 		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem sourceItem = (ISimpleCSItem)sourceCSObject;
+			ISimpleCSItem sourceItem = (ISimpleCSItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 				// Source:  Item
 				// Target:  Cheat Sheet
-				ISimpleCS targetCheatSheet = (ISimpleCS)targetCSObject;
+				ISimpleCS targetCheatSheet = (ISimpleCS) targetCSObject;
 				doDropMove(targetCheatSheet, sourceItem, targetLocation);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Source:  Item
 				// Target:  Item
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				doDropMove(targetItem, sourceItem, targetLocation);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_INTRO) {
 				// Source:  Item
 				// Target:  Intro
-				ISimpleCSIntro targetIntro = (ISimpleCSIntro)targetCSObject;
+				ISimpleCSIntro targetIntro = (ISimpleCSIntro) targetCSObject;
 				doDropMove(targetIntro, sourceItem, targetLocation);
 			}
 		} else if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			ISimpleCSSubItem sourceSubItem = (ISimpleCSSubItem)sourceCSObject;
+			ISimpleCSSubItem sourceSubItem = (ISimpleCSSubItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				// Source:  SubItem
 				// Target:  Item
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				doDropMove(targetItem, sourceSubItem, targetLocation);
-			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) &&
-					(targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
+			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) && (targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
 				// Source:  SubItem
 				// Target:  SubItem
-				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem)targetCSObject;
+				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem) targetCSObject;
 				doDropMove(targetSubItem, sourceSubItem, targetLocation);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param targetCheatSheet
 	 * @param sourceItem
@@ -509,12 +459,12 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			}
 			// Adjust all the source object transient field values to
 			// acceptable values
-			sourceItem.reconnect(targetCheatSheet, fModel);				
+			sourceItem.reconnect(targetCheatSheet, fModel);
 			// Paste item as the last child of cheat sheet root 
-			targetCheatSheet.addItem(sourceItem);					
-		}		
+			targetCheatSheet.addItem(sourceItem);
+		}
 	}
-	
+
 	/**
 	 * @param targetItem
 	 * @param sourceItem
@@ -523,25 +473,22 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void doDropMove(ISimpleCSItem targetItem, ISimpleCSItem sourceItem, int targetLocation) {
 		ISimpleCS parent = targetItem.getSimpleCS();
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				parent.getPreviousSibling(targetItem, ISimpleCSItem.class);
+			IDocumentElementNode previousNode = parent.getPreviousSibling(targetItem, ISimpleCSItem.class);
 			if (sourceItem.equals(previousNode)) {
 				// NO-OP, not legal
 				return;
 			}
 			// Adjust all the source object transient field values to
 			// acceptable values
-			sourceItem.reconnect(parent, fModel);				
+			sourceItem.reconnect(parent, fModel);
 			// Get index of target item
 			int index = parent.indexOfItem(targetItem);
 			// Paste item as sibling of item (before) 
 			if (index != -1) {
 				parent.addItem(index, sourceItem);
 			}
-		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) ||
-				(targetLocation == ViewerDropAdapter.LOCATION_ON)) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetItem, ISimpleCSItem.class);					
+		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) || (targetLocation == ViewerDropAdapter.LOCATION_ON)) {
+			IDocumentElementNode nextNode = parent.getNextSibling(targetItem, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				// NO-OP, not legal
 				return;
@@ -549,12 +496,12 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceItem.reconnect(parent, fModel);
-			
+
 			if (nextNode == null) {
 				parent.addItem(sourceItem);
 			} else {
 				// Get index of target item
-				int index = parent.indexOfItem((ISimpleCSItem)nextNode);
+				int index = parent.indexOfItem((ISimpleCSItem) nextNode);
 				// Paste item as sibling of item (after)
 				if (index != -1) {
 					parent.addItem(index, sourceItem);
@@ -562,7 +509,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			}
 		}
 	}
-	
+
 	/**
 	 * @param targetIntro
 	 * @param sourceItem
@@ -572,10 +519,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		ISimpleCS parent = targetIntro.getSimpleCS();
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
 			// NO-OP, not legal
-		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) ||
-				(targetLocation == ViewerDropAdapter.LOCATION_ON)) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetIntro, ISimpleCSItem.class);					
+		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) || (targetLocation == ViewerDropAdapter.LOCATION_ON)) {
+			IDocumentElementNode nextNode = parent.getNextSibling(targetIntro, ISimpleCSItem.class);
 			if (sourceItem.equals(nextNode)) {
 				// NO-OP, not legal
 				return;
@@ -587,15 +532,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				parent.addItem(sourceItem);
 			} else {
 				// Get index of target item
-				int index = parent.indexOfItem((ISimpleCSItem)nextNode);
+				int index = parent.indexOfItem((ISimpleCSItem) nextNode);
 				// Paste item as sibling of intro (first item child of cheat sheet after intro)
 				if (index != -1) {
 					parent.addItem(index, sourceItem);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * @param targetItem
 	 * @param sourceSubItem
@@ -607,18 +552,17 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
 			if (targetItem.getExecutable() != null) {
 				return;
-			}  else if (targetItem.isFirstSubItem(sourceSubItem)) {
+			} else if (targetItem.isFirstSubItem(sourceSubItem)) {
 				return;
 			}
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceSubItem.reconnect(targetItem, fModel);
 			// Get the item's first subitem child
-			ISimpleCSSubItem firstSubItem = 
-				(ISimpleCSSubItem)targetItem.getChildNode(ISimpleCSSubItem.class);
+			ISimpleCSSubItem firstSubItem = (ISimpleCSSubItem) targetItem.getChildNode(ISimpleCSSubItem.class);
 			// Paste subitem as the first child of item
 			if (firstSubItem == null) {
-				targetItem.addSubItem(sourceSubItem);	
+				targetItem.addSubItem(sourceSubItem);
 			} else {
 				int index = targetItem.indexOfSubItem(firstSubItem);
 				// Paste subitem as the first child of item
@@ -634,52 +578,49 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			}
 			// Adjust all the source object transient field values to
 			// acceptable values
-			sourceSubItem.reconnect(targetItem, fModel);				
+			sourceSubItem.reconnect(targetItem, fModel);
 			// Paste subitem as the last child of item
-			targetItem.addSubItem(sourceSubItem);					
+			targetItem.addSubItem(sourceSubItem);
 		}
 	}
-	
+
 	/**
 	 * @param targetSubItem
 	 * @param sourceSubItem
 	 * @param targetLocation
 	 */
 	private void doDropMove(ISimpleCSSubItem targetSubItem, ISimpleCSSubItem sourceSubItem, int targetLocation) {
-		ISimpleCSItem parent = (ISimpleCSItem)targetSubItem.getParent();
+		ISimpleCSItem parent = (ISimpleCSItem) targetSubItem.getParent();
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = 
-				parent.getPreviousSibling(targetSubItem, ISimpleCSSubItem.class);
+			IDocumentElementNode previousNode = parent.getPreviousSibling(targetSubItem, ISimpleCSSubItem.class);
 			if (sourceSubItem.equals(previousNode)) {
 				// NO-OP, not legal
 				return;
-			}					
+			}
 			// Adjust all the source object transient field values to
 			// acceptable values
-			sourceSubItem.reconnect(parent, fModel);				
+			sourceSubItem.reconnect(parent, fModel);
 			// Get index of target item
 			int index = parent.indexOfSubItem(targetSubItem);
 			// Paste item as sibling of item (before) 
 			if (index != -1) {
 				parent.addSubItem(index, sourceSubItem);
 			}
-		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) ||
-				(targetLocation == ViewerDropAdapter.LOCATION_ON)) {
-			IDocumentElementNode nextNode = 
-				parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);					
+		} else if ((targetLocation == ViewerDropAdapter.LOCATION_AFTER) || (targetLocation == ViewerDropAdapter.LOCATION_ON)) {
+			IDocumentElementNode nextNode = parent.getNextSibling(targetSubItem, ISimpleCSSubItem.class);
 			if (sourceSubItem.equals(nextNode)) {
 				// NO-OP, not legal
 				return;
-			}					
+			}
 			// Adjust all the source object transient field values to
 			// acceptable values
 			sourceSubItem.reconnect(parent, fModel);
-			
+
 			if (nextNode == null) {
 				parent.addSubItem(sourceSubItem);
 			} else {
 				// Get index of target item
-				int index = parent.indexOfSubItem((ISimpleCSSubItem)nextNode);
+				int index = parent.indexOfSubItem((ISimpleCSSubItem) nextNode);
 				// Paste item as sibling of item (after)
 				if (index != -1) {
 					parent.addSubItem(index, sourceSubItem);
@@ -687,7 +628,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
 	 */
@@ -696,10 +637,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if (validatePaste(sourceObjects) == false) {
 			return;
 		}
-		ISimpleCSObject object = (ISimpleCSObject)sourceObjects[0];
+		ISimpleCSObject object = (ISimpleCSObject) sourceObjects[0];
 		// Remove the object from the model
 		if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem item = (ISimpleCSItem)object;
+			ISimpleCSItem item = (ISimpleCSItem) object;
 			ISimpleCS cheatsheet = object.getSimpleCS();
 			doSelect(false);
 			cheatsheet.removeItem(item);
@@ -707,8 +648,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			ISimpleCSObject parent = object.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
-				ISimpleCSItem item = ((ISimpleCSItem)parent);
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem) object;
+				ISimpleCSItem item = ((ISimpleCSItem) parent);
 				doSelect(false);
 				item.removeSubItem(subitem);
 				doSelect(true);
@@ -723,9 +664,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// text edit operations to get completely screwed up (e.g. mark-up
 		// in wrong position or getting lost)
 		// TODO: MP: Undo: What are the implications of this?
-		((PDEFormEditor)getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
+		((PDEFormEditor) getPage().getEditor()).getContextManager().getPrimaryContext().flushEditorInput();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -736,42 +677,37 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fSubStepInfoDecoration = new ControlDecoration(button, bits);
 		fSubStepInfoDecoration.setMarginWidth(0);
 		updateSubStepInfoDecoration(false, false, false);
-		fSubStepInfoDecoration.setImage(
-			FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_INFORMATION).getImage());
-	}	
+		fSubStepInfoDecoration.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
+	}
 
 	/**
 	 * @param show
 	 * @param itemHasNoExecutable
 	 * @param itemIsNotOptional
 	 */
-	private void updateSubStepInfoDecoration(boolean show, 
-			boolean itemHasNoExecutable, boolean itemIsNotOptional) {
+	private void updateSubStepInfoDecoration(boolean show, boolean itemHasNoExecutable, boolean itemIsNotOptional) {
 		//
 		if (show) {
 			fSubStepInfoDecoration.show();
 			if (itemHasNoExecutable == false) {
 				fSubStepInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSMasterTreeSection_msgButtonDisabledCommand);
-			} else if (itemIsNotOptional == false){
+			} else if (itemIsNotOptional == false) {
 				fSubStepInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSMasterTreeSection_msgButtonDisabledOptional);
 			}
 		} else {
 			fSubStepInfoDecoration.hide();
-		}	
+		}
 		fSubStepInfoDecoration.setShowHover(show);
 	}
-		
-	
+
 	/**
 	 * 
 	 */
 	private void createTreeListeners() {
 		// Create listener for the outline view 'link with editor' toggle 
 		// button
-		fTreeViewer.addPostSelectionChangedListener(
-				getPage().getPDEEditor().new PDEFormEditorChangeListener());
-	}	
+		fTreeViewer.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
+	}
 
 	/**
 	 * @return
@@ -779,30 +715,30 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	public ISelection getSelection() {
 		return fTreeViewer.getSelection();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-		case F_BUTTON_ADD_STEP:
-			handleAddStepAction();
-			break;
-		case F_BUTTON_ADD_SUBSTEP:
-			handleAddSubStepAction();
-			break;
-		case F_BUTTON_REMOVE:
-			handleDeleteAction();
-			break;
-		case F_BUTTON_UP:
-			handleMoveStepAction(F_UP_FLAG);
-			break;
-		case F_BUTTON_DOWN:
-			handleMoveStepAction(F_DOWN_FLAG);
-			break;
-		case F_BUTTON_PREVIEW:
-			handlePreviewAction();
-			break;
+			case F_BUTTON_ADD_STEP :
+				handleAddStepAction();
+				break;
+			case F_BUTTON_ADD_SUBSTEP :
+				handleAddSubStepAction();
+				break;
+			case F_BUTTON_REMOVE :
+				handleDeleteAction();
+				break;
+			case F_BUTTON_UP :
+				handleMoveStepAction(F_UP_FLAG);
+				break;
+			case F_BUTTON_DOWN :
+				handleMoveStepAction(F_DOWN_FLAG);
+				break;
+			case F_BUTTON_PREVIEW :
+				handlePreviewAction();
+				break;
 		}
 	}
 
@@ -814,7 +750,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// made in the master tree viewer with elements in the source view
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
-	}	
+	}
 
 	/**
 	 * 
@@ -824,7 +760,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return;
 		}
 		ISimpleCSObject csObject = getCurrentSelection();
-		
+
 		boolean canAddItem = false;
 		boolean canAddSubItem = false;
 		boolean canRemove = false;
@@ -832,11 +768,11 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		boolean canMoveDown = false;
 
 		boolean itemHasNoExecutable = false;
-		boolean itemIsNotOptional = false;		
+		boolean itemIsNotOptional = false;
 		boolean showDecoration = false;
-		
+
 		if (csObject != null) {
-			
+
 			if (csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 				// Add item to end of cheat sheet child items
 				canAddItem = true;
@@ -845,20 +781,20 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// which is right after the introduction node
 				canAddItem = true;
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				ISimpleCSItem item = (ISimpleCSItem)csObject;
+				ISimpleCSItem item = (ISimpleCSItem) csObject;
 				if (item.getSimpleCS().isFirstItem(item) == false) {
 					canMoveUp = true;
 				}
 				if (item.getSimpleCS().isLastItem(item) == false) {
 					canMoveDown = true;
 				}
-				
+
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a cheat sheet with no items
 				if (item.getSimpleCS().getItemCount() > 1) {
 					canRemove = true;
 				}
-				
+
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a subitem and any of the following
 				// together:  perform-when, command, action
@@ -873,12 +809,12 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				showDecoration = (canAddSubItem == false);
 				// Add item right after this item
 				canAddItem = true;
-				
+
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem) csObject;
 				ISimpleCSObject parent = subitem.getParent();
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-					ISimpleCSItem item = (ISimpleCSItem)parent;
+					ISimpleCSItem item = (ISimpleCSItem) parent;
 					if (item.isFirstSubItem(subitem) == false) {
 						canMoveUp = true;
 					}
@@ -892,27 +828,22 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					// Semantic Rule:  Cannot add subitems to an item that is 
 					// optional				
 					itemHasNoExecutable = (item.getExecutable() == null);
-					itemIsNotOptional = (item.getSkip() == false);					
+					itemIsNotOptional = (item.getSkip() == false);
 					if (itemHasNoExecutable && itemIsNotOptional) {
 						canAddSubItem = true;
 					}
-					showDecoration = (canAddSubItem == false);					
+					showDecoration = (canAddSubItem == false);
 				}
 				canRemove = true;
-				
-			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
-						(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
-						(csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
-						(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
-						(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+
+			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) || (csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) || (csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) || (csObject.getType() == ISimpleCSConstants.TYPE_ACTION) || (csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
 				// Specifically for perform-when, repeated-subitem, 
 				// conditional-subitem edge cases
 				// Action and command supported; but, will never be applicable
 				canRemove = true;
 			}
 
-			updateSubStepInfoDecoration(showDecoration, itemHasNoExecutable, 
-					itemIsNotOptional);
+			updateSubStepInfoDecoration(showDecoration, itemHasNoExecutable, itemIsNotOptional);
 		}
 
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, canAddItem);
@@ -920,8 +851,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
 		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
@@ -937,14 +868,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Execute the action
 		fAddStepAction.run();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	private ISimpleCSObject getCurrentSelection() {
 		ISelection selection = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
-		return (ISimpleCSObject)object;
+		return (ISimpleCSObject) object;
 	}
 
 	/**
@@ -961,8 +892,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fAddSubStepAction.setDataObject(csObject);
 		// Execute the action
 		fAddSubStepAction.run();
-	}	
-	
+	}
+
 	/**
 	 * 
 	 */
@@ -970,29 +901,28 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
-				ISimpleCSItem item = (ISimpleCSItem)object;
+				ISimpleCSItem item = (ISimpleCSItem) object;
 				item.getSimpleCS().moveItem(item, positionFlag);
 			} else if (object instanceof ISimpleCSSubItem) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem) object;
 				// Get the current index of the subitem
 				ISimpleCSObject parent = subitem.getParent();
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-					ISimpleCSItem item = (ISimpleCSItem)parent;				
+					ISimpleCSItem item = (ISimpleCSItem) parent;
 					item.moveSubItem(subitem, positionFlag);
 				}
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void handlePreviewAction() {
 		// Get the editor
-		PDEFormEditor editor = (PDEFormEditor)getPage().getEditor();
+		PDEFormEditor editor = (PDEFormEditor) getPage().getEditor();
 		// Get the form editor contributor
-		SimpleCSEditorContributor contributor = 
-			(SimpleCSEditorContributor)editor.getContributor();
+		SimpleCSEditorContributor contributor = (SimpleCSEditorContributor) editor.getContributor();
 		// Get the preview action
 		SimpleCSPreviewAction previewAction = contributor.getPreviewAction();
 		// Set the cheat sheet object
@@ -1002,7 +932,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Run the preview action
 		previewAction.run();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -1015,12 +945,11 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
-		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE) &&
-				(event.getChangedProperty().equals(IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP)) ) {
+		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE) && (event.getChangedProperty().equals(IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP))) {
 			handleModelChangeTypeSwap(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1028,16 +957,16 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 */
 	public void refresh() {
 		// Get the form page
-		SimpleCSDefinitionPage page = (SimpleCSDefinitionPage)getPage();			
+		SimpleCSDefinitionPage page = (SimpleCSDefinitionPage) getPage();
 		// Replace the current dirty model with the model reloaded from
 		// file
-		fModel = (ISimpleCSModel)page.getModel();
+		fModel = (ISimpleCSModel) page.getModel();
 		// Re-initialize the tree viewer.  Makes a details page selection
 		initializeTreeViewer();
-		
+
 		super.refresh();
 	}
-	
+
 	/**
 	 * @param event
 	 */
@@ -1056,16 +985,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if ((objects[0] instanceof ISimpleCSObject) == false) {
 			return;
 		}
-		ISimpleCSObject object = (ISimpleCSObject)objects[0];		
+		ISimpleCSObject object = (ISimpleCSObject) objects[0];
 		if (object == null) {
 			// Ignore
-		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) || (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
 			// Refresh the element
 			fTreeViewer.refresh(object);
 		}
-	}		
-	
+	}
+
 	/**
 	 * @param event
 	 */
@@ -1075,13 +1003,12 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		ISimpleCSObject object = (ISimpleCSObject) objects[0];
 		if (object == null) {
 			// Ignore
-		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) || (object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
 			// Refresh the parent element in the tree viewer
 			fTreeViewer.refresh(object.getParent());
 			// Select the new item in the tree
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
-		}		
+		}
 	}
 
 	/**
@@ -1119,17 +1046,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				csObject = object.getParent();
 			}
 			fTreeViewer.setSelection(new StructuredSelection(csObject), true);
-		} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) || (object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) || (object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
 			// Remove the object
 			fTreeViewer.remove(object);
 			// Select the parent in the tree
-			fTreeViewer.setSelection(
-					new StructuredSelection(object.getParent()), true);
+			fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
 		}
 	}
-	
+
 	/**
 	 * @param event
 	 */
@@ -1140,24 +1064,22 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if ((objects[0] instanceof ISimpleCSObject) == false) {
 			return;
 		}
-		ISimpleCSObject object = (ISimpleCSObject)objects[0];		
+		ISimpleCSObject object = (ISimpleCSObject) objects[0];
 		if (object == null) {
 			// Ignore
-		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_SUBITEM)
-				|| (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) || (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) || (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
 			// Refresh the element in the tree viewer
 			fTreeViewer.update(object, null);
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
 	public void fireSelection() {
 		fTreeViewer.setSelection(fTreeViewer.getSelection());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -1168,15 +1090,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
 		// Add the "New" submenu to the main context menu
 		manager.add(submenu);
-		if ((csObject == null) ||
-				(csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+		if ((csObject == null) || (csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
 			// Add to the "New" submenu
 			// Add step action
 			fAddStepAction.setDataObject(fModel.getSimpleCS());
 			fAddStepAction.setEnabled(fModel.isEditable());
 			submenu.add(fAddStepAction);
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem item = (ISimpleCSItem)csObject;
+			ISimpleCSItem item = (ISimpleCSItem) csObject;
 			// Add to the "New" submenu
 			// Add sub-step action
 			fAddSubStepAction.setDataObject(csObject);
@@ -1186,8 +1107,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot add subitems to an item that is 
 			// optional				
-			if ((item.getExecutable() == null) &&
-					(item.getSkip() == false)) {
+			if ((item.getExecutable() == null) && (item.getSkip() == false)) {
 				fAddSubStepAction.setEnabled(fModel.isEditable());
 			} else {
 				fAddSubStepAction.setEnabled(false);
@@ -1197,7 +1117,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Add a separator to the main context menu
 			manager.add(new Separator());
 			// Delete step action
-			fRemoveStepAction.setItem((ISimpleCSItem)csObject);
+			fRemoveStepAction.setItem((ISimpleCSItem) csObject);
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a cheat sheet with no items
 			if (item.getSimpleCS().getItemCount() > 1) {
@@ -1206,41 +1126,37 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				fRemoveStepAction.setEnabled(false);
 			}
 			manager.add(fRemoveStepAction);
-		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
-					(csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
-					(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)) {
+		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) || (csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) || (csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)) {
 			// Add to the main context menu
 			// Add a separator to the main context menu
 			manager.add(new Separator());
 			// Delete sub-step action
-			fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)csObject);
+			fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject) csObject);
 			fRemoveSubStepAction.setEnabled(fModel.isEditable());
-			manager.add(fRemoveSubStepAction);			
-		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
-					(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
-					(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+			manager.add(fRemoveSubStepAction);
+		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) || (csObject.getType() == ISimpleCSConstants.TYPE_ACTION) || (csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
 			// Specifically for perform-when edge case
 			// Action and command supported; but, will never be applicable
 			// Add to the main context menu
 			// Add a separator to the main context menu
 			manager.add(new Separator());
 			// Delete run object action
-			fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)csObject);
+			fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject) csObject);
 			fRemoveRunObjectAction.setEnabled(fModel.isEditable());
-			manager.add(fRemoveRunObjectAction);				
+			manager.add(fRemoveRunObjectAction);
 		}
 		// Add clipboard operations
 		manager.add(new Separator());
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
 		// Ensure model is editable
-		if (isEditable() == false) { 
+		if (isEditable() == false) {
 			return false;
 		} else if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
@@ -1253,10 +1169,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		} else if (actionId.equals(ActionFactory.PASTE.getId())) {
 			doPaste();
 			return true;
-		}		
+		}
 		return false;
 	}
-	
+
 	/**
 	 * @param object
 	 */
@@ -1264,7 +1180,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
-				ISimpleCSItem item = (ISimpleCSItem)object;
+				ISimpleCSItem item = (ISimpleCSItem) object;
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a cheat sheet with no items
 				if (item.getSimpleCS().getItemCount() > 1) {
@@ -1275,29 +1191,29 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					Display.getCurrent().beep();
 				}
 			} else if (object instanceof ISimpleCSSubItemObject) {
-				fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)object);
+				fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject) object);
 				fRemoveSubStepAction.run();
 			} else if (object instanceof ISimpleCSRunContainerObject) {
 				// Specifically for perform-when edge case
 				// Action and command supported; but, will never be applicable
-				fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)object);
+				fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject) object);
 				fRemoveRunObjectAction.run();
 			} else if (object instanceof ISimpleCS) {
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a cheat sheet with no root
 				// cheatsheet node
 				// Produce audible beep
-				Display.getCurrent().beep();				
+				Display.getCurrent().beep();
 			} else if (object instanceof ISimpleCSIntro) {
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a cheat sheet with no 
 				// introduction
 				// Produce audible beep
-				Display.getCurrent().beep();				
+				Display.getCurrent().beep();
 			}
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
@@ -1310,8 +1226,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
 			// Verify that something was actually selected
 			ISelection selection = fTreeViewer.getSelection();
-			if ((selection != null) && 
-					(selection.isEmpty() == false)) {
+			if ((selection != null) && (selection.isEmpty() == false)) {
 				return true;
 			}
 		}
@@ -1327,14 +1242,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Validate target object
 		if ((targetObject instanceof ISimpleCSObject) == false) {
 			return false;
-		} 
+		}
 		// Validate source objects
 		if (validatePaste(sourceObjects) == false) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param sourceObjects
 	 * @return
@@ -1350,7 +1265,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -1360,8 +1275,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return false;
 		}
 		// Multi-select not supported
-		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
-		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject) sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject) targetObject;
 		// Validate paste
 		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
@@ -1383,10 +1298,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
@@ -1395,52 +1310,51 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		if (validatePaste(targetObject, sourceObjects) == false) {
 			Display.getDefault().beep();
 			return;
-		}		
+		}
 		// Multi-select not supported
-		ISimpleCSObject sourceCSObject = (ISimpleCSObject)sourceObjects[0];
-		ISimpleCSObject targetCSObject = (ISimpleCSObject)targetObject;		
+		ISimpleCSObject sourceCSObject = (ISimpleCSObject) sourceObjects[0];
+		ISimpleCSObject targetCSObject = (ISimpleCSObject) targetObject;
 		// Validate paste
 		if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem sourceItem = (ISimpleCSItem)sourceCSObject;
+			ISimpleCSItem sourceItem = (ISimpleCSItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-				ISimpleCS targetCheatSheet = (ISimpleCS)targetCSObject;
+				ISimpleCS targetCheatSheet = (ISimpleCS) targetCSObject;
 				// Adjust all the source object transient field values to
 				// acceptable values
-				sourceItem.reconnect(targetCheatSheet, fModel);				
+				sourceItem.reconnect(targetCheatSheet, fModel);
 				// Paste item as the last child of cheat sheet root 
 				targetCheatSheet.addItem(sourceItem);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				ISimpleCS targetCheatSheet = targetItem.getSimpleCS();
 				// Adjust all the source object transient field values to
 				// acceptable values
-				sourceItem.reconnect(targetCheatSheet, fModel);					
+				sourceItem.reconnect(targetCheatSheet, fModel);
 				// Paste source item as sibling of the target item (right after it)
 				int index = targetCheatSheet.indexOfItem(targetItem) + 1;
-				targetCheatSheet.addItem(index, sourceItem);				
+				targetCheatSheet.addItem(index, sourceItem);
 			} else if (targetCSObject.getType() == ISimpleCSConstants.TYPE_INTRO) {
-				ISimpleCSIntro targetIntro = (ISimpleCSIntro)targetCSObject;
+				ISimpleCSIntro targetIntro = (ISimpleCSIntro) targetCSObject;
 				ISimpleCS targetCheatSheet = targetCSObject.getSimpleCS();
 				// Adjust all the source object transient field values to
 				// acceptable values
-				sourceItem.reconnect(targetCheatSheet, fModel);					
+				sourceItem.reconnect(targetCheatSheet, fModel);
 				// Paste source item as the first item (right after intro node)
 				int index = targetCheatSheet.indexOf(targetIntro) + 1;
-				targetCheatSheet.addItem(index, sourceItem);	
+				targetCheatSheet.addItem(index, sourceItem);
 			}
 		} else if (sourceCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-			ISimpleCSSubItem sourceSubitem = (ISimpleCSSubItem)sourceCSObject;
+			ISimpleCSSubItem sourceSubitem = (ISimpleCSSubItem) sourceCSObject;
 			if (targetCSObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetCSObject;
 				// Adjust all the source object transient field values to
 				// acceptable values
-				sourceSubitem.reconnect(targetItem, fModel);				
+				sourceSubitem.reconnect(targetItem, fModel);
 				// Paste subitem as the last child of the item 
 				targetItem.addSubItem(sourceSubitem);
-			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) &&
-					(targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
-				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem)targetCSObject;
-				ISimpleCSItem targetItem = (ISimpleCSItem)targetSubItem.getParent();
+			} else if ((targetCSObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) && (targetCSObject.getParent().getType() == ISimpleCSConstants.TYPE_ITEM)) {
+				ISimpleCSSubItem targetSubItem = (ISimpleCSSubItem) targetCSObject;
+				ISimpleCSItem targetItem = (ISimpleCSItem) targetSubItem.getParent();
 				// Adjust all the source object transient field values to
 				// acceptable values
 				sourceSubitem.reconnect(targetItem, fModel);
@@ -1448,9 +1362,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				int index = targetItem.indexOfSubItem(targetSubItem) + 1;
 				targetItem.addSubItem(index, sourceSubitem);
 			}
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canCut(org.eclipse.jface.viewers.ISelection)
 	 */
@@ -1464,15 +1378,14 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			return false;
 		}
 		// Get the first element
-		Object object = ((IStructuredSelection)selection).getFirstElement();
+		Object object = ((IStructuredSelection) selection).getFirstElement();
 		// Ensure we have a CS object
 		if ((object instanceof ISimpleCSObject) == false) {
 			return false;
 		}
-		ISimpleCSObject csObject = (ISimpleCSObject)object;
+		ISimpleCSObject csObject = (ISimpleCSObject) object;
 		// Can cut only items and subitems
-		if ((csObject.getType() == ISimpleCSConstants.TYPE_ITEM) &&
-				(csObject.getSimpleCS().getItemCount() != 1)) {
+		if ((csObject.getType() == ISimpleCSConstants.TYPE_ITEM) && (csObject.getSimpleCS().getItemCount() != 1)) {
 			// Is an item and is not the last item
 			return true;
 		} else if (object instanceof ISimpleCSSubItem) {
@@ -1482,5 +1395,5 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		// Cannot cut anything else
 		return false;
 	}
-	
+
 }

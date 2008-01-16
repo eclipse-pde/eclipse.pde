@@ -35,10 +35,8 @@ public class SortAction extends Action {
 	 * @param listener
 	 * @param useMiniImage
 	 */
-	public SortAction(StructuredViewer viewer, String tooltipText,
-			ViewerComparator sorter, ViewerComparator defaultSorter, 
-			IPropertyChangeListener listener) {
-		
+	public SortAction(StructuredViewer viewer, String tooltipText, ViewerComparator sorter, ViewerComparator defaultSorter, IPropertyChangeListener listener) {
+
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		// Set the tooltip
 		setToolTipText(tooltipText);

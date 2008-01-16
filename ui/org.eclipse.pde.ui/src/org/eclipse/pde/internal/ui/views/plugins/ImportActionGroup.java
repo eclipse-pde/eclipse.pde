@@ -12,16 +12,10 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
@@ -34,21 +28,23 @@ public class ImportActionGroup extends ActionGroup {
 	class ImportAction extends Action {
 		IStructuredSelection fSel;
 		int fImportType;
+
 		ImportAction(int importType, IStructuredSelection selection) {
 			fSel = selection;
 			fImportType = importType;
 			switch (fImportType) {
-			case PluginImportOperation.IMPORT_BINARY:
-				setText(PDEUIMessages.PluginsView_asBinaryProject);
-				break;
-			case PluginImportOperation.IMPORT_BINARY_WITH_LINKS:
-				setText(PDEUIMessages.ImportActionGroup_binaryWithLinkedContent);
-				break;
-			case PluginImportOperation.IMPORT_WITH_SOURCE:
-				setText(PDEUIMessages.PluginsView_asSourceProject);
-				break;
+				case PluginImportOperation.IMPORT_BINARY :
+					setText(PDEUIMessages.PluginsView_asBinaryProject);
+					break;
+				case PluginImportOperation.IMPORT_BINARY_WITH_LINKS :
+					setText(PDEUIMessages.ImportActionGroup_binaryWithLinkedContent);
+					break;
+				case PluginImportOperation.IMPORT_WITH_SOURCE :
+					setText(PDEUIMessages.PluginsView_asSourceProject);
+					break;
 			}
 		}
+
 		public void run() {
 			handleImport(fImportType, fSel);
 		}
@@ -60,12 +56,11 @@ public class ImportActionGroup extends ActionGroup {
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			String menuName = null;
-			if (sSelection.getFirstElement() instanceof IPluginExtension || 
-					sSelection.getFirstElement() instanceof IPluginExtensionPoint)
+			if (sSelection.getFirstElement() instanceof IPluginExtension || sSelection.getFirstElement() instanceof IPluginExtensionPoint)
 				menuName = PDEUIMessages.ImportActionGroup_importContributingPlugin;
 			else
 				menuName = PDEUIMessages.PluginsView_import;
-			MenuManager importMenu = new MenuManager(menuName); 
+			MenuManager importMenu = new MenuManager(menuName);
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY, sSelection));
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY_WITH_LINKS, sSelection));
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_WITH_SOURCE, sSelection));
@@ -83,9 +78,7 @@ public class ImportActionGroup extends ActionGroup {
 		Display display = Display.getCurrent();
 		if (display == null)
 			display = Display.getDefault();
-		IPluginModelBase[] models =
-			(IPluginModelBase[]) externalModels.toArray(
-					new IPluginModelBase[externalModels.size()]);
+		IPluginModelBase[] models = (IPluginModelBase[]) externalModels.toArray(new IPluginModelBase[externalModels.size()]);
 
 		PluginImportWizard.doImportOperation(display.getActiveShell(), importType, models, false);
 	}
@@ -98,17 +91,17 @@ public class ImportActionGroup extends ActionGroup {
 		}
 		return false;
 	}
-	
+
 	private static IPluginModelBase getModel(Object next) {
 		IPluginModelBase model = null;
 		if (next instanceof IPluginModelBase)
 			model = (IPluginModelBase) next;
 		else if (next instanceof IPluginBase)
-			model = ((IPluginBase)next).getPluginModel();
+			model = ((IPluginBase) next).getPluginModel();
 		else if (next instanceof IPluginExtension)
-			model = ((IPluginExtension)next).getPluginModel();
+			model = ((IPluginExtension) next).getPluginModel();
 		else if (next instanceof IPluginExtensionPoint)
-			model = ((IPluginExtensionPoint)next).getPluginModel();
+			model = ((IPluginExtensionPoint) next).getPluginModel();
 		return model;
 	}
 }

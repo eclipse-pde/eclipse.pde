@@ -25,42 +25,49 @@ public interface IFieldData {
 	 * @return plug-in identifier as entered in the wizard
 	 */
 	String getId();
+
 	/**
 	 * Plug-in version field.
 	 * 
 	 * @return plug-in version as entered in the wizard
 	 */
 	String getVersion();
+
 	/**
 	 * Plug-in name field
 	 * 
 	 * @return plug-in name as entered in the wizard
 	 */
 	String getName();
+
 	/**
 	 * Plug-in provider field
 	 * 
 	 * @return plug-in provider as entered in the wizard
 	 */
 	String getProvider();
+
 	/**
 	 * Plug-in library field
 	 * 
 	 * @return the name of the initial Java library
 	 */
 	String getLibraryName();
+
 	/**
 	 * Source folder field
 	 * 
 	 * @return the name of the Java source folder
 	 */
 	String getSourceFolderName();
+
 	/**
 	 * Output folder field
 	 * 
 	 * @return the name of the Java output folder
 	 */
 	String getOutputFolderName();
+
 	/**
 	 * Legacy selection
 	 * 
@@ -69,7 +76,7 @@ public interface IFieldData {
 	 *         if the plug-in is compatible with Eclipse 3.0.
 	 */
 	boolean isLegacy();
-	
+
 	/**
 	 * OSGi bundle selection
 	 * 
@@ -78,6 +85,7 @@ public interface IFieldData {
 	 *         the plug-in has standard pre-3.0 layout.
 	 */
 	boolean hasBundleStructure();
+
 	/**
 	 * Simple project selection
 	 * 
