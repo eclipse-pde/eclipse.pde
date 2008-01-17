@@ -349,6 +349,8 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			String id = memento.getString(M_PLUGIN_ID);
 			String version = memento.getString(M_PLUGIN_VERSION);
 			ModelEntry entry = PluginRegistry.findEntry(id);
+			if (entry == null)
+				return null;
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
