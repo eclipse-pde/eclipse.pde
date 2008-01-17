@@ -20,11 +20,13 @@ import org.osgi.framework.*;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	private Hashtable fPluginMap = new Hashtable();
+	private Hashtable fExtensionPointMap = new Hashtable();
 	public boolean isInExtensionSet;
 
-	class BundleFolder implements IBundleFolder {
+	static class BundleFolder implements IBundleFolder {
 		private int id;
 		private Bundle bundle;
+		private Object[] children;
 
 		public BundleFolder(Bundle pd, int id) {
 			this.bundle = pd;
@@ -36,7 +38,10 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 
 		public Object[] getChildren() {
-			return getFolderChildren(bundle, id);
+			if (children == null) {
+				children = getFolderChildren(bundle, id);
+			}
+			return children;
 		}
 
 		public int getFolderId() {
@@ -48,7 +53,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	class BundlePrerequisite implements IBundlePrerequisite {
+	static class BundlePrerequisite implements IBundlePrerequisite {
 		private ManifestElement underlyingElement;
 
 		public BundlePrerequisite(ManifestElement element) {
@@ -75,7 +80,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	class BundleLibrary implements IBundleLibrary {
+	static class BundleLibrary implements IBundleLibrary {
 		private ManifestElement underlyingElement;
 
 		public BundleLibrary(ManifestElement element) {
@@ -87,7 +92,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	protected PluginObjectAdapter createAdapter(Object object, int id) {
+	static protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IBundleFolder.F_EXTENSIONS)
 			return new ExtensionAdapter(object);
 		if (id == IBundleFolder.F_EXTENSION_POINTS)
@@ -135,14 +140,15 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			Object[] folders = (Object[]) fPluginMap.get(bundleID);
 			if (folders == null) {
 				folders = createPluginFolders(bundle);
-				fPluginMap.put(bundleID, folders);
-			} else {
+
 				ArrayList folderList = new ArrayList();
 				for (int i = 0; i < folders.length; i++) {
 					if (folders[i] != null && ((IBundleFolder) folders[i]).getChildren() != null || ((IBundleFolder) folders[i]).getFolderId() == IBundleFolder.F_LOCATION)
 						folderList.add(folders[i]);
 				}
 				folders = folderList.toArray(new Object[folderList.size()]);
+
+				fPluginMap.put(bundleID, folders);
 			}
 			return folders;
 		}
@@ -158,20 +164,28 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return (Object[]) element;
 		}
 		if (element instanceof IExtensionPoint) {
-			Object[] array = ((IExtensionPoint) element).getExtensions();
-			Object[] result = null;
-			if (array != null && array.length > 0) {
-				result = new Object[array.length];
-				for (int i = 0; i < array.length; i++) {
-					result[i] = createAdapter(array[i], IBundleFolder.F_EXTENSIONS);
+			IExtensionPoint extensionPoint = (IExtensionPoint) element;
+			String id = extensionPoint.getUniqueIdentifier();
+
+			Object[] children = (Object[]) fExtensionPointMap.get(id);
+			if (children == null) {
+				Object[] array = extensionPoint.getExtensions();
+				if (array != null && array.length > 0) {
+					children = new Object[array.length];
+					for (int i = 0; i < array.length; i++) {
+						children[i] = createAdapter(array[i], IBundleFolder.F_EXTENSIONS);
+					}
+
+					fExtensionPointMap.put(id, children);
 				}
 			}
-			return result;
+
+			return children;
 		}
 		return null;
 	}
 
-	Object[] getFolderChildren(Bundle bundle, int id) {
+	static Object[] getFolderChildren(Bundle bundle, int id) {
 		Object[] array = null;
 		String bundleId = bundle.getSymbolicName();
 		switch (id) {
@@ -210,7 +224,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { // do nothing
 	}
 
-	private Object[] getManifestHeaderArray(Bundle bundle, String headerKey) {
+	static private Object[] getManifestHeaderArray(Bundle bundle, String headerKey) {
 		String libraries = (String) bundle.getHeaders().get(headerKey);
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(headerKey, libraries);
