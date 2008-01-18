@@ -85,6 +85,8 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	 */
 	public File getJVMLocation(String os) {
 		IPath jreContainerPath = getJREContainerPath(os);
+		if (jreContainerPath == null) // no vm was specified
+			return null;
 		IVMInstall vm = JavaRuntime.getVMInstall(jreContainerPath);
 		if (vm != null) {
 			return vm.getInstallLocation();
