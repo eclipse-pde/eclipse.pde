@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008  IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,7 +273,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 
 		// delete manifest.mf imported from libraries
-		IFile importedManifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		IFile importedManifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (importedManifest.exists()) {
 			importedManifest.delete(true, false, monitor);
 			if (!fData.hasBundleStructure()) {
@@ -319,7 +319,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
-	protected IClasspathEntry[] getInternalClassPathEntries(IProject project, IFieldData data) {
+	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project, IFieldData data) {
 		String[] libraryPaths;
 		if (fData.isUnzipLibraries()) {
 			libraryPaths = new String[] {""}; //$NON-NLS-1$
@@ -330,7 +330,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		for (int j = 0; j < libraryPaths.length; j++) {
 			File jarFile = new File(libraryPaths[j]);
 			String jarName = jarFile.getName();
-			IPath path = project.getFullPath().append(jarName);
+			IPath path = project.getProject().getFullPath().append(jarName);
 			entries[j] = JavaCore.newLibraryEntry(path, null, null, true);
 		}
 		return entries;
