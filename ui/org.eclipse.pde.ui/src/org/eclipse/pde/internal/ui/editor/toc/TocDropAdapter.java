@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,14 +166,15 @@ public class TocDropAdapter extends ViewerDropAdapter {
 					return;
 				}
 
-				if (!TocExtensionUtil.hasValidPageExtension(path) && !TocExtensionUtil.isTOCFile(path)) {
-					event.detail = DND.DROP_NONE;
+				if(!HelpEditorUtil.hasValidPageExtension(path)
+					&& !HelpEditorUtil.isTOCFile(path))
+				{	event.detail = DND.DROP_NONE;
 					return;
 				}
 
 				// Make sure that the user isn't dropping a TOC into itself
-				if (TocExtensionUtil.isCurrentResource(path, model)) {
-					event.detail = DND.DROP_NONE;
+				if(HelpEditorUtil.isCurrentResource(path, model))
+				{	event.detail = DND.DROP_NONE;
 					return;
 				}
 			}

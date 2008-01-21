@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.internal.ui.editor.toc.TocExtensionUtil;
+import org.eclipse.pde.internal.ui.editor.toc.HelpEditorUtil;
 
-public class TocPageFilter extends ViewerFilter {
+public class HelpEditorFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof IFile) {
 			IPath path = ((IFile) element).getFullPath();
 
-			return TocExtensionUtil.hasValidPageExtension(path);
+			return HelpEditorUtil.hasValidPageExtension(path);
 		}
 
 		if (element instanceof IProject && !((IProject) element).isOpen()) {

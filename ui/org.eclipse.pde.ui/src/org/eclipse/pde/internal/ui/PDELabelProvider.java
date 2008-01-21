@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.ictxhelp.ICtxHelpConstants;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
@@ -37,6 +38,7 @@ import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.core.itoc.ITocConstants;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject;
 import org.eclipse.pde.internal.core.text.toc.TocObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -92,6 +94,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof TocObject) {
 			return getObjectText((TocObject) obj);
+		}
+		if (obj instanceof CtxHelpObject) {
+			return getObjectText((CtxHelpObject) obj);
 		}
 		if (obj instanceof FeaturePlugin) {
 			return getObjectText((FeaturePlugin) obj);
@@ -288,6 +293,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return PDETextHelper.translateReadText(obj.getName());
 	}
 
+	/**
+	 * @param obj
+	 */
+	public String getObjectText(CtxHelpObject obj) {
+		return PDETextHelper.translateReadText(obj.getName());
+	}
+
 	public String getObjectText(FeaturePlugin obj) {
 		String name = isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
 		String version = obj.getVersion();
@@ -441,6 +453,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof TocObject) {
 			return getObjectImage((TocObject) obj);
+		}
+		if (obj instanceof CtxHelpObject) {
+			return getObjectImage((CtxHelpObject) obj);
 		}
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
@@ -711,6 +726,31 @@ public class PDELabelProvider extends SharedLabelProvider {
 			}
 			case ITocConstants.TYPE_ANCHOR : {
 				return get(PDEPluginImages.DESC_TOC_ANCHOR_OBJ);
+			}
+			default :
+				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
+		}
+	}
+
+	/**
+	 * @param object
+	 */
+	private Image getObjectImage(CtxHelpObject object) {
+		switch (object.getType()) {
+			case ICtxHelpConstants.TYPE_ROOT : {
+				return get(PDEPluginImages.DESC_TOC_OBJ);
+			}
+			case ICtxHelpConstants.TYPE_CONTEXT : {
+				return get(PDEPluginImages.DESC_CTXHELP_CONTEXT_OBJ);
+			}
+			case ICtxHelpConstants.TYPE_DESCRIPTION : {
+				return get(PDEPluginImages.DESC_CTXHELP_DESC_OBJ);
+			}
+			case ICtxHelpConstants.TYPE_TOPIC : {
+				return get(PDEPluginImages.DESC_TOC_LEAFTOPIC_OBJ);
+			}
+			case ICtxHelpConstants.TYPE_COMMAND : {
+				return get(PDEPluginImages.DESC_CTXHELP_COMMAND_OBJ);
 			}
 			default :
 				return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);

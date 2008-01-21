@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,12 @@ public class TocFileValidator implements ISelectionStatusValidator {
 		}
 		IFile file = (IFile) selection[0];
 		// Ensure we have a TOC file
-		if (!TocExtensionUtil.isTOCFile(file.getFullPath())) {
+		if (!HelpEditorUtil.isTOCFile(file.getFullPath())) {
 			return errorStatus(PDEUIMessages.TocFileValidator_errorInvalidTOC);
 		}
 
 		//Ensure that the TOC file selected isn't the current file
-		if (TocExtensionUtil.isCurrentResource(file.getFullPath(), fModel)) {
+		if (HelpEditorUtil.isCurrentResource(file.getFullPath(), fModel)) {
 			return errorStatus(PDEUIMessages.TocFileValidator_errorSameTOC);
 		}
 
@@ -62,18 +62,10 @@ public class TocFileValidator implements ISelectionStatusValidator {
 
 	}
 
-	/**
-	 * @param message
-	 * @return
-	 */
 	private IStatus errorStatus(String message) {
 		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, message, null);
 	}
 
-	/**
-	 * @param message
-	 * @return
-	 */
 	private IStatus okStatus(String message) {
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, message, null);
 	}

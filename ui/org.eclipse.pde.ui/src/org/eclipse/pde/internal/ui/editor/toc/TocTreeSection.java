@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -356,11 +356,11 @@ public class TocTreeSection extends TreeSection {
 
 				TocObject parent = tocObject.getParent();
 				if (sel.size() == 1 && (tocObject.getType() == ITocConstants.TYPE_TOC || parent.getType() == ITocConstants.TYPE_TOPIC || parent.getType() == ITocConstants.TYPE_TOC)) { /* Semantic rule: 
-								 * As long as the selection is a child of a 
-								 * TOC root or a topic, or the selection itself
-								 * is a TOC root, then a new object can be added
-								 * either to the selection or to the parent
-								 */
+																	 * As long as the selection is a child of a 
+																	 * TOC root or a topic, or the selection itself
+																	 * is a TOC root, then a new object can be added
+																	 * either to the selection or to the parent
+																	 */
 					canAddObject = true;
 				}
 
@@ -670,13 +670,13 @@ public class TocTreeSection extends TreeSection {
 		String message = null;
 
 		if (tocFile) {
-			if (TocExtensionUtil.isTOCFile(path)) {
+			if (HelpEditorUtil.isTOCFile(path)) {
 				return true;
 			}
 
 			message = PDEUIMessages.TocPage_invalidTocFile;
 		} else {
-			if (TocExtensionUtil.hasValidPageExtension(path)) {
+			if (HelpEditorUtil.hasValidPageExtension(path)) {
 				return true;
 			}
 
@@ -739,7 +739,7 @@ public class TocTreeSection extends TreeSection {
 	 * 
 	 * @param dropTarget The target that the drop occurs near/on
 	 * @param dropLocation The location of the drop relative to the target
-	 * @return
+	 * @return parent
 	 */
 	private TocTopic determineParent(TocObject dropTarget, int dropLocation) {
 		//We must determine what object will be the parent of the
@@ -755,14 +755,14 @@ public class TocTreeSection extends TreeSection {
 		} else { //In all other cases, it depends on the location of the drop
 			//relative to the drop target
 			switch (dropLocation) {
-				case TocDropAdapter.LOCATION_JUST_AFTER : { //if the drop occured after an expanded node
+				case TocDropAdapter.LOCATION_JUST_AFTER : { //if the drop occurred after an expanded node
 					//and all of its children,
 					//make the drop target's parent the target parent object
 					if (!fTocTree.getExpandedState(dropTarget)) {
 						return (TocTopic) dropTarget.getParent();
 					}
 					//otherwise, the target parent is the drop target,
-					//since the drop occured between it and its first child
+					//since the drop occurred between it and its first child
 				}
 				case ViewerDropAdapter.LOCATION_ON : { //the drop location is directly on the drop target
 					//set the parent object to be the drop target
@@ -811,11 +811,11 @@ public class TocTreeSection extends TreeSection {
 				// If the path is to a valid TOC file
 				// and it isn't the file in this model
 				// then make a link
-				if (TocExtensionUtil.isTOCFile(path) && !TocExtensionUtil.isCurrentResource(path, fModel)) {
+				if (HelpEditorUtil.isTOCFile(path) && !HelpEditorUtil.isCurrentResource(path, fModel)) {
 					tocObjects.add(makeNewTocLink(targetParent, file));
 				}
 				// If the path is to a file with an HTML page extension, make a topic
-				else if (TocExtensionUtil.hasValidPageExtension(path)) {
+				else if (HelpEditorUtil.hasValidPageExtension(path)) {
 					TocTopic topic = makeNewTocTopic(targetParent, file);
 					String title = generateTitle(targetParent, path);
 

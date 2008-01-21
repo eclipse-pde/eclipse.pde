@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.toc.TocExtensionUtil;
+import org.eclipse.pde.internal.ui.editor.toc.HelpEditorUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -55,9 +55,11 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 			return false;
 		}
 
-		if (!TocExtensionUtil.hasValidPageExtension(new Path(fLastFilename))) {
-			String message = NLS.bind(PDEUIMessages.TocHTMLWizardPage_badExtension, TocExtensionUtil.getPageExtensionList());
-
+		if(!HelpEditorUtil.hasValidPageExtension(new Path(fLastFilename)))
+		{	String message = NLS.bind(
+				PDEUIMessages.TocHTMLWizardPage_badExtension, 
+				HelpEditorUtil.getPageExtensionList());
+		
 			setErrorMessage(message);
 			return false;
 		}

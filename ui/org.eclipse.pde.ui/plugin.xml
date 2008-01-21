@@ -422,6 +422,17 @@
                contentTypeId="org.eclipse.pde.tocFile">
          </contentTypeBinding>
       </editor>
+      <editor
+            class="org.eclipse.pde.internal.ui.editor.ctxhelp.CtxHelpEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.toc.TocEditorContributor"
+            default="true"
+            icon="$nl$/icons/obj16/toc_obj.gif"
+            id="org.eclipse.pde.ui.ctxHelpEditor"
+            name="%ctxhelp.editor">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.ctxHelpFile">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.views">

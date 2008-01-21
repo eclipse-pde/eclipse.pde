@@ -2833,6 +2833,70 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
 
+	public static String CtxHelpCommandDetails_command;
+
+	public static String CtxHelpCommandDetails_commandDetails;
+
+	public static String CtxHelpCommandDetails_label;
+
+	public static String CtxHelpCommandDetails_specifyDisplayLabel;
+
+	public static String CtxHelpCommandDetails_specifyTheCommand;
+
+	public static String CtxHelpContextDetails_contextDetails;
+
+	public static String CtxHelpContextDetails_description;
+
+	public static String CtxHelpContextDetails_id;
+
+	public static String CtxHelpContextDetails_specifyDescription;
+
+	public static String CtxHelpContextDetails_specifyID;
+
+	public static String CtxHelpContextDetails_specifyTitle;
+
+	public static String CtxHelpContextDetails_title;
+
+	public static String CtxHelpDescriptionDetails_description;
+
+	public static String CtxHelpDescriptionDetails_specifyDescription;
+
+	public static String CtxHelpPage_contextHelp;
+
+	public static String CtxHelpPage_errorParsing;
+
+	public static String CtxHelpPage_failedToLoad;
+
+	public static String CtxHelpTopicDetails_label;
+
+	public static String CtxHelpTopicDetails_location;
+
+	public static String CtxHelpTopicDetails_specifyLabel;
+
+	public static String CtxHelpTopicDetails_specifyLocation;
+
+	public static String CtxHelpTreeSection_addCommand;
+
+	public static String CtxHelpTreeSection_addContext;
+
+	public static String CtxHelpTreeSection_addTopic;
+
+	public static String CtxHelpTreeSection_contextHelp;
+
+	public static String CtxHelpTreeSection_defaultCommandName;
+
+	public static String CtxHelpTreeSection_defaultContextName;
+
+	public static String CtxHelpTreeSection_defaultTopicName;
+
+	public static String CtxHelpTreeSection_editContextHelpStructure;
+
+	public static String CtxHelpTreeSection_newCommand;
+
+	public static String CtxHelpTreeSection_newContext;
+
+	public static String CtxHelpTreeSection_newTopic;
+
 	public static String PluginsView_description;
 
 	public static String TargetProfileWindow_additionalLocations;

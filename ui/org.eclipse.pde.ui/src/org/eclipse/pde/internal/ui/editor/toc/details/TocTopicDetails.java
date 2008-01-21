@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.toc.details;
 
 import org.eclipse.core.resources.IFile;
@@ -150,10 +149,10 @@ public class TocTopicDetails extends TocAbstractDetails {
 
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.TocDetails_browseSelection);
-		dialog.setMessage(PDEUIMessages.TocDetails_browseMessage);
-		dialog.addFilter(new TocPageFilter());
-
+		dialog.setTitle(PDEUIMessages.TocDetails_browseSelection);  
+		dialog.setMessage(PDEUIMessages.TocDetails_browseMessage);  
+		dialog.addFilter(new HelpEditorFilter());
+		
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
 		if (dialog.open() == Window.OK) {

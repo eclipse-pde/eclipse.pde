@@ -125,7 +125,7 @@ public class TocLinkDetails extends TocAbstractDetails {
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.TocLinkDetails_browseSelection);
 		dialog.setMessage(PDEUIMessages.TocLinkDetails_browseMessage);
-		dialog.addFilter(new FileExtensionFilter(TocExtensionUtil.tocExtension));
+		dialog.addFilter(new FileExtensionFilter(HelpEditorUtil.tocExtension));
 
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
