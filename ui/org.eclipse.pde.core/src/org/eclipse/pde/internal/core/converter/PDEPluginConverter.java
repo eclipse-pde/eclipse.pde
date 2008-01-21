@@ -10,15 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.converter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import java.io.*;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.BundleException;
 
 public class PDEPluginConverter {
@@ -47,27 +39,6 @@ public class PDEPluginConverter {
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (PluginConversionException e) {
-		} finally {
-			monitor.done();
-		}
-	}
-
-	public static void createBundleForFramework(IProject project, HashMap newProps, IProgressMonitor monitor) throws CoreException {
-		try {
-			File outputFile = new File(project.getLocation().append(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).toOSString());
-			File inputFile = new File(project.getLocation().toOSString());
-			PluginConverter converter = PluginConverter.getDefault();
-			double version = TargetPlatformHelper.getTargetVersion();
-			String versionString = version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatformHelper.getTargetVersionString();
-			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
-
-			Map prop = getProperties(outputFile, newProps);
-			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART);
-			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
-			converter.writeManifest(outputFile, prop, false);
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (PluginConversionException e) {
-		} catch (CoreException e) {
 		} finally {
 			monitor.done();
 		}
