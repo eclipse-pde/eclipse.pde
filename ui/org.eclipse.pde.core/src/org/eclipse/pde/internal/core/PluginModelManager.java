@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,37 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 191365
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.osgi.service.resolver.BundleDelta;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.StateDelta;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IModelProviderListener {
 
@@ -384,7 +368,9 @@ public class PluginModelManager implements IModelProviderListener {
 	private synchronized void initializeTable() {
 		if (fEntries != null)
 			return;
-		fEntries = Collections.synchronizedMap(new TreeMap());
+
+		// Cannot assign to fEntries here - will create a race condition with isInitialized()
+		Map entries = Collections.synchronizedMap(new TreeMap());
 
 		// Create a state that contains all bundles from the target and workspace
 		// If a workspace bundle has the same symbolic name as a target bundle,
@@ -397,7 +383,7 @@ public class PluginModelManager implements IModelProviderListener {
 		fExternalManager.initializeModels(fState.getTargetModels());
 
 		// add target models to the master table
-		boolean statechanged = addToTable(fExternalManager.getAllModels());
+		boolean statechanged = addToTable(entries, fExternalManager.getAllModels());
 
 		// a state is combined only if the workspace plug-ins have not changed
 		// since the last shutdown of the workbench
@@ -406,7 +392,7 @@ public class PluginModelManager implements IModelProviderListener {
 			// initialize the workspace models from the cached state
 			fWorkspaceManager.initializeModels(models);
 			// add workspace models to the master table
-			addToTable(models);
+			addToTable(entries, models);
 			// resolve the state incrementally if some target models
 			// were removed
 			if (statechanged)
@@ -417,12 +403,12 @@ public class PluginModelManager implements IModelProviderListener {
 			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
 
 			// add workspace plug-ins to the master table
-			addToTable(models);
+			addToTable(entries, models);
 
 			// add workspace plug-ins to the state
 			// and remove their target counterparts from the state.
 			for (int i = 0; i < models.length; i++) {
-				addWorkspaceBundleToState(models[i]);
+				addWorkspaceBundleToState(entries, models[i]);
 			}
 
 			// resolve the state incrementally if any workspace plug-ins were found
@@ -432,6 +418,8 @@ public class PluginModelManager implements IModelProviderListener {
 			// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
 			PDECore.getDefault().getExtensionsRegistry().targetReloaded();
 		}
+
+		fEntries = entries;
 	}
 
 	/**
@@ -441,17 +429,17 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 * @return <code>true</code> if changes were made to the state; <code>false</code> otherwise
 	 */
-	private boolean addToTable(IPluginModelBase[] models) {
+	private boolean addToTable(Map entries, IPluginModelBase[] models) {
 		boolean stateChanged = false;
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			LocalModelEntry entry = (LocalModelEntry) fEntries.get(id);
+			LocalModelEntry entry = (LocalModelEntry) entries.get(id);
 			// create a new entry for the given ID if none already exists
 			if (entry == null) {
 				entry = new LocalModelEntry(id);
-				fEntries.put(id, entry);
+				entries.put(id, entry);
 			}
 			// add the model to the entry
 			entry.addModel(models[i]);
@@ -472,12 +460,16 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param model  the workspace model
 	 */
 	private synchronized void addWorkspaceBundleToState(IPluginModelBase model) {
+		addWorkspaceBundleToState(fEntries, model);
+	}
+
+	private synchronized void addWorkspaceBundleToState(Map entries, IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		if (id == null)
 			return;
 
 		// remove target models by the same ID from the state, if any
-		ModelEntry entry = (ModelEntry) fEntries.get(id);
+		ModelEntry entry = (ModelEntry) entries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();
 			for (int i = 0; i < models.length; i++)
@@ -494,16 +486,26 @@ public class PluginModelManager implements IModelProviderListener {
 			// on its own
 			HostSpecification spec = desc.getHost();
 			if (spec != null && ("true".equals(System.getProperty("pde.allowCycles")) //$NON-NLS-1$ //$NON-NLS-2$
-					|| ClasspathUtilCore.isPatchFragment(desc) || desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
+					|| isPatchFragment(entries, desc) || desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
 				BundleDescription host = (BundleDescription) spec.getSupplier();
 				if (host != null) {
-					ModelEntry hostEntry = (ModelEntry) fEntries.get(host.getName());
+					ModelEntry hostEntry = (ModelEntry) entries.get(host.getName());
 					if (hostEntry != null) {
 						fState.addBundle(hostEntry.getModel(host), true);
 					}
 				}
 			}
 		}
+	}
+
+	// Cannot directly call ClasspathUtilCore.isPatchFragment(BundleDescription) since it would cause a loop in our initialization.
+	private boolean isPatchFragment(Map entries, BundleDescription desc) {
+		ModelEntry entry = (ModelEntry) entries.get(desc.getSymbolicName());
+		if (entry != null) {
+			IPluginModelBase base = entry.getModel(desc);
+			return ClasspathUtilCore.isPatchFragment(base);
+		}
+		return false;
 	}
 
 	/**
@@ -825,7 +827,6 @@ public class PluginModelManager implements IModelProviderListener {
 	/**
 	 * Returns the state containing bundle descriptions for workspace plug-ins and target plug-ins
 	 * that form the current PDE state
-	 * @return
 	 */
 	public PDEState getState() {
 		initializeTable();
