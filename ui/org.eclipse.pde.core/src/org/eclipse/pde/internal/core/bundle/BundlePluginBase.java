@@ -13,45 +13,17 @@ package org.eclipse.pde.internal.core.bundle;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.IIdentifiable;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDEStateHelper;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.plugin.AbstractExtensions;
-import org.eclipse.pde.internal.core.plugin.PluginImport;
-import org.eclipse.pde.internal.core.plugin.PluginLibrary;
-import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleVendorHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
-import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.text.bundle.*;
+import org.osgi.framework.*;
 
 public class BundlePluginBase extends PlatformObject implements IBundlePluginBase, Serializable {
 
@@ -139,6 +111,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
+		ensureModelEditable();
 		if (libraries == null)
 			// if libraries == null, initialize the libraries varible by calling getLibraries()
 			getLibraries();
@@ -171,6 +144,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void remove(IPluginLibrary library) throws CoreException {
+		ensureModelEditable();
 		if (libraries != null) {
 			libraries.remove(library);
 			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
@@ -187,6 +161,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport iimport) throws CoreException {
+		ensureModelEditable();
 		if (iimport == null)
 			return;
 		if (imports == null)
@@ -197,9 +172,10 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	public void add(IPluginImport[] iimports) throws CoreException {
+		ensureModelEditable();
 		if (iimports != null && iimports.length > 0) {
 			if (imports == null)
-				// if imports == null, intitialize the imports list by calling getImports()
+				// if imports == null, initialize the imports list by calling getImports()
 				getImports();
 			for (int i = 0; i < iimports.length; i++) {
 				if (iimports[i] != null)
@@ -244,6 +220,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
+		ensureModelEditable();
 		if (imports != null) {
 			imports.remove(pluginImport);
 			Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
@@ -255,6 +232,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	public void remove(IPluginImport[] pluginImports) throws CoreException {
+		ensureModelEditable();
 		if (imports != null) {
 			for (int i = 0; i < pluginImports.length; i++) {
 				imports.remove(pluginImports[i]);
@@ -366,6 +344,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
+		ensureModelEditable();
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getProviderName();
@@ -398,6 +377,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
+		ensureModelEditable();
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getVersion();
@@ -417,6 +397,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 *      org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
+		ensureModelEditable();
 		if (libraries != null) {
 			int index1 = libraries.indexOf(l1);
 			int index2 = libraries.indexOf(l2);
@@ -446,6 +427,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void add(IPluginExtension extension) throws CoreException {
+		ensureModelEditable();
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions == null)
 			return;
@@ -462,6 +444,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	public void add(IPluginExtensionPoint point) throws CoreException {
+		ensureModelEditable();
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions == null)
 			return;
@@ -513,6 +496,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void remove(IPluginExtension extension) throws CoreException {
+		ensureModelEditable();
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extension);
@@ -528,6 +512,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
+		ensureModelEditable();
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extensionPoint);
@@ -567,6 +552,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 *      org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
+		ensureModelEditable();
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.swap(e1, e2);
@@ -577,6 +563,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void swap(IPluginImport import1, IPluginImport import2) throws CoreException {
+		ensureModelEditable();
 		if (imports != null) {
 			int index1 = imports.indexOf(import1);
 			int index2 = imports.indexOf(import2);
@@ -622,6 +609,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
+		ensureModelEditable();
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getId();
@@ -658,6 +646,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
+		ensureModelEditable();
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getName();
@@ -825,7 +814,8 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#add(org.eclipse.pde.core.plugin.IPluginImport, int)
 	 */
-	public void add(IPluginImport iimport, int index) {
+	public void add(IPluginImport iimport, int index) throws CoreException {
+		ensureModelEditable();
 		int importCount = 0;
 		if (imports != null) {
 			importCount = imports.size();
@@ -871,7 +861,8 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary, int)
 	 */
-	public void add(IPluginLibrary library, int index) {
+	public void add(IPluginLibrary library, int index) throws CoreException {
+		ensureModelEditable();
 		int libraryCount = 0;
 		if (libraries != null) {
 			libraryCount = libraries.size();
@@ -968,6 +959,19 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		IPluginLibrary previousLibrary = (IPluginLibrary) libraries.get(targetIndex - 1);
 
 		return previousLibrary;
+	}
+
+	protected void ensureModelEditable() throws CoreException {
+		if (!getModel().isEditable()) {
+			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange);
+		}
+	}
+
+	protected void throwCoreException(String message) throws CoreException {
+		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
+		CoreException ce = new CoreException(status);
+		ce.fillInStackTrace();
+		throw ce;
 	}
 
 }

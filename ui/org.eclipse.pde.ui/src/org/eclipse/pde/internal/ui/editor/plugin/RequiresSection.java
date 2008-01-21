@@ -297,9 +297,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private IPluginModelBase getModel() {
 		return (IPluginModelBase) getPage().getModel();
 	}
@@ -674,7 +671,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 	/**
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
@@ -694,7 +690,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
@@ -711,7 +706,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/**
 	 * @param sourceImportObject
 	 * @param targetImportObject
-	 * @return
 	 */
 	private boolean validateDropMoveModel(ImportObject sourceImportObject, ImportObject targetImportObject) {
 		// Objects have to be from the same model
@@ -824,7 +818,11 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		// the table viewer
 		setImportInsertIndex(targetIndex);
 		// Add source as sibling of target	
-		bundlePluginBase.add(sourcePluginImport, targetIndex);
+		try {
+			bundlePluginBase.add(sourcePluginImport, targetIndex);
+		} catch (CoreException e) {
+			// CoreException if model is not editable, which should never be the case
+		}
 		// Reset the index
 		resetImportInsertIndex();
 	}
@@ -843,9 +841,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		fImportInsertIndex = index;
 	}
 
-	/**
-	 * @return
-	 */
 	private int getImportInsertIndex() {
 		return fImportInsertIndex;
 	}
@@ -870,9 +865,6 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isTreeViewerSorted() {
 		if (fSortAction == null) {
 			return false;

@@ -644,9 +644,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private HashSet createPluginLibrarySet() {
 		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
@@ -675,9 +672,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private IPluginModelBase getModel() {
 		return (IPluginModelBase) getPage().getModel();
 	}
@@ -701,7 +695,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 
 	/**
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
@@ -762,7 +755,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/**
 	 * @param targetObject
 	 * @param sourceObjects
-	 * @return
 	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
@@ -779,7 +771,6 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/**
 	 * @param sourcePluginLibrary
 	 * @param targetPluginLibrary
-	 * @return
 	 */
 	private boolean validateDropMoveModel(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary) {
 		// Objects have to be from the same model
@@ -848,7 +839,11 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		// acceptable values
 		((PluginLibrary) sourcePluginLibrary).reconnect(model, bundlePluginBase);
 		// Add source as sibling of target		
-		bundlePluginBase.add(sourcePluginLibrary, targetIndex);
+		try {
+			bundlePluginBase.add(sourcePluginLibrary, targetIndex);
+		} catch (CoreException e) {
+			// CoreException only if model is not editable, which should never be the case
+		}
 	}
 
 	/**

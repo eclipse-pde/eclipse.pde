@@ -83,6 +83,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			else
 				model = new BundlePluginModel();
 			model.setEnabled(true);
+			bmodel.setEditable(false);
 			((IBundlePluginModelBase) model).setBundleModel(bmodel);
 
 			IFile efile = project.getFile(bmodel.isFragmentModel() ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
