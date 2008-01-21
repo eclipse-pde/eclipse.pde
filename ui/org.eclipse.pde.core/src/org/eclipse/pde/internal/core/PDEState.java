@@ -11,38 +11,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.bundle.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEState extends MinimalState {
@@ -281,7 +263,7 @@ public class PDEState extends MinimalState {
 			else
 				model = new BundleFragmentModel();
 			model.setEnabled(true);
-			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
 			bundle.load(desc, this);
 			model.setBundleDescription(desc);
 			model.setBundleModel(bundle);

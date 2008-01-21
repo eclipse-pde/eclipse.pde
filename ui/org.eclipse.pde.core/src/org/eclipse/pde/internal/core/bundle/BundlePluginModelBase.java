@@ -14,32 +14,13 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.IEditableModel;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.internal.core.AbstractNLModel;
-import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
@@ -231,7 +212,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	public URL getNLLookupLocation() {
 		try {
-			return new URL("file:" + getInstallLocation()); //$NON-NLS-1$ //$NON-NLS-2$
+			return new URL("file:" + getInstallLocation()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -273,7 +254,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
-	public void load() throws CoreException {
+	public void load() {
 	}
 
 	/*
@@ -281,7 +262,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
 	 */
-	public void load(InputStream source, boolean outOfSync) throws CoreException {
+	public void load(InputStream source, boolean outOfSync) {
 	}
 
 	/*
@@ -289,7 +270,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public void reload(InputStream source, boolean outOfSync) throws CoreException {
+	public void reload(InputStream source, boolean outOfSync) {
 	}
 
 	/**
