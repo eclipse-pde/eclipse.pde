@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -97,13 +98,24 @@ public class LaunchConfigurationHelper {
 			}
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
-		if (properties != null)
+		if (properties != null) {
 			addRequiredProperties(properties, productID, map);
-		else
+		} else {
 			properties = new Properties();
-		setBundleLocations(map, properties);
-		if (!directory.exists())
+		}
+		if (!directory.exists()) {
 			directory.mkdirs();
+		}
+		String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
+		if (osgiBundles != null && osgiBundles.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
+			URL bundlesTxt = P2Utils.writeBundlesTxt(map.values(), directory);
+			if (bundlesTxt != null) {
+				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+			}
+		}
+		setBundleLocations(map, properties);
+
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
 	}
@@ -127,9 +139,9 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static String computeOSGiBundles(String bundleList, Map map) {
-		// if using p2's simple configurator, revert to default osgi.bundles
+		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
 		if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
-			bundleList = P2Utils.getDefaultOSGiBundles();
+			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 		}
 		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();

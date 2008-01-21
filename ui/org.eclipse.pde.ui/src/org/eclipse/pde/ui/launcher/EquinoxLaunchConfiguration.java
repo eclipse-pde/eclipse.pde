@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,14 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -67,13 +69,29 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
-		String bundles = getBundles(autostart);
+
+		String bundles = null;
+		if (fAllBundles.containsKey("org.eclipse.equinox.simpleconfigurator")) { //$NON-NLS-1$
+			// If simple configurator is being used, we need to write out the bundles.txt instead of writing out the list in the config.ini
+			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration));
+			if (bundlesTxt != null) {
+				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+			}
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("org.eclipse.equinox.simpleconfigurator"); //$NON-NLS-1$
+			appendStartData(buffer, (String) fModels.get(fAllBundles.get("org.eclipse.equinox.simpleconfigurator")), autostart); //$NON-NLS-1$
+			bundles = buffer.toString();
+		} else {
+			bundles = getBundles(autostart);
+		}
 		if (bundles.length() > 0)
 			properties.put("osgi.bundles", bundles); //$NON-NLS-1$
+
 		if (!"3.3".equals(configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, ""))) { //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("osgi.noShutdown", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		LaunchConfigurationHelper.save(new File(getConfigDir(configuration), "config.ini"), properties); //$NON-NLS-1$
 	}
 
@@ -94,25 +112,36 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 					continue;
 
 				String data = fModels.get(model).toString();
-				int index = data.indexOf(':');
-				String level = index > 0 ? data.substring(0, index) : "default"; //$NON-NLS-1$
-				String auto = index > 0 && index < data.length() - 1 ? data.substring(index + 1) : "default"; //$NON-NLS-1$
-				if ("default".equals(auto)) //$NON-NLS-1$
-					auto = Boolean.toString(defaultAuto);
-				if (!level.equals("default") || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
-					buffer.append("@"); //$NON-NLS-1$
-
-				if (!level.equals("default")) { //$NON-NLS-1$
-					buffer.append(level);
-					if ("true".equals(auto)) //$NON-NLS-1$
-						buffer.append(":"); //$NON-NLS-1$
-				}
-				if ("true".equals(auto)) { //$NON-NLS-1$
-					buffer.append("start"); //$NON-NLS-1$
-				}
+				appendStartData(buffer, data, defaultAuto);
 			}
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * Convenience method to parses the startData ("startLevel:autoStart"), convert it to the
+	 * format expected by the OSGi bundles property, and append to a StringBuffer.
+	 * @param buffer buffer to append the data to
+	 * @param startData data to parse ("startLevel:autoStart")
+	 * @param defaultAuto default auto start setting
+	 */
+	private void appendStartData(StringBuffer buffer, String startData, boolean defaultAuto) {
+		int index = startData.indexOf(':');
+		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
+		String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
+		if ("default".equals(auto)) //$NON-NLS-1$
+			auto = Boolean.toString(defaultAuto);
+		if (!level.equals("default") || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("@"); //$NON-NLS-1$
+
+		if (!level.equals("default")) { //$NON-NLS-1$
+			buffer.append(level);
+			if ("true".equals(auto)) //$NON-NLS-1$
+				buffer.append(":"); //$NON-NLS-1$
+		}
+		if ("true".equals(auto)) { //$NON-NLS-1$
+			buffer.append("start"); //$NON-NLS-1$
+		}
 	}
 
 	/*
