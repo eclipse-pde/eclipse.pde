@@ -131,7 +131,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
 		boolean comboInitialized = false;
 		if (settings != null && !osgiProject) {
 			String text = settings.get(S_TARGET_NAME);
@@ -205,7 +205,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSimple(!fJavaButton.getSelection());
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
-		fData.setLegacy(false); //$NON-NLS-1$
+		fData.setLegacy(false);
 		fData.setTargetVersion(fTargetCombo.getText());
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
