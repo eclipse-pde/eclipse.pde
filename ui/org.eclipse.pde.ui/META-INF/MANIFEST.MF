@@ -26,6 +26,8 @@ Export-Package:
  org.eclipse.pde.internal.ui.editor.contentassist;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.contentassist.display;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.context;x-internal:=true,
+ org.eclipse.pde.internal.ui.editor.ctxhelp;x-internal:=true,
+ org.eclipse.pde.internal.ui.editor.ctxhelp.details;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.feature;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.outline;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.plugin;x-internal:=true,
