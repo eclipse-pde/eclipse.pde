@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - bug 189533
+ *     Les Jones <lesojones@gmail.com> - bug 215760
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -730,6 +731,9 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 	public void handleSelectAll(boolean selected) {
 		fPluginListViewer.setAllChecked(selected);
 		fPluginTreeViewer.setAllChecked(selected);
+
+		// Whether selecting or de-selecting, there should be no greyed elements
+		fPluginTreeViewer.setGrayedElements(new Object[0]);
 
 		IPluginModelBase[] allModels = getCurrentModels();
 		for (int i = 0; i < allModels.length; i++) {
