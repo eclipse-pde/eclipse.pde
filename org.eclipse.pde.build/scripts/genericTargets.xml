@@ -39,6 +39,7 @@
 		fetchTag="${fetchTag}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
+		pluginPath="${pluginPath}"
 	/>
 	
 	<!-- Run generated fetch script -->

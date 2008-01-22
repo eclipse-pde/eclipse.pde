@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
+import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -116,6 +117,15 @@ public class FetchTask extends Task {
 		generator.setRecursiveGeneration(recursiveGeneration);
 	}
 
+	/**
+	 * Set the plug-in path to be the given value.
+	 * 
+	 * @param pluginPath a File.pathSeparator separated list of paths
+	 */
+	public void setPluginPath(String pluginPath) {
+		generator.setPluginPath(Utils.getArrayFromString(pluginPath, File.pathSeparator));
+	}
+	
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
