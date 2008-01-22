@@ -427,7 +427,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		File propertiesFile = new File(file);
 		if (propertiesFile.exists()) {
 			try {
-				buildProperties.load(new BufferedInputStream(new FileInputStream(file)));
+				InputStream input = new BufferedInputStream(new FileInputStream(file));
+				try {
+					buildProperties.load(input);
+				} finally {
+					input.close();
+				}
 			} catch (IOException e) {
 				// nothing
 			}

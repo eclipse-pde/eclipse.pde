@@ -137,4 +137,12 @@ public class FeatureGeneratorTask extends Task {
 	public void setConfigInfo(String configInfo) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
+	
+	/**
+	 * Set to the location of a build.properties to be used for the generated feature
+	 * @param buildPropertiesFile
+	 */
+	public void setBuildPropertiesFile(String buildPropertiesFile) {
+		generator.setBuildProperties(buildPropertiesFile);
+	}
 }

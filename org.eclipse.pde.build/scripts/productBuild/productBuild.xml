@@ -10,6 +10,7 @@
 <property name="pluginList" value=""/>
 <property name="featureList" value=""/>
 <property name="includeLaunchers" value="true"/>
+<property name="generatedBuildProperties" value=""/>
 
 <!-- ===================================================================== -->
 <!-- main entry point to setup, fetch, generate, build etc. Use -->
@@ -48,6 +49,7 @@
 		pluginList="${pluginList}"
 		featureList="${featureList}"
 		includeLaunchers="${includeLaunchers}"
+		buildPropertiesFile="${generatedBuildProperties}"
 	/>
 </target>
 
