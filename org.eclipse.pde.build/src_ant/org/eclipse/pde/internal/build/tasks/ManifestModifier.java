@@ -104,10 +104,11 @@ public class ManifestModifier extends Task {
 	}
 
 	private void changeValue(String key, String value) {
-		if (manifest.getMainAttributes().getValue(key).equals(value))
+		Attributes attributes = manifest.getMainAttributes();
+		if (attributes.containsKey(key) && attributes.getValue(key).equals(value))
 			return;
 		contentChanged = true;
-		manifest.getMainAttributes().put(new Attributes.Name(key), value);
+		attributes.put(new Attributes.Name(key), value);
 	}
 
 	private void removeAttribute(String key) {
