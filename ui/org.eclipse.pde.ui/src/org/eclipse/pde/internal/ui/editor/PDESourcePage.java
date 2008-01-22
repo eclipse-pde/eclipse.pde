@@ -248,8 +248,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	protected void firePropertyChange(int type) {
 		if (type == PROP_DIRTY) {
 			fEditor.fireSaveNeeded(getEditorInput(), true);
-		} else
-			super.firePropertyChange(type);
+		}
+		super.firePropertyChange(type);
 	}
 
 	/* (non-Javadoc)
