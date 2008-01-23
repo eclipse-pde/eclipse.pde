@@ -57,6 +57,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.views.plugins;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.cheatsheet;x-internal:=true,
+ org.eclipse.pde.internal.ui.wizards.ctxhelp;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.exports;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.extension;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.feature;x-internal:=true,
