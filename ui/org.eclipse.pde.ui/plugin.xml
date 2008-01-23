@@ -216,6 +216,16 @@
             %new.toc.description
          </description>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.userAssistance"
+            class="org.eclipse.pde.internal.ui.wizards.ctxhelp.NewCtxHelpWizard"
+            icon="icons/obj16/toc_obj.gif"
+            id="org.eclipse.pde.ui.NewContextHelpWizard"
+            name="%new.ctxhelp.name">
+         <description>
+            %new.ctxhelp.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">

@@ -548,6 +548,16 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewCheatSheetFileWizard_0;
 
+	public static String NewCtxHelpOperation_ExampleContextId;
+
+	public static String NewCtxHelpOperation_ExampleTopicLabel;
+
+	public static String NewCtxHelpWizard_NewContextHelp;
+
+	public static String NewCtxHelpWizardPage_contextHelpDescription;
+
+	public static String NewCtxHelpWizardPage_contextHelpTitle;
+
 	public static String NewLibraryPluginCreationPage_pdependencies;
 
 	public static String OpenSchemaAction_errorMsgSchemaNotFound;
