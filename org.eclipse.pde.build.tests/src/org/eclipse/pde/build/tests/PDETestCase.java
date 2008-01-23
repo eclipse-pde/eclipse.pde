@@ -45,15 +45,14 @@ public abstract class PDETestCase extends TestCase {
 		AbstractScriptGenerator.getConfigInfos().clear();
 		BuildTimeSiteFactory.setInstalledBaseSite(null);
 		AbstractScriptGenerator.setForceUpdateJar(false);
-		//TODO: bug 192904, need to setGlobalQualifier to null
-		QualifierReplacer.setGlobalQualifier("");
+		QualifierReplacer.setGlobalQualifier(null);
 	}
 
 	protected void runTest() throws Throwable {
 		super.runTest();
 
 		//clean up after success
-		if (buildFolder != null && buildFolder.exists()) {
+		if (buildFolder != null && buildFolder.exists() && !Boolean.getBoolean("pde.build.noCleanup")) {
 			try {
 				buildFolder.delete(true, null);
 			} catch (CoreException e) {
