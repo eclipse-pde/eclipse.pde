@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
@@ -32,6 +33,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
 		switch (problemID) {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :
+				// if targetVersion <= 3.3, we can add Eclipse-LazyStart header even if previous header's value was false.  We can't do this for 3.4+ since Bundle-AcativationPolicy does not have a "false" value.
+				if (marker.getAttribute("canAdd", true) || TargetPlatformHelper.getTargetVersion() <= 3.3) //$NON-NLS-1$
+					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART)), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART))}; //$NON-NLS-1$ //$NON-NLS-2$
 				return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART))}; //$NON-NLS-1$
 			case PDEMarkerFactory.M_JAVA_PACKAGE__PORTED :
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
@@ -90,7 +94,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY :
 				return new IMarkerResolution[] {new AddBundleClassPathMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("entry", null))}; //$NON-NLS-1$
 			case PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT :
-				return new IMarkerResolution[] {new RemoveLazyLoadingDirectiveResolution(AbstractPDEMarkerResolution.REMOVE_TYPE)};
+				return new IMarkerResolution[] {new RemoveLazyLoadingDirectiveResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART))}; //$NON-NLS-1$
 		}
 		return NO_RESOLUTIONS;
 	}
