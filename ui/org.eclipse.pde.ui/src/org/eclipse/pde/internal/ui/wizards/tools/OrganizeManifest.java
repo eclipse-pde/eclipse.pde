@@ -167,7 +167,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		if (!(bundle instanceof Bundle))
 			return;
 		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null) {
-			String[] remove = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART};
+			String[] remove = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (int i = 0; i < remove.length; i++) {
 				IManifestHeader lazy = ((Bundle) bundle).getManifestHeader(remove[i]);
 				if (lazy instanceof SingleManifestHeader)
