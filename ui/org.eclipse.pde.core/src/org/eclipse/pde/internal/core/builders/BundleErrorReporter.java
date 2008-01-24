@@ -126,15 +126,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			// if we actually have packages to add
 			if (packages.toString().length() > 0) {
 				IMarker marker = report(PDECoreMessages.BundleErrorReporter_missingPackagesInProject, header == null ? 1 : header.getLineNumber() + 1, CompilerFlags.P_MISSING_EXPORT_PKGS, PDEMarkerFactory.M_MISSING_EXPORT_PKGS, PDEMarkerFactory.CAT_OTHER);
-				try {
-					if (marker != null)
-						marker.setAttribute("packages", packages.toString()); //$NON-NLS-1$
-				} catch (CoreException e) {
-				}
+				addMarkerAttribute(marker, "packages", packages.toString()); //$NON-NLS-1$
 			}
-
 		}
-
 	}
 
 	/**
@@ -333,12 +327,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				// Get strictly compatible EE for the default VM
 				if (systemEnvs[i].isStrictlyCompatible(defaultVM)) {
 					IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
-					try {
-						if (marker != null) {
-							marker.setAttribute("ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
-						}
-					} catch (CoreException e) {
-					}
+					addMarkerAttribute(marker, "ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
 					break;
 				}
 			}
@@ -483,12 +472,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			int line = header != null ? header.getLineNumber() + 1 : 1;
 			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_missingBundleClassPathEntry, new Object[] {entry});
 			IMarker marker = report(message, line, CompilerFlags.P_MISSING_BUNDLE_CLASSPATH_ENTRIES, PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY, PDEMarkerFactory.CAT_OTHER);
-			try {
-				if (marker != null) {
-					marker.setAttribute("entry", entry); //$NON-NLS-1$
-				}
-			} catch (CoreException e) {
-			}
+			addMarkerAttribute(marker, "entry", entry); //$NON-NLS-1$
 		}
 	}
 
@@ -750,11 +734,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!getExportedPackages().contains(name) && !(fProject.getFolder(name.replace('.', '/')).exists())) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name);
 					IMarker marker = report(message, getPackageLine(header, elements[i]), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST, PDEMarkerFactory.CAT_OTHER);
-					try {
-						if (marker != null)
-							marker.setAttribute("packageName", name); //$NON-NLS-1$
-					} catch (CoreException e) {
-					}
+					addMarkerAttribute(marker, "packageName", name); //$NON-NLS-1$
 				}
 			}
 		}
@@ -920,11 +900,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (friends != null && internal != null) {
 			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_directive_hasNoEffectWith_, new String[] {ICoreConstants.FRIENDS_DIRECTIVE, ICoreConstants.INTERNAL_DIRECTIVE});
 			IMarker marker = report(message, getPackageLine(header, element), CompilerFlags.WARNING, PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
-			try {
-				if (marker != null)
-					marker.setAttribute("packageName", element.getValue()); //$NON-NLS-1$
-			} catch (CoreException e) {
-			}
+			addMarkerAttribute(marker, "packageName", element.getValue()); //$NON-NLS-1$
 		}
 	}
 
@@ -948,15 +924,26 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 		if (!validateStartHeader(header))
 			return; // valid start header problems already reported
+
+		IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
+		if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
+			IMarker marker = report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+			addMarkerAttribute(marker, "header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
+		}
+
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2 && !containsValidActivationHeader()) {
 			int line = header.getLineNumber();
 			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, new Object[] {ICoreConstants.ECLIPSE_AUTOSTART, getCurrentActivationHeader()});
 			IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
-			try {
-				if (marker != null)
+			if (marker != null) {
+				try {
 					marker.setAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
-			} catch (CoreException e) {
+					ManifestElement elem = header.getElements()[0];
+					boolean unnecessary = elem.getValue().equals("false") && elem.getAttribute("excludes") == null; //$NON-NLS-1$ //$NON-NLS-2$
+					marker.setAttribute("canAdd", !unnecessary); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
 			}
 		}
 	}
@@ -968,8 +955,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header != null) {
 			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
 			if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
-				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+				IMarker marker = report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
+				addMarkerAttribute(marker, "header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
 			}
+
 			if (severity == CompilerFlags.IGNORE || containsValidActivationHeader())
 				return;
 			double targetVersion = TargetPlatformHelper.getTargetVersion();
@@ -979,10 +968,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				int line = header.getLineNumber();
 				String message = NLS.bind(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, new Object[] {ICoreConstants.ECLIPSE_LAZYSTART, getCurrentActivationHeader()});
 				IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
-				try {
-					if (marker != null)
+				if (marker != null) {
+					try {
 						marker.setAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
-				} catch (CoreException e) {
+						ManifestElement elem = header.getElements()[0];
+						boolean unnecessary = elem.getValue().equals("false") && elem.getAttribute("excludes") == null; //$NON-NLS-1$ //$NON-NLS-2$
+						marker.setAttribute("canAdd", !unnecessary); //$NON-NLS-1$
+					} catch (CoreException e) {
+					}
 				}
 			}
 		}
@@ -1124,12 +1117,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		if (header != null && elements[0] != null && elements[0].getValue().equals(element.getValue())) {
 			IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unecessaryDependencyDueToFragmentHost, element.getValue()), getPackageLine(requireBundleHeader, element), CompilerFlags.WARNING, PDEMarkerFactory.M_UNECESSARY_DEP, PDEMarkerFactory.CAT_OTHER);
-			if (marker != null) {
-				try {
-					marker.setAttribute("bundleId", element.getValue()); //$NON-NLS-1$
-				} catch (CoreException e) {
-				}
-			}
+			addMarkerAttribute(marker, "bundleId", element.getValue()); //$NON-NLS-1$
 		}
 	}
 
@@ -1141,5 +1129,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fOsgiR4 && isCheckDeprecated()) {
 			report(PDECoreMessages.BundleErrorReporter_providePackageHeaderDeprecated, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE, PDEMarkerFactory.CAT_OTHER);
 		}
+	}
+
+	private void addMarkerAttribute(IMarker marker, String attr, String value) {
+		if (marker != null)
+			try {
+				marker.setAttribute(attr, value);
+			} catch (CoreException e) {
+			}
 	}
 }

@@ -11,24 +11,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class RemoveLazyLoadingDirectiveResolution extends AbstractManifestMarkerResolution {
 
-	public RemoveLazyLoadingDirectiveResolution(int type) {
+	private String fHeader = null;
+
+	public RemoveLazyLoadingDirectiveResolution(int type, String currentHeader) {
 		super(type);
+		fHeader = currentHeader;
 	}
 
 	protected void createChange(BundleModel model) {
-		Bundle bundle = (Bundle) model.getBundle();
-		IManifestHeader header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
-		if (header != null)
-			bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);
-
+		model.getBundle().setHeader(fHeader, null);
 	}
 
 	public String getLabel() {

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -49,6 +50,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	private FormEntry fClassEntry;
 	private Button fLazyStart;
 	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
+	private boolean fBlockListener = false;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
@@ -93,11 +95,14 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fLazyStart.setEnabled(isEditable());
 		fLazyStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IManifestHeader header = getLazyStartHeader();
-				if (header instanceof LazyStartHeader)
-					((LazyStartHeader) header).setLazyStart(fLazyStart.getSelection());
-				else
+				LazyStartHeader[] headers = getLazyStartHeaders();
+				// must block the refresh otherwise we have problems with multiple activation headers. 
+				fBlockListener = true;
+				for (int i = 0; i < headers.length; i++)
+					headers[i].setLazyStart(fLazyStart.getSelection());
+				if (headers.length == 0)
 					getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
+				fBlockListener = false;
 			}
 		});
 	}
@@ -158,6 +163,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 
 	public void refresh() {
+		if (fBlockListener)
+			return;
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		// if we are refactoring, the Manifest moves before the editor closes.  This could cause the model to be null on a refresh()
 		if (model == null)
@@ -176,17 +183,34 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		super.refresh();
 	}
 
+	private LazyStartHeader[] getLazyStartHeaders() {
+		IBundle bundle = getBundle();
+		ArrayList headers = new ArrayList(3);
+		if (bundle instanceof Bundle) {
+			String[] keys = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
+			for (int i = 0; i < keys.length; i++) {
+				IManifestHeader header = bundle.getManifestHeader(keys[i]);
+				if (header != null)
+					headers.add(header);
+			}
+		}
+		return (LazyStartHeader[]) headers.toArray(new LazyStartHeader[headers.size()]);
+	}
+
+	// get the LazyStartHeader the same way the runtime would resolve them
 	private IManifestHeader getLazyStartHeader() {
 		IBundle bundle = getBundle();
+		IManifestHeader header = null;
 		if (bundle instanceof Bundle) {
-			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
+			double targetVersion = TargetPlatformHelper.getTargetVersion();
+			if (targetVersion >= 3.3)
+				header = bundle.getManifestHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
+			if (header == null && targetVersion >= 3.2)
+				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 			if (header == null)
 				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
-			if (header == null)
-				header = bundle.getManifestHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
-			return header;
 		}
-		return null;
+		return header;
 	}
 
 	private String getLazyStartHeaderName() {
