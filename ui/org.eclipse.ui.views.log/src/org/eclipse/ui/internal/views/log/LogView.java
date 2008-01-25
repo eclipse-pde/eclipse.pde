@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
  *     													bugs 207323, 207931, 207101
- *     													bugs 172658
+ *     													bugs 172658, 216341
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
 
@@ -591,7 +591,18 @@ public class LogView extends ViewPart implements ILogListener {
 		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
 		if (fDirectory != null)
 			dialog.setFilterPath(fDirectory);
-		handleImportPath(dialog.open());
+		String path = dialog.open();
+		if (path == null) { // cancel
+			return;
+		}
+
+		File file = new Path(path).toFile();
+		if (file.exists()) {
+			handleImportPath(path);
+		} else {
+			String msg = NLS.bind(Messages.LogView_FileCouldNotBeFound, file.getName());
+			MessageDialog.openError(getViewSite().getShell(), Messages.LogView_OpenFile, msg);
+		}
 	}
 
 	public void handleImportPath(String path) {

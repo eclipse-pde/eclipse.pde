@@ -51,6 +51,7 @@ public class Messages extends NLS {
 	public static String LogView_view_currentLog_tooltip;
 	public static String LogView_properties_tooltip;
 
+	public static String LogView_FileCouldNotBeFound;
 	public static String LogView_FilterDialog_title;
 	public static String LogView_FilterDialog_eventTypes;
 	public static String LogView_FilterDialog_information;
@@ -64,6 +65,7 @@ public class Messages extends NLS {
 	public static String LogView_GroupByNone;
 	public static String LogView_GroupByPlugin;
 	public static String LogView_GroupBySession;
+	public static String LogView_OpenFile;
 
 	public static String LogViewLabelProvider_Session;
 	public static String LogViewLabelProvider_truncatedMessage;
