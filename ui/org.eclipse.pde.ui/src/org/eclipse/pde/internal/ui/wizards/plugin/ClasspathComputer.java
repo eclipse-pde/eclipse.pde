@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,8 @@ public class ClasspathComputer {
 	}
 
 	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear) throws CoreException {
-
+		IJavaProject javaProject = JavaCore.create(project);
 		ArrayList result = new ArrayList();
-
 		IBuild build = getBuild(project);
 
 		// add own libraries/source
@@ -50,14 +49,13 @@ public class ClasspathComputer {
 
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
-		result.add(createJREEntry(ee));
+		result.add(createJREEntryUsingPreviousEntry(javaProject, ee));
 		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
 
 		// add pde container
 		result.add(createContainerEntry());
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
-		IJavaProject javaProject = JavaCore.create(project);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
 		if (!validation.isOK()) {
 			PDECore.logErrorMessage(validation.getMessage());
@@ -275,7 +273,46 @@ public class ClasspathComputer {
 		}
 	}
 
+	/**
+	 * Returns a new classpath container entry for the given execution environment.  If the given java project
+	 * has an existing JRE/EE classpath entry, the access rules, extra attributes and isExported settings of
+	 * the existing entry will be added to the new execution entry.
+	 *  
+	 * @param javaProject project to check for existing JRE/EE classpath entries
+	 * @param ee id of the execution environment to create an entry for
+	 * @return new classpath container entry
+	 * @throws CoreException if there is a problem accessing the classpath entries of the project
+	 */
+	public static IClasspathEntry createJREEntryUsingPreviousEntry(IJavaProject javaProject, String ee) throws CoreException {
+		IClasspathEntry existingEntry = null;
+		IClasspathEntry[] entries = javaProject.getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+				existingEntry = entries[i];
+				break;
+			}
+		}
+		if (existingEntry == null) {
+			return createJREEntry(ee);
+		}
+		return JavaCore.newContainerEntry(getEEPath(ee), existingEntry.getAccessRules(), existingEntry.getExtraAttributes(), existingEntry.isExported());
+	}
+
+	/**
+	 * Returns a classpath container entry for the given execution environment.
+	 * @param ee id of the execution environment
+	 * @return classpath container entry
+	 */
 	public static IClasspathEntry createJREEntry(String ee) {
+		return JavaCore.newContainerEntry(getEEPath(ee));
+	}
+
+	/**
+	 * Returns the JRE container path for the execution environment with the given id.
+	 * @param ee execution environment id
+	 * @return JRE container path for the execution environment
+	 */
+	private static IPath getEEPath(String ee) {
 		IPath path = null;
 		if (ee != null) {
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
@@ -283,11 +320,15 @@ public class ClasspathComputer {
 			if (env != null)
 				path = JavaRuntime.newJREContainerPath(env);
 		}
-		if (path == null)
+		if (path == null) {
 			path = JavaRuntime.newDefaultJREContainerPath();
-		return JavaCore.newContainerEntry(path);
+		}
+		return path;
 	}
 
+	/**
+	 * @return a new classpath container entry for a required plugin container
+	 */
 	public static IClasspathEntry createContainerEntry() {
 		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
 	}
