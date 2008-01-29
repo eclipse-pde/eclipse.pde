@@ -105,9 +105,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	}
 
 	private boolean isImportedPackage(String packageName) {
-		BundleDescription desc = PluginRegistry.findModel(fProject.getProject()).getBundleDescription();
-		if (desc != null) {
-			ImportPackageSpecification[] importPkgs = desc.getImportPackages();
+		IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+		if (model != null && model.getBundleDescription() != null) {
+			ImportPackageSpecification[] importPkgs = model.getBundleDescription().getImportPackages();
 			for (int i = 0; i < importPkgs.length; i++) {
 				if (importPkgs[i].getName().equals(packageName)) {
 					return true;
