@@ -168,7 +168,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
 		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
 		IPluginBase base = fModel.getPluginBase();
-		boolean hasExtensions = base != null && (base.getExtensionPoints().length > 0 || base.getExtensions().length > 0);
+		// must check the existence of plugin.xml file instead of using IPluginBase because if the bundle is not a singleton,
+		// it won't be registered with the extension registry and will always return 0 when querying extensions/extension points
+		boolean hasExtensions = base != null && fProject.findMember(ICoreConstants.PLUGIN_PATH) != null;
 
 		if (hasExtensions) {
 			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
