@@ -883,8 +883,8 @@ public class CtxHelpTreeSection extends TreeSection {
 	private void handleModelInsertType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
-			CtxHelpObject object = (CtxHelpObject) objects[i];
-			if (object != null) {
+			if (objects[i] instanceof CtxHelpObject) {
+				CtxHelpObject object = (CtxHelpObject) objects[i];
 				if (object.getType() != ICtxHelpConstants.TYPE_ROOT) {
 					fTree.refresh(object.getParent());
 					// Select the new object in the tree, unless it is a description node
@@ -903,7 +903,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] != null) {
+			if (objects[i] instanceof CtxHelpObject) {
 				CtxHelpObject object = (CtxHelpObject) objects[i];
 				fTree.remove(object);
 				CtxHelpObject nextSelection = fRemoveObjectAction.getNextSelection();
@@ -924,10 +924,8 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private void handleModelChangeType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		CtxHelpObject object = (CtxHelpObject) objects[0];
-
-		if (object != null) {
-			fTree.update(object, null);
+		if (objects[0] != null) {
+			fTree.update(objects[0], null);
 		}
 	}
 
