@@ -79,4 +79,11 @@ public class CtxHelpDescription extends CtxHelpObject {
 	public boolean canAddSibling(int objectType) {
 		return objectType == TYPE_COMMAND || objectType == TYPE_TOPIC;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#getTerminateIndent()
+	 */
+	protected String getTerminateIndent() {
+		return ""; //$NON-NLS-1$
+	}
 }

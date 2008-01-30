@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Print end element
 		// TODO: MP: TEO: LOW: Replace with XMLPrintHandler constants
 		if (terminate == false) {
-			buffer.append(getLineDelimiter() + getIndent());
+			buffer.append(getTerminateIndent());
 			buffer.append("</"); //$NON-NLS-1$
 			buffer.append(getXMLTagName());
 			buffer.append(">"); //$NON-NLS-1$
@@ -636,6 +636,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	protected String getContentIndent() {
 		// TODO: MP: TEO: LOW: Add indent methods on documenttextnode?
 		return getLineDelimiter() + getIndent() + "   "; //$NON-NLS-1$
+	}
+
+	protected String getTerminateIndent() {
+		// Subclasses to override
+		return getLineDelimiter() + getIndent();
 	}
 
 	protected String getLineDelimiter() {

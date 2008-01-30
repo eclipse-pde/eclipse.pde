@@ -70,6 +70,13 @@ public abstract class CtxHelpObject extends DocumentObject implements ICtxHelpCo
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#getContentIndent()
+	 */
+	protected String getContentIndent() {
+		return ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentElementNode#isLeafNode()
 	 */
 	public boolean isLeafNode() {
