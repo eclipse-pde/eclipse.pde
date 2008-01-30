@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
  *     													bugs 207323, 207931, 207101
- *     													bugs 172658, 216341
+ *     													bugs 172658, 216341, 216657
  *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *******************************************************************************/
 
@@ -121,7 +121,7 @@ public class LogView extends ViewPart implements ILogListener {
 		private int groupBy;
 
 		public GroupByAction(String text, int groupBy) {
-			super(text, Action.AS_RADIO_BUTTON);
+			super(text, IAction.AS_RADIO_BUTTON);
 
 			this.groupBy = groupBy;
 
@@ -500,6 +500,7 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 		fFilteredTree.getViewer().setInput(this);
 		addMouseListeners();
+		addDragSource();
 	}
 
 	private void createColumns(Tree tree) {
@@ -610,7 +611,7 @@ public class LogView extends ViewPart implements ILogListener {
 			fInputFile = new Path(path).toFile();
 			fDirectory = fInputFile.getParent();
 			IRunnableWithProgress op = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(Messages.LogView_operation_importing, IProgressMonitor.UNKNOWN);
 					readLogFile();
 				}
@@ -618,8 +619,8 @@ public class LogView extends ViewPart implements ILogListener {
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 			try {
 				pmd.run(true, true, op);
-			} catch (InvocationTargetException e) {
-			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) { // do nothing
+			} catch (InterruptedException e) { // do nothing
 			} finally {
 				fReadLogAction.setText(Messages.LogView_readLog_reload);
 				fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
@@ -659,14 +660,14 @@ public class LogView extends ViewPart implements ILogListener {
 				writer.write(reader.readLine());
 				writer.write(System.getProperty("line.separator")); //$NON-NLS-1$
 			}
-		} catch (IOException e) {
+		} catch (IOException e) { // do nothing
 		} finally {
 			try {
 				if (reader != null)
 					reader.close();
 				if (writer != null)
 					writer.close();
-			} catch (IOException e1) {
+			} catch (IOException e1) { // do nothing
 			}
 		}
 	}
@@ -693,7 +694,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	public void fillContextMenu(IMenuManager manager) {
+	public void fillContextMenu(IMenuManager manager) { // nothing
 	}
 
 	public AbstractEntry[] getElements() {
@@ -714,7 +715,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	protected void reloadLog() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(Messages.LogView_operation_reloading, IProgressMonitor.UNKNOWN);
 				readLogFile();
 			}
@@ -722,8 +723,8 @@ public class LogView extends ViewPart implements ILogListener {
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 		try {
 			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) { // do nothing
+		} catch (InterruptedException e) { // do nothing
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_restore);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_restore);
@@ -775,36 +776,35 @@ public class LogView extends ViewPart implements ILogListener {
 
 		if (entriesCount <= limit) {
 			return;
-		} else { // remove oldest
-			Comparator dateComparator = new Comparator() {
-				public int compare(Object o1, Object o2) {
-					Date l1 = ((LogEntry) o1).getDate();
-					Date l2 = ((LogEntry) o2).getDate();
-					if ((l1 != null) && (l2 != null)) {
-						return l1.before(l2) ? -1 : 1;
-					} else if ((l1 == null) && (l2 == null)) {
-						return 0;
-					} else
-						return (l1 == null) ? -1 : 1;
-				}
-			};
+		}
+		Comparator dateComparator = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Date l1 = ((LogEntry) o1).getDate();
+				Date l2 = ((LogEntry) o2).getDate();
+				if ((l1 != null) && (l2 != null)) {
+					return l1.before(l2) ? -1 : 1;
+				} else if ((l1 == null) && (l2 == null)) {
+					return 0;
+				} else
+					return (l1 == null) ? -1 : 1;
+			}
+		};
 
-			if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
-				elements.subList(0, elements.size() - limit).clear();
-			} else {
-				List copy = new ArrayList(entriesCount);
-				for (Iterator i = elements.iterator(); i.hasNext();) {
-					AbstractEntry group = (AbstractEntry) i.next();
-					copy.addAll(Arrays.asList(group.getChildren(group)));
-				}
+		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
+			elements.subList(0, elements.size() - limit).clear();
+		} else {
+			List copy = new ArrayList(entriesCount);
+			for (Iterator i = elements.iterator(); i.hasNext();) {
+				AbstractEntry group = (AbstractEntry) i.next();
+				copy.addAll(Arrays.asList(group.getChildren(group)));
+			}
 
-				Collections.sort(copy, dateComparator);
-				List toRemove = copy.subList(0, copy.size() - limit);
+			Collections.sort(copy, dateComparator);
+			List toRemove = copy.subList(0, copy.size() - limit);
 
-				for (Iterator i = elements.iterator(); i.hasNext();) {
-					AbstractEntry group = (AbstractEntry) i.next();
-					group.removeChildren(toRemove);
-				}
+			for (Iterator i = elements.iterator(); i.hasNext();) {
+				AbstractEntry group = (AbstractEntry) i.next();
+				group.removeChildren(toRemove);
 			}
 		}
 
@@ -813,14 +813,13 @@ public class LogView extends ViewPart implements ILogListener {
 	private int getEntriesCount() {
 		if (fMemento.getInteger(P_GROUP_BY).intValue() == GROUP_BY_NONE) {
 			return elements.size();
-		} else {
-			int size = 0;
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				AbstractEntry group = (AbstractEntry) i.next();
-				size += group.size();
-			}
-			return size;
 		}
+		int size = 0;
+		for (Iterator i = elements.iterator(); i.hasNext();) {
+			AbstractEntry group = (AbstractEntry) i.next();
+			size += group.size();
+		}
+		return size;
 	}
 
 	/**
@@ -977,11 +976,15 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private void copyToClipboard(ISelection selection) {
+	/**
+	 * Converts selected log view element to string.
+	 * @return textual log entry representation or null if selection doesn't contain log entry
+	 */
+	private static String selectionToString(ISelection selection) {
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
 		if (selection.isEmpty())
-			return;
+			return null;
 		LogEntry entry = (LogEntry) ((IStructuredSelection) selection).getFirstElement();
 		entry.write(pwriter);
 		pwriter.flush();
@@ -990,8 +993,18 @@ public class LogView extends ViewPart implements ILogListener {
 			pwriter.close();
 			writer.close();
 		} catch (IOException e) {
+			// empty
 		}
-		if (textVersion.trim().length() > 0) {
+
+		return textVersion;
+	}
+
+	/**
+	 * Copies selected element to clipboard.
+	 */
+	private void copyToClipboard(ISelection selection) {
+		String textVersion = selectionToString(selection);
+		if ((textVersion != null) && (textVersion.trim().length() > 0)) {
 			// set the clipboard contents
 			fClipboard.setContents(new Object[] {textVersion}, new Transfer[] {TextTransfer.getInstance()});
 		}
@@ -1106,6 +1119,42 @@ public class LogView extends ViewPart implements ILogListener {
 		for (int i = 0; i < tableEvents.length; i++) {
 			fTree.addListener(tableEvents[i], tableListener);
 		}
+	}
+
+	/**
+	 * Adds drag source support to error log tree.
+	 */
+	private void addDragSource() {
+		DragSource source = new DragSource(fTree, DND.DROP_COPY);
+		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
+		source.setTransfer(types);
+
+		source.addDragListener(new DragSourceAdapter() {
+
+			public void dragStart(DragSourceEvent event) {
+				ISelection selection = fFilteredTree.getViewer().getSelection();
+				if (selection.isEmpty()) {
+					event.doit = false;
+					return;
+				}
+
+				AbstractEntry entry = (AbstractEntry) ((TreeSelection) selection).getFirstElement();
+				if (!(entry instanceof LogEntry)) {
+					event.doit = false;
+					return;
+				}
+			}
+
+			public void dragSetData(DragSourceEvent event) {
+				if (!TextTransfer.getInstance().isSupportedType(event.dataType)) {
+					return;
+				}
+
+				ISelection selection = fFilteredTree.getViewer().getSelection();
+				String textVersion = selectionToString(selection);
+				event.data = textVersion;
+			}
+		});
 	}
 
 	private void makeHoverShell() {
