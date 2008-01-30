@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector;
 
 /**
@@ -57,6 +58,8 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor#getFixImportProposals(org.eclipse.jdt.core.IJavaProject, java.lang.String)
 	 */
 	public ClasspathFixProposal[] getFixImportProposals(IJavaProject project, String name) throws CoreException {
+		if (!WorkspaceModelManager.isPluginProject(project.getProject()))
+			return new ClasspathFixProposal[0];
 		ClasspathFixCollector collector = new ClasspathFixCollector();
 		IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project.getProject(), name, collector);
 		try {

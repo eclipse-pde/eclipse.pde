@@ -63,8 +63,12 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			IJavaProject referencedJavaProject = referencedElement.getJavaElement().getJavaProject();
 			if (referencedJavaProject != null && WorkspaceModelManager.isPluginProject(referencedJavaProject.getProject())) {
 				IPackageFragment referencedPackage = (IPackageFragment) referencedElement.getJavaElement().getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+				IJavaProject currentProject = context.getCompilationUnit().getJavaProject();
+				// only find proposals for Plug-in projects
+				if (!WorkspaceModelManager.isPluginProject(currentProject.getProject()))
+					return;
 				// get the packages exported by the referenced plug-in project
-				if (!referencedJavaProject.equals(context.getCompilationUnit().getJavaProject())) {
+				if (!referencedJavaProject.equals(currentProject)) {
 					IPluginModelBase referencedModel = PluginRegistry.findModel(referencedJavaProject.getProject());
 					ExportPackageDescription[] exportPackages = referencedModel.getBundleDescription().getExportPackages();
 					// check if the required package is exported already
@@ -152,8 +156,12 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			ASTNode node = getParent(selectedNode);
 			// Find import declaration which is the problem
 			if (node instanceof ImportDeclaration) {
-				String className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
 				IProject project = cu.getJavaElement().getJavaProject().getProject();
+				// only try to find proposals on Plug-in Projects
+				if (!WorkspaceModelManager.isPluginProject(project))
+					return;
+
+				String className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
 
 				// create a collector that will create IJavaCompletionProposals and load them into 'result'
 				AbstractClassResolutionCollector collector = createCollector(result);
