@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -35,8 +36,6 @@ import org.osgi.framework.Version;
  * @since 3.3
  */
 public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate {
-
-	private static String[] REQUIRED_PLUGINS = {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	protected File fConfigDir = null;
 
@@ -245,7 +244,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	private String concatArg(String vmArgs, String arg) {
 		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
 			vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
-		return vmArgs.concat(arg); //$NON-NLS-1$
+		return vmArgs.concat(arg);
 	}
 
 	/*
@@ -352,8 +351,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
-		for (int i = 0; i < REQUIRED_PLUGINS.length; i++) {
-			String id = REQUIRED_PLUGINS[i];
+		String[] requiredPlugins = getRequiredPlugins(configuration);
+		for (int i = 0; i < requiredPlugins.length; i++) {
+			String id = requiredPlugins[i];
 			if (!fPluginMap.containsKey(id)) {
 				fPluginMap.put(id, findPlugin(id));
 			}
@@ -367,6 +367,14 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		clear(configuration, new SubProgressMonitor(monitor, 1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigurationDirectory(configuration).toString());
 		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));
+	}
+
+	private String[] getRequiredPlugins(ILaunchConfiguration configuration) {
+		// if we are using JUnit4, we need to include the junit4 specific bundles
+		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
+		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()))
+			return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", "org.junit4", "org.eclipse.jdt.junit4.runtime"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	/**
