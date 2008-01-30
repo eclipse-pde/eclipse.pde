@@ -11,24 +11,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.ListIterator;
-
-import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.RegistryFactory;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
@@ -252,13 +239,15 @@ public class PDEExtensionRegistry {
 			return PluginRegistry.findModel(desc);
 		// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
 		ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
-		if (!searchAll && entry.getWorkspaceModels().length > 0)
-			return null;
-		IPluginModelBase externalModels[] = entry.getExternalModels();
-		for (int j = 0; j < externalModels.length; j++) {
-			BundleDescription extDesc = externalModels[j].getBundleDescription();
-			if (extDesc != null && extDesc.getBundleId() == bundleId)
-				return externalModels[j];
+		if (entry != null) {
+			if (!searchAll && entry.getWorkspaceModels().length > 0)
+				return null;
+			IPluginModelBase externalModels[] = entry.getExternalModels();
+			for (int j = 0; j < externalModels.length; j++) {
+				BundleDescription extDesc = externalModels[j].getBundleDescription();
+				if (extDesc != null && extDesc.getBundleId() == bundleId)
+					return externalModels[j];
+			}
 		}
 		return null;
 	}
