@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.*;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class PDEPerspective implements IPerspectiveFactory {
 
@@ -77,7 +78,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
 		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		factory.addShowViewShortcut(IPDEUIConstants.PLUGINS_VIEW_ID);
-		factory.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+		factory.addShowViewShortcut(ProjectExplorer.VIEW_ID);
 		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		factory.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		factory.addShowViewShortcut(IPageLayout.ID_OUTLINE);
