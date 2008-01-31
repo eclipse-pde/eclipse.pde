@@ -1832,6 +1832,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginWorkingSet_nameInUse;
 	public static String PluginsView_schemaEditor;
 	public static String PluginsView_copy;
+	public static String PluginsView_deferredLabel0;
+
 	public static String PluginsView_dependentPlugins;
 	public static String PluginsView_pluginsInJavaSearch;
 	public static String PluginsView_addToJavaSearch;
@@ -1851,6 +1853,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_CollapseAllAction_description;
 	public static String PluginsView_CollapseAllAction_tooltip;
 	public static String PluginsView_SelectAllAction_label;
+	public static String PluginsView_TotalPlugins_unknown;
 
 	public static String PluginSection_open;
 	public static String PluginsView_unableToOpen;

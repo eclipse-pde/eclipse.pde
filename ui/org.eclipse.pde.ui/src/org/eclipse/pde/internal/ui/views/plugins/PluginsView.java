@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 191365
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.OpenAction;
@@ -45,6 +47,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.progress.*;
 
 public class PluginsView extends ViewPart implements IPluginModelListener {
 
@@ -75,7 +78,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private JavaFilter fJavaFilter = new JavaFilter();
 	private CopyToClipboardAction fCopyAction;
 	private Clipboard fClipboard;
-	private PluginModelManager fManager;
+	private Object fRoot = null;
 
 	class DisabledFilter extends ViewerFilter {
 
@@ -151,7 +154,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	public void dispose() {
-		fManager.removePluginModelListener(this);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		PDECore.getDefault().getSearchablePluginsManager().removePluginModelListener(this);
 		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 		if (fClipboard != null) {
@@ -166,11 +169,23 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL);
 		fDrillDownAdapter = new DrillDownAdapter(fTreeViewer);
 		fTreeViewer.setContentProvider(new PluginsContentProvider(this));
 		fTreeViewer.setLabelProvider(new PluginsLabelProvider());
-		fTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
+		// need custom comparator so that way PendingUpdateAdapter is at the top.  Using regular PluginComparator the PendingUpdateAdapter
+		// will be sorted to the bottom.  When it is removed after the table is initialized, the focus will go to the last item in the table (bug 216339)
+		fTreeViewer.setComparator(new ListUtil.PluginComparator() {
+
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (e1 instanceof PendingUpdateAdapter)
+					return -1;
+				else if (e2 instanceof PendingUpdateAdapter)
+					return 1;
+				return super.compare(viewer, e1, e2);
+			}
+
+		});
 		initDragAndDrop();
 		makeActions();
 		initFilters();
@@ -185,10 +200,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			}
 		});
 		PDECore.getDefault().getSearchablePluginsManager().addPluginModelListener(this);
-		fManager = PDECore.getDefault().getModelManager();
-		fTreeViewer.setInput(fManager);
-		fManager.addPluginModelListener(this);
-		updateContentDescription();
+		fTreeViewer.setInput(fRoot = getDeferredTreeRoot());
+
+		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 		getViewSite().setSelectionProvider(fTreeViewer);
 
@@ -668,8 +682,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 			return;
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 		// Start busy indicator.
 		final File file = localFile;
@@ -690,7 +702,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		}
 	}
 
-	private File getLocalCopy(File file) throws IOException, CoreException {
+	private File getLocalCopy(File file) throws IOException {
 		// create a tmp. copy of this file and make it
 		// read-only. This is to ensure that the original
 		// file belonging to the external plug-in directories
@@ -780,9 +792,21 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		return ""; //$NON-NLS-1$
 	}
 
-	private void updateContentDescription() {
-		String total = Integer.toString(PluginRegistry.getAllModels().length);
-		String visible = Integer.toString(fTreeViewer.getTree().getItemCount());
+	protected void updateContentDescription() {
+		String total = null;
+		String visible = null;
+
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		if (manager.isInitialized()) {
+			// Only show the correct values if the PDE is already initialized
+			// (N.B. PluginRegistry.getAllModels() would call the init if allowed to execute)
+			total = Integer.toString(PluginRegistry.getAllModels().length);
+			visible = Integer.toString(fTreeViewer.getTree().getItemCount());
+		} else {
+			// defaults to be shown if the PDE isn't initialized
+			total = PDEUIMessages.PluginsView_TotalPlugins_unknown;
+			visible = "0"; //$NON-NLS-1$
+		}
 		setContentDescription(NLS.bind(PDEUIMessages.PluginsView_description, visible, total));
 	}
 
@@ -805,7 +829,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 						IPluginModelBase[] models = getModels(added[i]);
 						for (int j = 0; j < models.length; j++) {
 							if (isVisible(models[j]))
-								fTreeViewer.add(fManager, models[j]);
+								fTreeViewer.add(fRoot, models[j]);
 						}
 					}
 				}
@@ -821,7 +845,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private boolean isVisible(IPluginModelBase entry) {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
 		for (int i = 0; i < filters.length; i++) {
-			if (!filters[i].select(fTreeViewer, fManager, entry))
+			if (!filters[i].select(fTreeViewer, fRoot, entry))
 				return false;
 		}
 		return true;
@@ -875,6 +899,45 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			public String[] getShowInTargetIds() {
 				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
 			}
+		};
+	}
+
+	/*
+	 * Returns an IDeferredWorkbenchAdapater which will be used to load this view in the background if the ModelManager is not fully initialized
+	 */
+	private IDeferredWorkbenchAdapter getDeferredTreeRoot() {
+		return new IDeferredWorkbenchAdapter() {
+
+			public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+				Object[] bases = getChildren(object);
+				collector.add(bases, monitor);
+				monitor.done();
+			}
+
+			public ISchedulingRule getRule(Object object) {
+				return null;
+			}
+
+			public boolean isContainer() {
+				return true;
+			}
+
+			public Object[] getChildren(Object o) {
+				return PDECore.getDefault().getModelManager().getAllModels();
+			}
+
+			public ImageDescriptor getImageDescriptor(Object object) {
+				return null;
+			}
+
+			public String getLabel(Object o) {
+				return PDEUIMessages.PluginsView_deferredLabel0;
+			}
+
+			public Object getParent(Object o) {
+				return null;
+			}
+
 		};
 	}
 }

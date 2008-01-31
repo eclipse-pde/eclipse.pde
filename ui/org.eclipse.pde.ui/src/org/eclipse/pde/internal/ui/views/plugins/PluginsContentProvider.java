@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Les Jones <lesojones@gmail.com> - bug 191365
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.File;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class PluginsContentProvider extends DefaultContentProvider implements ITreeContentProvider, IStructuredContentProvider {
 
 	private PluginsView fView;
 	private StandardJavaElementContentProvider fJavaProvider;
+	private DeferredTreeContentManager fManager = null;
 
 	/**
 	 * Constructor for PluginsContentProvider.
@@ -35,6 +40,8 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null)
 			return;
+		fManager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
+		fManager.addUpdateCompleteListener(getCompletionJobListener());
 		fView.updateTitle(newInput);
 	}
 
@@ -43,8 +50,11 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof PluginModelManager) {
-			return ((PluginModelManager) parentElement).getAllModels();
+		if (parentElement instanceof IDeferredWorkbenchAdapter) {
+			if (PDECore.getDefault().getModelManager().isInitialized())
+				return PDECore.getDefault().getModelManager().getAllModels();
+			Object[] children = fManager.getChildren(parentElement);
+			return children;
 		}
 		if (parentElement instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) parentElement;
@@ -95,9 +105,8 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof PluginModelManager) {
-			return !((PluginModelManager) element).isEmpty();
-		}
+		if (element instanceof IDeferredWorkbenchAdapter)
+			return fManager.mayHaveChildren(element);
 		if (element instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) element;
 			return model.getUnderlyingResource() == null && !new File(model.getInstallLocation()).isFile();
@@ -116,6 +125,16 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	 */
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
+	}
+
+	protected IJobChangeListener getCompletionJobListener() {
+		return new JobChangeAdapter() {
+
+			public void done(IJobChangeEvent event) {
+				fView.updateContentDescription();
+			}
+
+		};
 	}
 
 }
