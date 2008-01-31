@@ -249,8 +249,10 @@ public class LauncherUtils {
 						file = (File) files.pop();
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
-							for (int j = 0; j < children.length; j++)
-								files.push(children[j]);
+							if (children != null) {
+								for (int j = 0; j < children.length; j++)
+									files.push(children[j]);
+							}
 						} else if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
 							timeStamp = file.lastModified();
 					}
