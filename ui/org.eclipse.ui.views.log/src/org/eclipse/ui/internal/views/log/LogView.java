@@ -1496,7 +1496,20 @@ public class LogView extends ViewPart implements ILogListener {
 		return fInputFile;
 	}
 
+	/**
+	 * Returns whether given session equals to currently displayed in LogView.
+	 * @param session LogSession
+	 * @return true if given session equals to currently displayed in LogView
+	 */
 	public boolean isCurrentLogSession(LogSession session) {
-		return (fInputFile.equals(Platform.getLogFileLocation().toFile())) && (currentSession != null) && (currentSession.equals(session));
+		return isPlatformLogOpen() && (currentSession != null) && (currentSession.equals(session));
+	}
+
+	/**
+	 * Returns whether currently open log is platform log or imported file.
+	 * @return true if currently open log is platoform log, false otherwise
+	 */
+	public boolean isPlatformLogOpen() {
+		return (fInputFile.equals(Platform.getLogFileLocation().toFile()));
 	}
 }

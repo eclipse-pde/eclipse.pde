@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.util.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -191,6 +192,12 @@ public class ImportLogAction extends Action implements IMenuCreator {
 				ActionContributionItem item = new ActionContributionItem(actions[i]);
 				item.fill(menu, -1);
 			}
+		}
+
+		if (!logView.isPlatformLogOpen()) {
+			(new Separator()).fill(menu, -1);
+			ActionContributionItem item = new ActionContributionItem(new ImportConfigurationLogAction(Messages.LogView_readLog_reload, Platform.getLogFileLocation().toFile().getAbsolutePath()));
+			item.fill(menu, -1);
 		}
 	}
 

@@ -90,6 +90,7 @@ public class Messages extends NLS {
 	public static String FilterDialog_FilterShouldntContainSemicolon;
 	public static String FilterDialog_Remove;
 	public static String ImportLogAction_noLaunchHistory;
+	public static String ImportLogAction_reloadThisWorkspaceLog;
 	public static String OpenLogDialog_title;
 	public static String OpenLogDialog_message;
 	public static String OpenLogDialog_cannotDisplay;
