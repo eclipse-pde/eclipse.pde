@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.internal.views.log.ILogFileProvider;
+import org.eclipse.ui.internal.views.log.LogFilesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.BundleContext;
@@ -43,6 +45,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private BundleContext fBundleContext;
 
 	private java.util.Hashtable fCounters;
+
+	// Provides Launch Configurations log files to Log View
+	private ILogFileProvider fLogFileProvider;
 
 	// Shared colors for all forms
 	private FormColors fFormColors;
@@ -166,6 +171,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		this.fBundleContext = context;
 		fLaunchConfigurationListener = new LaunchConfigurationListener();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
+		fLogFileProvider = new PDELogFileProvider();
+		LogFilesManager.addLogFileProvider(fLogFileProvider);
 	}
 
 	public BundleContext getBundleContext() {
@@ -189,6 +196,10 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (fLaunchConfigurationListener != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
 			fLaunchConfigurationListener = null;
+		}
+		if (fLogFileProvider != null) {
+			LogFilesManager.removeLogFileProvider(fLogFileProvider);
+			fLogFileProvider = null;
 		}
 		LauncherUtils.shutdown();
 		super.stop(context);

@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.launcher;
+
+import java.io.File;
+import java.util.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.*;
+import org.eclipse.ui.internal.views.log.ILogFileProvider;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+/**
+ * Provides list of log files for PDE Launch Configurations.
+ */
+public class PDELogFileProvider implements ILogFileProvider {
+
+	/**
+	 * Returns most recent log files for all PDE Launch Configurations.
+	 * 
+	 * @see ILogFileProvider#getLogSources()
+	 * @since 3.4 
+	 */
+	public Map getLogSources() {
+		ILaunchConfiguration[] configurations = null;
+		try {
+			configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return Collections.EMPTY_MAP;
+		}
+
+		Map sources = new HashMap();
+
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration configuration = configurations[i];
+
+			ILaunchConfigurationType type;
+			try {
+				type = configuration.getType();
+				if ("org.eclipse.pde.ui.RuntimeWorkbench".equals(type.getIdentifier())) { //$NON-NLS-1$
+					String name = configuration.getName();
+					File configFile = LaunchListener.getMostRecentLogFile(configuration);
+
+					if (configFile != null) {
+						sources.put(name, configFile.getAbsolutePath());
+					}
+				}
+
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(e.getStatus());
+			}
+		}
+
+		return sources;
+	}
+
+}

@@ -13,4 +13,4 @@ Import-Package: com.ibm.icu.text
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal.views.log;x-internal:=true
+Export-Package: org.eclipse.ui.internal.views.log;x-friends:="org.eclipse.pde.ui"

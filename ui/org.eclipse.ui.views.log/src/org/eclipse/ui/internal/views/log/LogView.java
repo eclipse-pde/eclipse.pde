@@ -268,7 +268,7 @@ public class LogView extends ViewPart implements ILogListener {
 				manager.add(fReadLogAction);
 				manager.add(new Separator());
 				manager.add(fExportAction);
-				manager.add(importLogAction);
+				manager.add(createImportLogAction());
 				manager.add(new Separator());
 
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
@@ -359,11 +359,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private Action createImportLogAction() {
-		Action action = new Action(Messages.LogView_import) {
-			public void run() {
-				handleImport();
-			}
-		};
+		Action action = new ImportLogAction(this, Messages.LogView_import);
 		action.setToolTipText(Messages.LogView_import_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
@@ -587,7 +583,7 @@ public class LogView extends ViewPart implements ILogListener {
 		super.dispose();
 	}
 
-	private void handleImport() {
+	void handleImport() {
 		FileDialog dialog = new FileDialog(getViewSite().getShell());
 		dialog.setFilterExtensions(new String[] {"*.log"}); //$NON-NLS-1$
 		if (fDirectory != null)

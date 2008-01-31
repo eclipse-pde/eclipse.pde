@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						try {
-							File log = getMostRecentLogFile(launch);
+							File log = getMostRecentLogFile(launch.getLaunchConfiguration());
 							if (log != null && log.exists()) {
 								MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, null, // accept the default window icon
 										PDEUIMessages.Launcher_error_code13, MessageDialog.ERROR, new String[] {PDEUIMessages.Launcher_error_displayInLogView, PDEUIMessages.Launcher_error_displayInSystemEditor, IDialogConstants.NO_LABEL}, OPEN_IN_ERROR_LOG_VIEW);
@@ -175,8 +175,16 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		}
 	}
 
-	private File getMostRecentLogFile(ILaunch launch) throws CoreException {
-		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+	/**
+	 * Returns latest log file for Launch Configuration.
+	 * It's ".metadala/.log", file with most recent timestamp ending with ".log"
+	 * in configuration location or null if none found.
+	 *
+	 * @returns log file or null
+	 * @throws CoreException
+	 * @since 3.4
+	 */
+	static File getMostRecentLogFile(ILaunchConfiguration configuration) throws CoreException {
 		File latest = null;
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		if (workspace.length() > 0) {
