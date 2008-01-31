@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
+import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.Collator;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
@@ -391,15 +392,39 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 
 		public boolean matchItem(Object item) {
+			String id = null;
 			if (item instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) item;
-				return matches(model.getPluginBase().getId());
+				id = model.getPluginBase().getId();
 			} else if (item instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint model = (IPluginExtensionPoint) item;
-				return matches(model.getFullId());
+				id = model.getFullId();
 			} else if (item instanceof IPluginExtension) {
 				IPluginExtension model = (IPluginExtension) item;
-				return matches(model.getPoint());
+				id = model.getPoint();
+			}
+
+			// if the id does not match, check to see if a segment matches.
+			// This is how PatternFilter searches for matches (see PatternFilter.getWords(String))
+			return (matches(id)) ? true : matchesSegments(id);
+		}
+
+		private boolean matchesSegments(String id) {
+			BreakIterator iter = BreakIterator.getWordInstance();
+			iter.setText(id);
+			int i = iter.first();
+			while (i != java.text.BreakIterator.DONE && i < id.length()) {
+				int j = iter.following(i);
+				if (j == java.text.BreakIterator.DONE) {
+					j = id.length();
+				}
+				// match the word
+				if (Character.isLetterOrDigit(id.charAt(i))) {
+					String word = id.substring(i, j);
+					if (matches(word))
+						return true;
+				}
+				i = j;
 			}
 			return false;
 		}
