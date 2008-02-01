@@ -194,8 +194,8 @@ public class PluginImportOperation extends JarImportOperation {
 	 * @throws CoreException if a problem occurs while importing a plugin
 	 */
 	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		String id = model.getPluginBase().getId();
-		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
+		String pluginName = getProjectName(model);
+		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, pluginName), 6);
 		try {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
@@ -209,13 +209,13 @@ public class PluginImportOperation extends JarImportOperation {
 					}
 				}
 				if (envs.length > 0 && !found) {
-					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, envs[0]);
+					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, pluginName, envs[0]);
 					if (!queryExecutionEnvironment(message))
 						return;
 				}
 			}
 
-			IProject project = findProject(id);
+			IProject project = findProject(pluginName);
 
 			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
 				if (!queryReplace(project))
@@ -247,7 +247,7 @@ public class PluginImportOperation extends JarImportOperation {
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_BINARY_WITH_LINKS :
-					if (id.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
+					if (pluginName.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
 						importAsBinary(project, model, true, monitor);
 					} else {
 						importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
@@ -270,6 +270,25 @@ public class PluginImportOperation extends JarImportOperation {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	// Returns the name of any projects the currently exist with same id and version.  Otherwise it returns a default naming convention
+	protected String getProjectName(IPluginModelBase model) {
+		String id = model.getPluginBase().getId();
+		String version = model.getPluginBase().getVersion();
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		if (entry != null) {
+			IPluginModelBase[] existingModels = entry.getWorkspaceModels();
+			for (int i = 0; i < existingModels.length; i++) {
+				String existingVersion = existingModels[i].getPluginBase().getVersion();
+				if (version.equals(existingVersion)) {
+					IResource res = existingModels[i].getUnderlyingResource();
+					if (res != null)
+						return res.getProject().getName();
+				}
+			}
+		}
+		return id + "_" + version; //$NON-NLS-1$
 	}
 
 	// returns true if it is safe to delete the project.  It is not safe to delete if
