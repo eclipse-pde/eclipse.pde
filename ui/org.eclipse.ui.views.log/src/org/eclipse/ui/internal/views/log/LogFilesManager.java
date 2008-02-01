@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Manages the log file providers.
@@ -40,9 +39,19 @@ public class LogFilesManager {
 	}
 
 	/**
-	 * Returns the list of registered log file providers.
+	 * Returns the list of logs.
 	 */
-	static ILogFileProvider[] getLogFileProviders() {
-		return (ILogFileProvider[]) logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
+	static Map getLogSources() {
+		ILogFileProvider[] providers = (ILogFileProvider[]) logFileProviders.toArray(new ILogFileProvider[logFileProviders.size()]);
+		Map result = new HashMap();
+
+		for (int i = 0; i < providers.length; i++) {
+			ILogFileProvider provider = providers[i];
+
+			Map sources = provider.getLogSources();
+			result.putAll(sources);
+		}
+
+		return result;
 	}
 }

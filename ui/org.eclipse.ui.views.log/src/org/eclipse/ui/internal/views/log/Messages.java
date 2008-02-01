@@ -65,7 +65,9 @@ public class Messages extends NLS {
 	public static String LogView_GroupByNone;
 	public static String LogView_GroupByPlugin;
 	public static String LogView_GroupBySession;
+	public static String LogView_LogFileTitle;
 	public static String LogView_OpenFile;
+	public static String LogView_WorkspaceLogFile;
 
 	public static String LogViewLabelProvider_Session;
 	public static String LogViewLabelProvider_truncatedMessage;

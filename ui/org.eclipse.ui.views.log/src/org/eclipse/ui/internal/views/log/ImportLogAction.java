@@ -158,17 +158,12 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 */
 	private ImportConfigurationLogAction[] getLogActions() {
 		List result = new ArrayList();
-		ILogFileProvider[] providers = LogFilesManager.getLogFileProviders();
+		Map sources = LogFilesManager.getLogSources();
 
-		for (int i = 0; i < providers.length; i++) {
-			ILogFileProvider provider = providers[i];
-
-			Map sources = provider.getLogSources();
-			for (Iterator j = sources.keySet().iterator(); j.hasNext();) {
-				String name = (String) j.next();
-				String location = (String) sources.get(name);
-				result.add(new ImportConfigurationLogAction(name, location));
-			}
+		for (Iterator j = sources.keySet().iterator(); j.hasNext();) {
+			String name = (String) j.next();
+			String location = (String) sources.get(name);
+			result.add(new ImportConfigurationLogAction(name, location));
 		}
 
 		return (ImportConfigurationLogAction[]) result.toArray(new ImportConfigurationLogAction[result.size()]);

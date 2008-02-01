@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
@@ -50,12 +51,13 @@ public class PDELogFileProvider implements ILogFileProvider {
 					File configFile = LaunchListener.getMostRecentLogFile(configuration);
 
 					if (configFile != null) {
-						sources.put(name, configFile.getAbsolutePath());
+						sources.put(name, configFile.getCanonicalPath());
 					}
 				}
 
 			} catch (CoreException e) {
 				StatusManager.getManager().handle(e.getStatus());
+			} catch (IOException e) { // do nothing
 			}
 		}
 

@@ -740,6 +740,37 @@ public class LogView extends ViewPart implements ILogListener {
 		currentSession = LogReader.parseLogFile(fInputFile, result, fMemento);
 		group(result);
 		limitEntriesCount();
+
+		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				setContentDescription(getTitleSummary());
+			}
+		});
+
+	}
+
+	private String getTitleSummary() {
+		String path = ""; //$NON-NLS-1$
+		try {
+			path = fInputFile.getCanonicalPath();
+		} catch (IOException e) { // log nothing
+		}
+
+		if (isPlatformLogOpen()) {
+			return Messages.LogView_WorkspaceLogFile;
+		}
+
+		Map sources = LogFilesManager.getLogSources();
+		if (sources.containsValue(path)) {
+			for (Iterator i = sources.keySet().iterator(); i.hasNext();) {
+				String key = (String) i.next();
+				if (sources.get(key).equals(path)) {
+					return NLS.bind(Messages.LogView_LogFileTitle, new String[] {key, path});
+				}
+			}
+		}
+
+		return path;
 	}
 
 	/**
