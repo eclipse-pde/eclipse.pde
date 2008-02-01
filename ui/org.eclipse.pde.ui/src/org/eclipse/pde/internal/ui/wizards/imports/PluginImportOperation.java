@@ -421,10 +421,14 @@ public class PluginImportOperation extends JarImportOperation {
 						IFolder dest = jarFile.getProject().getFolder(folder);
 
 						if (srcZip instanceof IFolder) {
-							if (dest.exists()) {
-								dest.delete(true, null);
+							// if the source (srcZip) equals the destination folder (dest), then we don't want to delete/copy since every
+							// is already where it needs to be.  This happens when importing source bundles in folder format declaring source with ext. point. (bug 214542)
+							if (!srcZip.equals(dest)) {
+								if (dest.exists()) {
+									dest.delete(true, null);
+								}
+								((IFolder) srcZip).move(dest.getFullPath(), true, new SubProgressMonitor(monitor, 1));
 							}
-							((IFolder) srcZip).move(dest.getFullPath(), true, new SubProgressMonitor(monitor, 1));
 						} else if (srcZip instanceof IFile) {
 							if (!dest.exists()) {
 								dest.create(true, true, null);
