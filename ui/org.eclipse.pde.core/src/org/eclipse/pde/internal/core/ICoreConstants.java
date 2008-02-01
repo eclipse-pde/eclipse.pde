@@ -116,7 +116,7 @@ public interface ICoreConstants {
 	public static final String[] TRANSLATABLE_HEADERS = new String[] {Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY};
 
 	// EASTER EGG
-	public static final String[] EE_TOKENS = new String[] {"wassim", "zx", "cherie", "jlb" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	public static final String[] EE_TOKENS = new String[] {"wassim", "zx", "bbauman", "cherie", "jlb" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
 
 	// Common paths
