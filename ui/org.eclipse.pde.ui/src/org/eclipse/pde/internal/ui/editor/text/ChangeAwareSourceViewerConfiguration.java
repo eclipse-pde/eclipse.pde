@@ -146,8 +146,9 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int style = cutDown ? SWT.RESIZE : (SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
-				return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
+				int shellStyle = cutDown ? SWT.NONE : SWT.RESIZE;
+				int textWidgetStyle = cutDown ? SWT.NONE : SWT.V_SCROLL | SWT.H_SCROLL;
+				return new DefaultInformationControl(parent, shellStyle, textWidgetStyle, new HTMLTextPresenter(cutDown));
 			}
 		};
 	}
