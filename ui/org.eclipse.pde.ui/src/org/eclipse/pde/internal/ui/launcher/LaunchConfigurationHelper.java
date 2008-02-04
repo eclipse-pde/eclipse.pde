@@ -139,14 +139,11 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static String computeOSGiBundles(String bundleList, Map map) {
-		StringBuffer buffer = new StringBuffer();
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
 		if (bundleList.indexOf("org.eclipse.equinox.simpleconfigurator") != -1) { //$NON-NLS-1$
-			buffer.append("reference:"); //$NON-NLS-1$
-			buffer.append(LaunchConfigurationHelper.getBundleURL("org.eclipse.equinox.simpleconfigurator", map)); //$NON-NLS-1$
-			buffer.append("@1:start"); //$NON-NLS-1$
-			return buffer.toString();
+			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 		}
+		StringBuffer buffer = new StringBuffer();
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
