@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,9 @@ package org.eclipse.pde.ui.tests.imports;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.BinaryRepositoryProvider;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
@@ -31,35 +27,12 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 	public static Test suite() {
 		return new TestSuite(ImportWithLinksTestCase.class);
 	}
-
-	public void testImportLinksJAR() {
-		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
-		verifyLinkedProject("org.eclipse.pde.core", true);
+	
+	protected int getType() {
+		return TYPE;
 	}
-
-	public void testImportLinksFlat() {
-		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
-		verifyLinkedProject("org.eclipse.jdt.debug", true);
-	}
-
-	public void testImportLinksNotJavaFlat() {
-		runOperation(new String[] {"org.eclipse.pde.source"}, TYPE);
-		verifyLinkedProject("org.eclipse.pde.source", false);
-	}
-
-	public void testImportLinksNotJavaJARd() {
-		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
-		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
-	}
-
-	public void testImportLinksMultiple() {
-		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"}, TYPE);
-		verifyLinkedProject("org.eclipse.core.filebuffers", true);
-		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
-		verifyLinkedProject("org.eclipse.pde.build", true);
-	}
-
-	private void verifyLinkedProject(String projectName, boolean isJava) {
+	
+	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);
 			RepositoryProvider provider = RepositoryProvider.getProvider(project);

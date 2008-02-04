@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -27,11 +21,45 @@ import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard.ImportQuer
 import org.eclipse.pde.ui.tests.PDETestCase;
 
 public abstract class BaseImportTestCase extends PDETestCase {
+	
+	protected abstract int getType();
+	protected abstract void verifyProject(String projectName, boolean isJava);
+	
+	public void testImportLinksJAR() {
+		doSingleImport("org.eclipse.pde.core", true);
+	}
 
-	protected void runOperation(String[] symbolicNames, int type) {
+	public void testImportLinksFlat() {
+		doSingleImport("org.eclipse.jdt.debug", true);
+	}
+
+	public void testImportLinksNotJavaFlat() {
+		doSingleImport("org.eclipse.pde.source", false);
+	}
+
+	public void testImportLinksNotJavaJARd() {
+		doSingleImport("org.eclipse.jdt.doc.user", false);
+	}
+	
+	private void doSingleImport(String bundleSymbolicName, boolean isJava) {
+		IPluginModelBase modelToImport = PluginRegistry.findModel(bundleSymbolicName);
+		assertNull(modelToImport.getUnderlyingResource());
+		runOperation(new IPluginModelBase[] {modelToImport}, getType());
+		verifyProject(modelToImport, isJava);
+	}
+	
+	public void testImportLinksMultiple() {
+		IPluginModelBase[] modelsToImport = getModels(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"});
+		runOperation(modelsToImport, getType());
+		for (int i = 0; i < modelsToImport.length; i++) {
+			verifyProject(modelsToImport[i], i != 1);
+		}
+	}
+	
+	protected void runOperation(IPluginModelBase[] models, int type) {
 		PluginImportOperation.IImportQuery query = new ImportQuery(getShell());
 		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(getShell());
-		final PluginImportOperation op = new PluginImportOperation(getModels(symbolicNames), type, query, executionQuery, false);
+		final PluginImportOperation op = new PluginImportOperation(models, type, query, executionQuery, false);
 
 		try {
 			op.run(new NullProgressMonitor());
@@ -50,6 +78,12 @@ public abstract class BaseImportTestCase extends PDETestCase {
 			models[i] = model;
 		}
 		return models;
+	}
+	
+	protected void verifyProject(IPluginModelBase modelImported, boolean isJava) {
+		String id = modelImported.getPluginBase().getId();
+		String version = modelImported.getPluginBase().getVersion();
+		verifyProject(id + "_" + version, isJava);
 	}
 
 	protected IProject verifyProject(String projectName) {

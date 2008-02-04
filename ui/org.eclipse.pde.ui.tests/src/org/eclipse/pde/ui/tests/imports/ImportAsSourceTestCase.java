@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,29 +30,11 @@ public class ImportAsSourceTestCase extends BaseImportTestCase {
 		return new TestSuite(ImportAsSourceTestCase.class);
 	}
 
-	public void testImportSourceJAR() {
-		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
-		verifySourceProject("org.eclipse.pde.core", true);
+	protected int getType() {
+		return TYPE;
 	}
 
-	public void testImportSourceFlat() {
-		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
-		verifySourceProject("org.eclipse.jdt.debug", true);
-	}
-
-	public void testImportSourceNotJavaJARd() {
-		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
-		verifySourceProject("org.eclipse.jdt.doc.user", false);
-	}
-
-	public void testImportSourceMultiple() {
-		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"}, TYPE);
-		verifySourceProject("org.eclipse.core.filebuffers", true);
-		verifySourceProject("org.eclipse.jdt.doc.user", false);
-		verifySourceProject("org.eclipse.pde.build", true);
-	}
-
-	private void verifySourceProject(String projectName, boolean isJava) {
+	protected void verifyProject(String projectName, boolean isJava) {
 		try {
 			IProject project = verifyProject(projectName);
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
