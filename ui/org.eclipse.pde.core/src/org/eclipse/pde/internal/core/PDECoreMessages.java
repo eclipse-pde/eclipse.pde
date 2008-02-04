@@ -193,8 +193,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_importNoJRE;
 
-	public static String ManifestConsistencyChecker_projectCheck;
-
 	public static String ManifestConsistencyChecker_buildDoesNotExist;
 
 	public static String ManifestConsistencyChecker_builderTaskName;
@@ -203,7 +201,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String ManifestConsistencyChecker_manifestMisspelled;
 
-	public static String BundleErrorReporter_lazyStart_missingActivator;
 	public static String BundleErrorReporter_lazyStart_unsupported;
 
 	public static String BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing;
