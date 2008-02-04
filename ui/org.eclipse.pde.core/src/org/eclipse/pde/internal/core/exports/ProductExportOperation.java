@@ -146,23 +146,25 @@ public class ProductExportOperation extends FeatureExportOperation {
 		File homeDir = new File(TargetPlatform.getLocation());
 		if (!hasLaunchers) {
 			if (homeDir.exists() && homeDir.isDirectory()) {
-				buffer.append("absolute:file:"); //$NON-NLS-1$
-				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath()); //$NON-NLS-1$
+				appendAbsolutePath(buffer, new File(homeDir, "startup.jar")); //$NON-NLS-1$
 				if (!TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-					File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
-					if (file.exists()) {
-						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath());
-					}
-					file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
-					if (file.exists()) {
-						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath());
+					// try to retrieve the exact eclipse launcher path
+					// see bug 205833
+					File file = null;
+					if (System.getProperties().get("eclipse.launcher") != null) { //$NON-NLS-1$
+						String launcherPath = System.getProperties().get("eclipse.launcher").toString(); //$NON-NLS-1$
+						file = new File(launcherPath);
+						if (file.exists() && !file.isDirectory()) {
+							appendAbsolutePath(buffer, file);
+						} else { // just assume traditional eclipse paths
+							appendEclipsePath(buffer, homeDir);
+						}
+					} else { // just assume traditional eclipse paths
+						appendEclipsePath(buffer, homeDir);
 					}
 					file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
 					if (file.exists()) {
-						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath());
+						appendAbsolutePath(buffer, file);
 					}
 				}
 			}
@@ -173,6 +175,26 @@ public class ProductExportOperation extends FeatureExportOperation {
 		buffer.append("/temp/"); //$NON-NLS-1$
 
 		return buffer.toString();
+	}
+
+	private void appendEclipsePath(StringBuffer buffer, File homeDir) {
+		File file = null;
+		file = new File(homeDir, "eclipse"); //$NON-NLS-1$
+		if (file.exists()) {
+			appendAbsolutePath(buffer, file);
+		}
+		file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
+		if (file.exists()) {
+			appendAbsolutePath(buffer, file);
+		}
+	}
+
+	private void appendAbsolutePath(StringBuffer buffer, File file) {
+		if (buffer.length() > 0)
+			buffer.append(","); //$NON-NLS-1$
+
+		buffer.append("absolute:file:"); //$NON-NLS-1$
+		buffer.append(file.getAbsolutePath());
 	}
 
 	private void createEclipseProductFile() {

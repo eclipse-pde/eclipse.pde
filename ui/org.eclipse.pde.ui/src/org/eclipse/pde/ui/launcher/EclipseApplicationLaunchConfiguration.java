@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
 					path = new Path(TargetPlatform.getLocation()).append("Eclipse.app/Contents/Resources/Splash.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
 				} else {
-					path = new Path(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$	
+					path = new Path(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$
+					if (TargetPlatform.getOS().equals("win32")) { //$NON-NLS-1$
+						path = path.addFileExtension(".exe"); //$NON-NLS-1$
+					}
 				}
 
 				programArgs.add(1, path.toOSString()); //This could be the branded launcher if we want (also this does not bring much)
