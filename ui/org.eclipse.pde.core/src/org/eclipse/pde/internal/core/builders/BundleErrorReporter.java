@@ -912,10 +912,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null)
 			return;
 		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
-			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
-			if (activator == null && Constants.ACTIVATION_LAZY.equalsIgnoreCase(header.getValue())) {
-				report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
-			}
 			validateHeaderValue(header, new String[] {Constants.ACTIVATION_LAZY});
 		} else if (severity != CompilerFlags.IGNORE && !containsValidActivationHeader()) {
 			report(PDECoreMessages.BundleErrorReporter_bundleActivationPolicy_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
@@ -926,12 +922,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 		if (!validateStartHeader(header))
 			return; // valid start header problems already reported
-
-		IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
-		if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
-			IMarker marker = report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
-			addMarkerAttribute(marker, "header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
-		}
 
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2 && !containsValidActivationHeader()) {
@@ -955,12 +945,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		validateStartHeader(header);
 		if (header != null) {
-			IHeader activator = getHeader(Constants.BUNDLE_ACTIVATOR);
-			if (activator == null && "true".equals(header.getValue())) { //$NON-NLS-1$
-				IMarker marker = report(PDECoreMessages.BundleErrorReporter_lazyStart_missingActivator, header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT, PDEMarkerFactory.CAT_OTHER);
-				addMarkerAttribute(marker, "header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
-			}
-
 			if (severity == CompilerFlags.IGNORE || containsValidActivationHeader())
 				return;
 			double targetVersion = TargetPlatformHelper.getTargetVersion();
@@ -974,6 +958,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					try {
 						marker.setAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
 						ManifestElement elem = header.getElements()[0];
+
 						boolean unnecessary = elem.getValue().equals("false") && elem.getAttribute("excludes") == null; //$NON-NLS-1$ //$NON-NLS-2$
 						marker.setAttribute("canAdd", !unnecessary); //$NON-NLS-1$
 					} catch (CoreException e) {
