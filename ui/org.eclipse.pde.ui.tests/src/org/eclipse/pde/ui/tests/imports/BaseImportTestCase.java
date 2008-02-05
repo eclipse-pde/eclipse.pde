@@ -82,8 +82,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	
 	protected void verifyProject(IPluginModelBase modelImported, boolean isJava) {
 		String id = modelImported.getPluginBase().getId();
-		String version = modelImported.getPluginBase().getVersion();
-		verifyProject(id + "_" + version, isJava);
+		verifyProject(id, isJava);
 	}
 
 	protected IProject verifyProject(String projectName) {
