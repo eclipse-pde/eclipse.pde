@@ -41,6 +41,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			printProjectDeclaration();
 			printAssembleMacroDef();
 			generateMainTarget();
+			generateMetadataTarget();
 			script.printProjectEnd();
 		} finally {
 			if (script != null)
@@ -96,6 +97,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);
 			}
 		}
+		if (haveP2Bundles())
+			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 		script.printTargetEnd();
 	}
 
@@ -118,6 +121,31 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printAttribute("dot", config.length() > 0 ? "." : "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printAttribute("scriptPrefix", "assemble", true); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("/>"); //$NON-NLS-1$
+	}
+
+	protected void generateMetadataTarget() {
+		if (haveP2Bundles()) {
+			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
+			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			script.print("<p2.generator "); //$NON-NLS-1$
+			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
+			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
+
+			ProductFile product = configScriptGenerator.getProductFile();
+			if (product != null)
+				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
+			else {
+				script.printAttribute("root", "name", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("rootVersion", "1.0.0", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			script.println("/>"); //$NON-NLS-1$
+			script.printTargetEnd();
+		}
 	}
 
 	public void setSignJars(boolean value) {

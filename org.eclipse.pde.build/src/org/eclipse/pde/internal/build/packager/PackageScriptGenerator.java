@@ -76,4 +76,28 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		else
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
+	
+	protected void generateMetadataTarget() {
+		if (haveP2Bundles()) {
+			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
+			script.print("<p2.generator "); //$NON-NLS-1$
+			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("flavor", "${p2.flavor}", true); //$NON-NLS-1$//$NON-NLS-2$
+			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
+
+			ProductFile product = configScriptGenerator.getProductFile();
+			if (product != null)
+				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
+			else {
+				script.printAttribute("root", "name", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("rootVersion", "1.0.0", true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			script.println("/>"); //$NON-NLS-1$
+			script.printTargetEnd();
+		}
+	}
 }

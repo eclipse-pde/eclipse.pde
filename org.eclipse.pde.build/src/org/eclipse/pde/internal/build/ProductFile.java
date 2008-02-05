@@ -93,6 +93,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String splashLocation = null;
 	private String productName = null;
 	private String application = null;
+	private String location = null;
 
 	private Properties  launcherArgs = new Properties();
 	
@@ -110,6 +111,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	public ProductFile(String location, String os) throws CoreException {
 		super();
 		this.currentOS = os;
+		this.location = location;
 		try {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
@@ -128,6 +130,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 
 	public String getLauncherName() {
 		return launcherName;
+	}
+	
+	public String getLocation() {
+		return location;
 	}
 	
 	public List getPlugins() {

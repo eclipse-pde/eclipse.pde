@@ -85,36 +85,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	}
 
 	private void initialize() throws CoreException {
-		loadProduct();
+		productFile = loadProduct(product);
 
 		PDEState state = getSite(false).getRegistry();
 		refactoredRuntime = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON) != null;
-	}
-
-	private void loadProduct() throws CoreException {
-		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
-			productFile = null;
-			return;
-		}
-		String productPath = findFile(product, false);
-		File f = null;
-		if (productPath != null) {
-			f = new File(productPath);
-		} else {
-			// couldn't find productFile, try it as a path directly
-			f = new File(product);
-			if (!f.exists() || !f.isFile()) {
-				// doesn't exist, try it as a path relative to the working directory
-				f = new File(getWorkingDirectory(), product);
-				if (!f.exists() || !f.isFile()) {
-					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
-				}
-			}
-		}
-
-		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
-		//this is better since this generator may be used for multiple OS's
-		productFile = new ProductFile(f.getAbsolutePath(), null);
 	}
 
 	private void copyFile(String src, String dest) {

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.metadata.generator.Generator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
@@ -27,6 +28,7 @@ import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 	private static Properties immutableAntProperties = null;
+	private static Boolean p2Bundles = null;
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
@@ -83,6 +85,19 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 	}
 
+	static public boolean haveP2Bundles() {
+		if (p2Bundles != null)
+			return p2Bundles.booleanValue();
+
+		try {
+			new Generator(null);
+			p2Bundles = Boolean.TRUE;
+		} catch (Throwable e) {
+			p2Bundles = Boolean.FALSE;
+		}
+		return p2Bundles.booleanValue();
+	}
+	
 	public static String getImmutableAntProperty(String key) {
 		return getImmutableAntProperty(key, null);
 	}
@@ -349,6 +364,31 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return pdeUIState != null;
 	}
 
+	public ProductFile loadProduct(String product) throws CoreException {
+		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
+			return null;
+		}
+		String productPath = findFile(product, false);
+		File f = null;
+		if (productPath != null) {
+			f = new File(productPath);
+		} else {
+			// couldn't find productFile, try it as a path directly
+			f = new File(product);
+			if (!f.exists() || !f.isFile()) {
+				// doesn't exist, try it as a path relative to the working directory
+				f = new File(getWorkingDirectory(), product);
+				if (!f.exists() || !f.isFile()) {
+					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
+				}
+			}
+		}
+
+		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
+		//this is better since this generator may be used for multiple OS's
+		return new ProductFile(f.getAbsolutePath(), null);
+	}
+	
 	//Find a file in a bundle or a feature.
 	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {

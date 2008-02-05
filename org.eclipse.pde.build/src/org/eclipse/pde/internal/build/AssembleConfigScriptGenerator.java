@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.File;
 import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
@@ -84,38 +83,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		loadPostProcessingSteps();
 	}
 
-	private void loadProduct() {
-		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
-			productFile = null;
-			return;
-		}
-		String productPath = findFile(product, false);
-
-		File f = null;
-		if (productPath != null) {
-			f = new File(productPath);
-		} else {
-			// couldn't find product, try it as a path directly
-			f = new File(product);
-			if (!f.exists() || !f.isFile()) {
-				// doesn't exist, try it as a path relative to the working directory
-				f = new File(getWorkingDirectory(), product);
-				if (!f.exists() || !f.isFile()) {
-					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
-				}
-			}
-		}
-		if (f.exists() && f.isFile()) {
-			try {
-				productFile = new ProductFile(f.getAbsolutePath(), configInfo.getOs());
-			} catch (CoreException e) {
-				// TODO log
-			}
-		} else {
-			//TODO log
-		}
-	}
-
 	private String computeIconsList() {
 		String result = Utils.getPropertyFormat(PROPERTY_LAUNCHER_ICONS);
 		if (productFile == null)
@@ -143,7 +110,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void generate() {
-		loadProduct();
+		try {
+			productFile = loadProduct(product);
+		} catch (CoreException e) {
+			//ignore
+		}
 		generatePrologue();
 		generateInitializationSteps();
 		generateGatherBinPartsCalls();
@@ -568,6 +539,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
+			script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 
 			if (rootFileProviders.size() > 0) {
@@ -580,6 +552,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printAttribute("launcherConfig", configInfo.toString(), true); //$NON-NLS-1$
 				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
 				script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 				if (productFile != null) {
 					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
 				}
@@ -588,19 +561,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 			script.printTargetEnd();
 		}
-	}
-
-	private boolean haveP2Bundles() {
-		if (p2Bundles != null)
-			return p2Bundles.booleanValue();
-
-		try {
-			this.getClass().getClassLoader().loadClass("org.eclipse.equinox.p2.metadata.generator.Generator"); //$NON-NLS-1$
-			p2Bundles = Boolean.TRUE;
-		} catch (Exception e) {
-			p2Bundles = Boolean.FALSE;
-		}
-		return p2Bundles.booleanValue();
 	}
 
 	private void generateZipTarget() {
@@ -808,6 +768,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		product = value;
 	}
 
+	public ProductFile getProductFile() {
+		return productFile;
+	}
+	
 	public void setArchiveFormat(String archiveFormat) {
 		this.archiveFormat = archiveFormat;
 	}
