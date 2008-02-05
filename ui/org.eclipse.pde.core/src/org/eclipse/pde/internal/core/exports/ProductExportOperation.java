@@ -426,6 +426,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, fRoot);
+
+		//for now, don't do p2 generation for products
+		if (fAntBuildProperties.containsKey("generate.p2.metadata")) { //$NON-NLS-1$
+			fAntBuildProperties.remove("generate.p2.metadata"); //$NON-NLS-1$
+		}
 		return properties;
 	}
 

@@ -360,11 +360,11 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			// TODO update this stuff
 			if (fInfo.toDirectory) {
 				fAntBuildProperties.put("generate.p2.metadata", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-				fAntBuildProperties.put("p2.flavor", "default"); //$NON-NLS-1$ //$NON-NLS-2$
-				fAntBuildProperties.put("p2.publish.artifacts", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				fAntBuildProperties.put("p2.flavor", "tooling"); //$NON-NLS-1$ //$NON-NLS-2$
+				fAntBuildProperties.put("p2.publish.artifacts", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					fAntBuildProperties.put("p2.metadata.repo", new File(fInfo.destinationDirectory).toURL().toString()); //$NON-NLS-1$
-					fAntBuildProperties.put("p2.artifact.repo", new File(fInfo.destinationDirectory).toURL().toString()); //$NON-NLS-1$
+					fAntBuildProperties.put("p2.metadata.repo", new File(fInfo.destinationDirectory, "p2repo").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					fAntBuildProperties.put("p2.artifact.repo", new File(fInfo.destinationDirectory, "p2repo").toURL().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (MalformedURLException e) {
 					PDECore.log(e);
 				}
