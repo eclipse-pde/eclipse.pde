@@ -194,8 +194,8 @@ public class PluginImportOperation extends JarImportOperation {
 	 * @throws CoreException if a problem occurs while importing a plugin
 	 */
 	private void importPlugin(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		String pluginName = getProjectName(model);
-		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, pluginName), 6);
+		String id = model.getPluginBase().getId();
+		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
@@ -209,13 +209,13 @@ public class PluginImportOperation extends JarImportOperation {
 					}
 				}
 				if (envs.length > 0 && !found) {
-					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, pluginName, envs[0]);
+					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, envs[0]);
 					if (!queryExecutionEnvironment(message))
 						return;
 				}
 			}
 
-			IProject project = findProject(pluginName);
+			IProject project = findProject(id);
 
 			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
 				if (!queryReplace(project))
@@ -247,7 +247,7 @@ public class PluginImportOperation extends JarImportOperation {
 					importAsBinary(project, model, true, new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_BINARY_WITH_LINKS :
-					if (pluginName.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
+					if (id.startsWith("org.eclipse.swt") && !isJARd(model)) { //$NON-NLS-1$
 						importAsBinary(project, model, true, monitor);
 					} else {
 						importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
