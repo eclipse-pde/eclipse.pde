@@ -317,6 +317,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (!fProject.hasNature(JavaCore.NATURE_ID))
 				return;
 		} catch (CoreException e) {
+			return;
 		}
 
 		String[] bundleEnvs = desc.getExecutionEnvironments();
