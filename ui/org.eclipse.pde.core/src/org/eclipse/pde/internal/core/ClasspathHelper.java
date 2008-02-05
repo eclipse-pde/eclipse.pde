@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,40 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 
 public class ClasspathHelper {
@@ -65,8 +41,14 @@ public class ClasspathHelper {
 			if (id == null)
 				continue;
 			String entry = writeEntry(getDevPaths(models[i], checkExcluded, null));
-			if (entry.length() > 0)
-				properties.put(id, entry);
+			if (entry.length() > 0) {
+				String currentValue = (String) properties.get(id);
+				if (!entry.equals(currentValue)) {
+					if (currentValue != null)
+						entry = currentValue.concat(",").concat(entry); //$NON-NLS-1$
+					properties.put(id, entry);
+				}
+			}
 		}
 		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -102,8 +84,15 @@ public class ClasspathHelper {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			if (model.getUnderlyingResource() != null) {
 				String entry = writeEntry(getDevPaths(model, true, map));
-				if (entry.length() > 0)
-					properties.put(model.getPluginBase().getId(), entry);
+				if (entry.length() > 0) {
+					String id = model.getPluginBase().getId();
+					String currentValue = (String) properties.get(id);
+					if (!entry.equals(currentValue)) {
+						if (currentValue != null)
+							entry = currentValue.concat(",").concat(entry); //$NON-NLS-1$
+						properties.put(id, entry);
+					}
+				}
 			}
 		}
 		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -126,7 +115,7 @@ public class ClasspathHelper {
 		return getDevEntries(true);
 	}
 
-	public static String getDevEntries(boolean checkExcluded) {
+	private static String getDevEntries(boolean checkExcluded) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
@@ -152,6 +141,7 @@ public class ClasspathHelper {
 		return buffer.toString();
 	}
 
+	// TODO remove - no longer used after bug 217870
 	public static Dictionary getDevDictionary(IPluginModelBase model) {
 		if (model.getUnderlyingResource() == null)
 			return null;
