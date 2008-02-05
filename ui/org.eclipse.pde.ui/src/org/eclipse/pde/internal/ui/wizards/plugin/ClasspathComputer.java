@@ -49,11 +49,11 @@ public class ClasspathComputer {
 
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
-		result.add(createJREEntryUsingPreviousEntry(javaProject, ee));
+		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.JRE_CONTAINER_PATH));
 		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
 
 		// add pde container
-		result.add(createContainerEntry());
+		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
@@ -278,24 +278,28 @@ public class ClasspathComputer {
 	 * has an existing JRE/EE classpath entry, the access rules, extra attributes and isExported settings of
 	 * the existing entry will be added to the new execution entry.
 	 *  
-	 * @param javaProject project to check for existing JRE/EE classpath entries
+	 * @param javaProject project to check for existing classpath entries
 	 * @param ee id of the execution environment to create an entry for
+	 * @param path id of the container to create an entry for
+	 * 
 	 * @return new classpath container entry
 	 * @throws CoreException if there is a problem accessing the classpath entries of the project
 	 */
-	public static IClasspathEntry createJREEntryUsingPreviousEntry(IJavaProject javaProject, String ee) throws CoreException {
-		IClasspathEntry existingEntry = null;
+	public static IClasspathEntry createEntryUsingPreviousEntry(IJavaProject javaProject, String ee, IPath path) throws CoreException {
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-				existingEntry = entries[i];
-				break;
+			if (entries[i].getPath().equals(path)) {
+				if (path.equals(PDECore.JRE_CONTAINER_PATH))
+					return JavaCore.newContainerEntry(getEEPath(ee), entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
+
+				return JavaCore.newContainerEntry(path, entries[i].getAccessRules(), entries[i].getExtraAttributes(), entries[i].isExported());
 			}
 		}
-		if (existingEntry == null) {
+
+		if (path.equals(PDECore.JRE_CONTAINER_PATH))
 			return createJREEntry(ee);
-		}
-		return JavaCore.newContainerEntry(getEEPath(ee), existingEntry.getAccessRules(), existingEntry.getExtraAttributes(), existingEntry.isExported());
+
+		return JavaCore.newContainerEntry(path);
 	}
 
 	/**

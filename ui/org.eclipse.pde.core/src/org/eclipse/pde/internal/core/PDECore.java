@@ -13,22 +13,12 @@ package org.eclipse.pde.internal.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
-import org.eclipse.pde.internal.core.builders.PluginRebuilder;
+import org.eclipse.pde.internal.core.builders.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
@@ -38,6 +28,7 @@ public class PDECore extends Plugin {
 
 	public static final IPath REQUIRED_PLUGINS_CONTAINER_PATH = new Path(PLUGIN_ID + ".requiredPlugins"); //$NON-NLS-1$
 	public static final IPath JAVA_SEARCH_CONTAINER_PATH = new Path(PLUGIN_ID + ".externalJavaSearch"); //$NON-NLS-1$
+	public static final IPath JRE_CONTAINER_PATH = new Path(JavaRuntime.JRE_CONTAINER);
 
 	public static final String BINARY_PROJECT_VALUE = "binary"; //$NON-NLS-1$
 	public static final String BINARY_REPOSITORY_PROVIDER = PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
