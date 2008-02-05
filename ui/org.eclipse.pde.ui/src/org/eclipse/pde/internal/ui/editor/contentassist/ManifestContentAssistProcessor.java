@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				TypeCompletionProposal proposal = new TypeCompletionProposal(fHeader[i] + ": ", getImage(F_TYPE_HEADER), //$NON-NLS-1$
 						fHeader[i], startOffset, currentValue.length());
 				proposal.setAdditionalProposalInfo(getJavaDoc(fHeader[i]));
-				completions.add(proposal); //$NON-NLS-1$
+				completions.add(proposal);
 			}
 		}
 		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
@@ -435,17 +435,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			if (set == null)
 				set = parseHeaderForValues(currentValue, offset);
 			value = removeLeadingSpaces(value);
-			int length = value.length();
-			IProject proj = ((PDEFormEditor) fSourcePage.getEditor()).getCommonProject();
-			if (proj != null) {
-				IJavaProject jp = JavaCore.create(proj);
-				IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, set, false);
-				for (int i = 0; i < frags.length; i++) {
-					String name = frags[i].getElementName();
-					if (name.regionMatches(true, 0, value, 0, length))
-						list.add(new TypeCompletionProposal(name, getImage(F_TYPE_PKG), name, offset - length, length));
-				}
-			}
+			addPackageCompletions(value, set, offset, list);
 		} else {
 			String value = currentValue;
 			if (comma > 0) {
@@ -511,14 +501,45 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 
 	protected ICompletionProposal[] handleBundleActivationPolicyCompletion(final String currentValue, final int offset) {
-		int comma = currentValue.lastIndexOf(',');
 		int semicolon = currentValue.lastIndexOf(';');
-		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
+		if (semicolon == -1) {
+			// we know there are no directives, therefore we are looking for a header value
 			String value = removeLeadingSpaces(currentValue);
-			String lazyValue = "lazy"; //$NON-NLS-1$
+			String lazyValue = Constants.ACTIVATION_LAZY;
 			int length = value.length();
 			if (lazyValue.regionMatches(0, value, 0, length))
 				return new ICompletionProposal[] {new TypeCompletionProposal(lazyValue, null, lazyValue, offset - length, length)};
+		} else {
+			int equals = currentValue.lastIndexOf('=');
+			if (semicolon > equals) {
+				// we know we are looking for a directive
+				String[] validDirectives = new String[] {Constants.EXCLUDE_DIRECTIVE, Constants.INCLUDE_DIRECTIVE};
+				Integer[] validTypes = new Integer[] {new Integer(F_TYPE_DIRECTIVE), new Integer(F_TYPE_DIRECTIVE)};
+				return handleAttrsAndDirectives(currentValue, initializeNewList(validDirectives), initializeNewList(validTypes), offset);
+			}
+			int quote = currentValue.lastIndexOf('"');
+			if (!insideQuotes(currentValue)) {
+				// if quote > equals, that means the cursor is after a closing quote for the directive
+				if (equals > quote)
+					return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				// We know we are looking for a completion inside the quote of a directive
+				String value = currentValue.substring(quote + 1);
+				// find existing packages 
+				StringTokenizer parser = new StringTokenizer(value, ","); //$NON-NLS-1$
+				HashSet set = new HashSet();
+				while (parser.hasMoreTokens()) {
+					set.add(parser.nextToken().trim());
+				}
+				// find the value of the package we are trying to find the completion for
+				int comma = value.lastIndexOf(',');
+				if (comma > -1)
+					value = removeLeadingSpaces(value.substring(comma + 1));
+				// find proposals
+				ArrayList proposals = new ArrayList();
+				addPackageCompletions(value, set, offset, proposals);
+				return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+			}
 		}
 		return new ICompletionProposal[0];
 	}
@@ -594,6 +615,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int semicolon = value.lastIndexOf(';');
 		value = removeLeadingSpaces(value.substring(semicolon + 1));
 		StringTokenizer tokenizer = new StringTokenizer(fullValue, ";"); //$NON-NLS-1$
+		// remove value part of the String, the rest of the tokens will be attributes/directives
 		tokenizer.nextToken();
 		while (tokenizer.hasMoreTokens()) {
 			String tokenValue = removeLeadingSpaces(tokenizer.nextToken());
@@ -610,6 +632,28 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			}
 		}
 		return matchValueCompletion(value, (String[]) attrs.toArray(new String[attrs.size()]), toIntArray(types), offset);
+	}
+
+	/**
+	 * Adds completions to the proposals list which represent packages in source folders found in the current project
+	 * 
+	 * @param value the current incomplete package value (without any leading spaces)
+	 * @param currentPackages a Set containing the packages already specified by the Manifest Header
+	 * @param offset the offset of the current completion proposal
+	 * @param proposals the list to which new completion proposals will be added
+	 */
+	private void addPackageCompletions(String value, Set currentPackages, int offset, ArrayList proposals) {
+		int length = value.length();
+		IProject proj = ((PDEFormEditor) fSourcePage.getEditor()).getCommonProject();
+		if (proj != null) {
+			IJavaProject jp = JavaCore.create(proj);
+			IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, currentPackages, false);
+			for (int i = 0; i < frags.length; i++) {
+				String name = frags[i].getElementName();
+				if (name.regionMatches(true, 0, value, 0, length))
+					proposals.add(new TypeCompletionProposal(name, getImage(F_TYPE_PKG), name, offset - length, length));
+			}
+		}
 	}
 
 	private HashSet parseHeaderForValues(String currentValue, int offset) {
@@ -637,11 +681,16 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				++line;
 				colon = newValue.lastIndexOf(':');
 			} while ((colon == -1 || (newValue.length() > colon && newValue.charAt(colon + 1) == '=')) && (entireHeader || newValue.indexOf(',') == -1) && !(doc.getNumberOfLines() == line));
+
 			if (colon > 0 && newValue.charAt(colon + 1) != '=') {
 				newValue = doc.get(offset, startOfLine - 1 - offset);
 			} else {
+				// break on the comma to find our element, but only break on a comma that is not enclosed in parenthesis 
 				int comma = newValue.indexOf(',');
-				newValue = (comma != -1) ? newValue.substring(0, comma) : newValue;
+				int parenthesis = newValue.indexOf('"');
+				int test = newValue.indexOf('"', parenthesis + 1);
+				if (!(parenthesis < comma && newValue.indexOf('"', parenthesis + 1) > comma))
+					newValue = (comma != -1) ? newValue.substring(0, comma) : newValue;
 			}
 			return value.concat(newValue);
 		} catch (BadLocationException e) {
