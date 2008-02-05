@@ -57,6 +57,10 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		fGenerateFileButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				enableBrowseSection(!fGenerateFileButton.getSelection());
+				boolean generateConfig = fGenerateFileButton.getSelection();
+				fLocationText.setEditable(!generateConfig);
+				if (generateConfig)
+					fLocationText.setEnabled(true);
 			}
 		});
 
@@ -87,6 +91,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		fGenerateFileButton.setSelection(generateDefault);
 		fUseTemplateButton.setSelection(!generateDefault);
 		enableBrowseSection(!generateDefault);
+		fLocationText.setEditable(!generateDefault);
+		if (generateDefault)
+			fLocationText.setEnabled(true);
 		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "")); //$NON-NLS-1$
 	}
 
