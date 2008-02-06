@@ -181,4 +181,10 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		}
 	}
 
+	public String validate() {
+		if (fGenerateFileButton.getSelection())
+			return null;
+		return super.validate();
+	}
+
 }

@@ -114,4 +114,10 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		return PDEUIMessages.ConfigurationAreaBlock_name;
 	}
 
+	public String validate() {
+		if (fUseDefaultLocationButton.getSelection())
+			return null;
+		return super.validate();
+	}
+
 }
