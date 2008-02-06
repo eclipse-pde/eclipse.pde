@@ -1,0 +1,431 @@
+/*******************************************************************************
+ * Copyright (c) 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.api.tools.internal.provisional.scanner;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.pde.api.tools.internal.CompilationUnit;
+import org.eclipse.pde.api.tools.internal.JavadocTagManager;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.search.MethodExtractor;
+import org.eclipse.pde.api.tools.internal.util.Util;
+import org.objectweb.asm.ClassReader;
+
+/**
+ * Scans the source of a *.java file for the javadoc tags on types that have been contributed to the apiJavadocTags extension point:
+ * @since 1.0.0
+ */
+public class TagScanner {
+
+	/**
+	 * Constant used for controlling tracing in the scanner
+	 */
+	private static boolean DEBUG = Util.DEBUG;
+	
+	/**
+	 * Method used for initializing tracing in the scanner
+	 */
+	public static void setDebug(boolean debugValue) {
+		DEBUG = debugValue || Util.DEBUG;
+	}
+	
+	/**
+	 * Visitor to scan a compilation unit. We only care about javadoc nodes that have either 
+	 * type or enum declarations as parents, so we have to override the ones we don't care 
+	 * about.
+	 */
+	class Visitor extends ASTVisitor {
+		
+		private IApiDescription fDescription = null;
+		
+		/**
+		 * Package descriptor. Initialized to default package, and overridden if a package
+		 * declaration is visited.
+		 */
+		private IPackageDescriptor fPackage = Factory.packageDescriptor(""); //$NON-NLS-1$
+		
+		/**
+		 * Type descriptor for type currently being visited.
+		 */
+		private IReferenceTypeDescriptor fType = null;
+		
+		/**
+		 * Used to look up binaries when resolving method signatures, or
+		 * <code>null</code> if not provided.
+		 */
+		private IClassFileContainer fContainer = null;
+		
+		/**
+		 * Cache of class files to maps of unresolved method descriptors to resolved descriptors.
+		 */
+		private Map fMethodMappings = null;
+		
+		/**
+		 * Constructor
+		 * @param description API description to annotate
+		 * @param container class file container or <code>null</code>, used
+		 * 	to resolve method signatures
+		 */
+		public Visitor(IApiDescription description, IClassFileContainer container) {
+			fDescription = description;
+			fContainer = container;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Javadoc)
+		 */
+		public boolean visit(Javadoc node) {
+			List tags = node.tags();
+			ASTNode parent = node.getParent();
+			if(parent != null) {
+				switch(parent.getNodeType()) {
+					case ASTNode.ENUM_DECLARATION: {
+						processTags(fType, tags, IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+						break;
+					}
+					case ASTNode.TYPE_DECLARATION: {
+						TypeDeclaration type = (TypeDeclaration) parent;
+						if(type.isInterface()) {
+							processTags(fType, tags, IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE);
+						}
+						else {
+							processTags(fType, tags, IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+						}
+						break;
+					}
+					case ASTNode.METHOD_DECLARATION: {
+						MethodDeclaration method = (MethodDeclaration) parent;
+						String signature = Util.getMethodSignatureFromNode(method);
+						if(signature != null) {
+							IMethodDescriptor descriptor = fType.getMethod(method.getName().getFullyQualifiedName(), signature);
+							processTags(descriptor, tags, getEnclosingType(method), IApiJavadocTag.MEMBER_METHOD);
+						}
+						break;
+					}
+					case ASTNode.FIELD_DECLARATION: {
+						FieldDeclaration field = (FieldDeclaration) parent;
+						List fields = field.fragments();
+						VariableDeclarationFragment fragment = null;
+						for(Iterator iter = fields.iterator(); iter.hasNext();) {
+							fragment = (VariableDeclarationFragment) iter.next();
+							processTags(fType.getField(fragment.getName().getFullyQualifiedName()), tags, getEnclosingType(field), IApiJavadocTag.MEMBER_FIELD);
+						}
+						break;
+					}
+				}
+			}
+			return false;
+		}
+		
+		private int getEnclosingType(ASTNode node) {
+			while (!(node instanceof AbstractTypeDeclaration)) {
+				node = node.getParent();
+			}
+			if (node instanceof TypeDeclaration) {
+				if (((TypeDeclaration)node).isInterface()) {
+					return IApiJavadocTag.TYPE_INTERFACE;
+				}
+			}
+			return IApiJavadocTag.TYPE_CLASS;
+		}
+		
+		/**
+		 * A type has been entered - update the type being visited.
+		 * 
+		 * @param name name from type node
+		 */
+		private void enterType(SimpleName name) {
+			if (fType == null) {
+				fType = fPackage.getType(name.getFullyQualifiedName());
+			} else {
+				fType = fType.getType(name.getFullyQualifiedName());
+			}			
+		}
+		
+		/**
+		 * A type has been exited - update the type being visited.
+		 */
+		private void exitType() {
+			fType = fType.getEnclosingType();
+		}
+		
+		/**
+		 * Processes the tags for the given {@link IElementDescriptor}
+		 * @param descriptor the descriptor
+		 * @param tags the listing of tags from the AST
+		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
+		 * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code>
+		 */
+		protected void processTags(IElementDescriptor descriptor, List tags, int type, int member) {
+			JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
+			TagElement tag = null;
+			String tagname = null;
+			int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+			for(Iterator iter = tags.iterator(); iter.hasNext();) {
+				tag = (TagElement) iter.next();
+				tagname = tag.getTagName();
+				restrictions |= jtm.getRestrictionsForTag(tagname, type, member);
+			}
+			if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
+				if (descriptor.getElementType() == IElementDescriptor.T_METHOD) {
+					descriptor = resolveMethod((IMethodDescriptor)descriptor);
+				}
+				fDescription.setRestrictions(null, descriptor, restrictions);
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
+		 */
+		public boolean visit(TypeDeclaration node) {
+			enterType(node.getName());
+			return true;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
+		 */
+		public void endVisit(TypeDeclaration node) {
+			exitType();
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+		 */
+		public boolean visit(EnumDeclaration node) {
+			enterType(node.getName());
+			return true;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
+		 */
+		public void endVisit(EnumDeclaration node) {
+			exitType();
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.PackageDeclaration)
+		 */
+		public boolean visit(PackageDeclaration node) {
+			Name name = node.getName();
+			fPackage = Factory.packageDescriptor(name.getFullyQualifiedName());
+			return false;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
+		 */
+		public boolean visit(MethodDeclaration node) {
+			return true;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
+		 */
+		public boolean visit(FieldDeclaration node) {
+			return true;
+		}
+		
+		/**
+		 * Returns a method descriptor with a resolved signature for the given method
+		 * descriptor with an unresolved signature.
+		 * 
+		 * @param descriptor method to resolve
+		 * @return resolved method descriptor or the same method descriptor if unable to
+		 * 	resolve
+		 */
+		private IMethodDescriptor resolveMethod(IMethodDescriptor descriptor) {
+			if (fContainer != null) {
+				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
+				try {
+					IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
+					if(classFile != null) {
+						Map methodMapping = getMethodMapping(classFile);
+						IMethodDescriptor resolved = (IMethodDescriptor) methodMapping.get(descriptor);
+						if (resolved != null) {
+							return resolved;
+						}
+					}
+					else {
+						//we could possibly use the java model to try and resolve ??
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+				}
+			}
+			return descriptor;
+		}
+		
+		/**
+		 * Returns resolved method descriptors from the given class file.
+		 * 
+		 * @param file class file
+		 * @return method descriptors for all methods in the file
+		 * @throws CoreException
+		 */
+		private IMethodDescriptor[] getMethods(IClassFile file) throws CoreException {
+			MethodExtractor extractor = new MethodExtractor();
+			ClassReader reader = new ClassReader(file.getContents());
+			reader.accept(extractor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
+			return extractor.getMethods();
+		}
+		
+		
+		/**
+		 * Returns a map of unresolved methods descriptors to resolved method descriptors
+		 * for the methods in the given class file.
+		 * 
+		 * @param file class file
+		 * @return mapping of unresolved methods to resolved methods
+		 * @throws CoreException 
+		 */
+		private Map getMethodMapping(IClassFile file) throws CoreException {
+			if (fMethodMappings == null) {
+				fMethodMappings = new HashMap();
+			}
+			Map mapping = (Map) fMethodMappings.get(file);
+			if (mapping == null) {
+				mapping = new HashMap();
+				IMethodDescriptor[] methods = getMethods(file);
+				for (int i = 0; i < methods.length; i++) {
+					IMethodDescriptor resolved = methods[i];
+					String[] params = Signature.getParameterTypes(resolved.getSignature());
+					String returnType = Signature.getReturnType(resolved.getSignature());
+					for (int j = 0; j < params.length; j++) {
+						params[j] = getUnqualified(params[j]);
+					}
+					returnType = getUnqualified(returnType);
+					IMethodDescriptor unresolved = resolved.getEnclosingType().getMethod(resolved.getName(), Signature.createMethodSignature(params, returnType));
+					mapping.put(unresolved, resolved);
+				}
+				fMethodMappings.put(file, mapping);
+			}
+			return mapping;
+		}
+		
+		/**
+		 * Returns the unqualified equivalent of the given signature.
+		 * 
+		 * @param signature
+		 * @return unqualified signature
+		 */
+		private String getUnqualified(String signature) {
+			if (!isPrimitive(signature)) {
+				return Signature.createTypeSignature(Signature.getSimpleName(Signature.getSignatureSimpleName(signature).replace('/', '.')), false);
+			}
+			return signature;
+		}
+		
+		/**
+		 * Returns whether the signature is primitive.
+		 * 
+		 * @param signature
+		 * @return whether the signature is primitive 
+		 */
+		private boolean isPrimitive(String signature) {
+			return Signature.getElementType(signature).length() == 1;
+		}
+	}
+	
+	/**
+	 * The singleton instance of the scanner
+	 */
+	private static TagScanner fSingleton = null;
+	
+	/**
+	 * Delegate for getting the singleton instance of the scanner
+	 * @return
+	 */
+	public static final TagScanner newScanner() {
+		if(fSingleton == null) {
+			fSingleton = new TagScanner();
+		}
+		return fSingleton;
+	}
+	
+	/**
+	 * Constructor
+	 * Cannot be instantiated
+	 */
+	private TagScanner() {}
+	
+	/**
+	 * Scans the specified source {@linkplain CompilationUnit} for contributed API javadoc tags.
+	 * Tags on methods will have unresolved signatures.
+	 * 
+	 * @param source the source file to scan for tags
+	 * @param description the API description to annotate with any new tag rules found
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public void scan(CompilationUnit source, IApiDescription description) throws FileNotFoundException, IOException {
+		scan(source, description, null);
+	}
+	
+	/**
+	 * Scans the specified source {@linkplain CompilationUnit} for contributed API javadoc tags.
+	 * 
+	 * @param source the source file to scan for tags
+	 * @param description the API description to annotate with any new tag rules found
+	 * @param container optional class file container containing the class file for the given source
+	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
+	 * 	not provided (<code>null</code>), method signatures will be unresolved.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container) throws FileNotFoundException, IOException {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		InputStream inputStream = null;
+		try {
+			inputStream = source.getInputStream();
+			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, System.getProperty("file.encoding"))); //$NON-NLS-1$
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch(IOException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		}
+		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
+		cunit.accept(new Visitor(description, container));
+	}	
+}

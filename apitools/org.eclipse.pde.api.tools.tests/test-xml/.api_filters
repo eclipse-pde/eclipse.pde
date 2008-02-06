@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <component id="ApiPluginTests">
+    <package kind="REMOVED_FIELD" name="x.y.z">
+      <type kind="" name="C4"/>
+    </package>
+    <package kind="" name="x">
+      <type kind="ADDED_CLASS_BOUND" name="C1"/>
+      <type kind="ADDED_INTERFACE_BOUND,CHANGED_CONTRACTED_SUPERINTERFACES_SET" name="C2"/>
+    </package>
+    <package kind="" name="x.y">
+      <type kind="CHANGED_SUPERCLASS" name="C3">
+        <field kind="CHANGED_VALUE" name="field"/>
+        <method kind="ADDED_NO_EXTEND" name="foo" signature="(Ljava/lang/Integer;)Ljava/lang/Object;"/>
+      </type>
+    </package>
+  </component>
