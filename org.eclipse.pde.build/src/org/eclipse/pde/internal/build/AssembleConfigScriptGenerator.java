@@ -562,6 +562,19 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printTargetEnd();
 		}
 	}
+	
+	public boolean haveP2Bundles() {
+		if (p2Bundles != null)
+			return p2Bundles.booleanValue();
+
+		try {
+			this.getClass().getClassLoader().loadClass("org.eclipse.equinox.p2.metadata.generator.Generator"); //$NON-NLS-1$
+			p2Bundles = Boolean.TRUE;
+		} catch (Exception e) {
+			p2Bundles = Boolean.FALSE;
+		}
+		return p2Bundles.booleanValue();
+	}
 
 	private void generateZipTarget() {
 		final int parameterSize = 15;

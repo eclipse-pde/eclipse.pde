@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.metadata.generator.Generator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
@@ -28,7 +27,6 @@ import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 	private static Properties immutableAntProperties = null;
-	private static Boolean p2Bundles = null;
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
@@ -83,19 +81,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (!getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) || getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER) == null) {
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
 		}
-	}
-
-	static public boolean haveP2Bundles() {
-		if (p2Bundles != null)
-			return p2Bundles.booleanValue();
-
-		try {
-			new Generator(null);
-			p2Bundles = Boolean.TRUE;
-		} catch (Throwable e) {
-			p2Bundles = Boolean.FALSE;
-		}
-		return p2Bundles.booleanValue();
 	}
 	
 	public static String getImmutableAntProperty(String key) {

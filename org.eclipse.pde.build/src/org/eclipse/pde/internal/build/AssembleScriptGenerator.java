@@ -97,7 +97,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);
 			}
 		}
-		if (haveP2Bundles())
+		if (configScriptGenerator.haveP2Bundles())
 			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 		script.printTargetEnd();
 	}
@@ -124,7 +124,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateMetadataTarget() {
-		if (haveP2Bundles()) {
+		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
 			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			script.print("<p2.generator "); //$NON-NLS-1$

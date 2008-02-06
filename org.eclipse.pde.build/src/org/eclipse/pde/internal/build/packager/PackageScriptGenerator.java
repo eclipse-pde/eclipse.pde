@@ -78,7 +78,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 	
 	protected void generateMetadataTarget() {
-		if (haveP2Bundles()) {
+		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
 			script.print("<p2.generator "); //$NON-NLS-1$
 			script.printAttribute("append", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
