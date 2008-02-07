@@ -25,6 +25,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
@@ -141,7 +142,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	 * @throws CoreException
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.api.tools", message, e));
+		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
 	}	
 	
 	/* (non-Javadoc)
@@ -156,7 +157,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 				File dir = (File) fPackages.get(pkg);
 				File[] files = dir.listFiles(new FileFilter() {
 					public boolean accept(File file) {
-						return file.isFile() && file.getName().endsWith(".class");
+						return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
 					}
 				});
 				List classFiles = new ArrayList();
@@ -165,7 +166,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 					String name = file.getName();
 					String typeName = name.substring(0, name.length() - 6);
 					if (pkg.length() > 0) {
-						typeName = pkg + "." + typeName;
+						typeName = pkg + "." + typeName; //$NON-NLS-1$
 					}
 					classFiles.add(new ClassFile(file, typeName));
 				}
@@ -196,14 +197,14 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		init();
 		int index = qualifiedName.lastIndexOf('.');
 		String cfName = qualifiedName;
-		String pkg = "";
+		String pkg = Util.DEFAULT_PACKAGE_NAME;
 		if (index > 0) {
 			pkg = qualifiedName.substring(0, index);
 			cfName = qualifiedName.substring(index + 1);
 		}
 		File dir = (File) fPackages.get(pkg);
 		if (dir != null) {
-			File file = new File(dir, cfName + ".class");
+			File file = new File(dir, cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
 				return new ClassFile(file, qualifiedName);
 			}
@@ -241,7 +242,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	private synchronized void init() {
 		if (fPackages == null) {
 			fPackages = new HashMap();
-			processDirectory("", fRoot);
+			processDirectory(Util.DEFAULT_PACKAGE_NAME, fRoot);
 		}
 	}
 	
@@ -262,7 +263,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 				if (file.isDirectory()) {
 					dirs.add(file);
 				} else if (!hasClassFiles) {
-					if (file.getName().endsWith(".class")) {
+					if (file.getName().endsWith(Util.DOT_CLASS_SUFFIX)) {
 						fPackages.put(packageName, dir);
 						hasClassFiles = true;
 					}
@@ -275,7 +276,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 				if (packageName.length() == 0) {
 					nextName = child.getName();
 				} else {
-					nextName = packageName + "." + child.getName();
+					nextName = packageName + "." + child.getName(); //$NON-NLS-1$
 				}
 				processDirectory(nextName, child);
 			}

@@ -247,6 +247,9 @@ public final class Util {
 
 	public static final String EMPTY_STRING = "";//$NON-NLS-1$
 	public static final String DEFAULT_PACKAGE_NAME = EMPTY_STRING;
+	
+	public static final String DOT_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
+
 	/**
 	 * Constant representing the default size to read from an input stream
 	 */
@@ -1623,7 +1626,7 @@ public final class Util {
 	 * @return true if the name is for a class file false otherwise
 	 */
 	public static boolean isClassFile(String fileName) {
-		return fileName.toLowerCase().endsWith(".class"); //$NON-NLS-1$
+		return fileName.toLowerCase().endsWith(DOT_CLASS_SUFFIX); 
 	}
 
 	public static boolean isDefault(int accessFlags) {

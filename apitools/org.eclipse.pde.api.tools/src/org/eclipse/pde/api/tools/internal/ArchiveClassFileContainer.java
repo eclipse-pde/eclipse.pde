@@ -27,6 +27,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
@@ -38,17 +39,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class ArchiveClassFileContainer implements IClassFileContainer {
-	
-	/**
-	 * Suffix for a class file
-	 */
-	private static final String CLASS_FILE_SUFFIX = ".class";
-
-	/**
-	 * Default package name
-	 */
-	private static final String DEF_PACKAGE_NAME = "";
-	
+		
 	/**
 	 * Location of the archive in the local file system.
 	 */
@@ -92,7 +83,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		 */
 		public String getTypeName() {
 			if (fTypeName == null) {
-				fTypeName = fEntryName.replace('/', '.').substring(0, fEntryName.length() - CLASS_FILE_SUFFIX.length()); 
+				fTypeName = fEntryName.replace('/', '.').substring(0, fEntryName.length() - Util.DOT_CLASS_SUFFIX.length()); 
 			}
 			return fTypeName; 
 		}
@@ -195,13 +186,13 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	public IClassFile findClassFile(String qualifiedName) throws CoreException {
 		init();
 		int index = qualifiedName.lastIndexOf('.');
-		String packageName = DEF_PACKAGE_NAME;
+		String packageName = Util.DEFAULT_PACKAGE_NAME;
 		if (index >= 0) {
 			packageName = qualifiedName.substring(0, index);
 		}
 		Set classFileNames = (Set) fPackages.get(packageName);
 		if (classFileNames != null) {
-			String fileName = qualifiedName.replace('.', '/') + ".class";
+			String fileName = qualifiedName.replace('.', '/') + Util.DOT_CLASS_SUFFIX;
 			if (classFileNames.contains(fileName)) {
 				return new ArchiveClassFile(this, fileName);
 			}
@@ -247,8 +238,8 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
 				String name = entry.getName();
-				if (name.endsWith(CLASS_FILE_SUFFIX)) {
-					String pkg = DEF_PACKAGE_NAME;
+				if (name.endsWith(Util.DOT_CLASS_SUFFIX)) {
+					String pkg = Util.DEFAULT_PACKAGE_NAME;
 					int index = name.lastIndexOf('/');
 					if (index >= 0) {
 						pkg = name.substring(0, index).replace('/', '.');
@@ -290,7 +281,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR,
-				"org.eclipse.pde.api.tools", message, e));
+				ApiPlugin.PLUGIN_ID, message, e));
 	}
 	
 	/* (non-Javadoc)

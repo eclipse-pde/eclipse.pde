@@ -27,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.stubs.Converter;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common implementation of an API component as a composite class file container.
@@ -108,7 +109,7 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 				}
 				// contents can be null when creating stubs - as anonymous inner classes are ignored
 				if (contents != null) {
-					String entryName = classFile.getTypeName().replace('.', '/') + ".class"; //$NON-NLS-1$
+					String entryName = classFile.getTypeName().replace('.', '/') + Util.DOT_CLASS_SUFFIX;
 					writeZipFileEntry(fZip, entryName, contents, fCompress);
 					fEntriesWritten++;
 				}
