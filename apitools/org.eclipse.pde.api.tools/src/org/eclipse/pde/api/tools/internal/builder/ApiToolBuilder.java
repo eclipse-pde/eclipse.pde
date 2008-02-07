@@ -961,7 +961,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			IMarker marker = correspondingResource.createMarker(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER);
 			// retrieve line number, char start and char end
 			int lineNumber = 1;
-			int charStart = 0;
+			int charStart = -1;
 			int charEnd = 1;
 			IMember member = Util.getIMember(delta, project);
 			if (member != null) {
@@ -1002,7 +1002,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						new Integer(severity),
 						SOURCE,
 						new Integer(lineNumber),
-						new Integer(charStart),
+						new Integer(charStart < 0 ? 0 : charStart),
 						new Integer(charEnd),
 						new Integer(delta.getFlags()),
 						new Integer(delta.getKind()),
