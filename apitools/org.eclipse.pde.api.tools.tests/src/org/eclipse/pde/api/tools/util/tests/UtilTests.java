@@ -119,6 +119,7 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong conversion", "(QList;)QList;", Util.dequalifySignature("(QList;)QList;"));
 		assertEquals("wrong converstion", "(QLanguage;)V;", Util.dequalifySignature("(Lfoo.test.Language;)V;"));
 		assertEquals("wrong converstion", "(QJokes;)V;", Util.dequalifySignature("(Lfoo.test.Jokes;)V;"));
+		assertEquals("wrong conversion", "(QDiff;)Z", Util.dequalifySignature("(LDiff;)Z"));
 	}
 	
 	/**

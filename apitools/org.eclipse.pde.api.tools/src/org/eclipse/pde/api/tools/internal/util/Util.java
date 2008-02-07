@@ -352,8 +352,8 @@ public final class Util {
 				case 'L' : {
 					buffer.append('Q');
 					// read reference type
-					i++;
 					int lastDotPosition = i;
+					i++;
 					while(i < chars.length && (currentChar = chars[i]) != ';') {
 						switch(currentChar) {
 							case '/' :
