@@ -1123,19 +1123,7 @@ public final class Util {
 								int index = indexOf;
 								String selector = key.substring(0, index);
 								String descriptor = key.substring(index, key.length());
-								IMethod method = null;
-								try {
-									method = type.getMethod(selector, Signature.getParameterTypes(Util.dequalifySignature(descriptor)));
-								} catch (IllegalArgumentException e) {
-									e.printStackTrace();
-								}
-								if (method == null) {
-									return null;
-								}
-								if (method.exists()) {
-									return method;
-								}
-								break;
+								return getMethod(type, selector, descriptor);
 							case IDelta.TYPE_MEMBER :
 								IType type2 = type.getType(key);
 								if (type2.exists()) {
@@ -1153,23 +1141,123 @@ public final class Util {
 					int index = indexOf;
 					String selector = key.substring(0, index);
 					String descriptor = key.substring(index, key.length());
-					IMethod method = null;
-					try {
-						method = type.getMethod(selector, Signature.getParameterTypes(Util.dequalifySignature(descriptor)));
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					}
-					if (method == null) {
-						return null;
-					}
-					if (method.exists()) {
-						return method;
-					}
-
-					break;
+					return getMethod(type, selector, descriptor);
 				}
 		}
 		return null;
+	}
+
+	private static IMember getMethod(IType type, String selector, String descriptor) {
+		IMethod method = null;
+		String[] parameterTypes = Signature.getParameterTypes(Util.dequalifySignature(descriptor));
+
+		try {
+			method = type.getMethod(selector, parameterTypes);
+		} catch (IllegalArgumentException e) {
+			ApiPlugin.log(e);
+		}
+		if (method == null) {
+			return null;
+		}
+		if (method.exists()) {
+			return method;
+		} else {
+			// try to check by selector
+			IMethod[] methods = null;
+			try {
+				methods = type.getMethods();
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e);
+				return type;
+			}
+			List list = new ArrayList();
+			for (int i = 0, max = methods.length; i < max; i++) {
+				IMethod method2 = methods[i];
+				if (selector.equals(method2.getElementName())) {
+					list.add(method2);
+				}
+			}
+			switch(list.size()) {
+				case 0 :
+					return type;
+				case 1 :
+					return (IMember) list.get(0);
+				default:
+					// need to find a matching parameters
+					loop: for (Iterator iterator = list.iterator(); iterator.hasNext(); ) {
+						IMethod method2 = (IMethod) iterator.next();
+						String[] parameterTypes2 = method2.getParameterTypes();
+						boolean found = false;
+						if (parameterTypes2.length == parameterTypes.length) {
+							for (int i = 0, max = parameterTypes.length; i < max; i++) {
+								switch(parameterTypes[i].charAt(0)) {
+									case Signature.C_UNRESOLVED :
+										// object type
+										int index = parameterTypes[i].lastIndexOf('$');
+										int index2 = parameterTypes2[i].lastIndexOf('$');
+										if (index == -1) {
+											continue loop;
+										}
+										if (!parameterTypes[i].substring(index + 1, parameterTypes[i].length()).equals(
+												parameterTypes2[i].substring(index2 + 1, parameterTypes2[i].length()))) {
+											continue loop;
+										}
+										break;
+									case Signature.C_ARRAY :
+										// array type
+										int counter = 0;
+										int j = 0;
+										while (parameterTypes[i].charAt(j) == '[') {
+											counter++;
+										}
+										int counter2 = 0;
+										j = 0;
+										if (parameterTypes[j].charAt(0) != '[') {
+											// not matching types
+											continue loop;
+										}
+										while (parameterTypes2[i].charAt(j) == '[') {
+											counter2++;
+										}
+										if (counter2 != counter) {
+											// not matching types
+											continue loop;
+										}
+										index = parameterTypes[i].lastIndexOf('$');
+										index2 = parameterTypes2[i].lastIndexOf('$');
+										if (index == -1) {
+											continue loop;
+										}
+										if (!parameterTypes[i].substring(index + 1, parameterTypes[i].length()).equals(
+												parameterTypes2[i].substring(index2 + 1, parameterTypes2[i].length()))) {
+											continue loop;
+										}
+										break;
+									case Signature.C_CHAR :
+									case Signature.C_BOOLEAN :
+									case Signature.C_BYTE :
+									case Signature.C_DOUBLE :
+									case Signature.C_FLOAT :
+									case Signature.C_INT :
+									case Signature.C_LONG :
+									case Signature.C_SHORT :
+									case Signature.C_VOID :
+										if (parameterTypes[i].charAt(0) != parameterTypes2[i].charAt(0)) {
+											// not matching types
+											continue loop;
+										}
+								}
+								continue loop;
+							}
+							found = true;
+						}
+						if (found) {
+							return method2;
+						}
+					}
+			}
+		}
+		return type;
 	}
 
 	/**
