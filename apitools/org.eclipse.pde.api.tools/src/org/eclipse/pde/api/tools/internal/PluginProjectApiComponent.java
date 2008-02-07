@@ -227,7 +227,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	private IPath getProjectSettingsPath(boolean create) throws CoreException {
 		IPath path = null;
 		IProject project  = fProject.getProject();
-			if(project.exists()) {
+		if(project.exists()) {
 			IFolder folder = project.getFolder(".settings"); //$NON-NLS-1$
 			if(folder.exists()) {
 				 return folder.getLocation();
@@ -370,9 +370,11 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			}
 			//save the .api_filters file
 			IPath path = getProjectSettingsPath(true);
-			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
-			String xml = filters.getStoreAsXml();
-			Util.saveFile(new File(path.toOSString(), API_FILTERS_XML_NAME), xml);
+			if(path != null) {
+				ApiFilterStore filters = (ApiFilterStore) getFilterStore();
+				String xml = filters.getStoreAsXml();
+				Util.saveFile(new File(path.toOSString(), API_FILTERS_XML_NAME), xml);
+			}
 		}
 	}
 	
