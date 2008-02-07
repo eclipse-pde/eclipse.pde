@@ -209,6 +209,11 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	 */
 	protected synchronized void resetClassFileContainers() {
 		if(fClassFileContainers != null) {
+			try {
+				close();
+			} catch (CoreException e) {
+				ApiPlugin.log(e.getStatus());
+			}
 			fClassFileContainers.clear();
 		}
 		fClassFileContainers = null;
