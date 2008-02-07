@@ -14,16 +14,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,10 +42,13 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 
 /**
  * An API component for a plug-in project in the workspace.
@@ -87,6 +92,11 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 * Associated IPluginModelBase object
 	 */
 	private IPluginModelBase fModel;
+	
+	/**
+	 * A cache of bundle class path entries to class file containers.
+	 */
+	private Map fPathToOutputContainers;
 
 	/**
 	 * Constructs an API component for the given Java project in the specified profile.
@@ -244,59 +254,92 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.BundleApiComponent#createClassFileContainers()
 	 */
 	protected List createClassFileContainers() throws CoreException {
-		long time = System.currentTimeMillis();
-		// collect output locations and libraries within the project
-		List locations = new ArrayList();
+		// first populate build.properties cache so we can create class file containers
+		// from bundle classpath entries
+		fPathToOutputContainers = new HashMap();
 		if (fProject.exists() && fProject.getProject().isOpen()) {
-			IClasspathEntry entries[] = fProject.getRawClasspath();
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry classpathEntry = entries[i];
-				if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					IPath path = classpathEntry.getOutputLocation();
-					if (path != null) {
-						locations.add(path);
-					}
-				} else {
-					if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
-						classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
-					}
-					if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-						// TODO: check if the library is in the same project?
-						locations.add(classpathEntry.getPath());
+			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
+			if (prop.exists()) {
+				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
+				IBuildEntry[] entries = properties.getBuild().getBuildEntries();
+				for (int i = 0; i < entries.length; i++) {
+					IBuildEntry buildEntry = entries[i];
+					if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
+						String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
+						String[] tokens = buildEntry.getTokens();
+						if (tokens.length == 1) {
+							IClassFileContainer container = getSourceFolderContainer(tokens[0]);
+							if (container != null) {
+								fPathToOutputContainers.put(jar, container);
+							}
+						} else {
+							List containers = new ArrayList();
+							for (int j = 0; j < tokens.length; j++) {
+								IClassFileContainer container = getSourceFolderContainer(tokens[j]);
+								if (container != null) {
+									containers.add(container);
+								}	
+							}
+							if (!containers.isEmpty()) {
+								fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers));
+							}
+						}
 					}
 				}
 			}
+			return super.createClassFileContainers();
 		}
-		// add the default location if not already included
-		IPath def = fProject.getOutputLocation();
-		if (!locations.contains(def)) {
-			locations.add(def);
-		}
-		
-		// create class file containers
-		List containers = new ArrayList();
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath path = null,
-		      location = null;
-		File file = null;
-		for (int i = 0; i < locations.size(); i++) {
-			path = (IPath) locations.get(i);
-			location = root.getFile(path).getLocation();
-			if(location == null) {
-				location = path;
-			}
-			file = location.toFile();
-			if (file.isDirectory()) {
-				containers.add(new DirectoryClassFileContainer(file.getAbsolutePath()));
-			} else {
-				containers.add(new ArchiveClassFileContainer(file.getAbsolutePath()));
-			}
-		}
-		if (DEBUG) {
-			System.out.println("Time to create classfile containers for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		return containers;
+		return Collections.EMPTY_LIST;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createClassFileContainer(java.lang.String)
+	 */
+	protected IClassFileContainer createClassFileContainer(String path) throws IOException {
+		IClassFileContainer container = (IClassFileContainer) fPathToOutputContainers.get(path);
+		if (container == null) {
+			// could be a binary jar included in the plug-in, just look for it
+			container = findClassFileContainer(path);
+		}
+		return container;
+	}
+	
+	/** 
+	 * Finds and returns an existing class file container at the specified location
+	 * in this project, or <code>null</code> if none.
+	 * 
+	 * @param location project relative path to the class file container
+	 * @return class file container or null
+	 */
+	private IClassFileContainer findClassFileContainer(String location) {
+		IResource res = fProject.getProject().findMember(new Path(location));
+		if (res != null) {
+			if (res.getType() == IResource.FILE) {
+				return new ArchiveClassFileContainer(res.getLocation().toOSString());
+			} else {
+				return new DirectoryClassFileContainer(res.getLocation().toOSString());
+			}
+		}
+		return null;
+	}
+	
+	/** 
+	 * Finds and returns a class file container for the specified
+	 * source folder, or <code>null</code> if it does not exist.
+	 * 
+	 * @param location project relative path to the source folder
+	 * @return class file container or <code>null</code>
+	 */
+	private IClassFileContainer getSourceFolderContainer(String location) {
+		IResource res = fProject.getProject().findMember(new Path(location));
+		if (res != null) {
+			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
+			if (root.exists()) {
+				return new SourceFolderClassFileContainer(root);
+			}
+		}
+		return null;
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#export(java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
@@ -397,4 +440,20 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			Util.saveFile(new File(path, API_DESCRIPTION_XML_NAME), xml);
 		}
 	}
+	
+	/**
+	 * Resets this bundle. 
+	 * 
+	 * @throws CoreException 
+	 */
+	protected synchronized void reset() throws CoreException {
+		fPathToOutputContainers = null;
+		// delete persisted API settings
+		File file = new File(STATE_PATH.toFile(), API_DESCRIPTION_XML_NAME);
+		if (file.exists()) {
+			file.delete();
+		}
+		super.reset();
+	}
+	
 }

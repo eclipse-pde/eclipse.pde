@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -870,5 +870,31 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	
 	private void storeBundleDescription(BundleDescription bundleDescription, IApiComponent component) {
 		this.fComponents.put(bundleDescription.getSymbolicName() + bundleDescription.getVersion().toString(), component);
+	}
+	
+	/**
+	 * Reset the given bundle.
+	 * 
+	 * @param component
+	 * @param description
+	 * @throws CoreException 
+	 */
+	protected synchronized void reset(BundleApiComponent component, BundleDescription description) throws CoreException {
+		fComponentsCache.clear();
+		if (description != null) {
+			fState.removeBundle(description);
+		}
+		component.init(fState, nextId());
+		fState.addBundle(component.getBundleDescription());
+		fState.resolve();
+	}
+	
+	/**
+	 * Clear cached settings for the given package.
+	 * 
+	 * @param packageName
+	 */
+	protected synchronized void clearPackage(String packageName) {
+		fComponents.remove(packageName);
 	}
 }

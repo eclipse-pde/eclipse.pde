@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,9 +56,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -869,6 +873,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 								if(moved != null) {
 									handleCompilationUnitRemoval(component, moved);
 								}
+								handlePotentialNewPackage((IPackageFragment)unit.getParent());
 								handleCompilationUnitScan(component, unit);
 							}
 							else if(delta.getKind() == IJavaElementDelta.REMOVED /*&& 
@@ -930,9 +935,25 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(DEBUG) {
 			System.out.println("processed CLASSPATH change for project: ["+project.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getName());
-		if(component instanceof PluginProjectApiComponent) {
-			((PluginProjectApiComponent) component).resetClassFileContainers();
+		reset(project.getName());
+	}
+	
+	/**
+	 * Resets the component with the given id.
+	 * 
+	 * @param componentId
+	 */
+	private void reset(String componentId) {
+		IApiComponent component = getWorkspaceProfile().getApiComponent(componentId);
+		if(component instanceof AbstractApiComponent) {
+			try {
+				((AbstractApiComponent) component).reset();
+				if(DEBUG) {
+					System.out.println("reset component: ["+componentId+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e.getStatus());
+			}
 		}
 	}
 	
@@ -1010,7 +1031,13 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Handles the specified {@link IPackageFragment} being removed
+	 * Handles the specified {@link IPackageFragment} being removed.
+	 * When a packaged is removed, we:
+	 * <ol>
+	 * <li>Remove the package from its API description</li>
+	 * <li>Remove the package from the cache of resolved providers
+	 * 	of that package (in the API profile)</li>
+	 * </ol>
 	 * @param project
 	 * @param fragment
 	 * @throws CoreException
@@ -1022,6 +1049,35 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getName());
 		if(component != null) {
 			component.getApiDescription().removeElement(Factory.packageDescriptor(fragment.getElementName()));
+			((ApiProfile)getWorkspaceProfile()).clearPackage(fragment.getElementName());
+		}
+	}
+	
+	/**
+	 * A type has been added to a package fragment, see if the package
+	 * is in the API description yet. We add packages when a type is
+	 * added to avoid adding empty packages to the API description.
+	 * When a packaged is added, we:
+	 * <ol>
+	 * <li>Add the package to its API description with default (private
+	 *  visibility)</li>
+	 * </ol>
+	 * @param fragment package fragment
+	 */
+	private void handlePotentialNewPackage(IPackageFragment fragment) {
+		IApiComponent component = getWorkspaceProfile().getApiComponent(fragment.getJavaProject().getElementName());
+		if (component != null) {
+			IPackageDescriptor descriptor = Factory.packageDescriptor(fragment.getElementName());
+			try {
+				IApiDescription apiDescription = component.getApiDescription();
+				IApiAnnotations annotations = apiDescription.resolveAnnotations(null, descriptor);
+				if (annotations == null) {
+					// add default private visibility
+					apiDescription.setVisibility(null, descriptor, VisibilityModifiers.PRIVATE);
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e.getStatus());
+			}
 		}
 	}
 	
@@ -1112,7 +1168,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				model = entries[i].getModel();
 				if(model != null) {
 					try {
-						handleExportedPackagesChanged(model);
+						handleBundleDefinitionChanged(model);
 					}
 					catch(CoreException e) {
 						ApiPlugin.log(e);
@@ -1123,18 +1179,15 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Handles scanning and updating the exported package listing for 
-	 * the given {@link IPluginModelBase}
+	 * Handles updating when a bundle definition has changed.
+	 * This causes the bundle to be reset/reinitialized the state
+	 * with a new bundle description. Happens whenever the manifest
+	 * or build.properties changes.
+	 *  
 	 * @param model
 	 * @throws CoreException
 	 */
-	private void handleExportedPackagesChanged(IPluginModelBase model) throws CoreException {
-		IApiComponent component = getWorkspaceProfile().getApiComponent(model.getBundleDescription().getName());
-		if(component != null) {
-			if(DEBUG) {
-				System.out.println("processed EXPORTED PACKAGE updates: ["+component.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			BundleApiComponent.loadManifestApiDescription(component.getApiDescription(), model.getBundleDescription(), component.getPackageNames());
-		}
+	private void handleBundleDefinitionChanged(IPluginModelBase model) throws CoreException {
+		reset(model.getBundleDescription().getName());
 	}
 }

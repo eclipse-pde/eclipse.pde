@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -65,9 +66,11 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -658,19 +661,38 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that a library added to the classpath of a project causes the 
+	 * Tests that a library added to the build and bundle class path of a project causes the 
 	 * class file containers for the project to need to be recomputed
+	 * @throws IOException 
+	 * @throws InvocationTargetException 
+	 * @throws CoreException 
 	 */
-	public void testWPUpdateLibraryAddedToClasspath() {
+	public void testWPUpdateLibraryAddedToClasspath() throws InvocationTargetException, IOException, CoreException {
 		try {
-			IClasspathEntry entry = JavaCore.newLibraryEntry(PLUGIN_LOC.append("component.a_1.0.0.jar"), null, null);
+			IFolder folder = fProject.getProject().getFolder("libx");
+			folder.create(false, true, null);
+			importFileFromDirectory(PLUGIN_LOC.append("component.a_1.0.0.jar").toFile(), folder.getFullPath(), null);
+			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
+			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
 			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.ADDED, 0, IJavaElement.PACKAGE_FRAGMENT_ROOT);
+			// add to classpath
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			addToClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
-			assertNotNull("the added event for the package fragment was not received", obj);
+			assertNotNull("the event for class path addition not received", obj);
+			// add to mandifest bundle classpath
+			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			assertNotNull("the plugin model for the testing project must exist", model);
+			IFile file = (IFile) model.getUnderlyingResource();
+			assertNotNull("the underlying model file must exist", file);
+			WorkspaceBundleModel manifest = new WorkspaceBundleModel(file);
+			manifest.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, ".," + libPath.removeFirstSegments(1).toString());
+			PluginModelEventWaiter waiter2 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+			manifest.save();
+			Object object = waiter2.waitForEvent();
+			assertNotNull("the event for manifest modification was not received", object);
 			assertTrue("there must be more containers after the addition", before < component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -683,14 +705,28 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateLibraryRemovedFromClasspath() {
 		try {
-			IClasspathEntry entry = JavaCore.newLibraryEntry(PLUGIN_LOC.append("component.a_1.0.0.jar"), null, null);
+			IFile lib = fProject.getProject().getFolder("libx").getFile("component.a_1.0.0.jar");
+			IClasspathEntry entry = JavaCore.newLibraryEntry(lib.getFullPath(), null, null);
 			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
+			// remove classpath entry
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			removeFromClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the added event for the package fragment was not received", obj);
+			// remove from bundle class path
+			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			assertNotNull("the plugin model for the testing project must exist", model);
+			IFile file = (IFile) model.getUnderlyingResource();
+			assertNotNull("the underlying model file must exist", file);
+			WorkspaceBundleModel manifest = new WorkspaceBundleModel(file);
+			manifest.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, ".");
+			PluginModelEventWaiter waiter2 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+			manifest.save();
+			Object object = waiter2.waitForEvent();
+			assertNotNull("the event for the manifest modification was not received", object);
+			
 			assertTrue("there must be more containers after the addition", before > component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -740,6 +776,27 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			addToClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the changed event for the package fragment root (classpath) was not received", obj);
+			// add to bundle class path
+			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			assertNotNull("the plugin model for the testing project must exist", model);
+			IFile file = (IFile) model.getUnderlyingResource();
+			assertNotNull("the underlying model file must exist", file);
+			WorkspaceBundleModel manifest = new WorkspaceBundleModel(file);
+			manifest.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, ".,next.jar");
+			PluginModelEventWaiter waiter2 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+			manifest.save();
+			Object object = waiter2.waitForEvent();
+			assertNotNull("the event for manifest modification was not received", object);
+			// add to build.properties
+			WorkspaceBuildModel prop = new WorkspaceBuildModel(fProject.getProject().getFile("build.properties"));
+			IBuildEntry newEntry = prop.getFactory().createEntry("source.next.jar");
+			newEntry.addToken("src2/");
+			prop.getBuild().add(newEntry);
+			PluginModelEventWaiter waiter3 = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+			prop.save();
+			Object object3 = waiter3.waitForEvent();
+			assertNotNull("the event for biuld.properties modification was not received", object3);
+			
 			assertTrue("there must be one more container after the change", before < component.getClassFileContainers().length);
 			assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(src2.getRawClasspathEntry().getOutputLocation().toFile().getName()));
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,9 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#close()
 	 */
 	public synchronized void close() throws CoreException {
+		if (fClassFileContainers == null) {
+			return;
+		}
 		MultiStatus multi = null;
 		IStatus single = null;
 		IClassFileContainer[] containers = getClassFileContainers();
@@ -204,17 +207,13 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 	}
 
 	/**
-	 * Resets the class file containers for this container. 
-	 * A reset constitutes setting the cached containers to <code>null</code>
+	 * Resets this component.
+	 * 
+	 * @throws CoreException 
 	 */
-	protected synchronized void resetClassFileContainers() {
+	protected synchronized void reset() throws CoreException {
 		if(fClassFileContainers != null) {
-			try {
-				close();
-			} catch (CoreException e) {
-				ApiPlugin.log(e.getStatus());
-			}
-			fClassFileContainers.clear();
+			close();
 		}
 		fClassFileContainers = null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,6 +322,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 				BundleDescription fragment = fragments[i];
 				BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
 				if (component != null) {
+					// force initialization of the fragment so we can retrieve its class file containers
+					component.getClassFileContainers();
 					all.add(component);
 				}
 			}
@@ -398,7 +400,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/**
 	 * Creates and returns a class file container at the specified path in
 	 * this bundle, or <code>null</code> if the class file container does not
-	 * exist.
+	 * exist. The path is the name (path) of entries specified by the
+	 * <code>Bundle-ClassPath:</code> header.
 	 * 
 	 * @param path relative path to a class file container in this bundle
 	 * @return class file container or <code>null</code>
@@ -1059,5 +1062,21 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public boolean hasFragments() {
 		return fBundleDescription.getFragments().length != 0;
+	}
+	
+	/**
+	 * Resets this bundle.
+	 * 
+	 * @throws CoreException 
+	 */
+	protected synchronized void reset() throws CoreException {
+		super.reset();
+		close();
+		fContainerToBundle = null;
+		fContainerToPath = null;
+		fManifest = null;
+		BundleDescription oldDescription = fBundleDescription;
+		fBundleDescription = null;
+		((ApiProfile)getProfile()).reset(this, oldDescription);
 	}
 }
