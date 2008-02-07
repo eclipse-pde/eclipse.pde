@@ -90,7 +90,7 @@ public class ApiToolingSetupWizardPage extends WizardPage {
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
 		Table table = new Table(comp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 250;
+		gd.heightHint = 150;
 		table.setLayoutData(gd);
 		tableviewer =  new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
