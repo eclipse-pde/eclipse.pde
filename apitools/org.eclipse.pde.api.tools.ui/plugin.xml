@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="apitools_javadoc_proposals"
-         name="API Tools Javadoc Proposals"
+         name="%ApiToolsJavadocProposals.name"
          point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
       <javaCompletionProposalComputer
             activate="true"
@@ -142,7 +142,7 @@
             class="org.eclipse.pde.api.tools.ui.internal.search.ApiSearchPage"
             icon="icons/full/obj16/extract_references.gif"
             id="org.eclipse.pde.api.tools.ui.searchPage"
-            label="API Search"
+            label="%ApiSearchPage.name"
             searchViewHelpContextId="org.eclipse.pde.api.tools.ui.apitools_search_page"
             showScopeSection="false">
       </page>
