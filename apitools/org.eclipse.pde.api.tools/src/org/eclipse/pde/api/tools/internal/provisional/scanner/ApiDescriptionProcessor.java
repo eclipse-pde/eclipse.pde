@@ -617,7 +617,7 @@ public class ApiDescriptionProcessor {
 				IDocument document = tfb.getDocument(); 
 				//TODO support undo??
 				TextEdit edits = rewrite.rewriteAST(document, null);
-				edits.apply(document);
+				edits.apply(document, TextEdit.CREATE_UNDO);
 				tfb.commit(new NullProgressMonitor(), true);
 			} finally {
 				bm.disconnect(path, LocationKind.IFILE, null);
