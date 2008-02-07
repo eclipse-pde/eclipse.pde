@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -67,12 +66,12 @@ public class PDEJavaHelperUI {
 		IProject project = resource.getProject();
 		try {
 			IJavaSearchScope searchScope = null;
-			if (superTypeName != null) {
-				IJavaProject javaProject = JavaCore.create(project);
-				IType superType = javaProject.findType(superTypeName);
-				if (superType != null)
-					searchScope = SearchEngine.createHierarchyScope(superType);
-			}
+//			if (superTypeName != null) {
+//				IJavaProject javaProject = JavaCore.create(project);
+//				IType superType = javaProject.findType(superTypeName);
+//				if (superType != null)
+//					searchScope = SearchEngine.createHierarchyScope(superType);
+//			}
 			if (searchScope == null)
 				searchScope = PDEJavaHelper.getSearchScope(project);
 
