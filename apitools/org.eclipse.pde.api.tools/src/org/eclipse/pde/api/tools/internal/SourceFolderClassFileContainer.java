@@ -44,7 +44,7 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	/**
 	 * Output location, or <code>null</code> if does not exist
 	 */
-	private IContainer fOutputLocaiton;
+	private IContainer fOutputLocation;
 	
 	/**
 	 * Constructs a new class file container on the given package
@@ -106,7 +106,7 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#close()
 	 */
 	public synchronized void close() throws CoreException {
-		fOutputLocaiton = null;
+		fOutputLocation = null;
 	}
 	
 	/**
@@ -116,20 +116,20 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	 * @return output location or <code>null</code>
 	 */
 	private synchronized IContainer getOutputLocation() {
-		if (fOutputLocaiton == null) {
+		if (fOutputLocation == null) {
 			try {
 				IPath location = fRoot.getRawClasspathEntry().getOutputLocation();
 				if (location == null) {
 					location = fRoot.getJavaProject().getOutputLocation();
 				}
-				fOutputLocaiton = ResourcesPlugin.getWorkspace().getRoot().getFolder(location);
-				if (!fOutputLocaiton.exists()) {
-					fOutputLocaiton = null;
+				fOutputLocation = ResourcesPlugin.getWorkspace().getRoot().getFolder(location);
+				if (!fOutputLocation.exists()) {
+					fOutputLocation = null;
 				}
 			} catch (JavaModelException e) {
 			}
 		}
-		return fOutputLocaiton;
+		return fOutputLocation;
 	}
 
 	/* (non-Javadoc)
