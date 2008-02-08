@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,6 +47,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -261,27 +263,68 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
 			if (prop.exists()) {
 				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
-				IBuildEntry[] entries = properties.getBuild().getBuildEntries();
-				for (int i = 0; i < entries.length; i++) {
-					IBuildEntry buildEntry = entries[i];
-					if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
-						String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
-						String[] tokens = buildEntry.getTokens();
-						if (tokens.length == 1) {
-							IClassFileContainer container = getSourceFolderContainer(tokens[0]);
-							if (container != null) {
-								fPathToOutputContainers.put(jar, container);
+				IBuild build = properties.getBuild();
+				IBuildEntry entry = build.getEntry("custom");
+				if (entry != null) {
+					String[] tokens = entry.getTokens();
+					if (tokens.length == 1 && tokens[0].equals("true")) {
+						// hack : add the current output location for each classpath entries
+						IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
+						List containers = new ArrayList();
+						for (int i = 0; i < classpathEntries.length; i++) {
+							IClasspathEntry classpathEntry = classpathEntries[i];
+							switch(classpathEntry.getEntryKind()) {
+								case IClasspathEntry.CPE_SOURCE :
+									IClassFileContainer container = getSourceFolderContainer(classpathEntry.getPath().removeFirstSegments(1).toString());
+									if (container != null) {
+										containers.add(container);
+									}
+									break;
+								case IClasspathEntry.CPE_VARIABLE :
+									classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
+								case IClasspathEntry.CPE_LIBRARY :
+									IPath path = classpathEntry.getPath();
+									if (Util.isArchive(path.lastSegment())) {
+										IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+										if (resource != null) {
+											// jar inside the workspace
+											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString()));
+										} else {
+											// external jar
+											containers.add(new ArchiveClassFileContainer(path.toOSString()));
+										}
+									}
+									break;
 							}
-						} else {
-							List containers = new ArrayList();
-							for (int j = 0; j < tokens.length; j++) {
-								IClassFileContainer container = getSourceFolderContainer(tokens[j]);
+						}
+						if (containers.size() != 0) {
+							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers));
+						}
+					}
+				} else {
+					IBuildEntry[] entries = build.getBuildEntries();
+					int length = entries.length;
+					for (int i = 0; i < length; i++) {
+						IBuildEntry buildEntry = entries[i];
+						if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
+							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
+							String[] tokens = buildEntry.getTokens();
+							if (tokens.length == 1) {
+								IClassFileContainer container = getSourceFolderContainer(tokens[0]);
 								if (container != null) {
-									containers.add(container);
-								}	
-							}
-							if (!containers.isEmpty()) {
-								fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers));
+									fPathToOutputContainers.put(jar, container);
+								}
+							} else {
+								List containers = new ArrayList();
+								for (int j = 0; j < tokens.length; j++) {
+									IClassFileContainer container = getSourceFolderContainer(tokens[j]);
+									if (container != null) {
+										containers.add(container);
+									}
+								}
+								if (!containers.isEmpty()) {
+									fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers));
+								}
 							}
 						}
 					}
@@ -378,8 +421,10 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if(DEBUG) {
 				System.out.println("starting save cycle for plugin project component: ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			persistApiSettings();
-			persistApiFilters();
+			if (fProject.exists()) {
+				persistApiSettings();
+				persistApiFilters();
+			}
 		}
 		catch(IOException ioe) {
 			ApiPlugin.log(ioe);
