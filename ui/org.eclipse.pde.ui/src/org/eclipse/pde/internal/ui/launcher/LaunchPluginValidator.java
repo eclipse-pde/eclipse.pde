@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -66,13 +65,13 @@ public class LaunchPluginValidator {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 
-		String version = configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, (String) null); //$NON-NLS-1$
+		String version = configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, (String) null);
 		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
 		boolean upgrade = !"3.3".equals(version) && newApp; //$NON-NLS-1$
 		if (!upgrade)
-			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null; //$NON-NLS-1$
+			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null;
 		if (upgrade) {
-			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
@@ -152,34 +151,50 @@ public class LaunchPluginValidator {
 		if (usedefault || useFeatures || models.length == 0)
 			return models;
 
-		ArrayList list = new ArrayList();
+		Collection result = null;
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			TreeSet deselected = parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+			result = new ArrayList();
+			Set deselected = parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 			if (deselected.size() == 0)
 				return models;
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
-				if (id != null && !deselected.contains(id))
-					list.add(models[i]);
+				if (id != null && !deselected.contains(models[i]))
+					result.add(models[i]);
 			}
 		} else {
-			TreeSet selected = parsePlugins(configuration, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id != null && selected.contains(id))
-					list.add(models[i]);
-			}
+			result = parsePlugins(configuration, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
 		}
-		return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 
-	public static TreeSet parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		TreeSet set = new TreeSet();
+	/**
+	 * 
+	 * @param configuration launchConfiguration to get the attribute value
+	 * @param attribute launch configuration attribute to containing plug-in information
+	 * @return a TreeSet containing IPluginModelBase objects which are represented by the value of the attribute
+	 * @throws CoreException
+	 */
+	public static Set parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
+		HashSet set = new HashSet();
 		String ids = configuration.getAttribute(attribute, (String) null);
 		if (ids != null) {
+			boolean targetPlatform = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
 			StringTokenizer tok = new StringTokenizer(ids, ","); //$NON-NLS-1$
-			while (tok.hasMoreTokens())
-				set.add(tok.nextToken());
+			while (tok.hasMoreTokens()) {
+				String token = tok.nextToken();
+				int index = token.indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
+				String id = (index == -1) ? token : token.substring(0, index);
+				String version = (index == -1) ? null : token.substring(index + 1);
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					IPluginModelBase models[] = targetPlatform ? entry.getExternalModels() : entry.getWorkspaceModels();
+					for (int i = 0; i < models.length; i++) {
+						if (models[i].getPluginBase().getVersion().equals(version) || version == null)
+							set.add(models[i]);
+					}
+				}
+			}
 		}
 		return set;
 	}
@@ -207,15 +222,14 @@ public class LaunchPluginValidator {
 		addToMap(map, getSelectedWorkspacePlugins(config));
 
 		Set exModels = parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		IPluginModelBase[] exmodels = PluginRegistry.getExternalModels();
-		for (int i = 0; i < exmodels.length; i++) {
-			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && exModels.contains(id)) {
-				IPluginModelBase existing = (IPluginModelBase) map.get(id);
-				// only allow dups if plug-in existing in map is not a workspace plug-in
-				if (existing == null || existing.getUnderlyingResource() == null)
-					addToMap(map, exmodels[i]);
-			}
+		Iterator it = exModels.iterator();
+		while (it.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) it.next();
+			String id = model.getPluginBase().getId();
+			IPluginModelBase existing = (IPluginModelBase) map.get(id);
+			// only allow dups if plug-in existing in map is not a workspace plug-in
+			if (existing == null || existing.getUnderlyingResource() == null)
+				addToMap(map, model);
 		}
 		return map;
 	}

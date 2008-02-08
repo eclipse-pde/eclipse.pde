@@ -179,12 +179,11 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		for (int i = 0; i < selected.length; i++) {
 			if (selected[i] instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) selected[i];
-				String id = model.getPluginBase().getId();
 				TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(model);
 				if (model.getUnderlyingResource() == null) {
-					appendToBuffer(tBuffer, id, item);
+					appendToBuffer(tBuffer, model, item);
 				} else {
-					appendToBuffer(wBuffer, id, item);
+					appendToBuffer(wBuffer, model, item);
 				}
 			}
 		}
@@ -195,23 +194,20 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (fAddWorkspaceButton.getSelection()) {
 			for (int i = 0; i < fWorkspaceModels.length; i++) {
 				if (!fPluginTreeViewer.getChecked(fWorkspaceModels[i])) {
-					if (buffer.length() > 0)
-						buffer.append(","); //$NON-NLS-1$
-					buffer.append(fWorkspaceModels[i].getPluginBase().getId());
+					appendToBuffer(buffer, fWorkspaceModels[i], null);
 				}
 			}
 		}
 		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.length() > 0 ? buffer.toString() : (String) null);
 	}
 
-	private void appendToBuffer(StringBuffer buffer, String id, TreeItem item) {
+	private void appendToBuffer(StringBuffer buffer, IPluginModelBase model, TreeItem item) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
-		buffer.append(id);
-		buffer.append("@"); //$NON-NLS-1$
-		buffer.append(item.getText(1));
-		buffer.append(":"); //$NON-NLS-1$
-		buffer.append(item.getText(2));
+		String startLevel = item != null ? item.getText(1) : null;
+		String autoStart = item != null ? item.getText(2) : null;
+		String value = BundleLauncherHelper.writeBundles(model, startLevel, autoStart);
+		buffer.append(value);
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {

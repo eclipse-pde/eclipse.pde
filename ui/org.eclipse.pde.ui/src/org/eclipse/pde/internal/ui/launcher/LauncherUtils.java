@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,12 +166,10 @@ public class LauncherUtils {
 		if (!store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE))
 			return;
 
-		String timeStamp, selected, deSelected;
+		String timeStamp;
 		boolean useDefault, autoAdd;
 		try {
 			timeStamp = launch.getAttribute(TIMESTAMP, "0"); //$NON-NLS-1$
-			selected = launch.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, ""); //$NON-NLS-1$
-			deSelected = launch.getAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, ""); //$NON-NLS-1$
 			autoAdd = launch.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			useDefault |= launch.getAttribute(IPDELauncherConstants.USEFEATURES, false);
@@ -179,9 +177,9 @@ public class LauncherUtils {
 			if (useDefault)
 				handleUseDefault(timeStamp, projects);
 			else if (autoAdd)
-				handleDeselectedPlugins(timeStamp, deSelected, projects);
+				handleDeselectedPlugins(launch, timeStamp, projects);
 			else
-				handleSelectedPlugins(timeStamp, selected, projects);
+				handleSelectedPlugins(launch, timeStamp, projects);
 
 			if (!projects.isEmpty())
 				Display.getDefault().syncExec(new Runnable() {
@@ -284,37 +282,29 @@ public class LauncherUtils {
 		}
 	}
 
-	private static void handleSelectedPlugins(String timeStamp, String value, ArrayList projects) {
-		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			value = tokenizer.nextToken();
-			int index = value.indexOf('@');
-			String id = index > 0 ? value.substring(0, index) : value;
-			IPluginModelBase base = PluginRegistry.findModel(id);
-			if (base != null) {
-				IResource res = base.getUnderlyingResource();
-				if (res != null) {
-					IProject project = res.getProject();
-					String projTimeStamp = getTimeStamp(project);
-					if (projTimeStamp.compareTo(timeStamp) > 0 && shouldAdd(project, timeStamp, projTimeStamp))
-						projects.add(project);
-				}
+	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList projects) throws CoreException {
+		Set selectedPlugins = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Iterator it = selectedPlugins.iterator();
+		while (it.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) it.next();
+			IResource res = model.getUnderlyingResource();
+			if (res != null) {
+				IProject project = res.getProject();
+				String projTimeStamp = getTimeStamp(project);
+				if (projTimeStamp.compareTo(timeStamp) > 0 && shouldAdd(project, timeStamp, projTimeStamp))
+					projects.add(project);
 			}
 		}
 	}
 
-	private static void handleDeselectedPlugins(String launcherTimeStamp, String value, ArrayList projects) {
-		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-		HashSet deSelectedProjs = new HashSet();
-		while (tokenizer.hasMoreTokens())
-			deSelectedProjs.add(tokenizer.nextToken());
-
+	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList projects) throws CoreException {
+		Set deSelectedPlugins = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
 				continue;
 			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
-			if (base == null || base != null && deSelectedProjs.contains(base.getPluginBase().getId()))
+			if (base == null || base != null && deSelectedPlugins.contains(base))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
 			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))

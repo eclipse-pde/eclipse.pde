@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -212,7 +212,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
 			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
-		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName())); //$NON-NLS-1$
+		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName()));
 		initializeProgramArguments(wc);
 		initializeVMArguments(wc);
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
@@ -284,16 +284,20 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			if (model == null || !model.isEnabled())
 				continue;
 			if (model.getUnderlyingResource() == null) {
-				if (explugins.length() > 0)
-					explugins.append(","); //$NON-NLS-1$
-				explugins.append(id);
+				appendPlugin(explugins, model);
 			} else {
-				if (wsplugins.length() > 0)
-					wsplugins.append(","); //$NON-NLS-1$
-				wsplugins.append(id);
+				appendPlugin(wsplugins, model);
 			}
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
+	}
+
+	private void appendPlugin(StringBuffer buffer, IPluginModelBase model) {
+		if (buffer.length() > 0)
+			buffer.append(',');
+		buffer.append(model.getPluginBase().getId());
+		buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
+		buffer.append(model.getPluginBase().getVersion());
 	}
 }

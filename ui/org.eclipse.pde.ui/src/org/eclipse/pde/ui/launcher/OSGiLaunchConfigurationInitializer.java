@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 
 /**
  * Initilizes launch configuration attributes for newly-created OSGi Framework 
@@ -73,23 +74,20 @@ public class OSGiLaunchConfigurationInitializer {
 		StringBuffer wsplugins = new StringBuffer();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getPluginBase().getId();
 			boolean inWorkspace = models[i].getUnderlyingResource() != null;
-			appendBundle(inWorkspace ? wsplugins : explugins, id);
+			appendBundle(inWorkspace ? wsplugins : explugins, models[i]);
 		}
 		configuration.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
 		configuration.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 	}
 
-	private void appendBundle(StringBuffer buffer, String bundleID) {
+	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$
-		buffer.append(bundleID);
-		buffer.append("@"); //$NON-NLS-1$
-		buffer.append(getStartLevel(bundleID));
-		buffer.append(":"); //$NON-NLS-1$
-		buffer.append(getAutoStart(bundleID));
+		String id = model.getPluginBase().getId();
+		String value = BundleLauncherHelper.writeBundles(model, getStartLevel(id), getAutoStart(id));
+		buffer.append(value);
 	}
 
 	/**

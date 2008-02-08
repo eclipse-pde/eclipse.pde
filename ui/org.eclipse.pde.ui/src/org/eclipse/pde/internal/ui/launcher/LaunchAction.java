@@ -83,14 +83,10 @@ public class LaunchAction extends Action {
 		IPluginModelBase[] models = getModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
-			String id = model.getPluginBase().getId();
-			if (model.getUnderlyingResource() == null) {
-				explugins.append(id);
-				explugins.append(","); //$NON-NLS-1$
-			} else {
-				wsplugins.append(id);
-				wsplugins.append(","); //$NON-NLS-1$
-			}
+			if (model.getUnderlyingResource() == null)
+				appendBundle(explugins, model);
+			else
+				appendBundle(wsplugins, model);
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
@@ -99,6 +95,13 @@ public class LaunchAction extends Action {
 		if (configIni != null)
 			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
 		return wc.doSave();
+	}
+
+	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
+		buffer.append(model.getPluginBase().getId());
+		buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
+		buffer.append(model.getPluginBase().getVersion());
+		buffer.append(',');
 	}
 
 	private String getProgramArguments(String os) {
@@ -233,7 +236,7 @@ public class LaunchAction extends Action {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
-		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
+		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName));
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);

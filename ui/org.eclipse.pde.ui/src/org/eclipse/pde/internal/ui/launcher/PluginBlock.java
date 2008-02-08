@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.TreeSet;
+import java.util.Iterator;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -62,18 +63,12 @@ public class PluginBlock extends AbstractPluginBlock {
 		fNumWorkspaceChecked = automaticAdd ? fWorkspaceModels.length : 0;
 
 		String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-		TreeSet ids = LaunchPluginValidator.parsePlugins(configuration, attribute);
-		for (int i = 0; i < fWorkspaceModels.length; i++) {
-			String id = fWorkspaceModels[i].getPluginBase().getId();
-			if (id == null)
-				continue;
-			if (automaticAdd && ids.contains(id)) {
-				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], false))
-					fNumWorkspaceChecked -= 1;
-			} else if (!automaticAdd && ids.contains(id)) {
-				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], true))
-					fNumWorkspaceChecked += 1;
-			}
+		Set bundles = LaunchPluginValidator.parsePlugins(configuration, attribute);
+		Iterator it = bundles.iterator();
+		while (it.hasNext()) {
+			IPluginModelBase base = (IPluginModelBase) it.next();
+			fPluginTreeViewer.setChecked(base, !automaticAdd);
+			fNumWorkspaceChecked = automaticAdd ? fNumWorkspaceChecked - 1 : fNumWorkspaceChecked + 1;
 		}
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
@@ -84,12 +79,12 @@ public class PluginBlock extends AbstractPluginBlock {
 		fNumExternalChecked = 0;
 
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		TreeSet selected = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		for (int i = 0; i < fExternalModels.length; i++) {
-			if (selected.contains(fExternalModels[i].getPluginBase().getId())) {
-				if (fPluginTreeViewer.setChecked(fExternalModels[i], true))
-					fNumExternalChecked += 1;
-			}
+		Set selected = LaunchPluginValidator.parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+		Iterator it = selected.iterator();
+		while (it.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) it.next();
+			fPluginTreeViewer.setChecked(model, true);
+			fNumExternalChecked += 1;
 		}
 
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
@@ -105,9 +100,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				// if "automatic add" option is selected, save "deselected" workspace plugins
 				// Otherwise, save "selected" workspace plugins
 				if (fPluginTreeViewer.getChecked(model) != fAddWorkspaceButton.getSelection()) {
-					if (wbuf.length() > 0)
-						wbuf.append(","); //$NON-NLS-1$
-					wbuf.append(model.getPluginBase().getId());
+					appendBundle(wbuf, model);
 				}
 			}
 
@@ -125,9 +118,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				if (checked[i] instanceof IPluginModelBase) {
 					IPluginModelBase model = (IPluginModelBase) checked[i];
 					if (model.getUnderlyingResource() == null) {
-						if (exbuf.length() > 0)
-							exbuf.append(","); //$NON-NLS-1$
-						exbuf.append(model.getPluginBase().getId());
+						appendBundle(exbuf, model);
 					}
 				}
 			}
@@ -138,6 +129,14 @@ public class PluginBlock extends AbstractPluginBlock {
 			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, (String) null);
 			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, (String) null);
 		}
+	}
+
+	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
+		if (buffer.length() > 0)
+			buffer.append(","); //$NON-NLS-1$
+		buffer.append(model.getPluginBase().getId());
+		buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
+		buffer.append(model.getPluginBase().getVersion());
 	}
 
 	protected void computeSubset() {
