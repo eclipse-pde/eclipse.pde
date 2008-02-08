@@ -366,7 +366,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 						}
 					}
 				}
-			}						
+			}
 		} catch (BundleException e) {
 			abort("Unable to parse bundle classpath", e); //$NON-NLS-1$
 		} catch (IOException e) {
