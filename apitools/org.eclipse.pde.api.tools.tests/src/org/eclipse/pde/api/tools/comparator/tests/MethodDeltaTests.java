@@ -440,7 +440,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.CHANGED_NON_VISIBLE, child.getKind());
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
@@ -484,7 +484,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong kind", IDelta.CHANGED_NON_VISIBLE, child.getKind());
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));

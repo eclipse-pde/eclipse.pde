@@ -1,5 +1,5 @@
 import java.util.List;
 
 public class X {
-	List<Integer> list;
+	public List<Integer> list;
 }

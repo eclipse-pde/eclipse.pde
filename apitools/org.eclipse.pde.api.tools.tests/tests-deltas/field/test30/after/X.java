@@ -1,5 +1,5 @@
 import java.util.Map;
 
 public class X {
-	Map<String, String> list;
+	public Map<String, String> list;
 }
