@@ -19,7 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -396,6 +398,35 @@ public class ApiProfile implements IApiProfile, Cloneable {
 					ResolverError resolverError = errors[i];
 					System.err.println(resolverError);
 				}
+				System.out.println("All components added to the state"); //$NON-NLS-1$
+				BundleDescription[] bundles = fState.getBundles();
+				Arrays.sort(bundles, new Comparator() {
+					public int compare(Object o1, Object o2) {
+						BundleDescription bundleDescription1 = (BundleDescription) o1;
+						BundleDescription bundleDescription2 = (BundleDescription) o2;
+						return bundleDescription1.getSymbolicName().compareTo(bundleDescription2.getSymbolicName());
+					}
+				});
+				for (int i = 0, max = bundles.length; i < max; i++) {
+					BundleDescription bundleDescription = bundles[i];
+					System.out.println("bundle descriptions added to the state[" + i + "] : " + bundleDescription.getSymbolicName());
+				}
+				System.out.println("All available components"); //$NON-NLS-1$
+				Arrays.sort(components, new Comparator() {
+					public int compare(Object o1, Object o2) {
+						IApiComponent component1 = (IApiComponent) o1;
+						IApiComponent component2 = (IApiComponent) o2;
+						return component1.getId().compareTo(component2.getId());
+					}
+				});
+				for (int i = 0, max = components.length; i < max; i++) {
+					IApiComponent component = components[i];
+					if (component instanceof PluginProjectApiComponent) {
+						System.out.println("workspace component[" + i + "] : " + component);
+					} else {
+						System.out.println("Binary component   [" + i + "] : " + component);
+					}
+				}
 			} else {
 				System.out.println("No errors found during state resolution"); //$NON-NLS-1$
 			}
@@ -714,13 +745,15 @@ public class ApiProfile implements IApiProfile, Cloneable {
 			File bundlesRoot = new File(root);
 			if (bundlesRoot.exists() && bundlesRoot.isDirectory()) {
 				File[] bundles = bundlesRoot.listFiles();
-				StringBuffer buffer = new StringBuffer(bundleName);
-				buffer.append('_');
-				String key = String.valueOf(buffer);
-				for (int i = 0; i < bundles.length; i++) {
-					File file = bundles[i];
-					if (file.getName().startsWith(key)) {
-						return file;
+				if (bundles != null) {
+					StringBuffer buffer = new StringBuffer(bundleName);
+					buffer.append('_');
+					String key = String.valueOf(buffer);
+					for (int i = 0; i < bundles.length; i++) {
+						File file = bundles[i];
+						if (file.getName().startsWith(key)) {
+							return file;
+						}
 					}
 				}
 			}
