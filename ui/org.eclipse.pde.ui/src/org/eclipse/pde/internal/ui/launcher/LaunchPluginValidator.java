@@ -136,7 +136,18 @@ public class LaunchPluginValidator {
 			if (!map.containsKey(id)) {
 				map.put(id, model);
 			} else {
-				map.put(id + "_" + desc.getBundleId(), model); //$NON-NLS-1$
+				// since other code grabs only the model matching the "id", we want to make
+				// sure the model matching the "id" has the highest version (because for singletons
+				// the runtime will only resolve the highest version).  Bug 218393
+				IPluginModelBase oldModel = (IPluginModelBase) map.get(id);
+				String oldVersion = oldModel.getPluginBase().getVersion();
+				String newVersion = model.getPluginBase().getVersion();
+				if (oldVersion.compareTo(newVersion) < 0) {
+					map.put(id + "_" + oldModel.getBundleDescription().getBundleId(), oldModel); //$NON-NLS-1$
+					map.put(id, model);
+				} else {
+					map.put(id + "_" + desc.getBundleId(), model); //$NON-NLS-1$
+				}
 			}
 		}
 	}
