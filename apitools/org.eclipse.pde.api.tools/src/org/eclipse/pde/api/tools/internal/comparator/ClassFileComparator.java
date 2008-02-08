@@ -151,6 +151,8 @@ public class ClassFileComparator {
 				case IDelta.REMOVED :
 					actualKind = IDelta.REMOVED_NON_VISIBLE;
 					break;
+				case IDelta.CHANGED :
+					actualKind = IDelta.CHANGED_NON_VISIBLE;
 			}
 		}
 		int actualFlags = flags;
@@ -202,7 +204,7 @@ public class ClassFileComparator {
 		if (superclassSet1 == null) {
 			if (superclassSet2 != null) {
 				// this means the direct super class of descriptor1 is java.lang.Object
-				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.SUPERCLASS, this.classFile, this.descriptor1.name);
+				this.addDelta(this.descriptor1, IDelta.ADDED, IDelta.SUPERCLASS, this.classFile, this.descriptor1.name);
 				return;
 			}
 			// both types extends java.lang.Object
