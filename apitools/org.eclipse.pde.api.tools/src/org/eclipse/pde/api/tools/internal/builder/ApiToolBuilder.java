@@ -1218,7 +1218,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					IDelta localDelta = (IDelta) iterator.next();
 					IType type = null;
 					try {
-						type = javaProject.findType(localDelta.getTypeName());
+						type = javaProject.findType(localDelta.getTypeName().replace('$', '.'));
 					} catch (JavaModelException e) {
 						ApiPlugin.log(e);
 					}
@@ -1292,16 +1292,23 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
 				// ensure that there is a @since tag for the corresponding member
-				IMember member = Util.getIMember(delta, javaProject);
-				if (member != null) {
-					processMember(
-							javaProject,
-							compilationUnit,
-							member,
-							component,
-							missingTagSeverityLevel,
-							malformedTagSeverityLevel,
-							invalidTagVersionSeverityLevel);
+				switch(delta.getKind()) {
+					case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
+					case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
+					case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
+					case IDelta.ADDED :
+						IMember member = Util.getIMember(delta, javaProject);
+						if (member != null) {
+							processMember(
+									javaProject,
+									compilationUnit,
+									member,
+									component,
+									missingTagSeverityLevel,
+									malformedTagSeverityLevel,
+									invalidTagVersionSeverityLevel);
+						}
+						
 				}
 			}
 		}

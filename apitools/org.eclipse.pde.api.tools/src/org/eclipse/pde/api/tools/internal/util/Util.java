@@ -908,7 +908,7 @@ public final class Util {
 				buffer.append("unknown kind"); //$NON-NLS-1$
 			break;
 		}
-		buffer.append(' ').append(delta.getTypeName()).append("#").append(delta.getKey()); //$NON-NLS-1$
+		buffer.append(' ').append(getDeltaFlagsName(delta.getFlags())).append(' ').append(delta.getTypeName()).append("#").append(delta.getKey()); //$NON-NLS-1$
 		return String.valueOf(buffer);
 	}
 
@@ -1082,7 +1082,7 @@ public final class Util {
 		if (typeName == null) return null;
 		IType type = null;
 		try {
-			type = javaProject.findType(typeName);
+			type = javaProject.findType(typeName.replace('$', '.'));
 		} catch (JavaModelException e) {
 			// ignore
 		}
