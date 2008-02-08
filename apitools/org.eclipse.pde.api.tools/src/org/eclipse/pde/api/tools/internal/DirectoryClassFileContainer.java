@@ -160,22 +160,24 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 						return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
 					}
 				});
-				List classFiles = new ArrayList();
-				for (int j = 0; j < files.length; j++) {
-					File file = files[j];
-					String name = file.getName();
-					String typeName = name.substring(0, name.length() - 6);
-					if (pkg.length() > 0) {
-						typeName = pkg + "." + typeName; //$NON-NLS-1$
+				if (files != null) {
+					List classFiles = new ArrayList();
+					for (int j = 0; j < files.length; j++) {
+						File file = files[j];
+						String name = file.getName();
+						String typeName = name.substring(0, name.length() - 6);
+						if (pkg.length() > 0) {
+							typeName = pkg + "." + typeName; //$NON-NLS-1$
+						}
+						classFiles.add(new ClassFile(file, typeName));
 					}
-					classFiles.add(new ClassFile(file, typeName));
-				}
-				Collections.sort(classFiles);
-				Iterator cfIterator = classFiles.iterator();
-				while (cfIterator.hasNext()) {
-					IClassFile classFile = (IClassFile) cfIterator.next();
-					visitor.visit(pkg, classFile);
-					visitor.end(pkg, classFile);
+					Collections.sort(classFiles);
+					Iterator cfIterator = classFiles.iterator();
+					while (cfIterator.hasNext()) {
+						IClassFile classFile = (IClassFile) cfIterator.next();
+						visitor.visit(pkg, classFile);
+						visitor.end(pkg, classFile);
+					}
 				}
 			}
 			visitor.endVisitPackage(pkg);
