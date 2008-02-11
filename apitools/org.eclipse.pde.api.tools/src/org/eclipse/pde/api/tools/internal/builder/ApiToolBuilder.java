@@ -1285,6 +1285,12 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			if (compilationUnit != null) {
 				if(charStart > -1) {
 					element = compilationUnit.getElementAt(charStart);
+					if(element == null) {
+						element = compilationUnit.findPrimaryType();
+						if(element == null) {
+							element = compilationUnit;
+						}
+					}
 				} else {
 					element = compilationUnit;
 				}
