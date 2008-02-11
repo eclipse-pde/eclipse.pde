@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -120,20 +122,36 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	 * @return output location or <code>null</code>
 	 */
 	private synchronized IContainer getOutputLocation() {
-		if (fOutputLocation == null) {
+		if (this.fOutputLocation == null) {
 			try {
-				IPath location = fRoot.getRawClasspathEntry().getOutputLocation();
-				if (location == null) {
-					location = fRoot.getJavaProject().getOutputLocation();
-				}
-				fOutputLocation = ResourcesPlugin.getWorkspace().getRoot().getFolder(location);
-				if (!fOutputLocation.exists()) {
-					fOutputLocation = null;
+				switch(fRoot.getKind()) {
+					case IPackageFragmentRoot.K_SOURCE :
+						IPath location = fRoot.getRawClasspathEntry().getOutputLocation();
+						if (location == null) {
+							location = fRoot.getJavaProject().getOutputLocation();
+						}
+						this.fOutputLocation = ResourcesPlugin.getWorkspace().getRoot().getFolder(location);
+						if (!fOutputLocation.exists()) {
+							fOutputLocation = null;
+						}
+						break;
+					case IPackageFragmentRoot.K_BINARY :
+						IResource resource = fRoot.getUnderlyingResource();
+						if (resource != null) {
+							switch(resource.getType()) {
+								case IResource.PROJECT :
+									this.fOutputLocation = (IProject) resource;
+									break;
+								case IResource.FOLDER :
+									this.fOutputLocation = (IFolder) resource;
+									break;
+							}
+						}
 				}
 			} catch (JavaModelException e) {
 			}
 		}
-		return fOutputLocation;
+		return this.fOutputLocation;
 	}
 
 	/* (non-Javadoc)
