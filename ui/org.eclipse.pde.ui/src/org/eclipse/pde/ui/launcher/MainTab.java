@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 171767
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -43,7 +44,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	public MainTab() {
 		createWorkspaceDataBlock();
 		createProgramBlock();
-		fJreBlock = new JREBlock(this);
+		createJREBlock();
 		fImage = PDEPluginImages.DESC_MAIN_TAB.createImage();
 	}
 
@@ -96,10 +97,10 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		for (int i = 0; i < controls.length; i++)
 			controls[i].addListener(SWT.Activate, listener);
 
+		Dialog.applyDialogFont(composite);
 		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scrollContainer.setExpandHorizontal(true);
 		setControl(scrollContainer);
-		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 
@@ -167,6 +168,14 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 */
 	protected void createProgramBlock() {
 		fProgramBlock = new ProgramBlock(this);
+	}
+
+	/**
+	 * Creates the Java Runtime Environment group on the tab
+	 *
+	 */
+	protected void createJREBlock() {
+		fJreBlock = new JREBlock(this);
 	}
 
 	/*
