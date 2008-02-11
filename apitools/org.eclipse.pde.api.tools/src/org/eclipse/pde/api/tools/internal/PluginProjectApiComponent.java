@@ -239,7 +239,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	private IPath getProjectSettingsPath(boolean create) throws CoreException {
 		IPath path = null;
 		IProject project  = fProject.getProject();
-		if(project.exists()) {
+		if(project.isAccessible()) {
 			IFolder folder = project.getFolder(".settings"); //$NON-NLS-1$
 			if(folder.exists()) {
 				 return folder.getLocation();
