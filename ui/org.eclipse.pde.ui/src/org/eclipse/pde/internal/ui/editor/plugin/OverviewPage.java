@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.SWT;
@@ -224,6 +225,11 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
 			organizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
 			organizeAction.run(null);
+		} else if (href.equals("externalize")) { //$NON-NLS-1$
+			getEditor().doSave(null);
+			GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
+			externalizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
+			externalizeAction.run(null);
 		} else
 			super.linkActivated(e);
 	}
