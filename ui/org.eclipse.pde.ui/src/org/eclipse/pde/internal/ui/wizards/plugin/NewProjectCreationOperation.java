@@ -360,7 +360,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private IClasspathEntry[] getClassPathEntries(IJavaProject project, IFieldData data) {
 		IClasspathEntry[] internalClassPathEntries = getInternalClassPathEntries(project, data);
 		IClasspathEntry[] entries = new IClasspathEntry[internalClassPathEntries.length + 2];
-		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
+		System.arraycopy(internalClassPathEntries, 0, entries, 2, internalClassPathEntries.length);
 
 		// Set EE of new project
 		String executionEnvironment = null;
@@ -368,8 +368,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			executionEnvironment = ((AbstractFieldData) data).getExecutionEnvironment();
 		}
 		ClasspathComputer.setComplianceOptions(project, ExecutionEnvironmentAnalyzer.getCompliance(executionEnvironment));
-		entries[entries.length - 2] = ClasspathComputer.createJREEntry(executionEnvironment);
-		entries[entries.length - 1] = ClasspathComputer.createContainerEntry();
+		entries[0] = ClasspathComputer.createJREEntry(executionEnvironment);
+		entries[1] = ClasspathComputer.createContainerEntry();
 
 		return entries;
 	}

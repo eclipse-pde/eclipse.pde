@@ -44,9 +44,6 @@ public class ClasspathComputer {
 		ArrayList result = new ArrayList();
 		IBuild build = getBuild(project);
 
-		// add own libraries/source
-		addSourceAndLibraries(project, model, build, clear, result);
-
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.JRE_CONTAINER_PATH));
@@ -54,6 +51,9 @@ public class ClasspathComputer {
 
 		// add pde container
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
+
+		// add own libraries/source
+		addSourceAndLibraries(project, model, build, clear, result);
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
