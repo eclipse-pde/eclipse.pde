@@ -173,6 +173,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	/**
 	 * Creates the Java Runtime Environment group on the tab
 	 *
+	 * @since 3.4
 	 */
 	protected void createJREBlock() {
 		fJreBlock = new JREBlock(this);
