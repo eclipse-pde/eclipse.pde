@@ -123,7 +123,7 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 			try {
 				return new FileInputStream(fFile);
 			} catch (FileNotFoundException e) {
-				abort("File not found", e);
+				abort("File not found", e); //$NON-NLS-1$
 			}
 			return null; // never reaches here
 		}
@@ -288,5 +288,33 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 
 	public String getOrigin() {
 		return this.fOrigin;
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.fOrigin == null) ? 0 : this.fOrigin.hashCode());
+		result = prime * result + ((this.fRoot == null) ? 0 : this.fRoot.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DirectoryClassFileContainer other = (DirectoryClassFileContainer) obj;
+		if (this.fOrigin == null) {
+			if (other.fOrigin != null)
+				return false;
+		} else if (!this.fOrigin.equals(other.fOrigin))
+			return false;
+		if (this.fRoot == null) {
+			if (other.fRoot != null)
+				return false;
+		}
+		return this.fRoot.equals(other.fRoot);
 	}
 }

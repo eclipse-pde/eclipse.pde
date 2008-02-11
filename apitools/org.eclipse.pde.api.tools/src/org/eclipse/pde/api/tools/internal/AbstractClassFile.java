@@ -32,7 +32,7 @@ public abstract class AbstractClassFile implements IClassFile {
 		try {
 			return Util.getInputStreamAsByteArray(inputStream, -1);
 		} catch (IOException e) {
-			abort("Unable to read class file: " + getTypeName(), e);
+			abort("Unable to read class file: " + getTypeName(), e); //$NON-NLS-1$
 			return null; // never gets here
 		} finally {
 			try {

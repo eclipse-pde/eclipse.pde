@@ -87,7 +87,7 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 								IResource res = members[j];
 								if (res.getType() == IResource.FILE) {
 									IFile file = (IFile) res;
-									if (res.getFileExtension().equals("class")) {
+									if (Util.isClassFile(file.getName())) {
 										StringBuffer typeName = new StringBuffer();
 										typeName.append(pkg);
 										typeName.append('.');
@@ -200,5 +200,48 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	
 	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
 		return findClassFile(qualifiedName);
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		IContainer container = this.getOutputLocation();
+		if (container != null) {
+			IPath location = container.getLocation();
+			if (location != null) {
+				return prime * result + location.toOSString().hashCode();
+			}
+		}
+		return prime * result + super.hashCode();
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SourceFolderClassFileContainer other = (SourceFolderClassFileContainer) obj;
+		if (this.fRoot == null) {
+			if (other.fRoot != null)
+				return false;
+		}
+		IContainer container = this.getOutputLocation();
+		IContainer container2 = other.getOutputLocation();
+		if (container == null) {
+			if (container2 != null) {
+				return false;
+			}
+		} else if (container2 == null) {
+			return false;
+		}
+		IPath location = container.getLocation();
+		if (location == null) {
+			return container2.getLocation() == null;
+		}
+		IPath location2 = container2.getLocation();
+		if (location2 == null) return false;
+		return location.toOSString().equals(location2.toOSString());
 	}
 }

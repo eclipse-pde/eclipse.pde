@@ -409,7 +409,7 @@ public class ApiProfile implements IApiProfile, Cloneable {
 				});
 				for (int i = 0, max = bundles.length; i < max; i++) {
 					BundleDescription bundleDescription = bundles[i];
-					System.out.println("bundle descriptions added to the state[" + i + "] : " + bundleDescription.getSymbolicName());
+					System.out.println("bundle descriptions added to the state[" + i + "] : " + bundleDescription.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				System.out.println("All available components"); //$NON-NLS-1$
 				Arrays.sort(components, new Comparator() {
@@ -422,9 +422,9 @@ public class ApiProfile implements IApiProfile, Cloneable {
 				for (int i = 0, max = components.length; i < max; i++) {
 					IApiComponent component = components[i];
 					if (component instanceof PluginProjectApiComponent) {
-						System.out.println("workspace component[" + i + "] : " + component);
+						System.out.println("workspace component[" + i + "] : " + component); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						System.out.println("Binary component   [" + i + "] : " + component);
+						System.out.println("Binary component   [" + i + "] : " + component); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			} else {

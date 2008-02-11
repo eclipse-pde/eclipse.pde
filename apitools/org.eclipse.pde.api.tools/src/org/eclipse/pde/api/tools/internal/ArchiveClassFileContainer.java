@@ -123,10 +123,10 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 				try {
 					return zipFile.getInputStream(entry);
 				} catch (IOException e) {
-					abort("Failed to open class file: " + getTypeName() + " in archive: " + fArchive.fLocation, e);
+					abort("Failed to open class file: " + getTypeName() + " in archive: " + fArchive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			abort("Class file not found: " + getTypeName() + " in archive: " + fArchive.fLocation, null);
+			abort("Class file not found: " + getTypeName() + " in archive: " + fArchive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 	}
@@ -181,7 +181,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 				fZipFile.close();
 				fZipFile = null;
 			} catch (IOException e) {
-				abort("Failed to close class file archive", e);
+				abort("Failed to close class file archive", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -262,7 +262,7 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 			try {
 				fZipFile = new ZipFile(fLocation);
 			} catch (IOException e) {
-				abort("Failed to open archive: " + fLocation, e);
+				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
 			}
 		}
 		return fZipFile;

@@ -264,10 +264,10 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if (prop.exists()) {
 				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
 				IBuild build = properties.getBuild();
-				IBuildEntry entry = build.getEntry("custom");
+				IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
-					if (tokens.length == 1 && tokens[0].equals("true")) {
+					if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
 						// hack : add the current output location for each classpath entries
 						IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
 						List containers = new ArrayList();
@@ -299,7 +299,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 							}
 						}
 						if (containers.size() != 0) {
-							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers, this.getId()));
+							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers, this.getId())); //$NON-NLS-1$
 						}
 					}
 				} else {
