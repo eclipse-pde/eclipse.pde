@@ -336,7 +336,7 @@ public class SearchEngine implements IApiSearchEngine {
 			fPotentialMatches[i] = new LinkedList();
 		}
 		// 1. extract all references, filtering out kinds we don't care about
-		localMonitor.subTask("API usage: collecting references");
+		localMonitor.subTask("API usage: collecting references"); 
 		extractReferences(sourceScope, localMonitor);
 		localMonitor.worked(1);
 		// 2. resolve the remaining references

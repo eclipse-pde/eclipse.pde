@@ -101,6 +101,8 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -1420,6 +1422,93 @@ public final class Util {
 	public static String getPackageName(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		return index == -1 ? DEFAULT_PACKAGE_NAME : typeName.substring(0, index);
+	}
+	
+	/**
+	 * Returns the string representation of an element descriptor type or <code>null</code>
+	 * if the kind is unknown
+	 * @param kind
+	 * @return the string of the kind or <code>null</code>
+	 */
+	public static String getDescriptorKind(int kind) {
+		switch(kind) {
+		case IElementDescriptor.T_PACKAGE: {
+			return "PACKAGE";	 //$NON-NLS-1$
+		}
+		case IElementDescriptor.T_ARRAY_TYPE: {
+			return "ARRAY_TYPE"; //$NON-NLS-1$
+		}
+		case IElementDescriptor.T_FIELD: {
+			return "FIELD"; //$NON-NLS-1$
+		}
+		case IElementDescriptor.T_METHOD: {
+			return "METHOD"; //$NON-NLS-1$
+		}
+		case IElementDescriptor.T_PRIMITIVE_TYPE: {
+			return "PRIMITIVE_TYPE"; //$NON-NLS-1$
+		}
+		case IElementDescriptor.T_REFERENCE_TYPE: {
+			return "REFERENCE_TYPE"; //$NON-NLS-1$
+		}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the string representation of the specified visibility modifier or <code>null</code>
+	 * if the kind is unknown
+	 * @param kind
+	 * @return
+	 */
+	public static String getVisibilityKind(int kind) {
+		switch(kind) {
+			case VisibilityModifiers.ALL_VISIBILITIES: {
+				return "ALL_VISIBILITIES"; //$NON-NLS-1$
+			}
+			case VisibilityModifiers.API: {
+				return "API"; //$NON-NLS-1$
+			}
+			case VisibilityModifiers.PRIVATE: {
+				return "PRIVATE"; //$NON-NLS-1$
+			}
+			case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+				return "PRIVATE_PERMISSIBLE"; //$NON-NLS-1$
+			}
+			case VisibilityModifiers.SPI: {
+				return "SPI"; //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the string representation of the specified restriction kind or <code>null</code>
+	 * if the kind is unknown
+	 * @param kind
+	 * @return the string for the kind or <code>null</code>
+	 */
+	public static String getRestrictionKind(int kind) {
+		switch(kind) {
+			case RestrictionModifiers.ALL_RESTRICTIONS: {
+				return "ALL_RESTRICTIONS"; //$NON-NLS-1$
+			}
+			case RestrictionModifiers.NO_EXTEND: {
+				return "NO_EXTEND"; //$NON-NLS-1$
+			}
+			case RestrictionModifiers.NO_IMPLEMENT: {
+				return "NO_IMPLEMENT"; //$NON-NLS-1$
+			}
+			case RestrictionModifiers.NO_INSTANTIATE: {
+				return "NO_INSTANTIATE"; //$NON-NLS-1$
+			}
+			case RestrictionModifiers.NO_REFERENCE: {
+				return "NO_REFERENCE"; //$NON-NLS-1$
+			}
+			case RestrictionModifiers.NO_RESTRICTIONS: {
+				return "NO_RESTRICTIONS"; //$NON-NLS-1$
+			}
+		}
+		return null;
 	}
 	
 	/**

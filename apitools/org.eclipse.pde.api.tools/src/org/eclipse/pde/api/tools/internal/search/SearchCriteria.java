@@ -33,6 +33,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Implementation of an API search criteria.
@@ -144,6 +145,17 @@ public class SearchCriteria implements IApiSearchCriteria {
 			return false;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Element: ").append(Util.getDescriptorKind(fElementType)); //$NON-NLS-1$
+			if(fPattern != null) {
+				buffer.append(" with pattern :").append(fPattern.toString()); //$NON-NLS-1$
+			}
+			return buffer.toString();
+		}
 	}
 	
 	/**
@@ -190,7 +202,13 @@ public class SearchCriteria implements IApiSearchCriteria {
 			Set parents = getParents(element);
 			return parents.contains(fElement);
 		}
-
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return fElement.toString();
+		}
 	}
 	
 	/**
@@ -438,5 +456,23 @@ public class SearchCriteria implements IApiSearchCriteria {
 			}
 		}
 		return false;		
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("*** Search Criteria ***\n"); //$NON-NLS-1$
+		buffer.append("Reference Kinds: ").append(Util.getReferenceKind(fReferenceKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Restriction Kinds: ").append(Util.getRestrictionKind(fRestrictionKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("Visibility Kinds: ").append(Util.getVisibilityKind(fVisibilityKinds)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		if(fPatterns != null) {
+			buffer.append("Patterns: ").append(fPatterns.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(fPotentialElements != null) {
+			buffer.append("Potential Matches: ").append(fPotentialElements.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return buffer.toString();
 	}
 }

@@ -162,4 +162,21 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 	public String getOrigin() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("*** Search Scope ***\n");
+		IApiComponent key = null;
+		HashSet entry = null;
+		for(Iterator iter = fComponents.keySet().iterator(); iter.hasNext();){
+			key = (IApiComponent) iter.next();
+			entry = (HashSet) fComponents.get(key);
+			buffer.append("Component: ").append(key.getId()).append("\n");
+			buffer.append("Elements: ").append(entry.toString()).append("\n");
+		}
+		return buffer.toString();
+	}
 }

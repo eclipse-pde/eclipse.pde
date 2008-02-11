@@ -89,8 +89,10 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 									IFile file = (IFile) res;
 									if (Util.isClassFile(file.getName())) {
 										StringBuffer typeName = new StringBuffer();
-										typeName.append(pkg);
-										typeName.append('.');
+										if(pkg.length() != 0) {
+											typeName.append(pkg);
+											typeName.append('.');
+										}
 										String fileName = file.getName();
 										String className = fileName.substring(0, fileName.length() - Util.DOT_CLASS_SUFFIX.length());
 										typeName.append(className);
