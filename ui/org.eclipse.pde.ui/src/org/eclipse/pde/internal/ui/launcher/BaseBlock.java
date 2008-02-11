@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 217333
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.io.File;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
@@ -38,7 +43,7 @@ public abstract class BaseBlock {
 
 	protected Listener fListener = new Listener();
 
-	protected Label fLocationLabel;
+	protected Link fLocationLink;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
@@ -64,12 +69,12 @@ public abstract class BaseBlock {
 	}
 
 	protected void createText(Composite parent, String text, int indent) {
-		fLocationLabel = new Label(parent, SWT.NONE);
-		fLocationLabel.setText(text);
+		fLocationLink = new Link(parent, SWT.NONE);
+		fLocationLink.setText("<a>" + text + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (indent > 0) {
 			GridData gd = new GridData();
 			gd.horizontalIndent = indent;
-			fLocationLabel.setLayoutData(gd);
+			fLocationLink.setLayoutData(gd);
 		}
 
 		fLocationText = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -77,6 +82,22 @@ public abstract class BaseBlock {
 		gd.widthHint = 400;
 		fLocationText.setLayoutData(gd);
 		fLocationText.addModifyListener(fListener);
+
+		fLocationLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					String path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(getLocation(), false);
+					File f = new File(path);
+					if (f.exists())
+						Program.launch(f.getCanonicalPath());
+					else
+						MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileNotFoundMessage : PDEUIMessages.BaseBlock_directoryNotFoundMessage);
+				} catch (Exception ex) {
+					MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), isFile() ? PDEUIMessages.BaseBlock_fileTitle : PDEUIMessages.BaseBlock_directoryTitle, isFile() ? PDEUIMessages.BaseBlock_fileErrorMessage : PDEUIMessages.BaseBlock_directoryErrorMessage);
+				}
+			}
+		});
+
 	}
 
 	protected void createButtons(Composite parent, String[] buttonLabels) {
@@ -155,8 +176,13 @@ public abstract class BaseBlock {
 
 	protected abstract String getName();
 
+	/**
+	 * @return true if the block edits a file, false otherwise (i.e. directory)
+	 */
+	protected abstract boolean isFile();
+
 	protected void enableBrowseSection(boolean enabled) {
-		fLocationLabel.setEnabled(enabled);
+		fLocationLink.setEnabled(enabled);
 		fLocationText.setEnabled(enabled);
 		fFileSystemButton.setEnabled(enabled);
 		fWorkspaceButton.setEnabled(enabled);

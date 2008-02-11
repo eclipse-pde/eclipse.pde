@@ -2374,6 +2374,18 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseBlock_errorMessage;
 
+	public static String BaseBlock_fileTitle;
+
+	public static String BaseBlock_fileNotFoundMessage;
+
+	public static String BaseBlock_fileErrorMessage;
+
+	public static String BaseBlock_directoryTitle;
+
+	public static String BaseBlock_directoryNotFoundMessage;
+
+	public static String BaseBlock_directoryErrorMessage;
+
 	public static String ConfigurationTemplateBlock_name;
 
 	public static String WorkspaceDataBlock_name;
