@@ -275,7 +275,8 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 							IClasspathEntry classpathEntry = classpathEntries[i];
 							switch(classpathEntry.getEntryKind()) {
 								case IClasspathEntry.CPE_SOURCE :
-									IClassFileContainer container = getSourceFolderContainer(classpathEntry.getPath().removeFirstSegments(1).toString());
+									String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
+									IClassFileContainer container = getSourceFolderContainer(containerPath, this.getId());
 									if (container != null) {
 										containers.add(container);
 									}
@@ -288,17 +289,17 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 										IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 										if (resource != null) {
 											// jar inside the workspace
-											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString()));
+											containers.add(new ArchiveClassFileContainer(resource.getLocation().toOSString(), this.getId()));
 										} else {
 											// external jar
-											containers.add(new ArchiveClassFileContainer(path.toOSString()));
+											containers.add(new ArchiveClassFileContainer(path.toOSString(), this.getId()));
 										}
 									}
 									break;
 							}
 						}
 						if (containers.size() != 0) {
-							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers));
+							fPathToOutputContainers.put(".", new CompositeClassFileContainer(containers, this.getId()));
 						}
 					}
 				} else {
@@ -310,20 +311,21 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
 							String[] tokens = buildEntry.getTokens();
 							if (tokens.length == 1) {
-								IClassFileContainer container = getSourceFolderContainer(tokens[0]);
+								IClassFileContainer container = getSourceFolderContainer(tokens[0], this.getId());
 								if (container != null) {
 									fPathToOutputContainers.put(jar, container);
 								}
 							} else {
 								List containers = new ArrayList();
 								for (int j = 0; j < tokens.length; j++) {
-									IClassFileContainer container = getSourceFolderContainer(tokens[j]);
+									String currentToken = tokens[j];
+									IClassFileContainer container = getSourceFolderContainer(currentToken, this.getId());
 									if (container != null) {
 										containers.add(container);
 									}
 								}
 								if (!containers.isEmpty()) {
-									fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers));
+									fPathToOutputContainers.put(jar, new CompositeClassFileContainer(containers, this.getId()));
 								}
 							}
 						}
@@ -358,9 +360,9 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			if (res.getType() == IResource.FILE) {
-				return new ArchiveClassFileContainer(res.getLocation().toOSString());
+				return new ArchiveClassFileContainer(res.getLocation().toOSString(), this.getId());
 			} else {
-				return new DirectoryClassFileContainer(res.getLocation().toOSString());
+				return new DirectoryClassFileContainer(res.getLocation().toOSString(), this.getId());
 			}
 		}
 		return null;
@@ -373,12 +375,12 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 * @param location project relative path to the source folder
 	 * @return class file container or <code>null</code>
 	 */
-	private IClassFileContainer getSourceFolderContainer(String location) {
+	private IClassFileContainer getSourceFolderContainer(String location, String id) {
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
 			if (root.exists()) {
-				return new SourceFolderClassFileContainer(root);
+				return new SourceFolderClassFileContainer(root, id);
 			}
 		}
 		return null;

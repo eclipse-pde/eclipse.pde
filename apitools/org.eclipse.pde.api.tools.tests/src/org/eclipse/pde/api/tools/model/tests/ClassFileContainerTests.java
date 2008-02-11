@@ -61,7 +61,7 @@ public class ClassFileContainerTests extends TestCase {
 		path = path.append("test-jars").append("sample.jar");
 		File file = path.toFile();
 		assertTrue("Missing jar file", file.exists());
-		return new ArchiveClassFileContainer(path.toOSString());
+		return new ArchiveClassFileContainer(path.toOSString(), null);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class ClassFileContainerTests extends TestCase {
 		path = path.append("test-bin-dir");
 		File file = path.toFile();
 		assertTrue("Missing bin directory", file.exists());
-		return new DirectoryClassFileContainer(path.toOSString());
+		return new DirectoryClassFileContainer(path.toOSString(), null);
 	}	
 	
 	/**

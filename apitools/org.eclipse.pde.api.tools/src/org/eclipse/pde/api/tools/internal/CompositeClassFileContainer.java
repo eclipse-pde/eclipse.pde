@@ -23,13 +23,15 @@ public class CompositeClassFileContainer extends AbstractClassFileContainer {
 	
 	private List fContainers;
 	
+	private String fOrigin;
 	/**
 	 * Constructs a composite container on the given list of containers.
 	 * 
 	 * @param containers list of containers
 	 */
-	public CompositeClassFileContainer(List containers) {
-		fContainers = containers;
+	public CompositeClassFileContainer(List containers, String origin) {
+		this.fContainers = containers;
+		this.fOrigin = origin;
 	}
 
 	/* (non-Javadoc)
@@ -37,6 +39,10 @@ public class CompositeClassFileContainer extends AbstractClassFileContainer {
 	 */
 	protected List createClassFileContainers() throws CoreException {
 		return fContainers;
+	}
+	
+	public String getOrigin() {
+		return this.fOrigin;
 	}
 
 }

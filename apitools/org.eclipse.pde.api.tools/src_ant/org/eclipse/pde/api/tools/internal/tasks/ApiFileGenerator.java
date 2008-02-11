@@ -52,7 +52,7 @@ public class ApiFileGenerator extends Task {
 		StringBuffer classFileContainerRootBuffer = new StringBuffer(this.targetFolder);
 		classFileContainerRootBuffer.append(File.separatorChar).append(this.projectName);
 		DirectoryClassFileContainer classFileContainer = new DirectoryClassFileContainer(
-				String.valueOf(classFileContainerRootBuffer));
+				String.valueOf(classFileContainerRootBuffer), projectName);
 		String[] packageNames = null;
 		try {
 			packageNames = classFileContainer.getPackageNames();

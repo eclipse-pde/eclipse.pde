@@ -107,7 +107,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 		List libs = new ArrayList(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
-			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString()));
+			libs.add(new ArchiveClassFileContainer(lib.getSystemLibraryPath().toOSString(), null));
 		}
 		return libs;
 	}
@@ -200,5 +200,9 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 */
 	public boolean hasFragments() {
 		return false;
+	}
+
+	public String getOrigin() {
+		return null;
 	}
 }

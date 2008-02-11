@@ -159,4 +159,7 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 		return false;
 	}
 
+	public String getOrigin() {
+		return null;
+	}
 }

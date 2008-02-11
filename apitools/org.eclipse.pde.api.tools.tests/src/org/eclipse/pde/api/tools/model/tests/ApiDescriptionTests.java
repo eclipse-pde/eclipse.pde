@@ -433,9 +433,6 @@ public class ApiDescriptionTests extends TestCase {
 			public IClassFile findClassFile(String qualifiedName) throws CoreException {
 				return null;
 			}
-			public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-				return Util.NO_CLASS_FILES;
-			}
 			public void close() throws CoreException {
 			}
 			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
@@ -489,6 +486,15 @@ public class ApiDescriptionTests extends TestCase {
 			}
 			public boolean hasFragments() {
 				return false;
+			}
+			public IClassFileContainer[] getClassFileContainers(String id) {
+				return null;
+			}
+			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+				return null;
+			}
+			public String getOrigin() {
+				return this.getId();
 			}
 		});
 		settings.accept(xmlVisitor);

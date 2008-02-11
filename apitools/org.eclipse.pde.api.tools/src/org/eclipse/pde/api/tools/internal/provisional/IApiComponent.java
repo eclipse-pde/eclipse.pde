@@ -98,6 +98,18 @@ public interface IApiComponent extends IClassFileContainer {
 	public IClassFileContainer[] getClassFileContainers();
 	
 	/**
+	 * Returns class file containers containing the class files associated with
+	 * this component that comes from the given component id in the order they 
+	 * would appear on the build path or class path.
+	 * 
+	 * This is used to filter out the class file containers coming from a fragment
+	 * 
+	 * @param id the given component id
+	 * @return class file containers
+	 */
+	public IClassFileContainer[] getClassFileContainers(String id);
+
+	/**
 	 * Returns a collection of descriptions of components required by this
 	 * component, or an empty collection if none.
 	 * 

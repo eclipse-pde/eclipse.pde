@@ -253,32 +253,28 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
-		IClassFile[] classFiles = null;
+		IClassFile classFile = null;
 		try {
-			classFiles = component.findClassFiles("Zork");
+			classFile = component.findClassFile("Zork");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
-		assertNotNull("No class files", classFiles);
-		assertEquals("Not empty", 0, classFiles.length);
+		assertNull("No class file", classFile);
 
 		try {
-			classFiles = component.findClassFiles("X");
+			classFile = component.findClassFile("X");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
-		assertNotNull("No class files", classFiles);
-		assertEquals("Wrong size", 1, classFiles.length);
-		IClassFile classFile = classFiles[0];
+		assertNotNull("No class file", classFile);
 
+		IClassFile referenceClassFile = null;
 		try {
-			classFiles = referenceComponent.findClassFiles("X");
+			referenceClassFile = referenceComponent.findClassFile("X");
 		} catch (CoreException e) {
 			assertTrue("Should not happen", false);
 		}
-		assertNotNull("No class files", classFiles);
-		assertEquals("Wrong size", 1, classFiles.length);
-		IClassFile referenceClassFile = classFiles[0];
+		assertNotNull("No class file", referenceClassFile);
 
 		try {
 			ApiComparator.compare(null, classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);

@@ -44,6 +44,11 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	private File fRoot;
 	
 	/**
+	 * Origin of this class file container
+	 */
+	private String fOrigin;
+
+	/**
 	 * Map of package names to associated directory (file)
 	 */
 	private Map fPackages;
@@ -128,9 +133,11 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 	 * Constructs a class file container rooted at the specified path.
 	 * 
 	 * @param location absolute path in the local file system
+	 * @param origin id of the component that creates this class file container
 	 */
-	public DirectoryClassFileContainer(String location) {
-		fRoot = new File(location);
+	public DirectoryClassFileContainer(String location, String origin) {
+		this.fRoot = new File(location);
+		this.fOrigin = origin;
 	}
 
 	/**
@@ -214,16 +221,6 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IClassFileContainer#findClassFiles(java.lang.String)
-	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-		IClassFile classFile = findClassFile(qualifiedName);
-		if (classFile == null) {
-			return Util.NO_CLASS_FILES;
-		}
-		return new IClassFile[] { classFile };
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#getPackageNames()
@@ -283,5 +280,13 @@ public class DirectoryClassFileContainer implements IClassFileContainer {
 				processDirectory(nextName, child);
 			}
 		}
+	}
+
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+		return findClassFile(qualifiedName);
+	}
+
+	public String getOrigin() {
+		return this.fOrigin;
 	}
 }

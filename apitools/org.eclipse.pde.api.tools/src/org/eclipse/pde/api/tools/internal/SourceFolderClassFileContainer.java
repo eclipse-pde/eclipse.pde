@@ -46,14 +46,18 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	 */
 	private IContainer fOutputLocation;
 	
+	private String fOrigin;
+
 	/**
 	 * Constructs a new class file container on the given package
 	 * fragment root.
 	 * 
 	 * @param root package fragment root
+	 * @param origin id of the component that creates this class file container
 	 */
-	public SourceFolderClassFileContainer(IPackageFragmentRoot root) {
+	public SourceFolderClassFileContainer(IPackageFragmentRoot root, String origin) {
 		fRoot = root;
+		fOrigin = origin;
 	}
 
 	/* (non-Javadoc)
@@ -158,17 +162,6 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#findClassFiles(java.lang.String)
-	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-		IClassFile classFile = findClassFile(qualifiedName);
-		if (classFile == null) {
-			return Util.NO_CLASS_FILES;
-		}
-		return new IClassFile[]{classFile};
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
@@ -183,5 +176,11 @@ public class SourceFolderClassFileContainer implements IClassFileContainer {
 		return (String[]) names.toArray(new String[names.size()]);
 	}
 
-
+	public String getOrigin() {
+		return this.fOrigin;
+	}
+	
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+		return findClassFile(qualifiedName);
+	}
 }

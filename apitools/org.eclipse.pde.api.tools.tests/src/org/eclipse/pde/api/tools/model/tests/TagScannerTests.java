@@ -58,7 +58,7 @@ public class TagScannerTests extends TestCase {
 	 * @return
 	 */
 	protected IClassFileContainer newArchiveClassFileContainer(IPath path) {
-		return new ArchiveClassFileContainer(path.toOSString());
+		return new ArchiveClassFileContainer(path.toOSString(), null);
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public class TagScannerTests extends TestCase {
 	 * is provided (via an {@link IClassFileContainer})
 	 */
 	public void testBug212276() {
-		DirectoryClassFileContainer container = new DirectoryClassFileContainer(BIN_LOC.toOSString());
+		DirectoryClassFileContainer container = new DirectoryClassFileContainer(BIN_LOC.toOSString(), null);
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod10.java", manifest, container);
 		IApiAnnotations description = manifest.resolveAnnotations(null, Factory.methodDescriptor("a.b.c.TestMethod10", "one", "(Ljava/lang/String;Ljava/lang/Integer;)V"));

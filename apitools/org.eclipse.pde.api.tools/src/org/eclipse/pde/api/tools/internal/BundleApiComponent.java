@@ -414,9 +414,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 			File entry = new File(bundle, path);
 			if (entry.exists()) {
 				if (entry.isFile()) {
-					return new ArchiveClassFileContainer(entry.getCanonicalPath());
+					return new ArchiveClassFileContainer(entry.getCanonicalPath(), this.getId());
 				} else {
-					return new DirectoryClassFileContainer(entry.getCanonicalPath());
+					return new DirectoryClassFileContainer(entry.getCanonicalPath(), this.getId());
 				}
 			}
 		} else {
@@ -424,7 +424,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			ZipFile zip = null;
 			try {
 				if (path.equals(".")) { //$NON-NLS-1$
-					return new ArchiveClassFileContainer(fLocation);
+					return new ArchiveClassFileContainer(fLocation, this.getId());
 				} else {
 					// TODO: use temporary space from OSGi if in a framework
 					zip = new ZipFile(fLocation);
@@ -461,7 +461,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 								}
 							}
 						}
-						return new ArchiveClassFileContainer(tempFile.getCanonicalPath());
+						return new ArchiveClassFileContainer(tempFile.getCanonicalPath(), this.getId());
 					}
 				}
 			} finally {
@@ -1078,5 +1078,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 		BundleDescription oldDescription = fBundleDescription;
 		fBundleDescription = null;
 		((ApiProfile)getProfile()).reset(this, oldDescription);
+	}
+	
+	public String getOrigin() {
+		return this.getId();
 	}
 }

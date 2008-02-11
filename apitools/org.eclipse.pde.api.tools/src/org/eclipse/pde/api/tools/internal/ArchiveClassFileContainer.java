@@ -46,6 +46,11 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	private String fLocation;
 	
 	/**
+	 * Origin of this class file container
+	 */
+	private String fOrigin;
+	
+	/**
 	 * Cache of package names to class file paths in that package,
 	 * or <code>null</code> if not yet initialized.
 	 */
@@ -132,8 +137,9 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 	 * 
 	 * @param path location of the file in the local file system
 	 */
-	public ArchiveClassFileContainer(String path) {
-		fLocation = path;
+	public ArchiveClassFileContainer(String path, String origin) {
+		this.fLocation = path;
+		this.fOrigin = origin;
 	}
 	
 	/* (non-Javadoc)
@@ -200,16 +206,6 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IClassFileContainer#findClassFiles(java.lang.String)
-	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-		IClassFile classFile = findClassFile(qualifiedName);
-		if (classFile == null) {
-			return Util.NO_CLASS_FILES;
-		}
-		return new IClassFile[] { classFile };
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IClassFileContainer#getPackageNames()
@@ -300,4 +296,11 @@ public class ArchiveClassFileContainer implements IClassFileContainer {
 		return this.fLocation.hashCode();
 	}
 	
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+		return findClassFile(qualifiedName);
+	}
+	
+	public String getOrigin() {
+		return this.fOrigin;
+	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +22,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common implementation of a composite class file container.
@@ -91,45 +91,27 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String,java.lang.String)
 	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-		IClassFile[] allClassFiles = null;
-		int counter = 0;
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
 		IClassFileContainer[] containers = getClassFileContainers();
 		for (int i = 0; i < containers.length; i++) {
-			IClassFile file = containers[i].findClassFile(qualifiedName);
-			if (file != null) {
-				if (allClassFiles == null) {
-					allClassFiles = new IClassFile[2];
-					allClassFiles[counter++] = file;
-				} else {
-					if (counter == allClassFiles.length) {
-						System.arraycopy(
-								allClassFiles,
-								0,
-								(allClassFiles = new IClassFile[counter + 1]),
-								0,
-								counter);
-					}
-					allClassFiles[counter++] = file;
+			String origin = containers[i].getOrigin();
+			if (origin == null) {
+				IClassFile file = containers[i].findClassFile(qualifiedName);
+				if (file != null) {
+					return file;
+				}
+			} else if (origin.equals(id)) {
+				IClassFile file = containers[i].findClassFile(qualifiedName, id);
+				if (file != null) {
+					return file;
 				}
 			}
 		}
-		if (counter == 0) {
-			return Util.NO_CLASS_FILES;
-		}
-		if (counter != allClassFiles.length) {
-			System.arraycopy(
-					allClassFiles,
-					0,
-					(allClassFiles = new IClassFile[counter]),
-					0,
-					counter);
-		}
-		return allClassFiles;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -175,15 +157,41 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 			}
 		}
 		return (IClassFileContainer[]) fClassFileContainers.toArray(new IClassFileContainer[fClassFileContainers.size()]);
-	}	
+	}
 	
+	/**
+	 * Returns the class file containers in this container. Creates the containers if
+	 * they are not yet created.
+	 * 
+	 * @param id the given id
+	 * @return class file containers
+	 */
+	protected synchronized IClassFileContainer[] getClassFileContainers(String id) {
+		if (fClassFileContainers == null) {
+			try {
+				fClassFileContainers = createClassFileContainers();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		List containers = new ArrayList();
+		for (Iterator iterator = this.fClassFileContainers.iterator(); iterator.hasNext(); ) {
+			IClassFileContainer container = (IClassFileContainer) iterator.next();
+			String origin = container.getOrigin();
+			if (origin != null && origin.equals(id)) {
+				containers.add(container);
+			}
+		}
+		return (IClassFileContainer[]) containers.toArray(new IClassFileContainer[containers.size()]);
+	}
+
 	/**
 	 * Creates and returns the class file containers for this component.
 	 * Subclasses must override.
 	 * 
 	 * @return list of class file containers for this component
 	 */
-	protected abstract List createClassFileContainers() throws CoreException;	
+	protected abstract List createClassFileContainers() throws CoreException;
 
 	/**
 	 * Sets the class file containers in this container.

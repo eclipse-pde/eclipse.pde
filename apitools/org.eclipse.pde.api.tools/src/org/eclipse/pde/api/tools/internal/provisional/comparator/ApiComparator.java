@@ -250,7 +250,7 @@ public class ApiComparator {
 		final Delta globalDelta = new Delta();
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
 			IApiComponent apiComponent = apiComponents[i];
-			if (!apiComponent.isSystemComponent() && !apiComponent.isFragment()) {
+			if (!apiComponent.isSystemComponent()) {
 				String id = apiComponent.getId();
 				IApiComponent apiComponent2 = profile.getApiComponent(id);
 				IDelta delta = null;
@@ -278,7 +278,7 @@ public class ApiComparator {
 		}
 		for (int i = 0, max = apiComponents2.length; i < max; i++) {
 			IApiComponent apiComponent = apiComponents2[i];
-			if (!apiComponent.isSystemComponent() && !apiComponent.isFragment()) {
+			if (!apiComponent.isSystemComponent()) {
 				String id = apiComponent.getId();
 				if (!apiComponentsIds.contains(id)) {
 					// addition of an api component
@@ -461,19 +461,14 @@ public class ApiComparator {
 			return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.EXECUTION_ENVIRONMENT, null, referenceComponent.getId(), null);
 		}
 		try {
-			if (referenceComponent.hasFragments()) {
-				return compareWithFragments(referenceComponent, component2, referenceProfile, profile, visibilityModifiers);
-			} else {
-				return compareNoFragment(referenceComponent, component2, referenceProfile, profile, visibilityModifiers);
-			}
+			return internalCompare(referenceComponent, component2, referenceProfile, profile, visibilityModifiers);
 		} catch(CoreException e) {
 			// null means an error case
 			return null;
 		}
 	}
-	
-	
-	private static IDelta compareWithFragments(
+
+	private static IDelta internalCompare(
 			final IApiComponent component,
 			final IApiComponent component2,
 			final IApiProfile referenceProfile,
@@ -482,7 +477,8 @@ public class ApiComparator {
 
 		final Set classFileBaseLineNames = new HashSet();
 		final Delta globalDelta = new Delta();
-		IClassFileContainer[] classFileContainers = component.getClassFileContainers();
+		final String id = component.getId();
+		IClassFileContainer[] classFileContainers = component.getClassFileContainers(id);
 		final IApiDescription apiDescription = component.getApiDescription();
 		if (classFileContainers != null) {
 			for (int i = 0, max = classFileContainers.length; i < max; i++) {
@@ -498,101 +494,7 @@ public class ApiComparator {
 									return;
 								}
 								classFileBaseLineNames.add(typeName);
-								IClassFile[] classFiles2 = component2.findClassFiles(typeName);
-								switch(classFiles2.length) {
-									case 0 :
-										globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, classFile, typeName, typeName));
-										break;
-									case 1 :
-										ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, classFiles2[0], component, component2, referenceProfile, profile, visibilityModifiers);
-										IDelta delta = comparator.getDelta();
-										if (delta != null && delta != NO_DELTA) {
-											globalDelta.add(delta);
-										}
-										break;
-									default :
-										// more than one type
-										IClassFile[] classFiles = component.findClassFiles(typeName);
-										if (classFiles.length != classFiles2.length) {
-											// report a missing type
-											globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.DUPLICATED_TYPE, classFile, typeName, typeName));
-										}
-										for (int i = 0, max = classFiles.length; i < max; i++) {
-											comparator = new ClassFileComparator(classFiles[i], classFiles2[i], component, component2, referenceProfile, profile, visibilityModifiers);
-											delta = comparator.getDelta();
-											if (delta != null && delta != NO_DELTA) {
-												globalDelta.add(delta);
-											}
-										}
-								}
-							} catch (CoreException e) {
-								ApiPlugin.log(e);
-							}
-						}
-					});
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
-				}
-			}
-		}
-		IClassFileContainer[] classFileContainers2 = component2.getClassFileContainers();
-		final IApiDescription apiDescription2 = component2.getApiDescription();
-		if (classFileContainers2 != null) {
-			for (int i = 0, max = classFileContainers2.length; i < max; i++) {
-				IClassFileContainer container = classFileContainers2[i];
-				try {
-					container.accept(new ClassFileContainerVisitor() {
-						public void visit(String packageName, IClassFile classFile) {
-							String typeName = classFile.getTypeName();
-							if (classFileBaseLineNames.contains(typeName)) {
-								// already processed
-								return;
-							}
-							IApiAnnotations elementDescription = apiDescription2.resolveAnnotations(null, Factory.typeDescriptor(typeName));
-							try {
-								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
-								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
-									return;
-								}
-								globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE, classFile, typeName, null));
-							} catch (CoreException e) {
-								ApiPlugin.log(e);
-							}
-						}
-					});
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
-				}
-			}
-		}
-		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
-	}
-
-	private static IDelta compareNoFragment(
-			final IApiComponent component,
-			final IApiComponent component2,
-			final IApiProfile referenceProfile,
-			final IApiProfile profile,
-			final int visibilityModifiers) throws CoreException {
-		final Set classFileBaseLineNames = new HashSet();
-		final Delta globalDelta = new Delta();
-		IClassFileContainer[] classFileContainers = component.getClassFileContainers();
-		final IApiDescription apiDescription = component.getApiDescription();
-		if (classFileContainers != null) {
-			for (int i = 0, max = classFileContainers.length; i < max; i++) {
-				IClassFileContainer container = classFileContainers[i];
-				try {
-					container.accept(new ClassFileContainerVisitor() {
-						public void visit(String packageName, IClassFile classFile) {
-							String typeName = classFile.getTypeName();
-							IApiAnnotations elementDescription = apiDescription.resolveAnnotations(null, Factory.typeDescriptor(typeName));
-							try {
-								TypeDescriptor typeDescriptor = new TypeDescriptor(classFile);
-								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
-									return;
-								}
-								classFileBaseLineNames.add(typeName);
-								IClassFile classFile2 = component2.findClassFile(typeName);
+								IClassFile classFile2 = component2.findClassFile(typeName, id);
 								if (classFile2 == null) {
 									globalDelta.add(new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, classFile, typeName, typeName));
 								} else {
@@ -612,7 +514,7 @@ public class ApiComparator {
 				}
 			}
 		}
-		IClassFileContainer[] classFileContainers2 = component2.getClassFileContainers();
+		IClassFileContainer[] classFileContainers2 = component2.getClassFileContainers(id);
 		final IApiDescription apiDescription2 = component2.getApiDescription();
 		if (classFileContainers2 != null) {
 			for (int i = 0, max = classFileContainers2.length; i < max; i++) {
@@ -627,7 +529,7 @@ public class ApiComparator {
 								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
 									return;
 								}
-								if (classFileBaseLineNames.remove(typeName)) {
+								if (classFileBaseLineNames.contains(typeName)) {
 									// already processed
 									return;
 								}

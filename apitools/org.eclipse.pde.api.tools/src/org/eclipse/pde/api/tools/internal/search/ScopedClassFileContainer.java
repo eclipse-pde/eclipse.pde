@@ -159,7 +159,7 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
+	 * @see IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
 	 */
 	public void accept(ClassFileContainerVisitor visitor) throws CoreException {
 		ProxyVisitor proxyVisitor = new ProxyVisitor(visitor);
@@ -167,14 +167,14 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#close()
+	 * @see IClassFileContainer#close()
 	 */
 	public void close() throws CoreException {
 		fComponent.close();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#findClassFile(java.lang.String)
+	 * @see IClassFileContainer#findClassFile(java.lang.String)
 	 */
 	public IClassFile findClassFile(String qualifiedName) throws CoreException {
 		String packageName = Util.getPackageName(qualifiedName);
@@ -193,29 +193,35 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IClassFileContainer#findClassFiles(java.lang.String)
+	 * @see IClassFileContainer#findClassFile(java.lang.String,java.lang.String)
 	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
 		String packageName = Util.getPackageName(qualifiedName);
 		Set types = (Set) fTypesPerPackage.get(packageName);
 		if (types != null) {
 			if (types.isEmpty()) {
 				// all types in the package
-				return fComponent.findClassFiles(qualifiedName);
+				return fComponent.findClassFile(qualifiedName, id);
 			} else {
 				if (types.contains(qualifiedName)) {
-					return fComponent.findClassFiles(qualifiedName);
+					return fComponent.findClassFile(qualifiedName, id);
 				}
 			}
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#getPackageNames()
+	 * @see IClassFileContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
 		return (String[]) fPackageNames.toArray(new String[fPackageNames.size()]);
 	}
 
+	/* (non-Javadoc)
+	 * @see IClassFileContainer#getOrigin()
+	 */
+	public String getOrigin() {
+		return this.fComponent.getId();
+	}
 }

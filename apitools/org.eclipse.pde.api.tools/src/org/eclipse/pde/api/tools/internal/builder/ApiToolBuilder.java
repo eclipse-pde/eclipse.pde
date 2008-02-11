@@ -1216,21 +1216,35 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				if (javaProject == null) return;
 				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 					IDelta localDelta = (IDelta) iterator.next();
-					IType type = null;
-					try {
-						type = javaProject.findType(localDelta.getTypeName().replace('$', '.'));
-					} catch (JavaModelException e) {
-						ApiPlugin.log(e);
-					}
-					if (type == null) {
-						// delta reported against an api component or an api profile
-						if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
-							createMarkerFor(localDelta, null, javaProject, reference, component);
-						}
-					} else {
-						ICompilationUnit compilationUnit = type.getCompilationUnit();
-						if (compilationUnit == null) continue;
-						processDelta(javaProject, localDelta, compilationUnit, reference, component);
+					switch(localDelta.getElementType()) {
+						case IDelta.API_COMPONENT_ELEMENT_TYPE :
+						case IDelta.API_PROFILE_ELEMENT_TYPE :
+							if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
+								createMarkerFor(localDelta, null, javaProject, reference, component);
+							}
+							break;
+						default:
+							IType type = null;
+							try {
+								type = javaProject.findType(localDelta.getTypeName().replace('$', '.'));
+							} catch (JavaModelException e) {
+								ApiPlugin.log(e);
+							}
+							if (type == null) {
+								// delta reported against an api component or an api profile
+								if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
+									createMarkerFor(localDelta, null, javaProject, reference, component);
+								}
+							} else {
+								ICompilationUnit compilationUnit = type.getCompilationUnit();
+								if (compilationUnit == null) {
+									if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
+										createMarkerFor(localDelta, null, javaProject, reference, component);
+									}
+								} else {
+									processDelta(javaProject, localDelta, compilationUnit, reference, component);
+								}
+							}
 					}
 				}
 				checkApiComponentVersion(javaProject, reference, component);

@@ -35,7 +35,6 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.search.ClassFileScanner;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * This class tests the class file scanner and the class file visitor
@@ -156,7 +155,7 @@ public class ClassFileScannerTests extends TestCase {
 		assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_DIR + File.separator + "Test12.java",
 				WORKSPACE_ROOT, 
 				new String[] {"-1.4", "-preserveAllLocals",	"-nowarn"}));
-		container = new DirectoryClassFileContainer(WORKSPACE_ROOT+File.separator+"classes");
+		container = new DirectoryClassFileContainer(WORKSPACE_ROOT+File.separator+"classes", null);
 		scanner = ClassFileScanner.newScanner();
 		component = new IApiComponent() {
 			public String[] getPackageNames() throws CoreException {
@@ -164,9 +163,6 @@ public class ClassFileScannerTests extends TestCase {
 			}
 			public IClassFile findClassFile(String qualifiedName) throws CoreException {
 				return null;
-			}
-			public IClassFile[] findClassFiles(String qualifiedName) throws CoreException {
-				return Util.NO_CLASS_FILES;
 			}
 			public void close() throws CoreException {
 			}
@@ -221,6 +217,15 @@ public class ClassFileScannerTests extends TestCase {
 			}
 			public boolean hasFragments() {
 				return false;
+			}
+			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+				return null;
+			}
+			public IClassFileContainer[] getClassFileContainers(String id) {
+				return null;
+			}
+			public String getOrigin() {
+				return this.getId();
 			}
 		};
 	}

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.0.0
  */
 public interface IClassFileContainer {
-	
+
 	/**
 	 * Returns the names of all packages in this container in dot
 	 * separated format. Does not include empty packages.
@@ -27,7 +27,7 @@ public interface IClassFileContainer {
 	 * @exception if unable to retrieve package names
 	 */
 	public String[] getPackageNames() throws CoreException;
-	
+
 	/**
 	 * Returns the class file with the given fully qualified name
 	 * or <code>null</code> if none.
@@ -38,17 +38,18 @@ public interface IClassFileContainer {
 	 * @exception if an exception occurs retrieving the class file
 	 */
 	public IClassFile findClassFile(String qualifiedName) throws CoreException;
-	
+
 	/**
-	 * Returns the class files with the given fully qualified name
-	 * or an empty array if none.
+	 * Returns the class file with the given fully qualified name
+	 * coming from the component with the given id or <code>null</code> if none.
 	 * 
 	 * @param qualifiedName fully qualified type name. Package names
 	 * are dot separated and type names are '$'-separated.
-	 * @return an array of class files or an empty array if none
+	 * @param id the api component id to consider
+	 * @return class file or <code>null</code>
 	 * @exception if an exception occurs retrieving the class file
 	 */
-	public IClassFile[] findClassFiles(String qualifiedName) throws CoreException;
+	public IClassFile findClassFile(String qualifiedName, String id) throws CoreException;
 
 	/**
 	 * Visits all class files in this container.
@@ -66,4 +67,11 @@ public interface IClassFileContainer {
 	 * @throws CoreException if closing fails
 	 */
 	public void close() throws CoreException;
+	
+	/**
+	 * Returns the id of the component from where the receiver is coming from.
+	 * 
+	 * @return the id of the origin of this class file container
+	 */
+	public String getOrigin();
 }
