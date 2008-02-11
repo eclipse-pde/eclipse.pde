@@ -529,7 +529,7 @@ public class ApiComparator {
 								if (filterType(visibilityModifiers, elementDescription, typeDescriptor)) {
 									return;
 								}
-								if (classFileBaseLineNames.remove(typeName)) {
+								if (classFileBaseLineNames.contains(typeName)) {
 									// already processed
 									return;
 								}

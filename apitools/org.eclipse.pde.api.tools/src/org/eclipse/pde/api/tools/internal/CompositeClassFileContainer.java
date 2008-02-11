@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 
 /**
  * A collection of class file containers.
@@ -35,16 +30,7 @@ public class CompositeClassFileContainer extends AbstractClassFileContainer {
 	 * @param containers list of containers
 	 */
 	public CompositeClassFileContainer(List containers, String origin) {
-		List temp = new ArrayList();
-		Set uniqueContainers = new HashSet(containers.size() * 2);
-		for (Iterator iterator = containers.iterator(); iterator.hasNext();  ) {
-			IClassFileContainer container = (IClassFileContainer) iterator.next();
-			if (!uniqueContainers.contains(container)) {
-				uniqueContainers.add(container);
-				temp.add(container);
-			}
-		}
-		this.fContainers = temp;
+		this.fContainers = containers;
 		this.fOrigin = origin;
 	}
 
