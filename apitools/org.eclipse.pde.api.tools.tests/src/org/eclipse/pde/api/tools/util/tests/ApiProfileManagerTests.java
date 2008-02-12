@@ -682,7 +682,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			addToClasspath(fProject, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the event for class path addition not received", obj);
-			// add to mandifest bundle classpath
+			// add to manifest bundle classpath
 			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
