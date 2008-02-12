@@ -60,6 +60,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
+	public static final String P_IMPORT_LOG = "importLog"; //$NON-NLS-1$
 	public static final String P_GROUP_BY = "groupBy"; //$NON-NLS-1$
 
 	private int MESSAGE_ORDER;
@@ -359,7 +360,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private Action createImportLogAction() {
-		Action action = new ImportLogAction(this, Messages.LogView_import);
+		Action action = new ImportLogAction(this, Messages.LogView_import, fMemento);
 		action.setToolTipText(Messages.LogView_import_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
@@ -1538,7 +1539,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	/**
 	 * Returns whether currently open log is platform log or imported file.
-	 * @return true if currently open log is platoform log, false otherwise
+	 * @return true if currently open log is platform log, false otherwise
 	 */
 	public boolean isPlatformLogOpen() {
 		return (fInputFile.equals(Platform.getLogFileLocation().toFile()));

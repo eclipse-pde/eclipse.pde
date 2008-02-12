@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218293
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -15,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IMemento;
 
 /**
  * Imports log to Log View from such sources as file in local file system, file in workspace,
@@ -30,6 +32,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 */
 	private final LogView logView;
 	private ImportConfigurationLogAction[] actions;
+	private IMemento fMemento;
 
 	/**
 	 * Action imports log file from given location to Log View.
@@ -39,8 +42,10 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		private String location;
 
 		public ImportConfigurationLogAction(String name, String location) {
+			super(name, AS_RADIO_BUTTON);
 			this.name = name;
 			this.location = location;
+			setId(name + "#" + location); //$NON-NLS-1$
 		}
 
 		/*
@@ -49,14 +54,10 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		 */
 		public void run() {
 			logView.handleImportPath(location);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.Action#getText()
-		 */
-		public String getText() {
-			return name;
+			if (isChecked()) {
+				// remember we clicked on that item
+				fMemento.putString(LogView.P_IMPORT_LOG, getId());
+			}
 		}
 
 		/*
@@ -73,9 +74,10 @@ public class ImportLogAction extends Action implements IMenuCreator {
 		}
 	}
 
-	public ImportLogAction(LogView logView, String text) {
+	public ImportLogAction(LogView logView, String text, IMemento memento) {
 		super(text);
 		this.logView = logView;
+		this.fMemento = memento;
 		setMenuCreator(this);
 	}
 
@@ -175,6 +177,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 * @see IMenuCreator#getMenu(Control)
 	 */
 	private void createMenuItems(Menu menu) {
+		String previouslyCheckedActionId = fMemento.getString(LogView.P_IMPORT_LOG);
 		if (actions.length == 0) {
 			Action action = new Action(Messages.ImportLogAction_noLaunchHistory) {
 				// dummy action
@@ -184,16 +187,17 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			actionItem.fill(menu, -1);
 		} else {
 			for (int i = 0; i < actions.length; i++) {
+				actions[i].setChecked(actions[i].getId().equals(previouslyCheckedActionId) && !logView.isPlatformLogOpen());
 				ActionContributionItem item = new ActionContributionItem(actions[i]);
 				item.fill(menu, -1);
 			}
 		}
 
-		if (!logView.isPlatformLogOpen()) {
-			(new Separator()).fill(menu, -1);
-			ActionContributionItem item = new ActionContributionItem(new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath()));
-			item.fill(menu, -1);
-		}
+		(new Separator()).fill(menu, -1);
+		ImportConfigurationLogAction importWorkspaceLogAction = new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath());
+		importWorkspaceLogAction.setChecked(logView.isPlatformLogOpen());
+		ActionContributionItem item = new ActionContributionItem(importWorkspaceLogAction);
+		item.fill(menu, -1);
 	}
 
 	/*
