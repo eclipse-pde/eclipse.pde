@@ -302,7 +302,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	/**
 	 * The current project for which this builder was defined
 	 */
-	private IProject fCurrentProject;
+	private IProject fCurrentProject = null;
 	
 	/**
 	 * Used to help determine the scope of the api problem (change or breakage)
@@ -333,9 +333,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		this.bits = 0;
-		this.fCurrentProject = getProject();
-		this.fTypesToCheck.clear();
-		if (fCurrentProject == null || !fCurrentProject.isAccessible() || !this.fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
+		fCurrentProject = getProject();
+		fTypesToCheck.clear();
+		if (fCurrentProject == null || !fCurrentProject.isAccessible() || !fCurrentProject.hasNature(ApiPlugin.NATURE_ID) ||
 				hasBeenBuilt(fCurrentProject)) {
 			return new IProject[0];
 		}
@@ -427,7 +427,6 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					return;
 				}
 				IMarker marker = fCurrentProject.createMarker(ApiPlugin.DEFAULT_API_PROFILE_PROBLEM_MARKER);
-				//TODO add this severity level to the pref page?
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 				marker.setAttribute(IMarker.MESSAGE, BuilderMessages.ApiToolBuilder_10);
 			} else {
@@ -480,6 +479,19 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
+	 * @return if the api usage scan should be ignored
+	 */
+	private boolean ignoreApiUsageScan() {
+		boolean ignore = true;
+		IJavaProject jproject = JavaCore.create(fCurrentProject);
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, jproject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOIMPLEMENT, jproject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOINSTANTIATE, jproject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, jproject) == ApiPlugin.SEVERITY_IGNORE;
+		return ignore;
+	}
+	
+	/**
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
 	 * 
@@ -489,6 +501,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param monitor progress monitor
 	 */
 	private void checkApiUsage(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor) {
+		if(ignoreApiUsageScan()) {
+			return;
+		}
 		ApiUseAnalyzer analyzer = new ApiUseAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
@@ -498,9 +513,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}		
 			if (illegal.length > 0) {
-				IJavaProject javaProject = JavaCore.create(this.fCurrentProject);
+				IJavaProject jproject = JavaCore.create(fCurrentProject);
 				for (int i = 0; i < illegal.length; i++) {
-					createMarkerFor(illegal[i], javaProject);
+					createMarkerFor(illegal[i], jproject);
 				}
 			}
 		} catch (CoreException e) {
@@ -645,7 +660,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					}
 					className = type.getFullyQualifiedName();
 					if(reference != null) {
-						compareProfiles(file, new String(className), reference,	apiComponent);
+						compareProfiles(new String(className), reference,	apiComponent);
 					}
 					scopeElements.add(Util.getType(new String(className)));
 				}
@@ -885,12 +900,20 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void compareProfiles(IResource resource, String typeName, IApiComponent reference, IApiComponent component) {
-		IJavaProject javaProject = JavaCore.create(this.fCurrentProject);
-		if (javaProject == null) return;
+	/**
+	 * Compares the given type between the two api components
+	 * @param typeName the type to check in each component
+	 * @param reference 
+	 * @param component
+	 */
+	private void compareProfiles(String typeName, IApiComponent reference, IApiComponent component) {
+		IJavaProject javaProject = JavaCore.create(fCurrentProject);
+		if (javaProject == null) {
+			return;
+		}
 		ICompilationUnit compilationUnit = null;
 		if (DEBUG) {
-			System.out.println("BEFORE"); //$NON-NLS-1$
+			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IResource compilationUnitResource = null;
 		try {
@@ -902,13 +925,8 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					if (compilationUnitResource != null) {
 						if (DEBUG) {
 							IMarker[] markers = getMarkers(compilationUnitResource);
-							if (markers == null) {
-								// no marker created
-							} else {
-								for (int i = 0, max = markers.length; i < max; i++) {
-									IMarker marker = markers[i];
-									System.out.println(marker);
-								}
+							for (int i = 0, max = markers.length; i < max; i++) {
+								System.out.println(markers[i]);
 							}
 						}
 					}
@@ -924,7 +942,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			ApiPlugin.log(e);
 		}
 		if (classFile == null) {
-			if (DEBUG) System.err.println("Could not retrieve class file for " + typeName + " in " + component.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			if (DEBUG) {
+				System.err.println("Could not retrieve class file for " + typeName + " in " + component.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return;
 		}
 		IDelta delta = null;
@@ -940,11 +960,15 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		} catch(Exception e) {
 			ApiPlugin.log(e);
 		} finally {
-			if (DEBUG) System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (DEBUG) {
+				System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 		}
 
 		if (delta == null) {
-			if (DEBUG) System.err.println("An error occured while comparing"); //$NON-NLS-1$
+			if (DEBUG) {
+				System.err.println("An error occured while comparing"); //$NON-NLS-1$
+			}
 			return;
 		}
 		if (delta != ApiComparator.NO_DELTA) {
@@ -954,7 +978,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				processDelta(javaProject, localDelta, compilationUnit, reference, component);
 			}
 			checkApiComponentVersion(javaProject, reference, component);
-			if (DEBUG) System.out.println("Complete"); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println("Completed compare with no delta"); //$NON-NLS-1$
+			}
 		} else {
 			if (DEBUG) {
 				System.out.println("No delta"); //$NON-NLS-1$
@@ -962,16 +988,15 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			cleanupVersionNumberingMarker();
 		}
 		if (DEBUG) {
-			System.out.println("AFTER"); //$NON-NLS-1$
+			System.out.println("finished comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			if (compilationUnitResource != null) {
 				IMarker[] markers = getMarkers(compilationUnitResource);
-				if (markers == null) {
+				if (markers.length == 0) {
 					// no marker created
-					System.out.println("No marker created"); //$NON-NLS-1$
+					System.out.println("No markers created on: ["+compilationUnitResource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					for (int i = 0, max = markers.length; i < max; i++) {
-						IMarker marker = markers[i];
-						System.out.println(marker);
+						System.out.println(markers[i]);
 					}
 				}
 			}
@@ -1130,7 +1155,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 			}
 		} catch(CoreException e) {}
-		return null;
+		return new IMarker[0];
 	}
 
 	private IType getType(IJavaProject javaProject, String typeName) throws JavaModelException {
@@ -1333,6 +1358,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param project project the compilation unit is in
 	 */
 	private void createMarkerFor(IReference reference, IJavaProject project) {
+		if(isReferenceFiltered(project, reference)) {
+			return;
+		}
 		try {
 			String message = null;
 			String prefKey = null;
@@ -1376,9 +1404,6 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_11, new String[] {field.getEnclosingType().getQualifiedName(), field.getName()});
 					break;
 				}
-			}
-			if(isReferenceFiltered(project, reference)) {
-				return;
 			}
 			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, project);
 			if (sev == ApiPlugin.SEVERITY_IGNORE) {
