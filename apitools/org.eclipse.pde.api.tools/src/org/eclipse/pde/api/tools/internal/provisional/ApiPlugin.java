@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ISavedState;
@@ -28,7 +29,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
@@ -520,23 +520,23 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			super.stop(context);
 		}
 	}
-	
+
 	/**
-	 * Returns the severity for the specific key from the given {@link IJavaProject}.
+	 * Returns the severity for the specific key from the given {@link IProject}.
 	 * If the project does not have project specific settings, the workspace preference
 	 * is returned. If <code>null</code> is passed in as the project the workspace
 	 * preferences are consulted.
 	 * 
-	 * @param prefkey
-	 * @param project or <code>null</code>
+	 * @param prefkey the given preference key
+	 * @param project the given project or <code>null</code>
 	 * @return the severity level for the given pref key
 	 */
-	public int getSeverityLevel(String prefkey, IJavaProject project) {
+	public int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		List scopes = new ArrayList();
 		scopes.add(new InstanceScope());
 		if(project != null) {
-			scopes.add(new ProjectScope(project.getProject()));
+			scopes.add(new ProjectScope(project));
 		}
 		String value = service.getString(ApiPlugin.getPluginIdentifier(), prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
 		if(value == null) {
@@ -550,7 +550,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		}
 		return SEVERITY_IGNORE;
 	}
-	
+
 	/**
 	 * Method to configure all of the debug options for this plugin
 	 */

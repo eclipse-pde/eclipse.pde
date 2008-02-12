@@ -75,7 +75,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * specific settings
 	 */
 	public void testGetProjectSpecificValue() {
-		int value = ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, getTestingJavaProject(TESTING_PROJECT_NAME));
+		int value = ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
 		assertEquals("The value for RESTRICTION_NOREFERENCE should be 'Ignore'", value, ApiPlugin.SEVERITY_IGNORE);
 	}
 	
@@ -84,7 +84,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * specific settings
 	 */
 	public void testGetDefaultProjectSpecificValue() {
-		int value = ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, getTestingJavaProject(TESTING_PROJECT_NAME));
+		int value = ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
 		assertEquals("The value for RESTRICTION_NOEXTEND should be 'Warning'", value, ApiPlugin.SEVERITY_WARNING);
 	}
 	

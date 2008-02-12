@@ -483,11 +483,10 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private boolean ignoreApiUsageScan() {
 		boolean ignore = true;
-		IJavaProject jproject = JavaCore.create(fCurrentProject);
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, jproject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOIMPLEMENT, jproject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOINSTANTIATE, jproject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, jproject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOIMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOINSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
 		return ignore;
 	}
 	
@@ -977,7 +976,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				IDelta localDelta = (IDelta) iterator.next();
 				processDelta(javaProject, localDelta, compilationUnit, reference, component);
 			}
-			checkApiComponentVersion(javaProject, reference, component);
+			checkApiComponentVersion(reference, component);
 			if (DEBUG) {
 				System.out.println("Completed compare with no delta"); //$NON-NLS-1$
 			}
@@ -1009,8 +1008,8 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param reference
 	 * @param component
 	 */
-	private void checkApiComponentVersion(IJavaProject javaProject, IApiComponent reference, IApiComponent component) {
-		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, javaProject);
+	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
+		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
 		if ((this.bits & (CONTAINS_API_BREAKAGE | CONTAINS_API_CHANGES)) != 0
 				&& severityLevel != ApiPlugin.SEVERITY_IGNORE) {
 			String referenceVersionValue = reference.getVersion();
@@ -1280,7 +1279,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					delta.getElementType(),
 					delta.getKind(),
 					delta.getFlags()); 
-			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, project);
+			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, fCurrentProject);
 			if (sev == ApiPlugin.SEVERITY_IGNORE) {
 				// ignore
 				return;
@@ -1405,7 +1404,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					break;
 				}
 			}
-			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, project);
+			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, fCurrentProject);
 			if (sev == ApiPlugin.SEVERITY_IGNORE) {
 				// ignore
 				return;
@@ -1645,7 +1644,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							}
 					}
 				}
-				checkApiComponentVersion(javaProject, reference, component);
+				checkApiComponentVersion(reference, component);
 			}
 			if (DEBUG) System.out.println("Complete"); //$NON-NLS-1$
 		} else if (DEBUG) {
@@ -1673,9 +1672,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case IDelta.ADDED_IMPLEMENT_RESTRICTION :
 					// check new apis
 					this.bits |= CONTAINS_API_CHANGES;
-					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, javaProject);
-					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, javaProject);
-					int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, javaProject);
+					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, fCurrentProject);
+					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, fCurrentProject);
+					int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, fCurrentProject);
 					if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 							|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 							|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
@@ -1699,9 +1698,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				System.err.println(deltaDetails + " is not binary compatible"); //$NON-NLS-1$
 			}
 			createMarkerFor(delta, compilationUnit, javaProject, reference, component);
-			int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, javaProject);
-			int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, javaProject);
-			int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, javaProject);
+			int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, fCurrentProject);
+			int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, fCurrentProject);
+			int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, fCurrentProject);
 			if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
