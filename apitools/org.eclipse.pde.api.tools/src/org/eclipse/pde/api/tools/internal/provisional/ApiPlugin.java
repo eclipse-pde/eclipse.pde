@@ -137,36 +137,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static final String BUILDER_ID = PLUGIN_ID + ".apitoolbuilder" ; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the id for the default api profile problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>
-	 */
-	public static final String DEFAULT_API_PROFILE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the id for the binary compatibility problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.binary_compatibility</code> 
-	 */
-	public static final String BINARY_COMPATIBILITY_PROBLEM_MARKER = PLUGIN_ID + ".binary_compatibility"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the id for the api usage problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.api_usage</code> 
-	 */
-	public static final String API_USAGE_PROBLEM_MARKER = PLUGIN_ID + ".api_usage"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the id for the version numbering problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.version_numbering</code> 
-	 */
-	public static final String VERSION_NUMBERING_PROBLEM_MARKER = PLUGIN_ID + ".version_numbering"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the id for the missing @since tag problem marker.
-	 * Value is: <code>org.eclipse.pde.api.tools.marker.sincetags</code> 
-	 */
-	public static final String SINCE_TAGS_PROBLEM_MARKER = PLUGIN_ID + ".marker.sincetags"; //$NON-NLS-1$
-	
-	/**
 	 * Constant representing the id of the workspace {@link IApiProfile}.
 	 * Value is: <code>workspace</code>
 	 */

@@ -421,17 +421,17 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				}
 				// first we clean up all existing api tooling markers for the current project
 				cleanupMarkers(this.fCurrentProject);
-				IMarker[] markers = this.fCurrentProject.findMarkers(ApiPlugin.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 				if (markers.length == 1) {
 					// marker already exists. So we can simply return
 					return;
 				}
-				IMarker marker = fCurrentProject.createMarker(ApiPlugin.DEFAULT_API_PROFILE_PROBLEM_MARKER);
+				IMarker marker = fCurrentProject.createMarker(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER);
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 				marker.setAttribute(IMarker.MESSAGE, BuilderMessages.ApiToolBuilder_10);
 			} else {
 				// we want to make sure that existing markers are removed
-				this.fCurrentProject.deleteMarkers(ApiPlugin.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 			}
 		}
 		catch(CoreException e) {
@@ -1087,10 +1087,10 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private void cleanupVersionNumberingMarker() {
 		try {
-			IMarker[] markers = this.fCurrentProject.findMarkers(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
 			if (manifestFile == null) return;
-			IMarker[] manifestMarkers = manifestFile.findMarkers(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			IMarker[] manifestMarkers = manifestFile.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 			if (markers.length != 0) {
 				// check if we already have such a version numbering marker
 				if (manifestMarkers.length != 0) {
@@ -1126,12 +1126,12 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	private void cleanupMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
-				resource.deleteMarkers(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(ApiPlugin.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(ApiPlugin.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
-					resource.deleteMarkers(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				}
 			}
 		} catch(CoreException e) {
@@ -1148,10 +1148,10 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		try {
 			if (resource != null && resource.exists()) {
 				ArrayList markers = new ArrayList();
-				markers.addAll(Arrays.asList(resource.findMarkers(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(ApiPlugin.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
-				markers.addAll(Arrays.asList(resource.findMarkers(ApiPlugin.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
+				markers.addAll(Arrays.asList(resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE)));
 				return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 			}
 		} catch(CoreException e) {}
@@ -1289,7 +1289,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			if (sev == ApiPlugin.SEVERITY_WARNING) {
 				severity = IMarker.SEVERITY_WARNING;
 			}
-			IMarker marker = correspondingResource.createMarker(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER);
+			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER);
 			// retrieve line number, char start and char end
 			int lineNumber = 1;
 			int charStart = -1;
@@ -1434,7 +1434,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			if (correspondingResource == null) {
 				return;
 			}
-			IMarker marker = correspondingResource.createMarker(ApiPlugin.API_USAGE_PROBLEM_MARKER);
+			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER);
 			IDocument document = Util.getDocument(compilationUnit);
 			// retrieve line number, char start and char end
 			int lineNumber = location.getLineNumber();
@@ -1527,11 +1527,11 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							first = line.indexOf(qname);
 						}
 						if(first < 0) {
-							qname = "super."+name;
+							qname = "super."+name; //$NON-NLS-1$
 							first = line.indexOf(qname);
 						}
 						if(first < 0) {
-							qname = "this."+name;
+							qname = "this."+name; //$NON-NLS-1$
 							first = line.indexOf(qname);
 						}
 						if(first > -1) {
@@ -1867,7 +1867,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				// ignore
 			}
 			if (correspondingResource == null) return;
-			IMarker marker = correspondingResource.createMarker(ApiPlugin.SINCE_TAGS_PROBLEM_MARKER);
+			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER);
 			int lineNumber = 1;
 			int charStart = 0;
 			int charEnd = 1;
@@ -1916,13 +1916,13 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private void createVersionNumberingProblemMarkerMarker(final String message, int markerSeverity, boolean breakage, String version) {
 		try {
-			IMarker[] markers = this.fCurrentProject.findMarkers(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
 			if (manifestFile == null) {
 				// Cannot retrieve the manifest.mf file
 				return;
 			}
-			IMarker[] manifestMarkers = manifestFile.findMarkers(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			IMarker[] manifestMarkers = manifestFile.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 			if (markers.length != 0) {
 				// check if we already have such a version numbering marker
 				if (manifestMarkers.length != 0) {
@@ -1955,7 +1955,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			}
 			// this error should be located on the manifest.mf file
 			// first of all we check how many binary breakage marker are there
-			IMarker marker = manifestFile.createMarker(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER);
+			IMarker marker = manifestFile.createMarker(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER);
 			marker.setAttributes(
 				new String[] {
 						IMarker.MESSAGE,
