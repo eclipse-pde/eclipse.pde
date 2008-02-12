@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Les Jones <lesojones@gmail.com> - Bug 195433
+ *     Les Jones <lesojones@gmail.com> - bug 195433, 218210
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -255,8 +255,18 @@ public class JREBlock {
 		if (fJreButton.getSelection()) {
 			if (fJreCombo.getSelectionIndex() != -1) {
 				String jreName = fJreCombo.getText();
-				IVMInstall install = VMHelper.getVMInstall(jreName);
-				jrePath = JavaRuntime.newJREContainerPath(install);
+
+				String defaultVM = null;
+				try {
+					defaultVM = VMHelper.getDefaultVMInstallName(config);
+				} catch (CoreException e) {
+				}
+				// Only set the jrePath if name is different from the default
+				if (defaultVM == null || !jreName.equals(defaultVM)) {
+					IVMInstall install = VMHelper.getVMInstall(jreName);
+					// remove the name to make portable
+					jrePath = JavaRuntime.newJREContainerPath(install).removeLastSegments(1);
+				}
 			}
 		} else {
 			if (fEeCombo.getSelectionIndex() != -1) {
