@@ -121,6 +121,13 @@ public class PDEState extends MinimalState {
 			resolveState(false);
 			saveState(dir);
 		} else {
+			// get the system bundle from the State
+			if (fState.getPlatformProperties() != null && fState.getPlatformProperties().length > 0) {
+				String systemBundle = (String) fState.getPlatformProperties()[0].get(ICoreConstants.OSGI_SYSTEM_BUNDLE);
+				if (systemBundle != null)
+					fSystemBundle = systemBundle;
+			}
+
 			boolean propertiesChanged = initializePlatformProperties();
 			fState.setResolver(Platform.getPlatformAdmin().getResolver());
 			if (propertiesChanged)

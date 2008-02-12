@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -154,7 +155,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		Object obj = item.getData();
 		if (obj instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) obj;
-			if (!"org.eclipse.osgi".equals(model.getPluginBase().getId())) //$NON-NLS-1$
+			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
+			if (!(systemBundleId.equals(model.getPluginBase().getId())))
 				return fPluginTreeViewer.getChecked(model);
 		}
 		return false;
@@ -310,7 +312,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			int index = value == null ? -1 : value.indexOf(':');
 			item.setText(1, index == -1 ? "" : value.substring(0, index)); //$NON-NLS-1$
 			if (model.isFragmentModel()) {
-				item.setText(2, "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				item.setText(2, "false"); //$NON-NLS-1$
 			} else {
 				item.setText(2, index == -1 ? "" : value.substring(index + 1)); //$NON-NLS-1$
 			}
@@ -327,7 +329,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void resetText(TreeItem item) {
 		if (item.getChecked()) {
 			IPluginModelBase model = (IPluginModelBase) item.getData();
-			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
+			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
+			boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
 			if (!"default".equals(item.getText(1))) //$NON-NLS-1$
 				item.setText(1, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (model.isFragmentModel())
@@ -399,7 +402,6 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	 * removed when I find it.
 	 * 
 	 * @param roots
-	 * @return
 	 */
 	private ArrayList getAllTreeItems(TreeItem[] roots) {
 		ArrayList list = new ArrayList();

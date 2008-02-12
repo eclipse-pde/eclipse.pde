@@ -243,7 +243,7 @@ public class ClasspathHelper {
 		IPluginLibrary[] libraries = base.getLibraries();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals("org.eclipse.osgi"), false); //$NON-NLS-1$
+				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
 				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
 				boolean searchBuild = file.exists();
 				if (searchBuild) {

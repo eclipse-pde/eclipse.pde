@@ -638,7 +638,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public ModelEntry findEntry(String id) {
 		if ("system.bundle".equals(id)) //$NON-NLS-1$
-			id = "org.eclipse.osgi"; //$NON-NLS-1$
+			id = getSystemBundleId();
 		return id == null ? null : (ModelEntry) getEntryTable().get(id);
 	}
 
@@ -853,6 +853,15 @@ public class PluginModelManager implements IModelProviderListener {
 		modelsChanged(new ModelProviderEvent(state, type, added, removed, new IModel[0]));
 
 		fireStateChanged(state);
+	}
+
+	/**
+	 * Returns the id of the system bundle currently in the resolver state
+	 * 
+	 * @return a String with the id of the system.bundle
+	 */
+	public String getSystemBundleId() {
+		return getState().getSystemBundle();
 	}
 
 	/**

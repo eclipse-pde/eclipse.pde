@@ -27,8 +27,6 @@ import org.osgi.framework.*;
 
 public class TargetPlatformHelper {
 
-	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
-
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 
@@ -192,25 +190,31 @@ public class TargetPlatformHelper {
 
 	public static Dictionary getTargetEnvironment() {
 		Dictionary result = new Hashtable();
-		result.put("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
-		result.put("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
-		result.put("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
-		result.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
-		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		result.put("osgi.resolverMode", "development"); //$NON-NLS-1$ //$NON-NLS-2$
+		result.put(ICoreConstants.OSGI_OS, TargetPlatform.getOS());
+		result.put(ICoreConstants.OSGI_WS, TargetPlatform.getWS());
+		result.put(ICoreConstants.OSGI_NL, TargetPlatform.getNL());
+		result.put(ICoreConstants.OSGI_ARCH, TargetPlatform.getOSArch());
+		result.put(ICoreConstants.OSGI_RESOLVE_OPTIONAL, "true"); //$NON-NLS-1$
+		result.put(ICoreConstants.OSGI_RESOLVER_MODE, "development"); //$NON-NLS-1$
+		return result;
+	}
+
+	public static Dictionary getTargetEnvironment(MinimalState state) {
+		Dictionary result = getTargetEnvironment();
+		result.put(ICoreConstants.OSGI_SYSTEM_BUNDLE, state.getSystemBundle());
 		return result;
 	}
 
 	public static Dictionary[] getPlatformProperties(String[] profiles, MinimalState state) {
 		if (profiles == null || profiles.length == 0)
-			return new Dictionary[] {getTargetEnvironment()};
+			return new Dictionary[] {getTargetEnvironment(state)};
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
-			Properties profileProps = getJavaProfileProperties(profiles[i], state.getState());
+			Properties profileProps = getJavaProfileProperties(profiles[i], state);
 			if (profileProps != null) {
-				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
+				Dictionary props = TargetPlatformHelper.getTargetEnvironment(state);
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -222,11 +226,13 @@ public class TargetPlatformHelper {
 		}
 		if (result.size() > 0)
 			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
-		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
+		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
 	}
 
-	private static Properties getJavaProfileProperties(String ee, State state) {
-		BundleDescription osgiBundle = state.getBundle(SYSTEM_BUNDLE, null);
+	// We need system bundle passed here, because we are building the properties to be passed to
+	// the State - it doesn't know which is the system bundle yet.
+	private static Properties getJavaProfileProperties(String ee, MinimalState state) {
+		BundleDescription osgiBundle = state.getState().getBundle(state.getSystemBundle(), null);
 		if (osgiBundle == null)
 			return null;
 

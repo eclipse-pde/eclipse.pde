@@ -108,8 +108,18 @@ public interface ICoreConstants {
 	public static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
+	public static final String ECLIPSE_SYSTEM_BUNDLE = "Eclipse-SystemBundle"; //$NON-NLS-1$
 
-	// Equinox-specifid directives
+	// Equinox-specific system properties
+	public static final String OSGI_SYSTEM_BUNDLE = "osgi.system.bundle"; //$NON-NLS-1$
+	public static final String OSGI_OS = "osgi.os"; //$NON-NLS-1$
+	public static final String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
+	public static final String OSGI_NL = "osgi.nl"; //$NON-NLS-1$
+	public static final String OSGI_ARCH = "osgi.arch"; //$NON-NLS-1$
+	public static final String OSGI_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
+	public static final String OSGI_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
+
+	// Equinox-specific directives
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 

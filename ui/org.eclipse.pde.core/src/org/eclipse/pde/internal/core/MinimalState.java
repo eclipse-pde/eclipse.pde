@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,34 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Dictionary;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.StateDelta;
-import org.eclipse.osgi.service.resolver.StateHelper;
-import org.eclipse.osgi.service.resolver.StateObjectFactory;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.util.Headers;
@@ -61,13 +42,15 @@ public class MinimalState {
 
 	private boolean fNoProfile;
 
-	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
+	private static final String DEFAULT_SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
 
 	protected static boolean DEBUG = false;
 
 	protected static StateObjectFactory stateObjectFactory;
 
 	protected static String DIR;
+
+	protected String fSystemBundle = DEFAULT_SYSTEM_BUNDLE;
 
 	static {
 		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -83,6 +66,7 @@ public class MinimalState {
 		this.fEEListChanged = state.fEEListChanged;
 		this.fExecutionEnvironments = state.fExecutionEnvironments;
 		this.fNoProfile = state.fNoProfile;
+		this.fSystemBundle = state.fSystemBundle;
 	}
 
 	protected MinimalState() {
@@ -145,11 +129,12 @@ public class MinimalState {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
-		if (desc != null && SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
+		if (desc != null && "true".equals(manifest.get(ICoreConstants.ECLIPSE_SYSTEM_BUNDLE))) { //$NON-NLS-1$
 			// if this is the system bundle then 
 			// indicate that the javaProfile has changed since the new system
 			// bundle may not contain profiles for all EE's in the list
 			fEEListChanged = true;
+			fSystemBundle = desc.getSymbolicName();
 		}
 		if (desc != null) {
 			addAuxiliaryData(desc, manifest, hasBundleStructure);
@@ -330,6 +315,10 @@ public class MinimalState {
 		if (versionRange == null || versionRange.getMinimum() != null)
 			return constraint.getName();
 		return constraint.getName() + '_' + versionRange;
+	}
+
+	public String getSystemBundle() {
+		return fSystemBundle;
 	}
 
 }
