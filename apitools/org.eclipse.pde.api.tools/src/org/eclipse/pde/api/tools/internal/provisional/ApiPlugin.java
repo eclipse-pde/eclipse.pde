@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
@@ -514,6 +515,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
+			ApiDescriptionManager.shutdown();
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 		}
 		finally {

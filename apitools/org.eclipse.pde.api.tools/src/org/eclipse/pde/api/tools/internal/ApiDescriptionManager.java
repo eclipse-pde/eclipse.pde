@@ -13,7 +13,12 @@ package org.eclipse.pde.api.tools.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 
 /**
@@ -22,22 +27,34 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
  * 
  * @since 1.0
  * 
- * TODO: persist/restore descriptions
- * TODO: remove projects from cache as removed/closed from workspace
+ * TODO: persist/restore descriptions to improve performance
  */
-public class ApiDescriptionManager {
+public class ApiDescriptionManager implements IElementChangedListener {
 	
 	/**
 	 * Singleton
 	 */
 	private static ApiDescriptionManager fgDefault;
 	
+	/**
+	 * Maps Java projects to API descriptions
+	 */
 	private Map fDescriptions = new HashMap();
 
 	/**
 	 * Constructs an API description manager.
 	 */
 	private ApiDescriptionManager() {
+		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
+	}
+
+	/**
+	 * Cleans up Java element listener
+	 */
+	public static void shutdown() {
+		if (fgDefault != null) {
+			JavaCore.removeElementChangedListener(fgDefault);
+		}
 	}
 	
 	/**
@@ -66,5 +83,42 @@ public class ApiDescriptionManager {
 		}
 		return description;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		IJavaElementDelta delta = event.getDelta();
+		processJavaElementDeltas(delta.getAffectedChildren());
+	}
+	
+	/**
+	 * Remove projects that get closed or removed.
+	 * 
+	 * @param deltas
+	 */
+	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas) {
+		IJavaElementDelta delta = null;
+		for(int i = 0; i < deltas.length; i++) {
+			delta = deltas[i];
+			switch(delta.getElement().getElementType()) {
+				case IJavaElement.JAVA_PROJECT: {
+					IJavaProject proj = (IJavaProject) delta.getElement();
+					switch (delta.getKind()) {
+						case IJavaElementDelta.CHANGED:
+							int flags = delta.getFlags();
+							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
+								fDescriptions.remove(proj);
+							}
+							break;
+						case IJavaElementDelta.REMOVED:
+							fDescriptions.remove(proj);
+							break;
+					}
+					break;
+				}
+			}
+		}
+	}	
 
 }

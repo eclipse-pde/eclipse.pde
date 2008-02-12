@@ -657,12 +657,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 									processJavaElementDeltas(delta.getAffectedChildren(), proj);
 								}
 								break;
-							case IJavaElementDelta.ADDED:
-							case IJavaElementDelta.REMOVED:
-								if(DEBUG) {
-									System.out.println("--> processing ADDED/REMOVED project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								break;
 							}
 						}
 						break;
