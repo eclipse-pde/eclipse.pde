@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
@@ -34,19 +34,19 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		try {
 			String type = marker.getType();
-			if(type.equals(ApiPlugin.API_USAGE_PROBLEM_MARKER)) {
+			if(type.equals(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
 			}
-			else if(type.equals(ApiPlugin.BINARY_COMPATIBILITY_PROBLEM_MARKER)) {
+			else if(type.equals(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
 			}
-			else if(type.equals(ApiPlugin.DEFAULT_API_PROFILE_PROBLEM_MARKER)) {
+			else if(type.equals(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
 			}
-			else if(type.equals(ApiPlugin.VERSION_NUMBERING_PROBLEM_MARKER)) {
+			else if(type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER)) {
 //				return new IMarkerResolution[] {new VersionNumberingResolution(marker)};
 			}
-			else if(type.equals(ApiPlugin.SINCE_TAGS_PROBLEM_MARKER)) {
+			else if(type.equals(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new SinceTagResolution(marker)};
 			}
 		}
