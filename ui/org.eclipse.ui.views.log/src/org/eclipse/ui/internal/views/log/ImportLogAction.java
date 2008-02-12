@@ -191,7 +191,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 
 		if (!logView.isPlatformLogOpen()) {
 			(new Separator()).fill(menu, -1);
-			ActionContributionItem item = new ActionContributionItem(new ImportConfigurationLogAction(Messages.LogView_readLog_reload, Platform.getLogFileLocation().toFile().getAbsolutePath()));
+			ActionContributionItem item = new ActionContributionItem(new ImportConfigurationLogAction(Messages.ImportLogAction_reloadWorkspaceLog, Platform.getLogFileLocation().toFile().getAbsolutePath()));
 			item.fill(menu, -1);
 		}
 	}
