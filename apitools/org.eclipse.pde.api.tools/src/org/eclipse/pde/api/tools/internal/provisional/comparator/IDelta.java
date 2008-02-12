@@ -108,14 +108,14 @@ public interface IDelta {
 	public static final int ANNOTATION_ELEMENT_TYPE = 0x001;
 
 	/**
-	 * Element type constant indicating that the delta is reported against an api component.
+	 * Element type constant indicating that the delta is reported against an API component.
 	 * 
 	 * @see #getElementType()
 	 */
 	public static final int API_COMPONENT_ELEMENT_TYPE = 0x002;
 
 	/**
-	 * Element type constant indicating that the delta is reported against an api profile.
+	 * Element type constant indicating that the delta is reported against an API profile.
 	 * 
 	 * @see #getElementType()
 	 */

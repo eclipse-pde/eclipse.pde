@@ -437,7 +437,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	}	
 	
 	/**
-	 * Returns the api kind description for the given kind, or <code>null</code>
+	 * Returns the API kind description for the given kind, or <code>null</code>
 	 * @param kind
 	 * @return the kind description or <code>null</code>
 	 */

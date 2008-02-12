@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * Operation for creating a new api problem filter
+ * Operation for creating a new API problem filter
  * 
  * @see IApiProblemFilter
  * @see IApiFilterStore

@@ -39,12 +39,12 @@ public class ApiComparator {
 	public static final IDelta NO_DELTA = new Delta();
 
 	/**
-	 * Constant used for controlling tracing in the api comparator
+	 * Constant used for controlling tracing in the API comparator
 	 */
 	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
-	 * Method used for initializing tracing in the api comparator
+	 * Method used for initializing tracing in the API comparator
 	 */
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
@@ -54,10 +54,10 @@ public class ApiComparator {
 	 * Returns a delta that corresponds to the comparison of the given class file with the reference. 
 	 * 
 	 * @param classFile2 the given class file that comes from the <code>component2</code>
-	 * @param component the given api component from the reference
-	 * @param component2 the given api component to compare with
-	 * @param referenceProfile the given api profile from which the given component <code>component</code> is coming from
-	 * @param profile the given api profile from which the given component <code>component2</code> is coming from
+	 * @param component the given API component from the reference
+	 * @param component2 the given API component to compare with
+	 * @param referenceProfile the given API profile from which the given component <code>component</code> is coming from
+	 * @param profile the given API profile from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
@@ -130,10 +130,10 @@ public class ApiComparator {
 	 * 
 	 * @param classFile the given class file
 	 * @param classFile2 the given class file to compare with
-	 * @param component the given api component from which the given class file is coming from
-	 * @param component2 the given api component to compare with
-	 * @param referenceProfile the given api profile from which the given component <code>component</code> is coming from
-	 * @param profile the given api profile from which the given component <code>component2</code> is coming from
+	 * @param component the given API component from which the given class file is coming from
+	 * @param component2 the given API component to compare with
+	 * @param referenceProfile the given API profile from which the given component <code>component</code> is coming from
+	 * @param profile the given API profile from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
@@ -173,11 +173,11 @@ public class ApiComparator {
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given api profiles. 
+	 * Returns a delta that corresponds to the comparison of the two given API profiles. 
 	 * 
-	 * @param referenceProfile the given api profile which is the reference
-	 * @param profile the given api profile to compare with
-	 * @param force a flag to force the comparison of nested api components with the same versions 
+	 * @param referenceProfile the given API profile which is the reference
+	 * @param profile the given API profile to compare with
+	 * @param force a flag to force the comparison of nested API components with the same versions 
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two profiles is null
@@ -190,12 +190,12 @@ public class ApiComparator {
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given api profiles.
-	 * Nested api components with the same versions are not compared.
+	 * Returns a delta that corresponds to the comparison of the two given API profiles.
+	 * Nested API components with the same versions are not compared.
 	 * <p>Equivalent to: compare(profile, profile2, false);</p>
 	 * 
-	 * @param referenceProfile the given api profile which is the reference
-	 * @param profile the given api profile to compare with
+	 * @param referenceProfile the given API profile which is the reference
+	 * @param profile the given API profile to compare with
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two profiles is null
@@ -207,12 +207,12 @@ public class ApiComparator {
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given api profiles. 
-	 * Nested api components with the same versions are not compared.
+	 * Returns a delta that corresponds to the comparison of the two given API profiles. 
+	 * Nested API components with the same versions are not compared.
 	 * <p>Equivalent to: compare(profile, profile2, visibilityModifiers, false);</p>
 	 * 
-	 * @param referenceProfile the given api profile which is the reference
-	 * @param profile the given api profile to compare with
+	 * @param referenceProfile the given API profile which is the reference
+	 * @param profile the given API profile to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
@@ -228,10 +228,10 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the difference between the given profile and the reference.
 	 * 
-	 * @param referenceProfile the given api profile which is used as the reference
-	 * @param profile the given api profile to compare with
+	 * @param referenceProfile the given API profile which is used as the reference
+	 * @param profile the given API profile to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested api components with the same versions 
+	 * @param force a flag to force the comparison of nested API components with the same versions 
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two profiles is null
@@ -255,7 +255,7 @@ public class ApiComparator {
 				IApiComponent apiComponent2 = profile.getApiComponent(id);
 				IDelta delta = null;
 				if (apiComponent2 == null) {
-					// report removal of an api component
+					// report removal of an API component
 					delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, null);
 				} else {
 					apiComponentsIds.add(id);
@@ -281,7 +281,7 @@ public class ApiComparator {
 			if (!apiComponent.isSystemComponent()) {
 				String id = apiComponent.getId();
 				if (!apiComponentsIds.contains(id)) {
-					// addition of an api component
+					// addition of an API component
 					globalDelta.add(new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id));
 				}
 			}
@@ -293,9 +293,9 @@ public class ApiComparator {
 	 * Returns a delta that corresponds to the difference between the given component and the reference profile.
 	 * 
 	 * @param component the given component to compare with the given reference profile
-	 * @param referenceProfile the given api profile which is used as the reference
+	 * @param referenceProfile the given API profile which is used as the reference
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested api components with the same versions 
+	 * @param force a flag to force the comparison of nested API components with the same versions 
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -320,7 +320,7 @@ public class ApiComparator {
 			String id = component.getId();
 			IApiComponent apiComponent2 = referenceProfile.getApiComponent(id);
 			if (apiComponent2 == null) {
-				// report addition of an api component
+				// report addition of an API component
 				delta = new Delta(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, null);
 			} else {
 				if (!component.getVersion().equals(apiComponent2.getVersion())
@@ -346,10 +346,10 @@ public class ApiComparator {
 	 * Returns a delta that corresponds to the difference between the given component and the given reference component.
 	 * The given component cannot be null.
 	 * 
-	 * @param referenceComponent the given api component that is used as the reference
+	 * @param referenceComponent the given API component that is used as the reference
 	 * @param component the given component to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested api components with the same versions 
+	 * @param force a flag to force the comparison of nested API components with the same versions 
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -367,13 +367,13 @@ public class ApiComparator {
 		return compare(referenceComponent, component, referenceComponent.getProfile(), component.getProfile(), visibilityModifiers);
 	}
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given api components.
+	 * Returns a delta that corresponds to the comparison of the two given API components.
 	 * The two components are compared even if their versions are identical.
 	 * 
-	 * @param referenceComponent the given api component from which the given class file is coming from
-	 * @param component2 the given api component to compare with
-	 * @param referenceProfile the given api profile from which the given component <code>component</code> is coming from
-	 * @param profile the given api profile from which the given component <code>component2</code> is coming from
+	 * @param referenceComponent the given API component from which the given class file is coming from
+	 * @param component2 the given API component to compare with
+	 * @param referenceProfile the given API profile from which the given component <code>component</code> is coming from
+	 * @param profile the given API profile from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
@@ -391,13 +391,13 @@ public class ApiComparator {
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given api components.
+	 * Returns a delta that corresponds to the comparison of the two given API components.
 	 * The two components are compared even if their versions are identical.
 	 * 
-	 * @param referenceComponent the given api component
-	 * @param component2 the given api component to compare with
-	 * @param referenceProfile the given api profile from which the given component <code>component</code> is coming from
-	 * @param profile the given api profile from which the given component <code>component2</code> is coming from
+	 * @param referenceComponent the given API component
+	 * @param component2 the given API component to compare with
+	 * @param referenceProfile the given API profile from which the given component <code>component</code> is coming from
+	 * @param profile the given API profile from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed

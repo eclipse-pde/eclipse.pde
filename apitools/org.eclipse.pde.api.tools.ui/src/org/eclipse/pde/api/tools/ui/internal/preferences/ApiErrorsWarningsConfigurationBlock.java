@@ -798,14 +798,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		gd.heightHint = 400;
 		folder.setLayoutData(gd);
 
-		// api scanning usage options
+		// API scanning usage options
 		createPage(
 				API_SCANNING_USAGE_PAGE_ID,
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_0,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_3);
 
-		// api binary compatibility options
+		// API binary compatibility options
 		createPage(
 				BINARY_COMPATIBILITY_PAGE_ID,
 				folder,
@@ -845,7 +845,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 		switch(kind) {
 			case API_SCANNING_USAGE_PAGE_ID :
-				// api usage/scanning
+				// API usage/scanning
 				//add visibility restrictions
 				initializeComboControls(page,
 					new String[] {
@@ -863,7 +863,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				);
 				break;
 			case VERSION_MANAGEMENT_PAGE_ID :
-				// api usage/scanning
+				// API usage/scanning
 				//add visibility restrictions
 				initializeComboControls(page,
 					new String[] {

@@ -25,7 +25,7 @@ import org.eclipse.ui.IMarkerResolution2;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Marker resolution for adding an api filter for the specific member the marker appears on
+ * Marker resolution for adding an API filter for the specific member the marker appears on
  * 
  * @since 1.0.0
  */

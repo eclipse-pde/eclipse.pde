@@ -141,7 +141,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 		// first mark all packages as internal
 		loadManifestApiDescription(apiDesc, getBundleDescription(), getPackageNames());
 		try {
-			// retrieve the location of the api description file in the metadata folder
+			// retrieve the location of the API description file in the metadata folder
 			String xml = loadApiDescription(STATE_PATH.toFile());
 			if (xml != null) {
 				ApiDescriptionProcessor.annotateApiSettings(apiDesc, xml);
@@ -149,11 +149,11 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 				loadSourceTags(apiDesc);
 			}
 		} catch (IOException e) {
-			abort("Unable to load api description", e); //$NON-NLS-1$
+			abort("Unable to load API description", e); //$NON-NLS-1$
 		}
 		fDescriptionCreated = true;
 		if (DEBUG) {
-			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create API description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return apiDesc;
 	}
@@ -218,7 +218,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 						ApiDescriptionProcessor.annotateApiFilters(store, xml);
 					}
 					catch(CoreException e) {
-						abort("unable to load api filters", e); //$NON-NLS-1$
+						abort("unable to load API filters", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -227,7 +227,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			ApiPlugin.log(e);
 		}
 		if (DEBUG) {
-			System.out.println("Time to create api filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create API filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return store;
 	}
@@ -456,7 +456,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	private void persistApiFilters() throws CoreException, IOException {
 		if(fFiltersCreated) {
 			if(DEBUG) {
-				System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("persisting API filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			//save the .api_filters file
 			IPath path = getProjectSettingsPath(true);
@@ -476,7 +476,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	private void persistApiSettings() throws IOException, CoreException {
 		if(fDescriptionCreated) {
 			if(DEBUG) {
-				System.out.println("persisting api settings for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("persisting API settings for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			// save the .api_settings file 
 			String path = checkStatePath();

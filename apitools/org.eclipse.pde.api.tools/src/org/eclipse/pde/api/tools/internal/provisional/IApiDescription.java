@@ -47,7 +47,7 @@ public interface IApiDescription {
 	 * Returns annotations for the specified element when referenced from the specified component. 
 	 * <p>
 	 * The parent package annotation will be returned if the requested {@link IElementDescriptor} 
-	 * does not exist in the api description. 
+	 * does not exist in the API description. 
 	 * If no inherited annotations can be derived <code>null</code> is returned.
 	 * </p>
 	 * <p>
@@ -77,9 +77,9 @@ public interface IApiDescription {
 	public boolean removeElement(IElementDescriptor element);
 	
 	/**
-	 * Returns true if this api description contains annotated elements, false otherwise.
+	 * Returns true if this API description contains annotated elements, false otherwise.
 	 *
-	 * @return true if this api description contains annotated elements, false otherwise.
+	 * @return true if this API description contains annotated elements, false otherwise.
 	 */
 	public boolean containsAnnotatedElements();
 }

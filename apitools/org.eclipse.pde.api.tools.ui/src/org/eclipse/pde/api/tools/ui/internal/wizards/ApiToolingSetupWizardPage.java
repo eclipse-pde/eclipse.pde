@@ -217,11 +217,11 @@ public class ApiToolingSetupWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * Notifies the user that they have no default api profile
+	 * Notifies the user that they have no default API profile
 	 */
 	private void notifyNoDefaultProfile() {
 		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
-			UIJob job = new UIJob("No default api profile detected")  { //$NON-NLS-1$
+			UIJob job = new UIJob("No default API profile detected")  { //$NON-NLS-1$
 				/* (non-Javadoc)
 				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 				 */

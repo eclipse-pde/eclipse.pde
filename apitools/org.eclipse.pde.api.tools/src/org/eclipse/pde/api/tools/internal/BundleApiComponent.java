@@ -117,13 +117,13 @@ public class BundleApiComponent extends AbstractApiComponent {
 	public static final String COMPONENT_XML_NAME = "component.xml"; //$NON-NLS-1$
 
 	/**
-	 * Name of api description XML file.
+	 * Name of API description XML file.
 	 * Value is <code>.api_description</code>
 	 */
 	public static final String API_DESCRIPTION_XML_NAME = ".api_description"; //$NON-NLS-1$
 	
 	/**
-	 * Name of the api filters XML file.
+	 * Name of the API filters XML file.
 	 * Value is <code>.api_filters</code>
 	 */
 	public static final String API_FILTERS_XML_NAME = ".api_filters"; //$NON-NLS-1$

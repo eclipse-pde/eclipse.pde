@@ -45,7 +45,7 @@ public interface IClassFileContainer {
 	 * 
 	 * @param qualifiedName fully qualified type name. Package names
 	 * are dot separated and type names are '$'-separated.
-	 * @param id the api component id to consider
+	 * @param id the API component id to consider
 	 * @return class file or <code>null</code>
 	 * @exception if an exception occurs retrieving the class file
 	 */

@@ -18,7 +18,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Marker resolution for adding an api filter to the parent of the member the marker is on.
+ * Marker resolution for adding an API filter to the parent of the member the marker is on.
  * 
  * @since 1.0.0
  */

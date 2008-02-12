@@ -62,7 +62,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The wizard page allowing a new api profiles to be created
+ * The wizard page allowing a new API profiles to be created
  * or an existing one to be edited
  * @since 1.0.0
  */

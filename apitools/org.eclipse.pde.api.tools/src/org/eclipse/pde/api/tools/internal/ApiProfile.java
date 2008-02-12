@@ -604,7 +604,7 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	}
 
 	/**
-	 * Returns if the specified location is a valid api project or not 
+	 * Returns if the specified location is a valid API project or not 
 	 * @param location
 	 * @return true if the location is valid, false otherwise
 	 * @throws CoreException

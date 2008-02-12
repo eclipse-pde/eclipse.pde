@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 
 /**
- * Java application to compare two api profiles
+ * Java application to compare two API profiles
  */
 public class Compare {
 	private static final String BASELINE = "-baseline"; //$NON-NLS-1$
@@ -31,8 +31,8 @@ public class Compare {
 	/**
 	 * Supported options:
 	 * <ul>
-	 * <li>-baseline: path to a file that specifies the api profile baseline</li>
-	 * <li>-profile: path to a file that specifies the api profile to compare with the baseline profile</li>
+	 * <li>-baseline: path to a file that specifies the API profile baseline</li>
+	 * <li>-profile: path to a file that specifies the API profile to compare with the baseline profile</li>
 	 * <li>-output: path to a folder in which the result files are generated</li>
 	 * <li>-options: path to a property file that defines the available options</li>
 	 * </ul>

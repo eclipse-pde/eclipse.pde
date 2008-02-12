@@ -99,7 +99,7 @@ import org.osgi.framework.Version;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Builder for creating api tooling resource markers
+ * Builder for creating API tooling resource markers
  * @since 1.0.0
  */
 public class ApiToolBuilder extends IncrementalProjectBuilder {
@@ -277,7 +277,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	private static final int CONTAINS_API_CHANGES = 2;
 
 	/**
-	 * Constant representing the name of the 'source' attribute on api tooling markers.
+	 * Constant representing the name of the 'source' attribute on API tooling markers.
 	 * Value is <code>Api Tooling</code>
 	 */
 	private static final String SOURCE = "Api Tooling"; //$NON-NLS-1$
@@ -288,12 +288,12 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	public static final int REF_TYPE_FLAG = 0;
 
 	/**
-	 * Constant used for controlling tracing in the api tool builder
+	 * Constant used for controlling tracing in the API tool builder
 	 */
 	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
-	 * Method used for initializing tracing in the api tool builder
+	 * Method used for initializing tracing in the API tool builder
 	 */
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
@@ -305,12 +305,12 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	private IProject fCurrentProject = null;
 	
 	/**
-	 * Used to help determine the scope of the api problem (change or breakage)
+	 * Used to help determine the scope of the API problem (change or breakage)
 	 */
 	private int bits;
 	
 	/**
-	 * The type that we want to check for api problems
+	 * The type that we want to check for API problems
 	 */
 	private ArrayList fTypesToCheck = new ArrayList();
 	
@@ -410,16 +410,16 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Checks to see if there is a default api profile set in the workspace,
+	 * Checks to see if there is a default API profile set in the workspace,
 	 * if not create a marker
 	 */
 	private void checkDefaultProfileSet() {
 		try {
 			if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
 				if(DEBUG) {
-					System.out.println("No default api profile, adding marker to ["+fCurrentProject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("No default API profile, adding marker to ["+fCurrentProject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				// first we clean up all existing api tooling markers for the current project
+				// first we clean up all existing API tooling markers for the current project
 				cleanupMarkers(this.fCurrentProject);
 				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 				if (markers.length == 1) {
@@ -479,7 +479,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * @return if the api usage scan should be ignored
+	 * @return if the API usage scan should be ignored
 	 */
 	private boolean ignoreApiUsageScan() {
 		boolean ignore = true;
@@ -579,7 +579,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Builds an api delta using the default profile (from the workspace settings and the current
+	 * Builds an API delta using the default profile (from the workspace settings and the current
 	 * workspace profile
 	 * @param delta
 	 */
@@ -900,7 +900,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Compares the given type between the two api components
+	 * Compares the given type between the two API components
 	 * @param typeName the type to check in each component
 	 * @param reference 
 	 * @param component
@@ -1003,7 +1003,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Checks the version number of the api component and creates problem markers as needed
+	 * Checks the version number of the API component and creates problem markers as needed
 	 * @param javaProject
 	 * @param reference
 	 * @param component
@@ -1119,7 +1119,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Cleans up the marker set for api tooling.
+	 * Cleans up the marker set for API tooling.
 	 * @param resource
 	 */
 	private void cleanupMarkers(IResource resource) {
@@ -1139,9 +1139,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Returns the complete set of api tooling markers currently on the specified resource
+	 * Returns the complete set of API tooling markers currently on the specified resource
 	 * @param resource
-	 * @return the complete set of api tooling markers
+	 * @return the complete set of API tooling markers
 	 */
 	private IMarker[] getMarkers(IResource resource) {
 		try {
@@ -1628,7 +1628,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 								ApiPlugin.log(e);
 							}
 							if (type == null) {
-								// delta reported against an api component or an api profile
+								// delta reported against an API component or an api profile
 								if (!DeltaProcessor.isBinaryCompatible(localDelta)) {
 									createMarkerFor(localDelta, null, javaProject, reference, component);
 								}
@@ -1670,7 +1670,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case IDelta.ADDED :
 				case IDelta.ADDED_EXTEND_RESTRICTION :
 				case IDelta.ADDED_IMPLEMENT_RESTRICTION :
-					// check new apis
+					// check new APIs
 					this.bits |= CONTAINS_API_CHANGES;
 					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, fCurrentProject);
 					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, fCurrentProject);

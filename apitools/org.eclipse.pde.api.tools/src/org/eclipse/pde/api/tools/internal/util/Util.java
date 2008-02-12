@@ -1350,9 +1350,9 @@ public final class Util {
 	}
 	
 	/**
-	 * Returns the string of the 'kind' from a given api problem marker
+	 * Returns the string of the 'kind' from a given API problem marker
 	 * @param kind
-	 * @return the string representation of the kind of an api problem marker or {@link #UNKNOWN_KIND}
+	 * @return the string representation of the kind of an API problem marker or {@link #UNKNOWN_KIND}
 	 */
 	public static final String getMarkerKind(IMarker marker) {
 		StringBuffer buffer = new StringBuffer();

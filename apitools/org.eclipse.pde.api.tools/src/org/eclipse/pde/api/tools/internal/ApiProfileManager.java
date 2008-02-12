@@ -87,60 +87,60 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant, IElementChangedListener, IPluginModelListener {
 	
 	/**
-	 * Constant used for controlling tracing in the api tool builder
+	 * Constant used for controlling tracing in the API tool builder
 	 */
 	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
-	 * Method used for initializing tracing in the api tool builder
+	 * Method used for initializing tracing in the API tool builder
 	 */
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
 	}
 	
 	/**
-	 * Constant representing the api profile node name for an api profile xml file.
+	 * Constant representing the API profile node name for an API profile xml file.
 	 * Value is <code>apiprofile</code>
 	 */
 	private static final String ELEMENT_APIPROFILE = "apiprofile";  //$NON-NLS-1$
 	/**
-	 * Constant representing the api component node name for an api profile xml file.
+	 * Constant representing the API component node name for an API profile xml file.
 	 * Value is <code>apicomponent</code>
 	 */
 	private static final String ELEMENT_APICOMPONENT = "apicomponent";  //$NON-NLS-1$
 	/**
-	 * Constant representing the api component pool node name for an api profile xml file.
+	 * Constant representing the API component pool node name for an API profile xml file.
 	 * Value is <code>pool</code>
 	 */
 	private static final String ELEMENT_POOL = "pool";  //$NON-NLS-1$	
 	/**
-	 * Constant representing the id attribute name for an api profile xml file.
+	 * Constant representing the id attribute name for an API profile xml file.
 	 * Value is <code>id</code>
 	 */
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	/**
-	 * Constant representing the version attribute name for an api profile xml file.
+	 * Constant representing the version attribute name for an API profile xml file.
 	 * Value is <code>version</code>
 	 */
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name attribute name for an api profile xml file.
+	 * Constant representing the name attribute name for an API profile xml file.
 	 * Value is <code>name</code>
 	 */
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	/**
-	 * Constant representing the location attribute name for an api profile xml file.
+	 * Constant representing the location attribute name for an API profile xml file.
 	 * Value is <code>location</code>
 	 */
 	private static final String ATTR_LOCATION = "location"; //$NON-NLS-1$
 	/**
-	 * Constant representing the ee attribute name for an api profile xml file.
+	 * Constant representing the ee attribute name for an API profile xml file.
 	 * Value is <code>ee</code>
 	 */
 	private static final String ELEMENT_EE = "ee"; //$NON-NLS-1$
 	
 	/**
-	 * Constant for the default api profile.
+	 * Constant for the default API profile.
 	 * Value is: <code>default_api_profile</code>
 	 */
 	private static final String DEFAULT_PROFILE = "default_api_profile"; //$NON-NLS-1$
@@ -280,7 +280,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	
 	/**
 	 * Persists all of the cached elements to individual xml files named 
-	 * with the id of the api profile
+	 * with the id of the API profile
 	 * @throws IOException 
 	 */
 	private void persistStateCache() throws CoreException, IOException {
@@ -778,21 +778,21 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					case IJavaElement.JAVA_PROJECT: {
 						IJavaProject proj = (IJavaProject) delta.getElement();
 						IProject pj = proj.getProject();
-						//process a project addition / opening, only if the project is an api aware project
+						//process a project addition / opening, only if the project is an API aware project
 						if(acceptProject(pj) && (delta.getKind() == IJavaElementDelta.ADDED ||
 								(delta.getFlags() & IJavaElementDelta.F_OPENED) != 0)) {
 							handleProjectAddition(pj);
 							return;
 						}
 						//process a project removal /closure. 
-						//we cannot tell if it is api aware as the project is no longer accessible at this point;
+						//we cannot tell if it is API aware as the project is no longer accessible at this point;
 						//so we cannot ask if we accept it, we just have to try and remove it from the description
 						else if(delta.getKind() == IJavaElementDelta.REMOVED ||
 								(delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0) {
 							handleProjectRemoval(pj);
 							return;
 						}
-						//process the project changed only if the project is api aware
+						//process the project changed only if the project is API aware
 						else if(acceptProject(pj) && delta.getKind() == IJavaElementDelta.CHANGED) {
 							handleProjectChanged(pj);
 							int flags = delta.getFlags();
@@ -811,7 +811,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 						break;
 					}
 					case IJavaElement.PACKAGE_FRAGMENT_ROOT: {
-						//fragment roots do not appear in an api description anywhere, only process the children, if any
+						//fragment roots do not appear in an API description anywhere, only process the children, if any
 						IPackageFragmentRoot root = (IPackageFragmentRoot) delta.getElement();
 						if(DEBUG) {
 							System.out.println("processed package fragment root delta: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -847,7 +847,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					}
 					case IJavaElement.PACKAGE_FRAGMENT: {
 						IPackageFragment fragment = (IPackageFragment) delta.getElement();
-						//we do not want to process an add delta, for the sake of keeping the api description sparse,
+						//we do not want to process an add delta, for the sake of keeping the API description sparse,
 						//as we would only add the package as inherited visibility anyway
 						if(delta.getKind() == IJavaElementDelta.REMOVED) {
 							handlePackageRemoval(project.getProject(), fragment);
@@ -913,7 +913,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	private void handleProjectAddition(IProject project) throws CoreException {
 		//the project has been added, create a new IApiComponent for it
 		if(project.exists() && project.isOpen() && project.hasNature(ApiPlugin.NATURE_ID)) {
-			//do no work for non-api tooling projects
+			//do no work for non-API tooling projects
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			if(model != null) {
 				IApiProfile profile = getWorkspaceProfile();
@@ -1005,7 +1005,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	private void handleCompilationUnitRemoval(IApiComponent component, ICompilationUnit unit) throws CoreException {
 		if(component.getApiDescription().removeElement(Factory.typeDescriptor(createFullyQualifiedName(unit)))) {
 			if(DEBUG) {
-				System.out.println("\tremoved compilation unit from api description: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("\tremoved compilation unit from API description: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

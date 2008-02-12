@@ -10,27 +10,27 @@ package org.eclipse.pde.api.tools.internal.provisional;
 public interface IApiMarkerConstants {
 
 	/**
-	 * Constant representing the name of the 'kind' attribute on api tooling markers.
+	 * Constant representing the name of the 'kind' attribute on API tooling markers.
 	 * Value is: <code>kind</code>
 	 */
 	public static final String MARKER_ATTR_KIND = "kind"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the 'flags' attribute on api tooling markers.
+	 * Constant representing the name of the 'flags' attribute on API tooling markers.
 	 * Value is: <code>flags</code>
 	 */
 	public static final String MARKER_ATTR_FLAGS = "flags"; //$NON-NLS-1$
 	/**
-	 * Constant representing the value of the @since tag missing type attribute on api tooling markers.
+	 * Constant representing the value of the @since tag missing type attribute on API tooling markers.
 	 * Value is: <code>missing</code>
 	 */
 	public static final String MARKER_ATTR_SINCE_TAG_MISSING = "missing"; //$NON-NLS-1$
 	/**
-	 * Constant representing the value of the @since tag malformed type attribute on api tooling markers.
+	 * Constant representing the value of the @since tag malformed type attribute on API tooling markers.
 	 * Value is: <code>malformed</code>
 	 */
 	public static final String MARKER_ATTR_SINCE_TAG_MALFORMED = "malformed"; //$NON-NLS-1$
 	/**
-	 * Constant representing the value of the @since tag invalid type attribute on api tooling markers.
+	 * Constant representing the value of the @since tag invalid type attribute on API tooling markers.
 	 * Value is: <code>invalid</code>
 	 */
 	public static final String MARKER_ATTR_SINCE_TAG_INVALID = "invalid"; //$NON-NLS-1$
@@ -42,7 +42,7 @@ public interface IApiMarkerConstants {
 	public static final String MARKER_ATT_HANDLE_ID = "org.eclipse.jdt.internal.core.JavaModelManager.handleId" ; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the name of the @since tag version attribute on api tooling markers,
+	 * Constant representing the name of the @since tag version attribute on API tooling markers,
 	 * or the new value for the bundle version.
 	 * Value is: <code>version</code>
 	 */
@@ -58,7 +58,7 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_MINOR_VERSION_CHANGE = "minor"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the default api profile problem marker.
+	 * Constant representing the id for the default API profile problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>
 	 */
 	public static final String DEFAULT_API_PROFILE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_profile"; //$NON-NLS-1$
@@ -68,7 +68,7 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String BINARY_COMPATIBILITY_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".binary_compatibility"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the api usage problem marker.
+	 * Constant representing the id for the API usage problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_usage</code> 
 	 */
 	public static final String API_USAGE_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".api_usage"; //$NON-NLS-1$

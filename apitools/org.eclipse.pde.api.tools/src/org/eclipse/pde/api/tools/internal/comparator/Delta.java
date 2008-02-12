@@ -44,7 +44,7 @@ public class Delta implements IDelta {
 				writer.print("enum type"); //$NON-NLS-1$
 				break;
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
-				writer.print("api component type"); //$NON-NLS-1$
+				writer.print("API component type"); //$NON-NLS-1$
 				break;
 			case IDelta.METHOD_ELEMENT_TYPE :
 				writer.print("method"); //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class Delta implements IDelta {
 				writer.print("constructor"); //$NON-NLS-1$
 				break;
 			case IDelta.API_PROFILE_ELEMENT_TYPE :
-				writer.print("api profile"); //$NON-NLS-1$
+				writer.print("API profile"); //$NON-NLS-1$
 				break;
 		}
 		writer.print(", kind : "); //$NON-NLS-1$

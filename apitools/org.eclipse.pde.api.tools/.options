@@ -25,5 +25,5 @@ org.eclipse.pde.api.tools/debug/pluginworkspacecomponent=false
 # for profile manager
 org.eclipse.pde.api.tools/debug/profilemanager=false
 
-# for api profile
+# for API profile
 org.eclipse.pde.api.tools/debug/apiprofile=false

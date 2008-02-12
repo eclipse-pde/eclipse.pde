@@ -61,7 +61,7 @@ public class ApiToolProjectNature implements IProjectNature {
 		newCommand.setBuilderName(builderID);
 
 		if (oldApiCommandIndex == -1) {
-			// Add a api build spec after all existing builders
+			// Add a API build spec after all existing builders
 			newCommands = new ICommand[length + 1];
 			System.arraycopy(oldBuildSpec, 0, newCommands, 0, length);
 			newCommands[length] = newCommand;

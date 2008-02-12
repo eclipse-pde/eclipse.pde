@@ -33,7 +33,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
- * Provides a property page for projects to allow project specific api tooling 
+ * Provides a property page for projects to allow project specific API tooling 
  * settings to be applied;
  *  
  * @since 1.0.0

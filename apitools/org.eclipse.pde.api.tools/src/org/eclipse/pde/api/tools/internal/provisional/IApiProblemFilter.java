@@ -169,7 +169,7 @@ public interface IApiProblemFilter {
 	public static final String CHANGED_CONTRACTED_SUPERINTERFACES_SET = "CHANGED_CONTRACTED_SUPERINTERFACES_SET"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the filter kind for changing an execution environment into an api component.
+	 * Constant representing the filter kind for changing an execution environment into an API component.
 	 * This kind applies to element types:
 	 * <ul>
 	 * <li>{@link IDelta#API_COMPONENT_ELEMENT_TYPE}</li>
@@ -400,7 +400,7 @@ public interface IApiProblemFilter {
 	public static final String ADDED_TYPE_PARAMETER = "ADDED_TYPE_PARAMETER"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the filter kind for adding an execution environment into an api component.
+	 * Constant representing the filter kind for adding an execution environment into an API component.
 	 * This kind applies to element types:
 	 * <ul>
 	 * <li>{@link IDelta#API_COMPONENT_ELEMENT_TYPE}</li>
@@ -599,7 +599,7 @@ public interface IApiProblemFilter {
 	public static final String REMOVED_METHOD_WITHOUT_DEFAULT_VALUE = "REMOVED_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$	
 	
 	/**
-	 * Constant representing the filter kind for a type being removed from an api component.
+	 * Constant representing the filter kind for a type being removed from an API component.
 	 * This kind applies to element types:
 	 * <ul>
 	 * <li>{@link IDelta#API_COMPONENT_ELEMENT_TYPE}</li>
@@ -611,7 +611,7 @@ public interface IApiProblemFilter {
 	public static final String REMOVED_TYPE = "REMOVED_TYPE"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the filter kind for a duplicated type being removed from an api component.
+	 * Constant representing the filter kind for a duplicated type being removed from an API component.
 	 * A duplicated type occurs when a type is defined in a host component and one of its fragment. 
 	 * This kind applies to element types:
 	 * <ul>
@@ -624,7 +624,7 @@ public interface IApiProblemFilter {
 	public static final String REMOVED_DUPLICATED_TYPE = "REMOVED_DUPLICATED_TYPE"; //$NON-NLS-1$
 
 	/**
-	 * Constant representing the filter kind for an api component being removed from an api profile.
+	 * Constant representing the filter kind for an API component being removed from an API profile.
 	 * This kind applies to element types:
 	 * <ul>
 	 * <li>{@link IDelta#API_PROFILE_ELEMENT_TYPE}</li>
@@ -648,7 +648,7 @@ public interface IApiProblemFilter {
 	public static final String REMOVED_VALUE = "REMOVED_VALUE"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the filter kind for removing an execution environment into an api component.
+	 * Constant representing the filter kind for removing an execution environment into an API component.
 	 * This kind applies to element types:
 	 * <ul>
 	 * <li>{@link IDelta#API_COMPONENT_ELEMENT_TYPE}</li>

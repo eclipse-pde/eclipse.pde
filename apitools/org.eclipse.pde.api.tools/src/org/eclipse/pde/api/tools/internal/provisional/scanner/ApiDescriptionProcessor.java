@@ -199,7 +199,7 @@ public class ApiDescriptionProcessor {
 		private Stack typeStack;
 		/**
 		 * Constructor
-		 * @param apis a listing of {@link IElementDescriptor}s that we care about for this visit
+		 * @param APIs a listing of {@link IElementDescriptor}s that we care about for this visit
 		 */
 		public ASTTagVisitor(List apis, IApiDescription description, ASTRewrite rewrite) {
 			this.apis = apis;
@@ -650,7 +650,7 @@ public class ApiDescriptionProcessor {
 			root = Util.parseDocument(xml);
 		}
 		catch(CoreException ce) {
-			abort("Failed to parse api filters xml file", ce); //$NON-NLS-1$
+			abort("Failed to parse API filters xml file", ce); //$NON-NLS-1$
 		}
 		if (!root.getNodeName().equals(ELEMENT_COMPONENT)) {
 			abort(ScannerMessages.ComponentXMLScanner_0, null); 
@@ -788,7 +788,7 @@ public class ApiDescriptionProcessor {
 			root = Util.parseDocument(xml);
 		}
 		catch(CoreException ce) {
-			abort("Failed to parse api description xml file", ce); //$NON-NLS-1$
+			abort("Failed to parse API description xml file", ce); //$NON-NLS-1$
 		}
 		if (!root.getNodeName().equals(ELEMENT_COMPONENT)) {
 			abort(ScannerMessages.ComponentXMLScanner_0, null); 
