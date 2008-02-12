@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-techc.com> - bug 218618
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -887,10 +888,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public Image getObjectImage(ExportPackageObject obj) {
 		int flags = 0;
-		if (obj.isInternal())
+		if (obj.isInternal()) {
 			flags = F_INTERNAL;
-		if (obj.getFriends().length > 0)
-			flags = F_FRIEND;
+			// if internal with at least one friend
+			if (obj.getFriends().length > 0)
+				flags = F_FRIEND;
+		}
 		ImageDescriptor desc = JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
 		return get(desc, flags);
 	}

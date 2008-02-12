@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 208967
+ *     Benjamin Cabe <benjamin.cabe@anyware-techc.com> - bug 218618
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-
+import java.util.*;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -89,25 +84,32 @@ public class ExportPackageObject extends PackageObject {
 	}
 
 	public void addFriend(PackageFriend friend) {
+		boolean oldIsInternal = isInternal();
 		fFriends.put(friend.getName(), friend);
 		addDirective(ICoreConstants.FRIENDS_DIRECTIVE, friend.getName());
 		setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
 		fHeader.update();
 		fireStructureChanged(friend, IModelChangedEvent.INSERT);
+		firePropertyChanged(this, ICoreConstants.INTERNAL_DIRECTIVE, Boolean.toString(oldIsInternal), Boolean.FALSE.toString());
 	}
 
 	public void removeFriend(PackageFriend friend) {
+		boolean hasInternalChanged = false;
 		fFriends.remove(friend.getName());
 		setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
-		if (fFriends.size() == 0)
+		if (fFriends.size() == 0) {
 			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
-		else {
+			hasInternalChanged = true;
+		} else {
 			Iterator iter = fFriends.keySet().iterator();
 			while (iter.hasNext())
 				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
 		}
 		fHeader.update();
 		fireStructureChanged(friend, IModelChangedEvent.REMOVE);
+		if (hasInternalChanged)
+			firePropertyChanged(this, ICoreConstants.INTERNAL_DIRECTIVE, Boolean.FALSE.toString(), Boolean.TRUE.toString());
+
 	}
 
 	public boolean hasFriend(String name) {
