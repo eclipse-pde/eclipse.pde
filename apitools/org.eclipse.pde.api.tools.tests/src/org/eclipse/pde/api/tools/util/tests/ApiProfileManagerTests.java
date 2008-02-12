@@ -180,13 +180,22 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * @return the {@link IApiDescription} for the testing project
 	 */
 	private IApiDescription getTestProjectApiDescription()  throws CoreException {
-		IApiProfile profile = fPMmanager.getWorkspaceProfile();
+		IApiProfile profile = getWorkspaceProfile();
 		assertNotNull("the workspace profile must exist", profile);
 		IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		if(component != null) {
 			return component.getApiDescription();
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the workspace profile.
+	 * 
+	 * @return workspace profile
+	 */
+	private IApiProfile getWorkspaceProfile() {
+		return fPMmanager.getWorkspaceProfile();
 	}
 	
 	/**
@@ -212,7 +221,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 * Tests trying to get the workspace profile without the framework running 
 	 */
 	public void testGetWorkspaceComponent() {
-		IApiProfile profile = fPMmanager.getWorkspaceProfile();
+		IApiProfile profile = getWorkspaceProfile();
 		assertTrue("the workspace profile must not be null", profile != null);
 	}
 	
@@ -294,7 +303,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
         IVMInstall vm = JavaRuntime.getDefaultVMInstall();
         assertNotNull("No default JRE", vm);
         addContainerEntry(fProject, new Path(JavaRuntime.JRE_CONTAINER));
-        IApiProfile profile = fPMmanager.getWorkspaceProfile();
+        IApiProfile profile = getWorkspaceProfile();
         assertNotNull("the workspace profile cannot be null", profile);
         IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
         assertNotNull("the test project api component must exist in the workspace profile", component);
@@ -305,16 +314,15 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateProjectClosed() {
 		try {
-			IApiProfile profile = fPMmanager.getWorkspaceProfile();
-			assertNotNull("the workspace profile must not be null", profile);
-			IApiComponent component  = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the workspace profile must not be null", getWorkspaceProfile());
+			IApiComponent component  = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 			assertNotNull("the change project api component must exist in the workspace profile", component);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CLOSED, IJavaElement.JAVA_PROJECT);
 			fProject.getProject().close(new NullProgressMonitor());
 			//might need a waiter to ensure the model changed event has been processed
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the closed event was not received", obj);
-			component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			component = getWorkspaceProfile().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 			assertNull("the test project api component should no longer exist in the workspace profile", component);
 		} catch (CoreException e) {
 			fail(e.getMessage());
@@ -330,7 +338,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			fProject.getProject().open(new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the opened event was not received", obj);
-			IApiProfile profile = fPMmanager.getWorkspaceProfile();
+			IApiProfile profile = getWorkspaceProfile();
 			assertNotNull("the workspace profile must not be null", profile);
 			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 			assertNotNull("the test project api component must exist in the workspace profile", component);
@@ -673,7 +681,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			importFileFromDirectory(PLUGIN_LOC.append("component.a_1.0.0.jar").toFile(), folder.getFullPath(), null);
 			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
 			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
-			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
 			// add to classpath
@@ -693,7 +701,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for manifest modification was not received", object);
 			// re-retrieve updated component
-			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be more containers after the addition", before < component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -708,7 +716,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		try {
 			IFile lib = fProject.getProject().getFolder("libx").getFile("component.a_1.0.0.jar");
 			IClasspathEntry entry = JavaCore.newLibraryEntry(lib.getFullPath(), null, null);
-			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
 			// remove classpath entry
@@ -728,7 +736,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for the manifest modification was not received", object);
 			// retrieve updated component
-			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be more containers after the addition", before > component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -745,7 +753,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			IContainer container = addFolderToProject(fProject.getProject(), "bin2");
 			assertNotNull("the new output folder cannot be null", container);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED | IJavaElementDelta.F_CLASSPATH_CHANGED, IJavaElement.JAVA_PROJECT);
-			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
 			fProject.setOutputLocation(container.getFullPath(), new NullProgressMonitor());
@@ -772,7 +780,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			assertNull("the default output location should be 'bin2' (implicit as null)", src2.getRawClasspathEntry().getOutputLocation());
 			IClasspathEntry entry = JavaCore.newSourceEntry(src2.getPath(), new IPath[]{}, container.getFullPath());
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("src2", IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH | IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
-			IApiComponent component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			IApiComponent component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getClassFileContainers().length;
 			addToClasspath(fProject, entry);
@@ -799,7 +807,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object3 = waiter3.waitForEvent();
 			assertNotNull("the event for biuld.properties modification was not received", object3);
 			// retrieve updated component
-			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
+			component = getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be one more container after the change", before < component.getClassFileContainers().length);
 			assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(src2.getRawClasspathEntry().getOutputLocation().toFile().getName()));
 		}

@@ -553,21 +553,9 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#getWorkspaceProfile()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager#getWorkspaceProfile()
 	 */
-	public IApiProfile getWorkspaceProfile() {
-		if(ApiPlugin.isRunningInFramework()) {
-			return new WorkspaceApiProfile();
-		}
-		return null;
-	}
-
-	/**
-	 * Only to be used by {@link WorkspaceApiProfile}.
-	 * 
-	 * @return
-	 */
-	protected synchronized IApiProfile getBaseWorkspaceProfile() {
+	public synchronized IApiProfile getWorkspaceProfile() {
 		if(ApiPlugin.isRunningInFramework()) {
 			if(this.workspaceprofile == null) {
 				this.workspaceprofile = createWorkspaceProfile();
@@ -724,7 +712,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(DEBUG) {
 			System.out.println("processed package fragment REMOVE delta: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		((ApiProfile)((WorkspaceApiProfile)getWorkspaceProfile()).getUnderlyingProfile()).clearPackage(fragment.getElementName());
+		((ApiProfile)getWorkspaceProfile()).clearPackage(fragment.getElementName());
 	}
 	
 	/**

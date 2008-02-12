@@ -77,7 +77,12 @@ public interface IApiProfileManager {
 	/**
 	 * Returns the workspace profile. Creates a new one if one does not exist.
 	 * If this method is called without the framework running it returns <code>null</code>
-	 * 
+	 * <p>
+	 * The workspace profile should be re-retrieved each time it is required
+	 * as some workspace modifications cause the underlying profile object to
+	 * change (for example, modification of MANIFEST.MF, build.properties,
+	 * or project build paths).
+	 * </p>
 	 * @return the workspace profile or <code>null</code>
 	 */
 	public IApiProfile getWorkspaceProfile();
