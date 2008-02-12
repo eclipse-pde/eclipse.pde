@@ -132,6 +132,10 @@
              method="true"
              comment="This method is not intended to be extended by clients.">
        </javaElement>
+       <javaElement
+             comment="This interface is not intended to be extended by clients."
+             interface="true">
+       </javaElement>
     </javadoctag>
     <javadoctag
           restrictionmodifier="noinstantiate"

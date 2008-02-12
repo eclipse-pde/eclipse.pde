@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -982,23 +982,39 @@ public class ClassFileVisitor extends ClassAdapter {
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.classname = this.processName(name);
 		this.fType = Util.getType(this.classname);
+		if(DEBUG) {
+			System.out.println("Starting visit of type: ["+this.fType.getQualifiedName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		this.enterMember(this.fType);
 		//if there is a signature we get more information from it, so we don't need to do both
 		if(signature != null) {
 			this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL, TYPE);
 		}
 		else {
-			Type supertype = null;
-			if(superName != null) {
-				supertype = Type.getObjectType(superName);
-				IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
-				if (typeReference != null) {
-					this.fSuperStack.add(typeReference.getTargetLocation().getType());
+			if((access & Opcodes.ACC_INTERFACE) != 0) {
+				//the type is an interface and we need to treat the interfaces set as extends, not implements
+				Type supertype = null;
+				for(int i = 0; i < interfaces.length; i++) {
+					supertype = Type.getObjectType(interfaces[i]);
+					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					if (typeReference != null) {
+						this.fSuperStack.add(typeReference.getTargetLocation().getType());
+					}
 				}
 			}
-			for(int i = 0; i < interfaces.length; i++) {
-				supertype = Type.getObjectType(interfaces[i]);
-				this.addTypeReference(supertype, ReferenceModifiers.REF_IMPLEMENTS);
+			else {
+				Type supertype = null;
+				if(superName != null) {
+					supertype = Type.getObjectType(superName);
+					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					if (typeReference != null) {
+						this.fSuperStack.add(typeReference.getTargetLocation().getType());
+					}
+				}
+				for(int i = 0; i < interfaces.length; i++) {
+					supertype = Type.getObjectType(interfaces[i]);
+					this.addTypeReference(supertype, ReferenceModifiers.REF_IMPLEMENTS);
+				}
 			}
 		}
 
@@ -1010,7 +1026,10 @@ public class ClassFileVisitor extends ClassAdapter {
 	public void visitEnd() {
 		this.exitMember();
 		if (!this.fSuperStack.isEmpty()) {
-			this.fSuperStack.pop();
+			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) this.fSuperStack.pop();
+			if(DEBUG) {
+				System.out.println("ending visit of type: ["+type.getQualifiedName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 

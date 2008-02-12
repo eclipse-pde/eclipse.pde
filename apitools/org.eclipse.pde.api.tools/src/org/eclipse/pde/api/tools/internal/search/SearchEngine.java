@@ -79,7 +79,7 @@ public class SearchEngine implements IApiSearchEngine {
 		}
 		
 		public boolean visitPackage(String packageName) {
-			fMonitor.subTask("API usage: collecting references in " + packageName);
+			fMonitor.subTask(SearchMessages.SearchEngine_0 + packageName);
 			return true;
 		}
 
@@ -157,7 +157,7 @@ public class SearchEngine implements IApiSearchEngine {
 	 * @exception CoreException if the scan fails
 	 */
 	private void extractReferences(IApiSearchScope scope, IProgressMonitor monitor) throws CoreException {
-		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, "Search failed", null); 
+		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, SearchMessages.SearchEngine_1, null); 
 		fScanner = ClassFileScanner.newScanner();
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
@@ -326,7 +326,7 @@ public class SearchEngine implements IApiSearchEngine {
 	public IReference[] search(IApiSearchScope sourceScope,
 			IApiSearchCriteria[] conditions, IProgressMonitor monitor)
 			throws CoreException {
-		SubMonitor localMonitor = SubMonitor.convert(monitor,"API usage analysis", 3);
+		SubMonitor localMonitor = SubMonitor.convert(monitor,SearchMessages.SearchEngine_2, 3);
 		fConditions = conditions;
 		fPotentialMatches = new List[fConditions.length];
 		for (int i = 0; i < conditions.length; i++) {
@@ -336,15 +336,15 @@ public class SearchEngine implements IApiSearchEngine {
 			fPotentialMatches[i] = new LinkedList();
 		}
 		// 1. extract all references, filtering out kinds we don't care about
-		localMonitor.subTask("API usage: collecting references"); 
+		localMonitor.subTask(SearchMessages.SearchEngine_3); 
 		extractReferences(sourceScope, localMonitor);
 		localMonitor.worked(1);
 		// 2. resolve the remaining references
-		localMonitor.subTask("API usage: resolving references");
+		localMonitor.subTask(SearchMessages.SearchEngine_4);
 		resolveReferences(localMonitor);
 		localMonitor.worked(1);
 		// 3. filter based on search conditions
-		localMonitor.subTask("API usage: analyzing references");
+		localMonitor.subTask(SearchMessages.SearchEngine_5);
 		for (int i = 0; i < fPotentialMatches.length; i++) {
 			List references = fPotentialMatches[i];
 			if (!references.isEmpty()) {
