@@ -214,15 +214,4 @@ public abstract class AbstractClassFileContainer implements IClassFileContainer 
 		}
 	}
 
-	/**
-	 * Resets this component.
-	 * 
-	 * @throws CoreException 
-	 */
-	protected synchronized void reset() throws CoreException {
-		if(fClassFileContainers != null) {
-			close();
-		}
-		fClassFileContainers = null;
-	}
 }

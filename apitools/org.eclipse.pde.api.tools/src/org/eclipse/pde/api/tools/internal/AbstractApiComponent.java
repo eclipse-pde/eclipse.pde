@@ -267,13 +267,4 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	 */
 	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;
 	
-	/**
-	 * Resets this API component.
-	 * 
-	 * @throws CoreException
-	 */
-	protected synchronized void reset() throws CoreException {
-		super.reset();
-		fApiDescription = null;
-	}
 }

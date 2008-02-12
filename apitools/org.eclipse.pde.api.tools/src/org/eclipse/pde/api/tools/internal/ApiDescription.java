@@ -26,6 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Implementation of an API description.
@@ -38,7 +39,12 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 public class ApiDescription implements IApiDescription {
 	
 	// flag to indicate visibility should be inherited from parent node
-	private static final int VISIBILITY_INHERITED = 0;
+	protected static final int VISIBILITY_INHERITED = 0;
+	
+	/**
+	 * Debug flag
+	 */
+	protected static final boolean DEBUG = Util.DEBUG;
 	
 	/**
 	 * API component identifier of the API component that owns this
@@ -53,9 +59,9 @@ public class ApiDescription implements IApiDescription {
 	 */
 	class ManifestNode implements Comparable {
 		private IElementDescriptor element = null;
-		private int visibility, restrictions;
-		private ManifestNode parent = null;
-		private HashMap overrides = new HashMap(),
+		protected int visibility, restrictions;
+		protected ManifestNode parent = null;
+		protected HashMap overrides = new HashMap(),
 						children = new HashMap();
 		
 		public ManifestNode(ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
@@ -63,6 +69,15 @@ public class ApiDescription implements IApiDescription {
 			this.visibility = visibility;
 			this.restrictions = restrictions;
 			this.parent = parent;
+		}
+		
+		/**
+		 * Returns the element associated with this node.
+		 * 
+		 * @return element
+		 */
+		protected IElementDescriptor getElement() {
+			return element;
 		}
 
 		/* (non-Javadoc)
@@ -130,6 +145,19 @@ public class ApiDescription implements IApiDescription {
 			}
 			return -1;
 		}
+		
+		/**
+		 * Ensure this node is up to date. Default implementation does
+		 * nothing. Subclasses should override as required.
+		 * 
+		 * Returns the resulting node if the node is valid, or <code>null</code>
+		 * if the node no longer exists.
+		 * 
+		 * @return up to date node, or <code>null</code> if no longer exists
+		 */
+		protected ManifestNode refresh() {
+			return this;
+		}
 	}
 		
 	/**
@@ -138,7 +166,7 @@ public class ApiDescription implements IApiDescription {
 	 * HashMap<IElementDescriptor(package), ManifestNode(package)>
 	 * </pre>
 	 */
-	private HashMap fPackageMap = new HashMap();
+	protected HashMap fPackageMap = new HashMap();
 	
 	private boolean fContainsAnnotatedElements;
 
@@ -169,7 +197,7 @@ public class ApiDescription implements IApiDescription {
 	 * @param visitor visitor to visit
 	 * @param childrenMap map of element name to manifest nodes
 	 */
-	private void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap) {
+	protected void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap) {
 		List elements = new ArrayList(childrenMap.keySet());
 		Collections.sort(elements);
 		Iterator iterator = elements.iterator();
@@ -205,6 +233,16 @@ public class ApiDescription implements IApiDescription {
 			visitChildren(visitor, node.children);
 		}
 		visitor.endVisitElement(node.element, component, desc);
+		visitOverrides(visitor, node);		
+	}
+
+	/**
+	 * Visits the overrides for a node, if any.
+	 * 
+	 * @param visitor
+	 * @param node
+	 */
+	protected void visitOverrides(ApiDescriptionVisitor visitor, ManifestNode node) {
 		if (!node.overrides.isEmpty()) {
 			List overrides = new ArrayList(node.overrides.keySet());
 			Collections.sort(overrides);
@@ -214,7 +252,7 @@ public class ApiDescription implements IApiDescription {
 				ManifestNode contextNode = (ManifestNode) node.overrides.get(context);
 				visitNode(visitor, context, contextNode);
 			}
-		}		
+		}
 	}
 	
 	/**
@@ -227,10 +265,9 @@ public class ApiDescription implements IApiDescription {
 	 * @param insert whether to insert a new node
 	 * @return manifest node or <code>null</code>
 	 */
-	private ManifestNode findNode(String component, IElementDescriptor element, boolean insert) {
+	protected ManifestNode findNode(String component, IElementDescriptor element, boolean insert) {
 		IElementDescriptor[] path = element.getPath();
 		Map map = fPackageMap;
-		int defaultVisibility = VisibilityModifiers.API;
 		ManifestNode parentNode = null;
 		ManifestNode node = null;
 		for (int i = 0 ; i < path.length; i++) {
@@ -239,15 +276,22 @@ public class ApiDescription implements IApiDescription {
 			node = (ManifestNode) map.get(current);
 			if (node == null) {
 				if (insert) {
-					node = new ManifestNode(parentNode, current, defaultVisibility, RestrictionModifiers.NO_RESTRICTIONS);
-					map.put(current, node);
+					node = createNode(parentNode, current);
+					if (node != null) {
+						map.put(current, node);
+					}
 				} else {
 					node = parentNode;
 					break; // check for component override
 				}
 			}
-			defaultVisibility = VISIBILITY_INHERITED;
-			map = node.children;
+			if (node != null) {
+				// ensure node is up to date
+				node = node.refresh();
+			}
+			if (node != null) {
+				map = node.children;
+			}
 		}
 		if (component == null || node == null) {
 			return node;
@@ -255,8 +299,12 @@ public class ApiDescription implements IApiDescription {
 		ManifestNode override = (ManifestNode) node.overrides.get(component);
 		if (override == null) {
 			if (insert) {
-				override = new ManifestNode(parentNode, element, defaultVisibility, RestrictionModifiers.NO_RESTRICTIONS);
-				node.overrides.put(component, override);
+				override = createNode(parentNode, element);
+				if (override != null) {
+					// ensure its up to date
+					override = override.refresh();
+					node.overrides.put(component, override);
+				}
 			} else {
 				return node;
 			}
@@ -273,7 +321,7 @@ public class ApiDescription implements IApiDescription {
 				return new ApiAnnotations(VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 			}
 		}
-		ManifestNode node = findNode(component, element, false);
+		ManifestNode node = findNode(component, element, isInsertOnResolve(component, element));
 		if (node != null) {
 			ManifestNode visNode = node;
 			int vis = visNode.visibility;
@@ -297,6 +345,25 @@ public class ApiDescription implements IApiDescription {
 		if(fPackageMap != null) {
 			fPackageMap.clear();
 		}
+	}
+	
+	/**
+	 * Creates and returns a new manifest node to be inserted into the tree
+	 * or <code>null</code> if the node does not exist.
+	 * 
+	 * <p>
+	 * Subclasses should override this method as required.
+	 * </p>
+	 * @param parentNode parent node
+	 * @param element element the node is to be created for
+	 * @return new manifest node or <code>null</code> if none
+	 */
+	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
+		int vis = VISIBILITY_INHERITED;
+		if (element.getElementType() == IElementDescriptor.T_PACKAGE) {
+			vis = VisibilityModifiers.API;
+		}
+		return new ManifestNode(parentNode, element, vis, RestrictionModifiers.NO_RESTRICTIONS);
 	}
 	
 	/* (non-Javadoc)
@@ -346,4 +413,21 @@ public class ApiDescription implements IApiDescription {
 		return "Api description for component: "+fOwningComponentId; //$NON-NLS-1$
 	}
 
+	/**
+	 * Returns whether a new node should be inserted into the API description
+	 * when resolving the annotations for an element if a node is not already
+	 * present, in the context of the given component.
+	 * <p>
+	 * Default implementation returns <code>false</code>. Subclasses should
+	 * override this method as required.
+	 * </p>
+	 * @param elementDescriptor
+	 * @param component context from which to resolve
+	 * @return whether a new node should be inserted into the API description
+	 * when resolving the annotations for an element if a node is not already
+	 * present
+	 */
+	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
+		return false;
+	}
 }

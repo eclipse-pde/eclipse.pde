@@ -15,6 +15,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
+
 /**
  * A compilation unit in the API context acts as a proxy to the stream of file contents. It holds 
  * meta-data about the underlying file, but does not hold on to the actual contents of the file.
@@ -25,6 +29,7 @@ public class CompilationUnit {
 
 	private String name = null;
 	private String filepath = null;
+	private ICompilationUnit unit = null;
 	
 	/**
 	 * The full path to the file
@@ -41,6 +46,11 @@ public class CompilationUnit {
 		name = file.getName();
 	}
 	
+	public CompilationUnit(ICompilationUnit compilationUnit) {
+		unit = compilationUnit;
+		name = compilationUnit.getElementName();
+	}
+	
 	/**
 	 * @return the name of the file
 	 */
@@ -55,6 +65,14 @@ public class CompilationUnit {
 	 * to the actual file
 	 */
 	public InputStream getInputStream() throws FileNotFoundException {
+		if (unit != null) {
+			try {
+				return ((IFile)(unit.getCorrespondingResource())).getContents();
+			} catch (CoreException e) {
+				// TODO: should throw CoreException
+				throw new FileNotFoundException(e.getStatus().getMessage());
+			}
+		}
 		return new FileInputStream(new File(filepath));
 	}
 }

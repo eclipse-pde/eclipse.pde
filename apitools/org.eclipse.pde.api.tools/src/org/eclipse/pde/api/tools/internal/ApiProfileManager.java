@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ISavedState;
@@ -45,7 +38,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
@@ -53,17 +45,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
-import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
@@ -516,7 +502,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Cleans up the manager and persists any unsaved Api profiles
+	 * Cleans up the manager and persists any unsaved API profiles
 	 */
 	public void stop() {
 		try {
@@ -571,152 +557,37 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 */
 	public IApiProfile getWorkspaceProfile() {
 		if(ApiPlugin.isRunningInFramework()) {
+			return new WorkspaceApiProfile();
+		}
+		return null;
+	}
+
+	/**
+	 * Only to be used by {@link WorkspaceApiProfile}.
+	 * 
+	 * @return
+	 */
+	protected synchronized IApiProfile getBaseWorkspaceProfile() {
+		if(ApiPlugin.isRunningInFramework()) {
 			if(this.workspaceprofile == null) {
 				this.workspaceprofile = createWorkspaceProfile();
-				annotateWorkspaceProfile();
 			}
 			return this.workspaceprofile;
 		}
 		return null;
-	}
+	}	
 	
 	/**
-	 * Annotates the restored workspace profile with any missing changes since the last 
-	 * save cycle it participated in
+	 * Disposes the workspace profile such that a new one will be created
+	 * on the next request.
 	 */
-	private void annotateWorkspaceProfile() {
-		if(this.savedstate != null) {
-			this.savedstate.processResourceChangeEvents(new IResourceChangeListener() {
-				public void resourceChanged(IResourceChangeEvent event) {
-					IResourceDelta delta = event.getDelta();
-					if(delta != null) {
-						if(DEBUG) {
-							System.out.println("processing saved state resource delta..."); //$NON-NLS-1$
-						}
-						try {
-							processResourceDeltas(delta.getAffectedChildren(), null, null);
-						}
-						catch (CoreException e) {
-							ApiPlugin.log(e);
-						}
-					}
-				}
-			});
-			//once we are done with it throw it away
-			this.savedstate = null;
+	private synchronized void disposeWorkspaceProfile() {
+		if (workspaceprofile != null) {
+			workspaceprofile.dispose();
+			workspaceprofile = null;
 		}
 	}
-	
-	/**
-	 * Processes resource deltas from the last saved state of the manager
-	 * @param deltas
-	 * @param project
-	 * @throws CoreException
-	 */
-	private void processResourceDeltas(IResourceDelta[] deltas, IJavaProject project, IPackageFragment fragment) throws CoreException {
-		IResourceDelta delta = null;
-		IResource resource = null;
-		for(int i = 0; i < deltas.length; i++) {
-			delta = deltas[i];
-			resource = delta.getResource();
-			switch(resource.getType()) {
-				case IResource.PROJECT: {
-					IProject proj = (IProject) resource;
-					if(delta.getKind() == IResourceDelta.ADDED || 
-							(delta.getFlags() & IResourceDelta.OPEN) != 0) {
-						handleProjectAddition(proj);
-					}
-					else if(delta.getKind() == IResourceDelta.REMOVED || 
-							(delta.getFlags() & IResourceDelta.OPEN) != 0) {
-						handleProjectRemoval(proj);
-					}
-					else if(delta.getKind() == IResourceDelta.CHANGED) {
-						handleProjectChanged(proj);
-						if(DEBUG) {
-							System.out.println("--> processing child deltas of project: ["+proj.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						processResourceDeltas(delta.getAffectedChildren(), JavaCore.create(proj), fragment);
-					}
-					break;
-				}
-				case IResource.FOLDER: {
-					IFolder folder = (IFolder) resource;
-					IJavaElement element = project.findPackageFragmentRoot(folder.getFullPath());
-					if(element == null) {
-						element = project.findPackageFragment(folder.getFullPath());
-					}
-					if(element == null) {
-						break;
-					}
-					switch(element.getElementType()) {
-						case IJavaElement.PACKAGE_FRAGMENT_ROOT: {
-							IPackageFragmentRoot root = (IPackageFragmentRoot) element;
-							if(DEBUG) {
-								System.out.println("processed package fragment root delta: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							int flags = delta.getFlags();
-							if((flags & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 ||
-									(flags & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
-								if(DEBUG) {
-									System.out.println("processed ADD / REMOVE package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								handleClasspathChanged(project.getProject());
-							}
-							processResourceDeltas(delta.getAffectedChildren(), project, fragment);
-							break;
-						}
-						case IJavaElement.PACKAGE_FRAGMENT: {
-							IPackageFragment frag = (IPackageFragment) element;
-							if(delta.getKind() == IResourceDelta.REMOVED) {
-								handlePackageRemoval(project.getProject(), fragment);
-							}
-							else {
-								if(DEBUG) {
-									System.out.println("processed package fragment CHANGED delta: ["+frag.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									System.out.println("--> processing child deltas of package fragment: ["+frag.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								processResourceDeltas(delta.getAffectedChildren(), project, frag);
-							}
-							break;	
-						}	
-					}
-					break;
-				}
-				case IResource.FILE: {
-					IFile file = (IFile) resource;
-					if("java".equalsIgnoreCase(file.getFileExtension())) { //$NON-NLS-1$
-						ICompilationUnit unit = fragment.getCompilationUnit(file.getName());
-						if(unit == null) {
-							break;
-						}
-						IApiComponent component = this.workspaceprofile.getApiComponent(project.getElementName());
-						if(component != null) {
-							if(delta.getKind() == IResourceDelta.ADDED) {
-								handleCompilationUnitScan(component, unit);
-							}
-							else if(delta.getKind() == IResourceDelta.REMOVED) {
-								if(DEBUG) {
-									System.out.println("\tprocessed compilation unit REMOVE delta: ["+unit.getElementName()+"]");  //$NON-NLS-1$//$NON-NLS-2$
-								}
-								handleCompilationUnitRemoval(component, unit);
-							}
-							else if(delta.getKind() == IResourceDelta.CHANGED) {  
-								if((delta.getFlags() & IResourceDelta.CONTENT) != 0 ||
-										(delta.getFlags() & IResourceDelta.REPLACED) != 0) {
-									handleCompilationUnitScan(component, unit);
-								}
-							}
-						}
-					}
-					else if (".classpath".equalsIgnoreCase(file.getName())) { //$NON-NLS-1$
-						handleClasspathChanged(project.getProject());
-					}
-					break;
-				}
-			}
-		}
-	}
-	
+		
 	/**
 	 * Creates a workspace {@link IApiProfile}
 	 * @return a new workspace {@link IApiProfile} or <code>null</code>
@@ -726,7 +597,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		IApiProfile profile = null; 
 		try {
 			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID, ApiPlugin.WORKSPACE_API_PROFILE_ID, "CURRENT", Util.createDefaultEEFile()); //$NON-NLS-1$
-			// populate it with only projects that are api aware
+			// populate it with only projects that are API aware
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			List componentsList = new ArrayList(models.length);
 			IApiComponent apiComponent = null;
@@ -778,124 +649,56 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					case IJavaElement.JAVA_PROJECT: {
 						IJavaProject proj = (IJavaProject) delta.getElement();
 						IProject pj = proj.getProject();
-						//process a project addition / opening, only if the project is an API aware project
-						if(acceptProject(pj) && (delta.getKind() == IJavaElementDelta.ADDED ||
-								(delta.getFlags() & IJavaElementDelta.F_OPENED) != 0)) {
-							handleProjectAddition(pj);
-							return;
-						}
-						//process a project removal /closure. 
-						//we cannot tell if it is API aware as the project is no longer accessible at this point;
-						//so we cannot ask if we accept it, we just have to try and remove it from the description
-						else if(delta.getKind() == IJavaElementDelta.REMOVED ||
-								(delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0) {
-							handleProjectRemoval(pj);
-							return;
-						}
-						//process the project changed only if the project is API aware
-						else if(acceptProject(pj) && delta.getKind() == IJavaElementDelta.CHANGED) {
-							handleProjectChanged(pj);
-							int flags = delta.getFlags();
-							if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-								if(DEBUG) {
-									System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+						if (acceptProject(pj)) {
+							switch (delta.getKind()) {
+								//process the project changed only if the project is API aware
+							case IJavaElementDelta.CHANGED:
+								int flags = delta.getFlags();
+								if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
+									(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
+									(flags & IJavaElementDelta.F_CLOSED) != 0 ||
+									(flags & IJavaElementDelta.F_OPENED) != 0) {
+										if(DEBUG) {
+											System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+										}
+										disposeWorkspaceProfile();
+								} else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
+									if(DEBUG) {
+										System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+									}
+									processJavaElementDeltas(delta.getAffectedChildren(), proj);
 								}
-								processJavaElementDeltas(delta.getAffectedChildren(), proj);
-							}
-							if((flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 &&
-								(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 &&
-								(flags & IJavaElementDelta.F_CONTENT) != 0) {
-								handleClasspathChanged(pj);
+								break;
+							case IJavaElementDelta.ADDED:
+							case IJavaElementDelta.REMOVED:
+								if(DEBUG) {
+									System.out.println("--> processing ADDED/REMOVED project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+								}
+								break;
 							}
 						}
 						break;
 					}
 					case IJavaElement.PACKAGE_FRAGMENT_ROOT: {
-						//fragment roots do not appear in an API description anywhere, only process the children, if any
 						IPackageFragmentRoot root = (IPackageFragmentRoot) delta.getElement();
 						if(DEBUG) {
 							System.out.println("processed package fragment root delta: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-						int flags = delta.getFlags();
 						switch(delta.getKind()) {
-							case IJavaElementDelta.ADDED:
-							case IJavaElementDelta.REMOVED: {
-								if(root.getKind() == IPackageFragmentRoot.K_BINARY) {
-									if(DEBUG) {
-										System.out.println("processed ADD / REMOVE binary package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									handleClasspathChanged(project.getProject());
-								}
-								break;
-							}
 							case IJavaElementDelta.CHANGED: {
-								if((flags & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 ||
-									(flags & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
-									if(DEBUG) {
-										System.out.println("processed CHANGED package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									handleClasspathChanged(project.getProject());
+								if(DEBUG) {
+									System.out.println("processed children of CHANGED package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
+								processJavaElementDeltas(delta.getAffectedChildren(), project);
 								break;
 							}
 						}
-						if(DEBUG) {
-							System.out.println("--> processing child deltas of package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						processJavaElementDeltas(delta.getAffectedChildren(), project);
 						break;
 					}
 					case IJavaElement.PACKAGE_FRAGMENT: {
 						IPackageFragment fragment = (IPackageFragment) delta.getElement();
-						//we do not want to process an add delta, for the sake of keeping the API description sparse,
-						//as we would only add the package as inherited visibility anyway
 						if(delta.getKind() == IJavaElementDelta.REMOVED) {
 							handlePackageRemoval(project.getProject(), fragment);
-						}
-						else {
-							if(DEBUG) {
-								System.out.println("processed package fragment CHANGED delta: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								System.out.println("--> processing child deltas of package fragment: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							processJavaElementDeltas(delta.getAffectedChildren(), project);
-						}
-						break;
-					}
-					case IJavaElement.COMPILATION_UNIT: {
-						ICompilationUnit unit = (ICompilationUnit) delta.getElement();
-						IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
-						if(component != null) {
-							if(delta.getKind() == IJavaElementDelta.ADDED) {
-								if(DEBUG) {
-									System.out.println("\tprocessed compilation unit ADD delta: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								ICompilationUnit moved = (ICompilationUnit) delta.getMovedFromElement();
-								if(moved != null) {
-									handleCompilationUnitRemoval(component, moved);
-								}
-								handlePotentialNewPackage((IPackageFragment)unit.getParent());
-								handleCompilationUnitScan(component, unit);
-							}
-							else if(delta.getKind() == IJavaElementDelta.REMOVED /*&& 
-									(delta.getFlags() & IJavaElementDelta.F_PRIMARY_WORKING_COPY) == 0*/) {
-								//if an editor is open we will not get just a plain removed delta, it will always be a 
-								//primary working copy delta, otherwise we could use the additional condition to prune some deltas
-								if(DEBUG) {
-									System.out.println("\tprocessed compilation unit REMOVE delta: ["+unit.getElementName()+"]");  //$NON-NLS-1$//$NON-NLS-2$
-								}
-								if(delta.getMovedToElement() == null) {
-									handleCompilationUnitRemoval(component, unit);
-								}
-							}
-							else if(delta.getKind() == IJavaElementDelta.CHANGED) {
-								if((delta.getFlags() & IJavaElementDelta.F_CONTENT) != 0 ||
-										(delta.getFlags() & IJavaElementDelta.F_PRIMARY_RESOURCE) != 0 ) {
-									if(DEBUG) {
-										System.out.println("\tprocessed compilation unit CONTENT & CHANGED delta: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									handleCompilationUnitScan(component, unit);
-								}
-							}
 						}
 						break;
 					}
@@ -905,136 +708,11 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			ApiPlugin.log(e);
 		}
 	}
-	
-	/**
-	 * Handles the specified {@link IProject} being added / opened
-	 * @param project
-	 */
-	private void handleProjectAddition(IProject project) throws CoreException {
-		//the project has been added, create a new IApiComponent for it
-		if(project.exists() && project.isOpen() && project.hasNature(ApiPlugin.NATURE_ID)) {
-			//do no work for non-API tooling projects
-			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			if(model != null) {
-				IApiProfile profile = getWorkspaceProfile();
-				IApiComponent component = profile.newApiComponent(model);
-				profile.addApiComponents(new IApiComponent[] {component}, true);
-				if(DEBUG) {
-					System.out.println("process project ADD/OPENED delta: ["+project.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-			return;
-		}
-	}
-	
-	/**
-	 * Handles a change to the classpath
-	 * @param root
-	 */
-	private void handleClasspathChanged(IProject project) {
-		if(DEBUG) {
-			System.out.println("processed CLASSPATH change for project: ["+project.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		reset(project.getName());
-	}
-	
-	/**
-	 * Resets the component with the given id.
-	 * 
-	 * @param componentId
-	 */
-	private void reset(String componentId) {
-		IApiComponent component = getWorkspaceProfile().getApiComponent(componentId);
-		if(component instanceof AbstractApiComponent) {
-			try {
-				((AbstractApiComponent) component).reset();
-				if(DEBUG) {
-					System.out.println("reset component: ["+componentId+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e.getStatus());
-			}
-		}
-	}
-	
-	/**
-	 * Handles the specified project being removed / closed
-	 * @param project
-	 */
-	private void handleProjectRemoval(IProject project) {
-		//the project has been removed remove the IApiComponent for it
-		IApiComponent component = this.workspaceprofile.getApiComponent(project.getName());
-		if(component != null) {
-			getWorkspaceProfile().removeApiComponents(new IApiComponent[] {component});
-			if(DEBUG) {
-				System.out.println("processed project CLOSED/REMOVED delta: ["+project.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return;
-		}	
-	}
-	
-	/**
-	 * Handles the specified project being changed
-	 * @param project
-	 * @throws CoreException
-	 */
-	private void handleProjectChanged(IProject project) throws CoreException {
-		if(DEBUG) {
-			System.out.println("processed project CHANGED delta: ["+project.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		IApiProfile profile = getWorkspaceProfile();
-		IApiComponent component = profile.getApiComponent(project.getName());
-		if(component == null) {
-			//create a new component
-			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			if(model != null) {
-				IApiComponent newcomponent = profile.newApiComponent(model);
-				if(newcomponent != null) {
-					profile.addApiComponents(new IApiComponent[] {newcomponent}, true);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Handles the removal of the specified {@link ICompilationUnit}
-	 * @param component
-	 * @param unit
-	 * @throws CoreException
-	 */
-	private void handleCompilationUnitRemoval(IApiComponent component, ICompilationUnit unit) throws CoreException {
-		if(component.getApiDescription().removeElement(Factory.typeDescriptor(createFullyQualifiedName(unit)))) {
-			if(DEBUG) {
-				System.out.println("\tremoved compilation unit from API description: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-	}
-	
-	/**
-	 * Handles the addition or change of the specified {@link ICompilationUnit}
-	 * @param component
-	 * @param unit
-	 * @throws CoreException
-	 */
-	private void handleCompilationUnitScan(IApiComponent component, ICompilationUnit unit) throws CoreException {
-		if(DEBUG) {
-			System.out.println("\tprocessed compilation unit SCAN: ["+unit.getElementName()+"]");  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		if(unit.exists() && unit.isConsistent() && unit.getUnderlyingResource().exists()) {
-			//the scanner does not remove changes, only annotates with additions.
-			//we need to remove the unit from its owning description and add back
-			//annotations.
-			//since profiles are sparse this is an insignificant amount of work
-			handleCompilationUnitRemoval(component, unit);
-			scanCompilationUnit(unit, component);
-		}
-	}
-	
+		
 	/**
 	 * Handles the specified {@link IPackageFragment} being removed.
 	 * When a packaged is removed, we:
 	 * <ol>
-	 * <li>Remove the package from its API description</li>
 	 * <li>Remove the package from the cache of resolved providers
 	 * 	of that package (in the API profile)</li>
 	 * </ol>
@@ -1046,48 +724,19 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(DEBUG) {
 			System.out.println("processed package fragment REMOVE delta: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getName());
-		if(component != null) {
-			component.getApiDescription().removeElement(Factory.packageDescriptor(fragment.getElementName()));
-			((ApiProfile)getWorkspaceProfile()).clearPackage(fragment.getElementName());
-		}
-	}
-	
-	/**
-	 * A type has been added to a package fragment, see if the package
-	 * is in the API description yet. We add packages when a type is
-	 * added to avoid adding empty packages to the API description.
-	 * When a packaged is added, we:
-	 * <ol>
-	 * <li>Add the package to its API description with default (private
-	 *  visibility)</li>
-	 * </ol>
-	 * @param fragment package fragment
-	 */
-	private void handlePotentialNewPackage(IPackageFragment fragment) {
-		IApiComponent component = getWorkspaceProfile().getApiComponent(fragment.getJavaProject().getElementName());
-		if (component != null) {
-			IPackageDescriptor descriptor = Factory.packageDescriptor(fragment.getElementName());
-			try {
-				IApiDescription apiDescription = component.getApiDescription();
-				IApiAnnotations annotations = apiDescription.resolveAnnotations(null, descriptor);
-				if (annotations == null) {
-					// add default private visibility
-					apiDescription.setVisibility(null, descriptor, VisibilityModifiers.PRIVATE);
-				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e.getStatus());
-			}
-		}
+		((ApiProfile)((WorkspaceApiProfile)getWorkspaceProfile()).getUnderlyingProfile()).clearPackage(fragment.getElementName());
 	}
 	
 	/**
 	 * Returns if we should care about the specified project
 	 * @param project
-	 * @return true if the project is an 'api aware' project, false otherwise
+	 * @return true if the project is an 'API aware' project, false otherwise
 	 */
 	private boolean acceptProject(IProject project) {
 		try {
+			if (!project.isOpen()) {
+				return true;
+			}
 			return project.exists() && project.hasNature(ApiPlugin.NATURE_ID);
 		}
 		catch(CoreException e) {
@@ -1095,54 +744,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		}
 	}
 	
-	/**
-	 * Creates a fully qualified name from a compilation unit. This method can be used when the compilation
-	 * unit no longer exists in the java model
-	 * @param unit
-	 * @return
-	 * @throws JavaModelException
-	 */
-	private String createFullyQualifiedName(ICompilationUnit unit) throws JavaModelException {
-		StringBuffer name = new StringBuffer();
-		IJavaElement parent = unit.getParent();
-		if(parent != null) {
-			while(parent != null) {
-				name.insert(0, "."); //$NON-NLS-1$
-				name.insert(0, parent.getElementName());
-				parent = parent.getParent();
-				if(parent.getElementType() != IJavaElement.JAVA_PROJECT ||
-						parent.getElementType() != IJavaElement.PACKAGE_FRAGMENT_ROOT) {
-					parent = null;
-				}
-			}
-		}
-		String typename = unit.getElementName();
-		//peel off the file extension
-		typename = typename.substring(0, typename.lastIndexOf(".")); //$NON-NLS-1$
-		name.append(typename);
-		return name.toString();
-	}
-	
-	/**
-	 * Scans the specified {@link ICompilationUnit}
-	 * @param unit
-	 * @param component
-	 * @throws CoreException
-	 */
-	private void scanCompilationUnit(ICompilationUnit unit, IApiComponent component) throws CoreException {
-		TagScanner scanner = TagScanner.newScanner();
-		try {
-			scanner.scan(new CompilationUnit(unit.getResource().getLocation().toOSString()), component.getApiDescription(), component);
-			if(DEBUG) {
-				System.out.println("\tscanned compilation unit: ["+unit.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		} catch (FileNotFoundException e) {
-			abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
-		} catch (IOException e) {
-			abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
@@ -1169,8 +770,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				if(model != null) {
 					try {
 						handleBundleDefinitionChanged(model);
-					}
-					catch(CoreException e) {
+					} catch(CoreException e) {
 						ApiPlugin.log(e);
 					}
 				}
@@ -1179,15 +779,18 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Handles updating when a bundle definition has changed.
-	 * This causes the bundle to be reset/reinitialized the state
-	 * with a new bundle description. Happens whenever the manifest
-	 * or build.properties changes.
+	 * Whenever a bundle definition changes (add/removed/changed), the 
+	 * workspace profile becomes potentially invalid as the bundle description
+	 * may have changed in some way to invalidate our underlying OSGi state.
+	 * <p>
+	 * The workspace profile is discarded, and a new one is cooked up on 
+	 * the next request.
+	 * </p>
 	 *  
 	 * @param model
 	 * @throws CoreException
 	 */
 	private void handleBundleDefinitionChanged(IPluginModelBase model) throws CoreException {
-		reset(model.getBundleDescription().getName());
+		disposeWorkspaceProfile();
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Analyzes a component or scope within a component for illegal API use in prerequisite
@@ -43,6 +44,11 @@ public class ApiUseAnalyzer {
 	 * Empty reference collection
 	 */
 	private static final IReference[] EMPTY = new IReference[0];
+	
+	/**
+	 * Debugging flag
+	 */
+	private static final boolean DEBUG = Util.DEBUG;
 
 	/**
 	 * Collects search criteria from an API description for usage problems.
@@ -169,6 +175,7 @@ public class ApiUseAnalyzer {
 	 * @return search conditions
 	 */
 	private IApiSearchCriteria[] buildSearchConditions(IApiProfile profile, IApiComponent component) {
+		long start = System.currentTimeMillis();
 		IApiComponent[] components = profile.getPrerequisiteComponents(new IApiComponent[]{component});
 		List condidtions = new ArrayList();
 		UsageVisitor visitor = new UsageVisitor(condidtions);
@@ -182,6 +189,10 @@ public class ApiUseAnalyzer {
 					ApiPlugin.log(e.getStatus());
 				}
 			}
+		}
+		long end = System.currentTimeMillis();
+		if (DEBUG) {
+			System.out.println("Time to build search conditions: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return (IApiSearchCriteria[]) condidtions.toArray(new IApiSearchCriteria[condidtions.size()]);
 	}	

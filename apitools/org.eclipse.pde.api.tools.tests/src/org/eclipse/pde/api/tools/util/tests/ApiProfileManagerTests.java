@@ -380,8 +380,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
 			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.typeDescriptor("a.b.c.TestClass1"));
-			assertNotNull("the annotations for a.b.c should be returned", annot);
-			assertTrue("there must not be any restrictions in the anotation ", annot.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+			assertNull("the annotations for a.b.c.TestClass1 should no longer be present", annot);
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
 		} catch (CoreException e) {
@@ -693,6 +692,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			manifest.save();
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for manifest modification was not received", object);
+			// re-retrieve updated component
+			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be more containers after the addition", before < component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -726,7 +727,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			manifest.save();
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for the manifest modification was not received", object);
-			
+			// retrieve updated component
+			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be more containers after the addition", before > component.getClassFileContainers().length);
 		}
 		catch(JavaModelException e) {
@@ -796,7 +798,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			prop.save();
 			Object object3 = waiter3.waitForEvent();
 			assertNotNull("the event for biuld.properties modification was not received", object3);
-			
+			// retrieve updated component
+			component = fPMmanager.getWorkspaceProfile().getApiComponent(fProject.getElementName());
 			assertTrue("there must be one more container after the change", before < component.getClassFileContainers().length);
 			assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(src2.getRawClasspathEntry().getOutputLocation().toFile().getName()));
 		}
@@ -817,7 +820,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			IApiDescription desc = getTestProjectApiDescription();
 			assertNotNull("the testing project api description must exist", desc);
 			IApiAnnotations annot = desc.resolveAnnotations(null, Factory.packageDescriptor("x.y.z"));
-			assertNull("the annotations for package 'x.y.z' should not exist", annot);
+			assertNotNull("the annotations for package 'x.y.z' should exist", annot);
 		}
 		catch (JavaModelException e) {
 			fail(e.getMessage());
@@ -922,7 +925,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 			Object object = waiter.waitForEvent();
 			assertNotNull("the changed event for the exported package change was not received", object);
 			annot = getTestProjectApiDescription().resolveAnnotations(null, Factory.packageDescriptor("export1"));
-			assertNull("there must be no annotation for the new exported package", annot);
+			assertNotNull("should still be an annotation for the package", annot);
+			assertTrue("unexported package must be private", VisibilityModifiers.isPrivate(annot.getVisibility()));
 		}
 		catch(CoreException e) {
 			fail(e.getMessage());

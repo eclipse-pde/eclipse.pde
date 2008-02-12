@@ -1064,22 +1064,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return fBundleDescription.getFragments().length != 0;
 	}
 	
-	/**
-	 * Resets this bundle.
-	 * 
-	 * @throws CoreException 
-	 */
-	protected synchronized void reset() throws CoreException {
-		super.reset();
-		close();
-		fContainerToBundle = null;
-		fContainerToPath = null;
-		fManifest = null;
-		BundleDescription oldDescription = fBundleDescription;
-		fBundleDescription = null;
-		((ApiProfile)getProfile()).reset(this, oldDescription);
-	}
-	
 	public String getOrigin() {
 		return this.getId();
 	}

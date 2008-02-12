@@ -34,7 +34,7 @@ public class PluginModelEventWaiter extends AbstractApiEventWaiter implements IP
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
-	public void modelsChanged(PluginModelDelta delta) {
+	public synchronized void modelsChanged(PluginModelDelta delta) {
 		if(delta.getKind() == fKind) {
 			setEvent(delta);
 			notifyAll();

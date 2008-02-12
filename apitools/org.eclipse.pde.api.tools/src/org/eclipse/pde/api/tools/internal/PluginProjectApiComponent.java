@@ -62,29 +62,23 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 public class PluginProjectApiComponent extends BundleApiComponent implements ISaveParticipant {
 	
 	/**
-	 * Constant used for controlling tracing in the plugin workspace component
+	 * Constant used for controlling tracing in the plug-in workspace component
 	 */
 	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
-	 * Method used for initializing tracing in the plugin workspace component
+	 * Method used for initializing tracing in the plug-in workspace component
 	 */
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
 	}
 
 	/**
-	 * Boolean flags to prevent the description and/or filters from being loaded
-	 * during a saving cycle (if they have not already been loaded.
+	 * Boolean flag to prevent the filters from being loaded
+	 * during a saving cycle (if they have not already been loaded).
 	 */
-	private boolean fDescriptionCreated = false;
 	private boolean fFiltersCreated = false;
-	
-	/**
-	 * the path to the state where each projects' .api_settings is location
-	 */
-	private IPath STATE_PATH = ApiPlugin.getDefault().getStateLocation();
-	
+		
 	/**
 	 * Associated Java project
 	 */
@@ -115,7 +109,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 		IProject project = ApiProfile.ROOT.getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
-		STATE_PATH = STATE_PATH.append(fProject.getElementName());
 		//TODO bad for performance?
 		//the lifecycle of the participant is the lifecycle of the component
 		ApiPlugin.getDefault().addSaveParticipant(this);
@@ -137,23 +130,9 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 */
 	protected IApiDescription createApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
-		IApiDescription apiDesc = new ApiDescription(getId());
-		// first mark all packages as internal
-		loadManifestApiDescription(apiDesc, getBundleDescription(), getPackageNames());
-		try {
-			// retrieve the location of the API description file in the metadata folder
-			String xml = loadApiDescription(STATE_PATH.toFile());
-			if (xml != null) {
-				ApiDescriptionProcessor.annotateApiSettings(apiDesc, xml);
-			} else {
-				loadSourceTags(apiDesc);
-			}
-		} catch (IOException e) {
-			abort("Unable to load API description", e); //$NON-NLS-1$
-		}
-		fDescriptionCreated = true;
+		IApiDescription apiDesc = ApiDescriptionManager.getDefault().getApiDescription(getJavaProject());
 		if (DEBUG) {
-			System.out.println("Time to create API description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return apiDesc;
 	}
@@ -218,7 +197,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 						ApiDescriptionProcessor.annotateApiFilters(store, xml);
 					}
 					catch(CoreException e) {
-						abort("unable to load API filters", e); //$NON-NLS-1$
+						abort("unable to load api filters", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -227,7 +206,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			ApiPlugin.log(e);
 		}
 		if (DEBUG) {
-			System.out.println("Time to create API filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create api filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return store;
 	}
@@ -424,7 +403,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 				System.out.println("starting save cycle for plugin project component: ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (fProject.exists()) {
-				persistApiSettings();
 				persistApiFilters();
 			}
 		}
@@ -434,29 +412,13 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	}
 	
 	/**
-	 * Util method to ensure the path to save to is created
-	 * @return the string representation of the path to save to
-	 * @throws CoreException
-	 */
-	private String checkStatePath() throws CoreException {
-		String path = STATE_PATH.toOSString();
-		File apiDescriptionFolder = new File(path);
-		if (!apiDescriptionFolder.exists()) {
-			if (!apiDescriptionFolder.mkdirs()) {
-				abort("Could not create the folder to save settings: ["+getName()+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return path;
-	}
-	
-	/**
 	 * Saves the .api_filters file for the component
 	 * @throws IOException 
 	 */
 	private void persistApiFilters() throws CoreException, IOException {
 		if(fFiltersCreated) {
 			if(DEBUG) {
-				System.out.println("persisting API filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			//save the .api_filters file
 			IPath path = getProjectSettingsPath(true);
@@ -469,38 +431,12 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	}
 	
 	/**
-	 * Saves the .api_settngs file for the component
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	private void persistApiSettings() throws IOException, CoreException {
-		if(fDescriptionCreated) {
-			if(DEBUG) {
-				System.out.println("persisting API settings for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			// save the .api_settings file 
-			String path = checkStatePath();
-			ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(this);
-			IApiDescription apidesc = getApiDescription();
-			apidesc.accept(xmlVisitor);
-			String xml = xmlVisitor.getXML();
-			Util.saveFile(new File(path, API_DESCRIPTION_XML_NAME), xml);
-		}
-	}
-	
-	/**
-	 * Resets this bundle. 
+	 * Returns the Java project associated with this component.
 	 * 
-	 * @throws CoreException 
+	 * @return associated Java project
 	 */
-	protected synchronized void reset() throws CoreException {
-		fPathToOutputContainers = null;
-		// delete persisted API settings
-		File file = new File(STATE_PATH.toFile(), API_DESCRIPTION_XML_NAME);
-		if (file.exists()) {
-			file.delete();
-		}
-		super.reset();
+	IJavaProject getJavaProject() {
+		return fProject;
 	}
 	
 }

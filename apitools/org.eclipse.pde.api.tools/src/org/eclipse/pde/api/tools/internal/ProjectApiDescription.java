@@ -1,0 +1,406 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.api.tools.internal;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.jar.JarFile;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
+import org.osgi.framework.BundleException;
+
+/**
+ * Implementation of an API description for a Java project.
+ * 
+ * @since 1.0
+ */
+public class ProjectApiDescription extends ApiDescription {
+		
+	/**
+	 * Associated API component.
+	 */
+	private IJavaProject fProject;
+		
+	/**
+	 * Time stamp at which package information was created
+	 */
+	private long fPackageTimeStamp;
+	
+	/** 
+	 * Whether a package refresh is in progress
+	 */
+	private boolean fRefreshingInProgress = false;
+	
+	/**
+	 * Associated manifest file
+	 */
+	private IFile fManifestFile;
+	
+	/**
+	 * Class file container cache used for tag scanning.
+	 * Maps package fragment roots to containers.
+	 * 
+	 * TODO: these could become out of date with class path changes.
+	 */
+	private Map fClassFileContainers;
+			
+	/**
+	 * A node for a package.
+	 */
+	class PackageNode extends ManifestNode {
+
+		private IPackageFragment fFragment;
+		/**
+		 * Constructs a new node.
+		 * 
+		 * @param parent
+		 * @param element
+		 * @param visibility
+		 * @param restrictions
+		 */
+		public PackageNode(IPackageFragment pkg, ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
+			super(parent, element, visibility, restrictions);
+			fFragment = pkg;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh()
+		 */
+		protected ManifestNode refresh() {
+			refreshPackages();
+			if (fFragment.exists()) {
+				return this;
+			} else {
+				return null;
+			}
+		}
+		
+	}
+	
+	/**
+	 * Node for a reference type.
+	 */
+	class TypeNode extends ManifestNode {
+		
+		private long fTimeStamp = -1L;
+		
+		private boolean fRefreshing = false;
+		
+		private IType fType;
+
+		/**
+		 * Constructs a node for a reference type.
+		 * 
+		 * @param type
+		 * @param parent
+		 * @param element
+		 * @param visibility
+		 * @param restrictions
+		 */
+		public TypeNode(IType type, ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
+			super(parent, element, visibility, restrictions);
+			fType = type;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh()
+		 */
+		protected synchronized ManifestNode refresh() {
+			if (fRefreshing) {
+				return this;
+			}
+			try {
+				fRefreshing = true;
+				if (fType.exists()) {
+					ICompilationUnit unit = fType.getCompilationUnit();
+					if (unit != null) {
+						IResource resource = unit.getCorrespondingResource();
+						if (resource != null) {
+							long stamp = resource.getModificationStamp();
+							if (stamp != fTimeStamp) {
+								children.clear();
+								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
+										getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
+								fTimeStamp = resource.getModificationStamp();
+							}
+						} else {
+							// error - no associated file
+							return null;
+						}
+					} else {
+						// TODO: binary type
+					}
+				} else {
+					// no longer exists
+					parent.children.remove(getElement());
+					return null;
+				}
+			} catch (JavaModelException e) {
+				ApiPlugin.log(e.getStatus());
+			} catch (FileNotFoundException e) {
+				ApiPlugin.log(e);
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			} finally {
+				fRefreshing = false;
+			}
+			return this;
+		}
+	}
+	
+	/**
+	 * Constructs a new API description for the given Java project.
+	 * 
+	 * @param component
+	 */
+	public ProjectApiDescription(IJavaProject project) {
+		super(project.getElementName());
+		fProject = project;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
+	 */
+	public void accept(ApiDescriptionVisitor visitor) {
+		try {
+			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				// TODO: only care about class path entries for things in this project (binary too)
+				if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+					if (DEBUG) {
+						System.out.println("visiting: " + root.getElementName().toString()); //$NON-NLS-1$
+					}
+					IJavaElement[] fragments = root.getChildren();
+					for (int j = 0; j < fragments.length; j++) {
+						IPackageFragment fragment = (IPackageFragment) fragments[j];
+						if (DEBUG) {
+							System.out.println("\t" + fragment.getElementName().toString()); //$NON-NLS-1$
+						}
+						IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
+						// visit package
+						IApiAnnotations annotations = resolveAnnotations(null, packageDescriptor);
+						boolean visitChildren  = visitor.visitElement(packageDescriptor, null, annotations);
+						if (visitChildren) {
+							IJavaElement[] children = fragment.getChildren();
+							for (int k = 0; k < children.length; k++) {
+								IJavaElement child = children[k];
+								if (child instanceof ICompilationUnit) {
+									ICompilationUnit unit = (ICompilationUnit) child;
+									IType[] allTypes = unit.getAllTypes();
+									for (int l = 0; l < allTypes.length; l++) {
+										visit(visitor, null, allTypes[l]);
+									}
+								} else if (child instanceof IClassFile) {
+									visit(visitor, null, ((IClassFile)child).getType());
+								}
+							}
+						}
+						visitor.endVisitElement(packageDescriptor, null, annotations);
+						// visit component overrides
+						ManifestNode node = findNode(null, packageDescriptor, false);
+						if (node != null) {
+							visitOverrides(visitor, node);
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * Visits a type.
+	 * 
+	 * @param visitor
+	 * @param owningComponent
+	 * @param type
+	 */
+	private void visit(ApiDescriptionVisitor visitor, String owningComponent, IType type) {
+		IElementDescriptor element = getElementDescriptor(type);
+		IApiAnnotations annotations = resolveAnnotations(owningComponent, element);
+		if (visitor.visitElement(element, owningComponent, annotations)) {
+			ManifestNode node = findNode(owningComponent, element, false);
+			if (node != null && node.children != null) {
+				visitChildren(visitor, node.children);
+			}
+		}
+		visitor.endVisitElement(element, owningComponent, annotations);
+		// component specific overrides
+		ManifestNode node = findNode(owningComponent, element, false);
+		if (node != null ) {
+			visitOverrides(visitor, node);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
+	 */
+	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
+		// only insert for <null> component context, otherwise rules are explicit and should
+		// not be inserted
+		return component == null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#createNode(org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
+	 */
+	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
+		switch (element.getElementType()) {
+			case IElementDescriptor.T_PACKAGE:
+				try {
+					IPackageDescriptor pkg = (IPackageDescriptor) element;
+					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
+					for (int i = 0; i < roots.length; i++) {
+						IPackageFragmentRoot root = roots[i];
+						IClasspathEntry entry = root.getRawClasspathEntry();
+						switch (entry.getEntryKind()) {
+						case IClasspathEntry.CPE_SOURCE:
+						case IClasspathEntry.CPE_LIBRARY:
+							IPackageFragment fragment = root.getPackageFragment(pkg.getName());
+							if (fragment.exists()) {
+								return new PackageNode(fragment, parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+							}
+						}
+					}
+					return null;
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+					return null;
+				}
+			case IElementDescriptor.T_REFERENCE_TYPE:
+				IReferenceTypeDescriptor descriptor = (IReferenceTypeDescriptor) element;
+				try {
+					IType type = getJavaProject().findType(descriptor.getQualifiedName().replace('$', '.'));
+					if (type != null && type.getJavaProject().equals(getJavaProject())) {
+						return new TypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
+					}
+				} catch (CoreException e ) {
+					ApiPlugin.log(e.getStatus());
+					return null;
+				}
+				return null;
+		}
+		return super.createNode(parentNode, element);
+	}
+
+	/**
+	 * Refreshes package nodes if required.
+	 */
+	private synchronized void refreshPackages() {
+		if (fRefreshingInProgress) {
+			return;
+		}
+		// check if in synch
+		if (fManifestFile == null || (fManifestFile.getModificationStamp() != fPackageTimeStamp)) {
+			try {
+				fRefreshingInProgress = true;
+				// set all existing packages to PRIVATE (could clear
+				// the map, but it would be less efficient)
+				Iterator iterator = fPackageMap.values().iterator();
+				while (iterator.hasNext()) {
+					PackageNode node = (PackageNode) iterator.next();
+					node.visibility = VisibilityModifiers.PRIVATE;
+				}
+				fManifestFile = getJavaProject().getProject().getFile(JarFile.MANIFEST_NAME);
+				if (fManifestFile.exists()) {
+					try {
+						Dictionary manifest = (Dictionary) ManifestElement.parseBundleManifest(fManifestFile.getContents(), new Hashtable(10));
+						State state = StateObjectFactory.defaultFactory.createState(false);
+						BundleDescription description = StateObjectFactory.defaultFactory.createBundleDescription(state, manifest, null, 0L);
+						BundleApiComponent.annotateExportedPackages(this, description.getExportPackages());
+						fPackageTimeStamp = fManifestFile.getModificationStamp();
+					} catch (IOException e) {
+						ApiPlugin.log(e);
+					} catch (BundleException e) {
+						ApiPlugin.log(e);
+					} catch (CoreException e) {
+						ApiPlugin.log(e.getStatus());
+					}
+				}
+			} finally {
+				fRefreshingInProgress = false;
+			}
+		}
+	}
+
+	private IElementDescriptor getElementDescriptor(IJavaElement element) {
+		switch (element.getElementType()) {
+			case IJavaElement.PACKAGE_FRAGMENT:
+				return Factory.packageDescriptor(element.getElementName());
+			case IJavaElement.TYPE:
+				return Factory.typeDescriptor(((IType)element).getFullyQualifiedName('$'));
+			default:
+				return null;
+		}
+	}
+	
+	/**
+	 * Returns the Java project associated with this component.
+	 * 
+	 * @return associated Java project
+	 */
+	private IJavaProject getJavaProject() {
+		return fProject;
+	}
+
+	/**
+	 * Returns a class file container for the given package fragment root.
+	 * 
+	 * @param root package fragment root
+	 * @return class file container
+	 */
+	private synchronized IClassFileContainer getClassFileContainer(IPackageFragmentRoot root) {
+		if (fClassFileContainers == null) {
+			fClassFileContainers = new HashMap();
+		}
+		IClassFileContainer container = (IClassFileContainer) fClassFileContainers.get(root);
+		if (container == null) {
+			container = new SourceFolderClassFileContainer(root, getJavaProject().getElementName());
+			fClassFileContainers.put(root, container);
+		}
+		return container;
+	}
+	
+}
