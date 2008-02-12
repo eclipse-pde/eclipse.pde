@@ -1,27 +1,36 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.osgi.framework.Constants;
 
 public class UpdateBundleVersionOperation {
 	IMarker fMarker;
-	String version;
+	String fVersion;
 
 	public UpdateBundleVersionOperation(IMarker marker, String version) {
 		this.fMarker = marker;
-		this.version = version;
+		this.fVersion = version;
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled()) return Status.CANCEL_STATUS;
 		if (monitor != null) {
 			monitor.beginTask(MarkerMessages.UpdateVersionNumberingOperation_title, 2);
 		}
-		// retrieve the AST node compilation unit
 		try {
 			if (monitor != null) {
 				monitor.worked(1);
@@ -32,11 +41,23 @@ public class UpdateBundleVersionOperation {
 				System.err.println("Project " + project.getName() + " doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
 				return Status.OK_STATUS;
 			}
-//			IApiProfile workspaceProfile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-//			IApiComponent apiComponent = workspaceProfile.getApiComponent(project.getName());
-//			if (apiComponent instanceof PluginProjectApiComponent) {
-//				PluginProjectApiComponent component = (PluginProjectApiComponent) apiComponent;
-//			}
+			if (resource.getType() == IResource.FILE) {
+				IFile file = (IFile) resource;
+				ModelModification mod = new ModelModification(file) {
+					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+						if (!(model instanceof IBundlePluginModelBase))
+							return;
+						IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
+						IBundle bundle = modelBase.getBundleModel().getBundle();
+						IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
+						if (header instanceof BundleVersionHeader) {
+							BundleVersionHeader versionHeader = (BundleVersionHeader) header;
+							versionHeader.setValue(fVersion);
+						}
+					}
+				};
+				PDEModelUtility.modifyModel(mod, null);
+			}
 			Util.getBuildJob(project).schedule();
 			if (monitor != null) {
 				monitor.worked(1);

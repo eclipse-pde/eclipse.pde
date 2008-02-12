@@ -44,7 +44,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
 			}
 			else if(type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER)) {
-//				return new IMarkerResolution[] {new VersionNumberingResolution(marker)};
+				return new IMarkerResolution[] {new VersionNumberingResolution(marker)};
 			}
 			else if(type.equals(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new SinceTagResolution(marker)};
