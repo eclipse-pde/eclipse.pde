@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,11 @@ import org.eclipse.ui.dialogs.PatternFilter;
 
 public class RegistryFilteredTree extends FilteredTree {
 
-	public RegistryFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
+	private RegistryBrowser browser;
+
+	public RegistryFilteredTree(RegistryBrowser browser, Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, treeStyle, filter);
+		this.browser = browser;
 	}
 
 	protected void createControl(Composite parent, int treeStyle) {
@@ -52,4 +55,10 @@ public class RegistryFilteredTree extends FilteredTree {
 		createTreeControl(treeComposite, treeStyle);
 	}
 
+	protected void updateToolbar(boolean visible) {
+		super.updateToolbar(visible);
+
+		// update view title on viewer's toolbar update
+		browser.updateTitle();
+	}
 }

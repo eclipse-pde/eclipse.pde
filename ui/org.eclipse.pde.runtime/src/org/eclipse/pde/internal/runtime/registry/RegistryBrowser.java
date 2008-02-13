@@ -183,7 +183,7 @@ public class RegistryBrowser extends ViewPart {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fFilteredTree = new RegistryFilteredTree(composite, SWT.MULTI, new PatternFilter());
+		fFilteredTree = new RegistryFilteredTree(this, composite, SWT.MULTI, new PatternFilter());
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		Tree tree = fFilteredTree.getViewer().getTree();
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -482,7 +482,7 @@ public class RegistryBrowser extends ViewPart {
 		updateTitle();
 	}
 
-	private void updateTitle() {
+	public void updateTitle() {
 		setContentDescription(getTitleSummary());
 	}
 
