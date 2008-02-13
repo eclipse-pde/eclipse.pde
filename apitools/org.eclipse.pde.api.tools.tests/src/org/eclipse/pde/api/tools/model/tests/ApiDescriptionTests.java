@@ -423,7 +423,7 @@ public class ApiDescriptionTests extends TestCase {
 			}
 		}
 		IApiDescription settings = new ApiDescription(null);
-		ApiDescriptionProcessor.annotateApiSettings(settings, readXML);
+		ApiDescriptionProcessor.annotateApiSettings(null, settings, readXML);
 		
 		// write back to XML and then re-create
 		ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(new IApiComponent() {
@@ -501,7 +501,7 @@ public class ApiDescriptionTests extends TestCase {
 		String writeXML = xmlVisitor.getXML();
 		
 		ApiDescription restored = new ApiDescription(null);
-		ApiDescriptionProcessor.annotateApiSettings(restored, writeXML);
+		ApiDescriptionProcessor.annotateApiSettings(null, restored, writeXML);
 		
 		// compare the original and restore settings
 		

@@ -219,7 +219,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		try {
 			String xml = loadApiDescription(new File(fLocation));
 			if (xml != null) {
-				ApiDescriptionProcessor.annotateApiSettings(apiDesc, xml);
+				ApiDescriptionProcessor.annotateApiSettings(null, apiDesc, xml);
 			}
 		} catch (IOException e) {
 			abort("Unable to load component.xml", e); //$NON-NLS-1$

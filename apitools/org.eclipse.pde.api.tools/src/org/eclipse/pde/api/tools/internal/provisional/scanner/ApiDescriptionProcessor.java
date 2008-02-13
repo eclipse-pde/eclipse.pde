@@ -33,10 +33,12 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -576,7 +578,7 @@ public class ApiDescriptionProcessor {
 	 */
 	public static void updateJavadocTags(IJavaProject project, File componentxml) throws CoreException, IOException {
 		IApiDescription description = new ApiDescription(null);
-		annotateApiSettings(description, serializeComponentXml(componentxml));
+		annotateApiSettings(project, description, serializeComponentXml(componentxml));
 		//visit the types
 		DescriptionVisitor visitor = new DescriptionVisitor(project, description);
 		description.accept(visitor);
@@ -782,7 +784,7 @@ public class ApiDescriptionProcessor {
 	 * @param xml XML used to generate settings
 	 * @throws CoreException 
 	 */
-	public static void annotateApiSettings(IApiDescription settings, String xml) throws CoreException {
+	public static void annotateApiSettings(IJavaProject project, IApiDescription settings, String xml) throws CoreException {
 		Element root = null;
 		try {
 			root = Util.parseDocument(xml);
@@ -810,9 +812,9 @@ public class ApiDescriptionProcessor {
 					abort("Missing type name", null); //$NON-NLS-1$
 				}
 				IReferenceTypeDescriptor typedesc = packdesc.getType(name); 
-				annotateDescriptor(settings, typedesc, type);
-				annotateMethodSettings(settings, typedesc, type);
-				annotateFieldSettings(settings, typedesc, type);
+				annotateDescriptor(project, settings, typedesc, type);
+				annotateMethodSettings(project, settings, typedesc, type);
+				annotateFieldSettings(project, settings, typedesc, type);
 			}
 		}
 	}
@@ -825,7 +827,7 @@ public class ApiDescriptionProcessor {
 	 * @param descriptor the current descriptor context
 	 * @param element the current element to annotate from
 	 */
-	private static void annotateDescriptor(IApiDescription settings, IElementDescriptor descriptor, Element element) {
+	private static void annotateDescriptor(IJavaProject project, IApiDescription settings, IElementDescriptor descriptor, Element element) {
 		String component = element.getAttribute(ATTR_CONTEXT);
 		if (component.length() == 0) {
 			component = null;
@@ -834,7 +836,39 @@ public class ApiDescriptionProcessor {
 		if (typeVis != -1) {
 			settings.setVisibility(component, descriptor, typeVis);
 		}
-		settings.setRestrictions(component, descriptor, getRestrictions(element));
+		int restrictions = getRestrictions(element);
+		if (descriptor.getElementType() == IElementDescriptor.T_REFERENCE_TYPE) {
+			IReferenceTypeDescriptor referenceTypeDescriptor = (IReferenceTypeDescriptor) descriptor;
+			IType type = null;
+			if (project != null) {
+				try {
+					type = project.findType(referenceTypeDescriptor.getQualifiedName());
+					if (type != null) {
+						if ((restrictions & RestrictionModifiers.NO_INSTANTIATE) != 0) {
+							// don't set for abstract class or interface
+							if (type.isInterface() || Flags.isAbstract(type.getFlags())) {
+								restrictions &= ~RestrictionModifiers.NO_INSTANTIATE;
+							}
+						}
+						if ((restrictions & RestrictionModifiers.NO_IMPLEMENT) != 0) {
+							// don't set for class
+							if (type.isClass()) {
+								restrictions &= ~RestrictionModifiers.NO_IMPLEMENT;
+							}
+						}
+						if ((restrictions & RestrictionModifiers.NO_EXTEND) != 0) {
+							// don't set for class
+							if (type.isClass() && Flags.isFinal(type.getFlags())) {
+								restrictions &= ~RestrictionModifiers.NO_EXTEND;
+							}
+						}
+					}
+				} catch (JavaModelException e) {
+					// ignore
+				}
+			}
+		}
+		settings.setRestrictions(component, descriptor, restrictions);
 	}
 	
 	/**
@@ -906,7 +940,7 @@ public class ApiDescriptionProcessor {
 	 * @param type the parent {@link Element}
 	 * @throws CoreException
 	 */
-	private static void annotateFieldSettings(IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
+	private static void annotateFieldSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
 		NodeList fields = type.getElementsByTagName(ELEMENT_FIELD);
 		Element field = null;
 		IFieldDescriptor fielddesc = null;
@@ -918,7 +952,7 @@ public class ApiDescriptionProcessor {
 				abort(ScannerMessages.ComponentXMLScanner_1, null); 
 			}
 			fielddesc = typedesc.getField(name);
-			annotateDescriptor(settings, fielddesc, field);
+			annotateDescriptor(project, settings, fielddesc, field);
 		}
 	}
 	
@@ -932,7 +966,7 @@ public class ApiDescriptionProcessor {
 	 * @param type the parent {@link Element}
 	 * @throws CoreException
 	 */
-	private static void annotateMethodSettings(IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
+	private static void annotateMethodSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
 		NodeList methods = type.getElementsByTagName(ELEMENT_METHOD);
 		Element method = null;
 		IMethodDescriptor methoddesc = null;
@@ -948,7 +982,7 @@ public class ApiDescriptionProcessor {
 				abort(ScannerMessages.ComponentXMLScanner_3, null); 
 			}
 			methoddesc = typedesc.getMethod(name, signature);
-			annotateDescriptor(settings, methoddesc, method);
+			annotateDescriptor(project, settings, methoddesc, method);
 		}
 	}
 }
