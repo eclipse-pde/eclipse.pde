@@ -207,7 +207,8 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				List tags = javadoc.tags();
 				for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
 					TagElement element = (TagElement) iterator.next();
-					if (TagElement.TAG_SINCE.equals(element.getTagName())) {
+					String tagName = element.getTagName();
+					if (TagElement.TAG_SINCE.equals(tagName)) {
 						// @since is present
 						// check if valid
 						List fragments = element.fragments();
@@ -219,6 +220,19 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							}
 						}
 						break;
+					} else if (tagName == null) {
+						List fragments = element.fragments();
+						loop: for (Iterator iterator2 = fragments.iterator(); iterator2.hasNext(); ) {
+							ASTNode node = (ASTNode) iterator2.next();
+							if (node.getNodeType() == ASTNode.TAG_ELEMENT) {
+								TagElement tagElement = (TagElement) node;
+								if (TagElement.TAG_INHERITDOC.equals(tagElement.getTagName())) {
+									// we don't want to flag inherited doc comment
+									found = true;
+									break loop;
+								}
+							}
+						}
 					}
 				}
 				if (!found) {
