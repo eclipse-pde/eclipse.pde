@@ -1,3 +1,3 @@
-class X {
+public class X {
 	public void foo() {}
 }

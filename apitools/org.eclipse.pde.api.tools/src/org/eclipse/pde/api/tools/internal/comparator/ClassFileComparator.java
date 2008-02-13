@@ -488,6 +488,38 @@ public class ClassFileComparator {
 			// annotation with annotation and enum with enums
 			int typeAccess = this.descriptor1.access;
 			int typeAccess2 = this.descriptor2.access;
+
+			if (Util.isProtected(typeAccess)) {
+				if (Util.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
+					// report delta - decrease access: protected to default or private
+					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
+				} else if (Util.isPublic(typeAccess2)) {
+					// report delta - increase access: protected to public
+					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+				}
+			} else if (Util.isPublic(typeAccess)
+					&& (Util.isProtected(typeAccess2)
+							|| Util.isPrivate(typeAccess2)
+							|| Util.isDefault(typeAccess2))) {
+				// report delta - decrease access: public to protected, default or private
+				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
+			} else if (Util.isDefault(typeAccess)
+					&& (Util.isPublic(typeAccess2)
+							|| Util.isProtected(typeAccess2))) {
+				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+			} else if (Util.isPrivate(typeAccess)
+					&& (Util.isDefault(typeAccess2)
+							|| Util.isPublic(typeAccess2)
+							|| Util.isProtected(typeAccess2))) {
+				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
+			}
+
+			if ((visibilityModifiers & VisibilityModifiers.API) != 0) {
+				if (!Util.isPublic(typeAccess2) && !Util.isProtected(typeAccess2)) {
+					return this.delta.isEmpty() ? ApiComparator.NO_DELTA : this.delta;
+				}
+			}
+			
 			if (Util.isAnnotation(typeAccess)) {
 				if (!Util.isAnnotation(typeAccess2)) {
 					if (Util.isInterface(typeAccess2)) {
@@ -588,30 +620,6 @@ public class ClassFileComparator {
 					MethodDescriptor methodDescriptor = (MethodDescriptor) object;
 					reportMethodAddition(methodDescriptor, this.descriptor1);
 				}
-			}
-			if (Util.isProtected(typeAccess)) {
-				if (Util.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
-					// report delta - decrease access: protected to default or private
-					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
-				} else if (Util.isPublic(typeAccess2)) {
-					// report delta - increase access: protected to public
-					this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
-				}
-			} else if (Util.isPublic(typeAccess)
-					&& (Util.isProtected(typeAccess2)
-							|| Util.isPrivate(typeAccess2)
-							|| Util.isDefault(typeAccess2))) {
-				// report delta - decrease access: public to protected, default or private
-				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.DECREASE_ACCESS, this.classFile, this.descriptor1.name);
-			} else if (Util.isDefault(typeAccess)
-					&& (Util.isPublic(typeAccess2)
-							|| Util.isProtected(typeAccess2))) {
-				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
-			} else if (Util.isPrivate(typeAccess)
-					&& (Util.isDefault(typeAccess2)
-							|| Util.isPublic(typeAccess2)
-							|| Util.isProtected(typeAccess2))) {
-				this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.INCREASE_ACCESS, this.classFile, this.descriptor1.name);
 			}
 			if (Util.isAbstract(typeAccess)) {
 				if (!Util.isAbstract(typeAccess2)) {
