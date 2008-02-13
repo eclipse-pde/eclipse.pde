@@ -39,6 +39,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
+import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -225,6 +228,23 @@ public class AbstractApiTest extends TestCase {
 			binEntry.addToken(libraryName == null ? "." : libraryName); //$NON-NLS-1$
 		}
 	}
+	
+	/**
+	 * Performs the given refactoring
+	 * @param refactoring
+	 * @throws Exception
+	 */
+	protected void performRefactoring(final Refactoring refactoring) throws CoreException {
+		if(refactoring == null) {
+			return;
+		}
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		CreateChangeOperation create= new CreateChangeOperation(refactoring);
+		refactoring.checkFinalConditions(monitor);
+		PerformChangeOperation perform = new PerformChangeOperation(create);
+		ResourcesPlugin.getWorkspace().run(perform, monitor);
+	}	
+	
 	/**
 	 * Crate a plugin project with the given name
 	 * @param projectName

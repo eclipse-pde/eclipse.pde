@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.actions;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
+import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocTagRefactoring;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -39,9 +42,15 @@ public class ApiToolingSetupObjectContribution implements IObjectActionDelegate 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		ApiToolingSetupWizard wizard = new ApiToolingSetupWizard();
-		WizardDialog dialog = new WizardDialog(ApiUIPlugin.getShell(), wizard);
-		dialog.open();
+		//TODO create changes
+		ApiToolingSetupWizard wizard = new ApiToolingSetupWizard(new JavadocTagRefactoring());
+		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
+		try {
+			op.run(ApiUIPlugin.getShell(), ActionMessages.ApiToolingSetupObjectContribution_0);
+		}
+		catch(InterruptedException ie) {
+			ApiUIPlugin.log(ie);
+		}
 	}
 
 	/* (non-Javadoc)

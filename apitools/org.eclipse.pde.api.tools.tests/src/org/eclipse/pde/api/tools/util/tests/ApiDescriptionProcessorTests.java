@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.util.tests;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocTagRefactoring;
 
 /**
  * This class tests the {@link ApiDescriptionProcessor}
@@ -184,7 +186,11 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 */
 	public void testProcessUpdate() {
 		try {
-			ApiDescriptionProcessor.updateJavadocTags(project, componentxml);
+			HashMap map = new HashMap();
+			ApiDescriptionProcessor.collectTagUpdates(project, componentxml, map);
+			JavadocTagRefactoring refactoring = new JavadocTagRefactoring();
+			refactoring.setChangeInput(map);
+			performRefactoring(refactoring);
 		}
 		catch (CoreException e) {
 			fail(e.getMessage());
@@ -192,7 +198,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			fail(e.getMessage());
 		}
 	}
-
+	
 	/**
 	 * Processes the change from original to updated
 	 * 

@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -65,6 +67,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -92,12 +95,17 @@ public class ApiDescriptionProcessor {
 		/**
 		 * The API description associated with the project. 
 		 */
-		IApiDescription apiDescription;
+		private IApiDescription apiDescription = null;
 		
 		/**
 		 * Java project to resolve types in
 		 */
-		IJavaProject project;
+		private IJavaProject project = null;
+		
+		/**
+		 * List to collect text edits
+		 */
+		private Map fCollector = null;
 		
 		/**
 		 * Members collected from current type.
@@ -110,14 +118,16 @@ public class ApiDescriptionProcessor {
 		private List exceptions = null;
 		
 		/**
-		 * Constructs a new visitor to update tags in a java project.
+		 * Constructs a new visitor to collect tag updates in a java project.
 		 * 
 		 * @param jp project to update
 		 * @param cd project's API description
+		 * @param collector collection to place text edits into
 		 */
-		DescriptionVisitor(IJavaProject jp, IApiDescription cd) {
+		DescriptionVisitor(IJavaProject jp, IApiDescription cd, Map collector) {
 			project = jp;
 			apiDescription = cd;
+			fCollector = collector;
 		}
 		
 		/* (non-Javadoc)
@@ -154,7 +164,7 @@ public class ApiDescriptionProcessor {
 					}
 					IType type = project.findType(refType.getQualifiedName(), new NullProgressMonitor());
 					if(type != null) {
-						processTagUpdates(type, refType, apiDescription, members);
+						processTagUpdates(type, refType, apiDescription, members, fCollector);
 					}
 				} catch (CoreException e) {
 					addStatus(e.getStatus());
@@ -166,6 +176,10 @@ public class ApiDescriptionProcessor {
 			}
 		}
 		
+		/**
+		 * Adds a status to the current listing of messages
+		 * @param status
+		 */
 		private void addStatus(IStatus status) {
 			if (exceptions == null) {
 				exceptions = new ArrayList();
@@ -186,7 +200,6 @@ public class ApiDescriptionProcessor {
 			return new MultiStatus(ApiPlugin.PLUGIN_ID, 0, 
 					(IStatus[]) exceptions.toArray(new IStatus[exceptions.size()]),
 					ScannerMessages.ComponentXMLScanner_1, null);
-			
 		}
 		
 	}
@@ -573,14 +586,15 @@ public class ApiDescriptionProcessor {
 	 * retrieved from the the specified component.xml file.
 	 * @param project the java project to update
 	 * @param componentxml the component.xml file to update from
+	 * @param collector
 	 * @throws CoreException
 	 * @throws IOException
 	 */
-	public static void updateJavadocTags(IJavaProject project, File componentxml) throws CoreException, IOException {
+	public static void collectTagUpdates(IJavaProject project, File componentxml, Map collector) throws CoreException, IOException {
 		IApiDescription description = new ApiDescription(null);
 		annotateApiSettings(project, description, serializeComponentXml(componentxml));
 		//visit the types
-		DescriptionVisitor visitor = new DescriptionVisitor(project, description);
+		DescriptionVisitor visitor = new DescriptionVisitor(project, description, collector);
 		description.accept(visitor);
 		IStatus status = visitor.getStatus();
 		if (!status.isOK()) {
@@ -595,10 +609,11 @@ public class ApiDescriptionProcessor {
 	 * @param desc
 	 * @param description
 	 * @param members members with API annotations
+	 * @param collector
 	 * @throws CoreException
 	 * @throws BadLocationException
 	 */
-	private static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List members) throws CoreException, BadLocationException {
+	private static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List members, Map collector) throws CoreException, BadLocationException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if(cunit != null) {
@@ -612,15 +627,21 @@ public class ApiDescriptionProcessor {
 			ASTTagVisitor visitor = new ASTTagVisitor(members, description, rewrite);
 			cast.accept(visitor);
 			ITextFileBufferManager bm = FileBuffers.getTextFileBufferManager(); 
-			IPath path = cast.getJavaElement().getPath(); 
+			IPath path = cast.getJavaElement().getPath();
 			try {
 				bm.connect(path, LocationKind.IFILE, null);
 				ITextFileBuffer tfb = bm.getTextFileBuffer(path, LocationKind.IFILE);
-				IDocument document = tfb.getDocument(); 
-				//TODO support undo??
-				TextEdit edits = rewrite.rewriteAST(document, null);
-				edits.apply(document, TextEdit.CREATE_UNDO);
-				tfb.commit(new NullProgressMonitor(), true);
+				IDocument document = tfb.getDocument();
+				TextEdit edit = rewrite.rewriteAST(document, null);
+				if(edit.getChildrenSize() > 0 || edit.getLength() != 0) {
+					IFile file = (IFile) cunit.getUnderlyingResource();
+					HashSet edits = (HashSet) collector.get(file);
+					if(edits == null) {
+						edits = new HashSet(3);
+						collector.put(file, edits);
+					}
+					edits.add(edit);
+				}
 			} finally {
 				bm.disconnect(path, LocationKind.IFILE, null);
 			}

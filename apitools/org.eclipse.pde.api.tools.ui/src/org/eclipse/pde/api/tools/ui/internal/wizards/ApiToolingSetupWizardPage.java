@@ -10,19 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -33,13 +43,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,18 +66,21 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The main page for the {@link ApiToolingSetupWizard}
  * 
  * @since 1.0.0
  */
-public class ApiToolingSetupWizardPage extends WizardPage {
+public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	
 	private static final String SETTINGS_SECTION = "ApiToolingSetupWizardPage"; //$NON-NLS-1$
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
 	
 	private CheckboxTableViewer tableviewer = null;
 	private Button removecxml = null;
+	private HashSet fProjectsToUpdate = new HashSet();
 	
 	/**
 	 * Constructor
@@ -102,7 +116,7 @@ public class ApiToolingSetupWizardPage extends WizardPage {
 				if(element instanceof IProject) {
 					IProject project  = (IProject) element;
 					try {
-						return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature(PDE.PLUGIN_NATURE)) 
+						return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature"))  //$NON-NLS-1$
 						&& !project.hasNature(ApiPlugin.NATURE_ID);
 					}
 					catch(CoreException ce) {}
@@ -192,27 +206,139 @@ public class ApiToolingSetupWizardPage extends WizardPage {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
+	 */
+	public IWizardPage getNextPage() {
+		//TODO if the user goes back and forth (and makes changes to the selected listing of projects) 
+		//we should remove those files from the mapping
+		JavadocTagRefactoring refactoring = (JavadocTagRefactoring) getRefactoring();
+		refactoring.setChangeInput(collectTagUpdates());
+		return super.getNextPage();
+	}
+	
+	/**
+	 * @return the mapping of text edits to the IFile they occur on
+	 */
+	private HashMap collectTagUpdates() {
+		final HashMap map = new HashMap();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				Object[] projects = tableviewer.getCheckedElements();
+				fProjectsToUpdate.clear();
+				fProjectsToUpdate.addAll(Arrays.asList(projects));
+				IProject project = null;
+				monitor.beginTask("Scanning projects for javadoc changes...", fProjectsToUpdate.size());
+				for(Iterator iter = fProjectsToUpdate.iterator(); iter.hasNext();) {
+					try {
+						project = (IProject) iter.next();
+						monitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new String[] {project.getName()}));
+						IResource cxml = project.findMember(ApiDescriptionProcessor.COMPONENT_XML_NAME);
+						if(cxml != null) {
+							ApiDescriptionProcessor.collectTagUpdates(JavaCore.create(project), new File(cxml.getLocationURI()), map);
+							if(monitor.isCanceled()) {
+								break;
+							}
+							monitor.worked(1);
+						}
+					}
+					catch (CoreException e) {
+						ApiUIPlugin.log(e);
+					} 
+					catch (IOException e) {
+						ApiUIPlugin.log(e);
+					}
+				}
+			}
+		};
+		try {
+			getContainer().run(false, false, op);
+		} catch (InvocationTargetException e) {
+			ApiUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			ApiUIPlugin.log(e);
+		}
+		return map;
+	}
+	
+	/**
+	 * Converts a single {@link IProject} to have an Api nature
+	 * @param projectToConvert
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void convertProject(IProject projectToConvert, IProgressMonitor monitor) throws CoreException {
+		// Do early checks to make sure we can get out fast if we're not setup
+		// properly
+		if (projectToConvert == null || !projectToConvert.exists()) {
+			return;
+		}
+		// Nature check - do we need to do anything at all?
+		if (projectToConvert.hasNature(ApiPlugin.NATURE_ID)) {
+			return;
+		}
+		if(!monitor.isCanceled()) {
+			addNatureToProject(projectToConvert, ApiPlugin.NATURE_ID, monitor);
+		}
+	}
+	
+	/**
+	 * Adds the Api project nature to the given {@link IProject}
+	 * @param proj
+	 * @param natureId
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+		IProjectDescription description = proj.getDescription();
+		String[] prevNatures = description.getNatureIds();
+		String[] newNatures = new String[prevNatures.length + 1];
+		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+		newNatures[prevNatures.length] = natureId;
+		description.setNatureIds(newNatures);
+		proj.setDescription(description, monitor);
+		if(!monitor.isCanceled()) {
+			monitor.worked(1);
+		}
+	}
+	
 	/**
 	 * Called by the {@link ApiToolingSetupWizard} when finishing the wizard
 	 * 
 	 * @return true if the page finished normally, false otherwise
 	 */
 	public boolean finish() {
-		Object[] projects = tableviewer.getCheckedElements();
-		IProject[] pjs = new IProject[projects.length];
-		System.arraycopy(projects, 0, pjs, 0, projects.length);
-		boolean remove = removecxml.getSelection();
-		ProjectUpdateOperation tagop = new ProjectUpdateOperation(pjs, remove);
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				boolean remove = removecxml.getSelection();
+				IProject project = null;
+				for(Iterator iter = fProjectsToUpdate.iterator(); iter.hasNext();) {
+					try {
+						project = (IProject) iter.next();
+						convertProject(project, SubMonitor.convert(monitor, WizardMessages.ApiToolingSetupWizardPage_5, 1));
+						if(remove) {
+							IResource cxml = project.findMember(ApiDescriptionProcessor.COMPONENT_XML_NAME);
+							if(cxml != null) {
+								cxml.delete(true, SubMonitor.convert(monitor, WizardMessages.ApiToolingSetupWizardPage_6, 1));
+							}
+						}
+					}
+					catch (CoreException e) {
+						ApiUIPlugin.log(e);
+					} 
+				}
+				IDialogSettings settings = ApiUIPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
+				settings.put(SETTINGS_REMOVECXML, remove);
+				notifyNoDefaultProfile();
+			}
+		};
 		try {
-			getContainer().run(false, true, tagop);
+			getContainer().run(false, false, op);
 		} catch (InvocationTargetException e) {
 			ApiUIPlugin.log(e);
 		} catch (InterruptedException e) {
 			ApiUIPlugin.log(e);
 		}
-		IDialogSettings settings = ApiUIPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
-		settings.put(SETTINGS_REMOVECXML, remove);
-		notifyNoDefaultProfile();
 		return true;
 	}
 	
