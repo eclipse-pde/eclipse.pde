@@ -727,6 +727,11 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/* (non-Javadoc)
+	 * 
+	 * Whenever a bundle definition changes (add/removed/changed), the 
+	 * workspace profile becomes potentially invalid as the bundle description
+	 * may have changed in some way to invalidate our underlying OSGi state.
+	 * 
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
 	public void modelsChanged(PluginModelDelta delta) {
@@ -750,29 +755,10 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			for(int i = 0; i < entries.length; i++) {
 				model = entries[i].getModel();
 				if(model != null) {
-					try {
-						handleBundleDefinitionChanged(model);
-					} catch(CoreException e) {
-						ApiPlugin.log(e);
-					}
+					disposeWorkspaceProfile();
 				}
 			}
 		}
 	}
-	
-	/**
-	 * Whenever a bundle definition changes (add/removed/changed), the 
-	 * workspace profile becomes potentially invalid as the bundle description
-	 * may have changed in some way to invalidate our underlying OSGi state.
-	 * <p>
-	 * The workspace profile is discarded, and a new one is cooked up on 
-	 * the next request.
-	 * </p>
-	 *  
-	 * @param model
-	 * @throws CoreException
-	 */
-	private void handleBundleDefinitionChanged(IPluginModelBase model) throws CoreException {
-		disposeWorkspaceProfile();
-	}
+
 }

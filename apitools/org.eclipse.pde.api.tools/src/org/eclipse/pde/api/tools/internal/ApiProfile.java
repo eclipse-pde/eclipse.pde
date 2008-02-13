@@ -604,7 +604,12 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	}
 
 	/**
-	 * Returns if the specified location is a valid API project or not 
+	 * Returns if the specified location is a valid API project or not.
+	 * <p>
+	 * We accept projects that are plug-ins even if not API enabled (i.e.
+	 * with API nature), as we still need them to make a complete
+	 * API profile without resolution errors.
+	 * </p> 
 	 * @param location
 	 * @return true if the location is valid, false otherwise
 	 * @throws CoreException
@@ -612,7 +617,7 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	private boolean isValidProject(String location) throws CoreException {
 		IPath path = new Path(location);
 		IProject project = ApiProfile.ROOT.getProject(path.lastSegment());
-		return project != null && project.exists() && project.hasNature(ApiPlugin.NATURE_ID);
+		return project != null && project.exists();
 	}
 	
 	/**
