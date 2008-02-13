@@ -555,6 +555,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 				if (productFile != null) {
 					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
+					script.printAttribute("productFile", productFile.getLocation(), true); //$NON-NLS-1$
 				}
 				script.println("/>"); //$NON-NLS-1$
 			}

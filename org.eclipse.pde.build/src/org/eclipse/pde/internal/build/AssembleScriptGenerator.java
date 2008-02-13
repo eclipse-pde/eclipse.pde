@@ -133,7 +133,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("metadataRepository", "${p2.metadata.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("artifactRepository", "${p2.artifact.repo}", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("publishArtifacts", "${p2.publish.artifacts}", true); //$NON-NLS-1$ //$NON-NLS-2$
-			script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ProductFile product = configScriptGenerator.getProductFile();
 			if (product != null)
