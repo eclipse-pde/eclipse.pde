@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 
 /**
@@ -70,17 +71,19 @@ public class ApiDescriptionManager implements IElementChangedListener {
 	}
 	
 	/**
-	 * Returns an API description for the given Java project.
+	 * Returns an API description for the given Java project and connect it to the
+	 * given bundle description.
 	 * 
 	 * @param project Java project
 	 * @return API description
 	 */
-	public synchronized IApiDescription getApiDescription(IJavaProject project) {
-		IApiDescription description = (IApiDescription) fDescriptions.get(project);
+	public synchronized IApiDescription getApiDescription(IJavaProject project, BundleDescription bundle) {
+		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
 		if (description == null) {
 			description = new ProjectApiDescription(project);
 			fDescriptions.put(project, description);
 		}
+		description.connect(bundle);
 		return description;
 	}
 

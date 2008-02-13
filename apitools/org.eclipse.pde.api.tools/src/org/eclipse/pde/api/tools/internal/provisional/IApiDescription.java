@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 
@@ -19,29 +20,39 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * 
  * @noimplement This interface is not to be implemented by clients
  * 
- * @since 1.0.0
+ * @since 1.0
  */
 public interface IApiDescription {
 	
 	/**
-	 * Sets the visibility for the specified element in the context of the specified component.
-	 *  
+	 * Status code indicating an element was not found when attempting to
+	 * set its visibility or usage restrictions.
+	 */
+	public static final int ELEMENT_NOT_FOUND = 100;
+	
+	/**
+	 * Sets the visibility for the specified element in the context of the specified component
+	 * and returns a status describing whether the operation succeeded.
+	 * 
 	 * @param component the component the visibility applies to or <code>null</code> for all components
 	 * @param element the element the visibility applies to 
 	 * @param visibility element visibility. See {@linkplain VisibilityModifiers} for
-	 * supported modifiers 
+	 * supported modifiers
+	 * @return status of the operation 
 	 */
-	public void setVisibility(String component, IElementDescriptor element, int visibility);
+	public IStatus setVisibility(String component, IElementDescriptor element, int visibility);
 	
 	/**
-	 * Sets the restrictions for the specified element in the context of the specified component.
+	 * Sets the restrictions for the specified element in the context of the specified component
+	 * and returns a status describing whether the operation succeeded.
 	 *  
 	 * @param component the component the visibility applies to or <code>null</code> for all components
 	 * @param element the element the restrictions apply to 
 	 * @param restrictions the restrictions to place on the element. See {@linkplain RestrictionModifiers} for
 	 * supported modifiers 
+	 * @return status of the operation
 	 */
-	public void setRestrictions(String component, IElementDescriptor element, int restrictions);
+	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions);
 	
 	/**
 	 * Returns annotations for the specified element when referenced from the specified component. 

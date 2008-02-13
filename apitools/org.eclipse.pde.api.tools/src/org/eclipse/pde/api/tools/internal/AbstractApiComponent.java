@@ -178,6 +178,15 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 		}
 		return fApiDescription;
 	}
+	
+	/**
+	 * Returns whether this component has created an API description.
+	 * 
+	 * @return whether this component has created an API description
+	 */
+	protected synchronized boolean hasApiDescription() {
+		return fApiDescription != null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()

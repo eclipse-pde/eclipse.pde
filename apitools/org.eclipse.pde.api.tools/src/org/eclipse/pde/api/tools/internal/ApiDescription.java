@@ -17,8 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -27,6 +30,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of an API description.
@@ -369,24 +374,30 @@ public class ApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setRestrictions(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
 	 */
-	public void setRestrictions(String component, IElementDescriptor element, int restrictions) {
+	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions) {
 		ManifestNode node = findNode(component, element, true);
 		if(node != null) {
 			node.restrictions = restrictions;
 			this.fContainsAnnotatedElements = true;
+			return Status.OK_STATUS;
 		}
-		// TODO: if null > error
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API restriction: {0} not found in {1}",
+						new String[]{element.toString(), fOwningComponentId}), null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#setVisibility(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor, int)
 	 */
-	public void setVisibility(String component, IElementDescriptor element, int visibility) {
+	public IStatus setVisibility(String component, IElementDescriptor element, int visibility) {
 		ManifestNode node = findNode(component, element, true);
 		if(node != null) {
 			node.visibility = visibility;
+			return Status.OK_STATUS;
 		}
-		// TODO: if null > error
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
+				MessageFormat.format("Failed to set API visibility: {0} not found in {1}",
+						new String[]{element.toString(), fOwningComponentId}), null);
 	}
 	
 	/* (non-Javadoc)

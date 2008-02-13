@@ -119,6 +119,18 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 */
 	public void dispose() {
 		try {
+			if (hasApiDescription()) {
+				try {
+					IApiDescription description = getApiDescription();
+					if (description instanceof ProjectApiDescription) {
+						((ProjectApiDescription) description).disconnect(getBundleDescription());
+					} else if (description instanceof CompositeApiDescription) {
+						((CompositeApiDescription) description).disconnect(getBundleDescription());
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e.getStatus());
+				}
+			}
 			ApiPlugin.getDefault().removeSaveParticipant(this);
 		} finally {
 			super.dispose();
@@ -126,11 +138,11 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.BundleApiComponent#createApiDescription()
+	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createLocalApiDescription()
 	 */
-	protected IApiDescription createApiDescription() throws CoreException {
+	protected IApiDescription createLocalApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
-		IApiDescription apiDesc = ApiDescriptionManager.getDefault().getApiDescription(getJavaProject());
+		IApiDescription apiDesc = ApiDescriptionManager.getDefault().getApiDescription(getJavaProject(), getBundleDescription());
 		if (DEBUG) {
 			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}

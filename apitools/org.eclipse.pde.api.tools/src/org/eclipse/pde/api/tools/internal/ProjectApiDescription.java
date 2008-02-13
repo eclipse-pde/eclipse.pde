@@ -12,11 +12,13 @@ package org.eclipse.pde.api.tools.internal;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Dictionary;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -32,9 +34,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.StateObjectFactory;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -46,7 +45,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
-import org.osgi.framework.BundleException;
 
 /**
  * Implementation of an API description for a Java project.
@@ -59,7 +57,13 @@ public class ProjectApiDescription extends ApiDescription {
 	 * Associated API component.
 	 */
 	private IJavaProject fProject;
-		
+	
+	/**
+	 * Only valid when connected to a bundle. Used to initialize
+	 * package exports.
+	 */
+	private BundleDescription fBundle;
+	
 	/**
 	 * Time stamp at which package information was created
 	 */
@@ -203,46 +207,36 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	public void accept(ApiDescriptionVisitor visitor) {
 		try {
-			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IPackageFragmentRoot root = roots[i];
-				// TODO: only care about class path entries for things in this project (binary too)
-				if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-					if (DEBUG) {
-						System.out.println("visiting: " + root.getElementName().toString()); //$NON-NLS-1$
-					}
-					IJavaElement[] fragments = root.getChildren();
-					for (int j = 0; j < fragments.length; j++) {
-						IPackageFragment fragment = (IPackageFragment) fragments[j];
-						if (DEBUG) {
-							System.out.println("\t" + fragment.getElementName().toString()); //$NON-NLS-1$
-						}
-						IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
-						// visit package
-						IApiAnnotations annotations = resolveAnnotations(null, packageDescriptor);
-						boolean visitChildren  = visitor.visitElement(packageDescriptor, null, annotations);
-						if (visitChildren) {
-							IJavaElement[] children = fragment.getChildren();
-							for (int k = 0; k < children.length; k++) {
-								IJavaElement child = children[k];
-								if (child instanceof ICompilationUnit) {
-									ICompilationUnit unit = (ICompilationUnit) child;
-									IType[] allTypes = unit.getAllTypes();
-									for (int l = 0; l < allTypes.length; l++) {
-										visit(visitor, null, allTypes[l]);
-									}
-								} else if (child instanceof IClassFile) {
-									visit(visitor, null, ((IClassFile)child).getType());
-								}
+			IPackageFragment[] fragments = getLocalPackageFragments();
+			for (int j = 0; j < fragments.length; j++) {
+				IPackageFragment fragment = fragments[j];
+				if (DEBUG) {
+					System.out.println("\t" + fragment.getElementName().toString()); //$NON-NLS-1$
+				}
+				IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
+				// visit package
+				IApiAnnotations annotations = resolveAnnotations(null, packageDescriptor);
+				boolean visitChildren  = visitor.visitElement(packageDescriptor, null, annotations);
+				if (visitChildren) {
+					IJavaElement[] children = fragment.getChildren();
+					for (int k = 0; k < children.length; k++) {
+						IJavaElement child = children[k];
+						if (child instanceof ICompilationUnit) {
+							ICompilationUnit unit = (ICompilationUnit) child;
+							IType[] allTypes = unit.getAllTypes();
+							for (int l = 0; l < allTypes.length; l++) {
+								visit(visitor, null, allTypes[l]);
 							}
-						}
-						visitor.endVisitElement(packageDescriptor, null, annotations);
-						// visit component overrides
-						ManifestNode node = findNode(null, packageDescriptor, false);
-						if (node != null) {
-							visitOverrides(visitor, node);
+						} else if (child instanceof IClassFile) {
+							visit(visitor, null, ((IClassFile)child).getType());
 						}
 					}
+				}
+				visitor.endVisitElement(packageDescriptor, null, annotations);
+				// visit component overrides
+				ManifestNode node = findNode(null, packageDescriptor, false);
+				if (node != null) {
+					visitOverrides(visitor, node);
 				}
 			}
 		} catch (JavaModelException e) {
@@ -346,15 +340,13 @@ public class ProjectApiDescription extends ApiDescription {
 				fManifestFile = getJavaProject().getProject().getFile(JarFile.MANIFEST_NAME);
 				if (fManifestFile.exists()) {
 					try {
-						Dictionary manifest = (Dictionary) ManifestElement.parseBundleManifest(fManifestFile.getContents(), new Hashtable(10));
-						State state = StateObjectFactory.defaultFactory.createState(false);
-						BundleDescription description = StateObjectFactory.defaultFactory.createBundleDescription(state, manifest, null, 0L);
-						BundleApiComponent.annotateExportedPackages(this, description.getExportPackages());
+						IPackageFragment[] fragments = getLocalPackageFragments();
+						Set names = new HashSet();
+						for (int i = 0; i < fragments.length; i++) {
+							names.add(fragments[i].getElementName());
+						}
+						BundleApiComponent.initializeApiDescription(this, fBundle, names);
 						fPackageTimeStamp = fManifestFile.getModificationStamp();
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					} catch (BundleException e) {
-						ApiPlugin.log(e);
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
 					}
@@ -401,6 +393,66 @@ public class ProjectApiDescription extends ApiDescription {
 			fClassFileContainers.put(root, container);
 		}
 		return container;
+	}
+	
+	/**
+	 * Returns all package fragments that originate from this project.
+	 * 
+	 * @return all package fragments that originate from this project
+	 */
+	private IPackageFragment[] getLocalPackageFragments() {
+		List local = new ArrayList();
+		try {
+			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				// only care about roots originating from this project (binary or source)
+				IResource resource = root.getCorrespondingResource();
+				if (resource != null && resource.getProject().equals(getJavaProject().getProject())) {
+					IJavaElement[] children = root.getChildren();
+					for (int j = 0; j < children.length; j++) {
+						local.add(children[j]);
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+		return (IPackageFragment[]) local.toArray(new IPackageFragment[local.size()]);
+	}
+	
+	/**
+	 * Connects this API description to the given bundle.
+	 * 
+	 * @param bundle bundle description
+	 */
+	synchronized void connect(BundleDescription bundle) {
+		if (fBundle != null && fBundle != bundle) {
+			throw new IllegalStateException("Already connected to a bundle"); //$NON-NLS-1$
+		}
+		fBundle = bundle;
+	}
+	
+	/**
+	 * Returns the bundle this description is connected to or <code>null</code>
+	 * 
+	 * @return connected bundle or <code>null</code>
+	 */
+	BundleDescription getConnection() {
+		return fBundle;
+	}
+	
+	/**
+	 * Disconnects this API description from the given bundle.
+	 * 
+	 * @param bundle bundle description
+	 */
+	synchronized void disconnect(BundleDescription bundle) {
+		if (bundle.equals(fBundle)) {
+			fBundle = null;
+		} else if (fBundle != null) {
+			throw new IllegalStateException("Not connected to same bundle"); //$NON-NLS-1$
+		}
 	}
 	
 }

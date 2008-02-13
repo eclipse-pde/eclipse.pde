@@ -205,17 +205,36 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiDescription()
+	 */
+	protected IApiDescription createApiDescription() throws CoreException {
+		BundleDescription[] fragments = getBundleDescription().getFragments();
+		if (fragments.length == 0) {
+			return createLocalApiDescription();
+		}
+		// build a composite description
+		IApiDescription[] descriptions = new IApiDescription[fragments.length + 1];
+		for (int i = 0; i < fragments.length; i++) {
+			BundleDescription fragment = fragments[i];
+			BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
+			descriptions[i + 1] = component.createLocalApiDescription();
+		}
+		descriptions[0] = createLocalApiDescription();
+		return new CompositeApiDescription(descriptions);
+	}
+
 	/**
-	 * Creates and returns this component's API description based on exported packages
-	 * and associated directives.
+	 * Creates and returns this component's API description based on packages
+	 * supplied by this component, exported packages, and associated directives.
 	 * 
 	 * @return API description
 	 * @throws CoreException if unable to initialize 
 	 */
-	protected IApiDescription createApiDescription() throws CoreException {
+	protected IApiDescription createLocalApiDescription() throws CoreException {
 		IApiDescription apiDesc = new ApiDescription(getId());
 		// first mark all packages as internal
-		loadManifestApiDescription(apiDesc, getBundleDescription(), getPackageNames());
+		initializeApiDescription(apiDesc, getBundleDescription(), getLocalPackageNames());
 		try {
 			String xml = loadApiDescription(new File(fLocation));
 			if (xml != null) {
@@ -226,30 +245,87 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return apiDesc;
 	}
+	
+	/**
+	 * Returns the names of all packages that originate from this bundle.
+	 * Does not include packages that originate from fragments or a host.
+	 * 
+	 * @return local package names
+	 * @throws CoreException
+	 */
+	protected Set getLocalPackageNames() throws CoreException {
+		Set names = new HashSet();
+		IClassFileContainer[] containers = getClassFileContainers();
+		for (int i = 0; i < containers.length; i++) {
+			if (containers[i].getOrigin().equals(getId())) {
+				String[] packageNames = containers[i].getPackageNames();
+				for (int j = 0; j < packageNames.length; j++) {
+					names.add(packageNames[j]);
+				}
+			}
+		}
+		return names;
+	}	
+	
 
 	/**
 	 * Initializes the given API description based on package exports in the manifest.
+	 * The API description for a bundle only contains packages that originate from
+	 * this bundle (so a host will not contain API descriptions for packages that
+	 * originate from fragments). However, a host's API description will be represented
+	 * by a proxy that delegates to the host and all of its fragments to provide
+	 * a complete description of the host.
 	 * 
 	 * @param apiDesc API description to initialize
 	 * @param bundle the bundle to load from
-	 * @param packages the current complete set of packages from the backing component
+	 * @param packages the complete set of packages names originating from the backing
+	 * 		component
 	 * @throws CoreException if an error occurs
 	 */
-	protected static void loadManifestApiDescription(IApiDescription apiDesc, BundleDescription bundle, String[] packages) throws CoreException {
-		if(packages.length == 0 && bundle.getExportPackages().length == 0) {
-			((ApiDescription)apiDesc).clearPackages();
+	protected static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set packages) throws CoreException {
+		Iterator iterator = packages.iterator();
+		while (iterator.hasNext()) {
+			String name = (String) iterator.next();
+			apiDesc.setVisibility(null, Factory.packageDescriptor(name), VisibilityModifiers.PRIVATE);
 		}
-		for (int i = 0; i < packages.length; i++) {
-			apiDesc.setVisibility(null, Factory.packageDescriptor(packages[i]), VisibilityModifiers.PRIVATE);
-		}
-		// then process exported packages
-		annotateExportedPackages(apiDesc, bundle.getExportPackages());
-		// export packages from my host
+		// then process exported packages that originate from this bundle
+		// considering host and fragment package exports
+		List supplied = new ArrayList();
+		ExportPackageDescription[] exportPackages = bundle.getExportPackages();
+		addSuppliedPackages(packages, supplied, exportPackages);
 		HostSpecification host = bundle.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
 			for (int i = 0; i < hosts.length; i++) {
-				annotateExportedPackages(apiDesc, hosts[i].getExportPackages());
+				addSuppliedPackages(packages, supplied, hosts[i].getExportPackages());
+			}
+		}
+		BundleDescription[] fragments = bundle.getFragments();
+		for (int i = 0; i < fragments.length; i++) {
+			addSuppliedPackages(packages, supplied, fragments[i].getExportPackages());
+		}
+		
+		annotateExportedPackages(apiDesc, (ExportPackageDescription[]) supplied.toArray(new ExportPackageDescription[supplied.size()]));
+	}
+
+	/**
+	 * Adds package exports to the given list if the associated package originates
+	 * from this bundle.
+	 *   
+	 * @param packages names of packages supplied by this bundle
+	 * @param supplied list to append package exports to
+	 * @param exportPackages package exports to consider
+	 */
+	protected static void addSuppliedPackages(Set packages, List supplied, ExportPackageDescription[] exportPackages) {
+		for (int i = 0; i < exportPackages.length; i++) {
+			ExportPackageDescription pkg = exportPackages[i];
+			String name = pkg.getName();
+			if (name.equals(".")) { //$NON-NLS-1$
+				// translate . to default package
+				name = Util.DEFAULT_PACKAGE_NAME;
+			}
+			if (packages.contains(name)) {
+				supplied.add(pkg);
 			}
 		}
 	}
@@ -286,7 +362,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 					//visibility, so we need to add the package as API in that case
 					apiDesc.setVisibility(null, pkgDesc, VisibilityModifiers.API);
 				}
-			}
+			}				
 		}
 	}
 	
