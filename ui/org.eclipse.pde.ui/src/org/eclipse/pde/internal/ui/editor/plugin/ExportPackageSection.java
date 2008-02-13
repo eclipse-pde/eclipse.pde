@@ -535,7 +535,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.INSERT :
 						fPackageViewer.add(object);
-						fPackageViewer.setSelection(new StructuredSelection(object));
+						fPackageViewer.setSelection(new StructuredSelection(object), false);
 						fPackageViewer.getTable().setFocus();
 						break;
 					case IModelChangedEvent.REMOVE :

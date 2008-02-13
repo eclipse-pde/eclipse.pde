@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 201572
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -296,6 +297,14 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 			refresh();
 			return;
 		}
+
+		if (event.getChangeType() == IModelChangedEvent.INSERT && event.getChangedObjects()[0] instanceof PackageFriend) {
+			fFriendViewer.refresh();
+			fFriendViewer.setSelection(new StructuredSelection(event.getChangedObjects()[0]), true);
+			fFriendViewer.getControl().setFocus();
+			return;
+		}
+
 		int index = fFriendViewer.getTable().getSelectionIndex();
 		fFriendViewer.refresh();
 		fFriendViewer.getTable().setSelection(Math.min(index, fFriendViewer.getTable().getItemCount() - 1));
