@@ -104,7 +104,6 @@ public class JavadocTagRefactoring extends Refactoring {
 					alledits.addChild(edit);
 				}
 				pchange.add(change);
-				pchange.setEnabled(false);
 			}
 		}
 		for(Iterator iter = fProjectChangeMap.keySet().iterator(); iter.hasNext();) {

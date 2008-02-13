@@ -183,8 +183,8 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 											pjs.add(pj);
 										}
 									}
-									return pjs.toArray();
 								}
+								return pjs.toArray();
 							}
 						}
 					}
@@ -228,7 +228,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				fProjectsToUpdate.clear();
 				fProjectsToUpdate.addAll(Arrays.asList(projects));
 				IProject project = null;
-				monitor.beginTask("Scanning projects for javadoc changes...", fProjectsToUpdate.size());
+				monitor.beginTask(WizardMessages.ApiToolingSetupWizardPage_7, fProjectsToUpdate.size());
 				for(Iterator iter = fProjectsToUpdate.iterator(); iter.hasNext();) {
 					try {
 						project = (IProject) iter.next();

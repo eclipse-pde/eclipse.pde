@@ -37,6 +37,7 @@ public class WizardMessages extends NLS {
 	public static String ApiToolingSetupWizardPage_4;
 	public static String ApiToolingSetupWizardPage_5;
 	public static String ApiToolingSetupWizardPage_6;
+	public static String ApiToolingSetupWizardPage_7;
 	public static String JavadocTagRefactoring_0;
 	public static String JavadocTagRefactoring_1;
 	public static String JavadocTagRefactoring_2;
