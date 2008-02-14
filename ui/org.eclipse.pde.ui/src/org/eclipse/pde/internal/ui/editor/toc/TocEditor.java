@@ -59,9 +59,11 @@ public class TocEditor extends MultiSourceEditor {
 		if (inUiThread() && isShowInApplicable()) {
 			if (adapter == IShowInSource.class) {
 				return getShowInSource();
-			} else if (adapter == IShowInTargetList.class) {
-				return getShowInTargetList();
 			}
+		}
+
+		if (adapter == IShowInTargetList.class) {
+			return getShowInTargetList();
 		}
 
 		return super.getAdapter(adapter);
