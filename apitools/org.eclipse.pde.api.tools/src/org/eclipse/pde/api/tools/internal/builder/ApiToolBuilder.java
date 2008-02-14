@@ -1019,8 +1019,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
 		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
-		if ((this.bits & (CONTAINS_API_BREAKAGE | CONTAINS_API_CHANGES)) != 0
-				&& severityLevel != ApiPlugin.SEVERITY_IGNORE) {
+		if (severityLevel != ApiPlugin.SEVERITY_IGNORE) {
 			String referenceVersionValue = reference.getVersion();
 			String componentVersionValue = component.getVersion();
 			Version referenceVersion = new Version(referenceVersionValue);
@@ -1608,7 +1607,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			} catch(Exception e) {
 				ApiPlugin.log(e);
 			} finally {
-				if (DEBUG) System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (DEBUG) {
+					System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
 			}
 		}
 		if (delta == null) {

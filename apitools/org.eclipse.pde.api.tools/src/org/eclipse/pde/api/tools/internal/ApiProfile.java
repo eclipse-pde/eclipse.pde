@@ -935,4 +935,11 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	protected synchronized void clearPackage(String packageName) {
 		fComponents.remove(packageName);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
 }
