@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -44,7 +45,11 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
+import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Implementation of an API description for a Java project.
@@ -67,7 +72,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Time stamp at which package information was created
 	 */
-	private long fPackageTimeStamp;
+	long fPackageTimeStamp;
 	
 	/** 
 	 * Whether a package refresh is in progress
@@ -77,7 +82,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Associated manifest file
 	 */
-	private IFile fManifestFile;
+	IFile fManifestFile;
 	
 	/**
 	 * Class file container cache used for tag scanning.
@@ -114,10 +119,21 @@ public class ProjectApiDescription extends ApiDescription {
 			if (fFragment.exists()) {
 				return this;
 			} else {
+				modified();
 				return null;
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
+		 */
+		void persistXML(Document document, Element parent, String component) {
+			Element pkg = document.createElement(ApiDescriptionProcessor.ELEMENT_PACKAGE);
+			pkg.setAttribute(ApiDescriptionManager.ATTR_HANDLE, fFragment.getHandleIdentifier());
+			persistAnnotations(pkg, component);
+			persistChildren(document, pkg, children);
+			parent.appendChild(pkg);
+		}		
 	}
 	
 	/**
@@ -125,7 +141,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	class TypeNode extends ManifestNode {
 		
-		private long fTimeStamp = -1L;
+		long fTimeStamp = -1L;
 		
 		private boolean fRefreshing = false;
 		
@@ -161,6 +177,7 @@ public class ProjectApiDescription extends ApiDescription {
 						if (resource != null) {
 							long stamp = resource.getModificationStamp();
 							if (stamp != fTimeStamp) {
+								modified();
 								children.clear();
 								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
@@ -168,6 +185,7 @@ public class ProjectApiDescription extends ApiDescription {
 								fTimeStamp = resource.getModificationStamp();
 							}
 						} else {
+							modified();
 							// error - no associated file
 							return null;
 						}
@@ -175,6 +193,7 @@ public class ProjectApiDescription extends ApiDescription {
 						// TODO: binary type
 					}
 				} else {
+					modified();
 					// no longer exists
 					parent.children.remove(getElement());
 					return null;
@@ -190,6 +209,18 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 			return this;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
+		 */
+		void persistXML(Document document, Element parent, String component) {
+			Element type = document.createElement(ApiDescriptionProcessor.ELEMENT_TYPE);
+			type.setAttribute(ApiDescriptionManager.ATTR_HANDLE, fType.getHandleIdentifier());
+			persistAnnotations(type, component);
+			type.setAttribute(ApiDescriptionManager.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
+			persistChildren(document, type, children);
+			parent.appendChild(type);
+		}		
 	}
 	
 	/**
@@ -294,7 +325,7 @@ public class ProjectApiDescription extends ApiDescription {
 						case IClasspathEntry.CPE_LIBRARY:
 							IPackageFragment fragment = root.getPackageFragment(pkg.getName());
 							if (fragment.exists()) {
-								return new PackageNode(fragment, parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+								return newPackageNode(fragment, parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 							}
 						}
 					}
@@ -308,7 +339,7 @@ public class ProjectApiDescription extends ApiDescription {
 				try {
 					IType type = getJavaProject().findType(descriptor.getQualifiedName().replace('$', '.'));
 					if (type != null && type.getJavaProject().equals(getJavaProject())) {
-						return new TypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
+						return newTypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
 					}
 				} catch (CoreException e ) {
 					ApiPlugin.log(e.getStatus());
@@ -317,6 +348,47 @@ public class ProjectApiDescription extends ApiDescription {
 				return null;
 		}
 		return super.createNode(parentNode, element);
+	}
+
+	/** 
+	 * Constructs and returns a new node for the given package fragment.
+	 * 
+	 * @param fragment
+	 * @param parent
+	 * @param descriptor
+	 * @param vis
+	 * @param res
+	 * @return
+	 */
+	PackageNode newPackageNode(IPackageFragment fragment, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
+		return new PackageNode(fragment, parent, descriptor, vis, res);
+	}
+
+	/**
+	 * Constructs and returns a new node for the given type.
+	 * 
+	 * @param type
+	 * @param parent
+	 * @param descriptor
+	 * @param vis
+	 * @param res
+	 * @return
+	 */
+	TypeNode newTypeNode(IType type, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
+		return new TypeNode(type, parent, descriptor, vis, res);
+	}
+	
+	/**
+	 * Constructs a new manifiest node.
+	 * 
+	 * @param parent
+	 * @param element
+	 * @param vis
+	 * @param res
+	 * @return
+	 */
+	ManifestNode newNode(ManifestNode parent, IElementDescriptor element, int vis, int res) {
+		return new ManifestNode(parent, element, vis, res);
 	}
 
 	/**
@@ -329,6 +401,7 @@ public class ProjectApiDescription extends ApiDescription {
 		// check if in synch
 		if (fManifestFile == null || (fManifestFile.getModificationStamp() != fPackageTimeStamp)) {
 			try {
+				modified();
 				fRefreshingInProgress = true;
 				// set all existing packages to PRIVATE (could clear
 				// the map, but it would be less efficient)
@@ -455,4 +528,52 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 	}
 	
+	/**
+	 * Returns this API description as XML.
+	 * 
+	 * @throws CoreException
+	 */
+	synchronized String getXML() throws CoreException {
+		Document document = Util.newDocument();	
+		Element component = document.createElement(ApiDescriptionProcessor.ELEMENT_COMPONENT);
+		component.setAttribute(ApiDescriptionProcessor.ATTR_ID, getJavaProject().getElementName());
+		component.setAttribute(ApiDescriptionManager.ATTR_MODIFICATION_STAMP, Long.toString(fPackageTimeStamp));
+		document.appendChild(component);
+		persistChildren(document, component, fPackageMap);
+		return Util.serializeDocument(document);
+	}
+
+	/**
+	 * Persists the elements in the given map as XML elements, appended
+	 * to the given xmlElement.
+	 *  
+	 * @param document XML document
+	 * @param xmlElement node to append children no
+	 * @param elementMap elements to persist
+	 */
+	void persistChildren(Document document, Element xmlElement, Map elementMap) {
+		Iterator iterator = elementMap.values().iterator();
+		while (iterator.hasNext()) {
+			ManifestNode node = (ManifestNode) iterator.next();
+			node.persistXML(document, xmlElement, null);
+			if (node.overrides != null && !node.overrides.isEmpty()) {
+				Iterator entries = node.overrides.entrySet().iterator();
+				while (entries.hasNext()) {
+					Entry entry = (Entry) entries.next();
+					String component = (String) entry.getKey();
+					ManifestNode override = (ManifestNode) entry.getValue();
+					override.persistXML(document, xmlElement, component);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Cleans this API description so it will be re-populated with fresh data.
+	 */
+	synchronized void clean() {
+		fPackageMap.clear();
+		fPackageTimeStamp = -1L;
+		modified();
+	}
 }

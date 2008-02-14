@@ -91,6 +91,7 @@ public interface IApiDescription {
 	 * Returns true if this API description contains annotated elements, false otherwise.
 	 *
 	 * @return true if this API description contains annotated elements, false otherwise.
+	 * @deprecated this method will be removed
 	 */
 	public boolean containsAnnotatedElements();
 }

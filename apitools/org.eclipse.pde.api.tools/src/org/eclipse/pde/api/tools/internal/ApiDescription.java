@@ -27,9 +27,14 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -58,6 +63,11 @@ public class ApiDescription implements IApiDescription {
 	 * a component description should have a component id.
 	 */
 	private String fOwningComponentId = null;
+	
+	/**
+	 * Whether this description needs saving
+	 */
+	private boolean fModified = false;
 	
 	/**
 	 * Represents a single node in the tree of mapped manifest items
@@ -163,6 +173,47 @@ public class ApiDescription implements IApiDescription {
 		protected ManifestNode refresh() {
 			return this;
 		}
+		
+		/**
+		 * Persists this node as a child of the given element.
+		 * 
+		 * @param document XML document
+		 * @param parent parent element in the document
+		 * @param component component the description is for or <code>null</code>
+		 */
+		void persistXML(Document document, Element parent, String component) {
+			switch (element.getElementType()) {
+			case IElementDescriptor.T_METHOD:
+				IMethodDescriptor md = (IMethodDescriptor) element;
+				Element method = document.createElement(ApiDescriptionProcessor.ELEMENT_METHOD);
+				method.setAttribute(ApiDescriptionProcessor.ATTR_NAME, md.getName());
+				method.setAttribute(ApiDescriptionProcessor.ATTR_SIGNATURE, md.getSignature());
+				persistAnnotations(method, component);
+				parent.appendChild(method);
+				break;
+			case IElementDescriptor.T_FIELD:
+				IFieldDescriptor fd = (IFieldDescriptor) element;
+				Element field = document.createElement(ApiDescriptionProcessor.ELEMENT_FIELD);
+				field.setAttribute(ApiDescriptionProcessor.ATTR_NAME, fd.getName());
+				persistAnnotations(field, component);
+				parent.appendChild(field);
+				break;
+			}
+		}
+		
+		/**
+		 * Adds visibility and restrictions to the XML element.
+		 * 
+		 * @param element XML element to annotate
+		 * @param component the component the description is for or <code>null</code>
+		 */
+		void persistAnnotations(Element element, String component) {
+			element.setAttribute(ApiDescriptionProcessor.ATTR_VISIBILITY, Integer.toString(visibility));
+			element.setAttribute(ApiDescriptionManager.ATTR_RESTRICTIONS, Integer.toString(restrictions));
+			if (component != null) {
+				element.setAttribute(ApiDescriptionProcessor.ATTR_CONTEXT, component);
+			}
+		}
 	}
 		
 	/**
@@ -173,7 +224,7 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected HashMap fPackageMap = new HashMap();
 	
-	private boolean fContainsAnnotatedElements;
+	private boolean fContainsAnnotatedElements = true;
 
 	/**
 	 * Constructs an API description owned by the specified component.
@@ -377,6 +428,7 @@ public class ApiDescription implements IApiDescription {
 	public IStatus setRestrictions(String component, IElementDescriptor element, int restrictions) {
 		ManifestNode node = findNode(component, element, true);
 		if(node != null) {
+			modified();
 			node.restrictions = restrictions;
 			this.fContainsAnnotatedElements = true;
 			return Status.OK_STATUS;
@@ -392,6 +444,7 @@ public class ApiDescription implements IApiDescription {
 	public IStatus setVisibility(String component, IElementDescriptor element, int visibility) {
 		ManifestNode node = findNode(component, element, true);
 		if(node != null) {
+			modified();
 			node.visibility = visibility;
 			return Status.OK_STATUS;
 		}
@@ -406,6 +459,7 @@ public class ApiDescription implements IApiDescription {
 	public boolean removeElement(IElementDescriptor element) {
 		ManifestNode node = findNode(null, element, false);
 		if(node != null) {
+			modified();
 			//packages have no parents
 			if(node.parent == null) {
 				return fPackageMap.remove(element) != null;
@@ -440,5 +494,21 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected boolean isInsertOnResolve(String component, IElementDescriptor elementDescriptor) {
 		return false;
+	}
+	
+	/**
+	 * Marks the description as modified
+	 */
+	protected synchronized void modified() {
+		fModified = true;
+	}
+	
+	/**
+	 * Returns whether this description has been modified.
+	 * 
+	 * @return
+	 */
+	protected synchronized boolean isModified() {
+		return fModified;
 	}
 }

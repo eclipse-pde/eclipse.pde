@@ -1,6 +1,5 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,8 +67,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
-import org.eclipse.pde.api.tools.internal.BundleApiComponent;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -544,20 +543,16 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		// clean up all existing markers
 		cleanupMarkers(fCurrentProject);
 		//clean up the .api_settings
-		cleanupApiProfileSettings(fCurrentProject);
+		cleanupApiDescription(fCurrentProject);
 	}
 
 	/**
 	 * Cleans the .api_settings file for the given project
 	 * @param project
 	 */
-	private void cleanupApiProfileSettings(IProject project) {
+	private void cleanupApiDescription(IProject project) {
 		if(project != null && project.exists()) {
-			IPath path = ApiPlugin.getDefault().getStateLocation().append(project.getName()).append(BundleApiComponent.API_DESCRIPTION_XML_NAME);
-			File file = new File(path.toOSString());
-			if(file.exists()) {
-				file.delete();
-			}
+			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, false);
 		}
 	}
 	
