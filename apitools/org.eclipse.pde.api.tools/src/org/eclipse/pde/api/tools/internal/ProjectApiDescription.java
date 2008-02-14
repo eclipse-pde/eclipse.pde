@@ -246,28 +246,27 @@ public class ProjectApiDescription extends ApiDescription {
 				}
 				IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
 				// visit package
-				IApiAnnotations annotations = resolveAnnotations(null, packageDescriptor);
-				boolean visitChildren  = visitor.visitElement(packageDescriptor, null, annotations);
-				if (visitChildren) {
-					IJavaElement[] children = fragment.getChildren();
-					for (int k = 0; k < children.length; k++) {
-						IJavaElement child = children[k];
-						if (child instanceof ICompilationUnit) {
-							ICompilationUnit unit = (ICompilationUnit) child;
-							IType[] allTypes = unit.getAllTypes();
-							for (int l = 0; l < allTypes.length; l++) {
-								visit(visitor, null, allTypes[l]);
+				ManifestNode pkgNode = findNode(null, packageDescriptor, isInsertOnResolve(null, packageDescriptor));
+				if (pkgNode != null) {
+					IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
+					if (visitor.visitElement(packageDescriptor, null, annotations)) {
+						IJavaElement[] children = fragment.getChildren();
+						for (int k = 0; k < children.length; k++) {
+							IJavaElement child = children[k];
+							if (child instanceof ICompilationUnit) {
+								ICompilationUnit unit = (ICompilationUnit) child;
+								IType[] allTypes = unit.getAllTypes();
+								for (int l = 0; l < allTypes.length; l++) {
+									visit(visitor, allTypes[l]);
+								}
+							} else if (child instanceof IClassFile) {
+								visit(visitor, ((IClassFile)child).getType());
 							}
-						} else if (child instanceof IClassFile) {
-							visit(visitor, null, ((IClassFile)child).getType());
 						}
 					}
-				}
-				visitor.endVisitElement(packageDescriptor, null, annotations);
-				// visit component overrides
-				ManifestNode node = findNode(null, packageDescriptor, false);
-				if (node != null) {
-					visitOverrides(visitor, node);
+					visitor.endVisitElement(packageDescriptor, null, annotations);
+					// visit component overrides
+					visitOverrides(visitor, pkgNode);
 				}
 			}
 		} catch (JavaModelException e) {
@@ -282,20 +281,20 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param owningComponent
 	 * @param type
 	 */
-	private void visit(ApiDescriptionVisitor visitor, String owningComponent, IType type) {
+	private void visit(ApiDescriptionVisitor visitor, IType type) {
 		IElementDescriptor element = getElementDescriptor(type);
-		IApiAnnotations annotations = resolveAnnotations(owningComponent, element);
-		if (visitor.visitElement(element, owningComponent, annotations)) {
-			ManifestNode node = findNode(owningComponent, element, false);
-			if (node != null && node.children != null) {
-				visitChildren(visitor, node.children);
+		ManifestNode typeNode = findNode(null, element, isInsertOnResolve(null, element));
+		if (typeNode != null) {
+			IApiAnnotations annotations = resolveAnnotations(typeNode, element);
+			if (visitor.visitElement(element, null, annotations)) {
+				// children
+				if (typeNode.children != null) {
+					visitChildren(visitor, typeNode.children);
+				}
 			}
-		}
-		visitor.endVisitElement(element, owningComponent, annotations);
-		// component specific overrides
-		ManifestNode node = findNode(owningComponent, element, false);
-		if (node != null ) {
-			visitOverrides(visitor, node);
+			visitor.endVisitElement(element, null, annotations);
+			// component specific overrides
+			visitOverrides(visitor, typeNode);
 		}
 	}
 	

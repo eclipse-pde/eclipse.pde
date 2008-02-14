@@ -379,19 +379,30 @@ public class ApiDescription implements IApiDescription {
 		}
 		ManifestNode node = findNode(component, element, isInsertOnResolve(component, element));
 		if (node != null) {
-			ManifestNode visNode = node;
-			int vis = visNode.visibility;
-			while (vis == VISIBILITY_INHERITED) {
-				visNode = visNode.parent;
-				vis = visNode.visibility;
-			}
-			int res = RestrictionModifiers.NO_RESTRICTIONS;
-			if (node.element.equals(element)) {
-				res = node.restrictions;
-			}
-			return new ApiAnnotations(vis, res);
+			return resolveAnnotations(node, element);
 		}
 		return null;
+	}
+	
+	/**
+	 * Resolves annotations based on inheritance for the given node and element.
+	 * 
+	 * @param node manifest node
+	 * @param element the element annotations are being resolved for
+	 * @return annotations
+	 */
+	protected IApiAnnotations resolveAnnotations(ManifestNode node, IElementDescriptor element) {
+		ManifestNode visNode = node;
+		int vis = visNode.visibility;
+		while (vis == VISIBILITY_INHERITED) {
+			visNode = visNode.parent;
+			vis = visNode.visibility;
+		}
+		int res = RestrictionModifiers.NO_RESTRICTIONS;
+		if (node.element.equals(element)) {
+			res = node.restrictions;
+		}
+		return new ApiAnnotations(vis, res);
 	}
 	
 	/**
