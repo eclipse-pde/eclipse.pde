@@ -752,7 +752,7 @@ public class ClassFileComparator {
 				}
 			} else if (!fieldDescriptor.value.equals(fieldDescriptor2.value)) {
 				// report delta - modified constant value
-				if (isProtectedWithExtendRestriction(access)) {
+				if (isProtectedWithExtendRestriction(access, this.descriptor2.access)) {
 					// consider static protected field in a class that cannot be subclassed as NON_VISIBLE
 					this.addDelta(IDelta.FIELD_ELEMENT_TYPE, IDelta.CHANGED_NON_VISIBLE, IDelta.VALUE, this.classFile, name);
 				} else {
@@ -829,8 +829,9 @@ public class ClassFileComparator {
 		}
 	}
 
-	private boolean isProtectedWithExtendRestriction(int access) {
-		return Util.isProtected(access) && RestrictionModifiers.isExtendRestriction(this.getCurrentTypeApiRestrictions());
+	private boolean isProtectedWithExtendRestriction(int access, int typeAccess) {
+		return Util.isProtected(access) && (RestrictionModifiers.isExtendRestriction(this.getCurrentTypeApiRestrictions())
+				|| Util.isFinal(typeAccess));
 	}
 	
 	private int getCurrentTypeApiRestrictions() {

@@ -25,9 +25,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 
 public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
-		if (false) return new TestSuite(FieldDeltaTests.class);
+		if (true) return new TestSuite(FieldDeltaTests.class);
 		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-		suite.addTest(new FieldDeltaTests("test34"));
+		suite.addTest(new FieldDeltaTests("test35"));
 		return suite;
 	}
 
@@ -826,5 +826,27 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+	}
+
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=218976
+	 */
+	public void test35() {
+		deployBundles("test35");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 }
