@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -433,11 +433,18 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 				System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			//save the .api_filters file
-			IPath path = getProjectSettingsPath(true);
-			if(path != null) {
-				ApiFilterStore filters = (ApiFilterStore) getFilterStore();
-				String xml = filters.getStoreAsXml();
-				Util.saveFile(new File(path.toOSString(), API_FILTERS_XML_NAME), xml);
+			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
+			String xml = filters.getStoreAsXml();
+			InputStream xstream = Util.getInputStreamFromString(xml);
+			if(xstream == null) {
+				return;
+			}
+			IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
+			if(!file.exists()) {
+				file.create(xstream, true, new NullProgressMonitor());
+			}
+			else {
+				file.setContents(xstream, true, false, new NullProgressMonitor());
 			}
 		}
 	}

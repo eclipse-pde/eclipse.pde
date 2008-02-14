@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -1926,6 +1927,21 @@ public final class Util {
 		}
 	}
 
+	/**
+	 * Returns the given string as an {@link InputStream}
+	 * @param string the string to convert
+	 * @return the {@link InputStream} for the given string
+	 */
+	public static InputStream getInputStreamFromString(String string) {
+		try {
+			return new ByteArrayInputStream(string.getBytes("UTF-8")); //$NON-NLS-1$
+		}
+		catch(UnsupportedEncodingException uee) {
+			ApiPlugin.log(uee);
+		}
+		return null;
+	}
+	
 	/**
 	 * Serializes the given XML document into a UTF-8 string.
 	 * 
