@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.wizards.toc.RegisterTocWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -41,17 +40,10 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.*;
 
-/**
- * TocEditor
- *
- */
 public class TocEditor extends MultiSourceEditor {
 
 	private ImageHyperlink fImageHyperlinkRegisterTOC;
 
-	/**
-	 * 
-	 */
 	public TocEditor() {
 		super();
 	}
@@ -64,7 +56,7 @@ public class TocEditor extends MultiSourceEditor {
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (isShowInApplicable()) {
+		if (inUiThread() && isShowInApplicable()) {
 			if (adapter == IShowInSource.class) {
 				return getShowInSource();
 			} else if (adapter == IShowInTargetList.class) {
@@ -73,6 +65,17 @@ public class TocEditor extends MultiSourceEditor {
 		}
 
 		return super.getAdapter(adapter);
+	}
+
+	private boolean inUiThread() {
+		// get our workbench display
+		Display display = getSite().getWorkbenchWindow().getWorkbench().getDisplay();
+
+		// return true if we're in the UI thread
+		if (display != null && !display.isDisposed()) {
+			return display.getThread() == Thread.currentThread();
+		}
+		return false;
 	}
 
 	private boolean isShowInApplicable() {
