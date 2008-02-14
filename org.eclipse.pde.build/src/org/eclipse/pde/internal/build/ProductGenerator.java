@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -46,7 +44,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 		}
 
-		String custom = findFile(productFile.getConfigIniPath(), false);
+		String custom = findConfigFile();
 		String location = null, fileList = null;
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
@@ -82,6 +80,38 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			createLauncherIniFile(rootLocation, config.getOs());
 		}
 
+	}
+
+	private String findConfigFile() {
+		String path = productFile.getConfigIniPath();
+		if (path == null)
+			return null;
+
+		String result = findFile(path, false);
+		if (result != null)
+			return result;
+
+		// couldn't find productFile, try it as a path directly
+		File f = new File(path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		// relative to the working directory
+		f = new File(getWorkingDirectory(), path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		// relative to the working directory/plugins
+		f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, path); //$NON-NLS-1$
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		//relative to .product file
+		f = new File(new File(productFile.getLocation()).getParent(), path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		return null;
 	}
 
 	private void initialize() throws CoreException {
@@ -337,11 +367,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				StringReader reader = new StringReader(programArgs);
 				StreamTokenizer tokenizer = new StreamTokenizer(reader);
 				tokenizer.resetSyntax();
-				tokenizer.whitespaceChars(0,0x20);
+				tokenizer.whitespaceChars(0, 0x20);
 				tokenizer.wordChars(0x21, 0xFF);
 				tokenizer.quoteChar('"');
 				tokenizer.quoteChar('\'');
-				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF){
+				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
 					writer.print(tokenizer.sval);
 					writer.print(lineDelimiter);
 				}
@@ -352,11 +382,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				StringReader reader = new StringReader(vmArgs);
 				StreamTokenizer tokenizer = new StreamTokenizer(reader);
 				tokenizer.resetSyntax();
-				tokenizer.whitespaceChars(0,0x20);
+				tokenizer.whitespaceChars(0, 0x20);
 				tokenizer.wordChars(0x21, 0xFF);
 				tokenizer.quoteChar('"');
 				tokenizer.quoteChar('\'');
-				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF){
+				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
 					writer.print(tokenizer.sval);
 					writer.print(lineDelimiter);
 				}
