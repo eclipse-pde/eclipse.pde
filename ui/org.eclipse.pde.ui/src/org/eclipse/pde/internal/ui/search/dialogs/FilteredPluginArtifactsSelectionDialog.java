@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -33,19 +35,28 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FilteredPluginArtifactsSelectionDialog"; //$NON-NLS-1$
 	private static final String S_EXTENSIONS = "showExtensions"; //$NON-NLS-1$
 	private static final String S_EXTENSION_POINTS = "showExtensionPoints"; //$NON-NLS-1$
+	private static final String S_EXPORTED_PACKAGES = "showExportedPackages"; //$NON-NLS-1$
 
 	private static final int TYPE_PLUGIN = 0;
 	private static final int TYPE_EXTENSION = 1;
 	private static final int TYPE_EXTENSION_POINT = 2;
+	private static final int TYPE_EXPORTED_PACKAGE = 3;
 
 	private Action extensionsAction = new ExtensionsAction();
 	private Action extensionPointsAction = new ExtensionPointsAction();
+	private Action exportedPackagesAction = new ExportedPackagesAction();
 	private ExtensionsFilter extensionsFilter = new ExtensionsFilter();
 	private ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
+	private ExportedPackagesFilter exportedPackagesFilter = new ExportedPackagesFilter();
 
-	// TODO implement ILabelDecorator?
-	private class SearchLabelProvider extends LabelProvider {
+	private SearchLabelProvider searchLabelProvider = new SearchLabelProvider();
+	private ILabelProvider detailsLabelProvider = new DetailedLabelProvider();
+
+	private class SearchLabelProvider extends LabelProvider implements ILabelDecorator {
 		public Image getImage(Object element) {
+			if (element instanceof ExportPackageDescription) {
+				return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
+			}
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
@@ -67,7 +78,24 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			if (object instanceof IPluginExtensionPoint)
 				return ((IPluginExtensionPoint) object).getFullId();
 
+			if (object instanceof ExportPackageDescription) {
+				ExportPackageDescription epd = (ExportPackageDescription) object;
+				return epd.getName() + ' ' + '(' + epd.getVersion() + ')';
+			}
+
 			return PDEPlugin.getDefault().getLabelProvider().getText(object);
+		}
+
+		public Image decorateImage(Image image, Object element) {
+			return null;
+		}
+
+		public String decorateText(String text, Object element) {
+			if (element instanceof ExportPackageDescription) {
+				ExportPackageDescription epd = (ExportPackageDescription) element;
+				return text.concat(" - " + epd.getSupplier().getSymbolicName()); //$NON-NLS-1$
+			}
+			return text;
 		}
 	}
 
@@ -83,6 +111,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			} else if (element instanceof IPluginExtension) {
 				IPluginExtension model = (IPluginExtension) element;
 				return getImage(model.getModel().getInstallLocation());
+			} else if (element instanceof ExportPackageDescription) {
+				ExportPackageDescription model = (ExportPackageDescription) element;
+				String id = model.getSupplier().getName();
+				String version = model.getSupplier().getVersion().toString();
+				IPluginModelBase base = getModel(id, version);
+				return getImage(base.getInstallLocation());
 			}
 			return null;
 		}
@@ -97,6 +131,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			} else if (element instanceof IPluginExtension) {
 				IPluginExtension model = (IPluginExtension) element;
 				return model.getModel().getInstallLocation();
+			} else if (element instanceof ExportPackageDescription) {
+				ExportPackageDescription model = (ExportPackageDescription) element;
+				String id = model.getSupplier().getName();
+				String version = model.getSupplier().getVersion().toString();
+				IPluginModelBase base = getModel(id, version);
+				return base.getInstallLocation();
 			}
 			return null;
 		}
@@ -148,6 +188,26 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	}
 
+	private class ExportedPackagesFilter extends ViewerFilter {
+
+		private boolean enabled = true;
+
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (enabled) // select everything
+				return true;
+
+			if (element instanceof ExportPackageDescription) {
+				return false;
+			}
+			return true;
+		}
+
+		public void setEnabled(boolean value) {
+			this.enabled = value;
+		}
+
+	}
+
 	private class ExtensionsAction extends Action {
 
 		public ExtensionsAction() {
@@ -176,6 +236,20 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	}
 
+	private class ExportedPackagesAction extends Action {
+
+		public ExportedPackagesAction() {
+			super(PDEUIMessages.FilteredPluginArtifactsSelectionDialog_showExportedPackages, IAction.AS_CHECK_BOX);
+			setChecked(true);
+		}
+
+		public void run() {
+			exportedPackagesFilter.setEnabled(isChecked());
+			scheduleRefresh();
+		}
+
+	}
+
 	public FilteredPluginArtifactsSelectionDialog(Shell shell) {
 		super(shell, false);
 
@@ -184,8 +258,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		setSelectionHistory(new PluginSearchSelectionHistory());
 
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		setListLabelProvider(new SearchLabelProvider());
-		setDetailsLabelProvider(new DetailedLabelProvider());
+		setListLabelProvider(searchLabelProvider);
+		setListSelectionLabelDecorator(searchLabelProvider);
+		setDetailsLabelProvider(detailsLabelProvider);
 	}
 
 	/* (non-Javadoc)
@@ -228,6 +303,22 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				subMonitor.worked(1);
 			}
 			subMonitor.done();
+
+			BundleDescription desc = model.getBundleDescription();
+			if (desc != null) {
+				ExportPackageDescription[] epds = desc.getExportPackages();
+				SubProgressMonitor subMonitor2 = new SubProgressMonitor(progressMonitor, epds.length);
+				for (int j = 0; j < epds.length; j++) {
+					ExportPackageDescription epd = epds[j];
+					// ensure we don't get EE packages 
+					int ee = ((Integer) epd.getDirective("x-equinox-ee")).intValue(); //$NON-NLS-1$
+					if (ee < 0)
+						contentProvider.add(epd, itemsFilter);
+					subMonitor2.worked(1);
+				}
+				subMonitor2.done();
+			}
+
 			contentProvider.add(models[i], itemsFilter);
 			progressMonitor.worked(1);
 		}
@@ -260,6 +351,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		} else if (item instanceof IPluginExtension) {
 			IPluginExtension model = (IPluginExtension) item;
 			return model.getPoint();
+		} else if (item instanceof ExportPackageDescription) {
+			ExportPackageDescription model = (ExportPackageDescription) item;
+			return model.getName();
 		}
 		return null;
 	}
@@ -283,6 +377,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		menuManager.add(new Separator());
 		menuManager.add(extensionsAction);
 		menuManager.add(extensionPointsAction);
+		menuManager.add(exportedPackagesAction);
 	}
 
 	protected void restoreDialog(IDialogSettings settings) {
@@ -298,8 +393,14 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			extensionPointsAction.setChecked(state);
 		}
 
+		if (settings.get(S_EXPORTED_PACKAGES) != null) {
+			boolean state = settings.getBoolean(S_EXPORTED_PACKAGES);
+			exportedPackagesAction.setChecked(state);
+		}
+
 		addListFilter(extensionsFilter);
 		addListFilter(extensionPointsFilter);
+		addListFilter(exportedPackagesFilter);
 		applyFilter();
 	}
 
@@ -307,6 +408,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		super.storeDialog(settings);
 		settings.put(S_EXTENSIONS, extensionsAction.isChecked());
 		settings.put(S_EXTENSION_POINTS, extensionPointsAction.isChecked());
+		settings.put(S_EXPORTED_PACKAGES, exportedPackagesAction.isChecked());
 	}
 
 	private class PluginSearchSelectionHistory extends SelectionHistory {
@@ -317,7 +419,10 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		private static final String M_TYPE = "type"; //$NON-NLS-1$
 
 		protected Object restoreItemFromMemento(IMemento memento) {
-			int type = memento.getInteger(M_TYPE).intValue();
+			Integer itype = memento.getInteger(M_TYPE);
+			if (itype == null)
+				return null;
+			int type = itype.intValue();
 			IPluginModelBase model = getModel(memento);
 			if (model == null)
 				return null;
@@ -342,6 +447,14 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 							return extension;
 					}
 					break;
+				case TYPE_EXPORTED_PACKAGE :
+					ExportPackageDescription[] descriptions = model.getBundleDescription().getExportPackages();
+					String pid = memento.getString(M_ID);
+					for (int i = 0; i < descriptions.length; i++) {
+						ExportPackageDescription desc = descriptions[i];
+						if (pid.equals(desc.getName()))
+							return desc;
+					}
 			}
 			return null;
 		}
@@ -379,6 +492,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				memento.putString(M_ID, model.getPoint());
 				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
 				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
+			} else if (item instanceof ExportPackageDescription) {
+				ExportPackageDescription model = (ExportPackageDescription) item;
+				memento.putInteger(M_TYPE, TYPE_EXPORTED_PACKAGE);
+				memento.putString(M_ID, model.getName());
+				memento.putString(M_PLUGIN_ID, model.getSupplier().getSymbolicName());
+				memento.putString(M_PLUGIN_VERSION, model.getSupplier().getVersion().toString());
 			}
 		}
 
@@ -402,6 +521,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			} else if (item instanceof IPluginExtension) {
 				IPluginExtension model = (IPluginExtension) item;
 				id = model.getPoint();
+			} else if (item instanceof ExportPackageDescription) {
+				ExportPackageDescription model = (ExportPackageDescription) item;
+				id = model.getName();
 			}
 
 			// if the id does not match, check to see if a segment matches.
@@ -460,14 +582,32 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				IPluginExtension item = (IPluginExtension) o2;
 				s2 = item.getPoint();
 			}
+			if (o1 instanceof ExportPackageDescription) {
+				ExportPackageDescription item = (ExportPackageDescription) o1;
+				s1 = item.getName();
+			}
+			if (o2 instanceof ExportPackageDescription) {
+				ExportPackageDescription item = (ExportPackageDescription) o2;
+				s2 = item.getName();
+			}
 			return collator.compare(s1, s2);
 		}
-
 	}
 
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
+	}
+
+	private IPluginModelBase getModel(String id, String version) {
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		IPluginModelBase[] models = entry.getActiveModels();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (version.equals(model.getPluginBase().getVersion()))
+				return model;
+		}
+		return null;
 	}
 
 }

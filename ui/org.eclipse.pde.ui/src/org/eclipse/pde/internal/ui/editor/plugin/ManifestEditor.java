@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.service.resolver.BaseDescription;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.build.*;
@@ -86,17 +88,30 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 						return null;
 					File file = new File(installLocation);
 					if (file.isFile()) {
-						if (CoreUtility.jarContainsResource(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR, false)) { //$NON-NLS-1$
-							filename = ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR; //$NON-NLS-1$
+						if (CoreUtility.jarContainsResource(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR, false)) {
+							filename = ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR;
 						}
-					} else if (new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists()) { //$NON-NLS-1$
-						filename = ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR; //$NON-NLS-1$
+					} else if (new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists()) {
+						filename = ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR;
 					}
 				}
 				IResource resource = model.getUnderlyingResource();
 				if (resource == null)
 					return openExternalPlugin(new File(model.getInstallLocation()), filename);
 				return openWorkspacePlugin(resource.getProject().getFile(filename));
+			}
+		}
+		if (object instanceof BaseDescription) {
+			BundleDescription desc = ((BaseDescription) object).getSupplier();
+			String id = desc.getSymbolicName();
+			String version = desc.getVersion().toString();
+
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			IPluginModelBase[] models = entry.getActiveModels();
+			for (int i = 0; i < models.length; i++) {
+				IPluginModelBase model = models[i];
+				if (version.equals(model.getPluginBase().getVersion()))
+					return open(model.getPluginBase(), true);
 			}
 		}
 		return null;
@@ -169,7 +184,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			manager.putContext(in, new BuildInputContext(this, in, false));
 		}
 		manager.monitorFile(manifestFile);
-		manager.monitorFile(pluginFile); //$NON-NLS-1$
+		manager.monitorFile(pluginFile);
 		manager.monitorFile(buildFile);
 
 		fPrefs = new ProjectScope(container.getProject()).getNode(PDECore.PLUGIN_ID);
@@ -337,9 +352,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	private IFile createPluginFile(IContainer container) {
-		IFile pluginFile = container.getFile(ICoreConstants.PLUGIN_PATH); //$NON-NLS-1$
+		IFile pluginFile = container.getFile(ICoreConstants.PLUGIN_PATH);
 		if (!pluginFile.exists())
-			pluginFile = container.getFile(ICoreConstants.FRAGMENT_PATH); //$NON-NLS-1$
+			pluginFile = container.getFile(ICoreConstants.FRAGMENT_PATH);
 		return pluginFile;
 	}
 
@@ -369,7 +384,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 				return;
 
 			if (zip.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR) != null) {
-				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
 				manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF"))); //$NON-NLS-1$
 			}
 

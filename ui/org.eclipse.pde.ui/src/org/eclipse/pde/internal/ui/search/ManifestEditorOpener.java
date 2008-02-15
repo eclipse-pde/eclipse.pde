@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,16 @@
 package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.jface.text.*;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.osgi.framework.Constants;
 
 public class ManifestEditorOpener {
 
@@ -41,7 +45,7 @@ public class ManifestEditorOpener {
 		String name = null;
 		String value = null;
 		IRegion region = null;
-		// since Extenion and Extension point matches don't contain line #'s, we need handle them differently (by trying to find matches in UI model)
+		// since Extension and Extension point matches don't contain line #'s, we need handle them differently (by trying to find matches in UI model)
 		if (editor instanceof ManifestEditor && (element instanceof IPluginExtension || element instanceof IPluginExtensionPoint)) {
 			region = getAttributeMatch((ManifestEditor) editor, element, document);
 		} else {
@@ -86,12 +90,32 @@ public class ManifestEditorOpener {
 		return null;
 	}
 
-	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
-	public static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
-		IPluginObject[] elements = null;
+	private static IRegion getAttributeRegion(IDocument document, String value, int offset) {
+		try {
+			FindReplaceDocumentAdapter findReplaceAdapter = new FindReplaceDocumentAdapter(document);
+			IRegion nameRegion = findReplaceAdapter.find(offset, value, true, true, false, false);
+			if (nameRegion != null) {
+				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value))
+					return new Region(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length());
+			}
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
 
-		if (!object.isInTheModel())
-			return null;
+	public static IRegion getAttributeMatch(ManifestEditor editor, Object object, IDocument document) {
+		if (object instanceof IPluginObject)
+			return getAttributeMatch(editor, (IPluginObject) object, document);
+
+		// assume we have a base description
+		String value = ((BaseDescription) object).getName();
+		IManifestHeader header = ((IBundlePluginModelBase) editor.getAggregateModel()).getBundleModel().getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+		return getAttributeRegion(document, value, header.getOffset());
+	}
+
+	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
+	private static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
+		IPluginObject[] elements = null;
 
 		// find equivalent models in UI text model
 		if (object instanceof IPluginExtension)
