@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.search.dialogs;
 
 import com.ibm.icu.text.BreakIterator;
-import com.ibm.icu.text.Collator;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.JavaUI;
@@ -555,43 +554,22 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private class PluginSearchComparator implements Comparator {
 
 		public int compare(Object o1, Object o2) {
-			Collator collator = Collator.getInstance();
-			String s1 = ""; //$NON-NLS-1$
-			String s2 = ""; //$NON-NLS-1$
-			if (o1 instanceof IPluginModelBase) {
-				IPluginModelBase item = (IPluginModelBase) o1;
-				s1 = item.getPluginBase().getId();
-			}
-			if (o2 instanceof IPluginModelBase) {
-				IPluginModelBase item = (IPluginModelBase) o2;
-				s2 = item.getPluginBase().getId();
-			}
-			if (o1 instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint item = (IPluginExtensionPoint) o1;
-				s1 = item.getFullId();
-			}
-			if (o2 instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint item = (IPluginExtensionPoint) o2;
-				s2 = item.getFullId();
-			}
-			if (o1 instanceof IPluginExtension) {
-				IPluginExtension item = (IPluginExtension) o1;
-				s1 = item.getPoint();
-			}
-			if (o2 instanceof IPluginExtension) {
-				IPluginExtension item = (IPluginExtension) o2;
-				s2 = item.getPoint();
-			}
-			if (o1 instanceof ExportPackageDescription) {
-				ExportPackageDescription item = (ExportPackageDescription) o1;
-				s1 = item.getName();
-			}
-			if (o2 instanceof ExportPackageDescription) {
-				ExportPackageDescription item = (ExportPackageDescription) o2;
-				s2 = item.getName();
-			}
-			return collator.compare(s1, s2);
+			return getId(o1) - getId(o2);
 		}
+
+		private int getId(Object element) {
+			if (element instanceof IPluginModelBase) {
+				return 100;
+			} else if (element instanceof IPluginExtensionPoint) {
+				return 200;
+			} else if (element instanceof IPluginExtension) {
+				return 300;
+			} else if (element instanceof ExportPackageDescription) {
+				return 400;
+			}
+			return 0;
+		}
+
 	}
 
 	public boolean close() {
