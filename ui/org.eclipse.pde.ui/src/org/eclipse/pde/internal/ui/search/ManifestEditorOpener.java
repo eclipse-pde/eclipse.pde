@@ -89,6 +89,10 @@ public class ManifestEditorOpener {
 	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.
 	public static IRegion getAttributeMatch(ManifestEditor editor, IPluginObject object, IDocument document) {
 		IPluginObject[] elements = null;
+
+		if (!object.isInTheModel())
+			return null;
+
 		// find equivalent models in UI text model
 		if (object instanceof IPluginExtension)
 			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensions();
