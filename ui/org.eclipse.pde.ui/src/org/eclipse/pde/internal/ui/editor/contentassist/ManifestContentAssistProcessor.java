@@ -688,7 +688,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				// break on the comma to find our element, but only break on a comma that is not enclosed in parenthesis 
 				int comma = newValue.indexOf(',');
 				int parenthesis = newValue.indexOf('"');
-				int test = newValue.indexOf('"', parenthesis + 1);
 				if (!(parenthesis < comma && newValue.indexOf('"', parenthesis + 1) > comma))
 					newValue = (comma != -1) ? newValue.substring(0, comma) : newValue;
 			}
