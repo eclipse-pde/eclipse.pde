@@ -837,13 +837,14 @@ public class ClassFileComparator {
 	private int getCurrentTypeApiRestrictions() {
 		try {
 			IApiDescription apiDescription = this.component2.getApiDescription();
-			if (!apiDescription.containsAnnotatedElements()) return RestrictionModifiers.NO_RESTRICTIONS;
 			IApiAnnotations resolvedAPIDescription = apiDescription.resolveAnnotations(null, this.descriptor2.handle);
 			if (resolvedAPIDescription != null) {
 				IApiDescription apiDescription2 = this.component.getApiDescription();
-				if (apiDescription2.containsAnnotatedElements()) {
-					IApiAnnotations referenceAPIDescription = apiDescription2.resolveAnnotations(null, this.descriptor1.handle);
-					if (referenceAPIDescription == null || referenceAPIDescription.getRestrictions() != resolvedAPIDescription.getRestrictions()) {
+				IApiAnnotations referenceAPIDescription = apiDescription2.resolveAnnotations(null, this.descriptor1.handle);
+				if (referenceAPIDescription != null) {
+					int restrictions = referenceAPIDescription.getRestrictions();
+					if (restrictions != resolvedAPIDescription.getRestrictions()
+							&& restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
 						// report different restrictions
 						this.addDelta(this.descriptor1, IDelta.CHANGED, IDelta.RESTRICTIONS, this.classFile, this.descriptor1.name);
 					}
