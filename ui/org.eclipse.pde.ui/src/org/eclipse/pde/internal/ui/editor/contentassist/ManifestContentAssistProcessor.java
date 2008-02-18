@@ -106,12 +106,14 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		fHeaders = new HeaderMap();
 		int numLines = doc.getNumberOfLines();
 		int offset = 0;
-		for (int i = 0; i < numLines; i++) {
+		// since we are searching the line after the current line to peak ahead to see if it is a new header, start with the index of 1
+		for (int i = 1; i < numLines; i++) {
 			try {
-				IRegion line = doc.getLineInformation(i);
-				String value = doc.get(offset, line.getOffset() + line.getLength() - offset);
-				if (value.indexOf(':') != value.lastIndexOf(':') || i == (numLines - 1)) {
-					value = doc.get(offset, line.getOffset() - offset - 1).trim();
+				IRegion nextLine = doc.getLineInformation(i);
+				// see if the next line contains a new header.  If so, we know we found the end of the current header
+				if (containsNewHeader(doc.get(nextLine.getOffset(), nextLine.getLength())) || i == (numLines - 1)) {
+					// if the next line contains a header, then get the text up to the character before the next line's offset
+					String value = doc.get(offset, nextLine.getOffset() - offset - 1).trim();
 					int index = value.indexOf(':');
 					String header = (index == -1) ? value : value.substring(0, index);
 					try {
@@ -127,11 +129,27 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 							fHeaders.put(header, elems);
 					} catch (BundleException e) {
 					}
-					offset = line.getOffset();
+					offset = nextLine.getOffset();
 				}
 			} catch (BadLocationException e) {
 			}
 		}
+	}
+
+	private boolean containsNewHeader(String text) {
+		int length = text.length();
+		// blank lines represent a new header as defined by the Java Manifest Specification
+		if (length == 0)
+			return true;
+		int index = text.indexOf(':');
+		while (index != -1) {
+			// if we are at end of the line, assume it the colon is defining a new header.  
+			// If the next character is an '=', the colon is part of a directive so we should continue looking
+			if ((index == length - 1) || (text.charAt(index + 1) != '='))
+				return true;
+			index = text.indexOf(':', index + 1);
+		}
+		return false;
 	}
 
 	protected final boolean shouldStoreSet(String header) {
