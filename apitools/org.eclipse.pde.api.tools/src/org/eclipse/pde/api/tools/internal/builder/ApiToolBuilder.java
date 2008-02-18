@@ -392,7 +392,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		checkDefaultProfileSet();
 		return projects;
 	}
-	
+
 	/**
 	 * Returns a listing of deltas for this project and for dependent projects
 	 * @param projects
@@ -1654,7 +1654,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							}
 					}
 				}
-				checkApiComponentVersion(reference, component);
+				if (reference != null && component != null) {
+					checkApiComponentVersion(reference, component);
+				}
 			}
 			if (DEBUG) System.out.println("Complete"); //$NON-NLS-1$
 		} else if (DEBUG) {
