@@ -265,7 +265,7 @@ public class JREBlock {
 				if (defaultVM == null || !jreName.equals(defaultVM)) {
 					IVMInstall install = VMHelper.getVMInstall(jreName);
 					// remove the name to make portable
-					jrePath = JavaRuntime.newJREContainerPath(install).removeLastSegments(1);
+					jrePath = JavaRuntime.newJREContainerPath(install);
 				}
 			}
 		} else {
