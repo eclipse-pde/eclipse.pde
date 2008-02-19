@@ -31,7 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -151,11 +150,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	private IApiProfile workspaceprofile = null;
 	
 	/**
-	 * The saved state from the last session the manager participated in
-	 */
-	private ISavedState savedstate = null;
-	
-	/**
 	 * The default save location for persisting the cache from this manager.
 	 */
 	private IPath savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
@@ -163,22 +157,21 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	/**
 	 * Constructor
 	 */
-	public ApiProfileManager(ISavedState savestate) {
+	public ApiProfileManager() {
 		ApiPlugin.getDefault().addSaveParticipant(this);
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		//we must load the workspace profile as soon as the manager starts to avoid 
 		//'holes' from missing workspace resource deltas
-		this.savedstate = savestate;
 		getWorkspaceProfile();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfileManager#getApiProfile(java.lang.String)
 	 */
-	public synchronized IApiProfile getApiProfile(String profileid) {
+	public synchronized IApiProfile getApiProfile(String name) {
 		initializeStateCache();
-		return (ApiProfile) profilecache.get(profileid);
+		return (ApiProfile) profilecache.get(name);
 	}
 
 	/* (non-Javadoc)
@@ -195,22 +188,22 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	public synchronized void addApiProfile(IApiProfile newprofile) {
 		if(newprofile != null) {
 			initializeStateCache();
-			profilecache.put(newprofile.getId(), newprofile);
+			profilecache.put(newprofile.getName(), newprofile);
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfileManager#removeApiProfile(java.lang.String)
 	 */
-	public synchronized boolean removeApiProfile(String id) {
-		if(id != null) {
+	public synchronized boolean removeApiProfile(String name) {
+		if(name != null) {
 			initializeStateCache();
-			IApiProfile profile = (IApiProfile) profilecache.remove(id);
+			IApiProfile profile = (IApiProfile) profilecache.remove(name);
 			if(profile != null) {
 				profile.dispose();
 				boolean success = true;
 				//remove from filesystem
-				File file = savelocation.append(id+".profile").toFile(); //$NON-NLS-1$
+				File file = savelocation.append(name+".profile").toFile(); //$NON-NLS-1$
 				if(file.exists()) {
 					success &= file.delete();
 				}
@@ -244,7 +237,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 						try {
 							fin = new FileInputStream(profile);
 							newprofile = restoreProfile(fin);
-							profilecache.put(newprofile.getId(), newprofile);
+							profilecache.put(newprofile.getName(), newprofile);
 						}
 						catch (IOException e) {
 							ApiPlugin.log(e);
@@ -303,15 +296,15 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	
 	/**
 	 * Returns a UTF-8 string representing the contents of a profile xml file or <code>null</code>
-	 * if the corresponding profile for the given id does not exist or there was an error 
+	 * if the corresponding profile for the given name does not exist or there was an error 
 	 * serializing the document
 	 * @param id
 	 * @return a UTF-8 xml string of the contents of a profile xml file, or <code>null</code>
 	 * @throws CoreException
 	 */
-	private synchronized String getStateAsXML(String id) throws CoreException {
+	private synchronized String getStateAsXML(String name) throws CoreException {
 		if(profilecache != null) {
-			IApiProfile profile = (IApiProfile) profilecache.get(id);
+			IApiProfile profile = (IApiProfile) profilecache.get(name);
 			if(profile != null) {
 				return getProfileXML(profile);
 			}
@@ -330,9 +323,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		Document document = Util.newDocument();
 		Element root = document.createElement(ELEMENT_APIPROFILE);
 		document.appendChild(root);
-		root.setAttribute(ATTR_ID, profile.getId());
 		root.setAttribute(ATTR_NAME, profile.getName());
-		root.setAttribute(ATTR_VERSION, profile.getVersion());
 		root.setAttribute(ELEMENT_EE, profile.getExecutionEnvironment());
 		// pool bundles by location
 		Map pools = new HashMap();
@@ -425,8 +416,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			Element root = document.getDocumentElement();
 			if(root.getNodeName().equals(ELEMENT_APIPROFILE)) {
 				profile = new ApiProfile(root.getAttribute(ATTR_NAME),
-						root.getAttribute(ATTR_ID),
-						root.getAttribute(ATTR_VERSION),
 						Util.createEEFile(root.getAttribute(ELEMENT_EE)));
 				// un-pooled components
 				NodeList children = root.getElementsByTagName(ELEMENT_APICOMPONENT);
@@ -468,7 +457,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					}
 					
 				}
-				profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]), true);
+				profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			}
 		} catch (IOException e) {
 			abort("Error restoring API profile", e); //$NON-NLS-1$
@@ -548,8 +537,8 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfileManager#setDefaultApiProfile(java.lang.String)
 	 */
-	public void setDefaultApiProfile(String id) {
-		defaultprofile = id;
+	public void setDefaultApiProfile(String name) {
+		defaultprofile = name;
 	}
 	
 	/* (non-Javadoc)
@@ -584,7 +573,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		long time = System.currentTimeMillis();
 		IApiProfile profile = null; 
 		try {
-			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID, ApiPlugin.WORKSPACE_API_PROFILE_ID, "CURRENT", Util.createDefaultEEFile()); //$NON-NLS-1$
+			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID, Util.createDefaultEEFile());
 			// populate it with only projects that are API aware
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			List componentsList = new ArrayList(models.length);
@@ -601,7 +590,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			}
 			IApiComponent[] components = new IApiComponent[componentsList.size()];
 			componentsList.toArray(components);
-			profile.addApiComponents(components, true);
+			profile.addApiComponents(components);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		} catch(IOException e) {

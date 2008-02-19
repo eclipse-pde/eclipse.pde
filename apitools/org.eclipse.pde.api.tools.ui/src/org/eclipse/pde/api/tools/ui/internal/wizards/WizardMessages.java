@@ -19,15 +19,11 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_18;
 	public static String ApiProfileWizardPage_19;
 	public static String ApiProfileWizardPage_20;
-	public static String ApiProfileWizardPage_21;
-	public static String ApiProfileWizardPage_22;
 	public static String ApiProfileWizardPage_23;
 	public static String ApiProfileWizardPage_24;
 	public static String ApiProfileWizardPage_3;
 	public static String ApiProfileWizardPage_4;
 	public static String ApiProfileWizardPage_5;
-	public static String ApiProfileWizardPage_6;
-	public static String ApiProfileWizardPage_7;
 	public static String ApiProfileWizardPage_8;
 	public static String ApiProfileWizardPage_9;
 	public static String ApiToolingSetupWizardPage_0;

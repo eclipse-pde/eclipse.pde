@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -320,11 +319,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private HashSet savelisteners = new HashSet();
 	
 	/**
-	 * The last save state that this plugin participated in
-	 */
-	private ISavedState savestate = null;
-	
-	/**
 	 * Constructor
 	 */
 	public ApiPlugin() {
@@ -410,7 +404,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public IApiProfileManager getApiProfileManager() {
 		if(fgApiProfileManager == null) {
-			fgApiProfileManager = new ApiProfileManager(this.savestate);
+			fgApiProfileManager = new ApiProfileManager();
 		}
 		return fgApiProfileManager;
 	}
@@ -503,10 +497,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		try {
 			super.start(context);
 		} finally {
-			this.savestate = ResourcesPlugin.getWorkspace().addSaveParticipant(this, this);
-			//we need to call the constructor to attach the java element listener
+			ResourcesPlugin.getWorkspace().addSaveParticipant(this, this);
 			configurePluginDebugOptions();
-			getApiProfileManager();
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
@@ -57,7 +56,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
@@ -73,17 +71,15 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * to read plug-ins.
 	 */
 	class ReloadOperation implements IRunnableWithProgress {
-		private String location, name, id, version, eeid;
+		private String location, name, eeid;
 	
 		/**
 		 * Constructor
 		 * @param platformPath
 		 */
-		public ReloadOperation(String name, String id, String version, String eeid, String location) {
+		public ReloadOperation(String name, String eeid, String location) {
 			this.location = location;
 			this.name = name;
-			this.id = id;
-			this.version = version;
 			this.eeid = eeid;
 		}
 		
@@ -124,7 +120,7 @@ public class ApiProfileWizardPage extends WizardPage {
 			monitor.worked(1);
 			try {
 				File eeFile = Util.createEEFile(eeid);
-				profile = Factory.newApiProfile(name, id, version, eeFile);
+				profile = Factory.newApiProfile(name, eeFile);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			} catch (IOException e) {
@@ -145,7 +141,7 @@ public class ApiProfileWizardPage extends WizardPage {
 				subMonitor.worked(1);
 			}
 			subMonitor.done();
-			profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]), true);
+			profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			monitor.worked(1);
 			monitor.done();
 		}
@@ -153,20 +149,13 @@ public class ApiProfileWizardPage extends WizardPage {
 	
 	private IApiProfile profile = null;
 	private ArrayList extralocations = new ArrayList();
-	private Text nametext = null,
-				 versiontext = null,
-				 idtext = null;
+	private Text nametext = null;
 	private CheckboxTableViewer tableviewer = null;
 	private Combo eecombo = null,
 				  locationcombo = null;
 	private Button browsebutton = null,
 				   resetbutton = null,
-				   reloadbutton = null,
-				   enablesbutton = null,
-				   enableallbutton = null,
-				   disablesbutton = null,
-				   disableallbutton = null,
-				   addrequiredbutton = null;
+				   reloadbutton = null;
 	
 	/**
 	 * Constructor
@@ -193,22 +182,6 @@ public class ApiProfileWizardPage extends WizardPage {
 		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_5, 1);
 		nametext = SWTFactory.createText(ncomp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING);
 		nametext.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(pageValid());
-			}
-		});
-		
-		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_6, 1);
-		idtext = SWTFactory.createText(ncomp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING);
-		idtext.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(pageValid());
-			}
-		});
-		
-		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_7, 1);
-		versiontext = SWTFactory.createText(ncomp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING);
-		versiontext.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(pageValid());
 			}
@@ -292,68 +265,10 @@ public class ApiProfileWizardPage extends WizardPage {
 			}
 		});
 		SWTFactory.createVerticalSpacer(bcomp, 1);
-		enablesbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_15, null);
-		enablesbutton.setEnabled(!tableviewer.getSelection().isEmpty());
-		enablesbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				checkSelected(true);
-			}
-		});
-		disablesbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_16, null);
-		disablesbutton.setEnabled(!tableviewer.getSelection().isEmpty());
-		disablesbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				checkSelected(false);
-			}
-		});
-		enableallbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_17, null);
-		enableallbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				checkAll(true);
-			}
-		});
-		disableallbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_18, null);
-		disableallbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				checkAll(false);
-			}
-		});
-		SWTFactory.createVerticalSpacer(bcomp, 1);
-		addrequiredbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_19, null);
-		addrequiredbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				performRequired();
-			}
-		});
 		setControl(comp);
 		setPageComplete(profile != null);
 		initialize();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_WIZARD_PAGE);
-	}
-
-	/**
-	 * Runs over all of the checked elements in the viewer and sets checked any of the required 
-	 * components from the checked ones (if they exist in the current profile).
-	 * 
-	 * This is an N^3 operation...
-	 */
-	protected void performRequired() {
-		Object[] objects = tableviewer.getCheckedElements();
-		IApiComponent component = null;
-		IRequiredComponentDescription[] required = null;
-		TableItem[] allcomponents = tableviewer.getTable().getItems();
-		for(int i = 0; i < objects.length; i++) {
-			component = (IApiComponent) objects[i];
-			required = component.getRequiredComponents();
-			for(int j = 0; j < required.length; j++) {
-				for(int k = 0; k < allcomponents.length; k++) {
-					component = (IApiComponent)allcomponents[k].getData(); 
-					if(component != null && component.getId().equals(required[j].getId())) {
-						tableviewer.setChecked(component, true);
-					}
-				}
-			}
-		}
 	}
 	
 	/**
@@ -362,15 +277,12 @@ public class ApiProfileWizardPage extends WizardPage {
 	protected void initialize() {
 		if(profile != null) {
 			nametext.setText(profile.getName());
-			idtext.setText(profile.getId());
-			versiontext.setText(profile.getVersion());
 			eecombo.setText(profile.getExecutionEnvironment());
 			//TODO init component enablements?? if we decide to allow specific target elements to be enabled
 			IApiComponent[] components = profile.getApiComponents();
 			HashSet locations = new HashSet();
 			IPath location = null;
 			for(int i = 0; i < components.length; i++) {
-				tableviewer.setChecked(components[i], profile.isEnabled(components[i]));
 				if(!components[i].isSystemComponent()) {
 					location = new Path(components[i].getLocation()).removeLastSegments(1);
 					if(location.toFile().isDirectory()) {
@@ -389,7 +301,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * Reloads all of the plugins from the location specified in the location text field.
 	 */
 	protected void doReload() {
-		ReloadOperation op = new ReloadOperation(nametext.getText().trim(), idtext.getText().trim(), versiontext.getText().trim(), eecombo.getText().trim(), locationcombo.getText().trim());
+		ReloadOperation op = new ReloadOperation(nametext.getText().trim(), eecombo.getText().trim(), locationcombo.getText().trim());
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, op);
 			tableviewer.setInput(getCurrentComponents());
@@ -407,16 +319,6 @@ public class ApiProfileWizardPage extends WizardPage {
 		String text = nametext.getText().trim();
 		if(text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
-			return false;
-		}
-		text = idtext.getText().trim();
-		if(text.length() < 1) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_21);
-			return false;
-		}
-		text = versiontext.getText().trim();
-		if(text.length() < 1) {
-			setErrorMessage(WizardMessages.ApiProfileWizardPage_22);
 			return false;
 		}
 		text = locationcombo.getText().trim();
@@ -489,8 +391,6 @@ public class ApiProfileWizardPage extends WizardPage {
 		resetbutton.setEnabled(size > 0);
 		reloadbutton.setEnabled(size > 0);
 		size = (tableviewer.getSelection().isEmpty() ? 0 : 1);
-		enablesbutton.setEnabled(size > 0);
-		disablesbutton.setEnabled(size > 0);
 	}
 	
 	/**
@@ -505,8 +405,6 @@ public class ApiProfileWizardPage extends WizardPage {
 			profile.setExecutionEnvironment(eefile);
 		}
 		profile.setName(nametext.getText().trim());
-		profile.setId(idtext.getText().trim());
-		profile.setVersion(versiontext.getText().trim());
 		return profile;
 	}
 }

@@ -207,7 +207,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 	protected IApiProfile getTestProfile(String id) {
 		IApiProfile profile = null;
 		try {
-			profile = Factory.newApiProfile("testprofile", id, "1.0.0", Util.createDefaultEEFile());
+			profile = Factory.newApiProfile("testprofile", Util.createDefaultEEFile());
 			fPMmanager.addApiProfile(profile);
 		} catch (CoreException e) {
 			fail(e.getMessage());

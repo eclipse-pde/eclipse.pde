@@ -106,7 +106,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			IApiProfile profile = (IApiProfile) element;
 			IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 			if(def != null) {
-				return profile.getId().equals(def.getId());
+				return profile.getName().equals(def.getName());
 			}
 		}
 		return false;

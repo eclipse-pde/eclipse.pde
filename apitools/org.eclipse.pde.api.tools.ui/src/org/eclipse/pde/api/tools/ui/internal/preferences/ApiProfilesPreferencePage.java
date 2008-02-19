@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
-			return profile.getId().hashCode() + profile.getExecutionEnvironment().hashCode() + profile.getName().hashCode() + profile.getVersion().hashCode();
+			return profile.getName().hashCode() + profile.getExecutionEnvironment().hashCode();
 		}
 		
 		/* (non-Javadoc)
@@ -109,9 +109,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				comparator = (IApiProfile) obj;
 			}
 			if(comparator != null) {
-				return (comparator.getId().equals(profile.getId()) && 
-						comparator.getVersion().equals(profile.getVersion()) &&
-						comparator.getName().equals(profile.getName()) &&
+				return (comparator.getName().equals(profile.getName()) &&
 						comparator.getExecutionEnvironment().equals(profile.getExecutionEnvironment()));
 			}
 			return super.equals(obj);
@@ -207,7 +205,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		defaultbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IApiProfile[] profiles = getCurrentSelection();
-				newdefault = profiles[0].getId();
+				newdefault = profiles[0].getName();
 				tableviewer.refresh();
 				defaultbutton.setEnabled(profiles.length == 1 && !isDefault(profiles[0]));
 				rebuildcount = 0;
@@ -266,11 +264,11 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			if(newdefault == null) {
 				IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 				if(def != null) {
-					return profile.getId().equals(def.getId());
+					return profile.getName().equals(def.getName());
 				}
 			}
 			else {
-				return profile.getId().equals(newdefault);
+				return profile.getName().equals(newdefault);
 			}
 		}
 		return false;
@@ -305,7 +303,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		if(originaldefault != null) {
- 			manager.setDefaultApiProfile(originaldefault.getId());
+ 			manager.setDefaultApiProfile(originaldefault.getName());
  		}
 		changes.clear();
 		return super.performCancel();
@@ -322,7 +320,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			change = (StateChange) iter.next();
 			switch(change.kind) {
 				case REMOVE :
-					manager.removeApiProfile(change.profile.getId());
+					manager.removeApiProfile(change.profile.getName());
 					if(isDefault(change.profile)) {
 						build = true;
 					}

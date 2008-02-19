@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,9 @@ public class ComponentManifestTests extends TestCase {
 		path = path.append("test-manifests");
 		File file = path.toFile();
 		assertTrue("Missing manfiest directory", file.exists());
-		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", "test", "test", TestSuiteHelper.getEEDescriptionFile());
+		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
-		baseline.addApiComponents(new IApiComponent[] { component } , true);
+		baseline.addApiComponents(new IApiComponent[] { component });
 		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getId());
 		assertEquals("Name: ", "Debug Platform UI" , component.getName());
 		assertEquals("Version: ", "3.3.100.qualifier" , component.getVersion());

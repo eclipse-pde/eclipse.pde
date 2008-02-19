@@ -164,7 +164,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			assertNotNull("the component_c jar cannot be null", jar);
 			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
 			IApiComponent component = profile.newApiComponent(jar.getLocation().toOSString());
-			profile.addApiComponents(new IApiComponent[] { component }, true);
+			profile.addApiComponents(new IApiComponent[] { component });
 			assertNotNull("the new component cannot be null", component);
 			IApiFilterStore store = component.getFilterStore();
 			assertNotNull("the new filter store cannot be null", store);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,14 +56,12 @@ public class Factory {
 	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
 	 * </p>
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param eeDescription execution environment description file
 	 * @return API profile
 	 * @throws CoreException if unable to create a new profile with the specified attributes 
 	 */
-	public static IApiProfile newApiProfile(String name, String id, String version, File eeDescription) throws CoreException {
-		return new ApiProfile(name, id, version, eeDescription);
+	public static IApiProfile newApiProfile(String name, File eeDescription) throws CoreException {
+		return new ApiProfile(name, eeDescription);
 	}
 	
 	/**
@@ -86,15 +84,13 @@ public class Factory {
 	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
 	 * </p>
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param profile execution environment profile
 	 * @param description execution environment description 
 	 * @return API profile
 	 * @throws CoreException if unable to create a new profile with the specified attributes 
 	 */
-	public static IApiProfile newApiProfile(String name, String id, String version, File profile, File description) throws CoreException {
-		return new ApiProfile(name, id, version, profile, description);
+	public static IApiProfile newApiProfile(String name, File profile, File description) throws CoreException {
+		return new ApiProfile(name, profile, description);
 	}	
 	
 	/**
@@ -116,15 +112,13 @@ public class Factory {
 	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
 	 * </p>
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param profile execution environment profile
 	 * @param description execution environment description 
 	 * @return API profile
 	 * @throws CoreException if unable to create a new profile with the specified attributes 
 	 */
-	public static IApiProfile newApiProfile(String name, String id, String version, Properties profile, File description) throws CoreException {
-		return new ApiProfile(name, id, version, profile, description);
+	public static IApiProfile newApiProfile(String name, Properties profile, File description) throws CoreException {
+		return new ApiProfile(name, profile, description);
 	}	
 
 	/**

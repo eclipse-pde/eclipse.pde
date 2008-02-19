@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,56 +133,6 @@ public class ApiProfileTests extends TestCase {
 		assertNotNull("Missing java.lang.Object", classFile);
 		assertEquals("Wrong type name", "java.lang.Object", classFile.getTypeName());
 	}	
-	
-	/**
-	 * Test enabled components 
-	 */
-	public void testEnabledComponents() throws FileNotFoundException, CoreException {
-		IApiProfile baseline = TestSuiteHelper.createTestingProfile("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.getApiComponents();
-		for (int i = 0; i < components.length; i++) {
-			assertTrue("Component should be enabled: " + components[i].getId(), baseline.isEnabled(components[i]));
-		}
-	}	
-	
-	/**
-	 * Test disabled components 
-	 */
-	public void testDisabledComponents() throws FileNotFoundException, CoreException {
-		IApiProfile baseline = TestSuiteHelper.createTestingProfile("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		
-		doEnable(baseline, "component.a", false);
-		doEnable(baseline, "component.b", false);
-		
-		IApiComponent[] components = baseline.getApiComponents();
-		for (int i = 0; i < components.length; i++) {
-			String id = components[i].getId();
-			if (id.equals("component.a") || id.equals("component.b")) {
-				assertFalse("Component should be disabled: " + id, baseline.isEnabled(components[i]));
-			} else {
-				assertTrue("Component should be enabled: " + id, baseline.isEnabled(components[i]));
-			}
-		}
-	}	
-	
-	/**
-	 * Enables/Disables the component with the specified id.
-	 * 
-	 * @param baseline API baseline
-	 * @param componentId component to disable
-	 * @param enable whether to enable or disable
-	 */
-	private void doEnable(IApiProfile baseline, String componentId, boolean enable) {
-		IApiComponent component = baseline.getApiComponent(componentId);
-		assertNotNull("Missing component: " + componentId, component);
-		if (enable) {
-			baseline.enable(component);
-		} else {
-			baseline.disable(component);
-		}
-	}
 	
 	/**
 	 * Validates basic component attributes.

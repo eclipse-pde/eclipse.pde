@@ -42,30 +42,30 @@ public interface IApiProfileManager {
 	 * Returns the {@link IApiProfile} object with the given id, or
 	 * <code>null</code> if there is no profile with the given id.
 	 * 
-	 * @param profileid the id of the profile to fetch
+	 * @param name the name of the profile to fetch
 	 * @return the {@link IApiProfile} with the given id or <code>null</code>
 	 */
-	public IApiProfile getApiProfile(String profileid);
+	public IApiProfile getApiProfile(String name);
 	
 	/**
 	 * Removes the {@link IApiProfile} with the given id from 
 	 * the manager, which propagates to the file-system to remove the 
 	 * underlying stored profile (if it exists).
 	 * 
-	 * @param id the unique id of the profile to remove from the manager
+	 * @param name the unique name of the profile to remove from the manager
 	 * @return true if the removal was successful false otherwise. A successful removal 
 	 * constitutes the associated profile being removed from the manager and/or the 
 	 * persisted state file being removed from disk.
 	 */
-	public boolean removeApiProfile(String id);
+	public boolean removeApiProfile(String name);
 	
 	/**
 	 * Allows the {@link IApiProfile} with the specified id to be set as 
 	 * the default profile. This method will accept <code>null</code>, which will remove
 	 * a default {@link IApiProfile} setting.
-	 * @param id the id of the {@link IApiProfile} to be the default
+	 * @param name the name of the {@link IApiProfile} to be the default
 	 */
-	public void setDefaultApiProfile(String id);
+	public void setDefaultApiProfile(String name);
 	
 	/**
 	 * Returns the {@link IApiProfile} that is the current default, or <code>null</code>

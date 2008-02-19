@@ -95,16 +95,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	private String fName;
 	
 	/**
-	 * profile symbolic name
-	 */
-	private String fId;
-	
-	/**
-	 * profile version identifier
-	 */
-	private String fVersion;
-	
-	/**
 	 * OSGi bundle state
 	 */
 	private State fState;
@@ -118,11 +108,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * Maps component id's to components
 	 */
 	private Map fComponentsById = new HashMap();
-	
-	/**
-	 * Set of enabled components.
-	 */
-	private Set fEnabledComponents = new HashSet();
 	
 	/**
 	 * Next available bundle id
@@ -160,13 +145,9 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * Constructs a new API profile with the given attributes.
 	 * 
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 */
-	ApiProfile(String name, String id, String version) {
+	ApiProfile(String name) {
 		fName = name;
-		fId = id;
-		fVersion = version;
 		fState = StateObjectFactory.defaultFactory.createState(true);
 	}	
 	
@@ -179,13 +160,11 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * Constructs a new API profile with the given attributes.
 	 * 
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param eeDescriptoin execution environment description file
 	 * @throws CoreException if unable to create a profile with the given attributes
 	 */
-	public ApiProfile(String name, String id, String version, File eeDescription) throws CoreException {
-		this(name, id, version);
+	public ApiProfile(String name, File eeDescription) throws CoreException {
+		this(name);
 		EEVMType.clearProperties(eeDescription);
 		String profile = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeDescription);
 		initialize(profile, eeDescription);
@@ -195,14 +174,12 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * Constructs a new API profile with the given attributes.
 	 * 
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param profile execution environment profile
 	 * @param description execution environment description file
 	 * @throws CoreException if unable to create a profile with the given attributes
 	 */
-	public ApiProfile(String name, String id, String version, Properties profile, File description) throws CoreException {
-		this(name, id, version);
+	public ApiProfile(String name, Properties profile, File description) throws CoreException {
+		this(name);
 		initialize(profile, description);
 	}	
 	
@@ -210,14 +187,12 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * Constructs a new API profile with the given attributes.
 	 * 
 	 * @param name profile name
-	 * @param id profile identifier
-	 * @param version profile version identifier
 	 * @param profile execution environment profile file
 	 * @param description execution environment description file
 	 * @throws CoreException if unable to create a profile with the given attributes
 	 */
-	public ApiProfile(String name, String id, String version, File profile, File description) throws CoreException {
-		this(name, id, version);
+	public ApiProfile(String name, File profile, File description) throws CoreException {
+		this(name);
 		initialize(profile, description);
 	}	
 	
@@ -226,15 +201,12 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 */
 	public Object clone() throws CloneNotSupportedException {
 		ApiProfile clone = new ApiProfile();
-		clone.fId = fId;
 		clone.fName = fName;
 		clone.fNextId = fNextId;
 		clone.fState = fState.getFactory().createState(fState);
-		clone.fVersion = fVersion;
 		clone.fSystemLibraryComponent = fSystemLibraryComponent;
 		clone.fComponents = new HashMap(fComponents);
 		clone.fComponentsById = new HashMap(fComponentsById);
-		clone.fEnabledComponents = new HashSet(fEnabledComponents);
 		clone.fExecutionEnvironment = fExecutionEnvironment;
 		return clone;
 	}
@@ -370,13 +342,12 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		fState.setPlatformProperties(dictionary);
 		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
 		fComponentsById.put(fSystemLibraryComponent.getId(), fSystemLibraryComponent);
-		fEnabledComponents.add(fSystemLibraryComponent);
 	}
 
 	/* (non-Javadoc)
 	 * @see IApiProfile#addApiComponents(org.eclipse.pde.api.tools.model.component.IApiComponent[], boolean)
 	 */
-	public void addApiComponents(IApiComponent[] components, boolean enabled) {
+	public void addApiComponents(IApiComponent[] components) {
 		for (int i = 0; i < components.length; i++) {
 			BundleApiComponent component = (BundleApiComponent) components[i];
 			if (component.isSourceComponent()) continue;
@@ -384,9 +355,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 			fState.addBundle(description);
 			this.storeBundleDescription(description, component);
 			fComponentsById.put(component.getId(), component);
-			if (enabled) {
-				fEnabledComponents.add(component);
-			}
 		}
 		fState.resolve();
 		if (DEBUG) {
@@ -440,28 +408,14 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		Collection values = fComponentsById.values();
 		return (IApiComponent[]) values.toArray(new IApiComponent[values.size()]);
 	}
-
-	/* (non-Javadoc)
-	 * @see IApiProfile#getId()
-	 */
-	public String getId() {
-		return fId;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see IApiProfile#getName()
 	 */
 	public String getName() {
 		return fName;
 	}
-
-	/* (non-Javadoc)
-	 * @see IApiProfile#getVersion()
-	 */
-	public String getVersion() {
-		return fVersion;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see IApiProfile#removeApiComponents(org.eclipse.pde.api.tools.model.IApiComponent[])
 	 */
@@ -643,43 +597,7 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	public String getExecutionEnvironment() {
 		return fExecutionEnvironment;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#isEnabled(org.eclipse.pde.api.tools.model.component.IApiComponent)
-	 */
-	public boolean isEnabled(IApiComponent component) {
-		return fEnabledComponents.contains(component);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#setEnabled(org.eclipse.pde.api.tools.model.component.IApiComponent[])
-	 */
-	public void setEnabled(IApiComponent[] components) {
-		fEnabledComponents.clear();
-		for (int i = 0; i < components.length; i++) {
-			IApiComponent component = components[i];
-			if (fComponentsById.containsKey(component.getId())) {
-				fEnabledComponents.add(component);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#disable(org.eclipse.pde.api.tools.model.component.IApiComponent)
-	 */
-	public void disable(IApiComponent component) {
-		fEnabledComponents.remove(component);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiState#enable(org.eclipse.pde.api.tools.model.component.IApiComponent)
-	 */
-	public void enable(IApiComponent component) {
-		if (fComponentsById.containsKey(component.getId())) {
-			fEnabledComponents.add(component);
-		}
-	}
-
+	
 	/**
 	 * Returns all errors in the state.
 	 * 
@@ -710,29 +628,11 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	}
 
 	/* (non-Javadoc)
-	 * @see IApiProfile#setId(java.lang.String)
-	 */
-	public void setId(String id) {
-		if(id != null) {
-			fId = id;
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see IApiProfile#setName(java.lang.String)
 	 */
 	public void setName(String name) {
 		if(name != null) {
 			fName = name;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see IApiProfile#setVersion(java.lang.String)
-	 */
-	public void setVersion(String version) {
-		if(version != null) {
-			fVersion = version;
 		}
 	}
 
@@ -828,7 +728,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		}
 		fComponents.clear();
 		fComponentsById.clear();
-		fEnabledComponents.clear();
 		fComponentsCache.clear();
 		if (fSystemPackageNames != null) fSystemPackageNames.clear();
 		fSystemLibraryComponent = null;

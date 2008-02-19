@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class TestSuiteHelper {
 	 */
 	public static IApiProfile createProfile(String name, File rootDirectory) throws CoreException {
 		File eeFile = getEEDescriptionFile();
-		IApiProfile baseline = newApiProfile(name, name, "test", eeFile);
+		IApiProfile baseline = newApiProfile(name, eeFile);
 		// create a component for each jar/directory in the folder
 		File[] files = rootDirectory.listFiles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();
@@ -84,7 +84,7 @@ public class TestSuiteHelper {
 			addAllRequired(baseline, requiredComponents, component, components);
 		} 
 		
-		baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]), true);
+		baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 		return baseline;
 	}	
 	
@@ -103,7 +103,7 @@ public class TestSuiteHelper {
 		File file = path.toFile();
 		if(file.exists()) {
 			File eeFile = getEEDescriptionFile();
-			IApiProfile baseline = newApiProfile("test", "test", "test", eeFile);
+			IApiProfile baseline = newApiProfile("test", eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
 			List components = new ArrayList();
@@ -126,7 +126,7 @@ public class TestSuiteHelper {
 				addAllRequired(baseline, requiredComponents, component, components);
 			} 
 			
-			baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]), true);
+			baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			return baseline;
 		}
 		return null;
@@ -139,15 +139,13 @@ public class TestSuiteHelper {
 	 * an OSGi framework.
 	 * </p>
 	 * @param name
-	 * @param id
-	 * @param version
 	 * @param ee execution environment description file
 	 * @return API baseline
 	 * @exception CoreException if unable to create a baseline
 	 */
-	public static IApiProfile newApiProfile(String name, String id, String version, File eeFile) throws CoreException {
+	public static IApiProfile newApiProfile(String name, File eeFile) throws CoreException {
 		if (ApiPlugin.isRunningInFramework()) {
-			return Factory.newApiProfile(name, id, version, eeFile);
+			return Factory.newApiProfile(name, eeFile);
 		} else {
 			String ee = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFile);
 			Properties properties = Util.getEEProfile(ee);
@@ -156,7 +154,7 @@ public class TestSuiteHelper {
 						"org.eclipse.pde.api.tools.tests",
 						"Unable to locate OSGi profile: " + ee));
 			} else {
-				return Factory.newApiProfile(name, id, version, properties, eeFile);
+				return Factory.newApiProfile(name,properties, eeFile);
 			}
 		}
 	}

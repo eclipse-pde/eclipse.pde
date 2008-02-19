@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.util.ArrayList;
@@ -21,8 +31,10 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.signature.SignatureReader;
 
-/*
- * TODO provide a way to link the right resource from a delta
+/**
+ * Compares class files from the workspace to those in the default {@link IApiProfile}
+ * 
+ * @since 1.0.0
  */
 public class ClassFileComparator {
 	/**
@@ -37,12 +49,14 @@ public class ClassFileComparator {
 		DEBUG = debugValue || Util.DEBUG;
 	}
 
-	private static boolean isCheckedException(IApiProfile state, IApiComponent apiComponent, String exceptionName) {
-		if (state == null) return true;
+	private static boolean isCheckedException(IApiProfile profile, IApiComponent apiComponent, String exceptionName) {
+		if (profile == null) {
+			return true;
+		}
 		try {
 			String packageName = Util.getPackageName(exceptionName);
 			IClassFile classFile = Util.getClassFile(
-					state.resolvePackage(apiComponent, packageName),
+					profile.resolvePackage(apiComponent, packageName),
 					exceptionName);
 			if (classFile != null) {
 				// TODO should this be reported as a checked exception
@@ -52,12 +66,12 @@ public class ClassFileComparator {
 					String superName = typeDescriptor.superName;
 					packageName = Util.getPackageName(superName);
 					classFile = Util.getClassFile(
-							state.resolvePackage(apiComponent, packageName),
+							profile.resolvePackage(apiComponent, packageName),
 							superName);
 					if (classFile == null) {
 						// TODO should we report this failure ?
 						if (DEBUG) {
-							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + state.getId() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						break;
 					}
@@ -444,7 +458,7 @@ public class ClassFileComparator {
 				if (components == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getId() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					continue;
 				}
@@ -452,7 +466,7 @@ public class ClassFileComparator {
 				if (superinterface == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERINTERFACES LOOKUP: Could not find interface " + interfaceName + " in profile " + profile.getId() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERINTERFACES LOOKUP: Could not find interface " + interfaceName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					continue;
 				}
@@ -1211,7 +1225,7 @@ public class ClassFileComparator {
 				if (components == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getId() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					break loop;
 				}
@@ -1219,7 +1233,7 @@ public class ClassFileComparator {
 				if (sourceComponent == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getId() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERCLASS LOOKUP: Could not find package " + packageName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					break loop;
 				}
@@ -1227,7 +1241,7 @@ public class ClassFileComparator {
 				if (superclass == null) {
 					// TODO should we report this failure ?
 					if (DEBUG) {
-						System.err.println("SUPERCLASS LOOKUP: Could not find class " + superName + " in profile " + profile.getId() + " from component " + sourceComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.err.println("SUPERCLASS LOOKUP: Could not find class " + superName + " in profile " + profile.getName() + " from component " + sourceComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					break loop;
 				}

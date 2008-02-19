@@ -50,40 +50,11 @@ public interface IApiProfile {
 	public void setName(String name);
 	
 	/**
-	 * Returns this profile's version identifier.
-	 * 
-	 * @return profile version
-	 */	
-	public String getVersion();
-	
-	/**
-	 * Allows the version of the profile to be changed to the new version.
-	 * If the new version is <code>null</code>, no changes are made.
-	 * @param version the new version for the profile
-	 */
-	public void setVersion(String version);
-	
-	/**
-	 * Returns this profile's symbolic name.
-	 * 
-	 * @return symbolic name
-	 */	
-	public String getId();
-	
-	/**
-	 * Allows the id of the profile to be changed to the new id.
-	 * If the new id is <code>null</code>, no changes are made.
-	 * @param id the new id for the profile
-	 */
-	public void setId(String id);
-	
-	/**
 	 * Adds the given API components to this profile, excluding all the source components.
 	 * 
 	 * @param components components to add
-	 * @param enabled whether the components should be enabled or disabled
 	 */
-	public void addApiComponents(IApiComponent[] components, boolean enabled);
+	public void addApiComponents(IApiComponent[] components);
 	
 	/**
 	 * Removes the specified API components from this profile.
@@ -152,39 +123,7 @@ public interface IApiProfile {
 	 * @param eefile the new execution environment file
 	 * @throws CoreException
 	 */
-	public void setExecutionEnvironment(File eefile) throws CoreException;
-	
-	/**
-	 * Sets the enabled components in this profile. Clients
-	 * decide how to interpret the enabled/disabled attributes of components.
-	 *
-	 * @param components components to enable or disable
-	 * @param enabled whether to enable or disable the components
-	 */
-	public void setEnabled(IApiComponent[] components);
-	
-	/**
-	 * Enables the specified component.
-	 * 
-	 * @param component API component
-	 */
-	public void enable(IApiComponent component);
-	
-	/**
-	 * Disables the specified component.
-	 * 
-	 * @param component API component
-	 */
-	public void disable(IApiComponent component);	
-	
-	/**
-	 * Returns whether the given component is enabled. Returns false if the
-	 * component is not part of this profile.
-	 * 
-	 * @param component API component
-	 * @return whether the given component is enabled
-	 */
-	public boolean isEnabled(IApiComponent component);
+	public void setExecutionEnvironment(File eefile) throws CoreException;	
 	
 	/**
 	 * Disposes this API profile. Clients must call this method when done
