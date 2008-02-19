@@ -49,6 +49,7 @@ public class PDEPluginImages {
 	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX + "IMG_ATT_FILE_OBJ"; //$NON-NLS-1$
 	public static final String IMG_ATT_IMPL_OBJ = NAME_PREFIX + "IMG_ATT_IMPL_OBJ"; //$NON-NLS-1$
 	public static final String IMG_ATT_REQ_OBJ = NAME_PREFIX + "IMG_ATT_REQ_OBJ"; //$NON-NLS-1$
+	public static final String IMG_ATT_ID_OBJ = NAME_PREFIX + "IMG_ATT_ID_OBJ"; //$NON-NLS-1$
 	public static final String IMG_GENERIC_XML_OBJ = NAME_PREFIX + "IMG_GENERIC_XML_OBJ"; //$NON-NLS-1$
 	public static final String OBJ_DESC_GENERATE_CLASS = NAME_PREFIX + "OBJ_DESC_GENERATE_CLASS"; //$NON-NLS-1$
 	public static final String OBJ_DESC_GENERATE_INTERFACE = NAME_PREFIX + "OBJ_DESC_GENERATE_INTERFACE"; //$NON-NLS-1$
@@ -65,6 +66,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ATT_IMPL_OBJ = create(PATH_OBJ, "att_impl_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_REQ_OBJ = create(PATH_OBJ, "att_req_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_URI_OBJ = create(PATH_OBJ, "att_URI_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATT_ID_OBJ = create(PATH_OBJ, "att_id_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUNDLE_OBJ = create(PATH_OBJ, "bundle_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHOICE_SC_OBJ = create(PATH_OBJ, "choice_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ = create(PATH_OBJ, "ftr_jar_obj.gif"); //$NON-NLS-1$
@@ -306,6 +308,7 @@ public class PDEPluginImages {
 		manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 		manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
 		manage(IMG_ATT_REQ_OBJ, DESC_ATT_REQ_OBJ);
+		manage(IMG_ATT_ID_OBJ, DESC_ATT_ID_OBJ);
 		manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
 		manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
 		manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);

@@ -13,10 +13,7 @@ package org.eclipse.pde.internal.core.builders;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -57,6 +54,8 @@ public class CompilerFlags {
 	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class"; //$NON-NLS-1$
 
 	public static final String P_UNKNOWN_RESOURCE = "compilers.p.unknown-resource"; //$NON-NLS-1$
+
+	public static final String P_UNKNOWN_IDENTIFIER = "compilers.p.unknown-identifier"; //$NON-NLS-1$
 
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$
 
@@ -205,6 +204,7 @@ public class CompilerFlags {
 		node.putInt(P_DEPRECATED, WARNING);
 		node.putInt(P_UNKNOWN_CLASS, WARNING);
 		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
+		node.putInt(P_UNKNOWN_IDENTIFIER, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
 		node.putInt(P_BUILD, WARNING);
 		node.putInt(P_INCOMPATIBLE_ENV, WARNING);

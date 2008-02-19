@@ -771,6 +771,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
 		if (att.getKind() == IMetaAttribute.RESOURCE)
 			return get(PDEPluginImages.DESC_ATT_FILE_OBJ);
+		if (att.getKind() == IMetaAttribute.IDENTIFIER)
+			return get(PDEPluginImages.DESC_ATT_ID_OBJ);
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
 			return get(PDEPluginImages.DESC_ATT_REQ_OBJ);
 		return get(PDEPluginImages.DESC_ATT_IMPL_OBJ);

@@ -310,16 +310,19 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	private void validateExtensionAttribute(Element element, Attr attr, ISchemaAttribute attInfo) {
 		ISchemaSimpleType type = attInfo.getType();
-		ISchemaRestriction restriction = type.getRestriction();
-		if (restriction != null) {
-			validateRestrictionAttribute(element, attr, restriction);
-		}
 
 		int kind = attInfo.getKind();
 		if (kind == IMetaAttribute.JAVA) {
 			validateJavaAttribute(element, attr);
 		} else if (kind == IMetaAttribute.RESOURCE) {
 			validateResourceAttribute(element, attr);
+		} else if (kind == IMetaAttribute.IDENTIFIER) {
+			validateIdentifierAttribute(element, attr, attInfo);
+		} else if (kind == IMetaAttribute.STRING) {
+			ISchemaRestriction restriction = type.getRestriction();
+			if (restriction != null) {
+				validateRestrictionAttribute(element, attr, restriction);
+			}
 		} else if (type.getName().equals("boolean")) { //$NON-NLS-1$
 			validateBoolean(element, attr);
 		}
@@ -529,6 +532,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			}
 		}
 		reportIllegalAttributeValue(element, attr);
+	}
+
+	private void validateIdentifierAttribute(Element element, Attr attr, ISchemaAttribute attInfo) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_IDENTIFIER);
+		if (severity != CompilerFlags.IGNORE) {
+			String value = attr.getValue();
+			String basedOn = attInfo.getBasedOn();
+			// only validate if we have a valid value and basedOn value
+			if (value != null && basedOn != null && value.length() > 0 && basedOn.length() > 0) {
+				Map attributes = PDERegistryHelper.getValidAttributes(attInfo);
+				if (!attributes.containsKey(value)) { // report error if we are missing something
+					report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				}
+			}
+		}
 	}
 
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {

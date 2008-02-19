@@ -52,8 +52,8 @@ public class PDECoreMessages extends NLS {
 	public static String BundleTextChangeListener_editNames_remove;
 
 	public static String ExtensionsErrorReporter_maxOccurrence;
-
 	public static String ExtensionsErrorReporter_minOccurrence;
+	public static String ExtensionsErrorReporter_unknownIdentifier;
 
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;

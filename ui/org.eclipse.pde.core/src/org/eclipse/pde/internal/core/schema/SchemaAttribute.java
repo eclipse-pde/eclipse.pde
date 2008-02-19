@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
@@ -67,7 +62,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public String getBasedOn() {
-		return getKind() == JAVA ? basedOn : null;
+		if (getKind() == JAVA || getKind() == IDENTIFIER)
+			return basedOn;
+		return null;
 	}
 
 	public int getKind() {
@@ -190,13 +187,15 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				writer.println(indent2 + "<appinfo>"); //$NON-NLS-1$
 				writer.print(indent3 + "<meta.attribute"); //$NON-NLS-1$
 				String kindValue = null;
-				switch (getKind()) {
+				switch (getKind()) { // TODO let's use some constants ;D
 					case JAVA :
 						kindValue = "java"; //$NON-NLS-1$
 						break;
 					case RESOURCE :
 						kindValue = "resource"; //$NON-NLS-1$
 						break;
+					case IDENTIFIER :
+						kindValue = "identifier"; //$NON-NLS-1$
 				}
 				if (kindValue != null)
 					writer.print(" kind=\"" + kindValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,43 +11,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Vector;
-
+import java.util.*;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
-import org.eclipse.pde.internal.core.ischema.IDocumentSection;
-import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
-import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
-import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.ischema.ISchemaType;
-import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
-import org.eclipse.pde.internal.core.util.SchemaUtil;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.util.*;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
@@ -716,6 +689,8 @@ public class Schema extends PlatformObject implements ISchema {
 				return IMetaAttribute.JAVA;
 			if (name.equals("resource")) //$NON-NLS-1$
 				return IMetaAttribute.RESOURCE;
+			if (name.equals("identifier")) //$NON-NLS-1$
+				return IMetaAttribute.IDENTIFIER;
 		}
 		return IMetaAttribute.STRING;
 	}

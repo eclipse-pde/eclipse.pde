@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.osgi.framework.Constants;
 
+// TODO this needs a rewrite
 public class ManifestEditorOpener {
 
 	public static IEditorPart open(Match match, boolean activate) throws PartInitException {
@@ -111,6 +112,10 @@ public class ManifestEditorOpener {
 		String value = ((BaseDescription) object).getName();
 		IManifestHeader header = ((IBundlePluginModelBase) editor.getAggregateModel()).getBundleModel().getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 		return getAttributeRegion(document, value, header.getOffset());
+	}
+
+	public static IRegion getAttributeMatch(ManifestEditor editor, String value, IDocument document) {
+		return getAttributeRegion(document, value, 0);
 	}
 
 	// Try to find a match for an Extension or Extension point by looking through the extensions/extension points in UI model for match.

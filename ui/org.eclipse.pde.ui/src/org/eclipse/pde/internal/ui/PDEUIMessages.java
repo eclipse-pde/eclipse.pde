@@ -1081,6 +1081,10 @@ public class PDEUIMessages extends NLS {
 	public static String ResourceAttributeCellEditor_title;
 	public static String ResourceAttributeCellEditor_message;
 
+	public static String IdAttributeRow_title;
+	public static String IdAttributeRow_message;
+	public static String IdAttributeRow_emptyMessage;
+
 	public static String ManifestEditor_RuntimeForm_title;
 	public static String ManifestSourcePage_extensionPoints;
 
@@ -2607,26 +2611,18 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaDetails_deprecated;
 
 	public static String SchemaAttributeDetails_use;
-
 	public static String SchemaAttributeDetails_type;
-
 	public static String SchemaAttributeDetails_restrictions;
-
 	public static String SchemaAttributeDetails_addRestButton;
-
 	public static String SchemaAttributeDetails_removeRestButton;
-
 	public static String SchemaAttributeDetails_extends;
-
 	public static String SchemaAttributeDetails_browseButton;
-
 	public static String SchemaAttributeDetails_implements;
-
 	public static String SchemaAttributeDetails_title;
-
 	public static String SchemaAttributeDetails_description;
-
 	public static String SchemaAttributeDetails_defaultDefaultValue;
+
+	public static String SchemaStringAttributeDetails_reference;
 
 	public static String SchemaDetails_name;
 
@@ -3194,5 +3190,9 @@ public class PDEUIMessages extends NLS {
 	public static String FilteredPluginArtifactsSelectionDialog_showExtensions;
 	public static String FilteredPluginArtifactsSelectionDialog_showExtensionPoints;
 	public static String FilteredPluginArtifactsSelectionDialog_showExportedPackages;
+
+	public static String FilteredSchemaAttributeSelectionDialog_title;
+	public static String FilteredSchemaAttributeSelectionDialog_message;
+	public static String FilteredSchemaAttributeSelectionDialog_searching;
 
 }

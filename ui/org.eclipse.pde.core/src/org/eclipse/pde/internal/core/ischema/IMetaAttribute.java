@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,14 @@ public interface IMetaAttribute {
 	public static final int RESOURCE = 2;
 
 	/**
+	 * Indicates that the value of the associated attribute is defined
+	 * in another extension element attribute.
+	 * 
+	 * @since 3.4
+	 */
+	public static final int IDENTIFIER = 3;
+
+	/**
 	 * Property that indicates if an attribute is translatable
 	 */
 	public static final String P_TRANSLATABLE = "translatable"; //$NON-NLS-1$
@@ -42,14 +50,9 @@ public interface IMetaAttribute {
 	 */
 	public static final String P_DEPRECATED = "deprecated"; //$NON-NLS-1$
 
-	/*
-	 * non-Javadoc
-	 */
-	public static final String[] kindTable = {"string", "java", "resource"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
 	/**
 	 * Returns optional name of the Java type this type must be based on (only
-	 * for JAVA kind).
+	 * for JAVA kind), or the path expression for IDENTIFIER kind.
 	 */
 	public String getBasedOn();
 

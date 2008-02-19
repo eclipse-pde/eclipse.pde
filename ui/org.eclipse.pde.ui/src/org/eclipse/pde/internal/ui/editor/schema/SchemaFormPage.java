@@ -56,6 +56,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			detailsPart.registerPage(SchemaStringAttributeDetails.class, new SchemaStringAttributeDetails(fSection));
 			detailsPart.registerPage(SchemaJavaAttributeDetails.class, new SchemaJavaAttributeDetails(fSection));
 			detailsPart.registerPage(SchemaOtherAttributeDetails.class, new SchemaOtherAttributeDetails(fSection));
+			detailsPart.registerPage(SchemaIdentifierAttributeDetails.class, new SchemaIdentifierAttributeDetails(fSection));
 			detailsPart.setPageProvider(this);
 		}
 
@@ -74,6 +75,8 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 				switch (kind) {
 					case IMetaAttribute.JAVA :
 						return SchemaJavaAttributeDetails.class;
+					case IMetaAttribute.IDENTIFIER :
+						return SchemaIdentifierAttributeDetails.class;
 					case IMetaAttribute.STRING :
 						if (att.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]))
 							return SchemaStringAttributeDetails.class;

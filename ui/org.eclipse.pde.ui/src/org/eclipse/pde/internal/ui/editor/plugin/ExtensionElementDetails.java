@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Provide more structure, safety, and convenience for ID-based references between extension points (id hell)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -86,11 +87,13 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 		if (schemaElement != null) {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
-			// Compute horizontal span
-			for (int i = 0; i < atts.length; i++) {
-				if (isEditable() && (atts[i].getKind() == IMetaAttribute.JAVA || atts[i].getKind() == IMetaAttribute.RESOURCE)) {
-					span = 3;
-					break;
+			if (isEditable()) {
+				// Compute horizontal span
+				for (int i = 0; i < atts.length; i++) {
+					if (atts[i].getKind() == IMetaAttribute.JAVA || atts[i].getKind() == IMetaAttribute.RESOURCE || atts[i].getKind() == IMetaAttribute.IDENTIFIER) {
+						span = 3;
+						break;
+					}
 				}
 			}
 			glayout.numColumns = span;
@@ -125,6 +128,8 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			row = new ClassAttributeRow(this, att);
 		else if (att.getKind() == IMetaAttribute.RESOURCE)
 			row = new ResourceAttributeRow(this, att);
+		else if (att.getKind() == IMetaAttribute.IDENTIFIER)
+			row = new IdAttributeRow(this, att);
 		else if (att.isTranslatable())
 			row = new TranslatableAttributeRow(this, att);
 		else {
