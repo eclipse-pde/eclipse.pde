@@ -112,7 +112,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
-				getAttribute().setBasedOn(entry.getValue());
+				getAttribute().setBasedOn(fReferenceEntry.getValue());
 			}
 
 			public void browseButtonSelected(FormEntry entry) {
@@ -206,6 +206,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				String refId = buildBasedOnValue(attribute);
 				String id = schemaId + '/' + refId;
 				entry.setValue(id);
+				entry.commit();
 			}
 		}
 	}
