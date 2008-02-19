@@ -330,7 +330,6 @@ public class ProjectApiDescription extends ApiDescription {
 					}
 					return null;
 				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
 					return null;
 				}
 			case IElementDescriptor.T_REFERENCE_TYPE:
@@ -341,7 +340,6 @@ public class ProjectApiDescription extends ApiDescription {
 						return newTypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
 					}
 				} catch (CoreException e ) {
-					ApiPlugin.log(e.getStatus());
 					return null;
 				}
 				return null;
@@ -488,7 +486,7 @@ public class ProjectApiDescription extends ApiDescription {
 				}
 			}
 		} catch (JavaModelException e) {
-			ApiPlugin.log(e.getStatus());
+			// ignore
 		}
 		return (IPackageFragment[]) local.toArray(new IPackageFragment[local.size()]);
 	}
