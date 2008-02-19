@@ -13,13 +13,16 @@ package org.eclipse.pde.api.tools.internal.provisional.scanner;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -101,6 +104,11 @@ public class TagScanner {
 		 * Cache of class files to maps of unresolved method descriptors to resolved descriptors.
 		 */
 		private Map fMethodMappings = null;
+		
+		/**
+		 * List of exceptions encountered, or <code>null</code>
+		 */
+		private CoreException fException;
 		
 		/**
 		 * Constructor
@@ -210,10 +218,32 @@ public class TagScanner {
 			}
 			if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
 				if (descriptor.getElementType() == IElementDescriptor.T_METHOD) {
-					descriptor = resolveMethod((IMethodDescriptor)descriptor);
+					try {
+						descriptor = resolveMethod((IMethodDescriptor)descriptor);
+					} catch (CoreException e) {
+						fException = e;
+					}
 				}
 				fDescription.setRestrictions(null, descriptor, restrictions);
 			}
+		}
+		
+		/**
+		 * Returns whether to continue processing children.
+		 * 
+		 * @return whether to continue processing children.
+		 */
+		private boolean isContinue() {
+			return fException == null;
+		}
+		
+		/**
+		 * Returns an exception that aborted processing, or <code>null</code> if none.
+		 * 
+		 * @return an exception that aborted processing, or <code>null</code> if none
+		 */
+		CoreException getException() {
+			return fException;
 		}
 		
 		/* (non-Javadoc)
@@ -221,7 +251,7 @@ public class TagScanner {
 		 */
 		public boolean visit(TypeDeclaration node) {
 			enterType(node.getName());
-			return true;
+			return isContinue();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
@@ -234,7 +264,7 @@ public class TagScanner {
 		 */
 		public boolean visit(EnumDeclaration node) {
 			enterType(node.getName());
-			return true;
+			return isContinue();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
@@ -254,13 +284,13 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
 		 */
 		public boolean visit(MethodDeclaration node) {
-			return true;
+			return isContinue();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
 		 */
 		public boolean visit(FieldDeclaration node) {
-			return true;
+			return isContinue();
 		}
 		
 		/**
@@ -270,25 +300,22 @@ public class TagScanner {
 		 * @param descriptor method to resolve
 		 * @return resolved method descriptor or the same method descriptor if unable to
 		 * 	resolve
+		 * @exception CoreException if unable to resolve the method and a class file
+		 *  container was provided for this purpose
 		 */
-		private IMethodDescriptor resolveMethod(IMethodDescriptor descriptor) {
+		private IMethodDescriptor resolveMethod(IMethodDescriptor descriptor) throws CoreException {
 			if (fContainer != null) {
 				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
-				try {
-					IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
-					if(classFile != null) {
-						Map methodMapping = getMethodMapping(classFile);
-						IMethodDescriptor resolved = (IMethodDescriptor) methodMapping.get(descriptor);
-						if (resolved != null) {
-							return resolved;
-						}
+				IClassFile classFile = fContainer.findClassFile(type.getQualifiedName());
+				if(classFile != null) {
+					Map methodMapping = getMethodMapping(classFile);
+					IMethodDescriptor resolved = (IMethodDescriptor) methodMapping.get(descriptor);
+					if (resolved != null) {
+						return resolved;
 					}
-					else {
-						//we could possibly use the java model to try and resolve ??
-					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
 				}
+				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+					MessageFormat.format("Unable to resolve method signature: {0}", new String[]{descriptor.toString()}), null));
 			}
 			return descriptor;
 		}
@@ -362,6 +389,7 @@ public class TagScanner {
 		private boolean isPrimitive(String signature) {
 			return Signature.getElementType(signature).length() == 1;
 		}
+		
 	}
 	
 	/**
@@ -392,10 +420,9 @@ public class TagScanner {
 	 * 
 	 * @param source the source file to scan for tags
 	 * @param description the API description to annotate with any new tag rules found
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws CoreException
 	 */
-	public void scan(CompilationUnit source, IApiDescription description) throws FileNotFoundException, IOException {
+	public void scan(CompilationUnit source, IApiDescription description) throws CoreException {
 		scan(source, description, null);
 	}
 	
@@ -407,15 +434,20 @@ public class TagScanner {
 	 * @param container optional class file container containing the class file for the given source
 	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @throws CoreException 
 	 */
-	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container) throws FileNotFoundException, IOException {
+	public void scan(CompilationUnit source, IApiDescription description, IClassFileContainer container) throws CoreException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();
 			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, System.getProperty("file.encoding"))); //$NON-NLS-1$
+		} catch (FileNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+					MessageFormat.format("Compilation unit source not found: {0}", new String[]{source.getName()}), e));
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
+					MessageFormat.format("Error reading compilation unit: {0}", new String[]{source.getName()}), e));
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -426,6 +458,10 @@ public class TagScanner {
 			}
 		}
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
-		cunit.accept(new Visitor(description, container));
+		Visitor visitor = new Visitor(description, container);
+		cunit.accept(visitor);
+		if (visitor.getException() != null) {
+			throw visitor.getException();
+		}
 	}	
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -183,9 +182,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 						CompilationUnit cu = new CompilationUnit(unit.getResource().getLocation().toOSString());
 						try {
 							scanner.scan(cu, apiDescription, this);
-						} catch (FileNotFoundException e) {
-							abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
-						} catch (IOException e) {
+						} catch (CoreException e) {
 							abort("Unable to initialize from Javadoc tags", e); //$NON-NLS-1$
 						}
 					}

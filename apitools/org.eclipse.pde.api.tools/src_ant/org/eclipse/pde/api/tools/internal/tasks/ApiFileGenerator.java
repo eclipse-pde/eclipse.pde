@@ -101,9 +101,7 @@ public class ApiFileGenerator extends Task {
 				}
 				try {
 					tagScanner.scan(unit, apiDescription, classFileContainer);
-				} catch (FileNotFoundException e) {
-					ApiPlugin.log(e);
-				} catch (IOException e) {
+				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
 			}

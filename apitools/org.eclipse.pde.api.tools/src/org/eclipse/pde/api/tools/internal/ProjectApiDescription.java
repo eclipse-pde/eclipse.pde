@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -200,9 +198,7 @@ public class ProjectApiDescription extends ApiDescription {
 				}
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e.getStatus());
-			} catch (FileNotFoundException e) {
-				ApiPlugin.log(e);
-			} catch (IOException e) {
+			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			} finally {
 				fRefreshing = false;

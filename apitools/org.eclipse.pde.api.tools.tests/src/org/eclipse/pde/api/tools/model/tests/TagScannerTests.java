@@ -11,20 +11,21 @@
 package org.eclipse.pde.api.tools.model.tests;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -82,10 +83,8 @@ public class TagScannerTests extends TestCase {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc);
 		}
-		catch(FileNotFoundException e) {
-			fail(MessageFormat.format("The specified file was not found: {0}", new String[] {name}));
-		} catch (IOException e) {
-			fail(MessageFormat.format("The specified file stream could not be read: {0} file stream", new String[] {name}));
+		catch(CoreException e) {
+			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
 		}
 	}
 	
@@ -98,10 +97,8 @@ public class TagScannerTests extends TestCase {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null);
 		}
-		catch(FileNotFoundException e) {
-			fail(MessageFormat.format("The specified file was not found: {0}", new String[] {name}));
-		} catch (IOException e) {
-			fail(MessageFormat.format("The specified file stream could not be read: {0} file stream", new String[] {name}));
+		catch(CoreException e) {
+			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
 		}
 	}
 	
@@ -122,6 +119,39 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be API visibility for method 'void two(List, Runnable)'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void two(List, Runnable)'", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
 	}
+	
+	/**
+	 * Tests that when given a class file container and the class file is not found
+	 * and is required to resolve a method signature, an exception is thrown.
+	 */
+	public void testMissingClassfile() {
+		IClassFileContainer container = new IClassFileContainer() {
+			public String[] getPackageNames() throws CoreException {
+				return new String[]{"there.are.none"};
+			}
+			public String getOrigin() {
+				return "none";
+			}
+			public IClassFile findClassFile(String qualifiedName, String id) throws CoreException {
+				return null;
+			}
+			public IClassFile findClassFile(String qualifiedName) throws CoreException {
+				return null;
+			}
+			public void close() throws CoreException {
+			}
+		
+			public void accept(ClassFileContainerVisitor visitor) throws CoreException {
+			}
+		};
+		IApiDescription manifest = newDescription();
+		try { 
+			TagScanner.newScanner().scan(getCompilationUnit("a/b/c/TestMethod10.java"), manifest, container);
+		} catch (CoreException e) {
+			return;
+		}
+		fail("Should have been a core exception for missing class file");
+	}	
 	
 	/**
 	 * Tests that a source file with one type which has javadoc tags
