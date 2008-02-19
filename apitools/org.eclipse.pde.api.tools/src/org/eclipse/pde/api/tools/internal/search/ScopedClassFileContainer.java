@@ -97,8 +97,15 @@ public class ScopedClassFileContainer implements IClassFileContainer {
 
 		public void visit(String packageName, IClassFile classFile) {
 			Set types = (Set)fTypesPerPackage.get(packageName);
-			if (types != null  && (types.isEmpty() || types.contains(classFile.getTypeName()))) {
-				fVisitor.visit(packageName, classFile);
+			if (types != null) {
+				String typeName = classFile.getTypeName();
+				int index = typeName.indexOf('$');
+				if (index >= 0) {
+					typeName = typeName.substring(0, index);
+				}
+				if (types.isEmpty() || types.contains(typeName)) {
+					fVisitor.visit(packageName, classFile);
+				}
 			}
 		}
 
