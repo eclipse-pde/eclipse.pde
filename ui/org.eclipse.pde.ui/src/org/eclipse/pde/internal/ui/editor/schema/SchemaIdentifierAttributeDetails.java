@@ -92,6 +92,8 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		String basedOn = getAttribute().getBasedOn();
 		if ((basedOn != null) && (basedOn.length() > 0)) {
 			fReferenceEntry.setValue(basedOn, true);
+		} else {
+			fReferenceEntry.setValue("", true); //$NON-NLS-1$
 		}
 
 		boolean editable = isEditableElement();
