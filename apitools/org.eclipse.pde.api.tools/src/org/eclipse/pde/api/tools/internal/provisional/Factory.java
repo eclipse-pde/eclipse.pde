@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 import org.eclipse.pde.api.tools.internal.search.SearchCriteria;
 import org.eclipse.pde.api.tools.internal.search.SearchEngine;
 import org.eclipse.pde.api.tools.internal.search.SearchScope;
+import org.eclipse.pde.api.tools.internal.search.TypeScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -287,7 +288,18 @@ public class Factory {
 			scope.addElement(component, elements[i]);
 		}
 		return scope;
-	}	
+	}
+	
+	/**
+	 * Returns a new scope containing the specified types in the given component.
+	 * 
+	 * @param component API component
+	 * @param types reference types
+	 * @return search scope
+	 */
+	public static IApiSearchScope newTypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
+		return new TypeScope(component, types);
+	}
 	
 	/**
 	 * Creates and returns a new search engine.

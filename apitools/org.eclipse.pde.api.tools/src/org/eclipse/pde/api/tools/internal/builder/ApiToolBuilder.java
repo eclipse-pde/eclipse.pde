@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
@@ -671,9 +681,16 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					if(reference != null) {
 						compareProfiles(new String(className), reference,	apiComponent);
 					}
-					scopeElements.add(Util.getType(new String(className)));
+					try {
+						IType[] allTypes = unit.getAllTypes();
+						for (int i = 0; i < allTypes.length; i++) {
+							scopeElements.add(Util.getType(new String(allTypes[i].getFullyQualifiedName('$'))));
+						}
+					} catch (JavaModelException e) {
+						ApiPlugin.log(e.getStatus());
+					}
 				}
-				checkApiUsage(wsprofile, apiComponent, Factory.newScope(apiComponent, (IElementDescriptor[]) scopeElements.toArray(new IElementDescriptor[scopeElements.size()])), null);
+				checkApiUsage(wsprofile, apiComponent, Factory.newTypeScope(apiComponent, (IReferenceTypeDescriptor[]) scopeElements.toArray(new IReferenceTypeDescriptor[scopeElements.size()])), null);
 			}
 		} else if (DEBUG) {
 			System.out.println("No type to check"); //$NON-NLS-1$

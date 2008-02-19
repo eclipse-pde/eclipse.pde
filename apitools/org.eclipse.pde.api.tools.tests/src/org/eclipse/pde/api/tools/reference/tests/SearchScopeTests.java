@@ -213,4 +213,29 @@ public class SearchScopeTests extends TestCase {
 		assertTrue("Should enclose method", scope.encloses(componentA.getId(), method));
 		assertTrue("Should enclose field", scope.encloses(componentA.getId(), field));
 	}	
+	
+	/**
+	 * Tests that visiting a scope with two class files.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testVisitSpecificTypes() throws CoreException {
+		IApiProfile profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiComponent componentA = profile.getApiComponent("component.a");
+		Collection<String> expectedPackages = new HashSet<String>();
+		expectedPackages.add("a.b.c");
+		expectedPackages.add("component.a");
+		Collection<String> expectedTypes = new HashSet<String>();
+		IReferenceTypeDescriptor one = Factory.typeDescriptor("a.b.c.Generics");
+		IReferenceTypeDescriptor two = Factory.typeDescriptor("component.a.NoExtendClass");
+		expectedTypes.add(one.getQualifiedName());
+		expectedTypes.add(two.getQualifiedName());
+		IApiSearchScope scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{one, two});
+		Collection<String> actualPackages = new HashSet<String>();
+		Collection<String> actualTypes = new HashSet<String>();
+		visit(scope, actualPackages, actualTypes);
+		assertEquals("Different pacakges", expectedPackages, actualPackages);
+		assertEquals("Different types", expectedTypes, actualTypes);
+	}
+	
 }
