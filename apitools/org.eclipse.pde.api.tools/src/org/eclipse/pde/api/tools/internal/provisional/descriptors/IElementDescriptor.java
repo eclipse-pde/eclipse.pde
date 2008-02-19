@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
+import org.eclipse.core.resources.IResource;
+
 /**
  * Describes an element in an API component.
  * 
@@ -46,6 +48,11 @@ public interface IElementDescriptor {
 	 * Constant representing a method descriptor.
 	 */
 	public static final int T_METHOD = 6;	
+	
+	/**
+	 * Constant representing an {@link IResource} descriptor
+	 */
+	public static final int T_RESOURCE = 7;
 	
 	/**
 	 * Returns the parent of this element or <code>null</code> if none.

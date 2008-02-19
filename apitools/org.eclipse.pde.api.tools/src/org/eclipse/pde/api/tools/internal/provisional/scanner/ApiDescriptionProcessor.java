@@ -28,6 +28,9 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -78,6 +81,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.text.edits.TextEdit;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -460,6 +464,12 @@ public class ApiDescriptionProcessor {
 	public static final String ELEMENT_FIELD = "field"; //$NON-NLS-1$
 	
 	/**
+	 * Constant representing a resource element node in xml.
+	 * Value is: <code>resource</code>
+	 */
+	public static final String ELEMENT_RESOURCE = "resource"; //$NON-NLS-1$
+	
+	/**
 	 * Constant representing the xml attribute for the kind of an {@link IApiProblemFilter}.
 	 * Value is: <code>kind</code>
 	 */
@@ -682,48 +692,99 @@ public class ApiDescriptionProcessor {
 		if(component.length() == 0) {
 			abort("Missing component id", null); //$NON-NLS-1$
 		}
-		NodeList packages = root.getElementsByTagName(ELEMENT_PACKAGE);
+		NodeList children = root.getChildNodes();
 		NodeList types = null;
 		IPackageDescriptor packdesc = null;
 		Element type = null;
 		String name = null;
 		String kind = null;
-		for (int i = 0; i < packages.getLength(); i++) {
-			Element pkg = (Element) packages.item(i);
-			name = pkg.getAttribute(ATTR_NAME);
-			if (name.length() == 0) {
-				abort("Missing package name", null); //$NON-NLS-1$
+		Element child = null;
+		Node node = null;
+		for (int i = 0; i < children.getLength(); i++) {
+			node = children.item(i);
+			if(node.getNodeType() != Node.ELEMENT_NODE) {
+				continue;
 			}
-			kind = pkg.getAttribute(ATTR_KIND);
-			String[] kinds = kind.split("\\,"); //$NON-NLS-1$
-			if(kinds.length == 0) {
-				abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			packdesc = Factory.packageDescriptor(name);
-			//optimization: String.split will return a 1 entry array with the empty string when called on the empty string
-			//we want to leave these out of the filter mapping
-			if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-				store.addFilter(new ApiProblemFilter(component, packdesc, kinds));
-			}
-			types = pkg.getElementsByTagName(ELEMENT_TYPE);
-			for (int j = 0; j < types.getLength(); j++) {
-				type = (Element) types.item(j);
-				name = type.getAttribute(ATTR_NAME);
+			child = (Element) node;
+			if(ELEMENT_PACKAGE.equals(child.getNodeName())) {
+				name = child.getAttribute(ATTR_NAME);
 				if (name.length() == 0) {
-					abort("Missing type name", null); //$NON-NLS-1$
+					abort("Missing package name", null); //$NON-NLS-1$
 				}
-				kind = type.getAttribute(ATTR_KIND);
-				kinds = kind.split("\\,"); //$NON-NLS-1$
+				kind = child.getAttribute(ATTR_KIND);
+				String[] kinds = kind.split("\\,"); //$NON-NLS-1$
 				if(kinds.length == 0) {
 					abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				IReferenceTypeDescriptor typedesc = packdesc.getType(name);
+				packdesc = Factory.packageDescriptor(name);
+				//optimization: String.split will return a 1 entry array with the empty string when called on the empty string
+				//we want to leave these out of the filter mapping
 				if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-					store.addFilter(new ApiProblemFilter(component, typedesc, kinds));
+					store.addFilter(new ApiProblemFilter(component, packdesc, kinds));
 				}
-				annotateMethodFilters(store, component, typedesc, type);
-				annotateFieldFilters(store, component, typedesc, type);
+				types = child.getElementsByTagName(ELEMENT_TYPE);
+				for (int j = 0; j < types.getLength(); j++) {
+					type = (Element) types.item(j);
+					name = type.getAttribute(ATTR_NAME);
+					if (name.length() == 0) {
+						abort("Missing type name", null); //$NON-NLS-1$
+					}
+					kind = type.getAttribute(ATTR_KIND);
+					kinds = kind.split("\\,"); //$NON-NLS-1$
+					if(kinds.length == 0) {
+						abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					IReferenceTypeDescriptor typedesc = packdesc.getType(name);
+					if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
+						store.addFilter(new ApiProblemFilter(component, typedesc, kinds));
+					}
+					annotateMethodFilters(store, component, typedesc, type);
+					annotateFieldFilters(store, component, typedesc, type);
+				}
 			}
+			else if(ELEMENT_RESOURCE.equals(child.getNodeName())) {
+				annotateResourceFilters(child, store, component, new Path("")); //$NON-NLS-1$
+			}
+		}
+		
+	}
+	
+	/**
+	 * Annotates the filter store with resource filters 
+	 * @param root
+	 * @param store
+	 * @param component
+	 * @param path
+	 * @throws CoreException
+	 */
+	private static void annotateResourceFilters(Element root, IApiFilterStore store, String component, IPath path) throws CoreException {
+		IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
+		if(project == null || !project.isAccessible()) {
+			return;
+		}
+		String name = root.getAttribute(ATTR_NAME);
+		if (name.length() == 0) {
+			abort("Missing type name", null); //$NON-NLS-1$
+		}
+		path = path.append(name);
+		NodeList children = root.getChildNodes();
+		Node node = null;
+		for(int i = 0; i < children.getLength(); i++) {
+			node = children.item(i);
+			if(node.getNodeType() != Node.ELEMENT_NODE) {
+				continue;
+			}
+			annotateResourceFilters((Element) node, store, component, path);
+		}
+		String kind = root.getAttribute(ATTR_KIND);
+		String[] kinds = kind.split("\\,"); //$NON-NLS-1$
+		if(kinds.length == 0) {
+			abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		IResource res = project.findMember(path);
+		if(res != null && res.isAccessible()) {
+			store.addFilter(new ApiProblemFilter(component, Factory.resourceDescriptor(res), kinds));
+			path = path.removeLastSegments(1);
 		}
 	}
 	

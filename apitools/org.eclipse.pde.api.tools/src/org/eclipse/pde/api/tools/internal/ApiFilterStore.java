@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
@@ -35,6 +36,8 @@ import org.w3c.dom.Element;
 
 /**
  * Base implementation of a filter store for Api components
+ * 
+ * @since 1.0.0
  */
 public class ApiFilterStore implements IApiFilterStore {
 	
@@ -328,6 +331,10 @@ public class ApiFilterStore implements IApiFilterStore {
 					name = method.getName();
 					newnode.setAttribute(ApiDescriptionProcessor.ATTR_SIGNATURE, method.getSignature());
 					break;
+				}
+				case IElementDescriptor.T_RESOURCE: {
+					newnode = document.createElement(ApiDescriptionProcessor.ELEMENT_RESOURCE);
+					name = ((IResourceDescriptor)element).getName();
 				}
 			}
 			if(newnode != null) {

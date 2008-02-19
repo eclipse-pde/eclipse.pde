@@ -14,18 +14,21 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.PrimitiveDescriptorImpl;
+import org.eclipse.pde.api.tools.internal.descriptors.ResourceDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPrimitiveTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.ITypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchEngine;
@@ -205,6 +208,16 @@ public class Factory {
 	 */
 	public static IPackageDescriptor packageDescriptor(String packageName) {
 		return new PackageDescriptorImpl(packageName);
+	}
+	
+	/**
+	 * Returns a resource descriptor for the given path.
+	 * 
+	 * @param resource the handle to the backing {@link IResource}
+	 * @return an {@link IResourceDescriptor} for the given resource
+	 */
+	public static IResourceDescriptor resourceDescriptor(IResource resource) {
+		return new ResourceDescriptorImpl(resource);
 	}
 	
 	/**

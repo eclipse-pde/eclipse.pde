@@ -44,10 +44,10 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
 			}
 			else if(type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new VersionNumberingResolution(marker)};
+				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
 			}
 			else if(type.equals(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new SinceTagResolution(marker)};
+				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
 			}
 		}
 		catch(CoreException e) {

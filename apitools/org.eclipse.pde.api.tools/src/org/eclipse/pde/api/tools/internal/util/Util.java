@@ -111,6 +111,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
@@ -1036,6 +1037,9 @@ public final class Util {
 			case IElementDescriptor.T_FIELD: {
 				return ((IFieldDescriptor) desc).getName();
 			}
+			case IElementDescriptor.T_RESOURCE: {
+				return ((IResourceDescriptor)desc).getName();
+			}
 		}
 		return null;
 	}
@@ -1378,6 +1382,19 @@ public final class Util {
 				kinds != IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION && 
 				flags > 0) {
 					buffer.append("_").append(getDeltaFlagsName(flags)); //$NON-NLS-1$
+			}
+		}
+		else {
+			//might be string attribute
+			String kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, ""); //$NON-NLS-1$
+			if(IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE.equals(kind)) {
+				buffer.append(IApiProblemFilter.MINOR_VERSION_CHANGE);
+			}
+			else if(IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE.equals(kind)) {
+				buffer.append(IApiProblemFilter.MAJOR_VERSION_CHANGE);
+			}
+			else if(!"".equals(kind)) { //$NON-NLS-1$
+				buffer.append(kind);
 			}
 		}
 		String value = buffer.toString();

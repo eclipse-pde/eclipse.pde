@@ -436,6 +436,10 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if(xstream == null) {
 				return;
 			}
+			IProject project = fProject.getProject();
+			if(!project.isAccessible()) {
+				return;
+			}
 			IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
 			if(!file.exists()) {
 				file.create(xstream, true, new NullProgressMonitor());

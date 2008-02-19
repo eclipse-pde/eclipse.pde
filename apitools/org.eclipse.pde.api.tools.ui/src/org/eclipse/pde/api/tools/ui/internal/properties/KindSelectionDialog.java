@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.ui.internal.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -61,13 +62,15 @@ public class KindSelectionDialog extends SelectionDialog {
 		public Object[] getElements(Object inputElement) {
 			ArrayList input = new ArrayList((Collection)inputElement);
 			ArrayList kinds = new ArrayList();
-			if(fElement.getElementType() == IElementDescriptor.T_PACKAGE) {
+			IElementDescriptor element = fFilter.getElement();
+			input.removeAll(Arrays.asList(fFilter.getKinds()));
+			if(element.getElementType() == IElementDescriptor.T_PACKAGE) {
 				return input.toArray(new ApiKindDescription[input.size()]);
 			}
 			ApiKindDescription desc = null;
 			for(int i = 0; i < input.size(); i++) {
 				desc = (ApiKindDescription) input.get(i);
-				if(desc.appliesTo(fElement)) {
+				if(desc.appliesTo(element)) {
 					kinds.add(desc);
 				}
 			}
@@ -79,16 +82,16 @@ public class KindSelectionDialog extends SelectionDialog {
 	
 	private CheckboxTableViewer fViewer = null;
 	private Text fDescription = null;
-	private IElementDescriptor fElement = null;
+	private IApiProblemFilter fFilter = null;
 
 	/**
 	 * Constructor
 	 * @param parentShell
 	 * @param element
 	 */
-	protected KindSelectionDialog(Shell parentShell, IElementDescriptor element) {
+	protected KindSelectionDialog(Shell parentShell, IApiProblemFilter filter) {
 		super(parentShell);
-		fElement = element;
+		fFilter = filter;
 		setTitle(PropertiesMessages.KindSelectionDialog_0);
 	}
 	

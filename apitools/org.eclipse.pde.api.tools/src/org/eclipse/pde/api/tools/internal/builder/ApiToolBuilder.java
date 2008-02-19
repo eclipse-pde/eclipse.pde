@@ -75,6 +75,7 @@ import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiPreferenceConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -1019,7 +1020,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
 		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
-		if (severityLevel != ApiPlugin.SEVERITY_IGNORE) {
+		if (severityLevel != ApiPlugin.SEVERITY_IGNORE && reference != null) {
 			String referenceVersionValue = reference.getVersion();
 			String componentVersionValue = component.getVersion();
 			Version referenceVersion = new Version(referenceVersionValue);
@@ -1036,7 +1037,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							0,
 							0,
 							componentVersion.getQualifier());
-					createVersionNumberingProblemMarkerMarker(
+					createVersionNumberingProblemMarker(
 						NLS.bind(
 							BuilderMessages.VersionManagementIncorrectMajorVersionForAPIBreakage,
 							referenceVersionValue,
@@ -1055,7 +1056,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							componentVersion.getMinor() + 1,
 							0,
 							componentVersion.getQualifier());
-					createVersionNumberingProblemMarkerMarker(
+					createVersionNumberingProblemMarker(
 							NLS.bind(
 								BuilderMessages.VersionManagementIncorrectMajorVersionForAPIChange,
 								referenceVersionValue,
@@ -1071,7 +1072,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 							componentVersion.getMinor() + 1,
 							0,
 							componentVersion.getQualifier());
-					createVersionNumberingProblemMarkerMarker(
+					createVersionNumberingProblemMarker(
 							NLS.bind(
 								BuilderMessages.VersionManagementIncorrectMinorVersionForAPIChange,
 								referenceVersionValue,
@@ -1658,7 +1659,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					checkApiComponentVersion(reference, component);
 				}
 			}
-			if (DEBUG) System.out.println("Complete"); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println("Complete"); //$NON-NLS-1$
+			}
 		} else if (DEBUG) {
 			System.out.println("No delta"); //$NON-NLS-1$
 		}
@@ -1925,10 +1928,13 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param breakage
 	 * @param version
 	 */
-	private void createVersionNumberingProblemMarkerMarker(final String message, int markerSeverity, boolean breakage, String version) {
+	private void createVersionNumberingProblemMarker(final String message, int markerSeverity, boolean breakage, String version) {
 		try {
-			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
+			if(isVersionMarkerFiltered(manifestFile, breakage)) {
+				return;
+			}
+			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			if (manifestFile == null) {
 				// Cannot retrieve the manifest.mf file
 				return;
@@ -1986,5 +1992,26 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
+	}
+	
+	/**
+	 * Determines if problems for manifest files are filtered or not
+	 * @param manifest
+	 * @param breakage
+	 * @return true if the breakage should be filtered form the given manifest file, false otherwise
+	 */
+	private boolean isVersionMarkerFiltered(IResource manifest, boolean breakage) {
+		IApiComponent component = getWorkspaceProfile().getApiComponent(fCurrentProject.getName());
+		if(component != null) {
+			try {
+				String kind = breakage ? IApiProblemFilter.MAJOR_VERSION_CHANGE : IApiProblemFilter.MINOR_VERSION_CHANGE;
+				IElementDescriptor element = Factory.resourceDescriptor(manifest);
+				return component.getFilterStore().isFiltered(element, new String[] {kind});
+			}
+			catch(CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		return false;
 	}
 }

@@ -63,6 +63,8 @@ public class PropertiesMessages extends NLS {
 	public static String ApiFiltersPropertyPage_58;
 	public static String ApiFiltersPropertyPage_59;
 	public static String ApiFiltersPropertyPage_6;
+	public static String ApiFiltersPropertyPage_60;
+	public static String ApiFiltersPropertyPage_61;
 	public static String ApiFiltersPropertyPage_7;
 	public static String ApiFiltersPropertyPage_8;
 	public static String ApiFiltersPropertyPage_9;

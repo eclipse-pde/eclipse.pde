@@ -25,6 +25,24 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 public interface IApiProblemFilter {
 
 	/**
+	 * Constant representing the filter kind for a problem with the minor version of a plugin
+	 * 
+	 * Value is: <code>MINOR_VERSION_CHANGE</code> 
+	 * 
+	 * @see #getKinds()
+	 */
+	public static final String MINOR_VERSION_CHANGE = "MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the filter kind for a problem with the major version of a plugin
+	 * 
+	 * Value is: <code>MAJOR_VERSION_CHANGE</code> 
+	 * 
+	 * @see #getKinds()
+	 */
+	public static final String MAJOR_VERSION_CHANGE = "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+	
+	/**
 	 * Constant representing the filter kind for adding a class bound.
 	 * This kind applies to element types:
 	 * <ul>

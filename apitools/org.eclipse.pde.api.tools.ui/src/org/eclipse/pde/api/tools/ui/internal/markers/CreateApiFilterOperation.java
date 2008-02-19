@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -64,16 +65,19 @@ public class CreateApiFilterOperation extends UIJob {
 	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus runInUIThread(IProgressMonitor monitor) {
-		if(fBackingElement != null) {
-			IJavaProject project = fBackingElement.getJavaProject();
+		try {
+			IJavaProject project = resolveJavaProject();
+			if(project == null) {
+				return Status.CANCEL_STATUS;
+			}
 			IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile().getApiComponent(project.getElementName());
 			if(component == null) {
 				return Status.CANCEL_STATUS;
 			}
-			try {
-				IApiFilterStore store = component.getFilterStore();
-				IElementDescriptor element = null;
-				boolean childmarkers = false;
+			IApiFilterStore store = component.getFilterStore();
+			IElementDescriptor element = null;
+			boolean childmarkers = false;
+			if(fBackingElement != null) {
 				switch(fBackingElement.getElementType()) {
 					case IJavaElement.TYPE: {
 						IType type = (IType) fBackingElement;
@@ -97,17 +101,33 @@ public class CreateApiFilterOperation extends UIJob {
 						break;
 					}
 				}
-				if(element != null) {
-					store.addFilter(component.newProblemFilter(element, new String[] {fKind}));
-					cleanupMarkers(childmarkers);
-					return Status.OK_STATUS;
-				}
 			}
-			catch(CoreException ce) {
-				ApiUIPlugin.log(ce);
+			else {
+				IResource resource = fBackingMarker.getResource();
+				element = Factory.resourceDescriptor(resource);
+			}
+			if(element != null) {
+				store.addFilter(component.newProblemFilter(element, new String[] {fKind}));
+				cleanupMarkers(childmarkers);
+				return Status.OK_STATUS;
 			}
 		}
+		catch(CoreException ce) {
+			ApiUIPlugin.log(ce);
+		}
 		return Status.CANCEL_STATUS;
+	}
+	
+	/**
+	 * @return the {@link IJavaProject} backing this operation
+	 */
+	private IJavaProject resolveJavaProject() {
+		if(fBackingElement != null) {
+			return fBackingElement.getJavaProject();
+		}
+		else {
+			return JavaCore.create(fBackingMarker.getResource().getProject());
+		}
 	}
 	
 	/**

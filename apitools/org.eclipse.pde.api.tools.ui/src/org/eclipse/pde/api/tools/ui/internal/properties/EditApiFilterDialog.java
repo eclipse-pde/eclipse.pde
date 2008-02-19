@@ -125,7 +125,7 @@ public class EditApiFilterDialog extends StatusDialog {
 		fAddButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.EditApiFilterDialog_3, null);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				KindSelectionDialog dialog = new KindSelectionDialog(getShell(), fBackingFilter.getElement());
+				KindSelectionDialog dialog = new KindSelectionDialog(getShell(), fBackingFilter);
 				if(dialog.open() == IDialogConstants.OK_ID) {
 					Object[] result = dialog.getResult();
 					if(result != null) {

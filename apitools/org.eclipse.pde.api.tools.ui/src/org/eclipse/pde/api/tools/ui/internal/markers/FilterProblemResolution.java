@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
@@ -50,9 +51,12 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	public String getDescription() {
 		IJavaElement element = resolveElementFromMarker();
 		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {element.getElementName(), fKind});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {element.getElementName()});
 		}
-		return MarkerMessages.FilterProblemResolution_1;
+		else {
+			IResource res = fBackingMarker.getResource();
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getName()});
+		}
 	}
 
 	/* (non-Javadoc)
@@ -68,9 +72,12 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	public String getLabel() {
 		IJavaElement element = resolveElementFromMarker();
 		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_2, new String[] {element.getElementName(), fKind});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {element.getElementName()});
 		}
-		return MarkerMessages.FilterProblemResolution_1;
+		else {
+			IResource res = fBackingMarker.getResource();
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getName()});
+		}
 	}
 	
 	/**

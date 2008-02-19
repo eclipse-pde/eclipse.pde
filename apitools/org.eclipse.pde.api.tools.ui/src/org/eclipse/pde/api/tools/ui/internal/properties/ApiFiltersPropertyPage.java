@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -36,6 +37,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -294,6 +296,14 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		fgFilterDescriptions.put(temp, new ApiKindDescription(temp, 
 				PropertiesMessages.ApiFiltersPropertyPage_54,
 				new int[] {IElementDescriptor.T_METHOD}));
+		
+		//version number problem kinds
+		fgFilterDescriptions.put(IApiProblemFilter.MINOR_VERSION_CHANGE, new ApiKindDescription(IApiProblemFilter.MINOR_VERSION_CHANGE,
+				PropertiesMessages.ApiFiltersPropertyPage_60,
+				new int[] {IElementDescriptor.T_RESOURCE}));
+		fgFilterDescriptions.put(IApiProblemFilter.MAJOR_VERSION_CHANGE, new ApiKindDescription(IApiProblemFilter.MAJOR_VERSION_CHANGE,
+				PropertiesMessages.ApiFiltersPropertyPage_61,
+				new int[] {IElementDescriptor.T_RESOURCE}));
 	}
 	
 	/**
@@ -349,6 +359,13 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 					}
 					case IElementDescriptor.T_FIELD: {
 						return images.getImage(ISharedImages.IMG_FIELD_PUBLIC);
+					}
+					case IElementDescriptor.T_RESOURCE: {
+						IResourceDescriptor rdesc = ((IResourceDescriptor)desc);
+						if(rdesc.getResourceType() == IResource.FOLDER) {
+							return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
+						}
+						return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FILE);
 					}
 				}
 			}
