@@ -26,7 +26,6 @@ public class ApiToolingSetupWizard extends RefactoringWizard {
 		super(refactoring, RefactoringWizard.WIZARD_BASED_USER_INTERFACE);
 		setWindowTitle(WizardMessages.UpdateJavadocTagsWizard_0);
 		setNeedsProgressMonitor(true);
-		setForcePreviewReview(true);
 		setChangeCreationCancelable(false);
 	}
 	

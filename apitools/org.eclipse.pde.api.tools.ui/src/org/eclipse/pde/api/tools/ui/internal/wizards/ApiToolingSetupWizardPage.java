@@ -261,6 +261,16 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		return map;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
+	 */
+	protected boolean performFinish() {
+		if(fProjectsToUpdate.isEmpty()) {
+			collectTagUpdates();
+		}
+		return super.performFinish();
+	}
+	
 	/**
 	 * Converts a single {@link IProject} to have an Api nature
 	 * @param projectToConvert
