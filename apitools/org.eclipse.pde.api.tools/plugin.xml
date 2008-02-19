@@ -4,7 +4,6 @@
 	<!-- ======================================================================== -->
 	<!-- Extension: Builder                                                       -->
 	<!-- ======================================================================== -->
-   <extension-point id="apiJavadocTags" name="Api Javadoc Tags" schema="schema/apiJavadocTags.exsd"/>
 	<extension
 			id="apitoolbuilder"
 			point="org.eclipse.core.resources.builders"
@@ -100,71 +99,6 @@
   <attribute
         name="kind">
   </attribute>
- </extension>
-	<!-- ======================================================================== -->
-	<!-- Extension: API javadoc tags                                              -->
-	<!-- ======================================================================== -->
-<extension
-       id="org.eclipse.pde.api.tools.javadoctags.api_tooling"
-       name="%apiJavadocTags.name"
-       point="org.eclipse.pde.api.tools.apiJavadocTags">
-    <javadoctag
-          tagid="org.eclipse.pde.api.tools.noimplement"
-          restrictionmodifier="noimplement"
-          tagname="noimplement"
-          visibilitymodifier="api">
-       <javaElement
-             interface="true"
-             comment="This interface is not intended to be implemented by clients.">
-       </javaElement>
-    </javadoctag>
-    <javadoctag
-          restrictionmodifier="noextend"
-          tagid="org.eclipse.pde.api.tools.noextend"
-          tagname="noextend"
-          visibilitymodifier="api">
-       <javaElement
-             class="true"
-             comment="This class is not intended to be subclassed by clients.">
-       </javaElement>
-       <javaElement
-       		 class="true"
-             method="true"
-             comment="This method is not intended to be extended by clients.">
-       </javaElement>
-       <javaElement
-             comment="This interface is not intended to be extended by clients."
-             interface="true">
-       </javaElement>
-    </javadoctag>
-    <javadoctag
-          restrictionmodifier="noinstantiate"
-          tagid="org.eclipse.pde.api.tools.noinstantiate"
-          tagname="noinstantiate"
-          visibilitymodifier="api">
-       <javaElement
-             class="true"
-             comment="This class is not intended to be instantiated by clients.">
-       </javaElement>
-    </javadoctag>
-    <javadoctag
-          restrictionmodifier="noreference"
-          tagid="org.eclipse.pde.api.tools.noreference"
-          tagname="noreference"
-          visibilitymodifier="private">
-       <javaElement
-             class="true"
-             interface="true"
-             field="true"
-             comment="This field is not intended to be referenced by clients.">
-       </javaElement>
-       <javaElement
-       		 class="true"
-       		 interface="true"
-             method="true"
-             comment="This method is not intended to be referenced by clients.">
-       </javaElement>
-    </javadoctag>
  </extension>
 	<!-- ================================================================== -->
 	<!-- Extension: API nature                                              -->

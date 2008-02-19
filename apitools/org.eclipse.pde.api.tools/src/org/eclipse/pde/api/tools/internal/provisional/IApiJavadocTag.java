@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,38 +22,31 @@ public interface IApiJavadocTag {
 
 	/**
 	 * Type constant representing the tag applies to a Java class.
-	 * Values is <code>0</code>
+	 * Values is <code>1</code>
 	 */
-	public static final int TYPE_CLASS = 0;
+	public static final int TYPE_CLASS = 0x1;
 	/**
 	 * Type constant representing the tag applies to a Java interface.
-	 * Values is <code>1</code>
-	 */
-	public static final int TYPE_INTERFACE = 1;
-	/**
-	 * Member constant representing the tag applies to a Java method.
-	 * Values is <code>1</code>
-	 */
-	public static final int MEMBER_METHOD = 1; 
-	/**
-	 * Member constant representing the tag applies to a Java field.
 	 * Values is <code>2</code>
 	 */
-	public static final int MEMBER_FIELD = 2;
+	public static final int TYPE_INTERFACE = 0x1 << 1;
+	/**
+	 * Member constant representing the tag applies to a Java method.
+	 * Values is <code>4</code>
+	 */
+	public static final int MEMBER_METHOD = 0x1 << 2; 
+	/**
+	 * Member constant representing the tag applies to a Java field.
+	 * Values is <code>8</code>
+	 */
+	public static final int MEMBER_FIELD = 0x1 << 3;
 	
 	/**
 	 * Member constant representing the tag applies to a Java type declaration
 	 * - not to a member.
-	 * Values is <code>0</code>
+	 * Values is <code>16</code>
 	 */
-	public static final int MEMBER_NONE = 0;
-	
-	/**
-	 * Returns the identifier of the tag.
-	 * 
-	 * @return the id of the tag
-	 */
-	public String getTagId();
+	public static final int MEMBER_NONE = 0x1 << 4;
 	
 	/**
 	 * Returns the restriction modifier for the tag, or 
@@ -65,32 +58,6 @@ public interface IApiJavadocTag {
 	 * @return the restriction modifier for the tag or {@link RestrictionModifiers#NO_RESTRICTIONS}
 	 */
 	public int getRestrictionModifier();
-	
-	/**
-	 * Returns the visibility modifier for the tag, or 
-	 * {@link VisibilityModifiers#API} if the visibility is not recognized. 
-	 * 
-	 * See {@link VisibilityModifiers} for a complete listing of modifier values.
-	 * 
-	 * @return the visibility modifier for the tag
-	 */
-	public int getVisibilityModifier();
-	
-	/**
-	 * Returns the formatted javadoc tag completion for an element of the specified
-	 * kind. A formatted javadoc tag completion takes the 
-	 * form 'tag name' + ' tag comment'.
-	 * <br>
-	 * For example:
-	 * <pre>
-	 * <code>noimplement</code> this interface is not to be implemented by clients
-	 * </pre>
-	 * 
-	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
-	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code>
-	 * @return the formatted javadoc tag completion
-	 */
-	public String getTagCompletion(int type, int member);
 	
 	/**
 	 * Returns the formatted javadoc tag label. A formatted javadoc tag label takes the 

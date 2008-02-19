@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
-import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Manages contributed javadoc tags. This manager is lazy, in that
@@ -52,17 +49,46 @@ public class JavadocTagManager {
 		if(tagcache == null) {
 			tagcache = new HashMap();
 			List list = new ArrayList(4);
-			try {
-				IExtensionPoint extensionPoint = Util.getExtensionRegistry().getExtensionPoint(ApiPlugin.getPluginIdentifier(), ApiPlugin.EXTENSION_JAVADOC_TAGS);
-				IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-				IApiJavadocTag tag = null;
-				for (int i= 0; i < infos.length; i++) {
-					tag = new ApiJavadocTag(infos[i]);
-					tagcache.put(tag.getTagId(), tag);
-					list.add(tag);
-				}
-			}
-			catch(CoreException ce) {}
+			
+			//noimplement tag
+			ApiJavadocTag newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noimplement",  //$NON-NLS-1$
+					"noimplement", //$NON-NLS-1$
+					RestrictionModifiers.NO_IMPLEMENT,
+					new int[] {IApiJavadocTag.TYPE_INTERFACE}, 
+					new String[] {MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_interface, CoreMessages.JavadocTagManager_implemented})});
+			tagcache.put(newtag.getTagId(), newtag);
+			list.add(newtag);
+			
+			//noextend tag
+			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noextend",  //$NON-NLS-1$
+					"noextend", //$NON-NLS-1$
+					RestrictionModifiers.NO_EXTEND,
+					new int[] {IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.MEMBER_METHOD}, 
+					new String[] {MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_class, CoreMessages.JavadocTagManager_subclassed}),  
+									MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_interface, CoreMessages.JavadocTagManager_extended}), 
+									MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_method, CoreMessages.JavadocTagManager_extended})});  
+			tagcache.put(newtag.getTagId(), newtag);
+			list.add(newtag);
+			
+			//noinstantiate tag
+			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noinstantiate",  //$NON-NLS-1$
+					"noinstantiate", //$NON-NLS-1$
+					RestrictionModifiers.NO_INSTANTIATE,
+					new int[] {IApiJavadocTag.TYPE_CLASS}, 
+					new String[] {MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_class, CoreMessages.JavadocTagManager_instantiated})});
+			tagcache.put(newtag.getTagId(), newtag);
+			list.add(newtag);
+			
+			//noreference tag
+			newtag = new ApiJavadocTag("org.eclipse.pde.api.tools.noreference",  //$NON-NLS-1$
+					"noreference", //$NON-NLS-1$
+					RestrictionModifiers.NO_REFERENCE,
+					new int[] {IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_METHOD,
+								IApiJavadocTag.TYPE_CLASS | IApiJavadocTag.TYPE_INTERFACE | IApiJavadocTag.MEMBER_FIELD}, 
+					new String[] {MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_method, CoreMessages.JavadocTagManager_referenced}),
+								MessageFormat.format(CoreMessages.JavadocTagManager_not_intended_to_be, new String[] {CoreMessages.JavadocTagManager_field, CoreMessages.JavadocTagManager_referenced})});
+			tagcache.put(newtag.getTagId(), newtag);
+			list.add(newtag);
 			tags = (IApiJavadocTag[]) list.toArray(new IApiJavadocTag[list.size()]);
 		}
 	}
@@ -108,6 +134,9 @@ public class JavadocTagManager {
 	 * @return the restriction modifier for the given tag name or {@link RestrictionModifiers#NO_RESTRICTIONS} if not found
 	 */
 	public synchronized int getRestrictionsForTag(String tagname, int type, int member) {
+		if(tagname == null) {
+			return RestrictionModifiers.NO_RESTRICTIONS;
+		}
 		initializeJavadocTags();
 		for (int i = 0; i < tags.length; i++) {
 			IApiJavadocTag tag = tags[i];

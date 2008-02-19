@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,8 @@
 package org.eclipse.pde.api.tools.internal;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 
 /**
  * Base implementation of an {@link IApiJavadocTag}. Acts as a delegate
@@ -25,97 +23,90 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 public class ApiJavadocTag implements IApiJavadocTag {
 
 	/**
-	 * configuration element tag names
-	 */
-	private static final String TAGNAME = "tagname"; //$NON-NLS-1$
-	private static final String COMMENT = "comment"; //$NON-NLS-1$
-	private static final String TAGID = "tagid"; //$NON-NLS-1$
-	private static final String JAVA_ELEMENT = "javaElement"; //$NON-NLS-1$
-	private static final String CLASS = "class"; //$NON-NLS-1$
-	private static final String INTERFACE = "interface"; //$NON-NLS-1$
-	private static final String FIELD = "field";  //$NON-NLS-1$
-	private static final String METHOD = "method";  //$NON-NLS-1$
-	private static final String VISIBILITY = "visibilitymodifier"; //$NON-NLS-1$
-	private static final String RESTRICTION = "restrictionmodifier"; //$NON-NLS-1$
-	
-	/**
-	 * The backing {@link IConfigurationElement} for this tag
-	 */
-	private IConfigurationElement element = null;
-
-	/**
 	 * Array of element specific comments, or <code>null</code> if not applicable.
 	 * Indexed by type and member constants in {@link IApiJavadocTag}.
 	 */
 	private String[][] comments = null;
 
+	/**
+	 * The id of the tag
+	 */
+	private String fId = null;
+	/**
+	 * The name of the tag (immediately proceeding the '@' symbol
+	 */
+	private String fName = null;
+	/**
+	 * collection of elements this tag applies to
+	 */
+	private int[] fElements = null;
+	/**
+	 * matching collection of comments for the elements
+	 */
+	private String[] fComments = null;
+	/**
+	 * restriction modifier for the tag
+	 */
+	private int fRModifier = RestrictionModifiers.NO_RESTRICTIONS;
+
+	/**
+	 * Lazily computed tag label, cached once it has been computed
+	 */
 	private String taglabel = null;
 	
 	/**
 	 * Constructor
-	 * @param element
+	 * @param id the id of the tag
+	 * @param name the name of the tag (not including the '@' symbol)
+	 * @param rmodifier 
+	 * @param elements
+	 * @param comments
 	 */
-	public ApiJavadocTag(IConfigurationElement element) {
-		Assert.isNotNull(element);
-		this.element = element;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getRestrictionModifier()
-	 */
-	public int getRestrictionModifier() {
-		String restriction = element.getAttribute(RESTRICTION);
-		if("noimplement".equals(restriction)) { //$NON-NLS-1$
-			return RestrictionModifiers.NO_IMPLEMENT;
-		}
-		if("noextend".equals(restriction)) { //$NON-NLS-1$
-			return RestrictionModifiers.NO_EXTEND;
-		}
-		if("noinstantiate".equals(restriction)) { //$NON-NLS-1$
-			return RestrictionModifiers.NO_INSTANTIATE;	
-		}
-		if("noreference".equals(restriction)) { //$NON-NLS-1$
-			return RestrictionModifiers.NO_REFERENCE;
-		}
-		return RestrictionModifiers.NO_RESTRICTIONS;
-	}
-
-	protected String getTagComment(int type, int member) {
-		initializeElements();
-		return comments[type][member];
+	public ApiJavadocTag(String id, String name, int rmodifier, int[] elements, String[] comments) {
+		Assert.isNotNull(id);
+		fId = id;
+		Assert.isNotNull(name);
+		fName = name;
+		Assert.isNotNull(elements);
+		fElements = elements;
+		fComments = comments;
+		fRModifier = rmodifier;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagId()
 	 */
 	public String getTagId() {
-		return element.getAttribute(TAGID);
+		return fId;
 	}
-
 	
-	/**
-	 * @return the name of the tag, removes a starting '@' symbol if it appears
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getRestrictionModifier()
 	 */
-	public String getTagName() {
-		String tag = element.getAttribute(TAGNAME);
-		return (tag.charAt(0) == '@' ? tag.substring(1) : tag);
+	public int getRestrictionModifier() {
+		return fRModifier;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getVisibilityModifier()
+	/**
+	 * Returns the comment for the given type ad member
+	 * @param type
+	 * @param member
+	 * @return the comment for the tag
 	 */
-	public int getVisibilityModifier() {
-		String visibility = element.getAttribute(VISIBILITY);
-		if("spi".equals(visibility)) { //$NON-NLS-1$
-			return VisibilityModifiers.SPI;
+	protected String getTagComment(int type, int member) {
+		initializeElements();
+		int i1 = 0;
+		if(type == IApiJavadocTag.TYPE_INTERFACE) {
+			i1 = 1;
 		}
-		if("private".equals(visibility)) { //$NON-NLS-1$
-			return VisibilityModifiers.PRIVATE;
+		int i2 = 2;
+		if(member == IApiJavadocTag.MEMBER_FIELD) {
+			i2 = 1;
 		}
-		if("private permissible".equals(visibility)) { //$NON-NLS-1$
-			return VisibilityModifiers.PRIVATE_PERMISSIBLE; 
+		else if(member == IApiJavadocTag.MEMBER_METHOD) {
+			i2 = 0;
 		}
-		return VisibilityModifiers.API;
+		return comments[i1][i2];
 	}
 	
 	/**
@@ -124,68 +115,35 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	private void initializeElements() {
 		if(comments == null) {
 			comments = new String[2][3];
-			IConfigurationElement[] children = element.getChildren(JAVA_ELEMENT);
-			for(int i = 0; i < children.length; i++) {
-				IConfigurationElement child = children[i];
-				boolean clazz = getBoolean(child, CLASS, false);
-				boolean inter = getBoolean(child, INTERFACE, false);
-				boolean method = getBoolean(child, METHOD, false);
-				boolean field = getBoolean(child, FIELD, false);
-				String comment = child.getAttribute(COMMENT);
-				if (clazz) {
+			for(int i = 0; i < fElements.length; i++) {
+				boolean clazz = (IApiJavadocTag.TYPE_CLASS & fElements[i]) != 0;
+				boolean inter = (IApiJavadocTag.TYPE_INTERFACE & fElements[i]) != 0;
+				boolean method = (IApiJavadocTag.MEMBER_METHOD & fElements[i]) != 0;
+				boolean field = (IApiJavadocTag.MEMBER_FIELD & fElements[i]) != 0;
+				if(clazz) {
 					if (method) {
-						comments[IApiJavadocTag.TYPE_CLASS][IApiJavadocTag.MEMBER_METHOD] = comment;
+						comments[0][0] = fComments[i];
 					}
 					if (field) {
-						comments[IApiJavadocTag.TYPE_CLASS][IApiJavadocTag.MEMBER_FIELD] = comment;
+						comments[0][1] = fComments[i];
 					}
-					if (!method && !field) {
-						comments[IApiJavadocTag.TYPE_CLASS][IApiJavadocTag.MEMBER_NONE] = comment;
+					if(!field & !method) {
+						comments[0][2] = fComments[i];
 					}
 				}
-				if (inter) {
+				if(inter) {
 					if (method) {
-						comments[IApiJavadocTag.TYPE_INTERFACE][IApiJavadocTag.MEMBER_METHOD] = comment;
+						comments[1][0] = fComments[i];
 					}
 					if (field) {
-						comments[IApiJavadocTag.TYPE_INTERFACE][IApiJavadocTag.MEMBER_FIELD] = comment;
+						comments[1][1] = fComments[i];
 					}
-					if (!method && !field) {
-						comments[IApiJavadocTag.TYPE_INTERFACE][IApiJavadocTag.MEMBER_NONE] = comment;
+					if(!field & !method) {
+						comments[1][2] = fComments[i];
 					}
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Returns a boolean value from an XML attribute.
-	 * 
-	 * @param element configuration element
-	 * @param attribute attribute name
-	 * @param def default value of the attribute if unspecified
-	 * @return attribute value
-	 */
-	private boolean getBoolean(IConfigurationElement element, String attribute, boolean def) {
-		String value = element.getAttribute(attribute);
-		if (value == null) {
-			return def;
-		}
-		return Boolean.valueOf(value).booleanValue();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#getTagCompletion(int, int)
-	 */
-	public String getTagCompletion(int type, int member) {
-		StringBuffer tag = new StringBuffer();
-		tag.append(getTagName());
-		String comment = getTagComment(type, member);
-		if(comment != null) {
-			tag.append(" "); //$NON-NLS-1$
-			tag.append(comment);
-		}
-		return tag.toString();
 	}
 	
 	/* (non-Javadoc)
@@ -195,7 +153,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		if(taglabel == null) {
 			StringBuffer tag = new StringBuffer();
 			tag.append("@"); //$NON-NLS-1$
-			tag.append(getTagName());
+			tag.append(fName);
 			taglabel = tag.toString();
 		}
 		return taglabel;
@@ -205,10 +163,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		StringBuffer tag = new StringBuffer();
-		tag.append("@"); //$NON-NLS-1$
-		tag.append(getTagName());
-		return tag.toString();
+		return getTagLabel();
 	}
 
 	/* (non-Javadoc)
@@ -217,7 +172,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	public String getCompleteTag(int type, int member) {
 		StringBuffer tag = new StringBuffer();
 		tag.append("@"); //$NON-NLS-1$
-		tag.append(getTagName());
+		tag.append(fName);
 		tag.append(" "); //$NON-NLS-1$
 		tag.append(getTagComment(type, member));
 		return tag.toString();
@@ -228,6 +183,6 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 */
 	public boolean isApplicable(int type, int member) {
 		initializeElements();
-		return comments[type][member] != null;
+		return getTagComment(type, member) != null;
 	}
 }
