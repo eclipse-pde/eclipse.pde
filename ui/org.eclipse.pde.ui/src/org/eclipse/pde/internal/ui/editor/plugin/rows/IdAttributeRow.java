@@ -19,7 +19,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.util.PDERegistryHelper;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -56,7 +56,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		dialog.setTitle(PDEUIMessages.IdAttributeRow_title);
 		dialog.setMessage(PDEUIMessages.IdAttributeRow_message);
 		dialog.setEmptyListMessage(PDEUIMessages.IdAttributeRow_emptyMessage);
-		Map attributeMap = PDERegistryHelper.getValidAttributes(getAttribute());
+		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		dialog.setElements(attributeMap.keySet().toArray());
 		if (dialog.open() == Window.OK) {
 			text.setText(dialog.getFirstResult().toString());
@@ -67,7 +67,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#openReference()
 	 */
 	protected void openReference() {
-		Map attributeMap = PDERegistryHelper.getValidAttributes(getAttribute());
+		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		String id = text.getText();
 		// TODO why is this hard?
 		IConfigurationElement element = (IConfigurationElement) attributeMap.get(id);

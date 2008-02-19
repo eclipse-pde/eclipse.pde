@@ -541,7 +541,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			String basedOn = attInfo.getBasedOn();
 			// only validate if we have a valid value and basedOn value
 			if (value != null && basedOn != null && value.length() > 0 && basedOn.length() > 0) {
-				Map attributes = PDERegistryHelper.getValidAttributes(attInfo);
+				Map attributes = PDESchemaHelper.getValidAttributes(attInfo);
 				if (!attributes.containsKey(value)) { // report error if we are missing something
 					report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				}

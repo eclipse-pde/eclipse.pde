@@ -17,16 +17,16 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 
-public class PDERegistryHelper {
+public class PDESchemaHelper {
 
 	/**
-	 * Returns valid attributes given a proper reference id
+	 * Returns valid attributes given a schema attribute
 	 * 
-	 * @param basedOn A valid reference id (e.g., org.eclipse.ui.perspectives/perspective/@id)
+	 * @param attribute 
+	 * 		a schema attribute (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 * @return A map with the ids as keys and respective {@link IConfigurationElement} as pairs
 	 */
 	public static Map getValidAttributes(ISchemaAttribute attribute) {
-		// TODO shall we change to ISchemaAttribute as a param and use restrictions?
 		Map attributeMap = new HashMap();
 		gatherInfo(attributeMap, attribute.getBasedOn());
 
@@ -45,6 +45,20 @@ public class PDERegistryHelper {
 		}
 
 		return attributeMap;
+	}
+
+	/**
+	 * 
+	 * Returns a reference identifier given a schema attribute
+	 * 
+	 * @param attribute 
+	 * 		a schema attribute 
+	 * @return a reference identifier (e.g., org.eclipse.ui.perspectives/perspective/@id)
+	 */
+	public static String getReferenceIdentifier(ISchemaAttribute attribute) {
+		String rootId = attribute.getSchema().getQualifiedPointId();
+		String refId = buildBasedOnValue(attribute.getParent()) + "/@" + attribute.getName(); //$NON-NLS-1$
+		return rootId + refId;
 	}
 
 	private static void gatherInfo(Map attributesInfo, String basedOn) {
@@ -85,6 +99,23 @@ public class PDERegistryHelper {
 
 	private static List keepGoing(IConfigurationElement element, String tag) {
 		return Arrays.asList(element.getChildren(tag));
+	}
+
+	private static String buildBasedOnValue(ISchemaObject object) {
+		if (object instanceof ISchemaElement && !(object instanceof ISchemaRootElement)) {
+			ISchemaElement element = (ISchemaElement) object;
+			ISchema schema = element.getSchema();
+			ISchemaElement[] elements = schema.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				ISchemaElement[] children = schema.getCandidateChildren(elements[i]);
+				for (int j = 0; j < children.length; j++) {
+					if (object.getName().equals(children[j].getName())) {
+						return buildBasedOnValue(elements[i]) + '/' + object.getName();
+					}
+				}
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 }

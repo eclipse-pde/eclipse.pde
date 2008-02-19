@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -202,24 +203,11 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 			Object object = result[0];
 			if (object instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) object;
-				String schemaId = attribute.getSchema().getQualifiedPointId();
-				String refId = buildBasedOnValue(attribute);
-				String id = schemaId + '/' + refId;
+				String id = PDESchemaHelper.getReferenceIdentifier(attribute);
 				entry.setValue(id);
 				entry.commit();
 			}
 		}
-	}
-
-	// TODO faulty recursion... this doesn't work in all cases probably...
-	private String buildBasedOnValue(ISchemaObject object) {
-		if (object instanceof ISchemaElement)
-			return object.getName() + '/' + buildBasedOnValue(object.getParent());
-		return ""; //$NON-NLS-1$
-	}
-
-	private String buildBasedOnValue(ISchemaAttribute attribute) {
-		return buildBasedOnValue(attribute.getParent()) + "@" + attribute.getName(); //$NON-NLS-1$
 	}
 
 }
