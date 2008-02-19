@@ -48,6 +48,8 @@ public class PDERegistryHelper {
 	}
 
 	private static void gatherInfo(Map attributesInfo, String basedOn) {
+		if (basedOn == null) // check for null
+			return;
 		String[] path = basedOn.split("/"); //$NON-NLS-1$
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(path[0], true);
 		List members = new ArrayList();
