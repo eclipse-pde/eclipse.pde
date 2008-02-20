@@ -218,7 +218,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		for (int i = 0; i < fragments.length; i++) {
 			BundleDescription fragment = fragments[i];
 			BundleApiComponent component = (BundleApiComponent) getProfile().getApiComponent(fragment.getSymbolicName());
-			descriptions[i + 1] = component.createLocalApiDescription();
+			descriptions[i + 1] = component.getApiDescription();
 		}
 		descriptions[0] = createLocalApiDescription();
 		return new CompositeApiDescription(descriptions);
