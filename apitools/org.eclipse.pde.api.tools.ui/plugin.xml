@@ -77,7 +77,7 @@
          </enabledWhen>
          <filter
                name="projectNature"
-               value="org.eclipse.pde.api.tools.apitoolnature">
+               value="org.eclipse.pde.api.tools.apiAnalysisNature">
          </filter>
       </page>
       <page
@@ -95,7 +95,7 @@
          </enabledWhen>
          <filter
                name="projectNature"
-               value="org.eclipse.pde.api.tools.apitoolnature">
+               value="org.eclipse.pde.api.tools.apiAnalysisNature">
          </filter>
       </page>
    </extension>
