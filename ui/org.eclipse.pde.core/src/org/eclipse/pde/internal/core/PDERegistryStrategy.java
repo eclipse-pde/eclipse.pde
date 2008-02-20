@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,27 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
-import org.eclipse.core.runtime.spi.RegistryContributor;
-import org.eclipse.core.runtime.spi.RegistryStrategy;
+import org.eclipse.core.runtime.spi.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERegistryStrategy extends RegistryStrategy {
@@ -83,6 +72,21 @@ public class PDERegistryStrategy extends RegistryStrategy {
 				addBundles(fRegistry, entries[i].getExternalModels());
 			}
 			entries = delta.getAddedEntries();
+			ModelEntry[] removedEntries = delta.getRemovedEntries();
+			if (removedEntries.length == entries.length && fRegistry instanceof IDynamicExtensionRegistry) {
+				for (int i = 0; i < removedEntries.length; i++) {
+					if (removedEntries[i].getId() != null) {
+						IDynamicExtensionRegistry registry = (IDynamicExtensionRegistry) fRegistry;
+						IContributor[] contributors = registry.getAllContributors();
+						for (int j = 0; j < contributors.length; j++) {
+							if (removedEntries[i].getId().equals(contributors[j].getName())) {
+								registry.removeContributor(contributors[j], fKey);
+								break;
+							}
+						}
+					}
+				}
+			}
 			for (int i = 0; i < entries.length; i++)
 				addBundles(fRegistry, entries[i].getActiveModels());
 		}

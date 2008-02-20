@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public class PDEExtensionRegistry {
 				return extensions;
 			for (int i = 0; i < extensions.length; i++) {
 				IPluginModelBase base = getPlugin(extensions[i].getContributor(), true);
-				if (base.isEnabled())
+				if (base != null && base.isEnabled())
 					list.add(extensions[i]);
 			}
 		} else {
