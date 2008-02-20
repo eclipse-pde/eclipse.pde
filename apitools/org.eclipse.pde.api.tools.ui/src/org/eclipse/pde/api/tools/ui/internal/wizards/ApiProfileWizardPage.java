@@ -321,7 +321,8 @@ public class ApiProfileWizardPage extends WizardPage {
 	protected void initialize() {
 		if(fProfile != null) {
 			nametext.setText(fProfile.getName());
-			eecombo.setText(fProfile.getExecutionEnvironment());
+			fRecommendedEE = fProfile.getExecutionEnvironment();
+			eecombo.setText(fRecommendedEE);
 			IApiComponent[] components = fProfile.getApiComponents();
 			HashSet locations = new HashSet();
 			IPath location = null;

@@ -12,7 +12,6 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_11;
 	public static String ApiProfileWizardPage_12;
 	public static String ApiProfileWizardPage_13;
-	public static String ApiProfileWizardPage_14;
 	public static String ApiProfileWizardPage_15;
 	public static String ApiProfileWizardPage_16;
 	public static String ApiProfileWizardPage_17;
@@ -26,6 +25,7 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_5;
 	public static String ApiProfileWizardPage_8;
 	public static String ApiProfileWizardPage_9;
+	public static String ApiProfileWizardPage_ee_of_X_required;
 	public static String ApiToolingSetupWizardPage_0;
 	public static String ApiToolingSetupWizardPage_1;
 	public static String ApiToolingSetupWizardPage_2;
