@@ -5,7 +5,7 @@
 	<!-- Extension: Builder                                                       -->
 	<!-- ======================================================================== -->
 	<extension
-			id="apitoolbuilder"
+			id="apiAnalysisBuilder"
 			point="org.eclipse.core.resources.builders"
 			name="%apitoolBuilderName">
 		<builder
@@ -104,7 +104,7 @@
 	<!-- Extension: API nature                                              -->
 	<!-- ================================================================== -->
  <extension
-       id="apitoolnature"
+       id="apiAnalysisNature"
        name="%nature_name"
        point="org.eclipse.core.resources.natures">
     <runtime>
@@ -119,7 +119,7 @@
           id="org.eclipse.pde.PluginNature">
     </requires-nature>
     <builder
-          id="org.eclipse.pde.api.tools.apitoolbuilder">
+          id="org.eclipse.pde.api.tools.apiAnalysisBuilder">
     </builder>
  </extension>
 	<!-- ================================================================== -->

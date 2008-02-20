@@ -86,9 +86,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools" ; //$NON-NLS-1$
 	/**
 	 * The API tooling nature id
-	 * (value <code>"org.eclipse.pde.api.tools.apitoolgnature"</code>).
+	 * (value <code>"org.eclipse.pde.api.tools.apiAnalysisNature"</code>).
 	 */
-	public static final String NATURE_ID = PLUGIN_ID + ".apitoolnature" ; //$NON-NLS-1$
+	public static final String NATURE_ID = PLUGIN_ID + ".apiAnalysisNature" ; //$NON-NLS-1$
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
@@ -132,9 +132,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	
 	/**
 	 * The identifier for the Api builder
-	 * Value is: <code>"org.eclipse.pde.api.tools.apitoolbuilder"</code>
+	 * Value is: <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
 	 */
-	public static final String BUILDER_ID = PLUGIN_ID + ".apitoolbuilder" ; //$NON-NLS-1$
+	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$
 	
 	/**
 	 * Constant representing the id of the workspace {@link IApiProfile}.
