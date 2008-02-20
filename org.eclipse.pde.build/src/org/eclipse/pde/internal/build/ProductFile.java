@@ -94,6 +94,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String productName = null;
 	private String application = null;
 	private String location = null;
+	private String version = null;
 
 	private Properties  launcherArgs = new Properties();
 	
@@ -212,6 +213,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	
 	public boolean useFeatures() {
 		return useFeatures;
+	}
+
+	public String getVersion() {
+		return (version == null) ? "0.0.0" : version; //$NON-NLS-1$
 	}
 
 	public String getVMArguments(String os) {
@@ -446,6 +451,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		String use = attributes.getValue("useFeatures"); //$NON-NLS-1$
 		if (use != null)
 			useFeatures = IBuildPropertiesConstants.TRUE.equalsIgnoreCase(use);
+		version = attributes.getValue("version"); //$NON-NLS-1$
 	}
 
 	private void processConfigIni(Attributes attributes) {
