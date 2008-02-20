@@ -679,7 +679,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					}
 					className = type.getFullyQualifiedName();
 					if(reference != null) {
-						compareProfiles(new String(className), reference,	apiComponent);
+						compareProfiles(new String(className), reference, apiComponent);
 					}
 					try {
 						IType[] allTypes = unit.getAllTypes();
@@ -1701,6 +1701,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			switch(delta.getKind()) {
 				case IDelta.ADDED :
 				case IDelta.ADDED_EXTEND_RESTRICTION :
+				case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
 				case IDelta.ADDED_IMPLEMENT_RESTRICTION :
 					// check new APIs
 					this.bits |= CONTAINS_API_CHANGES;
