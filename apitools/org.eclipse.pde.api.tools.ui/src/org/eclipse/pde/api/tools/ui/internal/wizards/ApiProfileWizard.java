@@ -37,6 +37,7 @@ public class ApiProfileWizard extends Wizard {
 		else {
 			setWindowTitle(WizardMessages.ApiProfileWizard_1);
 		}
+		setNeedsProgressMonitor(true);
 	}
 	
 	/**

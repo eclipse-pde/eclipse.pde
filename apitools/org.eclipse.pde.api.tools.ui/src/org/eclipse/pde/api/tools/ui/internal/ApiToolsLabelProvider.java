@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProfileWizardPage.EEEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -67,6 +68,9 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof IApiProfile) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_FORWARD);
 		}
+		if(element instanceof EEEntry) {
+			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
+		}
 		return null;
 	}
 
@@ -92,6 +96,9 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				label.append("  [default profile]"); //$NON-NLS-1$
 			}
 			return label.toString();
+		}
+		if(element instanceof EEEntry) {
+			return ((EEEntry)element).toString();
 		}
 		return "<unknown>"; //$NON-NLS-1$
 	}

@@ -28,15 +28,15 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.api.tools.internal.SystemLibraryApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -55,9 +55,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The wizard page allowing a new API profiles to be created
@@ -65,6 +67,65 @@ import org.eclipse.ui.PlatformUI;
  * @since 1.0.0
  */
 public class ApiProfileWizardPage extends WizardPage {
+	
+	public class EEEntry {
+		String name = null;
+		/**
+		 * Constructor
+		 */
+		public EEEntry(String name) {
+			this.name = name;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return this.name;
+		}
+	}
+	
+	class ContentProvider implements ITreeContentProvider {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			if(parentElement instanceof IApiComponent) {
+				IApiComponent component = (IApiComponent) parentElement;
+				String[] ees = component.getExecutionEnvironments();
+				ArrayList entries = new ArrayList(ees.length);
+				for(int i = 0; i < ees.length; i++) {
+					entries.add(new EEEntry(ees[i]));
+				}
+				return entries.toArray();
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			if(element instanceof IApiComponent) {
+				IApiComponent component = (IApiComponent) element;
+				return component.getExecutionEnvironments().length > 0;
+			}
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			if(inputElement instanceof IApiComponent[]) {
+				return (Object[]) inputElement;
+			}
+			return new Object[0];
+		}
+		public void dispose() {}
+		public Object getParent(Object element) {return null;}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+	}
 	
 	/**
 	 * Resets the baseline contents based on current settings and a location from which
@@ -82,45 +143,17 @@ public class ApiProfileWizardPage extends WizardPage {
 			this.name = name;
 			this.eeid = eeid;
 		}
-		
-		/**
-		 * Returns a list of URLs of plug-ins from the configured location.
-		 * 
-		 * @return plug-in URLs
-		 */
-		private URL[] computePluginURLs() {
-			URL[] base  = PluginPathFinder.getPluginPaths(location);		
-			if (extralocations.size() == 0) {
-				return base;
-			}
-			File[] extraLocations = new File[extralocations.size() * 2];
-			for (int i = 0; i < extraLocations.length; i++) {
-				String location = extralocations.get(i/2).toString();
-				File dir = new File(location);
-				extraLocations[i] = dir;
-				dir = new File(dir, "plugins"); //$NON-NLS-1$
-				extraLocations[++i] = dir;
-			}
-			URL[] additional = PluginPathFinder.scanLocations(extraLocations);
-			if (additional.length == 0) {
-				return base;
-			}
-			URL[] result = new URL[base.length + additional.length];
-			System.arraycopy(base, 0, result, 0, base.length);
-			System.arraycopy(additional, 0, result, base.length, additional.length);
-			return result;
-		}
 			
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {	
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
-			URL[] urls = computePluginURLs();
+			URL[] urls = PluginPathFinder.getPluginPaths(location);	
 			monitor.worked(1);
 			try {
 				File eeFile = Util.createEEFile(eeid);
-				profile = Factory.newApiProfile(name, eeFile);
+				fProfile = Factory.newApiProfile(name, eeFile);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			} catch (IOException e) {
@@ -128,42 +161,54 @@ public class ApiProfileWizardPage extends WizardPage {
 			}
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
 			subMonitor.beginTask("", urls.length); //$NON-NLS-1$
+			fEEset.clear();
+			fRecommendedEE = null;
 			List components = new ArrayList();
+			String[] ees = null;
 			for (int i = 0; i < urls.length; i++) {
 				try {
-					IApiComponent component = profile.newApiComponent(urls[i].getFile());
+					IApiComponent component = fProfile.newApiComponent(urls[i].getFile());
 					if (component != null) {
 						components.add(component);
+						ees = component.getExecutionEnvironments();
+						for(int j = 0; j < ees.length; j++) {
+							fEEset.add(ees[j]);
+						}
 					}
 				} catch (CoreException e) {
+					fEEset.clear();
 					throw new InvocationTargetException(e);
 				}
 				subMonitor.worked(1);
 			}
 			subMonitor.done();
-			profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			monitor.worked(1);
 			monitor.done();
 		}
 	}
 	
-	private IApiProfile profile = null;
-	private ArrayList extralocations = new ArrayList();
+	private final ArrayList fOrderedEEs = new ArrayList(Arrays.asList(new String[] {"JavaSE-1.6", "J2SE-1.5", "J2SE-1.4", "J2SE-1.3", "J2SE-1.2", "JRE-1.1", "OSGi/Minimum-1.1", "OSGi/Minimum-1.0", "CDC-1.1/Foundation-1.1", "CDC-1.0/Foundation-1.0"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+	private HashSet fEEset = new HashSet();
+	private IApiProfile fProfile = null;
+	private String fRecommendedEE = null;
+	
+	/**
+	 * widgets
+	 */
 	private Text nametext = null;
-	private CheckboxTableViewer tableviewer = null;
+	private TreeViewer treeviewer = null;
 	private Combo eecombo = null,
 				  locationcombo = null;
 	private Button browsebutton = null,
-				   resetbutton = null,
 				   reloadbutton = null;
-	
 	/**
 	 * Constructor
 	 * @param profile
 	 */
 	protected ApiProfileWizardPage(IApiProfile profile) {
 		super(WizardMessages.ApiProfileWizardPage_1);
-		this.profile = profile;
+		this.fProfile = profile;
 		setTitle(WizardMessages.ApiProfileWizardPage_1);
 		if(profile == null) {
 			setMessage(WizardMessages.ApiProfileWizardPage_3);
@@ -189,18 +234,26 @@ public class ApiProfileWizardPage extends WizardPage {
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		String[] items = new String[envs.length];
 		for(int i = 0; i < envs.length; i++) {
-			items[i] = envs[i].getId();
+			if(envs[i].getCompatibleVMs().length > 0) {
+				items[i] = envs[i].getId();
+			}
 		}
 		Arrays.sort(items, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((String)o1).compareTo(o2);
 			}
+		});		
+		
+		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_8, 1, 100);
+		eecombo = SWTFactory.createCombo(ncomp, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE | SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, items);
+		eecombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageValid();
+			}
 		});
 		
-		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_8, 1, 160);
-		eecombo = SWTFactory.createCombo(ncomp, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE | SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, items);
+		SWTFactory.createVerticalSpacer(comp, 1);
 		
-		SWTFactory.createHorizontalSpacer(comp, 1);
 		Composite tcomp = SWTFactory.createComposite(comp, 4, 2, GridData.FILL_HORIZONTAL, 0, 0);
 		SWTFactory.createWrapLabel(tcomp, WizardMessages.ApiProfileWizardPage_9, 1);
 		locationcombo = SWTFactory.createCombo(tcomp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING, null);
@@ -222,51 +275,42 @@ public class ApiProfileWizardPage extends WizardPage {
 				String newPath = dialog.open();
 				if (newPath != null && !new Path(loctext).equals(new Path(newPath))) {
 					locationcombo.setText(newPath);
-					extralocations.clear();
 					doReload();
 				}
 			}
 		});
-		resetbutton = SWTFactory.createPushButton(tcomp, WizardMessages.ApiProfileWizardPage_12, null);
-		resetbutton.setEnabled(locationcombo.getText().trim().length() > 0);
-		resetbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				extralocations.clear();
-				doReload();
-			}
-		});
-		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 2);
 		
-		Table table = new Table(comp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 250;
-		table.setLayoutData(gd);
-		tableviewer = new CheckboxTableViewer(table);
-		tableviewer.setLabelProvider(new ApiToolsLabelProvider());
-		tableviewer.setContentProvider(new ArrayContentProvider());
-		tableviewer.setComparator(new ViewerComparator());
-		tableviewer.setInput(getCurrentComponents());
-		tableviewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-			}
-		});
-		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
-		
-		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL | GridData.BEGINNING, 0, 0);
-		reloadbutton = SWTFactory.createPushButton(bcomp, WizardMessages.ApiProfileWizardPage_14, null);
+		reloadbutton = SWTFactory.createPushButton(tcomp, WizardMessages.ApiProfileWizardPage_12, null);
 		reloadbutton.setEnabled(locationcombo.getText().trim().length() > 0);
 		reloadbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doReload();
 			}
 		});
-		SWTFactory.createVerticalSpacer(bcomp, 1);
+		
+		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 2);
+		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 250;
+		tree.setLayoutData(gd);
+		treeviewer = new TreeViewer(tree);
+		treeviewer.setLabelProvider(new ApiToolsLabelProvider());
+		treeviewer.setContentProvider(new ContentProvider());
+		treeviewer.setComparator(new ViewerComparator());
+		treeviewer.setInput(getCurrentComponents());
+		treeviewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
+			}
+		});
+		treeviewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return !(element instanceof SystemLibraryApiComponent);
+			}
+		});
+	
 		setControl(comp);
-		setPageComplete(profile != null);
+		setPageComplete(fProfile != null);
 		initialize();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_WIZARD_PAGE);
 	}
@@ -275,11 +319,10 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * Initializes the controls of the page if the profile is not <code>null</code>
 	 */
 	protected void initialize() {
-		if(profile != null) {
-			nametext.setText(profile.getName());
-			eecombo.setText(profile.getExecutionEnvironment());
-			//TODO init component enablements?? if we decide to allow specific target elements to be enabled
-			IApiComponent[] components = profile.getApiComponents();
+		if(fProfile != null) {
+			nametext.setText(fProfile.getName());
+			eecombo.setText(fProfile.getExecutionEnvironment());
+			IApiComponent[] components = fProfile.getApiComponents();
 			HashSet locations = new HashSet();
 			IPath location = null;
 			for(int i = 0; i < components.length; i++) {
@@ -303,13 +346,33 @@ public class ApiProfileWizardPage extends WizardPage {
 	protected void doReload() {
 		ReloadOperation op = new ReloadOperation(nametext.getText().trim(), eecombo.getText().trim(), locationcombo.getText().trim());
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, false, op);
-			tableviewer.setInput(getCurrentComponents());
-			tableviewer.setAllChecked(true);
-			tableviewer.refresh();
+			getContainer().run(false, true, op);
+			fRecommendedEE = resolveEE();
+			int idx = eecombo.indexOf(fRecommendedEE);
+			eecombo.select((idx > -1 ? idx : 0));
+			treeviewer.setInput(getCurrentComponents());
+			treeviewer.refresh();
 		} 
 		catch (InvocationTargetException ite) {} 
 		catch (InterruptedException ie) {}
+	}
+	
+	/**
+	 * Returns the smallest ee that covers all of the required ee's for all of the {@link IApiComponent}s for this profile
+	 * @return the ee to cover all of the components of this profile
+	 */
+	private String resolveEE() {
+		if(fEEset.size() == 1) {
+			return (String) fEEset.iterator().next();
+		}
+		else if(fEEset.size() > 1) {
+			for(int i = 0; i < fOrderedEEs.size(); i++) {
+				if(fEEset.contains(fOrderedEEs.get(i))) {
+					return (String) fOrderedEEs.get(i);
+				}
+			}
+		}
+		return Util.getDefaultEEId();
 	}
 	
 	/**
@@ -332,7 +395,11 @@ public class ApiProfileWizardPage extends WizardPage {
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		
+		String ee = eecombo.getText();
+		if(fRecommendedEE != null && fOrderedEEs.indexOf(ee) > fOrderedEEs.indexOf(fRecommendedEE)) {
+			setErrorMessage(MessageFormat.format(WizardMessages.ApiProfileWizardPage_ee_of_X_required, new String[] {fRecommendedEE}));
+			return false;
+		}
 		setErrorMessage(null);
 		return true;
 	}
@@ -343,43 +410,10 @@ public class ApiProfileWizardPage extends WizardPage {
 	 * @return the current API components in the baseline or an empty collection if none
 	 */
 	protected IApiComponent[] getCurrentComponents() {
-		if (profile != null) {
-			return profile.getApiComponents();
+		if (fProfile != null) {
+			return fProfile.getApiComponents();
 		}
 		return new IApiComponent[0];
-	}
-	
-	/**
-	 * Sets the items currently selected in the table viewer to be the specified checked state
-	 * @param the desired checked state
-	 */
-	protected void checkSelected(boolean checked) {
-		try {
-			tableviewer.getTable().setRedraw(false);
-			Object[] objs = ((IStructuredSelection) tableviewer.getSelection()).toArray();
-			for(int i = 0; i < objs.length; i++) {
-				tableviewer.setChecked(objs[i], checked);
-			}
-		}
-		finally {
-			tableviewer.getTable().setRedraw(true);
-			tableviewer.refresh();
-		}
-	}
-	
-	/**
-	 * Sets the checked state of all of the items in the table viewer to be the specified checked state
-	 * @param checked the desired checked state
-	 */
-	protected void checkAll(boolean checked) {
-		try {
-			tableviewer.getTable().setRedraw(false);
-			tableviewer.setAllChecked(checked);
-		}
-		finally {
-			tableviewer.getTable().setRedraw(true);
-			tableviewer.refresh();
-		}
 	}
 	
 	/**
@@ -387,10 +421,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	protected void updateButtons() {
 		String loctext = locationcombo.getText().trim();
-		int size = loctext.length();
-		resetbutton.setEnabled(size > 0);
-		reloadbutton.setEnabled(size > 0);
-		size = (tableviewer.getSelection().isEmpty() ? 0 : 1);
+		reloadbutton.setEnabled(loctext.length() > 0);
 	}
 	
 	/**
@@ -400,11 +431,11 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	public IApiProfile finish() throws IOException, CoreException {
 		String eeid = eecombo.getText().trim();
-		if(!profile.getExecutionEnvironment().equals(eeid)) {
+		if(!fProfile.getExecutionEnvironment().equals(eeid)) {
 			File eefile = Util.createEEFile(eeid);
-			profile.setExecutionEnvironment(eefile);
+			fProfile.setExecutionEnvironment(eefile);
 		}
-		profile.setName(nametext.getText().trim());
-		return profile;
+		fProfile.setName(nametext.getText().trim());
+		return fProfile;
 	}
 }

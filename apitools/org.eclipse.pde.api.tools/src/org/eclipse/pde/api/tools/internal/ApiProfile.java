@@ -350,7 +350,9 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	public void addApiComponents(IApiComponent[] components) {
 		for (int i = 0; i < components.length; i++) {
 			BundleApiComponent component = (BundleApiComponent) components[i];
-			if (component.isSourceComponent()) continue;
+			if (component.isSourceComponent()) {
+				continue;
+			}
 			BundleDescription description = component.getBundleDescription();
 			fState.addBundle(description);
 			this.storeBundleDescription(description, component);
@@ -619,7 +621,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * @see IApiProfile#setExecutionEnvironment(java.io.File)
 	 */
 	public void setExecutionEnvironment(File eefile) throws CoreException {
-		EEVMType.clearProperties(eefile);
 		Properties profile = Util.getEEProfile(eefile);
 		if (profile == null) {
 			abort("Could not set up the Execution Environment", null); //$NON-NLS-1$

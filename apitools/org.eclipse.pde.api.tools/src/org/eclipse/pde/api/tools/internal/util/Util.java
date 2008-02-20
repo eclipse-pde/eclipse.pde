@@ -57,20 +57,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.spi.RegistryContributor;
-import org.eclipse.core.runtime.spi.RegistryStrategy;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
@@ -126,56 +120,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 1.0.0
  */
 public final class Util {
-	
-	/**
-	 * Registry strategy for testing and non-framework use
-	 * @since
-	 */
-	static class APIRegistryStrategy extends RegistryStrategy {
-		String pfiles = null,
-			   cont = null;
-		/**
-		 * Constructor
-		 * @throws CoreException
-		 */
-		public APIRegistryStrategy() throws CoreException {
-			super(null, null);
-			pfiles = System.getProperty("pluginfiles"); //$NON-NLS-1$
-			if(pfiles == null) {
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(), UtilMessages.Util_2));
-			}
-			cont = System.getProperty("contributors"); //$NON-NLS-1$
-			if(cont == null) {
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(), UtilMessages.Util_3));
-			}
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.spi.RegistryStrategy#onStart(org.eclipse.core.runtime.IExtensionRegistry, boolean)
-		 */
-		public void onStart(IExtensionRegistry registry, boolean loadedFromCache) {
-			super.onStart(registry, loadedFromCache);
-			//parse the system properties for -Dpluginfiles and -Dcontributors
-			String[] paths = pfiles.split(","); //$NON-NLS-1$
-			String[] contributors = cont.split(","); //$NON-NLS-1$
-			if(paths.length == contributors.length) {
-				IContributor contributor = null;
-				File file = null;
-				for(int i = 0; i < paths.length; i++) {
-					file = new File(paths[i]);
-					if(file.exists() && file.isFile()) {
-						try {
-							contributor = new RegistryContributor(contributors[i], contributors[i], null, null);
-							registry.addContribution(new FileInputStream(file), contributor, false, null, null, null);
-						}
-						catch(FileNotFoundException fnfe) {
-							ApiPlugin.log(fnfe);
-						}
-					}
-					
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Class that runs a build in the workspace or the given project
@@ -942,12 +886,14 @@ public final class Util {
 	 * @return the corresponding properties or null if none
 	 */
 	public static Properties getEEProfile(File eeFileProperty) {
-		if (!eeFileProperty.exists()) return null;
+		if (!eeFileProperty.exists()) {
+			return null;
+		}
 		EEVMType.clearProperties(eeFileProperty);
 		String ee = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFileProperty);
-
-		if (ee == null) return null;
-
+		if (ee == null) {
+			return null;
+		}
 		String profileName = ee + ".profile"; //$NON-NLS-1$
 		InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName); //$NON-NLS-1$
 		if (stream != null) {
@@ -975,8 +921,9 @@ public final class Util {
 	 * @return the corresponding properties or null if none
 	 */
 	public static Properties getEEProfile(String eeName) {
-		if (eeName == null) return null;
-
+		if (eeName == null) {
+			return null;
+		}
 		String profileName = eeName + ".profile"; //$NON-NLS-1$
 		InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName); //$NON-NLS-1$
 		if (stream != null) {
@@ -995,24 +942,6 @@ public final class Util {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the {@link IExtensionRegistry} to use for internal functionality that requires plugins, but also has to work
-	 * with OSGi.
-	 * 
-	 * @return the {@link IExtensionRegistry} 
-	 * @throws CoreException if something bad happens
-	 */
-	public static IExtensionRegistry getExtensionRegistry() throws CoreException {
-		if(ApiPlugin.isRunningInFramework()) {
-			return Platform.getExtensionRegistry();
-		}
-		else {
-			//we need one of our own
-			IExtensionRegistry registry = RegistryFactory.createRegistry(new APIRegistryStrategy(), null, null);
-			return registry;
-		}
 	}
 
 	/**
