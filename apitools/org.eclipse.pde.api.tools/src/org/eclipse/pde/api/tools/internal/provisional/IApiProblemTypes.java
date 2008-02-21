@@ -14,14 +14,15 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Interface that defines all API problem types.
+ * API problem types.
  * 
  * This interface is not intended to be extended or implemented.
  *
  * @since 1.0
  */
-public interface IApiPreferenceConstants {
+public interface IApiProblemTypes {
 
+	// Binary compatibility problems
 	public static final String API_PROFILE_REMOVED_API_COMPONENT =
 		Util.getDeltaPrefererenceKey(IDelta.API_PROFILE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT);
 	public static final String API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT =
@@ -308,9 +309,28 @@ public interface IApiPreferenceConstants {
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUND);
 	public static final String CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.INTERFACE_BOUNDS);
-	// version management
-	public static final String REPORT_MISSING_SINCE_TAGS = "report_missing_since_tags"; //$NON-NLS-1$
-	public static final String REPORT_MALFORMED_SINCE_TAGS = "report_malformed_since_tags"; //$NON-NLS-1$
-	public static final String REPORT_INVALID_SINCE_TAG_VERSION = "report_invalid_since_tag_version"; //$NON-NLS-1$
-	public static final String REPORT_INCOMPATIBLE_API_COMPONENT_VERSION = "report_incompatible_api_component_version"; //$NON-NLS-1$
+
+	// Version numbering problems
+	public static final String MISSING_SINCE_TAG = "missing_since_tag"; //$NON-NLS-1$
+	public static final String MALFORMED_SINCE_TAG = "malformed_since_tag"; //$NON-NLS-1$
+	public static final String INVALID_SINCE_TAG_VERSION = "invalid_since_tag_version"; //$NON-NLS-1$
+	public static final String INCOMPATIBLE_API_COMPONENT_VERSION = "incompatible_api_component_version"; //$NON-NLS-1$
+	
+	// API usage problems
+	/**
+	 * Key for the severity of illegally implementing an interface marked as '@noimplement'.
+	 */
+	public static final String ILLEGAL_IMPLEMENT = "ILLEGAL_IMPLEMENT"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of illegally extending a member marked as '@noextend'.
+	 */
+	public static final String ILLEGAL_EXTEND = "ILLEGAL_EXTEND"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of illegally referencing a member marked as '@noreference'.
+	 */
+	public static final String ILLEGAL_REFERENCE = "ILLEGAL_REFERENCE"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of illegally instantiating a type marked as '@noinstantiate'.
+	 */
+	public static final String ILLEGAL_INSTANTIATE = "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
 }

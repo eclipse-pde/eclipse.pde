@@ -84,7 +84,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiPreferenceConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
@@ -507,10 +507,10 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 */
 	private boolean ignoreApiUsageScan() {
 		boolean ignore = true;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOEXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOIMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOINSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
-		ignore &= ApiPlugin.getDefault().getSeverityLevel(ApiPlugin.RESTRICTION_NOREFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
+		ignore &= ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, fCurrentProject) == ApiPlugin.SEVERITY_IGNORE;
 		return ignore;
 	}
 	
@@ -1036,7 +1036,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param component
 	 */
 	private void checkApiComponentVersion(IApiComponent reference, IApiComponent component) {
-		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
+		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fCurrentProject);
 		if (severityLevel != ApiPlugin.SEVERITY_IGNORE && reference != null) {
 			String referenceVersionValue = reference.getVersion();
 			String componentVersionValue = component.getVersion();
@@ -1391,23 +1391,23 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			String prefKey = null;
 			switch(reference.getReferenceKind()) {
 				case ReferenceModifiers.REF_IMPLEMENTS : {
-					prefKey = ApiPlugin.RESTRICTION_NOIMPLEMENT;
+					prefKey = IApiProblemTypes.ILLEGAL_IMPLEMENT;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_6, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
 					break;
 				}
 				case ReferenceModifiers.REF_EXTENDS : {
-					prefKey = ApiPlugin.RESTRICTION_NOEXTEND;
+					prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_7, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
 					break;
 				}
 				case ReferenceModifiers.REF_INSTANTIATE : {
-					prefKey = ApiPlugin.RESTRICTION_NOINSTANTIATE;
+					prefKey = IApiProblemTypes.ILLEGAL_INSTANTIATE;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_8, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
 					break;
 				}
 				case ReferenceModifiers.REF_OVERRIDE : {
 					IMethodDescriptor method = (IMethodDescriptor) reference.getTargetLocation().getMember();
-					prefKey = ApiPlugin.RESTRICTION_NOEXTEND;
+					prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_9, new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)});
 					break;
 				}
@@ -1416,7 +1416,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case ReferenceModifiers.REF_STATICMETHOD: 
 				case ReferenceModifiers.REF_VIRTUALMETHOD: {
 					IMethodDescriptor method = (IMethodDescriptor) reference.getTargetLocation().getMember();
-					prefKey = ApiPlugin.RESTRICTION_NOREFERENCE;
+					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_11, new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)});
 					break;
 				}
@@ -1425,7 +1425,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case ReferenceModifiers.REF_PUTFIELD :
 				case ReferenceModifiers.REF_PUTSTATIC : {
 					IFieldDescriptor field = (IFieldDescriptor) reference.getTargetLocation().getMember();
-					prefKey = ApiPlugin.RESTRICTION_NOREFERENCE;
+					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_11, new String[] {field.getEnclosingType().getQualifiedName(), field.getName()});
 					break;
 				}
@@ -1705,9 +1705,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case IDelta.ADDED_IMPLEMENT_RESTRICTION :
 					// check new APIs
 					this.bits |= CONTAINS_API_CHANGES;
-					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, fCurrentProject);
-					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, fCurrentProject);
-					int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, fCurrentProject);
+					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
+					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
+					int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
 					if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 							|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 							|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
@@ -1731,9 +1731,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				System.err.println(deltaDetails + " is not binary compatible"); //$NON-NLS-1$
 			}
 			createMarkerFor(delta, compilationUnit, javaProject, reference, component);
-			int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, fCurrentProject);
-			int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, fCurrentProject);
-			int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, fCurrentProject);
+			int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
+			int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
+			int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
 			if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {

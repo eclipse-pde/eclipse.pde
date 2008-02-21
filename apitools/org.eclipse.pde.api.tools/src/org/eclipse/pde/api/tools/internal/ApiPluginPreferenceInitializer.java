@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiPreferenceConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 
 /**
  * Initializes all of the core preferences for the {@link ApiPlugin}
@@ -37,10 +37,10 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		
 		//restrictions
-		prefs.setDefault(ApiPlugin.RESTRICTION_NOEXTEND, warnings[0]);
-		prefs.setDefault(ApiPlugin.RESTRICTION_NOIMPLEMENT, warnings[0]);
-		prefs.setDefault(ApiPlugin.RESTRICTION_NOINSTANTIATE, warnings[0]);
-		prefs.setDefault(ApiPlugin.RESTRICTION_NOREFERENCE, warnings[0]);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_EXTEND, warnings[0]);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, warnings[0]);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, warnings[0]);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_REFERENCE, warnings[0]);
 		
 		//binary compatibilities
 		for (int i = 0, max = ApiPlugin.AllBinaryCompatibilityKeys.length; i < max; i++) {
@@ -48,10 +48,10 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		}
 
 		// version management
-		prefs.setDefault(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
-		prefs.setDefault(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
+		prefs.setDefault(IApiProblemTypes.MISSING_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		prefs.setDefault(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
+		prefs.setDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
+		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
 	}
 
 }

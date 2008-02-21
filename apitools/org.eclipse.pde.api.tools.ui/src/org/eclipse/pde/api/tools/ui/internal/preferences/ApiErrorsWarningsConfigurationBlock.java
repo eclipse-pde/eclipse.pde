@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiPreferenceConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -201,312 +201,312 @@ public class ApiErrorsWarningsConfigurationBlock {
 		return new Key(ApiPlugin.getPluginIdentifier(), key);
 	}
 	//Restriction modifier keys
-	private static final Key KEY_NOIMPLEMENT = getApiToolsKey(ApiPlugin.RESTRICTION_NOIMPLEMENT);
-	private static final Key KEY_NOEXTEND = getApiToolsKey(ApiPlugin.RESTRICTION_NOEXTEND);
-	private static final Key KEY_NOINSTANTIATE = getApiToolsKey(ApiPlugin.RESTRICTION_NOINSTANTIATE);
-	private static final Key KEY_NOREFERENCE = getApiToolsKey(ApiPlugin.RESTRICTION_NOREFERENCE);
+	private static final Key KEY_NOIMPLEMENT = getApiToolsKey(IApiProblemTypes.ILLEGAL_IMPLEMENT);
+	private static final Key KEY_NOEXTEND = getApiToolsKey(IApiProblemTypes.ILLEGAL_EXTEND);
+	private static final Key KEY_NOINSTANTIATE = getApiToolsKey(IApiProblemTypes.ILLEGAL_INSTANTIATE);
+	private static final Key KEY_NOREFERENCE = getApiToolsKey(IApiProblemTypes.ILLEGAL_REFERENCE);
 	private static final Key KEY_API_PROFILE_REMOVED_API_COMPONENT =
-		getApiToolsKey(IApiPreferenceConstants.API_PROFILE_REMOVED_API_COMPONENT);
+		getApiToolsKey(IApiProblemTypes.API_PROFILE_REMOVED_API_COMPONENT);
 	private static final Key KEY_API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT =
-		getApiToolsKey(IApiPreferenceConstants.API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT);
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT);
 	private static final Key KEY_API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT =
-		getApiToolsKey(IApiPreferenceConstants.API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT);
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT);
 	private static final Key KEY_API_COMPONENT_REMOVED_TYPE =
-		getApiToolsKey(IApiPreferenceConstants.API_COMPONENT_REMOVED_TYPE);
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_TYPE);
 	private static final Key KEY_API_COMPONENT_REMOVED_DUPLICATED_TYPE =
-		getApiToolsKey(IApiPreferenceConstants.API_COMPONENT_REMOVED_DUPLICATED_TYPE);
+		getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_DUPLICATED_TYPE);
 	private static final Key KEY_ANNOTATION_ADDED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_CLASS_BOUND);
 	private static final Key KEY_ANNOTATION_ADDED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_INTERFACE_BOUND);
 	private static final Key KEY_ANNOTATION_ADDED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_INTERFACE_BOUNDS);
 	private static final Key KEY_ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD);
 	private static final Key KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE);
 	private static final Key KEY_ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD);
 	private static final Key KEY_ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER);
 	private static final Key KEY_ANNOTATION_ADDED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_ADDED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_ADDED_TYPE_PARAMETER);
 	private static final Key KEY_ANNOTATION_REMOVED_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_FIELD);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_FIELD);
 	private static final Key KEY_ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE);
 	private static final Key KEY_ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_METHOD_NO_DEFAULT_VALUE);
 	private static final Key KEY_ANNOTATION_REMOVED_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER);
 	private static final Key KEY_ANNOTATION_REMOVED_TYPE_PARAMETERS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_TYPE_PARAMETERS);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_TYPE_PARAMETERS);
 	private static final Key KEY_ANNOTATION_REMOVED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_TYPE_PARAMETER);
 	private static final Key KEY_ANNOTATION_REMOVED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_CLASS_BOUND);
 	private static final Key KEY_ANNOTATION_REMOVED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_INTERFACE_BOUND);
 	private static final Key KEY_ANNOTATION_REMOVED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_REMOVED_FIELD);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_REMOVED_FIELD);
 	private static final Key KEY_ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 	private static final Key KEY_ANNOTATION_CHANGED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_INTERFACE_BOUNDS);
 	private static final Key KEY_ANNOTATION_CHANGED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_CLASS_BOUND);
 	private static final Key KEY_ANNOTATION_CHANGED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_INTERFACE_BOUND);
 	private static final Key KEY_ANNOTATION_CHANGED_TO_CLASS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_TO_CLASS);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_TO_CLASS);
 	private static final Key KEY_ANNOTATION_CHANGED_TO_ENUM =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_TO_ENUM);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_TO_ENUM);
 	private static final Key KEY_ANNOTATION_CHANGED_TO_INTERFACE =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_TO_INTERFACE);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_TO_INTERFACE);
 	private static final Key KEY_ANNOTATION_CHANGED_RESTRICTIONS =
-		getApiToolsKey(IApiPreferenceConstants.ANNOTATION_CHANGED_RESTRICTIONS);
+		getApiToolsKey(IApiProblemTypes.ANNOTATION_CHANGED_RESTRICTIONS);
 
 	// interface key constant
 	private static final Key KEY_INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD);
 	private static final Key KEY_INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD);
 	private static final Key KEY_INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER);
 	private static final Key KEY_INTERFACE_ADDED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_CLASS_BOUND);
 	private static final Key KEY_INTERFACE_ADDED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_INTERFACE_BOUND);
 	private static final Key KEY_INTERFACE_ADDED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_INTERFACE_BOUNDS);
 	private static final Key KEY_INTERFACE_ADDED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_ADDED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_ADDED_TYPE_PARAMETER);
 	private static final Key KEY_INTERFACE_REMOVED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_TYPE_PARAMETER);
 	private static final Key KEY_INTERFACE_REMOVED_TYPE_PARAMETERS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_TYPE_PARAMETERS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_TYPE_PARAMETERS);
 	private static final Key KEY_INTERFACE_REMOVED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_CLASS_BOUND);
 	private static final Key KEY_INTERFACE_REMOVED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_INTERFACE_BOUND);
 	private static final Key KEY_INTERFACE_REMOVED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_INTERFACE_BOUNDS);
 	private static final Key KEY_INTERFACE_REMOVED_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_FIELD);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_FIELD);
 	private static final Key KEY_INTERFACE_REMOVED_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_METHOD);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_METHOD);
 	private static final Key KEY_INTERFACE_REMOVED_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_REMOVED_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_REMOVED_TYPE_MEMBER);
 	private static final Key KEY_INTERFACE_CHANGED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_CLASS_BOUND);
 	private static final Key KEY_INTERFACE_CHANGED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_INTERFACE_BOUND);
 	private static final Key KEY_INTERFACE_CHANGED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_INTERFACE_BOUNDS);
 	private static final Key KEY_INTERFACE_CHANGED_TO_CLASS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_TO_CLASS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_TO_CLASS);
 	private static final Key KEY_INTERFACE_CHANGED_TO_ENUM =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_TO_ENUM);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_TO_ENUM);
 	private static final Key KEY_INTERFACE_CHANGED_TO_ANNOTATION =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_TO_ANNOTATION);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_TO_ANNOTATION);
 	private static final Key KEY_INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 	private static final Key KEY_INTERFACE_CHANGED_RESTRICTIONS =
-		getApiToolsKey(IApiPreferenceConstants.INTERFACE_CHANGED_RESTRICTIONS);
+		getApiToolsKey(IApiProblemTypes.INTERFACE_CHANGED_RESTRICTIONS);
 
 	// enum key constant
 	private static final Key KEY_ENUM_ADDED_FIELD_NOT_EXTEND_RESTRICTION =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_ADDED_FIELD_NOT_EXTEND_RESTRICTION);
+		getApiToolsKey(IApiProblemTypes.ENUM_ADDED_FIELD_NOT_EXTEND_RESTRICTION);
 	private static final Key KEY_ENUM_ADDED_METHOD_NOT_EXTEND_RESTRICTION =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_ADDED_METHOD_NOT_EXTEND_RESTRICTION);
+		getApiToolsKey(IApiProblemTypes.ENUM_ADDED_METHOD_NOT_EXTEND_RESTRICTION);
 	private static final Key KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
+		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 	private static final Key KEY_ENUM_CHANGED_TO_ANNOTATION =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_CHANGED_TO_ANNOTATION);
+		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_TO_ANNOTATION);
 	private static final Key KEY_ENUM_CHANGED_TO_CLASS =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_CHANGED_TO_CLASS);
+		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_TO_CLASS);
 	private static final Key KEY_ENUM_CHANGED_TO_INTERFACE =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_CHANGED_TO_INTERFACE);
+		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_TO_INTERFACE);
 	private static final Key KEY_ENUM_REMOVED_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_REMOVED_FIELD);
+		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_FIELD);
 	private static final Key KEY_ENUM_REMOVED_ENUM_CONSTANT =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_REMOVED_ENUM_CONSTANT);
+		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT);
 	private static final Key KEY_ENUM_REMOVED_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_REMOVED_METHOD);
+		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_METHOD);
 	private static final Key KEY_ENUM_REMOVED_CONSTRUCTOR =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_REMOVED_CONSTRUCTOR);
+		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_CONSTRUCTOR);
 	private static final Key KEY_ENUM_REMOVED_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_REMOVED_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER);
 	private static final Key KEY_ENUM_CHANGED_RESTRICTIONS =
-		getApiToolsKey(IApiPreferenceConstants.ENUM_CHANGED_RESTRICTIONS);
+		getApiToolsKey(IApiProblemTypes.ENUM_CHANGED_RESTRICTIONS);
 
 	// class key constant
 	private static final Key KEY_CLASS_ADDED_NOT_EXTEND_RESTRICTION_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_NOT_EXTEND_RESTRICTION_FIELD);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_NOT_EXTEND_RESTRICTION_FIELD);
 	private static final Key KEY_CLASS_ADDED_NOT_EXTEND_RESTRICTION_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_NOT_EXTEND_RESTRICTION_METHOD);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_NOT_EXTEND_RESTRICTION_METHOD);
 	private static final Key KEY_CLASS_ADDED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER);
 	private static final Key KEY_CLASS_ADDED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_CLASS_BOUND);
 	private static final Key KEY_CLASS_ADDED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_INTERFACE_BOUND);
 	private static final Key KEY_CLASS_ADDED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_ADDED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.CLASS_ADDED_INTERFACE_BOUNDS);
 	private static final Key KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET);
 	private static final Key KEY_CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_CONTRACTED_SUPERCLASS_SET);
 	private static final Key KEY_CLASS_CHANGED_SUPERCLASS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_SUPERCLASS);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_SUPERCLASS);
 	private static final Key KEY_CLASS_CHANGED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_CLASS_BOUND);
 	private static final Key KEY_CLASS_CHANGED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_INTERFACE_BOUND);
 	private static final Key KEY_CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
 	private static final Key KEY_CLASS_CHANGED_NON_FINAL_TO_FINAL =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_NON_FINAL_TO_FINAL);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_NON_FINAL_TO_FINAL);
 	private static final Key KEY_CLASS_CHANGED_TO_ANNOTATION =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_TO_ANNOTATION);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_TO_ANNOTATION);
 	private static final Key KEY_CLASS_CHANGED_TO_ENUM =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_TO_ENUM);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_TO_ENUM);
 	private static final Key KEY_CLASS_CHANGED_TO_INTERFACE =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_TO_INTERFACE);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_TO_INTERFACE);
 	private static final Key KEY_CLASS_CHANGED_DECREASE_ACCESS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_DECREASE_ACCESS);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_DECREASE_ACCESS);
 	private static final Key KEY_CLASS_REMOVED_FIELD =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_FIELD);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_FIELD);
 	private static final Key KEY_CLASS_REMOVED_METHOD =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_METHOD);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_METHOD);
 	private static final Key KEY_CLASS_REMOVED_CONSTRUCTOR =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_CONSTRUCTOR);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_CONSTRUCTOR);
 	private static final Key KEY_CLASS_REMOVED_TYPE_MEMBER =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_TYPE_MEMBER);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_TYPE_MEMBER);
 	private static final Key KEY_CLASS_REMOVED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_TYPE_PARAMETER);
 	private static final Key KEY_CLASS_REMOVED_TYPE_PARAMETERS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_TYPE_PARAMETERS);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_TYPE_PARAMETERS);
 	private static final Key KEY_CLASS_REMOVED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_CLASS_BOUND);
 	private static final Key KEY_CLASS_REMOVED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_INTERFACE_BOUND);
 	private static final Key KEY_CLASS_REMOVED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_REMOVED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.CLASS_REMOVED_INTERFACE_BOUNDS);
 	private static final Key KEY_CLASS_CHANGED_RESTRICTIONS =
-		getApiToolsKey(IApiPreferenceConstants.CLASS_CHANGED_RESTRICTIONS);
+		getApiToolsKey(IApiProblemTypes.CLASS_CHANGED_RESTRICTIONS);
 
 	// field key constant
 	private static final Key KEY_FIELD_ADDED_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_ADDED_VALUE);
+		getApiToolsKey(IApiProblemTypes.FIELD_ADDED_VALUE);
 	private static final Key KEY_FIELD_CHANGED_TYPE =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_TYPE);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_TYPE);
 	private static final Key KEY_FIELD_CHANGED_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_VALUE);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_VALUE);
 	private static final Key KEY_FIELD_CHANGED_DECREASE_ACCESS =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_DECREASE_ACCESS);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_DECREASE_ACCESS);
 	private static final Key KEY_FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT);
 	private static final Key KEY_FIELD_CHANGED_NON_FINAL_TO_FINAL =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_NON_FINAL_TO_FINAL);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_NON_FINAL_TO_FINAL);
 	private static final Key KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_STATIC_TO_NON_STATIC);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_STATIC_TO_NON_STATIC);
 	private static final Key KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_CHANGED_NON_STATIC_TO_STATIC);
+		getApiToolsKey(IApiProblemTypes.FIELD_CHANGED_NON_STATIC_TO_STATIC);
 	private static final Key KEY_FIELD_REMOVED_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_REMOVED_VALUE);
+		getApiToolsKey(IApiProblemTypes.FIELD_REMOVED_VALUE);
 	private static final Key KEY_FIELD_REMOVED_TYPE_ARGUMENTS =
-		getApiToolsKey(IApiPreferenceConstants.FIELD_REMOVED_TYPE_ARGUMENTS);
+		getApiToolsKey(IApiProblemTypes.FIELD_REMOVED_TYPE_ARGUMENTS);
 
 	// method key constant
 	private static final Key KEY_METHOD_ADDED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_ADDED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_ADDED_CLASS_BOUND);
 	private static final Key KEY_METHOD_ADDED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_ADDED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_ADDED_INTERFACE_BOUND);
 	private static final Key KEY_METHOD_ADDED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_ADDED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.METHOD_ADDED_INTERFACE_BOUNDS);
 	private static final Key KEY_METHOD_ADDED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_ADDED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.METHOD_ADDED_TYPE_PARAMETER);
 	private static final Key KEY_METHOD_CHANGED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_CLASS_BOUND);
 	private static final Key KEY_METHOD_CHANGED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_INTERFACE_BOUND);
 	private static final Key KEY_METHOD_CHANGED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_TYPE_PARAMETER);
 	private static final Key KEY_METHOD_CHANGED_VARARGS_TO_ARRAY =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_VARARGS_TO_ARRAY);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_VARARGS_TO_ARRAY);
 	private static final Key KEY_METHOD_CHANGED_DECREASE_ACCESS =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_DECREASE_ACCESS);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_DECREASE_ACCESS);
 	private static final Key KEY_METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
 	private static final Key KEY_METHOD_CHANGED_NON_STATIC_TO_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_NON_STATIC_TO_STATIC);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_NON_STATIC_TO_STATIC);
 	private static final Key KEY_METHOD_CHANGED_STATIC_TO_NON_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_STATIC_TO_NON_STATIC);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_STATIC_TO_NON_STATIC);
 	private static final Key KEY_METHOD_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION);
+		getApiToolsKey(IApiProblemTypes.METHOD_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION);
 	private static final Key KEY_METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE);
 	private static final Key KEY_METHOD_REMOVED_TYPE_PARAMETERS =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_TYPE_PARAMETERS);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_TYPE_PARAMETERS);
 	private static final Key KEY_METHOD_REMOVED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_TYPE_PARAMETER);
 	private static final Key KEY_METHOD_REMOVED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_CLASS_BOUND);
 	private static final Key KEY_METHOD_REMOVED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_INTERFACE_BOUND);
 	private static final Key KEY_METHOD_REMOVED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.METHOD_REMOVED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.METHOD_REMOVED_INTERFACE_BOUNDS);
 
 	// constructor key constant
 	private static final Key KEY_CONSTRUCTOR_ADDED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_ADDED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_ADDED_CLASS_BOUND);
 	private static final Key KEY_CONSTRUCTOR_ADDED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_ADDED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_ADDED_INTERFACE_BOUND);
 	private static final Key KEY_CONSTRUCTOR_ADDED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_ADDED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_ADDED_INTERFACE_BOUNDS);
 	private static final Key KEY_CONSTRUCTOR_ADDED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_ADDED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_ADDED_TYPE_PARAMETER);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_CLASS_BOUND);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_INTERFACE_BOUND);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_TYPE_PARAMETER);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_DECREASE_ACCESS =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_DECREASE_ACCESS);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_DECREASE_ACCESS);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC);
 	private static final Key KEY_CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETERS =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_TYPE_PARAMETERS);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_TYPE_PARAMETERS);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETER =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_TYPE_PARAMETER);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_TYPE_PARAMETER);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_CLASS_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_CLASS_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_CLASS_BOUND);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUND =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_INTERFACE_BOUND);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_INTERFACE_BOUND);
 	private static final Key KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS =
-		getApiToolsKey(IApiPreferenceConstants.CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS);
+		getApiToolsKey(IApiProblemTypes.CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS);
 
 	// version management keys
-	private static final Key KEY_REPORT_MISSING_SINCE_TAGS =
-		getApiToolsKey(IApiPreferenceConstants.REPORT_MISSING_SINCE_TAGS);
-	private static final Key KEY_REPORT_MALFORMED_SINCE_TAGS =
-		getApiToolsKey(IApiPreferenceConstants.REPORT_MALFORMED_SINCE_TAGS);
-	private static final Key KEY_REPORT_INVALID_SINCE_TAG_VERSION =
-		getApiToolsKey(IApiPreferenceConstants.REPORT_INVALID_SINCE_TAG_VERSION);
-	private static final Key KEY_REPORT_INCOMPATIBLE_API_COMPONENT_VERSION =
-		getApiToolsKey(IApiPreferenceConstants.REPORT_INCOMPATIBLE_API_COMPONENT_VERSION);
+	private static final Key KEY_MISSING_SINCE_TAG =
+		getApiToolsKey(IApiProblemTypes.MISSING_SINCE_TAG);
+	private static final Key KEY_MALFORMED_SINCE_TAG =
+		getApiToolsKey(IApiProblemTypes.MALFORMED_SINCE_TAG);
+	private static final Key KEY_INVALID_SINCE_TAG_VERSION =
+		getApiToolsKey(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
+	private static final Key KEY_INCOMPATIBLE_API_COMPONENT_VERSION =
+		getApiToolsKey(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION);
 
 	private final int API_SCANNING_USAGE_PAGE_ID = 0;
 	private final int BINARY_COMPATIBILITY_PAGE_ID = 1;
@@ -658,10 +658,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_CONSTRUCTOR_REMOVED_CLASS_BOUND,
 		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUND,
 		KEY_CONSTRUCTOR_REMOVED_INTERFACE_BOUNDS,
-		KEY_REPORT_MISSING_SINCE_TAGS,
-		KEY_REPORT_MALFORMED_SINCE_TAGS,
-		KEY_REPORT_INVALID_SINCE_TAG_VERSION,
-		KEY_REPORT_INCOMPATIBLE_API_COMPONENT_VERSION,
+		KEY_MISSING_SINCE_TAG,
+		KEY_MALFORMED_SINCE_TAG,
+		KEY_INVALID_SINCE_TAG_VERSION,
+		KEY_INCOMPATIBLE_API_COMPONENT_VERSION,
 	};
 
 	/**
@@ -873,10 +873,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 						PreferenceMessages.VersionManagementReportInvalidApiComponentVersion,
 					},
 					new Key[] {
-						KEY_REPORT_MISSING_SINCE_TAGS,
-						KEY_REPORT_MALFORMED_SINCE_TAGS,
-						KEY_REPORT_INVALID_SINCE_TAG_VERSION,
-						KEY_REPORT_INCOMPATIBLE_API_COMPONENT_VERSION
+						KEY_MISSING_SINCE_TAG,
+						KEY_MALFORMED_SINCE_TAG,
+						KEY_INVALID_SINCE_TAG_VERSION,
+						KEY_INCOMPATIBLE_API_COMPONENT_VERSION
 					}
 				);
 				break;
