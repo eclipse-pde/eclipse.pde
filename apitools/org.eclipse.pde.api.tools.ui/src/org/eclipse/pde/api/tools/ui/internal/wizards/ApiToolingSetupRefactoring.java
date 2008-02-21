@@ -28,7 +28,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * 
  * @since 1.0.0
  */
-public class ApiProjectSetupRefactoring extends Refactoring {
+public class ApiToolingSetupRefactoring extends Refactoring {
 	
 	/**
 	 * The current set of changes

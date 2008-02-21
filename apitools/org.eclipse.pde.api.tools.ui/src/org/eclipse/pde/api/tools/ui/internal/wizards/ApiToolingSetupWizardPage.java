@@ -272,7 +272,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				Object[] projects = tableviewer.getCheckedElements();
 				IProject project = null;
 				monitor.beginTask(WizardMessages.ApiToolingSetupWizardPage_7, projects.length);
-				ApiProjectSetupRefactoring refactoring = (ApiProjectSetupRefactoring) getRefactoring();
+				ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
 				refactoring.resetRefactoring();
 				boolean remove = removecxml.getSelection();
 				CompositeChange pchange = null;

@@ -39,7 +39,7 @@ import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProc
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProjectSetupRefactoring;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
 import org.eclipse.pde.api.tools.ui.internal.wizards.WizardMessages;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -196,7 +196,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 */
 	public void testProcessUpdate() {
 		try {
-			ApiProjectSetupRefactoring refactoring = new ApiProjectSetupRefactoring();
+			ApiToolingSetupRefactoring refactoring = new ApiToolingSetupRefactoring();
 			CompositeChange change = new CompositeChange("Test");
 			createTagChanges(change, project, componentxml);
 			refactoring.addChange(change);
