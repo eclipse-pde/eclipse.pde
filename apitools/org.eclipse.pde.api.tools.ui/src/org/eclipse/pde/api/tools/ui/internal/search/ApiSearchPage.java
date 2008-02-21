@@ -373,7 +373,7 @@ public class ApiSearchPage extends DialogPage implements ISearchPage {
 	 * An existing entry will be updated.
 	 * @return the pattern data
 	 */
-	private SearchPatternData getPatternData() {
+	SearchPatternData getPatternData() {
 		String pattern= getPattern();
 		SearchPatternData match= findInPrevious(pattern);
 		if (match != null) {
@@ -403,7 +403,7 @@ public class ApiSearchPage extends DialogPage implements ISearchPage {
 		return patterns;
 	}
 
-	private boolean isCaseSensitive() {
+	boolean isCaseSensitive() {
 		return fCaseSensitive.getSelection();
 	}
 

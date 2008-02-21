@@ -63,6 +63,9 @@ public abstract class ElementDescriptorImpl implements IElementDescriptor, Compa
 			ElementDescriptorImpl element = (ElementDescriptorImpl) o;
 			return getComparable().compareTo(element.getComparable());
 		}
+		if (DEBUG) {
+			System.err.println(o.getClass());
+		}
 		return -1;
 	}
 
