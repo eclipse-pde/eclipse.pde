@@ -167,7 +167,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	public ApiProfileManager() {
 		ApiPlugin.getDefault().addSaveParticipant(this);
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		//we must load the workspace profile as soon as the manager starts to avoid 
 		//'holes' from missing workspace resource deltas
