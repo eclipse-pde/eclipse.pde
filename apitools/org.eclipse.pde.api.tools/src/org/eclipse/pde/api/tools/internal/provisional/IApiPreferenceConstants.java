@@ -1,14 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Interface that defines all the constants used to create the Api tooling markers.
+ * Interface that defines all API problem types.
  * 
  * This interface is not intended to be extended or implemented.
  *
- * @since 1.0.0
+ * @since 1.0
  */
 public interface IApiPreferenceConstants {
 
