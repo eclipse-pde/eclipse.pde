@@ -440,12 +440,15 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if(!project.isAccessible()) {
 				return;
 			}
-			IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
-			if(!file.exists()) {
-				file.create(xstream, true, new NullProgressMonitor());
-			}
-			else {
-				file.setContents(xstream, true, false, new NullProgressMonitor());
+			// only write the file if the project has an API nature
+			if (project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
+				IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
+				if(!file.exists()) {
+					file.create(xstream, true, new NullProgressMonitor());
+				}
+				else {
+					file.setContents(xstream, true, false, new NullProgressMonitor());
+				}
 			}
 		}
 	}
