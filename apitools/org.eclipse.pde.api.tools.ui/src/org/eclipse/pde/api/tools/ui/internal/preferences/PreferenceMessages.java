@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import org.eclipse.osgi.util.NLS;
@@ -24,6 +34,8 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProfilesPreferencePage_5;
 	public static String ApiProfilesPreferencePage_6;
 	public static String ApiProfilesPreferencePage_7;
+	public static String ApiPreferencePage_0;
+	public static String ApiPreferencePage_1;
 	public static String ApiToolingNotificationsBlock_0;
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;
