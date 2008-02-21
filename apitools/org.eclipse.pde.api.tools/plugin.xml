@@ -131,6 +131,10 @@
           class="org.eclipse.pde.api.tools.internal.ApiPluginPreferenceInitializer">
     </initializer>
  </extension>
+
+	<!-- =========================================================== -->
+	<!-- Extension: Ant task                                         -->
+	<!-- =========================================================== -->
  <extension
        point="org.eclipse.ant.core.antTasks">
     <antTask
