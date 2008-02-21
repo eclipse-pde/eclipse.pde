@@ -17,7 +17,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizard;
-import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocTagRefactoring;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProjectSetupRefactoring;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -43,7 +43,7 @@ public class ApiToolingSetupObjectContribution implements IObjectActionDelegate 
 	 */
 	public void run(IAction action) {
 		//TODO create changes
-		ApiToolingSetupWizard wizard = new ApiToolingSetupWizard(new JavadocTagRefactoring());
+		ApiToolingSetupWizard wizard = new ApiToolingSetupWizard(new ApiProjectSetupRefactoring());
 		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
 		try {
 			op.run(ApiUIPlugin.getShell(), ActionMessages.ApiToolingSetupObjectContribution_0);

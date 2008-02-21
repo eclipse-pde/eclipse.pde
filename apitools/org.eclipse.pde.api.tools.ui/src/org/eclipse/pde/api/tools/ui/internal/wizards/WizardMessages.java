@@ -38,6 +38,8 @@ public class WizardMessages extends NLS {
 	public static String JavadocTagRefactoring_1;
 	public static String JavadocTagRefactoring_2;
 	public static String JavadocTagRefactoring_3;
+	public static String ProjectUpdateChange_add_nature_and_builder;
+	public static String ProjectUpdateChange_project_not_accessible;
 	public static String ProjectUpdateOperation_0;
 	public static String ProjectUpdateOperation_1;
 	public static String ProjectUpdateOperation_2;

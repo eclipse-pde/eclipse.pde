@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -25,40 +22,24 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A refactoring to change javadoc tags during API tooling setup
  * 
- * @since 0.1.0
+ * @since 1.0.0
  */
-public class JavadocTagRefactoring extends Refactoring {
+public class ApiProjectSetupRefactoring extends Refactoring {
 	
 	/**
-	 * Map that text changes are collected into.
-	 * <pre>
-	 * HashMap<IFile, HashSet<TextEdit>>
-	 * </pre> 
+	 * The current set of changes
 	 */
-	private HashMap fChangeMap = null;
-	
-	/**
-	 * Map of projects to their composite changes
-	 * <pre>
-	 * HashMap<IProject, CompositeChange>
-	 * </pre>
-	 */
-	private HashMap fProjectChangeMap = new HashMap();
+	private HashSet fChanges = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fChangeMap == null) {
+		if(fChanges == null && fChanges.size() < 1) {
 			return RefactoringStatus.createErrorStatus(WizardMessages.JavadocTagRefactoring_0);
 		}
 		return RefactoringStatus.create(Status.OK_STATUS);
@@ -75,50 +56,28 @@ public class JavadocTagRefactoring extends Refactoring {
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fChangeMap == null) {
+		if(fChanges == null) {
 			return new NullChange();
 		}
-		CompositeChange cchange = new CompositeChange(WizardMessages.JavadocTagRefactoring_1);
-		IFile file = null;
-		MultiTextEdit alledits = null;
-		TextFileChange change = null;
-		HashSet edits = null;
-		TextEdit edit = null;
-		IProject project = null;
-		CompositeChange pchange = null;
-		for(Iterator iter = fChangeMap.keySet().iterator(); iter.hasNext();) {
-			file = (IFile) iter.next();
-			project = file.getProject();
-			pchange = (CompositeChange) fProjectChangeMap.get(project);
-			if(pchange == null) {
-				pchange = new CompositeChange(project.getName());
-				fProjectChangeMap.put(project, pchange);
-			}
-			change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
-			alledits = new MultiTextEdit();
-			change.setEdit(alledits);
-			edits = (HashSet) fChangeMap.get(file);
-			if(edits != null) {
-				for(Iterator iter2 = edits.iterator(); iter2.hasNext();) {
-					edit = (TextEdit) iter2.next();
-					alledits.addChild(edit);
-				}
-				pchange.add(change);
-			}
+		CompositeChange change = new CompositeChange(WizardMessages.JavadocTagRefactoring_1);
+		for(Iterator iter = fChanges.iterator(); iter.hasNext();) {
+			change.add((Change) iter.next());
 		}
-		for(Iterator iter = fProjectChangeMap.keySet().iterator(); iter.hasNext();) {
-			cchange.add((Change) fProjectChangeMap.get(iter.next()));
-		}
-		fProjectChangeMap.clear();
-		return cchange;
+		return change;
 	}
 	
-	/**
-	 * Sets the current input that the changes for this refactoring should be created from
-	 * @param changemap
-	 */
-	public void setChangeInput(HashMap changemap) {
-		fChangeMap = changemap;
+	public void addChange(Change change) {
+		if(fChanges == null) {
+			fChanges = new HashSet();
+		}
+		fChanges.add(change);
+	}
+	
+	public void resetRefactoring() {
+		if(fChanges != null) {
+			fChanges.clear();
+			fChanges = null;
+		}
 	}
 	
 	/* (non-Javadoc)

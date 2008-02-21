@@ -13,9 +13,11 @@ package org.eclipse.pde.api.tools.util.tests;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -31,10 +33,18 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
-import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocTagRefactoring;
+import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProjectSetupRefactoring;
+import org.eclipse.pde.api.tools.ui.internal.wizards.WizardMessages;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class tests the {@link ApiDescriptionProcessor}
@@ -186,16 +196,55 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 */
 	public void testProcessUpdate() {
 		try {
-			HashMap map = new HashMap();
-			ApiDescriptionProcessor.collectTagUpdates(project, componentxml, map);
-			JavadocTagRefactoring refactoring = new JavadocTagRefactoring();
-			refactoring.setChangeInput(map);
+			ApiProjectSetupRefactoring refactoring = new ApiProjectSetupRefactoring();
+			CompositeChange change = new CompositeChange("Test");
+			createTagChanges(change, project, componentxml);
+			refactoring.addChange(change);
 			performRefactoring(refactoring);
 		}
 		catch (CoreException e) {
 			fail(e.getMessage());
-		} catch (IOException e) {
-			fail(e.getMessage());
+		} 
+	}
+	
+	/**
+	 * Creates all of the text edit changes collected from the processor. The collected edits are arranged as multi-edits 
+	 * for the one file that they belong to
+	 * @param projectchange
+	 * @param project
+	 * @param cxml
+	 */
+	private void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
+		try {
+			HashMap map = new HashMap();
+			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
+			IFile file = null;
+			TextFileChange change = null;
+			MultiTextEdit multiedit = null;
+			HashSet alledits = null;
+			TextEdit edit = null;
+			for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+				file = (IFile) iter.next();
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
+				multiedit = new MultiTextEdit();
+				change.setEdit(multiedit);
+				alledits = (HashSet)map.get(file);
+				if(alledits != null) {
+					for(Iterator iter2 = alledits.iterator(); iter2.hasNext();) {
+						edit = (TextEdit) iter2.next();
+						multiedit.addChild(edit);
+					}
+				}
+				if(change != null) {
+					projectchange.add(change);
+				}
+			}
+		}
+		catch (CoreException e) {
+			ApiUIPlugin.log(e);
+		} 
+		catch (IOException e) {
+			ApiUIPlugin.log(e);
 		}
 	}
 	
