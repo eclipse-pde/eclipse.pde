@@ -148,7 +148,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	 * 
 	 * @param project
 	 * @param whether to delete the file on disk
-	 * @param whether to remove
+	 * @param whether to remove the cached API description
 	 */
 	public synchronized void clean(IJavaProject project, boolean delete, boolean remove) {
 		ProjectApiDescription desc = null;

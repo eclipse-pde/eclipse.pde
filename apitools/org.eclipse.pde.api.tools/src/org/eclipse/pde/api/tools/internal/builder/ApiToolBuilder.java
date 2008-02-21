@@ -84,8 +84,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -1145,10 +1145,11 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Cleans up the marker set for API tooling.
+	 * Cleans up markers associated with API tooling on the given resource.
+	 * 
 	 * @param resource
 	 */
-	private void cleanupMarkers(IResource resource) {
+	public static void cleanupMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				resource.deleteMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);

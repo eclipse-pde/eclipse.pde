@@ -29,8 +29,13 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -44,6 +49,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.builder.ApiToolBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -69,7 +75,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 1.0.0
  */
-public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant, IElementChangedListener, IPluginModelListener {
+public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant,
+	IElementChangedListener, IPluginModelListener, IResourceChangeListener {
 	
 	/**
 	 * Constant used for controlling tracing in the API tool builder
@@ -160,6 +167,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	public ApiProfileManager() {
 		ApiPlugin.getDefault().addSaveParticipant(this);
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		//we must load the workspace profile as soon as the manager starts to avoid 
 		//'holes' from missing workspace resource deltas
@@ -508,6 +516,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		finally {
 			JavaCore.removeElementChangedListener(this);
 			PDECore.getDefault().getModelManager().removePluginModelListener(this);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		}
 	}
 
@@ -745,6 +754,39 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				model = entries[i].getModel();
 				if(model != null) {
 					disposeWorkspaceProfile();
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		// clean all API errors when a project description changes
+		IResourceDelta delta = event.getDelta();
+		if (delta != null) {
+			IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
+			for (int i = 0; i < children.length; i++) {
+				IResourceDelta d = children[i];
+				IResource resource = d.getResource();
+				if (resource.getType() == IResource.PROJECT) {
+					if ((d.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+						IProject project = (IProject)resource;
+						if (project.isAccessible()) {
+							try {
+								if (!project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
+									IJavaProject jp = JavaCore.create(project);
+									if (jp.exists()) {
+										ApiDescriptionManager.getDefault().clean(jp, true, true);
+										ApiToolBuilder.cleanupMarkers(resource);
+									}
+								}
+							} catch (CoreException e) {
+								ApiPlugin.log(e.getStatus());
+							}
+						}
+					}
 				}
 			}
 		}
