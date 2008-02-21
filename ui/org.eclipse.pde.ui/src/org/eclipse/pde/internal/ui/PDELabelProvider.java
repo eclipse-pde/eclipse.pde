@@ -20,6 +20,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -50,6 +51,8 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
 public class PDELabelProvider extends SharedLabelProvider {
+	private static final String SYSTEM_BUNDLE = "system.bundle"; //$NON-NLS-1$
+
 	public PDELabelProvider() {
 	}
 
@@ -162,9 +165,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 			text = name + ' ' + formatVersion(pluginBase.getVersion());
 		else
 			text = name;
+		if (SYSTEM_BUNDLE.equals(pluginBase.getId())) {
+			text += getSystemBundleInfo();
+		}
 		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
 			text += " " + PDEUIMessages.PluginModelManager_outOfSync; //$NON-NLS-1$
 		return text;
+	}
+
+	private String getSystemBundleInfo() {
+		IPluginBase systemBundle = PluginRegistry.findModel(SYSTEM_BUNDLE).getPluginBase();
+		return NLS.bind(" [{0}]", systemBundle.getId()); //$NON-NLS-1$
 	}
 
 	private String preventNull(String text) {
@@ -185,6 +196,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			version = formatVersion(version);
 
 		String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
+		if (SYSTEM_BUNDLE.equals(obj.getId()))
+			return text + getSystemBundleInfo();
 		return version == null || version.length() == 0 ? text : text + " " + version; //$NON-NLS-1$
 	}
 
