@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,8 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	 */
 	private ArrayList fListenerList;
 
-	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerComparator defaultComparator, ViewerComparator comparator) {
-		super();
+	public SourceOutlinePage(PDEFormEditor editor, IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerComparator defaultComparator, ViewerComparator comparator) {
+		super(editor);
 		fModel = model;
 		fLabelProvider = lProvider;
 		fContentProvider = cProvider;
@@ -113,7 +113,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	}
 
 	/**
-	 * Used for restoral after temporary removal.  Uses listeners cached.
+	 * Used for restoration after temporary removal.  Uses listeners cached.
 	 */
 	public void addAllSelectionChangedListeners() {
 		// Re-add the tree listener added by our parent for our parent:
@@ -127,9 +127,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isViewerDefined() {
 		if (viewer == null) {
 			return false;

@@ -207,7 +207,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	protected ISortableContentOutlinePage createOutlinePage() {
-		SourceOutlinePage sourceOutlinePage = new SourceOutlinePage((IEditingModel) getInputContext().getModel(), createOutlineLabelProvider(), createOutlineContentProvider(), createDefaultOutlineComparator(), createOutlineComparator());
+		SourceOutlinePage sourceOutlinePage = new SourceOutlinePage(fEditor, (IEditingModel) getInputContext().getModel(), createOutlineLabelProvider(), createOutlineContentProvider(), createDefaultOutlineComparator(), createOutlineComparator());
 		fOutlinePage = sourceOutlinePage;
 		fOutlineSelectionChangedListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -630,7 +630,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @param node
 	 * @param offset
 	 * @param searchChildren
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage.findNode(Object[], int, boolean)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findNode(Object[], int, boolean)
 	 */
 	protected IDocumentRange findNode(IDocumentElementNode node, int offset, boolean searchChildren) {
 		return findNode(new Object[] {node}, offset, searchChildren);
