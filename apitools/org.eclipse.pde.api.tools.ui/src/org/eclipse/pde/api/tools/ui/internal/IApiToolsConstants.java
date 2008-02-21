@@ -38,6 +38,16 @@ public interface IApiToolsConstants {
 	public static final String IMG_OBJ_API_SEARCH = "IMG_OBJ_API_SEARCH"; //$NON-NLS-1$
 	
 	/**
+	 * Key for bundle image
+	 */
+	public static final String IMG_OBJ_BUNDLE = "IMG_OBJ_BUNDLE"; //$NON-NLS-1$
+	
+	/**
+	 * Key for fragment image
+	 */
+	public static final String IMG_OBJ_FRAGMENT = "IMG_OBJ_FRAGMENT"; //$NON-NLS-1$		
+	
+	/**
 	 * Id for the Api profiles preference page.
 	 */
 	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$

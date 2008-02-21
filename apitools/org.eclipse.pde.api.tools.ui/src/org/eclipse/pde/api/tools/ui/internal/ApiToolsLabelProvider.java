@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Label provider for API tools objects.
  * 
@@ -60,7 +62,10 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			if(comp.isSystemComponent()) {
 				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 			}
-			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_COMPONENT);
+			if (comp.isFragment()) {
+				return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_FRAGMENT);
+			}
+			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 		}
 		if (element instanceof File) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -79,7 +84,8 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 */
 	public String getText(Object element) {
 		if (element instanceof IApiComponent) {
-			return ((IApiComponent) element).getId();
+			IApiComponent comp = (IApiComponent) element;
+			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
 		}
 		if (element instanceof File) {
 			try {

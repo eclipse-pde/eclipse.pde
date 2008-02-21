@@ -101,6 +101,8 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY, OBJECT + "library_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE, OBJECT + "plugin_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
 	}
 
 	/**
