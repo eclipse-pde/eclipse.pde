@@ -315,7 +315,7 @@ public class TagScanner {
 					}
 				}
 				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-					MessageFormat.format("Unable to resolve method signature: {0}", new String[]{descriptor.toString()}), null));
+					MessageFormat.format("Unable to resolve method signature: {0}", new String[]{descriptor.toString()}), null)); //$NON-NLS-1$
 			}
 			return descriptor;
 		}
@@ -444,10 +444,13 @@ public class TagScanner {
 			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, System.getProperty("file.encoding"))); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-					MessageFormat.format("Compilation unit source not found: {0}", new String[]{source.getName()}), e));
+					MessageFormat.format("Compilation unit source not found: {0}", new String[]{source.getName()}), e)); //$NON-NLS-1$
 		} catch (IOException e) {
+			if (DEBUG) {
+				System.err.println(source.getName());
+			}
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-					MessageFormat.format("Error reading compilation unit: {0}", new String[]{source.getName()}), e));
+					MessageFormat.format("Error reading compilation unit: {0}", new String[]{source.getName()}), e)); //$NON-NLS-1$
 		} finally {
 			if (inputStream != null) {
 				try {
