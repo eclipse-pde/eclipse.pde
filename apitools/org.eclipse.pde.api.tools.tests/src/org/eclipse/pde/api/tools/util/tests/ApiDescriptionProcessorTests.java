@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -37,6 +38,7 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
@@ -95,7 +97,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if(fragment.getName().getFullyQualifiedName().equals(membername)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the field: "+membername+" must have a javadoc node", docnode);
-					assertTrue("the field: "+membername+" should conatin all of the tags: "+expectedtags.toString(), containsAllTags(docnode.tags()));
+					assertTrue("the field: "+membername+" should contain all of the tags: "+ getStringValue(expectedtags), containsAllTags(docnode.tags()));
 					processed = true;
 				}
 			}
@@ -113,7 +115,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if(signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the method: "+membername+" ["+signature+"] must have a javadoc node", docnode);
-					assertTrue("the method: "+membername+" ["+signature+"] should conatin all of the tags: "+expectedtags.toString(), containsAllTags(docnode.tags()));
+					assertTrue("the method: "+membername+" ["+signature+"] should conatin all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
 					processed = true;
 				}
 			}
@@ -131,7 +133,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if((innertypename == null && name.equals(type)) || name.equals(innertypename)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the type: "+name+" must have a javadoc node", docnode);
-					assertTrue("the type: "+name+" should conatin all of the tags: "+expectedtags.toString(), containsAllTags(docnode.tags()));
+					assertTrue("the type: "+name+" should conatin all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags()));
 					processed = true;
 				}
 			}
@@ -158,10 +160,21 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			}
 			return allfound;
 		}
+		
+		private String getStringValue(String[] tags) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0, max = tags.length; i < max; i++) {
+				if (i > 0) {
+					buffer.append(',');
+				}
+				buffer.append(tags[i]);
+			}
+			return String.valueOf(buffer);
+		}
 	}
 
-	private static String ROOT_DIR = "test-source" + File.separator + "javadoc"	+ File.separator;
-	private static File componentxml = new File(ROOT_DIR + File.separator + "component.xml");
+	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc");
+	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString());
 	private static IJavaProject project = null;
 
 	/**
@@ -174,11 +187,11 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * </ol>
 	 */
 	public void testSerializeComponentXml() {
-		String xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_DIR));
+		String xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_PATH.toOSString()));
 		assertNotNull("The component xml file must exist and be parsable from a root directory", xml);
 		xml = ApiDescriptionProcessor.serializeComponentXml(componentxml);
 		assertNotNull("The component xml file must exist and be parsable from a component.xml file", xml);
-		xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_DIR	+ File.separator + "component.jar"));
+		xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_PATH.append("component.jar").toOSString()));
 		assertNotNull("The component xml file must exist and be parsable from a jar file", xml);
 	}
 

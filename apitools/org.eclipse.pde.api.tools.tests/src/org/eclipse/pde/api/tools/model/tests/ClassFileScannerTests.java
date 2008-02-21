@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
@@ -43,22 +44,18 @@ import org.eclipse.pde.api.tools.internal.search.ClassFileScanner;
  */
 public class ClassFileScannerTests extends TestCase {
 	
-	private static String WORKSPACE_ROOT = null;
+	private static IPath WORKSPACE_ROOT = null;
 	private static String WORKSPACE_NAME = "test_classes_workspace";
-	private static String ROOT_DIR = "test-source"+File.separator+"classes"+File.separator;
+	private static IPath ROOT_PATH = null;
 	private static DirectoryClassFileContainer container = null;
 	private static ClassFileScanner scanner = null;
 	private static IApiComponent component = null;
 	
 	static {
-		//setup workspace root 
-		String userDir = System.getProperty("user.dir");
-		if (userDir.endsWith(File.separator)) {
-			WORKSPACE_ROOT = userDir + WORKSPACE_NAME;
-		} else {
-			WORKSPACE_ROOT = userDir + File.separator + WORKSPACE_NAME;
-		}
-		new File(WORKSPACE_ROOT).mkdirs();
+		//setup workspace root
+		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
+		ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("classes");
+		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 	
 	/**
@@ -150,12 +147,12 @@ public class ClassFileScannerTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testCompileClassWorkspace() throws CoreException {
-		String[] sourceFilePaths = new String[] {ROOT_DIR};
-		assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT, TestSuiteHelper.COMPILER_OPTIONS));
-		assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_DIR + File.separator + "Test12.java",
-				WORKSPACE_ROOT, 
-				new String[] {"-1.4", "-preserveAllLocals",	"-nowarn"}));
-		container = new DirectoryClassFileContainer(WORKSPACE_ROOT+File.separator+"classes", null);
+		String[] sourceFilePaths = new String[] {ROOT_PATH.toOSString()};
+		assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.COMPILER_OPTIONS));
+		assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(),
+				WORKSPACE_ROOT.toOSString(), 
+				new String[] {"-1.4", "-preserveAllLocals", "-nowarn"}));
+		container = new DirectoryClassFileContainer(WORKSPACE_ROOT.append("classes").toOSString(), null);
 		scanner = ClassFileScanner.newScanner();
 		component = new IApiComponent() {
 			public String[] getPackageNames() throws CoreException {
@@ -548,6 +545,6 @@ public class ClassFileScannerTests extends TestCase {
 	 */
 	public void testCleanup() {
 		// remove workspace root
-		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT)));
+		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
 	}
 }

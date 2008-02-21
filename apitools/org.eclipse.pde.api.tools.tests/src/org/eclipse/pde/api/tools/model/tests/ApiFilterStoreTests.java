@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -39,9 +38,9 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
  */
 public class ApiFilterStoreTests extends AbstractApiTest {
 	
-	private static final Path SRC_LOC = new Path(System.getProperty("user.dir")+File.separator+"test-source");
-	private static final Path XML_LOC = new Path(System.getProperty("user.dir")+File.separator+"test-xml");
-	private static final Path PLUGIN_LOC = new Path(System.getProperty("user.dir")+File.separator+"test-plugins");
+	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source");
+	private static final IPath XML_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-xml");
+	private static final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
 	
 	/**
 	 * Tests that the .api_settings file is copied over to the testing project properly

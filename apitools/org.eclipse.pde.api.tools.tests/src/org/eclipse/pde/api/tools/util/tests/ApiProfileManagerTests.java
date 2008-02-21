@@ -65,6 +65,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -170,8 +171,8 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		}
 	}
 	
-	private IPath SRC_LOC = new Path(System.getProperty("user.dir")).append("test-source").append("a").append("b").append("c");
-	private IPath PLUGIN_LOC = new Path(System.getProperty("user.dir")).append("test-plugins");
+	private IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c");
+	private IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
 	private IApiProfileManager fPMmanager = ApiPlugin.getDefault().getApiProfileManager();
 	private static IJavaProject fProject = null;
 	private static IPackageFragmentRoot fSrcroot = null;
@@ -428,6 +429,7 @@ public class ApiProfileManagerTests extends AbstractApiTest {
 		} finally {
 			bm.disconnect(path, LocationKind.IFILE, null);
 		}
+		waitForAutoBuild();
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ArchiveClassFileContainer;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
@@ -56,8 +55,7 @@ public class ClassFileContainerTests extends TestCase {
 	 * @return sample archive
 	 */
 	protected IClassFileContainer buildArchiveContainer() {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-jars").append("sample.jar");
 		File file = path.toFile();
 		assertTrue("Missing jar file", file.exists());
@@ -70,8 +68,7 @@ public class ClassFileContainerTests extends TestCase {
 	 * @return sample directory container
 	 */
 	protected IClassFileContainer buildDirectoryContainer() {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-bin-dir");
 		File file = path.toFile();
 		assertTrue("Missing bin directory", file.exists());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public abstract class DeltaTestSetup extends TestCase {
 
 	private static final String WORKSPACE_NAME = "tests_deltas_workspace";
 
-	private static String WORKSPACE_ROOT;
+	private static IPath WORKSPACE_ROOT;
 
 	private static final String BEFORE = "before";
 	private static final String AFTER = "after";
@@ -42,23 +42,18 @@ public abstract class DeltaTestSetup extends TestCase {
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 
 	static {
-		String userDir = System.getProperty("user.dir");
-		if (userDir.endsWith(File.separator)) {
-			WORKSPACE_ROOT = userDir + WORKSPACE_NAME;
-		} else {
-			WORKSPACE_ROOT = userDir + File.separator + WORKSPACE_NAME;
-		}
+		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		// create workspace root
-		new File(WORKSPACE_ROOT).mkdirs();
+		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 	
 	protected void tearDown() throws Exception {
 		// remove workspace root
-		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT)));
+		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
 		super.tearDown();
 	}
 
@@ -77,14 +72,14 @@ public abstract class DeltaTestSetup extends TestCase {
 	 */
 	private void deployBundle(String testName, String name) {
 		String[] sourceFilePaths = new String[] {
-			TESTS_DELTAS_NAME + File.separator + getTestRoot() + File.separator + testName + File.separator + name
+				TestSuiteHelper.getPluginDirectoryPath().append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append(name).toOSString()
 		};
-		String destinationPath = WORKSPACE_ROOT + File.separator + name + File.separator + BUNDLE_NAME;
+		IPath destinationPath = WORKSPACE_ROOT.append(name).append(BUNDLE_NAME);
 		String[] compilerOptions = TestSuiteHelper.COMPILER_OPTIONS;
-		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath, compilerOptions));
+		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
 		
 		// copy the MANIFEST in the workspace folder
-		copyResources(testName, name, destinationPath);
+		copyResources(testName, name, destinationPath.toOSString());
 	}
 
 	/**
@@ -93,15 +88,14 @@ public abstract class DeltaTestSetup extends TestCase {
 	 * @param destination where to put the resources
 	 */
 	private void copyResources(String testName, String name, String destination) {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(TESTS_DELTAS_NAME).append("resources");
 		File file = path.toFile();
 		File dest = new File(destination);
 		TestSuiteHelper.copy(file, dest);
 
 		// check if there is specific local resources to copy
-		path = new Path(dir);
+		path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources").append(name);
 		file = path.toFile();
 		if (file.exists()) {
@@ -110,7 +104,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		}
 
 		// check if there is a global local resources to copy
-		path = new Path(dir);
+		path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources");
 		file = path.toFile();
 		if (file.exists()) {
@@ -140,8 +134,8 @@ public abstract class DeltaTestSetup extends TestCase {
 		return state;
 	}
 
-	private String getBaseLineFolder(String name) {
-		return WORKSPACE_NAME + File.separator + name;
+	private IPath getBaseLineFolder(String name) {
+		return new Path(WORKSPACE_NAME).append(name);
 	}
 
 	/**

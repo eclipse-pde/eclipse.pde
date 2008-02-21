@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,9 @@ import java.io.FileFilter;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests the methods in our util class: {@link Util}
@@ -25,7 +26,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class UtilTests extends TestCase {
 
-	private static final Path SRC_LOC = new Path(System.getProperty("user.dir")+"/test_source");
+	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test_source");
 	
 	/**
 	 * Tests that a fully qualified type has its package removed correctly

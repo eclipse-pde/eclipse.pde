@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
 /**
@@ -40,7 +42,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	
 	static {
 		JAVADOC_SRC_DIR = getSourceDirectory("javadoc");
-		JAVADOC_READ_SRC_DIR = getSourceDirectory("a"+File.separator+"b"+File.separator+"c");
+		JAVADOC_READ_SRC_DIR = getSourceDirectory(new Path("a").append("b").append("c"));
 	}
 	
 	private static IJavaProject project = null;
@@ -130,12 +132,16 @@ public class ProjectCreationTests extends AbstractApiTest {
      * @param dirname the name of the directory the source is contained in
      * @return the complete path of the source directory
      */
+    private static String getSourceDirectory(IPath dirname) {
+		return TestSuiteHelper.getPluginDirectoryPath().append("test-source").append(dirname).toOSString(); 
+    }
+    
+    /**
+     * Returns the source path to load the test source files from into the testing project
+     * @param dirname the name of the directory the source is contained in
+     * @return the complete path of the source directory
+     */
     private static String getSourceDirectory(String dirname) {
-		String userDir = System.getProperty("user.dir");
-		if (userDir.endsWith(File.separator)) {
-			return userDir + "test-source"+ File.separator+dirname+File.separator; 
-		} else {
-			return userDir + File.separator + "test-source"+File.separator+dirname+File.separator;
-		}
-    }	
+		return TestSuiteHelper.getPluginDirectoryPath().append("test-source").append(dirname).toOSString(); 
+    }
 }

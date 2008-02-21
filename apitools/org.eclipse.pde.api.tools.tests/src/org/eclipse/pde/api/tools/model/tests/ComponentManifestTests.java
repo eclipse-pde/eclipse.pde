@@ -21,7 +21,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -46,11 +45,10 @@ public class ComponentManifestTests extends TestCase {
 	}
 	
 	public void testComponentManifest() throws FileNotFoundException, CoreException {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-manifests");
 		File file = path.toFile();
-		assertTrue("Missing manfiest directory", file.exists());
+		assertTrue("Missing manifest directory", file.exists());
 		IApiProfile baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = baseline.newApiComponent(file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });

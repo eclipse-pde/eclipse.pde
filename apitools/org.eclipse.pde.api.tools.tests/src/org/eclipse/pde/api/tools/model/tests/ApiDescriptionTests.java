@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
@@ -278,8 +277,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testRestoreFromXML() throws FileNotFoundException, IOException, CoreException {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml");
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists());
@@ -402,8 +400,7 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	public void testPersistRestoreXML() throws CoreException, IOException {
 		// read XML into API settings
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml");
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists());

@@ -18,24 +18,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.jdt.internal.launching.EEVMType;
@@ -92,6 +93,10 @@ public class TestSuiteHelper {
 		return baseline;
 	}	
 	
+	public static IApiProfile createTestingProfile(String testDirectory) throws CoreException {
+		return createTestingProfile(new Path(testDirectory));
+	}
+	
 	/**
 	 * Creates a simple baseline from bundles in the specified directory of 
 	 * the test plug-in project.
@@ -100,9 +105,8 @@ public class TestSuiteHelper {
 	 * <code>null</code> is returned
 	 * @throws CoreException
 	 */
-	public static IApiProfile createTestingProfile(String testDirectory) throws CoreException {
-		String dir = System.getProperty("user.dir");
-		IPath path = new Path(dir);
+	public static IApiProfile createTestingProfile(IPath testDirectory) throws CoreException {
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(testDirectory);
 		File file = path.toFile();
 		if(file.exists()) {
@@ -202,7 +206,7 @@ public class TestSuiteHelper {
 	}
 
 	private static String getJavaClassLibsAsString() {
-		String[] libs = getJavaClassLibs();
+		String[] libs = org.eclipse.pde.api.tools.tests.util.Util.getJavaClassLibs();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, max = libs.length; i < max; i++) {
 			if (i > 0) {
@@ -484,109 +488,18 @@ public class TestSuiteHelper {
 		}
 	}
 	/**
-	 * Search the user hard-drive for a Java class library.
-	 * Returns null if none could be found.
-	 *
-	 * Example of use: [org.eclipse.jdt.core.tests.util.Util.getJavaClassLib()]
-	*/
-	public static String[] getJavaClassLibs() {
-		// check bootclasspath properties for Sun, JRockit and Harmony VMs
-		String bootclasspathProperty = System.getProperty("sun.boot.class.path"); //$NON-NLS-1$
-		if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
-			// IBM J9 VMs
-			bootclasspathProperty = System.getProperty("vm.boot.class.path"); //$NON-NLS-1$
-			if ((bootclasspathProperty == null) || (bootclasspathProperty.length() == 0)) {
-				// Harmony using IBM VME
-				bootclasspathProperty = System.getProperty("org.apache.harmony.boot.class.path"); //$NON-NLS-1$
-			}
-		}
-		String[] jars = null;
-		if ((bootclasspathProperty != null) && (bootclasspathProperty.length() != 0)) {
-			StringTokenizer tokenizer = new StringTokenizer(bootclasspathProperty, File.pathSeparator);
-			final int size = tokenizer.countTokens();
-			jars = new String[size];
-			int i = 0;
-			while (tokenizer.hasMoreTokens()) {
-				final String fileName = toNativePath(tokenizer.nextToken());
-				if (new File(fileName).exists()) {
-					jars[i] = fileName;
-					i++;
-				}
-			}
-			if (size != i) {
-				// resize
-				System.arraycopy(jars, 0, (jars = new String[i]), 0, i);
-			}
-		} else {
-			String jreDir = getJREDirectory();
-			final String osName = System.getProperty("os.name");
-			if (jreDir == null) {
-				return new String[] {};
-			}
-			if (osName.startsWith("Mac")) {
-				return new String[] {
-						toNativePath(jreDir + "/../Classes/classes.jar")
-				};
-			}
-			final String vmName = System.getProperty("java.vm.name");
-			if ("J9".equals(vmName)) {
-				return new String[] {
-						toNativePath(jreDir + "/lib/jclMax/classes.zip")
-				};
-			}
-			String[] jarsNames = null;
-			ArrayList paths = new ArrayList();
-			if ("DRLVM".equals(vmName)) {
-				FilenameFilter jarFilter = new FilenameFilter() {
-					public boolean accept(File dir, String name) {
-						return name.endsWith(".jar") & !name.endsWith("-src.jar");
-					}
-				};
-				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter);
-				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths);
-			} else {
-				jarsNames = new String[] {
-						"/lib/vm.jar",
-						"/lib/rt.jar",
-						"/lib/core.jar",
-						"/lib/security.jar",
-						"/lib/xml.jar",
-						"/lib/graphics.jar"
-				};
-				addJarEntries(jreDir, jarsNames, paths);
-			}
-			jars = new String[paths.size()];
-			paths.toArray(jars);
-		}
-		return jars;
-	}
-	private static void addJarEntries(String jreDir, String[] jarNames, ArrayList paths) {
-		for (int i = 0, max = jarNames.length; i < max; i++) {
-			final String currentName = jreDir + jarNames[i];
-			File f = new File(currentName);
-			if (f.exists()) {
-				paths.add(toNativePath(currentName));
-			}
-		}
-	}
-	/**
-	 * Makes the given path a path using native path separators as returned by File.getPath()
-	 * and trimming any extra slash.
+	 * Returns the OS path to the directory that contains this plugin.
 	 */
-	private static String toNativePath(String path) {
-	    String nativePath = path.replace('\\', File.separatorChar).replace('/', File.separatorChar);
-	    return
-	        nativePath.endsWith("/") || nativePath.endsWith("\\") ?
-	            nativePath.substring(0, nativePath.length() - 1) :
-	            nativePath;
+	public static IPath getPluginDirectoryPath() {
+		if (Platform.isRunning()) {
+			try {
+				URL platformURL = Platform.getBundle("org.eclipse.pde.api.tools.tests").getEntry("/");
+				return new Path(new File(FileLocator.toFileURL(platformURL).getFile()).getAbsolutePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Path(System.getProperty("user.dir"));
 	}
-	/**
-	 * Returns the JRE directory this tests are running on.
-	 * Returns null if none could be found.
-	 *
-	 * Example of use: [org.eclipse.jdt.core.tests.util.Util.getJREDirectory()]
-	 */
-	public static String getJREDirectory() {
-	    return System.getProperty("java.home");
-	}
+
 }

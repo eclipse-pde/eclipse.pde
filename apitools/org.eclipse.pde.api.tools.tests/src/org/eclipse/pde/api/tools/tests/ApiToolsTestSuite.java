@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.pde.api.tools.util.tests.UtilTests;
  * 
  * @since 1.0.0
  */
-public class APIToolsTestSuite extends TestSuite {
+public class ApiToolsTestSuite extends TestSuite {
 
 	/**
 	 * Returns the suite.  This is required to
@@ -39,13 +39,13 @@ public class APIToolsTestSuite extends TestSuite {
 	 * @return the test
 	 */
 	public static Test suite() {
-		return new APIToolsTestSuite();
+		return new ApiToolsTestSuite();
 	}
 	
 	/**
 	 * Constructor
 	 */
-	public APIToolsTestSuite() {
+	public ApiToolsTestSuite() {
 		addTest(new TestSuite(ApiDescriptionTests.class));
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));

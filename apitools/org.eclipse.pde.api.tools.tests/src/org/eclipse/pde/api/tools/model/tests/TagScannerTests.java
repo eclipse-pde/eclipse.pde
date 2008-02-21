@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
@@ -41,8 +39,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class TagScannerTests extends TestCase {
 
-	private static final Path SRC_LOC = new Path(System.getProperty("user.dir")+File.separator+"test-source");
-	private static final Path BIN_LOC = new Path(System.getProperty("user.dir")+File.separator+"test-classes");
+	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source");
+	private static final IPath BIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-classes");
 	
 	/**
 	 * Creates a new empty API component description, not owned by any component.

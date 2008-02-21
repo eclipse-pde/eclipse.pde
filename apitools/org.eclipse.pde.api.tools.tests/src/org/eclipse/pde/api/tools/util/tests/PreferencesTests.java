@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 */
 	public void testGetDefaultSeverity() {
 		String value = ApiPlugin.getDefault().getPluginPreferences().getDefaultString(IApiProblemTypes.ILLEGAL_EXTEND);
-		assertEquals("The default value for RESTRICTION_NOEXTEND should be 'Warning'", value, ApiPlugin.VALUE_WARNING);
+		assertEquals("The default value for RESTRICTION_NOEXTEND should be 'Warning'", ApiPlugin.VALUE_WARNING, value);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 */
 	public void testGetSeverityReturnsDefault() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, null);
-		assertEquals("The default value for RESTRICTION_NOIMPLEMENT should be 'Warning'", value, ApiPlugin.SEVERITY_WARNING);
+		assertEquals("The default value for RESTRICTION_NOIMPLEMENT should be 'Warning'", ApiPlugin.SEVERITY_WARNING, value);
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 */
 	public void testGetNonDefaultValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, null);
-		assertEquals("The value for RESTRICTION_NOINSTANTIATE should be 'Error'", value, ApiPlugin.SEVERITY_ERROR);
+		assertEquals("The value for RESTRICTION_NOINSTANTIATE should be 'Error'", ApiPlugin.SEVERITY_ERROR, value);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 */
 	public void testGetProjectSpecificValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
-		assertEquals("The value for RESTRICTION_NOREFERENCE should be 'Ignore'", value, ApiPlugin.SEVERITY_IGNORE);
+		assertEquals("The value for RESTRICTION_NOREFERENCE should be 'Ignore'", ApiPlugin.SEVERITY_IGNORE, value);
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 */
 	public void testGetDefaultProjectSpecificValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
-		assertEquals("The value for RESTRICTION_NOEXTEND should be 'Warning'", value, ApiPlugin.SEVERITY_WARNING);
+		assertEquals("The value for RESTRICTION_NOEXTEND should be 'Warning'", ApiPlugin.SEVERITY_WARNING, value);
 	}
 	
 }
