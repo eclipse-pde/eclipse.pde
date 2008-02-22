@@ -342,21 +342,27 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#isMatch(org.eclipse.pde.api.tools.search.IReference)
 	 */
 	public boolean isMatch(IReference reference) {
-		return matchesElementRestrictions(reference)
-			&& matchesApiRestrictions(reference);
+		ILocation location = reference.getResolvedLocation();
+		if (location != null) {
+			IApiAnnotations annotations = reference.getResolvedAnnotations();
+			if (annotations != null) {
+				return matchesElementRestrictions(location)
+					&& matchesApiRestrictions(annotations);
+			}
+		}
+		return false;
 	}
 	
 	/**
-	 * Returns whether the given reference meets pattern matching criteria.
+	 * Returns whether the given location meets pattern matching criteria.
 	 * 
-	 * @param reference reference
-	 * @return whether the given reference meets pattern matching criteria
+	 * @param location location
+	 * @return whether the given location meets pattern matching criteria
 	 */
-	private boolean matchesPatternRestrictions(IReference reference) {
+	private boolean matchesPatternRestrictions(ILocation location) {
 		if (fPatterns == null) {
 			return true;
 		}
-		ILocation location = reference.getTargetLocation();
 		IElementDescriptor element = location.getMember();
 		Iterator iterator = fPatterns.iterator();
 		while (iterator.hasNext()) {
@@ -369,15 +375,14 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 	
 	/**
-	 * Returns whether the given reference matches the conditions of this
+	 * Returns whether the given annotations matches the conditions of this
 	 * search criteria.
 	 * 
-	 * @param reference reference
+	 * @param annotations API annotations
 	 * @return whether the given reference matches the conditions of this
 	 * search criteria
 	 */
-	private boolean matchesApiRestrictions(IReference reference) {
-		IApiAnnotations annotations = reference.getTargetApiAnnotations();
+	private boolean matchesApiRestrictions(IApiAnnotations annotations) {
 		int vis = annotations.getVisibility();
 		int res = annotations.getRestrictions();
 		if ((vis & fVisibilityKinds) > 0) {
@@ -401,18 +406,17 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}	
 	
 	/**
-	 * Returns whether the given reference is contained within the component and
+	 * Returns whether the given location is contained within the component and
 	 * element restrictions of this search criteria.
 	 * 
-	 * @param reference reference
-	 * @return whether the given reference is contained within the component and
+	 * @param location location
+	 * @return whether the given location is contained within the component and
 	 * element restrictions of this search criteria
 	 */
-	private boolean matchesElementRestrictions(IReference reference) {
+	private boolean matchesElementRestrictions(ILocation location) {
 		if (fComponentIds.isEmpty()) {
 			return true;
 		}
-		ILocation location = reference.getTargetLocation();
 		return encloses(location.getApiComponent().getId(), location.getMember());
 	}
 
@@ -438,15 +442,14 @@ public class SearchCriteria implements IApiSearchCriteria {
 	public boolean isPotentialMatch(IReference reference) {
 		return
 			matchesReferenceKinds(reference) &&
-			matchesPatternRestrictions(reference) &&
-			isPotentialElementMatch(reference);
+			matchesPatternRestrictions(reference.getReferencedLocation()) &&
+			isPotentialElementMatch(reference.getReferencedLocation());
 	}
 
-	private boolean isPotentialElementMatch(IReference reference) {
+	private boolean isPotentialElementMatch(ILocation location) {
 		if (fPotentialElements == null) {
 			return true;
 		}
-		ILocation location = reference.getTargetLocation();
 		IElementDescriptor element = location.getMember();
 		Iterator iterator = fPotentialElements.iterator();
 		while (iterator.hasNext()) {

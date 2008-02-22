@@ -498,7 +498,7 @@ public class ClassFileVisitor extends ClassAdapter {
 						IReference reference = (IReference) iterator.next();
 						ILocation sourceLocation = reference.getSourceLocation();
 						sourceLocation.setLineNumber(lineNumber);
-						ILocation targetLocation = reference.getTargetLocation();
+						ILocation targetLocation = reference.getReferencedLocation();
 						targetLocation.setLineNumber(lineNumber);
 					}
 				} else {
@@ -998,7 +998,7 @@ public class ClassFileVisitor extends ClassAdapter {
 					supertype = Type.getObjectType(interfaces[i]);
 					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
 					if (typeReference != null) {
-						this.fSuperStack.add(typeReference.getTargetLocation().getType());
+						this.fSuperStack.add(typeReference.getReferencedLocation().getType());
 					}
 				}
 			}
@@ -1008,7 +1008,7 @@ public class ClassFileVisitor extends ClassAdapter {
 					supertype = Type.getObjectType(superName);
 					IReference typeReference = this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
 					if (typeReference != null) {
-						this.fSuperStack.add(typeReference.getTargetLocation().getType());
+						this.fSuperStack.add(typeReference.getReferencedLocation().getType());
 					}
 				}
 				for(int i = 0; i < interfaces.length; i++) {

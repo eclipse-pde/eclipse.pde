@@ -33,4 +33,12 @@ public interface IApiSearchEngine {
 	 */
 	public IReference[] search(IApiSearchScope sourceScope, IApiSearchCriteria[] conditions, IProgressMonitor monitor) throws CoreException;	
 
+	/**
+	 * Resolves the given references.
+	 * 
+	 * @param references
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void resolveReferences(IReference[] references, IProgressMonitor monitor) throws CoreException;
 }

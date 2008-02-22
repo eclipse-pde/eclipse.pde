@@ -165,7 +165,7 @@ public class SearchEngineTests extends TestCase {
 		set.add(m3.getSignature());
 		for (int i = 0; i < refs.length; i++) {
 			IReference reference = refs[i];
-			IMethodDescriptor method = (IMethodDescriptor) reference.getTargetLocation().getMember();
+			IMethodDescriptor method = (IMethodDescriptor) reference.getReferencedLocation().getMember();
 			assertTrue("Method not present", set.remove(method.getName()));
 			assertTrue("Signature not present", set.remove(method.getSignature()));
 		}

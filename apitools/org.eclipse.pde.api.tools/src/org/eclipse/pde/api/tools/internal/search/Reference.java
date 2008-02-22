@@ -28,10 +28,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class Reference implements IReference {
 
-	private ILocation target = null,
-					  source = null;
+	private ILocation target = null;
+	private ILocation source = null;
+	private ILocation resolved = null; 
 	private int kind;
-	private boolean resolved = false;
 	private IApiAnnotations description = null;
 	
 	/**
@@ -73,22 +73,15 @@ public class Reference implements IReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IReference#getTargetApiDescription()
 	 */
-	public IApiAnnotations getTargetApiAnnotations() {
+	public IApiAnnotations getResolvedAnnotations() {
 		return description;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IReference#getTargetLocation()
 	 */
-	public ILocation getTargetLocation() {
+	public ILocation getReferencedLocation() {
 		return target;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IReference#isResolved()
-	 */
-	public boolean isResolved() {
-		return resolved;
 	}
 	
 	/**
@@ -98,7 +91,7 @@ public class Reference implements IReference {
 	 * @throws CoreException
 	 */
 	void resolve(SearchEngine engine) throws CoreException {
-		if(!resolved) {
+		if(resolved == null) {
 			IApiComponent sourceComponent = source.getApiComponent();
 			if(sourceComponent != null) {
 				if ((getReferenceKind() & METHODS_TO_RESOLVE) > 0) {
@@ -109,9 +102,10 @@ public class Reference implements IReference {
 							sourceComponent.getProfile().resolvePackage(sourceComponent, target.getType().getPackage().getName()),
 							target.getType().getQualifiedName());
 					if(cpackage != null) {
-						((Location)target).setApiComponent(cpackage);
-						description = cpackage.getApiDescription().resolveAnnotations(sourceComponent.getId(), target.getMember());
-						resolved = true;
+						ILocation res = new Location(cpackage, target.getMember());
+						res.setLineNumber(target.getLineNumber());
+						IApiAnnotations ann = cpackage.getApiDescription().resolveAnnotations(sourceComponent.getId(), res.getMember());
+						setResolution(ann, res);
 					}
 				}
 			}
@@ -148,10 +142,10 @@ public class Reference implements IReference {
 							// don't resolve references to synthetic methods
 							return false;
 						} else {
-							target = new Location(implComponent, method);
-							description = implComponent.getApiDescription().resolveAnnotations(
-									getSourceLocation().getApiComponent().getId(), target.getMember());
-							resolved = true;
+							ILocation res = new Location(implComponent, method);
+							IApiAnnotations ann = implComponent.getApiDescription().resolveAnnotations(
+									getSourceLocation().getApiComponent().getId(), res.getMember());
+							setResolution(ann, res);
 							return true;
 						}
 					}
@@ -210,10 +204,7 @@ public class Reference implements IReference {
 	 */
 	void setResolution(IApiAnnotations resolution, ILocation targetLocation) {
 		description = resolution;
-		target = targetLocation;
-		if (description != null) {
-			resolved = true;
-		}
+		resolved = targetLocation;
 	}
 
 	/* (non-Javadoc)
@@ -223,12 +214,19 @@ public class Reference implements IReference {
 		if (obj instanceof Reference) { 
 			Reference ref = (Reference) obj;
 			return getReferenceKind() == ref.getReferenceKind() &&
-				isResolved() == ref.isResolved() &&
+				equalOrNull(getResolvedLocation(), ref.getResolvedLocation()) &&
 				getSourceLocation().equals(ref.getSourceLocation()) &&
-				getTargetLocation().equals(ref.getTargetLocation()) &&
-				Util.equalsOrNull(getTargetApiAnnotations(), ref.getTargetApiAnnotations());
+				getReferencedLocation().equals(ref.getReferencedLocation()) &&
+				Util.equalsOrNull(getResolvedAnnotations(), ref.getResolvedAnnotations());
 		}
 		return false;
+	}
+	
+	private boolean equalOrNull(ILocation l1, ILocation l2) {
+		if (l1 == null) {
+			return l2 == null;
+		}
+		return l1.equals(l2);
 	}
 
 	/* (non-Javadoc)
@@ -236,6 +234,13 @@ public class Reference implements IReference {
 	 */
 	public int hashCode() {
 		return kind + source.hashCode() + target.hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IReference#getResolvedLocation()
+	 */
+	public ILocation getResolvedLocation() {
+		return resolved;
 	}
 
 	

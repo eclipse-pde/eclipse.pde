@@ -37,13 +37,20 @@ public interface IReference {
 	public ILocation getSourceLocation();
 	
 	/**
-	 * Returns the target location of this reference. 
-	 * For example if T references T1 the {@link ILocation} for T1
-	 * would be the target location.
+	 * Returns the unresolved location that has been referenced
+	 * from the source location. 
 	 * 
-	 * @return the target location of this reference.
+	 * @return the referenced location
 	 */
-	public ILocation getTargetLocation();
+	public ILocation getReferencedLocation();
+	
+	/**
+	 * Returns the resolved referenced location or <code>null</code> if
+	 * unresolved.
+	 * 
+	 * @return resolved referenced location or <code>null</code>
+	 */
+	public ILocation getResolvedLocation();
 	
 	/**
 	 * Returns the kind of this reference. See constants defined 
@@ -54,17 +61,10 @@ public interface IReference {
 	public int getReferenceKind();
 	
 	/**
-	 * Returns if this reference has been resolved or not. An unresolved reference cannot guarantee 
-	 * the completeness of information for the target location.
-	 * @return
-	 */
-	public boolean isResolved();
-	
-	/**
 	 * Returns the {@link IApiAnnotations} for the target location of this
 	 * reference. If the reference is unresolved <code>null</code> is returned.
 	 * @return the {@link IApiAnnotations} for the target location or <code>null</code> if unresolved.
 	 */
-	public IApiAnnotations getTargetApiAnnotations();
+	public IApiAnnotations getResolvedAnnotations();
 	
 }

@@ -210,14 +210,13 @@ public class SearchEngine implements IApiSearchEngine {
 	}
 	
 	/**
-	 * Resolves all extracted references in context of the given 
-	 * profile.
+	 * Resolves all references.
 	 * 
-	 * @param profile API profile to resolve references in
+	 * @param referenceLists lists of {@link IReference} to resolve
 	 * @param progress monitor
 	 * @throws CoreException if something goes wrong
 	 */
-	private void resolveReferences(IProgressMonitor monitor) throws CoreException {
+	private void resolveReferences(List[] referenceLists, IProgressMonitor monitor) throws CoreException {
 		fHits = 0;
 		fMiss = 0;
 		// sort references by target type for 'shared' resolution
@@ -228,14 +227,14 @@ public class SearchEngine implements IApiSearchEngine {
 		String key = null;
 		List methodDecls = new ArrayList(1000);
 		long start = System.currentTimeMillis();
-		for (int i = 0; i < fPotentialMatches.length; i++) {
-			Iterator references = fPotentialMatches[i].iterator();
+		for (int i = 0; i < referenceLists.length; i++) {
+			Iterator references = referenceLists[i].iterator();
 			while (references.hasNext()) {
 				ref = (IReference) references.next();
 				if (ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
 					methodDecls.add(ref);
 				} else {
-					key = createSignatureKey(ref.getSourceLocation(), ref.getTargetLocation());
+					key = createSignatureKey(ref.getSourceLocation(), ref.getReferencedLocation());
 					refs = (List) sigtoref.get(key);
 					if(refs == null) {
 						refs = new ArrayList(20);
@@ -309,12 +308,12 @@ public class SearchEngine implements IApiSearchEngine {
 			refs = (List) map.get(key);
 			ref = (IReference) refs.get(0);
 			((Reference)ref).resolve(this);
-			IApiAnnotations resolved = ref.getTargetApiAnnotations();
+			IApiAnnotations resolved = ref.getResolvedAnnotations();
 			if (resolved != null) {
 				Iterator iterator = refs.iterator();
 				while (iterator.hasNext()) {
 					Reference ref2 = (Reference) iterator.next();
-					ref2.setResolution(resolved, ref.getTargetLocation());
+					ref2.setResolution(resolved, ref.getResolvedLocation());
 				}
 			}
 		}
@@ -341,7 +340,7 @@ public class SearchEngine implements IApiSearchEngine {
 		localMonitor.worked(1);
 		// 2. resolve the remaining references
 		localMonitor.subTask(SearchMessages.SearchEngine_4);
-		resolveReferences(localMonitor);
+		resolveReferences(fPotentialMatches, localMonitor);
 		localMonitor.worked(1);
 		// 3. filter based on search conditions
 		localMonitor.subTask(SearchMessages.SearchEngine_5);
@@ -383,7 +382,7 @@ public class SearchEngine implements IApiSearchEngine {
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
 			IReference ref = (IReference) iterator.next();
-			ILocation location = ref.getTargetLocation();
+			ILocation location = ref.getReferencedLocation();
 			boolean consider = true;
 			if (!fLocalRefs) {
 				if (ref.getSourceLocation().getApiComponent().equals(location.getApiComponent())) {
@@ -392,7 +391,7 @@ public class SearchEngine implements IApiSearchEngine {
 			}
 			boolean match = false;
 			if (consider) {
-				IApiAnnotations description = ref.getTargetApiAnnotations();
+				IApiAnnotations description = ref.getResolvedAnnotations();
 				if (description != null) {
 					if (condition.isMatch(ref)) {
 						match = true;
@@ -405,6 +404,14 @@ public class SearchEngine implements IApiSearchEngine {
 				iterator.remove();
 			}
 		}
+	}
+	
+	public void resolveReferences(IReference[] references, IProgressMonitor monitor) throws CoreException {
+		List list = new ArrayList(references.length);
+		for (int i = 0; i < references.length; i++) {
+			list.add(references[i]);
+		}
+		resolveReferences(new List[]{list}, monitor);
 	}
 
 }

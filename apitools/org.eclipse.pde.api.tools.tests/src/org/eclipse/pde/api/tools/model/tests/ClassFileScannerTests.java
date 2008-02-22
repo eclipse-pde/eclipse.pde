@@ -91,7 +91,7 @@ public class ClassFileScannerTests extends TestCase {
 			ref = (IReference) iter.next();
 			if(ref.getReferenceKind() == kind) {
 				if(ref.getSourceLocation().getType().getQualifiedName().equals(sourcename)) {
-					target = ref.getTargetLocation();
+					target = ref.getReferencedLocation();
 					if(target.getType().getQualifiedName().equals(targetname)) {
 						return ref;
 					}
@@ -119,7 +119,7 @@ public class ClassFileScannerTests extends TestCase {
 			ref = (IReference) iter.next();
 			if(ref.getReferenceKind() == kind) {
 				if(ref.getSourceLocation().getType().getQualifiedName().equals(sourcename)) {
-					target = ref.getTargetLocation();
+					target = ref.getReferencedLocation();
 					if(target.getType().getQualifiedName().equals(targetname)) {
 						if (sourceMember != null) {
 							IMemberDescriptor member = ref.getSourceLocation().getMember();
@@ -128,7 +128,7 @@ public class ClassFileScannerTests extends TestCase {
 							}
 						}
 						if (targetMember != null) {
-							IMemberDescriptor member = ref.getTargetLocation().getMember();
+							IMemberDescriptor member = ref.getReferencedLocation().getMember();
 							if(!member.getName().equals(targetMember)) {
 								continue;
 							}

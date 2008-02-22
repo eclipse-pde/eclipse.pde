@@ -135,8 +135,8 @@ public class XMLFactory {
 		ILocation origin = reference.getSourceLocation();
 		Element child = serializeLocation(ELEMENT_ORIGIN, origin.getApiComponent().getId(), origin.getMember(), origin.getLineNumber(), null, document);
 		element.appendChild(child);
-		ILocation target = reference.getTargetLocation();
-		child = serializeLocation(ELEMENT_TARGET, target.getApiComponent().getId(), target.getMember(), -1, reference.getTargetApiAnnotations(), document);
+		ILocation target = reference.getResolvedLocation();
+		child = serializeLocation(ELEMENT_TARGET, target.getApiComponent().getId(), target.getMember(), -1, reference.getResolvedAnnotations(), document);
 		element.appendChild(child);
 		return element;
 	}

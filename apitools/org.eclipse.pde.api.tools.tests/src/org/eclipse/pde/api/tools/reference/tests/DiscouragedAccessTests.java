@@ -83,7 +83,7 @@ public class DiscouragedAccessTests extends TestCase {
 		for (int i = 0; i < references.length; i++) {
 			IReference ref = references[i];
 			total++;
-			IApiAnnotations resolved = ref.getTargetApiAnnotations();
+			IApiAnnotations resolved = ref.getResolvedAnnotations();
 			if (resolved != null) {
 				if(ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD) {
 					virtual++;
@@ -93,7 +93,7 @@ public class DiscouragedAccessTests extends TestCase {
 						pvirtual++;
 					}
 					priv++;
-					ILocation target = ref.getTargetLocation();
+					ILocation target = ref.getReferencedLocation();
 					if (jdtComponent.equals(target.getApiComponent())) {
 						if(ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD) {
 							pvirtualint++;
@@ -114,7 +114,7 @@ public class DiscouragedAccessTests extends TestCase {
 							illegalSetRefsByType.put(sourceName, set);
 						}
 						list.add(ref);
-						set.add(ref.getTargetLocation().getType().getQualifiedName());
+						set.add(ref.getReferencedLocation().getType().getQualifiedName());
 					}
 				}				
 			} else {

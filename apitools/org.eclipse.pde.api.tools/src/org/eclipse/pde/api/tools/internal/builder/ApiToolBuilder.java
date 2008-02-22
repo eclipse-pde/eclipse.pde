@@ -94,6 +94,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
@@ -1390,24 +1391,27 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		try {
 			String message = null;
 			String prefKey = null;
+			ILocation resolvedLocation = reference.getResolvedLocation();
+			String qualifiedTypeName = resolvedLocation.getType().getQualifiedName();
+			IMemberDescriptor member = resolvedLocation.getMember();
 			switch(reference.getReferenceKind()) {
 				case ReferenceModifiers.REF_IMPLEMENTS : {
 					prefKey = IApiProblemTypes.ILLEGAL_IMPLEMENT;
-					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_6, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
+					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_6, new String[] {qualifiedTypeName});
 					break;
 				}
 				case ReferenceModifiers.REF_EXTENDS : {
 					prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
-					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_7, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
+					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_7, new String[] {qualifiedTypeName});
 					break;
 				}
 				case ReferenceModifiers.REF_INSTANTIATE : {
 					prefKey = IApiProblemTypes.ILLEGAL_INSTANTIATE;
-					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_8, new String[] {reference.getTargetLocation().getType().getQualifiedName()});
+					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_8, new String[] {qualifiedTypeName});
 					break;
 				}
 				case ReferenceModifiers.REF_OVERRIDE : {
-					IMethodDescriptor method = (IMethodDescriptor) reference.getTargetLocation().getMember();
+					IMethodDescriptor method = (IMethodDescriptor) member;
 					prefKey = IApiProblemTypes.ILLEGAL_EXTEND;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_9, new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)});
 					break;
@@ -1416,7 +1420,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case ReferenceModifiers.REF_SPECIALMETHOD: 
 				case ReferenceModifiers.REF_STATICMETHOD: 
 				case ReferenceModifiers.REF_VIRTUALMETHOD: {
-					IMethodDescriptor method = (IMethodDescriptor) reference.getTargetLocation().getMember();
+					IMethodDescriptor method = (IMethodDescriptor) member;
 					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_11, new String[] {method.getEnclosingType().getQualifiedName(), Signature.toString(method.getSignature(), method.getName(), null, false, false)});
 					break;
@@ -1425,7 +1429,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				case ReferenceModifiers.REF_GETSTATIC :
 				case ReferenceModifiers.REF_PUTFIELD :
 				case ReferenceModifiers.REF_PUTSTATIC : {
-					IFieldDescriptor field = (IFieldDescriptor) reference.getTargetLocation().getMember();
+					IFieldDescriptor field = (IFieldDescriptor) member;
 					prefKey = IApiProblemTypes.ILLEGAL_REFERENCE;
 					message = MessageFormat.format(BuilderMessages.ApiToolBuilder_11, new String[] {field.getEnclosingType().getQualifiedName(), field.getName()});
 					break;
@@ -1479,7 +1483,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						break;
 					case ReferenceModifiers.REF_OVERRIDE : {
 							// report the marker on the method
-							IMethodDescriptor methodDesc = (IMethodDescriptor) reference.getTargetLocation().getMember();
+							IMethodDescriptor methodDesc = (IMethodDescriptor) member;
 							String[] parameterTypes = Signature.getParameterTypes(methodDesc.getSignature());
 							for (int i = 0; i < parameterTypes.length; i++) {
 								parameterTypes[i] = parameterTypes[i].replace('/', '.');
@@ -1504,7 +1508,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						break;
 					case ReferenceModifiers.REF_INSTANTIATE : {
 						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
-						IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) reference.getTargetLocation().getMember();
+						IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) member;
 						int offset = document.getLineOffset(linenumber);
 						String line = document.get(offset, document.getLineLength(linenumber));
 						String qname = typeDesc.getQualifiedName();
@@ -1524,7 +1528,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					case ReferenceModifiers.REF_SPECIALMETHOD: 
 					case ReferenceModifiers.REF_STATICMETHOD: {
 						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
-						IMethodDescriptor methodDesc = (IMethodDescriptor) reference.getTargetLocation().getMember();
+						IMethodDescriptor methodDesc = (IMethodDescriptor) member;
 						int offset = document.getLineOffset(linenumber);
 						String line = document.get(offset, document.getLineLength(linenumber));
 						String name = methodDesc.getName();
@@ -1540,7 +1544,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					case ReferenceModifiers.REF_PUTSTATIC : 
 					case ReferenceModifiers.REF_PUTFIELD :
 					case ReferenceModifiers.REF_GETFIELD : {
-						IFieldDescriptor field = (IFieldDescriptor) reference.getTargetLocation().getMember();
+						IFieldDescriptor field = (IFieldDescriptor) member;
 						String name = field.getName();
 						int linenumber = (lineNumber == 0 ? 0 : lineNumber -1);
 						int offset = document.getLineOffset(linenumber);
