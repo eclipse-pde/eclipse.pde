@@ -136,7 +136,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	private void generateP2Steps() {
 		if (haveP2Bundles())
-			script.printAntCallTask(TARGET_P2_METADATA, true, null);
+			return;
+		if (rootFileProviders.size() == 0 && features.length == 0 && plugins.length == 0)
+			return;
+		script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
 	private void generateArchivingSteps() {
