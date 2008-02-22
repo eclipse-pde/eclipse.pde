@@ -17,28 +17,22 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.pde.ui.MainPreferencePage/org.eclipse.pde.api.tools.ui.prefpages.main"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage"
-            id="org.eclipse.pde.api.tools.ui.prefpages.profiles"
+            id="org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"
             name="%ApiProfilesPreferencePage.name">
          <keywordReference
                id="org.eclipse.pde.api.tools.ui.profiles.prefpage">
          </keywordReference>
       </page>
       <page
-            category="org.eclipse.pde.ui.MainPreferencePage/org.eclipse.pde.api.tools.ui.prefpages.main"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage"
-            id="org.eclipse.pde.api.tools.ui.prefpages.errorswarnings"
+            id="org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage"
             name="%ApiErrorsWarningsPreferencePage.name">
          <keywordReference
                id="org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage.keywords">
          </keywordReference>
-      </page>
-      <page
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiPreferencePage"
-            id="org.eclipse.pde.api.tools.ui.prefpages.main"
-            name="%ApiPreferencePage.name">
       </page>
    </extension>
    <extension
