@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,8 +100,15 @@ public class PluginsTab extends AbstractLauncherTab {
 		fSelectionCombo = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
 		fSelectionCombo.setItems(new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode});
 		fSelectionCombo.setText(fSelectionCombo.getItem(0));
-		fSelectionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fSelectionCombo.setLayoutData(gd);
 		fSelectionCombo.addSelectionListener(new Listener());
+
+		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		label.setLayoutData(gd);
 
 		fPluginBlock.createControl(composite, 3, 10);
 

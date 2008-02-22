@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
+ *     Ian Bull <irbull@cs.uvic.ca> - bug 204404 and bug 207064
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -27,6 +27,8 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -42,11 +44,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.dialogs.PatternFilter;
 
 public abstract class AbstractPluginBlock {
 
 	protected AbstractLauncherTab fTab;
 
+	private FilteredCheckboxTree fPluginFilteredTree;
 	protected CheckboxTreeViewer fPluginTreeViewer;
 	protected NamedElement fWorkspacePlugins;
 	protected NamedElement fExternalPlugins;
@@ -74,6 +78,8 @@ public abstract class AbstractPluginBlock {
 	private PluginStatusDialog fDialog;
 
 	private Button fValidateButton;
+
+	private boolean viewerEnabled = true;
 
 	class Listener extends SelectionAdapter {
 
@@ -213,7 +219,7 @@ public abstract class AbstractPluginBlock {
 
 	public void createControl(Composite parent, int span, int indent) {
 		createPluginViewer(parent, span - 1, indent);
-		createButtonContainer(parent);
+		createButtonContainer(parent, fPluginFilteredTree.getTreeLocationOffset());
 		fIncludeOptionalButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, fTab.getName().toLowerCase(Locale.ENGLISH)));
 		fAddWorkspaceButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, fTab.getName().toLowerCase(Locale.ENGLISH)));
 
@@ -249,7 +255,32 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void createPluginViewer(Composite composite, int span, int indent) {
-		fPluginTreeViewer = new CheckboxTreeViewer(composite, getTreeViewerStyle());
+
+		fPluginFilteredTree = new FilteredCheckboxTree(composite, getTreeViewerStyle(), new PatternFilter());
+		fPluginTreeViewer = (CheckboxTreeViewer) fPluginFilteredTree.getViewer();
+		((FilterableCheckboxTreeViewer) fPluginTreeViewer).addPreRefreshNotifier(new PreRefreshNotifier() {
+
+			boolean previousFilter = false;
+
+			public void preRefresh(FilterableCheckboxTreeViewer viewer, boolean filtered) {
+				refreshTreeView(fPluginTreeViewer);
+				if (previousFilter != filtered) {
+					if (viewerEnabled) {
+						// Only update these buttons if the viewer is actually enabled
+						fWorkingSetButton.setEnabled(!filtered);
+						fAddRequiredButton.setEnabled(!filtered);
+						fDefaultsButton.setEnabled(!filtered);
+					}
+
+					fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
+					fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+					fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
+					fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+				}
+				previousFilter = filtered;
+			}
+		});
+
 		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -299,12 +330,15 @@ public abstract class AbstractPluginBlock {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;
-		fPluginTreeViewer.getTree().setLayoutData(gd);
+		fPluginFilteredTree.setLayoutData(gd);
 
 		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
 
 		fWorkspacePlugins = new NamedElement(PDEUIMessages.AdvancedLauncherTab_workspacePlugins, siteImage);
 		fExternalPlugins = new NamedElement(PDEUIMessages.PluginsTab_target, siteImage);
+
+		fWorkspacePlugins.setChildren(fWorkspaceModels);
+		fExternalPlugins.setChildren(fExternalModels);
 
 		fPluginTreeViewer.addFilter(new Filter());
 	}
@@ -325,11 +359,11 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	private void createButtonContainer(Composite parent) {
+	private void createButtonContainer(Composite parent, int vOffset) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.marginTop = 6;
+		layout.marginTop = vOffset;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
@@ -382,10 +416,15 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.setSubtreeChecked(group, checked);
 		fPluginTreeViewer.setGrayed(group, false);
 
+		Object[] checkedChildren = ((FilteredCheckboxTree.FilterableCheckboxTreeViewer) fPluginTreeViewer).getCheckedChildren(group);
+		int numberOfChildren = 0;
+		if (checkedChildren != null)
+			numberOfChildren = checkedChildren.length;
+
 		if (group == fWorkspacePlugins)
-			fNumWorkspaceChecked = checked ? fWorkspaceModels.length : 0;
+			fNumWorkspaceChecked = numberOfChildren;
 		else if (group == fExternalPlugins)
-			fNumExternalChecked = checked ? fExternalModels.length : 0;
+			fNumExternalChecked = numberOfChildren;
 
 	}
 
@@ -395,7 +434,6 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void handleFilterButton() {
-		refreshTreeView(fPluginTreeViewer);
 		fPluginTreeViewer.refresh();
 		fPluginTreeViewer.expandAll();
 	}
@@ -547,7 +585,10 @@ public abstract class AbstractPluginBlock {
 	}
 
 	public void enableViewer(boolean enable) {
+		viewerEnabled = enable;
 		fPluginTreeViewer.getTree().setEnabled(enable);
+		fPluginFilteredTree.resetFilter();
+		fPluginFilteredTree.getFilterControl().setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
 		fDefaultsButton.setEnabled(enable);
 		fWorkingSetButton.setEnabled(enable);

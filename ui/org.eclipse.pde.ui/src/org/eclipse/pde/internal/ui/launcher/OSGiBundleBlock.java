@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ian Bull <irbull@cs.uvic.ca> - bug 204404
+ *     Ian Bull <irbull@cs.uvic.ca> - bug 204404 and bug 207064
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.*;
 
 public class OSGiBundleBlock extends AbstractPluginBlock {
 
-	private HashMap levelColumnCache = null;
-	private HashMap autoColumnCache = null;
+	private HashMap levelColumnCache = new HashMap();
+	private HashMap autoColumnCache = new HashMap();
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
 
@@ -126,6 +126,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 								int selection = spinner.getSelection();
 								item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
 										: Integer.toString(selection));
+								levelColumnCache.put(item.getData(), item.getText(1));
 								fTab.updateLaunchConfigurationDialog();
 							}
 						}
@@ -141,12 +142,12 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 							if (item.getChecked()) {
 								item.setText(2, combo.getText());
 								fTab.updateLaunchConfigurationDialog();
+								autoColumnCache.put(item.getData(), item.getText(2));
 							}
 						}
 					});
 					autoColumnEditor.setEditor(combo, item, 2);
 				}
-
 			}
 		});
 	}
@@ -181,11 +182,10 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		for (int i = 0; i < selected.length; i++) {
 			if (selected[i] instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) selected[i];
-				TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(model);
 				if (model.getUnderlyingResource() == null) {
-					appendToBuffer(tBuffer, model, item);
+					appendToBuffer(tBuffer, model);
 				} else {
-					appendToBuffer(wBuffer, model, item);
+					appendToBuffer(wBuffer, model);
 				}
 			}
 		}
@@ -196,18 +196,19 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (fAddWorkspaceButton.getSelection()) {
 			for (int i = 0; i < fWorkspaceModels.length; i++) {
 				if (!fPluginTreeViewer.getChecked(fWorkspaceModels[i])) {
-					appendToBuffer(buffer, fWorkspaceModels[i], null);
+					appendToBuffer(buffer, fWorkspaceModels[i]);
 				}
 			}
 		}
 		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.length() > 0 ? buffer.toString() : (String) null);
 	}
 
-	private void appendToBuffer(StringBuffer buffer, IPluginModelBase model, TreeItem item) {
+	private void appendToBuffer(StringBuffer buffer, IPluginModelBase model) {
 		if (buffer.length() > 0)
-			buffer.append(","); //$NON-NLS-1$
-		String startLevel = item != null ? item.getText(1) : null;
-		String autoStart = item != null ? item.getText(2) : null;
+			buffer.append(","); //$NON-NLS-1$ 
+
+		String startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
+		String autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
 		String value = BundleLauncherHelper.writeBundles(model, startLevel, autoStart);
 		buffer.append(value);
 	}
@@ -224,6 +225,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
 		Map map = BundleLauncherHelper.getTargetBundleMap(configuration);
 		Iterator iter = map.keySet().iterator();
+		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			if (fPluginTreeViewer.setChecked(model, true)) {
@@ -237,13 +239,13 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	private void resetGroup(NamedElement group) {
-		Widget widget = fPluginTreeViewer.testFindItem(group);
-		if (widget instanceof TreeItem) {
-			TreeItem[] items = ((TreeItem) widget).getItems();
-			for (int i = 0; i < items.length; i++) {
-				if (!items[i].getChecked()) {
-					resetText(items[i]);
-				}
+		Object[] children = group.getChildren();
+		if (children == null)
+			return;
+		for (int i = 0; i < children.length; i++) {
+			Object child = children[i];
+			if (child instanceof IPluginModelBase) {
+				resetText((IPluginModelBase) child);
 			}
 		}
 	}
@@ -251,6 +253,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
 		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
 		Iterator iter = map.keySet().iterator();
+		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			if (fPluginTreeViewer.setChecked(model, true)) {
@@ -266,13 +269,17 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	protected void handleGroupStateChanged(Object group, boolean checked) {
 		super.handleGroupStateChanged(group, checked);
-		Widget item = fPluginTreeViewer.testFindItem(group);
-		if (item instanceof TreeItem) {
-			TreeItem[] items = ((TreeItem) item).getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem child = items[i];
-				if (child.getChecked() == (child.getText(1).length() == 0))
-					resetText(items[i]);
+
+		if (group instanceof NamedElement) {
+			NamedElement namedElement = (NamedElement) group;
+			Object[] children = namedElement.getChildren();
+			if (children == null)
+				return;
+			for (int i = 0; i < children.length; i++) {
+				Object child = children[i];
+				if (child instanceof IPluginModelBase) {
+					resetText((IPluginModelBase) child);
+				}
 			}
 		}
 	}
@@ -294,13 +301,17 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	private void updateGroup(Object group) {
-		Widget item = fPluginTreeViewer.testFindItem(group);
-		if (item instanceof TreeItem) {
-			TreeItem[] items = ((TreeItem) item).getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem child = items[i];
-				if (child.getChecked() == (child.getText(1).length() == 0))
-					resetText(items[i]);
+		if (group instanceof NamedElement) {
+			NamedElement namedElement = (NamedElement) group;
+			Object[] children = namedElement.getChildren();
+			if (children == null) {
+				return;
+			}
+			for (int i = 0; i < children.length; i++) {
+				Object child = children[i];
+				if (child instanceof IPluginModelBase) {
+					resetText((IPluginModelBase) child);
+				}
 			}
 		}
 	}
@@ -310,38 +321,50 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (widget instanceof TreeItem) {
 			TreeItem item = (TreeItem) widget;
 			int index = value == null ? -1 : value.indexOf(':');
-			item.setText(1, index == -1 ? "" : value.substring(0, index)); //$NON-NLS-1$
+			String levelValue = index == -1 ? "" : value.substring(0, index); //$NON-NLS-1$
+			String autoValue = null;
+			item.setText(1, levelValue);
 			if (model.isFragmentModel()) {
-				item.setText(2, "false"); //$NON-NLS-1$
+				autoValue = "false"; //$NON-NLS-1$
+				item.setText(2, autoValue);
 			} else {
-				item.setText(2, index == -1 ? "" : value.substring(index + 1)); //$NON-NLS-1$
+				autoValue = index == -1 ? "" : value.substring(index + 1); //$NON-NLS-1$
+				item.setText(2, autoValue);
 			}
+			levelColumnCache.put(model, levelValue);
+			autoColumnCache.put(model, autoValue);
 		}
 	}
 
 	private void resetText(IPluginModelBase model) {
+		String levelText = null;
+		String autoText = null;
 		Widget widget = fPluginTreeViewer.testFindItem(model);
-		if (widget instanceof TreeItem) {
-			resetText((TreeItem) widget);
-		}
-	}
+		if (fPluginTreeViewer.getChecked(model)) {
+			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
+			if (!"default".equals(levelColumnCache.get(model))) //$NON-NLS-1$
+				levelText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (!"default".equals(autoColumnCache.get(model))) //$NON-NLS-1$
+				autoText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private void resetText(TreeItem item) {
-		if (item.getChecked()) {
-			IPluginModelBase model = (IPluginModelBase) item.getData();
-			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
-			boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
-			if (!"default".equals(item.getText(1))) //$NON-NLS-1$
-				item.setText(1, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (model.isFragmentModel())
-				item.setText(2, "false"); //$NON-NLS-1$
-			else if (!"default".equals(item.getText(2))) //$NON-NLS-1$
-				item.setText(2, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (model.isFragmentModel()) {
+				autoText = "false"; //$NON-NLS-1$
+			}
 		} else {
-			if (item.getText(1).length() > 0)
-				item.setText(1, ""); //$NON-NLS-1$
-			if (item.getText(2).length() > 0)
-				item.setText(2, ""); //$NON-NLS-1$
+			levelText = ""; //$NON-NLS-1$
+			autoText = ""; //$NON-NLS-1$
+		}
+		if (levelText != null) {
+			levelColumnCache.put(model, levelText);
+			if (widget instanceof TreeItem) {
+				((TreeItem) widget).setText(1, levelText);
+			}
+		}
+		if (autoText != null) {
+			autoColumnCache.put(model, autoText);
+			if (widget instanceof TreeItem) {
+				((TreeItem) widget).setText(2, autoText);
+			}
 		}
 	}
 
@@ -363,9 +386,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	/**
-	 * Refreshes the tree viewer.  This caches the values of the 
-	 * level and auto column, and it clears any editors on the view.
-	 * Finally, it sets the selection to the root node.
+	 * Refreshes the tree viewer.  It clears any editors on the view.
 	 */
 	protected void refreshTreeView(CheckboxTreeViewer treeView) {
 		// Remove any selection
@@ -383,34 +404,5 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (autoColumnEditor != null && autoColumnEditor.getEditor() != null && !autoColumnEditor.getEditor().isDisposed()) {
 			autoColumnEditor.getEditor().dispose();
 		}
-
-		// Cache the current text
-		levelColumnCache = new HashMap();
-		autoColumnCache = new HashMap();
-		ArrayList allTreeItems = getAllTreeItems(treeView.getTree().getItems());
-		for (Iterator iterator = allTreeItems.iterator(); iterator.hasNext();) {
-			TreeItem item = (TreeItem) iterator.next();
-			levelColumnCache.put(item.getData(), item.getText(1));
-			autoColumnCache.put(item.getData(), item.getText(2));
-		}
 	}
-
-	/**
-	 * This gets all the tree items from a tree.  
-	 * 
-	 * This method must exist in some SWT util library, so it can probably be 
-	 * removed when I find it.
-	 * 
-	 * @param roots
-	 */
-	private ArrayList getAllTreeItems(TreeItem[] roots) {
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < roots.length; i++) {
-			TreeItem item = roots[i];
-			list.add(item);
-			list.addAll(getAllTreeItems(item.getItems()));
-		}
-		return list;
-	}
-
 }
