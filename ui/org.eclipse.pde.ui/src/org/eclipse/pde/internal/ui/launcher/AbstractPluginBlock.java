@@ -337,9 +337,6 @@ public abstract class AbstractPluginBlock {
 		fWorkspacePlugins = new NamedElement(PDEUIMessages.AdvancedLauncherTab_workspacePlugins, siteImage);
 		fExternalPlugins = new NamedElement(PDEUIMessages.PluginsTab_target, siteImage);
 
-		fWorkspacePlugins.setChildren(fWorkspaceModels);
-		fExternalPlugins.setChildren(fExternalModels);
-
 		fPluginTreeViewer.addFilter(new Filter());
 	}
 
@@ -486,6 +483,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
+		fPluginFilteredTree.resetFilter();
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
 		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
@@ -587,7 +585,6 @@ public abstract class AbstractPluginBlock {
 	public void enableViewer(boolean enable) {
 		viewerEnabled = enable;
 		fPluginTreeViewer.getTree().setEnabled(enable);
-		fPluginFilteredTree.resetFilter();
 		fPluginFilteredTree.getFilterControl().setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
 		fDefaultsButton.setEnabled(enable);

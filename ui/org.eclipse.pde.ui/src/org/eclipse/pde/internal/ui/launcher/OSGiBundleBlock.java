@@ -141,8 +141,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 						public void widgetSelected(SelectionEvent e) {
 							if (item.getChecked()) {
 								item.setText(2, combo.getText());
-								fTab.updateLaunchConfigurationDialog();
 								autoColumnCache.put(item.getData(), item.getText(2));
+								fTab.updateLaunchConfigurationDialog();
 							}
 						}
 					});
@@ -215,6 +215,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		super.initializeFrom(configuration);
+		levelColumnCache = new HashMap();
+		autoColumnCache = new HashMap();
 		initWorkspacePluginsState(configuration);
 		initExternalPluginsState(configuration);
 		updateCounter();
@@ -272,13 +274,17 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 		if (group instanceof NamedElement) {
 			NamedElement namedElement = (NamedElement) group;
-			Object[] children = namedElement.getChildren();
-			if (children == null)
-				return;
-			for (int i = 0; i < children.length; i++) {
-				Object child = children[i];
-				if (child instanceof IPluginModelBase) {
-					resetText((IPluginModelBase) child);
+			TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(namedElement);
+			if (item != null) {
+				TreeItem[] children = item.getItems();
+				if (children == null)
+					return;
+				for (int i = 0; i < children.length; i++) {
+					TreeItem childItem = children[i];
+					Object child = childItem.getData();
+					if (child instanceof IPluginModelBase) {
+						resetText((IPluginModelBase) child);
+					}
 				}
 			}
 		}
@@ -342,10 +348,16 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (fPluginTreeViewer.getChecked(model)) {
 			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
-			if (!"default".equals(levelColumnCache.get(model))) //$NON-NLS-1$
-				levelText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
-			if (!"default".equals(autoColumnCache.get(model))) //$NON-NLS-1$
-				autoText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
+			levelText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
+			autoText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (levelColumnCache.containsKey(model) && !isSystemBundle) {
+				levelText = (String) levelColumnCache.get(model);
+				levelText = levelText.length() > 0 ? levelText : "default"; //$NON-NLS-1$
+			}
+			if (autoColumnCache.containsKey(model) && !isSystemBundle) {
+				autoText = (String) autoColumnCache.get(model);
+				autoText = autoText.length() > 0 ? autoText : "default"; //$NON-NLS-1$
+			}
 
 			if (model.isFragmentModel()) {
 				autoText = "false"; //$NON-NLS-1$
