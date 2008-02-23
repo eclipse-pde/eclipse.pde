@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class PluginsLabelProvider extends LabelProvider {
 	private PDELabelProvider sharedProvider;
@@ -67,6 +68,10 @@ public class PluginsLabelProvider extends LabelProvider {
 
 		if (obj instanceof IStorage) {
 			return ((IStorage) obj).getName();
+		}
+
+		if (obj instanceof IDeferredWorkbenchAdapter) {
+			return ((IDeferredWorkbenchAdapter) obj).getLabel(obj);
 		}
 
 		return super.getText(obj);
