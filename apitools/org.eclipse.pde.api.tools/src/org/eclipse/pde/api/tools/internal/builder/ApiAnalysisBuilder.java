@@ -111,7 +111,7 @@ import com.ibm.icu.text.MessageFormat;
  * Builder for creating API tooling resource markers
  * @since 1.0.0
  */
-public class ApiToolBuilder extends IncrementalProjectBuilder {
+public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	
 	/**
 	 * An AST visitor used to find missing or incorrect @since tags

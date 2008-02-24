@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.PluginProjectApiComponent;
-import org.eclipse.pde.api.tools.internal.builder.ApiToolBuilder;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -529,7 +529,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			String option = Platform.getDebugOption(BUILDER_DEBUG);
 			if(option != null) {
 				boolean debugValue = option.equalsIgnoreCase(TRUE);
-				ApiToolBuilder.setDebug(debugValue);
+				ApiAnalysisBuilder.setDebug(debugValue);
 			}
 			
 			option = Platform.getDebugOption(DELTA_DEBUG);

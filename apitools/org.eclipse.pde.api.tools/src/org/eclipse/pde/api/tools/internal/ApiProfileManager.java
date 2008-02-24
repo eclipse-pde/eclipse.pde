@@ -49,7 +49,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.api.tools.internal.builder.ApiToolBuilder;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -779,7 +779,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 									IJavaProject jp = JavaCore.create(project);
 									if (jp.exists()) {
 										ApiDescriptionManager.getDefault().clean(jp, true, true);
-										ApiToolBuilder.cleanupMarkers(resource);
+										ApiAnalysisBuilder.cleanupMarkers(resource);
 									}
 								}
 							} catch (CoreException e) {

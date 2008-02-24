@@ -11,7 +11,7 @@
 		<builder
 			hasNature="true">
 			<run
-				class="org.eclipse.pde.api.tools.internal.builder.ApiToolBuilder">
+				class="org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder">
 			</run>
 		</builder>
 	</extension>
