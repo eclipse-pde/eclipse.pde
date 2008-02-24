@@ -51,7 +51,7 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public int getId() {
 		//TODO needs to include element
-		return fCategory | fKind | fFlags;
+		return fCategory | fKind | fFlags | fSeverity;
 	}
 	
 	/* (non-Javadoc)
