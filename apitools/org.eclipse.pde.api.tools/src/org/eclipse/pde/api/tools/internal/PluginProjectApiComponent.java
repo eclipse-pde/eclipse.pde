@@ -432,7 +432,12 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			//save the .api_filters file
 			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
 			String xml = filters.getStoreAsXml();
+			IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
 			if(xml == null) {
+				// no filters - delete the file if it exists
+				if (file.exists()) {
+					file.delete(false, new NullProgressMonitor());
+				}
 				return;
 			}
 			InputStream xstream = Util.getInputStreamFromString(xml);
@@ -445,7 +450,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			}
 			// only write the file if the project has an API nature
 			if (project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
-				IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
 				if(!file.exists()) {
 					file.create(xstream, true, new NullProgressMonitor());
 				}
