@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
  * Base implementation of {@link IApiProblemFilter}
@@ -25,25 +21,19 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  */
 public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneable {
 
-	
-	
 	private String fComponentId = null;
-	private HashSet fKinds = null;
-	private IElementDescriptor fElement = null;
+	private IApiProblem fProblem = null;
 	
 	/**
 	 * Constructor
+	 * 
 	 * @param componentid
-	 * @param element
-	 * @param kind
+	 * @param problem
 	 */
-	public ApiProblemFilter(String componentid, IElementDescriptor element, String[] kinds) {
+	public ApiProblemFilter(String componentid, IApiProblem problem) {
 		fComponentId = componentid;
-		fElement = element;
-		fKinds = new HashSet();
-		if(kinds != null) {
-			fKinds.addAll(Arrays.asList(kinds));
-		}
+		Assert.isNotNull(problem);
+		fProblem = problem;
 	}
 	
 	/* (non-Javadoc)
@@ -52,38 +42,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 	public String getComponentId() {
 		return fComponentId;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#getElement()
-	 */
-	public IElementDescriptor getElement() {
-		return fElement;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#getKind()
-	 */
-	public String[] getKinds() {
-		String[] array = (String[]) fKinds.toArray(new String[fKinds.size()]);
-		Arrays.sort(array);
-		return array;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#addKind(java.lang.String)
-	 */
-	public void addKind(String kind) {
-		if(kind != null) {
-			fKinds.add(kind);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#removeKind(java.lang.String)
-	 */
-	public boolean removeKind(String kind) {
-		return fKinds.remove(kind);
-	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -91,20 +49,11 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 	public boolean equals(Object obj) {
 		if(obj instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) obj;
-			boolean samekinds = false;
-			if(fKinds.size() == filter.getKinds().length) {
-				samekinds = true;
-				String[] kinds = filter.getKinds();
-				int idx = 0;
-				for(Iterator iter = fKinds.iterator(); iter.hasNext();) {
-					samekinds &= elementsEqual(iter.next(), kinds[idx++]);
-				}
-			}
-			return samekinds && elementsEqual(this.fComponentId, filter.getComponentId()) &&
-					elementsEqual(this.fElement, filter.getElement());
+			return elementsEqual(filter.getComponentId(), fComponentId) &&
+					filter.getUnderlyingProblem().equals(fProblem);
 		}
-		else if(obj instanceof IElementDescriptor) {
-			return this.fElement.equals(obj);
+		else if(obj instanceof IApiProblem) {
+			return fProblem.equals(obj);
 		}
 		return super.equals(obj);
 	}
@@ -128,7 +77,10 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "Api Problem Filter: type ["+fElement.getElementType()+"] for ["+fElement.toString()+"]: kinds "+fKinds.toString()+""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Filter for : "); //$NON-NLS-1$
+		buffer.append(fProblem.toString());
+		return buffer.toString();
 	}
 
 	/* (non-Javadoc)
@@ -137,7 +89,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 	public int compareTo(Object o) {
 		if(o instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) o;
-			return ((ElementDescriptorImpl)filter.getElement()).compareTo(fElement);
+			//TODO re-examine
 		}
 		return -1;
 	}
@@ -146,6 +98,13 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {
-		return new ApiProblemFilter(this.fComponentId, this.fElement, this.getKinds());
+		return new ApiProblemFilter(this.fComponentId, fProblem);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter#getUnderlyingProblem()
+	 */
+	public IApiProblem getUnderlyingProblem() {
+		return fProblem;
 	}
 }

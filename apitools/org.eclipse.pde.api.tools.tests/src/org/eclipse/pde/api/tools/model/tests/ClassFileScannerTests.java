@@ -25,12 +25,12 @@ import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.internal.provisional.search.IReference;
@@ -202,8 +202,7 @@ public class ClassFileScannerTests extends TestCase {
 			public IApiFilterStore getFilterStore() {
 				return null;
 			}
-			public IApiProblemFilter newProblemFilter(
-					IElementDescriptor element, String[] kinds) {
+			public IApiProblemFilter newProblemFilter(IApiProblem problem) {
 				return null;
 			}
 			public boolean isSourceComponent() {

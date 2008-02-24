@@ -432,6 +432,9 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			//save the .api_filters file
 			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
 			String xml = filters.getStoreAsXml();
+			if(xml == null) {
+				return;
+			}
 			InputStream xstream = Util.getInputStreamFromString(xml);
 			if(xstream == null) {
 				return;

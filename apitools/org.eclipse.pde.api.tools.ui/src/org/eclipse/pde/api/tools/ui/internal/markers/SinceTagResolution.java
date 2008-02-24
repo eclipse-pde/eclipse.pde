@@ -27,20 +27,20 @@ import org.eclipse.ui.progress.UIJob;
  * @since 1.0.0
  */
 public class SinceTagResolution implements IMarkerResolution2 {
-	String markerType;
+	int markerType;
 	String newVersionValue;
 	
 	public SinceTagResolution(IMarker marker) {
-		this.markerType = (String) marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, null);
+		this.markerType = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
 		this.newVersionValue = (String) marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
 	public String getDescription() {
-		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID.equals(this.markerType)) {
+		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID == this.markerType) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid0, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED.equals(this.markerType)) {
+		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED == this.markerType) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_malformed0, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.SinceTagResolution_missing0, this.newVersionValue);
@@ -58,9 +58,9 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID.equals(this.markerType)) {
+		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID == this.markerType) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid1, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED.equals(this.markerType)) {
+		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED == this.markerType) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_malformed1, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.SinceTagResolution_missing1, this.newVersionValue);
@@ -72,9 +72,9 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	 */
 	public void run(final IMarker marker) {
 		String title = null;
-		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID.equals(this.markerType)) {
+		if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID == this.markerType) {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_invalid2, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED.equals(this.markerType)) {
+		} else if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED == this.markerType) {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_malformed2, this.newVersionValue);
 		} else {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_missing2, this.newVersionValue);

@@ -35,10 +35,10 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 		try {
 			String type = marker.getType();
 			if(type.equals(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
 			else if(type.equals(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
 			else if(type.equals(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER)) {
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
@@ -47,7 +47,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
 			}
 			else if(type.equals(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker), new ParentFilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker)};
 			}
 		}
 		catch(CoreException e) {

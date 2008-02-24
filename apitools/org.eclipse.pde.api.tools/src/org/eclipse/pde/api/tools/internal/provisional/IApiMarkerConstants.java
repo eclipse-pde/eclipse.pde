@@ -20,6 +20,12 @@ package org.eclipse.pde.api.tools.internal.provisional;
 public interface IApiMarkerConstants {
 
 	/**
+	 * Constant representing the name of the 'category' attribute on api tooling markers.
+	 * Value is: <code>category</code>
+	 */
+	public static final String MARKER_ATTR_CATEGORY = "category"; //$NON-NLS-1$
+	
+	/**
 	 * Constant representing the name of the 'kind' attribute on API tooling markers.
 	 * Value is: <code>kind</code>
 	 */
@@ -31,19 +37,19 @@ public interface IApiMarkerConstants {
 	public static final String MARKER_ATTR_FLAGS = "flags"; //$NON-NLS-1$
 	/**
 	 * Constant representing the value of the @since tag missing type attribute on API tooling markers.
-	 * Value is: <code>missing</code>
+	 * Value is: <code>1</code>
 	 */
-	public static final String MARKER_ATTR_SINCE_TAG_MISSING = "missing"; //$NON-NLS-1$
+	public static final int MARKER_ATTR_SINCE_TAG_MISSING = 0x1;
 	/**
 	 * Constant representing the value of the @since tag malformed type attribute on API tooling markers.
-	 * Value is: <code>malformed</code>
+	 * Value is: <code>2</code>
 	 */
-	public static final String MARKER_ATTR_SINCE_TAG_MALFORMED = "malformed"; //$NON-NLS-1$
+	public static final int MARKER_ATTR_SINCE_TAG_MALFORMED = 0x1 << 1;
 	/**
 	 * Constant representing the value of the @since tag invalid type attribute on API tooling markers.
-	 * Value is: <code>invalid</code>
+	 * Value is: <code>4</code>
 	 */
-	public static final String MARKER_ATTR_SINCE_TAG_INVALID = "invalid"; //$NON-NLS-1$
+	public static final int MARKER_ATTR_SINCE_TAG_INVALID = 0x1 << 2;
 	
 	/**
 	 * Constant representing the handle id attribute of a java element.
@@ -59,14 +65,14 @@ public interface IApiMarkerConstants {
 	public static final String MARKER_ATTR_VERSION = "version"; //$NON-NLS-1$
 	/**
 	 * Constant representing the value of the version numbering marker for major version change.
-	 * Value is: <code>major</code>
+	 * Value is: <code>1</code>
 	 */
-	public static final String MARKER_ATTR_MAJOR_VERSION_CHANGE = "major"; //$NON-NLS-1$
+	public static final int MARKER_ATTR_MAJOR_VERSION_CHANGE = 0x1;
 	/**
 	 * Constant representing the value of the version numbering marker for minor version change.
-	 * Value is: <code>minor</code>
+	 * Value is: <code>2</code>
 	 */
-	public static final String MARKER_ATTR_MINOR_VERSION_CHANGE = "minor"; //$NON-NLS-1$
+	public static final int MARKER_ATTR_MINOR_VERSION_CHANGE = 0x1 << 1;
 	/**
 	 * Constant representing the id for the default API profile problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>

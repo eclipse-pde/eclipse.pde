@@ -113,10 +113,10 @@ public class UpdateSinceTagOperation {
 		}
 	}
 	private IMarker fMarker;
-	private String sinceTagType;
+	private int sinceTagType;
 	private String sinceTagVersion;
 
-	public UpdateSinceTagOperation(IMarker marker, String sinceTagType, String sinceTagVersion) {
+	public UpdateSinceTagOperation(IMarker marker, int sinceTagType, String sinceTagVersion) {
 		this.fMarker = marker;
 		this.sinceTagType = sinceTagType;
 		this.sinceTagVersion = sinceTagVersion;
@@ -155,7 +155,7 @@ public class UpdateSinceTagOperation {
 						unit.recordModifications();
 						AST ast = unit.getAST();
 						ASTRewrite rewrite = ASTRewrite.create(ast);
-						if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MISSING.equals(this.sinceTagType)) {
+						if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MISSING == this.sinceTagType) {
 							Javadoc docnode = node.getJavadoc();
 							if (docnode == null) {
 								docnode = ast.newJavadoc();

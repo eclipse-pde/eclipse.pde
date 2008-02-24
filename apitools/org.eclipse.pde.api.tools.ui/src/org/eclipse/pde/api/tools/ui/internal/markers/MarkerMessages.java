@@ -47,7 +47,6 @@ public class MarkerMessages extends NLS {
 	public static String VersionNumberingResolution_micro2;
 
 	public static String UpdateVersionNumberingOperation_title;
-	public static String UpdateVersionNumberingOperation_projectError;
 
 	static {
 		// initialize resource bundle

@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
@@ -34,7 +33,6 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 
 	protected IMarker fBackingMarker = null;
 	protected IJavaElement fResolvedElement = null;
-	protected String fKind = null;
 	
 	/**
 	 * Constructor
@@ -42,7 +40,6 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	 */
 	public FilterProblemResolution(IMarker marker) {
 		fBackingMarker = marker;
-		fKind = Util.getMarkerKind(fBackingMarker);
 	}
 	
 	/* (non-Javadoc)
@@ -55,7 +52,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 		}
 		else {
 			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getName()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment()});
 		}
 	}
 
@@ -76,7 +73,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 		}
 		else {
 			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getName()});
+			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment()});
 		}
 	}
 	
@@ -104,7 +101,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
 	public void run(IMarker marker) {
-		CreateApiFilterOperation op = new CreateApiFilterOperation(fBackingMarker, fResolvedElement, fKind);
+		CreateApiFilterOperation op = new CreateApiFilterOperation(fBackingMarker);
 		op.setSystem(true);
 		op.schedule();
 	}

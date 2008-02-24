@@ -12,33 +12,31 @@ package org.eclipse.pde.api.tools.ui.internal.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.pde.api.tools.internal.ApiProblemFilter;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
@@ -51,10 +49,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import com.ibm.icu.text.MessageFormat;
@@ -66,260 +66,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 	
-	static class ApiKindDescription {
-		String kind = null;
-		String description = null;
-		int[] types = null;
-		
-		public ApiKindDescription(String kind, String description, int[] types) {
-			this.kind = kind;
-			this.description = description;
-			this.types = types;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return this.kind.hashCode();
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if(obj instanceof String) {
-				return this.kind.equals(obj);
-			}
-			if(obj instanceof ApiKindDescription) {
-				return this.kind.equals(((ApiKindDescription)obj).kind);
-			}
-			return false;
-		}
-		
-		public boolean appliesTo(IElementDescriptor element) {
-			int type = element.getElementType();
-			for(int i = 0; i < types.length; i++) {
-				if(types[i] == type) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
-		public String toString() {
-			return kind;
-		}
-	}
-	
-	private static final HashMap fgFilterDescriptions = new HashMap(); 
-	
-	static {
-		//binary compatibility issues
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_CLASS_BOUND, new ApiKindDescription(IApiProblemFilter.ADDED_CLASS_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_0, 
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_INTERFACE_BOUND, new ApiKindDescription(IApiProblemFilter.ADDED_INTERFACE_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_1,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_INTERFACE_BOUNDS, new ApiKindDescription(IApiProblemFilter.ADDED_INTERFACE_BOUNDS, 
-				PropertiesMessages.ApiFiltersPropertyPage_2,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_METHOD_WITHOUT_DEFAULT_VALUE, new ApiKindDescription(IApiProblemFilter.ADDED_METHOD_WITHOUT_DEFAULT_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_3,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_NO_EXTEND, new ApiKindDescription(IApiProblemFilter.ADDED_NO_EXTEND, 
-				PropertiesMessages.ApiFiltersPropertyPage_4,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_NOT_IMPLEMENT_RESTRICTION, new ApiKindDescription(IApiProblemFilter.ADDED_NOT_IMPLEMENT_RESTRICTION, 
-				PropertiesMessages.ApiFiltersPropertyPage_5,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_TYPE_PARAMETER, new ApiKindDescription(IApiProblemFilter.ADDED_TYPE_PARAMETER, 
-				PropertiesMessages.ApiFiltersPropertyPage_6,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.ADDED_VALUE, new ApiKindDescription(IApiProblemFilter.ADDED_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_7,
-				new int[] {IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_CLASS_BOUND, new ApiKindDescription(IApiProblemFilter.CHANGED_CLASS_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_8,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_CONTRACTED_SUPERCLASS_SET, new ApiKindDescription(IApiProblemFilter.CHANGED_CONTRACTED_SUPERCLASS_SET, 
-				PropertiesMessages.ApiFiltersPropertyPage_9,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_CONTRACTED_SUPERINTERFACES_SET, new ApiKindDescription(IApiProblemFilter.CHANGED_CONTRACTED_SUPERINTERFACES_SET, 
-				PropertiesMessages.ApiFiltersPropertyPage_10,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_DECREASE_ACCESS, new ApiKindDescription(IApiProblemFilter.CHANGED_DECREASE_ACCESS, 
-				PropertiesMessages.ApiFiltersPropertyPage_11,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD, IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT, new ApiKindDescription(IApiProblemFilter.CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT, 
-				PropertiesMessages.ApiFiltersPropertyPage_12,
-				new int[] {IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_INTERFACE_BOUND, new ApiKindDescription(IApiProblemFilter.CHANGED_INTERFACE_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_13,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_NON_ABSTRACT_TO_ABSTRACT, new ApiKindDescription(IApiProblemFilter.CHANGED_NON_ABSTRACT_TO_ABSTRACT, 
-				PropertiesMessages.ApiFiltersPropertyPage_14,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_NON_FINAL_TO_FINAL, new ApiKindDescription(IApiProblemFilter.CHANGED_NON_FINAL_TO_FINAL, 
-				PropertiesMessages.ApiFiltersPropertyPage_15,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD, IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_NON_STATIC_TO_STATIC, new ApiKindDescription(IApiProblemFilter.CHANGED_NON_STATIC_TO_STATIC, 
-				PropertiesMessages.ApiFiltersPropertyPage_16,
-				new int[] {IElementDescriptor.T_FIELD, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_STATIC_TO_NON_STATIC, new ApiKindDescription(IApiProblemFilter.CHANGED_STATIC_TO_NON_STATIC, 
-				PropertiesMessages.ApiFiltersPropertyPage_17,
-				new int[] {IElementDescriptor.T_FIELD, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_SUPERCLASS, new ApiKindDescription(IApiProblemFilter.CHANGED_SUPERCLASS, 
-				PropertiesMessages.ApiFiltersPropertyPage_18,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_TO_ANNOTATION, new ApiKindDescription(IApiProblemFilter.CHANGED_TO_ANNOTATION, 
-				PropertiesMessages.ApiFiltersPropertyPage_19,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_TO_CLASS, new ApiKindDescription(IApiProblemFilter.CHANGED_TO_CLASS, 
-				PropertiesMessages.ApiFiltersPropertyPage_20,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_TO_ENUM, new ApiKindDescription(IApiProblemFilter.CHANGED_TO_ENUM, 
-				PropertiesMessages.ApiFiltersPropertyPage_21,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_TO_INTERFACE, new ApiKindDescription(IApiProblemFilter.CHANGED_TO_INTERFACE, 
-				PropertiesMessages.ApiFiltersPropertyPage_22,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_TYPE, new ApiKindDescription(IApiProblemFilter.CHANGED_TYPE, 
-				PropertiesMessages.ApiFiltersPropertyPage_23,
-				new int[] {IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_VALUE, new ApiKindDescription(IApiProblemFilter.CHANGED_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_24,
-				new int[] {IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.CHANGED_VARARGS_TO_ARRAY, new ApiKindDescription(IApiProblemFilter.CHANGED_VARARGS_TO_ARRAY, 
-				PropertiesMessages.ApiFiltersPropertyPage_25,
-				new int[] {IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_ANNOTATION_DEFAULT_VALUE, new ApiKindDescription(IApiProblemFilter.REMOVED_ANNOTATION_DEFAULT_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_26,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_API_COMPONENT, new ApiKindDescription(IApiProblemFilter.REMOVED_API_COMPONENT, 
-				PropertiesMessages.ApiFiltersPropertyPage_27,
-				new int[] {IDelta.API_COMPONENT_ELEMENT_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_CLASS_BOUND, new ApiKindDescription(IApiProblemFilter.REMOVED_CLASS_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_28,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_CONSTRUCTOR, new ApiKindDescription(IApiProblemFilter.REMOVED_CONSTRUCTOR, 
-				PropertiesMessages.ApiFiltersPropertyPage_29,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_ENUM_CONSTANT, new ApiKindDescription(IApiProblemFilter.REMOVED_ENUM_CONSTANT, 
-				PropertiesMessages.ApiFiltersPropertyPage_30,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_FIELD, new ApiKindDescription(IApiProblemFilter.REMOVED_FIELD,
-				PropertiesMessages.ApiFiltersPropertyPage_31,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_INTERFACE_BOUND, new ApiKindDescription(IApiProblemFilter.REMOVED_INTERFACE_BOUND, 
-				PropertiesMessages.ApiFiltersPropertyPage_32,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_INTERFACE_BOUNDS, new ApiKindDescription(IApiProblemFilter.REMOVED_INTERFACE_BOUNDS, 
-				PropertiesMessages.ApiFiltersPropertyPage_33,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_METHOD, new ApiKindDescription(IApiProblemFilter.REMOVED_METHOD, 
-				PropertiesMessages.ApiFiltersPropertyPage_34,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_METHOD_WITH_DEFAULT_VALUE, new ApiKindDescription(IApiProblemFilter.REMOVED_METHOD_WITH_DEFAULT_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_35,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_METHOD_WITHOUT_DEFAULT_VALUE, new ApiKindDescription(IApiProblemFilter.REMOVED_METHOD_WITHOUT_DEFAULT_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_36,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_TYPE, new ApiKindDescription(IApiProblemFilter.REMOVED_TYPE, 
-				PropertiesMessages.ApiFiltersPropertyPage_37,
-				new int[] {IDelta.API_COMPONENT_ELEMENT_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_TYPE_ARGUMENTS, new ApiKindDescription(IApiProblemFilter.REMOVED_TYPE_ARGUMENTS, 
-				PropertiesMessages.ApiFiltersPropertyPage_38,
-				new int[] {IElementDescriptor.T_FIELD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_TYPE_MEMBER, new ApiKindDescription(IApiProblemFilter.REMOVED_TYPE_MEMBER, 
-				PropertiesMessages.ApiFiltersPropertyPage_39,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_TYPE_PARAMETER, new ApiKindDescription(IApiProblemFilter.REMOVED_TYPE_PARAMETER, 
-				PropertiesMessages.ApiFiltersPropertyPage_40,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_TYPE_PARAMETERS, new ApiKindDescription(IApiProblemFilter.REMOVED_TYPE_PARAMETERS, 
-				PropertiesMessages.ApiFiltersPropertyPage_41,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		fgFilterDescriptions.put(IApiProblemFilter.REMOVED_VALUE, new ApiKindDescription(IApiProblemFilter.REMOVED_VALUE, 
-				PropertiesMessages.ApiFiltersPropertyPage_42,
-				new int[] {IElementDescriptor.T_FIELD}));
-		
-		//usage restriction issues
-		String temp = Util.getReferenceKind(ReferenceModifiers.REF_EXTENDS);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_43,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE, IElementDescriptor.T_METHOD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_IMPLEMENTS);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_44,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_INSTANTIATE);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_45,
-				new int[] {IElementDescriptor.T_REFERENCE_TYPE}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_OVERRIDE);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_46,
-				new int[] {IElementDescriptor.T_METHOD, IElementDescriptor.T_REFERENCE_TYPE}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_GETFIELD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_47,
-				new int[] {IElementDescriptor.T_FIELD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_GETSTATIC);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_48,
-				new int[] {IElementDescriptor.T_FIELD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_PUTFIELD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_49,
-				new int[] {IElementDescriptor.T_FIELD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_PUTSTATIC);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_50,
-				new int[] {IElementDescriptor.T_FIELD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_INTERFACEMETHOD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_51,
-				new int[] {IElementDescriptor.T_METHOD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_SPECIALMETHOD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_52,
-				new int[] {IElementDescriptor.T_METHOD}));
-		temp =  Util.getReferenceKind(ReferenceModifiers.REF_STATICMETHOD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp,
-				PropertiesMessages.ApiFiltersPropertyPage_53,
-				new int[] {IElementDescriptor.T_METHOD}));
-		temp = Util.getReferenceKind(ReferenceModifiers.REF_VIRTUALMETHOD);
-		fgFilterDescriptions.put(temp, new ApiKindDescription(temp, 
-				PropertiesMessages.ApiFiltersPropertyPage_54,
-				new int[] {IElementDescriptor.T_METHOD}));
-		
-		//version number problem kinds
-		fgFilterDescriptions.put(IApiProblemFilter.MINOR_VERSION_CHANGE, new ApiKindDescription(IApiProblemFilter.MINOR_VERSION_CHANGE,
-				PropertiesMessages.ApiFiltersPropertyPage_60,
-				new int[] {IElementDescriptor.T_RESOURCE}));
-		fgFilterDescriptions.put(IApiProblemFilter.MAJOR_VERSION_CHANGE, new ApiKindDescription(IApiProblemFilter.MAJOR_VERSION_CHANGE,
-				PropertiesMessages.ApiFiltersPropertyPage_61,
-				new int[] {IElementDescriptor.T_RESOURCE}));
-	}
-	
-	/**
-	 * Describes a reversible change to the listing of filters
-	 */
-	class Change {
-		static final int REMOVE = 1;
-		static final int CHANGE = 2;
-		IApiProblemFilter filter = null;
-		int type = 0;
-		public Change(IApiProblemFilter filter, int type) {
-			this.filter = filter;
-			this.type = type;
-		}
-	}
-	
 	/**
 	 * Comparator for the viewer to group filters by {@link IElementDescriptor} type
 	 */
@@ -329,7 +75,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		 */
 		public int category(Object element) {
 			if(element instanceof IApiProblemFilter) {
-				return ((IApiProblemFilter) element).getElement().getElementType();
+				return (int)((IApiProblemFilter) element).getUnderlyingProblem().getCategory();
 			}
 			return -1;
 		}
@@ -338,34 +84,37 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	/**
 	 * Label provider for the viewer
 	 */
-	class FileStoreLabelProvider extends LabelProvider {
+	class FilterStoreLabelProvider extends LabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
 			if(element instanceof IApiProblemFilter) {
 				IApiProblemFilter filter = (IApiProblemFilter) element;
-				IElementDescriptor desc = filter.getElement();
-				ISharedImages images = JavaUI.getSharedImages();
-				switch(desc.getElementType()) {
-					case IElementDescriptor.T_PACKAGE: {
-						return images.getImage(ISharedImages.IMG_OBJS_PACKAGE);
+				IApiProblem problem = filter.getUnderlyingProblem();
+				switch(problem.getSeverity()) {
+					case IMarker.SEVERITY_ERROR: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					}
-					case IElementDescriptor.T_REFERENCE_TYPE: {
-						return images.getImage(ISharedImages.IMG_OBJS_CLASS);
+					case IMarker.SEVERITY_WARNING: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
 					}
-					case IElementDescriptor.T_METHOD: {
-						return images.getImage(ISharedImages.IMG_OBJS_PUBLIC);
+					default: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 					}
-					case IElementDescriptor.T_FIELD: {
-						return images.getImage(ISharedImages.IMG_FIELD_PUBLIC);
+				}
+			}
+			if(element instanceof IResource) {
+				IResource resource = (IResource) element;
+				switch(resource.getType()) {
+					case IResource.FILE: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 					}
-					case IElementDescriptor.T_RESOURCE: {
-						IResourceDescriptor rdesc = ((IResourceDescriptor)desc);
-						if(rdesc.getResourceType() == IResource.FOLDER) {
-							return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
-						}
-						return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FILE);
+					case IResource.FOLDER: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+					}
+					case IResource.PROJECT: {
+						return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
 					}
 				}
 			}
@@ -377,17 +126,75 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		public String getText(Object element) {
 			if(element instanceof IApiProblemFilter) {
 				IApiProblemFilter filter = (IApiProblemFilter) element;
-				String name = Util.getFormattedFilterName(filter);
-				if(name != null) {
-					return name;
-				}
+				return filter.getUnderlyingProblem().getMessage();
+			}
+			if(element instanceof IResource) {
+				IResource resource = (IResource) element;
+				IPath path = resource.getProjectRelativePath();
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(path.removeFileExtension().lastSegment());
+				buffer.append(" ("); //$NON-NLS-1$
+				buffer.append(path.removeLastSegments(1));
+				buffer.append(")"); //$NON-NLS-1$
+				return buffer.toString();
 			}
 			return super.getText(element);
 		}
 	}
 	
-	private TableViewer fViewer = null;
-	private Button fRemoveButton, fEditButton;
+	/**
+	 * Content provider for the tree
+	 */
+	class TreeContentProvider implements ITreeContentProvider {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			if(parentElement instanceof IResource) {
+				try {
+					return getFilterStore().getFilters((IResource) parentElement);
+				} catch (CoreException e) {
+					ApiUIPlugin.log(e);
+				}
+			}
+			return new Object[0];
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			if(element instanceof IApiProblemFilter) {
+				return false;
+			}
+			if(element instanceof IResource) {
+				try {
+					return getFilterStore().getFilters((IResource) element).length > 0;
+				} catch (CoreException e) {
+					ApiUIPlugin.log(e);
+				}
+			}
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			if(inputElement instanceof ArrayList) {
+				return ((ArrayList)inputElement).toArray();
+			}
+			return new Object[0];
+		}
+		public Object getParent(Object element) {return null;}
+		public void dispose() {}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		
+	}
+	
+	private TreeViewer fViewer = null;
+	private Button fRemoveButton;
 	private IProject fProject = null;
 	private ArrayList fChangeset = new ArrayList();
 	private ArrayList fInputset = null;
@@ -398,16 +205,22 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(comp, PropertiesMessages.ApiFiltersPropertyPage_55, 2);
-		Table table = new Table(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
-		table.setLayoutData(gd);
-		fViewer = new TableViewer(table);
-		fViewer.setContentProvider(new ArrayContentProvider());
-		fViewer.setLabelProvider(new FileStoreLabelProvider());
+		tree.setLayoutData(gd);
+		fViewer = new TreeViewer(tree);
+		/*fViewer.setAutoExpandLevel(2);*/
+		fViewer.setContentProvider(new TreeContentProvider());
+		fViewer.setLabelProvider(new FilterStoreLabelProvider());
 		fViewer.setComparator(new ApiFilterComparator());
+		fViewer.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return !fChangeset.contains(element);
+			}
+		});
 		try {
-			fInputset = new ArrayList(Arrays.asList(getFilterStore().getFilters()));
+			fInputset = new ArrayList(Arrays.asList(getFilterStore().getResources()));
 			fViewer.setInput(fInputset);
 		}
 		catch(CoreException e) {
@@ -417,86 +230,55 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				fRemoveButton.setEnabled(ss.size() > 0);
-				fEditButton.setEnabled(ss.size() == 1);
 			}
 		});
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				if(ss.size() == 1) {
-					IApiProblemFilter filter = (IApiProblemFilter) ss.getFirstElement();
-					handleEdit(filter);
+				Object o = ((IStructuredSelection)event.getSelection()).getFirstElement();
+				if(fViewer.isExpandable(o)) {
+					fViewer.setExpandedState(o, !fViewer.getExpandedState(o));
 				}
 			}
 		});
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
-		fEditButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_56, null, SWT.LEFT);
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleEdit(getSelectedFilter());
-			}
-		});
-		fEditButton.setEnabled(false);
 		fRemoveButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_57, null, SWT.LEFT);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
-				IApiProblemFilter filter = (IApiProblemFilter) ss.getFirstElement();
-				Change change = new Change(filter, Change.REMOVE);
-				fChangeset.add(change);
-				fInputset.remove(filter);
-				fViewer.refresh();
+				HashSet deletions = collectDeletions(ss);
+				if(deletions.size() > 0) {
+					fChangeset.addAll(deletions);
+					fViewer.remove(deletions.toArray());
+					fViewer.refresh();
+				}
 			}
 		});
 		fRemoveButton.setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APITOOLS_FILTERS_PROPERTY_PAGE);
 		return comp;
 	}	
-	
+
 	/**
-	 * Returns the API kind description for the given kind, or <code>null</code>
-	 * @param kind
-	 * @return the kind description or <code>null</code>
+	 * Collects all of the elements to be deleted
+	 * @param selection
+	 * @return the set of elements to be added to the change set for deletion
 	 */
-	public static ApiKindDescription getDescription(String kind) {
-		return (ApiKindDescription) fgFilterDescriptions.get(kind);
-	}
-	
-	/**
-	 * @return all registered {@link ApiKindDescription}s
-	 */
-	public static Collection getAllKindDescriptions() {
-		return fgFilterDescriptions.values();
-	}
-	
-	/**
-	 * Returns the {@link IApiProblemFilter} currently selected in the viewer
-	 * @return the selected {@link IApiProblemFilter}
-	 */
-	private IApiProblemFilter getSelectedFilter() {
-		IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
-		if(ss.size() == 1) {
-			return (IApiProblemFilter) ss.getFirstElement();
+	private HashSet collectDeletions(IStructuredSelection selection) {
+		HashSet filters = new HashSet();
+		Object node = null;
+		Object[] children = null;
+		for(Iterator iter = selection.iterator(); iter.hasNext();) {
+			node = iter.next();
+			if(node instanceof IResource) {
+				children = ((TreeContentProvider)fViewer.getContentProvider()).getChildren(node);
+				filters.addAll(Arrays.asList(children));
+				fInputset.remove(node);
+			}
+			else {
+				filters.add(node);
+			}
 		}
-		return null;
-	}
-	
-	/**
-	 * Handles the edit button being pressed
-	 * @param filter the selected filter to edit
-	 */
-	private void handleEdit(IApiProblemFilter filter) {
-		EditApiFilterDialog dialog = new EditApiFilterDialog(getShell(), (IApiProblemFilter)((ApiProblemFilter)filter).clone());
-		if(dialog.open() == IDialogConstants.OK_ID) {
-			//do change
-			IApiProblemFilter editedfilter =  dialog.getFilter();
-			//update the viewer
-			fChangeset.add(new Change(filter, Change.REMOVE));
-			fInputset.remove(filter);
-			fChangeset.add(new Change(editedfilter, Change.CHANGE));
-			fInputset.add(editedfilter);
-			fViewer.refresh();
-		}
+		return filters;
 	}
 	
 	/**
@@ -525,14 +307,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 		}
 		return store;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
-	protected void performApply() {
-		super.performApply();
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -545,16 +320,11 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	 */
 	public boolean performOk() {
 		try {
-			Change change = null;
 			IApiFilterStore store = getFilterStore();
+			IApiProblemFilter filter = null;
 			for(int i = 0; i < fChangeset.size(); i++) {
-				change = (Change) fChangeset.get(i);
-				if(change.type == Change.REMOVE) {
-					store.removeFilter(change.filter);
-				}
-				else {
-					store.addFilter(change.filter);
-				}
+				filter = (IApiProblemFilter) fChangeset.get(i);
+				store.removeFilter(filter);
 			}
 			if(fChangeset.size() > 0) {
 				//TODO we need to incremental build to ensure new filter kinds are enacted and removed kinds show the markers

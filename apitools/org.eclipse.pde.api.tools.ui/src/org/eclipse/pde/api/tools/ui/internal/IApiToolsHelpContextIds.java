@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.properties.ApiFiltersPropertyPage;
-import org.eclipse.pde.api.tools.ui.internal.properties.EditApiFilterDialog;
 import org.eclipse.pde.api.tools.ui.internal.search.ApiSearchPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProfileWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;

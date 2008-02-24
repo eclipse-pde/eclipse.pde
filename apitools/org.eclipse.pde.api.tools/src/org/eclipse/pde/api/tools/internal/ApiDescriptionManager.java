@@ -240,7 +240,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				try {
 					Util.saveFile(new File(dir,  BundleApiComponent.API_DESCRIPTION_XML_NAME), xml);
 				} catch (IOException e) {
-					abort(MessageFormat.format("Failed to save API description for {0}", new String[]{project.getElementName()}), e);
+					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new String[]{project.getElementName()}), e);
 				}
 			}
 		}
@@ -271,7 +271,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				description.fManifestFile = project.getProject().getFile(JarFile.MANIFEST_NAME);
 				restoreChildren(description, root, null, description.fPackageMap);
 			} catch (IOException e) {
-				abort(MessageFormat.format("Failed to read API description for {0}",
+				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1,
 						new String[]{project.getElementName()}), e);
 			}
 		}
@@ -297,7 +297,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			int res = getInt(element, ATTR_RESTRICTIONS);
 			IJavaElement je = JavaCore.create(handle);
 			if (je.getElementType() != IJavaElement.PACKAGE_FRAGMENT) {
-				abort("Unable to restore package: " + handle, null);
+				abort(ScannerMessages.ApiDescriptionManager_2 + handle, null);
 			}
 			IPackageFragment fragment = (IPackageFragment) je;
 			elementDesc = Factory.packageDescriptor(fragment.getElementName());
@@ -308,7 +308,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			int res = getInt(element, ATTR_RESTRICTIONS);
 			IJavaElement je = JavaCore.create(handle);
 			if (je.getElementType() != IJavaElement.TYPE) {
-				abort("Unable to restore type: " + handle, null);
+				abort(ScannerMessages.ApiDescriptionManager_3 + handle, null);
 			}
 			IType type = (IType) je;
 			elementDesc = Factory.typeDescriptor(type.getFullyQualifiedName('$'));
@@ -332,7 +332,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 		}
 		if (node == null) {
-			abort("Unable to restore element", null);
+			abort(ScannerMessages.ApiDescriptionManager_4, null);
 		}
 		String component = element.getAttribute(ApiDescriptionProcessor.ATTR_CONTEXT);
 		if (component == null || component.length() == 0) {
@@ -340,7 +340,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 		} else {
 			ManifestNode baseNode = (ManifestNode) childrenMap.get(elementDesc);
 			if (baseNode == null) {
-				abort("Missing base node for override: " + elementDesc.toString(), null);
+				abort(ScannerMessages.ApiDescriptionManager_5 + elementDesc.toString(), null);
 			}
 			baseNode.overrides.put(component, node);
 		}
@@ -361,10 +361,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			try {
 				return Integer.parseInt(attribute);
 			} catch (NumberFormatException e) {
-				abort("Invalid integer attribute: " + attribute, e);
+				abort(ScannerMessages.ApiDescriptionManager_6 + attribute, e);
 			}
 		}
-		abort("Missing integer attribute: " + attr, null);
+		abort(ScannerMessages.ApiDescriptionManager_7 + attr, null);
 		return -1;
 	}
 	
@@ -382,10 +382,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			try {
 				return Long.parseLong(attribute);
 			} catch (NumberFormatException e) {
-				abort("Invalid long attribute: " + attribute, e);
+				abort(ScannerMessages.ApiDescriptionManager_8 + attribute, e);
 			}
 		}
-		abort("Missing long attribute: " + attr, null);
+		abort(ScannerMessages.ApiDescriptionManager_9 + attr, null);
 		return -1L;
 	}	
 	

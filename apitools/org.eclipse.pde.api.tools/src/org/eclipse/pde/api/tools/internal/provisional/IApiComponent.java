@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 
 
@@ -182,14 +181,13 @@ public interface IApiComponent extends IClassFileContainer {
 	public IApiFilterStore getFilterStore() throws CoreException;
 	
 	/**
-	 * Creates and returns a new problem filter that filters are problems contained
-	 * in the specified element applicable to the given kinds.
+	 * Creates and returns a new problem filter for the given 
+	 * {@link IApiProblem}
 	 * 
-	 * @param element the element problems are filtered from.
-	 * @param kinds specific problem kinds to filter for this element.
+	 * @param problem
 	 * @return new problem filter
 	 */
-	public IApiProblemFilter newProblemFilter(IElementDescriptor element, String[] kinds);
+	public IApiProblemFilter newProblemFilter(IApiProblem problem);
 	
 	/**
 	 * Returns whether this API component is a fragment.

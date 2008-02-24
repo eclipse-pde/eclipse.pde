@@ -93,19 +93,14 @@ import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IResourceDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
@@ -581,6 +576,7 @@ public final class Util {
 		}
 		return eeid;
 	}
+	
 	/**
 	 * Return a string that represents the element type of the given delta.
 	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
@@ -592,6 +588,28 @@ public final class Util {
 		return getDeltaElementType(delta.getElementType());
 	}
 
+	/**
+	 * Returns a text representation of a marker severity level
+	 * @param severity
+	 * @return text of a marker severity level
+	 */
+	public static String getSeverity(int severity) {
+		switch(severity) {
+			case IMarker.SEVERITY_ERROR: {
+				return "ERROR"; //$NON-NLS-1$
+			}
+			case IMarker.SEVERITY_INFO: {
+				return "INFO"; //$NON-NLS-1$
+			}
+			case IMarker.SEVERITY_WARNING: {
+				return "WARNING"; //$NON-NLS-1$
+			}
+			default: {
+				return "UNKNOWN_SEVERITY"; //$NON-NLS-1$
+			}
+		}
+	}
+	
 	/**
 	 * Return a string that represents the given element type
 	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
@@ -698,6 +716,7 @@ public final class Util {
 			case IDelta.VALUE : return "VALUE"; //$NON-NLS-1$
 			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
 			case IDelta.RESTRICTIONS : return "RESTRICTIONS"; //$NON-NLS-1$
+			case IApiProblem.NO_FLAGS : return "NO_FLAGS"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -943,36 +962,7 @@ public final class Util {
 		}
 		return null;
 	}
-
-	/**
-	 * Returns the name to display for an {@link IApiProblemFilter}.
-	 * Used primarily in UI context for label providers
-	 * @param filter
-	 * @return a formatted filter name or null if the type of the filter is unknown
-	 */
-	public static final String getFormattedFilterName(IApiProblemFilter filter) {
-		IElementDescriptor desc = filter.getElement();
-		switch(desc.getElementType()) {
-			case IElementDescriptor.T_PACKAGE: {
-				return ((IPackageDescriptor)desc).getName();
-			}
-			case IElementDescriptor.T_REFERENCE_TYPE: {
-				return ((IReferenceTypeDescriptor)desc).getName();
-			}
-			case IElementDescriptor.T_METHOD: {
-				IMethodDescriptor method = (IMethodDescriptor) desc;
-				return Signature.toString(method.getSignature(), method.getName(), null, false, false);
-			}
-			case IElementDescriptor.T_FIELD: {
-				return ((IFieldDescriptor) desc).getName();
-			}
-			case IElementDescriptor.T_RESOURCE: {
-				return ((IResourceDescriptor)desc).getName();
-			}
-		}
-		return null;
-	}
-
+	
 	/**
 	 * Returns the number of fragments for the given version value, -1 if the format is unknown.
 	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier.
@@ -1284,50 +1274,24 @@ public final class Util {
 	}
 	
 	/**
-	 * Returns the string of the 'kind' from a given API problem marker
-	 * @param kind
-	 * @return the string representation of the kind of an API problem marker or {@link #UNKNOWN_KIND}
+	 * Returns a string representation of the category of an api problem
+	 * @param category
+	 * @return the string of the api problem category
 	 */
-	public static final String getMarkerKind(IMarker marker) {
-		StringBuffer buffer = new StringBuffer();
-		int flags = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, -1);
-		int kinds = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, -1);
-		if(kinds != -1) {
-			String kindstr = null;
-			if(flags == 0) {
-				kindstr = getReferenceKind(kinds);
-			}
-			else {
-				kindstr = getDeltaKindName(kinds);
-				if(UNKNOWN_KIND.equals(kindstr)) {
-					//try the ref kinds: overlap
-					kindstr = getReferenceKind(kinds);
-				}
-			}
-			if(kindstr != null) { 
-				buffer.append(kindstr);
-			}
-			if(kinds != IDelta.ADDED_NOT_EXTEND_RESTRICTION && 
-				kinds != IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION && 
-				flags > 0) {
-					buffer.append("_").append(getDeltaFlagsName(flags)); //$NON-NLS-1$
-			}
+	public static String getProblemCategory(long category) {
+		if(category == IApiProblem.CATEGORY_BINARY) {
+			return "BINARY"; //$NON-NLS-1$
 		}
-		else {
-			//might be string attribute
-			String kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, ""); //$NON-NLS-1$
-			if(IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE.equals(kind)) {
-				buffer.append(IApiProblemFilter.MINOR_VERSION_CHANGE);
-			}
-			else if(IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE.equals(kind)) {
-				buffer.append(IApiProblemFilter.MAJOR_VERSION_CHANGE);
-			}
-			else if(!"".equals(kind)) { //$NON-NLS-1$
-				buffer.append(kind);
-			}
+		if(category == IApiProblem.CATEGORY_SINCETAGS) {
+			return "SINCETAGS"; //$NON-NLS-1$
 		}
-		String value = buffer.toString();
-		return (value.length() == 0 ? UNKNOWN_KIND : value);
+		if(category == IApiProblem.CATEGORY_USAGE) {
+			return "USAGE"; //$NON-NLS-1$
+		}
+		if(category == IApiProblem.CATEGORY_VERSION) {
+			return "VERSION"; //$NON-NLS-1$
+		}
+		return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 	}
 	
 	/**

@@ -21,11 +21,11 @@ import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.stubs.Converter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -262,10 +262,11 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiComponent#newProblemFilter(org.eclipse.pde.api.tools.descriptors.IElementDescriptor, java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#newProblemFilter(org.eclipse.pde.api.tools.internal.provisional.IApiProblem)
 	 */
-	public IApiProblemFilter newProblemFilter(IElementDescriptor element, String[] kinds) {
-		return new ApiProblemFilter(getId(), element, kinds);
+	public IApiProblemFilter newProblemFilter(IApiProblem problem) {
+	//TODO either expose a way to make problems or change the method to accept the parts of a problem
+		return new ApiProblemFilter(getId(), problem);
 	}
 	
 	/**

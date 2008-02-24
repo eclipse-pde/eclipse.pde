@@ -11,31 +11,27 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.ui.progress.UIJob;
 
 /**
  * Operation for creating a new API problem filter
  * 
+ * @see IApiProblem
  * @see IApiProblemFilter
  * @see IApiFilterStore
  * 
@@ -43,9 +39,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class CreateApiFilterOperation extends UIJob {
 
-	private IJavaElement fBackingElement = null;
 	private IMarker fBackingMarker = null;
-	private String fKind = null;
 	
 	/**
 	 * Constructor
@@ -54,11 +48,9 @@ public class CreateApiFilterOperation extends UIJob {
 	 * 
 	 * @see IApiProblemFilter#getKinds()
 	 */
-	public CreateApiFilterOperation(IMarker marker, IJavaElement element, String kind) {
+	public CreateApiFilterOperation(IMarker marker) {
 		super(MarkerMessages.CreateApiFilterOperation_0);
-		fBackingElement = element;
 		fBackingMarker = marker;
-		fKind = kind;
 	}
 
 	/* (non-Javadoc)
@@ -66,68 +58,29 @@ public class CreateApiFilterOperation extends UIJob {
 	 */
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		try {
-			IJavaProject project = resolveJavaProject();
+			IResource resource = fBackingMarker.getResource();
+			IProject project = resource.getProject();
 			if(project == null) {
 				return Status.CANCEL_STATUS;
 			}
-			IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile().getApiComponent(project.getElementName());
+			IApiComponent component = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile().getApiComponent(project.getName());
 			if(component == null) {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
-			IElementDescriptor element = null;
-			boolean childmarkers = false;
-			if(fBackingElement != null) {
-				switch(fBackingElement.getElementType()) {
-					case IJavaElement.TYPE: {
-						IType type = (IType) fBackingElement;
-						element = Factory.typeDescriptor(type.getFullyQualifiedName());
-						break;
-					}
-					case IJavaElement.METHOD: {
-						IMethod method = (IMethod) fBackingElement;
-						element = Factory.methodDescriptor(method.getDeclaringType().getFullyQualifiedName(), method.getElementName(), method.getSignature());
-						break;
-					}
-					case IJavaElement.FIELD: {
-						IField field = (IField) fBackingElement;
-						element = Factory.fieldDescriptor(field.getDeclaringType().getFullyQualifiedName(), field.getElementName());
-						break;
-					}
-					case IJavaElement.PACKAGE_FRAGMENT: {
-						IPackageFragment fragment = (IPackageFragment) fBackingElement;
-						element = Factory.packageDescriptor(fragment.getElementName());
-						childmarkers = true;
-						break;
-					}
-				}
-			}
-			else {
-				IResource resource = fBackingMarker.getResource();
-				element = Factory.resourceDescriptor(resource);
-			}
-			if(element != null) {
-				store.addFilter(component.newProblemFilter(element, new String[] {fKind}));
-				cleanupMarkers(childmarkers);
-				return Status.OK_STATUS;
-			}
+			store.addFilter(Factory.newApiProblem(resource, 
+					fBackingMarker.getAttribute(IMarker.MESSAGE, IApiToolsConstants.EMPTY_STRING),
+					fBackingMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING),
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_CATEGORY, 0),
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0), 
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, 0)));
+			cleanupMarkers(false);
+			return Status.OK_STATUS;
 		}
 		catch(CoreException ce) {
 			ApiUIPlugin.log(ce);
 		}
 		return Status.CANCEL_STATUS;
-	}
-	
-	/**
-	 * @return the {@link IJavaProject} backing this operation
-	 */
-	private IJavaProject resolveJavaProject() {
-		if(fBackingElement != null) {
-			return fBackingElement.getJavaProject();
-		}
-		else {
-			return JavaCore.create(fBackingMarker.getResource().getProject());
-		}
 	}
 	
 	/**

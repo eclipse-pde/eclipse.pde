@@ -60,7 +60,6 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
-import org.eclipse.pde.api.tools.internal.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
@@ -70,7 +69,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -81,7 +80,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.text.edits.TextEdit;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -470,10 +468,10 @@ public class ApiDescriptionProcessor {
 	public static final String ELEMENT_RESOURCE = "resource"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the xml attribute for the kind of an {@link IApiProblemFilter}.
-	 * Value is: <code>kind</code>
+	 * Constant representing a api filter element node in xml.
+	 * Value is: <code>filter</code>
 	 */
-	public static final String ATTR_KIND = "kind"; //$NON-NLS-1$
+	public static final String ELEMENT_FILTER = "filter"; //$NON-NLS-1$
 	
 	/**
 	 * Constant representing the id attribute for plug-in xml node.
@@ -492,6 +490,42 @@ public class ApiDescriptionProcessor {
 	 * Value is: <code>context</code>
 	 */
 	public static final String ATTR_CONTEXT = "context"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the path attribute of a resource in xml.
+	 * Value is: <code>path</code>
+	 */
+	public static final String ATTR_PATH = "path"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the category attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>category</code>
+	 */
+	public static final String ATTR_CATEGORY = "category"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the severity attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>severity</code>
+	 */
+	public static final String ATTR_SEVERITY = "severity"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the kind attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>kind</code>
+	 */
+	public static final String ATTR_KIND = "kind"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the flags attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>flags</code>
+	 */
+	public static final String ATTR_FLAGS = "flags"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the message attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>message</code>
+	 */
+	public static final String ATTR_MESSAGE = "message"; //$NON-NLS-1$
 	
 	/**
 	 * Constant representing the extend attribute for a type xml node.
@@ -671,8 +705,12 @@ public class ApiDescriptionProcessor {
 	}
 	
 	/**
-	 * Annotates the given {@link IApiFilterStore} with information loaded from the specified
-	 * xml file.
+	 * Annotates the given {@link IApiFilterStore} with information loaded from the specified.
+	 * Loading filters is a fail-fast operation, where an error is found we simply continue processing
+	 * the next element an ignore corrupt entries.
+	 * 
+	 * The whole load operation should not fail if attributes are invalid or resources no longer exist.
+	 * 
 	 * @param store
 	 * @param xml
 	 * @throws CoreException
@@ -692,169 +730,67 @@ public class ApiDescriptionProcessor {
 		if(component.length() == 0) {
 			abort("Missing component id", null); //$NON-NLS-1$
 		}
-		NodeList children = root.getChildNodes();
-		NodeList types = null;
-		IPackageDescriptor packdesc = null;
-		Element type = null;
-		String name = null;
-		String kind = null;
-		Element child = null;
-		Node node = null;
-		for (int i = 0; i < children.getLength(); i++) {
-			node = children.item(i);
-			if(node.getNodeType() != Node.ELEMENT_NODE) {
+		NodeList resources = root.getElementsByTagName(ELEMENT_RESOURCE);
+		Element element = null;
+		String path = null;
+		NodeList filters = null;
+		int category = 0, kind = 0, flags = 0, severity = 0;
+		IResource resource = null;
+		for(int i = 0; i < resources.getLength(); i++) {
+			element = (Element) resources.item(i);
+			path = element.getAttribute(ATTR_PATH);
+			if(path.length() == 0) {
 				continue;
 			}
-			child = (Element) node;
-			if(ELEMENT_PACKAGE.equals(child.getNodeName())) {
-				name = child.getAttribute(ATTR_NAME);
-				if (name.length() == 0) {
-					abort("Missing package name", null); //$NON-NLS-1$
-				}
-				kind = child.getAttribute(ATTR_KIND);
-				String[] kinds = kind.split("\\,"); //$NON-NLS-1$
-				if(kinds.length == 0) {
-					abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				packdesc = Factory.packageDescriptor(name);
-				//optimization: String.split will return a 1 entry array with the empty string when called on the empty string
-				//we want to leave these out of the filter mapping
-				if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-					store.addFilter(new ApiProblemFilter(component, packdesc, kinds));
-				}
-				types = child.getElementsByTagName(ELEMENT_TYPE);
-				for (int j = 0; j < types.getLength(); j++) {
-					type = (Element) types.item(j);
-					name = type.getAttribute(ATTR_NAME);
-					if (name.length() == 0) {
-						abort("Missing type name", null); //$NON-NLS-1$
-					}
-					kind = type.getAttribute(ATTR_KIND);
-					kinds = kind.split("\\,"); //$NON-NLS-1$
-					if(kinds.length == 0) {
-						abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					IReferenceTypeDescriptor typedesc = packdesc.getType(name);
-					if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-						store.addFilter(new ApiProblemFilter(component, typedesc, kinds));
-					}
-					annotateMethodFilters(store, component, typedesc, type);
-					annotateFieldFilters(store, component, typedesc, type);
-				}
-			}
-			else if(ELEMENT_RESOURCE.equals(child.getNodeName())) {
-				annotateResourceFilters(child, store, component, new Path("")); //$NON-NLS-1$
-			}
-		}
-		
-	}
-	
-	/**
-	 * Annotates the filter store with resource filters 
-	 * @param root
-	 * @param store
-	 * @param component
-	 * @param path
-	 * @throws CoreException
-	 */
-	private static void annotateResourceFilters(Element root, IApiFilterStore store, String component, IPath path) throws CoreException {
-		IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
-		if(project == null || !project.isAccessible()) {
-			return;
-		}
-		String name = root.getAttribute(ATTR_NAME);
-		if (name.length() == 0) {
-			abort("Missing type name", null); //$NON-NLS-1$
-		}
-		path = path.append(name);
-		NodeList children = root.getChildNodes();
-		Node node = null;
-		for(int i = 0; i < children.getLength(); i++) {
-			node = children.item(i);
-			if(node.getNodeType() != Node.ELEMENT_NODE) {
+			IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
+			if(project == null) {
 				continue;
 			}
-			annotateResourceFilters((Element) node, store, component, path);
-		}
-		String kind = root.getAttribute(ATTR_KIND);
-		String[] kinds = kind.split("\\,"); //$NON-NLS-1$
-		if(kinds.length == 0) {
-			abort("No kinds have been set on type ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		IResource res = project.findMember(path);
-		if(res != null && res.isAccessible()) {
-			store.addFilter(new ApiProblemFilter(component, Factory.resourceDescriptor(res), kinds));
-			path = path.removeLastSegments(1);
-		}
-	}
-	
-	/**
-	 * Adds all child method entries to the given store from xml
-	 * @param store
-	 * @param component
-	 * @param type
-	 * @param parent
-	 * @throws CoreException
-	 */
-	private static void annotateMethodFilters(IApiFilterStore store, String component, IReferenceTypeDescriptor type, Element parent) throws CoreException {
-		NodeList methods = parent.getElementsByTagName(ELEMENT_METHOD);
-		Element method = null;
-		String name = null;
-		String signature = null;
-		String kind = null;
-		IMethodDescriptor methoddesc = null;
-		for(int i = 0; i < methods.getLength(); i++) {
-			method = (Element) methods.item(i);
-			name = method.getAttribute(ATTR_NAME);
-			if(name == null) {
-				abort(ScannerMessages.ComponentXMLScanner_2, null); 
+			resource = project.findMember(new Path(path));
+			if(resource == null) {
+				continue;
 			}
-			signature = method.getAttribute(ATTR_SIGNATURE);
-			if(signature == null) {
-				abort(ScannerMessages.ComponentXMLScanner_3, null); 
-			}
-			kind = method.getAttribute(ATTR_KIND);
-			methoddesc = type.getMethod(name, Util.dequalifySignature(signature));
-			String[] kinds = kind.split("\\,"); //$NON-NLS-1$
-			if(kinds.length == 0) {
-				abort("No kinds have been set on method ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-				store.addFilter(new ApiProblemFilter(component, methoddesc, kinds));
+			filters = element.getElementsByTagName(ELEMENT_FILTER);
+			for(int j = 0; j < filters.getLength(); j++) {
+				element = (Element) filters.item(j);
+				category = loadIntegerAttribute(element, ATTR_CATEGORY);
+				if(category <= 0) {
+					continue;
+				}
+				severity = loadIntegerAttribute(element, ATTR_SEVERITY);
+				if(severity < 0) {
+					continue;
+				}
+				kind = loadIntegerAttribute(element, ATTR_KIND);
+				if(kind < 0){
+					continue;
+				}
+				flags = loadIntegerAttribute(element, ATTR_FLAGS);
+				if(flags < 0) {
+					continue;
+				}
+				store.addFilter(Factory.newApiProblem(resource, element.getAttribute(ATTR_MESSAGE), severity, category, kind, flags));
 			}
 		}
 	}
 	
 	/**
-	 * Adds all child field entries to the given store form xml
-	 * @param store
-	 * @param component
-	 * @param type
-	 * @param parent
-	 * @throws CoreException
+	 * Loads the specified integer attribute from the given xml element
+	 * @param element
+	 * @param name
+	 * @return
 	 */
-	private static void annotateFieldFilters(IApiFilterStore store, String component, IReferenceTypeDescriptor type, Element parent) throws CoreException {
-		NodeList fields = parent.getElementsByTagName(ELEMENT_FIELD);
-		Element field = null;
-		String name = null;
-		String kind = null;
-		IFieldDescriptor fielddesc = null;
-		for(int i = 0; i < fields.getLength(); i++) {
-			field = (Element) fields.item(i);
-			name = field.getAttribute(ATTR_NAME);
-			if(name == null) {
-				abort(ScannerMessages.ComponentXMLScanner_1, null); 
-			}
-			kind = field.getAttribute(ATTR_KIND); 
-			fielddesc = type.getField(name);
-			String[] kinds = kind.split("\\,"); //$NON-NLS-1$
-			if(kinds.length == 0) {
-				abort("No kinds have been set on field ["+name+"]", null); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			if(!"".equals(kinds[0]) || kinds.length > 1) { //$NON-NLS-1$
-				store.addFilter(new ApiProblemFilter(component, fielddesc, kinds));
-			}
+	private static int loadIntegerAttribute(Element element, String name) {
+		String value = element.getAttribute(name);
+		if(value.length() == 0) {
+			return -1;
 		}
+		try {
+			int number = Integer.parseInt(value);
+			return number;
+		}
+		catch(NumberFormatException nfe) {}
+		return -1;
 	}
 	
 	/**

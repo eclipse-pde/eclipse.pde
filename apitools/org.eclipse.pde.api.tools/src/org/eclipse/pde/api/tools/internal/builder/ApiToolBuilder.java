@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
@@ -84,7 +83,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
@@ -92,7 +91,6 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -1129,8 +1127,8 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					return;
 				case 1 :
 					IMarker marker = manifestMarkers[0];
-					Object attribute = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND);
-					if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE.equals(attribute)) {
+					int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
+					if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
 						marker.delete();
 					}
 					break;
@@ -1196,72 +1194,23 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
-	/**
-	 * Returns if the given delta is filtered from creating a marker or not
-	 * @param delta the delta to consider
-	 * @param project the containing project
-	 * @return true if the delta should not create a marker (is filtered) false otherwise
-	 */
-	private boolean isDeltaFiltered(IDelta delta, IJavaProject project) {
-		StringBuffer kind = new StringBuffer();
-		kind.append(Util.getDeltaKindName(delta));
-		if(delta.getKind() != IDelta.ADDED_NOT_EXTEND_RESTRICTION &&
-				delta.getKind() != IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION) {
-			if(delta.getFlags() > 0) {
-				kind.append("_").append(Util.getDeltaFlagsName(delta)); //$NON-NLS-1$
-			}
-		}
-		IElementDescriptor element = null;
-		IMember member = Util.getIMember(delta, project);
-		if(member == null) {
-			return false;
-		}
-		try {
-			switch(member.getElementType()) {
-				case IJavaElement.FIELD: {
-					IField field = (IField) member;
-					element = Factory.fieldDescriptor(field.getDeclaringType().getFullyQualifiedName(), field.getElementName());
-					break;
-				}
-				case IJavaElement.METHOD: {
-					IMethod method = (IMethod) member;
-					element = Factory.methodDescriptor(method.getDeclaringType().getFullyQualifiedName(), method.getElementName(), method.getSignature());
-					break;
-				}
-				case IJavaElement.TYPE: {
-					IType type = (IType) member;
-					element = Factory.typeDescriptor(type.getFullyQualifiedName());
-					break;
-				}
-			}
-		}
-		catch(JavaModelException e) {}
-		if(element == null) {
-			return false;
-		}
-		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
-		if(component != null) {
-			try {
-				return component.getFilterStore().isFiltered(element, new String[] {kind.toString()});
-			}
-			catch(CoreException e) {
-				ApiPlugin.log(e);
-			}
-		}
- 		return false;
-	}
 	
 	/**
-	 * Returns if the given {@link IReference} should be filtered from having a problem marker created for it
+	 * Returns if the given {@link IApiProblem} should be filtered from having a problem marker created for it
+	 * 
 	 * @param reference
-	 * @return true if the {@link IReference} should not have a marker created, false otherwise
+	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
 	 */
-	private boolean isReferenceFiltered(IJavaProject project, IReference reference) {
-		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getElementName());
+	private boolean isProblemFiltered(IResource resource, String message, int severity, int category, int kind, int flags) {
+		IApiProblem problem = Factory.newApiProblem(resource, message, severity, category, kind, flags);
+		IProject project = problem.getResource().getProject();
+		if(project == null) {
+			return false;
+		}
+		IApiComponent component = getWorkspaceProfile().getApiComponent(project.getName());
 		if(component != null) {
 			try {
-				IElementDescriptor element = reference.getSourceLocation().getMember();
-				return component.getFilterStore().isFiltered(element, new String[] {Util.getReferenceKind(reference.getReferenceKind())});
+				return component.getFilterStore().isFiltered(problem);
 			}
 			catch(CoreException e) {
 				ApiPlugin.log(e);
@@ -1278,9 +1227,6 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param project
 	 */
 	private void createMarkerFor(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
-		if(isDeltaFiltered(delta, project)) {
-			return;
-		}
 		this.bits |= CONTAINS_API_BREAKAGE;
 		try {
 			Version referenceVersion = new Version(reference.getVersion());
@@ -1303,10 +1249,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 					return;
 				}
 			}
-			String prefKey = Util.getDeltaPrefererenceKey(
-					delta.getElementType(),
-					delta.getKind(),
-					delta.getFlags()); 
+			String prefKey = Util.getDeltaPrefererenceKey(delta.getElementType(), delta.getKind(), delta.getFlags());
 			int sev = ApiPlugin.getDefault().getSeverityLevel(prefKey, fCurrentProject);
 			if (sev == ApiPlugin.SEVERITY_IGNORE) {
 				// ignore
@@ -1315,6 +1258,10 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			int severity = IMarker.SEVERITY_ERROR;
 			if (sev == ApiPlugin.SEVERITY_WARNING) {
 				severity = IMarker.SEVERITY_WARNING;
+			}
+			String message = NLS.bind(BuilderMessages.ApiToolBuilder_5, delta.getMessage());
+			if(isProblemFiltered(correspondingResource, message, severity, IApiProblem.CATEGORY_BINARY, delta.getKind(), delta.getFlags())) {
+				return;
 			}
 			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER);
 			// retrieve line number, char start and char end
@@ -1357,19 +1304,21 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						IMarker.LINE_NUMBER,
 						IMarker.CHAR_START,
 						IMarker.CHAR_END,
-						IApiMarkerConstants.MARKER_ATTR_FLAGS,
+						IApiMarkerConstants.MARKER_ATTR_CATEGORY,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
+						IApiMarkerConstants.MARKER_ATTR_FLAGS,
 						IApiMarkerConstants.MARKER_ATT_HANDLE_ID
 				},
 				new Object[] {
-						NLS.bind(BuilderMessages.ApiToolBuilder_5, delta.getMessage()),
+						message,
 						new Integer(severity),
 						SOURCE,
 						new Integer(lineNumber),
 						new Integer(charStart < 0 ? 0 : charStart),
 						new Integer(charEnd),
-						new Integer(delta.getFlags()),
+						new Integer(IApiProblem.CATEGORY_BINARY),
 						new Integer(delta.getKind()),
+						new Integer(delta.getFlags()),
 						element.getHandleIdentifier()
 				}
 			);
@@ -1385,9 +1334,6 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	 * @param project project the compilation unit is in
 	 */
 	private void createMarkerFor(IReference reference, IJavaProject project) {
-		if(isReferenceFiltered(project, reference)) {
-			return;
-		}
 		try {
 			String message = null;
 			String prefKey = null;
@@ -1462,6 +1408,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			}
 			IResource correspondingResource = compilationUnit.getCorrespondingResource();
 			if (correspondingResource == null) {
+				return;
+			}
+			if(isProblemFiltered(correspondingResource, message, severity, IApiProblem.CATEGORY_USAGE, reference.getReferenceKind(), IApiProblem.NO_FLAGS)) {
 				return;
 			}
 			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER);
@@ -1593,6 +1542,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						IMarker.LINE_NUMBER,
 						IMarker.CHAR_START,
 						IMarker.CHAR_END,
+						IApiMarkerConstants.MARKER_ATTR_CATEGORY,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_FLAGS,
 						IApiMarkerConstants.MARKER_ATT_HANDLE_ID
@@ -1604,6 +1554,7 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						new Integer(lineNumber),
 						new Integer(charStart),
 						new Integer(charEnd),
+						new Integer(IApiProblem.CATEGORY_USAGE),
 						new Integer(reference.getReferenceKind()),
 						new Integer(REF_TYPE_FLAG),
 						(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier())
@@ -1886,15 +1837,15 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Creates a marker to denote a problem with the since tag (existence or correctness) for a member
-	 * @param attributeValue
+	 * @param kind
 	 * @param message
 	 * @param compilationUnit
 	 * @param member
-	 * @param markerSeverity
+	 * @param severity
 	 * @param version
 	 */
-	private void createSinceTagMarker(final String attributeValue, final String message, final ICompilationUnit compilationUnit, 
-			final IMember member, int markerSeverity, final String version) {
+	private void createSinceTagMarker(int kind, final String message, final ICompilationUnit compilationUnit, 
+			IMember member, int severity, final String version) {
 		try {
 			// create a marker on the member for missing @since tag
 			IResource correspondingResource = null;
@@ -1903,7 +1854,12 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			} catch (JavaModelException e) {
 				// ignore
 			}
-			if (correspondingResource == null) return;
+			if (correspondingResource == null) {
+				return;
+			}
+			if(isProblemFiltered(correspondingResource, message, severity, IApiProblem.CATEGORY_SINCETAGS, kind, IApiProblem.NO_FLAGS)) {
+				return;
+			}
 			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER);
 			int lineNumber = 1;
 			int charStart = 0;
@@ -1925,17 +1881,19 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 						IMarker.LINE_NUMBER,
 						IMarker.CHAR_START,
 						IMarker.CHAR_END,
+						IApiMarkerConstants.MARKER_ATTR_CATEGORY,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_VERSION,
 				},
 				new Object[] {
 						message,
-						new Integer(markerSeverity),
+						new Integer(severity),
 						SOURCE,
 						new Integer(lineNumber),
 						new Integer(charStart),
 						new Integer(charEnd),
-						attributeValue,
+						new Integer(IApiProblem.CATEGORY_SINCETAGS),
+						new Integer(kind),
 						version
 				}
 			);
@@ -1947,16 +1905,13 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Creates a marker on a manifest file for a version numbering problem 
 	 * @param message
-	 * @param markerSeverity
+	 * @param severity
 	 * @param breakage
 	 * @param version
 	 */
-	private void createVersionNumberingProblemMarker(final String message, int markerSeverity, boolean breakage, String version) {
+	private void createVersionNumberingProblemMarker(final String message, int severity, boolean breakage, String version) {
 		try {
 			IResource manifestFile = Util.getManifestFile(this.fCurrentProject);
-			if(isVersionMarkerFiltered(manifestFile, breakage)) {
-				return;
-			}
 			IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			if (manifestFile == null) {
 				// Cannot retrieve the manifest.mf file
@@ -1968,9 +1923,9 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 				if (manifestMarkers.length != 0) {
 					// check if the existing marker has the same severity (breakage vs non breakage
 					IMarker marker = manifestMarkers[0];
-					Object attribute = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND);
+					int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
 					if (breakage) {
-						if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE.equals(attribute)) {
+						if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
 							// no need to create the same marker again
 							return;
 						} else {
@@ -1985,8 +1940,8 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			} else if (manifestMarkers.length != 0) {
 				// this means the marker is not create for a breakage change
 				IMarker marker = manifestMarkers[0];
-				Object attribute = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND);
-				if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE.equals(attribute)) {
+				int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
+				if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
 					// remove the existing marker to create one for non breakage version issue
 					marker.delete();
 				}
@@ -1995,46 +1950,31 @@ public class ApiToolBuilder extends IncrementalProjectBuilder {
 			}
 			// this error should be located on the manifest.mf file
 			// first of all we check how many binary breakage marker are there
+			int kind = breakage ? IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE : IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE;
+			if(isProblemFiltered(manifestFile, message, severity, IApiProblem.CATEGORY_VERSION, kind, IApiProblem.NO_FLAGS)) {
+				return;
+			}
 			IMarker marker = manifestFile.createMarker(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER);
 			marker.setAttributes(
 				new String[] {
 						IMarker.MESSAGE,
 						IMarker.SEVERITY,
 						IMarker.SOURCE_ID,
+						IApiMarkerConstants.MARKER_ATTR_CATEGORY,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_VERSION,
 				},
 				new Object[] {
 						message,
-						new Integer(markerSeverity),
+						new Integer(severity),
 						SOURCE,
-						breakage ? IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE : IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE,
+						new Integer(IApiProblem.CATEGORY_VERSION),
+						new Integer(kind),
 						version
 				}
 			);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-	}
-	
-	/**
-	 * Determines if problems for manifest files are filtered or not
-	 * @param manifest
-	 * @param breakage
-	 * @return true if the breakage should be filtered form the given manifest file, false otherwise
-	 */
-	private boolean isVersionMarkerFiltered(IResource manifest, boolean breakage) {
-		IApiComponent component = getWorkspaceProfile().getApiComponent(fCurrentProject.getName());
-		if(component != null) {
-			try {
-				String kind = breakage ? IApiProblemFilter.MAJOR_VERSION_CHANGE : IApiProblemFilter.MINOR_VERSION_CHANGE;
-				IElementDescriptor element = Factory.resourceDescriptor(manifest);
-				return component.getFilterStore().isFiltered(element, new String[] {kind});
-			}
-			catch(CoreException e) {
-				ApiPlugin.log(e);
-			}
-		}
-		return false;
 	}
 }
