@@ -207,8 +207,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$ 
 
-		String startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
-		String autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
+		String startLevel = (levelColumnCache.get(model) != null && levelColumnCache.get(model).toString().length() > 0) ? levelColumnCache.get(model).toString() : null;
+		String autoStart = (autoColumnCache.get(model) != null && levelColumnCache.get(model).toString().length() > 0) ? autoColumnCache.get(model).toString() : null;
 		String value = BundleLauncherHelper.writeBundles(model, startLevel, autoStart);
 		buffer.append(value);
 	}
