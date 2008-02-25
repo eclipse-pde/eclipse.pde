@@ -261,7 +261,7 @@ public class ElementSection extends TreeSection {
 			else if (object instanceof SchemaAttribute)
 				element = (SchemaElement) ((SchemaAttribute) object).getParent();
 
-			if (element != null && !(element instanceof ISchemaRootElement) && !(element instanceof ISchemaObjectReference)) { //$NON-NLS-1$
+			if (element != null && !(element instanceof ISchemaRootElement) && !(element instanceof ISchemaObjectReference)) {
 				fNewAttributeAction.setElement((SchemaElement) element);
 				fNewAttributeAction.setEnabled(fSchema.isEditable());
 				submenu.add(fNewAttributeAction);
@@ -302,7 +302,7 @@ public class ElementSection extends TreeSection {
 		}
 		manager.add(submenu);
 		if (object != null) {
-			if (!(object instanceof ISchemaRootElement)) { //$NON-NLS-1$
+			if (!(object instanceof ISchemaRootElement)) {
 				if (manager.getItems().length > 0)
 					manager.add(new Separator());
 				if (!(object instanceof ISchemaAttribute && ((ISchemaAttribute) object).getParent() instanceof ISchemaRootElement)) {
@@ -477,7 +477,7 @@ public class ElementSection extends TreeSection {
 			else if (object instanceof SchemaAttribute)
 				element = (SchemaElement) ((SchemaAttribute) object).getParent();
 
-			if (element != null && !(element instanceof ISchemaRootElement)) { //$NON-NLS-1$
+			if (element != null && !(element instanceof ISchemaRootElement)) {
 				fNewAttributeAction.setElement(element);
 				fNewAttributeAction.run();
 			}
