@@ -19,7 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
  * 
  * @since 1.0.0
  */
-public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneable {
+public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	private String fComponentId = null;
 	private IApiProblem fProblem = null;
@@ -81,17 +81,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Comparable, Cloneabl
 		buffer.append("Filter for : "); //$NON-NLS-1$
 		buffer.append(fProblem.toString());
 		return buffer.toString();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) {
-		if(o instanceof IApiProblemFilter) {
-			IApiProblemFilter filter = (IApiProblemFilter) o;
-			//TODO re-examine
-		}
-		return -1;
 	}
 	
 	/* (non-Javadoc)

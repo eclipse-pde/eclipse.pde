@@ -220,8 +220,11 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 			}
 		});
 		try {
-			fInputset = new ArrayList(Arrays.asList(getFilterStore().getResources()));
-			fViewer.setInput(fInputset);
+			IApiFilterStore store = getFilterStore();
+			if(store != null) {
+				fInputset = new ArrayList(Arrays.asList(store.getResources()));
+				fViewer.setInput(fInputset);
+			}
 		}
 		catch(CoreException e) {
 			ApiUIPlugin.log(e);
