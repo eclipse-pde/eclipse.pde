@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219852
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
@@ -101,10 +102,21 @@ public class BundleManifestChange {
 			BundleModel model = (BundleModel) bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
 			bundle.getModel().addModelChangedListener(listener);
+			boolean localizationRenamed = false;
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 				String newText = newTexts[i];
-				if (element instanceof IType) {
+				if (element instanceof IFile) {
+					String fileName = ((IFile) element).getProjectRelativePath().toString();
+					if (!localizationRenamed && fileName.endsWith(".properties")) { //$NON-NLS-1$
+						String oldText = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
+						String oldLocalization = bundle.getLocalization();
+						if (oldText.equals(oldLocalization)) {
+							renameLocalization(bundle, oldText, newText);
+							localizationRenamed = true;
+						}
+					}
+				} else if (element instanceof IType) {
 					String oldText = ((IType) element).getFullyQualifiedName('$');
 					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), false, oldText, newText);
 					resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS), false, oldText, newText);
@@ -138,6 +150,13 @@ public class BundleManifestChange {
 			return change;
 		}
 		return null;
+	}
+
+	private static void renameLocalization(Bundle bundle, String oldText, String newText) {
+		if (newText.endsWith(".properties")) //$NON-NLS-1$
+			bundle.setLocalization(newText.substring(0, newText.lastIndexOf("."))); //$NON-NLS-1$
+		else
+			bundle.setLocalization(null);
 	}
 
 	private static void resetHeaderValue(IManifestHeader header, boolean isPackage, String oldText, String newText) {
@@ -209,5 +228,4 @@ public class BundleManifestChange {
 		model.load();
 		return model.isLoaded() ? (Bundle) model.getBundle() : null;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		if (!getArguments().getUpdateReferences())
 			return null;
 		CompositeChange result = new CompositeChange(getName());
-		if (updateManifest())
-			addBundleManifestChange(result, pm);
+		addBundleManifestChange(result, pm);
 		if (updateBuildProperties())
 			addBuildPropertiesChange(result, pm);
 		addChange(result, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, pm);
@@ -80,7 +79,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	}
 
 	protected void addBuildPropertiesChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile("build.properties"); //$NON-NLS-1$
+		IFile file = fProject.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 		if (file.exists()) {
 			Change change = BuildPropertiesChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)

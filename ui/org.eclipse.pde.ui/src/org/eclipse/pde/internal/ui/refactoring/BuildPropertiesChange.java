@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class BuildPropertiesChange {
 					if (affectedElements[i] instanceof IJavaElement)
 						continue;
 					IResource res = (IResource) affectedElements[i];
-					// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource
+					// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource
 					if (res instanceof IProject)
 						continue;
 					for (int j = 0; j < entries.length; j++) {
