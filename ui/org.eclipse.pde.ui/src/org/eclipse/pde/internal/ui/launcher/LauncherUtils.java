@@ -217,6 +217,7 @@ public class LauncherUtils {
 		processor.setRemoveUnresolved(false);
 		processor.setModifyDep(false);
 		processor.setRemoveLazy(false);
+		processor.setRemoveUselessFiles(false);
 		processor.setAddDependencies(true);
 		processor.setCalculateUses(false);
 		processor.setMarkInternal(false);

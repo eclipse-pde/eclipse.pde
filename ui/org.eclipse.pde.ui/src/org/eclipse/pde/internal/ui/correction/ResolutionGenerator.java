@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 150225
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 214156
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
@@ -87,6 +88,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new ExternalizeResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker), new ExternalizeStringsResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.P_UNKNOWN_CLASS :
 				return new IMarkerResolution[] {new CreateClassXMLResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker), new ChooseClassXMLResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
+			case PDEMarkerFactory.P_USELESS_FILE :
+				return new IMarkerResolution[] {new DeletePluginBaseResolution(AbstractPDEMarkerResolution.REMOVE_TYPE), new AddNewExtensionResolution(AbstractPDEMarkerResolution.CREATE_TYPE), new AddNewExtensionPointResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
 			case PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE :
 				return new IMarkerResolution[] {new RenameProvidePackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET :

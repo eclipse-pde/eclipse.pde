@@ -2499,8 +2499,10 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_noDescAvailable;
 
 	public static String RemoveRequireBundleResolution_description;
-
 	public static String RemoveRequireBundleResolution_label;
+	public static String RemoveUselessPluginFile_description;
+	public static String AddNewExtensionResolution_description;
+	public static String AddNewExtensionPointResolution_description;
 
 	public static String OptionalRequireBundleResolution_description;
 
@@ -2968,6 +2970,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsOperation_lazyStart;
 
+	public static String OrganizeManifestsOperation_uselessPluginFile;
+
 	public static String OrganizeManifestsOperation_nlIconPath;
 
 	public static String OrganizeManifestsOperation_unusedKeys;
@@ -3001,6 +3005,8 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsWizardPage_generalGroup;
 
 	public static String OrganizeManifestsWizardPage_lazyStart;
+
+	public static String OrganizeManifestsWizardPage_uselessPluginFile;
 
 	public static String OrganizeManifestsWizardPage_internationalizationGroup;
 
