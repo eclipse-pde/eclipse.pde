@@ -207,8 +207,12 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (buffer.length() > 0)
 			buffer.append(","); //$NON-NLS-1$ 
 
-		String startLevel = (levelColumnCache.get(model) != null && levelColumnCache.get(model).toString().length() > 0) ? levelColumnCache.get(model).toString() : null;
-		String autoStart = (autoColumnCache.get(model) != null && levelColumnCache.get(model).toString().length() > 0) ? autoColumnCache.get(model).toString() : null;
+		String startLevel = null;
+		String autoStart = null;
+		if (fPluginTreeViewer.getChecked(model)) {
+			startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
+			autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
+		}
 		String value = BundleLauncherHelper.writeBundles(model, startLevel, autoStart);
 		buffer.append(value);
 	}
@@ -241,13 +245,16 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	private void resetGroup(NamedElement group) {
-		Object[] children = group.getChildren();
-		if (children == null)
-			return;
-		for (int i = 0; i < children.length; i++) {
-			Object child = children[i];
-			if (child instanceof IPluginModelBase) {
-				resetText((IPluginModelBase) child);
+		Widget widget = fPluginTreeViewer.testFindItem(group);
+		if (widget instanceof TreeItem) {
+			TreeItem[] items = ((TreeItem) widget).getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (!items[i].getChecked()) {
+					Object model = items[i].getData();
+					if (model instanceof IPluginModelBase) {
+						resetText((IPluginModelBase) model);
+					}
+				}
 			}
 		}
 	}
@@ -307,16 +314,16 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	private void updateGroup(Object group) {
-		if (group instanceof NamedElement) {
-			NamedElement namedElement = (NamedElement) group;
-			Object[] children = namedElement.getChildren();
-			if (children == null) {
-				return;
-			}
-			for (int i = 0; i < children.length; i++) {
-				Object child = children[i];
-				if (child instanceof IPluginModelBase) {
-					resetText((IPluginModelBase) child);
+		Widget item = fPluginTreeViewer.testFindItem(group);
+		if (item instanceof TreeItem) {
+			TreeItem[] items = ((TreeItem) item).getItems();
+			for (int i = 0; i < items.length; i++) {
+				TreeItem child = items[i];
+				if (child.getChecked() == (child.getText(1).length() == 0)) {
+					Object model = items[i].getData();
+					if (model instanceof IPluginModelBase) {
+						resetText((IPluginModelBase) model);
+					}
 				}
 			}
 		}
@@ -347,7 +354,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		String autoText = null;
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (fPluginTreeViewer.getChecked(model)) {
-			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
+			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
+			boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
 			levelText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
 			autoText = isSystemBundle ? "" : "default"; //$NON-NLS-1$ //$NON-NLS-2$
 			if (levelColumnCache.containsKey(model) && !isSystemBundle) {
