@@ -86,7 +86,7 @@ public class CompilersPropertyPage extends PropertyPage {
 
 		boolean useProjectSettings = CompilerFlags.getBoolean(getProject(), CompilerFlags.USE_PROJECT_PREF);
 
-		fProjectSpecific.setEnabled(useProjectSettings);
+		fProjectSpecific.setSelection(useProjectSettings);
 		fWorkspaceLink.setEnabled(!useProjectSettings);
 
 		updateEnableState();
@@ -114,7 +114,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 		if (useProjectSettings()) {
-			fProjectSpecific.setEnabled(false);
+			fProjectSpecific.setSelection(false);
 			updateEnableState();
 			configurationBlock.performDefaults();
 		}
