@@ -24,7 +24,6 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>category</code>
 	 */
 	public static final String MARKER_ATTR_CATEGORY = "category"; //$NON-NLS-1$
-	
 	/**
 	 * Constant representing the name of the 'kind' attribute on API tooling markers.
 	 * Value is: <code>kind</code>
@@ -36,43 +35,16 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_FLAGS = "flags"; //$NON-NLS-1$
 	/**
-	 * Constant representing the value of the @since tag missing type attribute on API tooling markers.
-	 * Value is: <code>1</code>
-	 */
-	public static final int MARKER_ATTR_SINCE_TAG_MISSING = 0x1;
-	/**
-	 * Constant representing the value of the @since tag malformed type attribute on API tooling markers.
-	 * Value is: <code>2</code>
-	 */
-	public static final int MARKER_ATTR_SINCE_TAG_MALFORMED = 0x1 << 1;
-	/**
-	 * Constant representing the value of the @since tag invalid type attribute on API tooling markers.
-	 * Value is: <code>4</code>
-	 */
-	public static final int MARKER_ATTR_SINCE_TAG_INVALID = 0x1 << 2;
-	
-	/**
 	 * Constant representing the handle id attribute of a java element.
 	 * Value is: <code>org.eclipse.jdt.internal.core.JavaModelManager.handleId</code>
 	 */
 	public static final String MARKER_ATT_HANDLE_ID = "org.eclipse.jdt.internal.core.JavaModelManager.handleId" ; //$NON-NLS-1$
-	
 	/**
 	 * Constant representing the name of the @since tag version attribute on API tooling markers,
 	 * or the new value for the bundle version.
 	 * Value is: <code>version</code>
 	 */
 	public static final String MARKER_ATTR_VERSION = "version"; //$NON-NLS-1$
-	/**
-	 * Constant representing the value of the version numbering marker for major version change.
-	 * Value is: <code>1</code>
-	 */
-	public static final int MARKER_ATTR_MAJOR_VERSION_CHANGE = 0x1;
-	/**
-	 * Constant representing the value of the version numbering marker for minor version change.
-	 * Value is: <code>2</code>
-	 */
-	public static final int MARKER_ATTR_MINOR_VERSION_CHANGE = 0x1 << 1;
 	/**
 	 * Constant representing the id for the default API profile problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.api_profile</code>

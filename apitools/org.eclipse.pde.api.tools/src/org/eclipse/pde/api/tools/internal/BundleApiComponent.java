@@ -370,16 +370,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore()
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
-		ApiFilterStore store = new ApiFilterStore(getId());
-		try {
-			String xml = loadApiFilters(new File(fLocation));
-			if(xml != null) {
-				ApiDescriptionProcessor.annotateApiFilters(store, xml);
-			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		}
-		return store;
+		//always return a new empty store since we do not support filtering from bundles
+		return new ApiFilterStore(getId());
 	}
 	
 	/* (non-Javadoc)

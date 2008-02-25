@@ -45,6 +45,8 @@ import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
@@ -154,6 +156,18 @@ public class AbstractApiTest extends TestCase {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the {@link IApiComponent} for the given project name or <code>null</code> if it does not exist
+	 * @param projectname the name of the project
+	 * @return the {@link IApiComponent} for the given project name or <code>null</code>
+	 */
+	protected IApiComponent getProjectApiComponent(String projectname) {
+		IJavaProject project = getTestingJavaProject(projectname);
+		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
+		assertNotNull("the workspace profile must exist", profile);
+		return profile.getApiComponent(project.getElementName());
 	}
 	
 	/**

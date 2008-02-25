@@ -12,11 +12,13 @@ package org.eclipse.pde.api.tools.model.tests;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -26,8 +28,11 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 
 /**
@@ -88,54 +93,149 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	 */
 	private void assertFilterStore(IApiFilterStore store, int count) {
 		assertNotNull("the filter store for the testing project cannot be null");
-		//TODO
-		/*IApiProblemFilter[] filters = store.getFilters();
-		assertTrue("there should be "+count+" filters", filters.length == count);
-		assertTrue("there should be no filter for package 'x'", !store.isFiltered(Factory.packageDescriptor("x"), new String[0]));
-		assertTrue("there should be a filter for C1 for ADDED_CLASS_BOUND", store.isFiltered(Factory.typeDescriptor("x.C1"), new String[] {IApiProblemFilter.ADDED_CLASS_BOUND}));
-		assertTrue("there should be a filter for C2 for ADDED_INTERFACE_BOUND and CHANGED_CONTRACTED_SUPERINTERFACES_SET", 
-				store.isFiltered(Factory.typeDescriptor("x.C2"), new String[] {IApiProblemFilter.ADDED_INTERFACE_BOUND, IApiProblemFilter.CHANGED_CONTRACTED_SUPERINTERFACES_SET}));
-		assertTrue("there should be a filter for C3 for CHANGED_SUPERCLASS", store.isFiltered(Factory.typeDescriptor("x.y.C3"), new String[] {IApiProblemFilter.CHANGED_SUPERCLASS}));
-		assertTrue("There should be a filter for field 'field' for CHANGED_VALUE", store.isFiltered(Factory.fieldDescriptor("x.y.C3", "field"), new String[] {IApiProblemFilter.CHANGED_VALUE}));
-		assertTrue("there should be a filter for unqualified method foo for ADDED_NO_EXTEND", store.isFiltered(Factory.methodDescriptor("x.y.C3", "foo", "(QInteger;)QObject;"), new String[] {IApiProblemFilter.ADDED_NO_EXTEND}));
-		assertTrue("there should be a filter for qualified method foo for ADDED_NO_EXTEND", store.isFiltered(Factory.methodDescriptor("x.y.C3", "foo", "(Ljava/lang/Integer;)Ljava/lang/Object;"), new String[] {IApiProblemFilter.ADDED_NO_EXTEND}));*/
+		IResource[] resources = store.getResources();
+		assertTrue("there should be "+count+" resources with filters", resources.length == count);
+		IJavaProject jproject = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
+		IProject project = jproject.getProject();
+		
+		//C4
+		IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
+		assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
+		IApiProblemFilter[] filters = store.getFilters(resource);
+		assertTrue("There should be 1 filter for src/x/y/z/C4.java", filters.length == 1);
+		IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem));
+		
+		//C1
+		resource = project.findMember(new Path("src/x/C1.java"));
+		assertNotNull("the resource src/x/C1.java must exist", resource);
+		filters = store.getFilters(resource);
+		assertTrue("there should be 2 filters for src/x/C1.java", filters.length == 2);
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_BINARY, IDelta.REMOVED, IDelta.FIELD);
+		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_INFO, IApiProblem.CATEGORY_BINARY, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
+		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem));
+		
+		//C3
+		resource = project.findMember(new Path("src/x/y/C3.java"));
+		assertNotNull("the resource src/x/y/C3.java must exist");
+		filters = store.getFilters(resource);
+		assertTrue("there should be 2 filters for src/x/y/C3.java", filters.length == 2);
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
+		assertTrue("the major version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem));
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_VERSION, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
+		assertTrue("the minor version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem));
+		
+		//MANIFEST.MF
+		resource = project.findMember(new Path("META-INF/MANIFEST.MF"));
+		assertNotNull("the resource META-INF/MANIFEST.MF must exist", resource);
+		filters = store.getFilters(resource);
+		assertTrue("there should be 3 filters for META-INF/MANIFEST.MF", filters.length == 3);
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.SINCE_TAG_MISSING, IApiProblem.NO_FLAGS);
+		assertTrue("the missing since tag problem should be filtered for META-INF/MANIFEST.MF", store.isFiltered(problem));
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.NO_FLAGS);
+		assertTrue("the malformed since tag problem should be filtered for META-INF/MANIFEST.MF", store.isFiltered(problem));
+		problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.SINCE_TAG_INVALID, IApiProblem.NO_FLAGS);
+		assertTrue("the invalid since tag problem should be filterd for META-INF/MANIFEST.MF", store.isFiltered(problem));
 	}
 	
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
 	 */
 	public void testAnnotateStoreFromLocalFile() {
-		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
-		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-		assertNotNull("the workspace profile must exist", profile);
-		IApiComponent component = profile.getApiComponent(project.getElementName());
+		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component);
 		try {
-			assertFilterStore(component.getFilterStore(), 8);
+			assertFilterStore(component.getFilterStore(), 4);
 		}
 		catch(CoreException e) {
 			fail(e.getMessage());
 		}
 	}
-
+	
 	/**
-	 * Tests that if a parent type has matching filter kinds we can say 'yes' that a type is filtered even if the type
-	 * itself does not appear in the store
+	 * Tests that asking the store if it filters an invalid problem will return 'false'
 	 */
-	public void testParentFiltered() {
+	public void testNonExistantProblem() {
+		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+		assertNotNull("the testing project api component must exist", component);
 		try {
-			IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
-			IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getWorkspaceProfile();
-			assertNotNull("the workspace profile must exist", profile);
-			IApiComponent component = profile.getApiComponent(project.getElementName());
-			assertNotNull("the testing project api component must exist", component);
 			IApiFilterStore store = component.getFilterStore();
-			IElementDescriptor type = Factory.typeDescriptor("x.y.z.C4");
-			//TODO
-		//	assertTrue("the type x.y.z.C4 should be filtered because its parent package x.y.z is", store.isFiltered(type, new String[] {IApiProblemFilter.REMOVED_FIELD}));
-		}
-		catch(CoreException e) {
+			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
+			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
+			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_WARNING, IApiProblem.CATEGORY_USAGE, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
+			assertFalse("the bogus problem should not be filtered", store.isFiltered(problem));
+		} 
+		catch (CoreException e) {
 			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * tests removing an api problem filter 
+	 */
+	public void testRemoveFilter() {
+		try {
+			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the testing project api component must exist", component);
+			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
+			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
+			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiFilterStore store;
+			store = component.getFilterStore();
+			store.removeFilter(component.newProblemFilter(problem));
+			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
+		} 
+		catch (CoreException e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * tests adding a filter using the method that accepts a filter
+	 */
+	public void testAddFilterFromFilter() {
+		try {
+			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the testing project api component must exist", component);
+			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
+			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
+			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiFilterStore store;
+			store = component.getFilterStore();
+			store.addFilter(component.newProblemFilter(problem));
+			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem));
+			store.removeFilter(component.newProblemFilter(problem));
+			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
+		}
+		catch(CoreException ce) {
+			fail(ce.getMessage());
+		}
+	}
+	
+	/**
+	 * tests adding a filter using the method that accepts an api problem
+	 */
+	public void testAddFilterFromProblem() {
+		try {
+			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the testing project api component must exist", component);
+			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+			IResource resource = project.findMember(new Path("src/x/y/z/C4.java"));
+			assertNotNull("the resource src/x/y/z/C4.java must exist", resource);
+			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
+			IApiFilterStore store;
+			store = component.getFilterStore();
+			store.addFilter(problem);
+			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem));
+			store.removeFilter(component.newProblemFilter(problem));
+			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
+		}
+		catch(CoreException ce) {
+			fail(ce.getMessage());
 		}
 	}
 	
@@ -155,7 +255,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that a filter store can be correctly annotated from a jar file (bundle)
+	 * Tests that a filter store will not be annotated from a bundle
 	 */
 	public void testAnnotateStoreFromBundle() {
 		try {
@@ -168,7 +268,8 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			assertNotNull("the new component cannot be null", component);
 			IApiFilterStore store = component.getFilterStore();
 			assertNotNull("the new filter store cannot be null", store);
-			assertFilterStore(store, 8);
+			IResource[] resources = store.getResources();
+			assertTrue("The filter store from a bundle should always be empty", resources.length == 0);
 		}
 		catch(CoreException e) {
 			fail(e.getMessage());

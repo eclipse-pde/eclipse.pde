@@ -48,7 +48,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.text.edits.TextEdit;
 
@@ -155,7 +155,7 @@ public class UpdateSinceTagOperation {
 						unit.recordModifications();
 						AST ast = unit.getAST();
 						ASTRewrite rewrite = ASTRewrite.create(ast);
-						if (IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MISSING == this.sinceTagType) {
+						if (IApiProblem.SINCE_TAG_MISSING == this.sinceTagType) {
 							Javadoc docnode = node.getJavadoc();
 							if (docnode == null) {
 								docnode = ast.newJavadoc();

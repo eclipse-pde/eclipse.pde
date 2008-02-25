@@ -48,8 +48,8 @@ public interface IApiFilterStore {
 	
 	/**
 	 * Returns all of the resources that have filters contained in this
-	 * filter store. if there are no resources with filters or the store has not
-	 * been initialized yet and empty array is returned, never <code>null</code>.
+	 * filter store. If there are no resources with filters or the store has not
+	 * been initialized yet an empty array is returned, never <code>null</code>.
 	 * 
 	 * The returned resources are not guaranteed to exist.
 	 * 

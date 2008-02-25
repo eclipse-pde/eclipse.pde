@@ -51,7 +51,7 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public int getId() {
 		//TODO needs to include element
-		return fCategory | fKind | fFlags | fSeverity;
+		return fCategory | fKind | fFlags;
 	}
 	
 	/* (non-Javadoc)
@@ -114,6 +114,13 @@ public class ApiProblem implements IApiProblem {
 		buffer.append("]"); //$NON-NLS-1$
 		return buffer.toString();
 	}	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getId();
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

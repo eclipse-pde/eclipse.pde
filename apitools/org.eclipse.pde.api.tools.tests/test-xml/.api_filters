@@ -1,16 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <component id="ApiPluginTests">
-    <package kind="REMOVED_FIELD" name="x.y.z">
-      <type kind="" name="C4"/>
-    </package>
-    <package kind="" name="x">
-      <type kind="ADDED_CLASS_BOUND" name="C1"/>
-      <type kind="ADDED_INTERFACE_BOUND,CHANGED_CONTRACTED_SUPERINTERFACES_SET" name="C2"/>
-    </package>
-    <package kind="" name="x.y">
-      <type kind="CHANGED_SUPERCLASS" name="C3">
-        <field kind="CHANGED_VALUE" name="field"/>
-        <method kind="ADDED_NO_EXTEND" name="foo" signature="(Ljava/lang/Integer;)Ljava/lang/Object;"/>
-      </type>
-    </package>
+<!--
+	Copyright (c) IBM Corporation and others 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
+	
+	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
+	All contexts are grouped by their relation, with all relations grouped alphabetically.
+-->
+  <component id="APIPluginTests">
+	  <!--
+	  	Test the kind for RestrictionModifiers#NO_IMPLEMENT
+	  	Also tests that broken filters (wrong text entered) do not break loading / using filters
+	  -->
+	  <resource path="src/x/y/z/C4.java">
+	  	<filter kind="256" flags="0" severity="2" category="33554432" message="Test the kind for RestrictionModifiers#NO_IMPLEMENT"/>
+	  	<filter kind="a" flags="0" severity="2" category="33554432" message=""/>
+	  	<filter kind="1" flags="a" severity="2" category="33554432" message=""/>
+	  	<filter kind ="1" flags="0" severity="a" category="33554432" message=""/>
+	  	<filter kind ="1" flags="0" severity="2" category="a" message=""/>
+	  </resource>
+	  
+	  <!--
+	  	Test the kind for IDelta#REMOVED with flags IDelta#FIELD
+	  	Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY
+	  -->
+	  <resource path="src/x/C1.java">
+	  	<filter kind="2048" flags="17" severity="1" category="16777216" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
+	  	<filter kind="128" flags="54" severity="0" category="16777216" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
+	  </resource>
+	   
+	  <!--
+	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE
+	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE
+	  -->
+	  <resource path="src/x/y/C3.java">
+	  	<filter kind="1" flags="0" severity="2" category="67108864" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE"/>
+	  	<filter kind="2" flags="0" severity="2" category="67108864" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE"/>
+	  </resource>
+	  
+	  <!--
+	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING
+	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED
+	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID
+	  -->
+	  <resource path="META-INF/MANIFEST.MF">
+	  	<filter kind="1" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING"/>
+	  	<filter kind="2" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED"/>
+	  	<filter kind="4" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID"/>
+	  </resource>
   </component>

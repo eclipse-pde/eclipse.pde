@@ -58,6 +58,13 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		return super.equals(obj);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fProblem.hashCode() + fComponentId.hashCode();
+	}
+	
 	/**
 	 * Returns if the two specified objects are equal.
 	 * Objects are considered equal if:

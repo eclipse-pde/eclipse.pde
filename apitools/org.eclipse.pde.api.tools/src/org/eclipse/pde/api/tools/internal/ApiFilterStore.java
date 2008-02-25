@@ -151,6 +151,7 @@ public class ApiFilterStore implements IApiFilterStore {
 			if(filters.isEmpty()) {
 				return fFilterMap.remove(filter.getUnderlyingProblem().getResource()) != null;
 			}
+			return true;
 		}
 		return false;
 	}

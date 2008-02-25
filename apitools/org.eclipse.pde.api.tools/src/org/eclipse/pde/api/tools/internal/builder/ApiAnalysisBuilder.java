@@ -1128,7 +1128,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				case 1 :
 					IMarker marker = manifestMarkers[0];
 					int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
-					if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
+					if (IApiProblem.MAJOR_VERSION_CHANGE == kind) {
 						marker.delete();
 					}
 					break;
@@ -1756,7 +1756,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					version = new Version(component.getVersion());
 					buffer.append(version.getMajor()).append('.').append(version.getMinor());
 					createSinceTagMarker(
-						IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MISSING,
+						IApiProblem.SINCE_TAG_MISSING,
 						BuilderMessages.VersionManagementMissingSinceTag,
 						compilationUnit,
 						member,
@@ -1793,7 +1793,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								buffer.append(version.getMajor()).append('.').append(version.getMinor());
 							}
 							createSinceTagMarker(
-									IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_MALFORMED,
+									IApiProblem.SINCE_TAG_MALFORMED,
 									NLS.bind(
 											BuilderMessages.VersionManagementMalformedSinceTag,
 											sinceVersion),
@@ -1817,7 +1817,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							Version version = new Version(component.getVersion());
 							buffer.append(version.getMajor()).append('.').append(version.getMinor());
 							createSinceTagMarker(
-								IApiMarkerConstants.MARKER_ATTR_SINCE_TAG_INVALID,
+								IApiProblem.SINCE_TAG_INVALID,
 								NLS.bind(
 									BuilderMessages.VersionManagementSinceTagGreaterThanComponentVersion,
 									sinceVersion,
@@ -1925,7 +1925,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					IMarker marker = manifestMarkers[0];
 					int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
 					if (breakage) {
-						if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
+						if (IApiProblem.MAJOR_VERSION_CHANGE == kind) {
 							// no need to create the same marker again
 							return;
 						} else {
@@ -1941,7 +1941,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// this means the marker is not create for a breakage change
 				IMarker marker = manifestMarkers[0];
 				int kind = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0);
-				if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == kind) {
+				if (IApiProblem.MAJOR_VERSION_CHANGE == kind) {
 					// remove the existing marker to create one for non breakage version issue
 					marker.delete();
 				}
@@ -1950,7 +1950,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			// this error should be located on the manifest.mf file
 			// first of all we check how many binary breakage marker are there
-			int kind = breakage ? IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE : IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE;
+			int kind = breakage ? IApiProblem.MAJOR_VERSION_CHANGE : IApiProblem.MINOR_VERSION_CHANGE;
 			if(isProblemFiltered(manifestFile, message, severity, IApiProblem.CATEGORY_VERSION, kind, IApiProblem.NO_FLAGS)) {
 				return;
 			}

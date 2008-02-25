@@ -45,6 +45,51 @@ public interface IApiProblem {
 	 * Value is: <code>0</code>
 	 */
 	public static final int NO_FLAGS = 0x0;
+
+	/**
+	 * Constant representing the value of the invalid @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>4</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int SINCE_TAG_INVALID = 0x1 << 2;
+
+	/**
+	 * Constant representing the value of the malformed @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int SINCE_TAG_MALFORMED = 0x1 << 1;
+
+	/**
+	 * Constant representing the value of the missing @since tag {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int SINCE_TAG_MISSING = 0x1;
+
+	/**
+	 * Constant representing the value of the major version change {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int MAJOR_VERSION_CHANGE = 0x1;
+
+	/**
+	 * Constant representing the value of the minor version change {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int MINOR_VERSION_CHANGE = 0x1 << 1;
 	
 	/**
 	 * Returns the severity of the problem. 

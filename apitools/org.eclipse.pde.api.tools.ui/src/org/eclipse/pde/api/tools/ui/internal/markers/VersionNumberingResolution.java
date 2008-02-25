@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
@@ -38,9 +39,9 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
 	public String getDescription() {
-		if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == this.kind) {
+		if (IApiProblem.MAJOR_VERSION_CHANGE == this.kind) {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_major0, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE == this.kind) {
+		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_minor0, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_micro0, this.newVersionValue);
@@ -58,9 +59,9 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == this.kind) {
+		if (IApiProblem.MAJOR_VERSION_CHANGE == this.kind) {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE == this.kind) {
+		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
 		} else {
 			return NLS.bind(MarkerMessages.VersionNumberingResolution_micro1, this.newVersionValue);
@@ -72,9 +73,9 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 	 */
 	public void run(final IMarker marker) {
 		String title = null;
-		if (IApiMarkerConstants.MARKER_ATTR_MAJOR_VERSION_CHANGE == this.kind) {
+		if (IApiProblem.MAJOR_VERSION_CHANGE == this.kind) {
 			title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
-		} else if (IApiMarkerConstants.MARKER_ATTR_MINOR_VERSION_CHANGE == this.kind) {
+		} else if (IApiProblem.MINOR_VERSION_CHANGE == this.kind) {
 			title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor2, this.newVersionValue);
 		} else {
 			title = NLS.bind(MarkerMessages.VersionNumberingResolution_micro2, this.newVersionValue);
