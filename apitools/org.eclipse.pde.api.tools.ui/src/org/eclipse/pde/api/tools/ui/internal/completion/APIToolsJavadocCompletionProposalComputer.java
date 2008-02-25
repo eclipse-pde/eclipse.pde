@@ -61,6 +61,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					int offset = jcontext.getInvocationOffset();
 					try {
 						IJavaElement element = cunit.getElementAt(offset);
+						if (element == null) {
+							return Collections.EMPTY_LIST;
+						}
 						ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, offset));
 						fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
 						int type = getType(element);
