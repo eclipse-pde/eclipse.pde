@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
@@ -39,6 +40,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button fFixIconNLSPaths;
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
+	private Button fRemoveUselessFiles;
 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
@@ -139,6 +141,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		fRemoveLazy = new Button(group, SWT.CHECK);
 		fRemoveLazy.setText(PDEUIMessages.OrganizeManifestsWizardPage_lazyStart);
+
+		fRemoveUselessFiles = new Button(group, SWT.CHECK);
+		fRemoveUselessFiles.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile);
+
 	}
 
 	private void createNLSGroup(Composite container) {
@@ -208,6 +214,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveLazy.setSelection(selection);
 		fProcessor.setRemoveLazy(selection);
 
+		selection = !settings.getBoolean(PROP_REMOVE_USELESSFILES);
+		fRemoveUselessFiles.setSelection(selection);
+		fProcessor.setRemoveUselessFiles(selection);
+
 		selection = settings.getBoolean(PROP_NLS_PATH);
 		fFixIconNLSPaths.setSelection(selection);
 		fProcessor.setPrefixIconNL(selection);
@@ -220,7 +230,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		setPageComplete();
 	}
 
-	protected void preformOk() {
+	protected void performOk() {
 		IDialogSettings settings = getDialogSettings();
 
 		settings.put(PROP_ADD_MISSING, !fAddMissing.getSelection());
@@ -235,6 +245,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		settings.put(PROP_ADD_DEPENDENCIES, fAdditonalDependencies.getSelection());
 
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
+		settings.put(PROP_REMOVE_USELESSFILES, !fRemoveUselessFiles.getSelection());
 
 		settings.put(PROP_NLS_PATH, fFixIconNLSPaths.getSelection());
 		settings.put(PROP_UNUSED_KEYS, fRemovedUnusedKeys.getSelection());
@@ -252,7 +263,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void setButtonArrays() {
-		fTopLevelButtons = new Button[] {fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal, fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy, fCalculateUses};
+		fTopLevelButtons = new Button[] {fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal, fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses};
 	}
 
 	private void setPageComplete() {
@@ -311,6 +322,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setAddDependencies(fAdditonalDependencies.getSelection());
 		else if (fRemoveLazy.equals(source))
 			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
+		else if (fRemoveUselessFiles.equals(source))
+			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
 		else if (fFixIconNLSPaths.equals(source))
 			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
 		else if (fRemovedUnusedKeys.equals(source))

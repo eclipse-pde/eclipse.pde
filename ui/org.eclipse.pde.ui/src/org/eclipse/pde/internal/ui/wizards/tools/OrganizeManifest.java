@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
@@ -18,7 +19,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.*;
@@ -174,7 +177,19 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					((SingleManifestHeader) lazy).setMainComponent(null);
 			}
 		}
+		
+	}
 
+	public static Change deleteUselessPluginFile(IProject project, IPluginModelBase modelBase) {
+		if (modelBase == null)
+			return null;
+
+		IExtensions ext = modelBase.getExtensions();
+		if (ext.getExtensionPoints().length > 0 || ext.getExtensions().length > 0)
+			return null;
+		String name = (modelBase instanceof IBundleFragmentModel) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+		IFile pluginFile = project.getFile(name);
+		return new DeleteResourceChange(pluginFile.getFullPath(), true);
 	}
 
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {

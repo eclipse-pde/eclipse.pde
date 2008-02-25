@@ -58,6 +58,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;
 	public static final int P_UNTRANSLATED_NODE = 0x3002;
 	public static final int P_UNKNOWN_CLASS = 0x3003;
+	public static final int P_USELESS_FILE = 0x3004;
 
 	// marker attribute keys
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$

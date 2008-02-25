@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
@@ -41,6 +42,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fRemoveDependencies = true; // if true: remove, else mark optional
 	protected boolean fUnusedDependencies = false; // find/remove unused dependencies - long running op
 	protected boolean fRemoveLazy = true; // remove lazy/auto start if no activator
+	protected boolean fRemoveUselessFiles = false; // remove fragment/plugin.xml if no extension/extension point defined
 	protected boolean fPrefixIconNL = false; // prefix icon paths with $nl$
 	protected boolean fUnusedKeys = false; // remove unused <bundle-localization>.properties keys
 	protected boolean fAddDependencies = false;
@@ -82,7 +84,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		CompositeChange change = new CompositeChange(NLS.bind(PDEUIMessages.OrganizeManifestsProcessor_rootMessage, new String[] {fCurrentProject.getName()}));
 		monitor.beginTask(NLS.bind(PDEUIMessages.OrganizeManifestsProcessor_rootMessage, new String[] {fCurrentProject.getName()}), getTotalTicksPerProject());
 
-		final TextFileChange[] result = {null};
+		final Change[] result = {null, null};
 		final Exception[] ee = new Exception[1];
 		ModelModification modification = new ModelModification(fCurrentProject) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
@@ -96,17 +98,19 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 					}
 			}
 		};
-		TextFileChange[] changes = PDEModelUtility.changesForModelModication(modification, monitor);
+		Change[] changes = PDEModelUtility.changesForModelModication(modification, monitor);
 		for (int i = 0; i < changes.length; i++)
 			change.add(changes[i]);
 		if (result[0] != null)
 			change.add(result[0]);
+		if (result[1] != null)
+			change.add(result[1]);
 		if (ee[0] != null)
 			PDEPlugin.log(ee[0]);
 		return change;
 	}
 
-	private void runCleanup(IProgressMonitor monitor, IBundlePluginModelBase modelBase, TextFileChange[] result) throws InvocationTargetException, InterruptedException {
+	private void runCleanup(IProgressMonitor monitor, IBundlePluginModelBase modelBase, Change[] result) throws InvocationTargetException, InterruptedException {
 
 		IBundle currentBundle = modelBase.getBundleModel().getBundle();
 		ISharedExtensionsModel sharedExtensionsModel = modelBase.getExtensionsModel();
@@ -179,6 +183,14 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			monitor.worked(1);
 		}
 
+		if (fRemoveUselessFiles) {
+			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_uselessPluginFile, fCurrentProject.getName()));
+			if (!monitor.isCanceled()) {
+				result[1] = OrganizeManifest.deleteUselessPluginFile(fCurrentProject, currentExtensionsModel);
+			}
+			monitor.worked(1);
+		}
+
 		if (fPrefixIconNL) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!monitor.isCanceled())
@@ -189,7 +201,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		if (fUnusedKeys) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedKeys, projectName));
 			if (!monitor.isCanceled()) {
-				TextFileChange[] results = OrganizeManifest.removeUnusedKeys(fCurrentProject, currentBundle, currentExtensionsModel);
+				Change[] results = OrganizeManifest.removeUnusedKeys(fCurrentProject, currentBundle, currentExtensionsModel);
 				if (results.length > 0)
 					result[0] = results[0];
 			}
@@ -235,6 +247,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			ticks += 4;
 		if (fRemoveLazy)
 			ticks += 1;
+		if (fRemoveUselessFiles)
+			ticks += 1;
 		if (fPrefixIconNL)
 			ticks += 1;
 		if (fUnusedKeys)
@@ -276,6 +290,10 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	public void setRemoveLazy(boolean removeLazy) {
 		fRemoveLazy = removeLazy;
+	}
+
+	public void setRemoveUselessFiles(boolean removeUselessFiles) {
+		fRemoveUselessFiles = removeUselessFiles;
 	}
 
 	public void setPrefixIconNL(boolean prefixIconNL) {

@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.util.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -86,6 +85,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					}
 				}
 			}
+
+			IExtensions extensions = fModel.getExtensions();
+			if (extensions != null && extensions.getExtensions().length == 0 && extensions.getExtensionPoints().length == 0)
+				report(PDECoreMessages.Builders_Manifest_useless_file, -1, IMarker.SEVERITY_WARNING, PDEMarkerFactory.P_USELESS_FILE, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 
