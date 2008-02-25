@@ -27,6 +27,7 @@ import org.osgi.framework.*;
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String PROFILE_EXTENSION = ".profile"; //$NON-NLS-1$
 	private static final String SYSTEM_PACKAGES = "org.osgi.framework.system.packages"; //$NON-NLS-1$
+	private static final String PROFILE_NAME = "osgi.java.profile.name"; //$NON-NLS-1$
 
 	private StateObjectFactory factory;
 	protected State state;
@@ -40,9 +41,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private List sortedBundles = null;
 	private Set convertedManifests;
 	private long lastSortingDate = 0L;
-
-	private String javaProfile;
-	private String[] javaProfiles;
 
 	protected long getNextId() {
 		return ++id;
@@ -385,23 +383,18 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public void resolveState() {
 		List configs = AbstractScriptGenerator.getConfigInfos();
-		Dictionary[] properties = new Dictionary[configs.size()];
+		ArrayList properties = new ArrayList();  //Collection of dictionaries
+		Dictionary prop;
 
 		// Set the JRE profile
+		String[] javaProfiles = getJavaProfiles(getOSGiLocation());
 		String systemPackages = null;
 		String ee = null;
-		if (javaProfile == null)
-			javaProfile = getDefaultJavaProfile();
-		Properties profileProps = getJavaProfileProperties();
-		if (profileProps != null) {
-			systemPackages = profileProps.getProperty(SYSTEM_PACKAGES);
-			ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-		}
 
 		int i = 0;
 		for (Iterator iter = configs.iterator(); iter.hasNext(); i++) {
 			Config aConfig = (Config) iter.next();
-			Dictionary prop = new Hashtable();
+			prop = new Hashtable();
 			if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.RESOLVER_DEV_MODE))
 				prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
 			String os = aConfig.getOs();
@@ -422,12 +415,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			else
 				prop.put(OSGI_ARCH, arch);
 
-			// Set the JRE profile
-			if (systemPackages != null)
-				prop.put(SYSTEM_PACKAGES, systemPackages);
-			if (ee != null)
-				prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
-
 			// check the user-specified platform properties
 			if (platformProperties != null) {
 				for (Enumeration e = platformProperties.keys(); e.hasMoreElements();) {
@@ -436,18 +423,34 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				}
 			}
 
-			properties[i] = prop;
+			properties.add(prop);
 		}
-		state.setPlatformProperties(properties);
-		state.resolve(false);
-	}
 
-	private String getDefaultJavaProfile() {
-		if (javaProfiles == null)
-			setJavaProfiles(getOSGiLocation());
-		if (javaProfiles != null && javaProfiles.length > 0)
-			return javaProfiles[0];
-		return null;
+		Properties profileProps = null;
+		boolean added = false;
+		//javaProfiles are sorted, go in reverse order, and if when we hit 0 we haven't added any yet, 
+		//then add that last profile so we have something.
+		for (int j = javaProfiles.length - 1; j >= 0; j--) {
+			// add a property set for each EE that is defined in the build.
+			profileProps = getJavaProfileProperties(javaProfiles[j]);
+			if (profileProps != null) {
+				String profileName = profileProps.getProperty(PROFILE_NAME);
+				if (AbstractScriptGenerator.getImmutableAntProperty(profileName) != null || (j == 0 && !added)) {
+					systemPackages = profileProps.getProperty(SYSTEM_PACKAGES);
+					ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+
+					prop = new Hashtable();
+					prop.put(SYSTEM_PACKAGES, systemPackages);
+					prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+					properties.add(prop);
+					added = true;
+				}
+			}
+		}
+
+		Dictionary[] stateProperties = (Dictionary[]) properties.toArray(new Dictionary[properties.size()]);
+		state.setPlatformProperties(stateProperties);
+		state.resolve(false);
 	}
 
 	public State getState() {
@@ -648,38 +651,15 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return new File(osgiBundle.getLocation());
 	}
 
-	private void setJavaProfiles(File bundleLocation) {
+	private String[] getJavaProfiles(File bundleLocation) {
 		String[] foundProfiles = null;
 		if (bundleLocation == null)
-			foundProfiles = getRuntimeJavaProfiles();
+			foundProfiles = BundleHelper.getDefault().getRuntimeJavaProfiles();
 		else if (bundleLocation.isDirectory())
 			foundProfiles = getDirJavaProfiles(bundleLocation);
 		else
 			foundProfiles = getJarJavaProfiles(bundleLocation);
-		javaProfiles = foundProfiles;
-	}
-
-	private String[] getRuntimeJavaProfiles() {
-		BundleContext context = BundleHelper.getDefault().getBundle().getBundleContext();
-		Bundle systemBundle = context.getBundle(0);
-
-		URL url = systemBundle.getEntry("profile.list"); //$NON-NLS-1$
-		if (url != null) {
-			try {
-				return getJavaProfiles(new BufferedInputStream(url.openStream()));
-			} catch (IOException e) {
-				//no profile.list?
-			}
-		}
-
-		ArrayList results = new ArrayList(6);
-		Enumeration entries = systemBundle.findEntries("/", "*.profile", false); //$NON-NLS-1$ //$NON-NLS-2$
-		while (entries.hasMoreElements()) {
-			URL entryUrl = (URL) entries.nextElement();
-			results.add(entryUrl.getFile().substring(1));
-		}
-
-		return sortProfiles((String[]) results.toArray(new String[results.size()]));
+		return foundProfiles;
 	}
 
 	private String[] getDirJavaProfiles(File bundleLocation) {
@@ -687,7 +667,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		File profileList = new File(bundleLocation, "profile.list"); //$NON-NLS-1$
 		if (profileList.exists())
 			try {
-				return getJavaProfiles(new BufferedInputStream(new FileInputStream(profileList)));
+				return BundleHelper.getJavaProfiles(new BufferedInputStream(new FileInputStream(profileList)));
 			} catch (IOException e) {
 				// this should not happen because we just checked if the file exists
 			}
@@ -696,7 +676,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				return name.endsWith(PROFILE_EXTENSION);
 			}
 		});
-		return sortProfiles(profiles);
+		return BundleHelper.sortProfiles(profiles);
 	}
 
 	private String[] getJarJavaProfiles(File bundleLocation) {
@@ -707,7 +687,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			ZipEntry profileList = zipFile.getEntry("profile.list"); //$NON-NLS-1$
 			if (profileList != null)
 				try {
-					return getJavaProfiles(zipFile.getInputStream(profileList));
+					return BundleHelper.getJavaProfiles(zipFile.getInputStream(profileList));
 				} catch (IOException e) {
 					// this should not happen, just incase do the default
 				}
@@ -728,37 +708,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					// nothing to do
 				}
 		}
-		return sortProfiles((String[]) results.toArray(new String[results.size()]));
+		return BundleHelper.sortProfiles((String[]) results.toArray(new String[results.size()]));
 	}
 
-	private String[] getJavaProfiles(InputStream is) throws IOException {
-		Properties props = new Properties();
-		props.load(is);
-		return ManifestElement.getArrayFromList(props.getProperty("java.profiles"), ","); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	private String[] sortProfiles(String[] profiles) {
-		Arrays.sort(profiles, new Comparator() {
-			public int compare(Object profile1, Object profile2) {
-				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
-				String p1 = (String) profile1;
-				String p2 = (String) profile2;
-				if (p1.startsWith("JavaSE") && !p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("JavaSE") && p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				return -p1.compareTo(p2);
-			}
-		});
-		return profiles;
-	}
-
-	private Properties getJavaProfileProperties() {
-		if (javaProfile == null)
+	private Properties getJavaProfileProperties(String profile) {
+		if (profile == null)
 			return null;
 		File location = getOSGiLocation();
 		InputStream is = null;
@@ -768,24 +722,23 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				BundleContext context = BundleHelper.getDefault().getBundle().getBundleContext();
 				Bundle systemBundle = context.getBundle(0);
 
-				URL url = systemBundle.getEntry(javaProfile);
+				URL url = systemBundle.getEntry(profile);
 				is = new BufferedInputStream(url.openStream());
 			} else if (location.isDirectory()) {
-				is = new BufferedInputStream(new FileInputStream(new File(location, javaProfile)));
+				is = new BufferedInputStream(new FileInputStream(new File(location, profile)));
 			} else {
-				zipFile = null;
 				try {
 					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry entry = zipFile.getEntry(javaProfile);
+					ZipEntry entry = zipFile.getEntry(profile);
 					if (entry != null)
 						is = zipFile.getInputStream(entry);
 				} catch (IOException e) {
 					// nothing to do
 				}
 			}
-			Properties profile = new Properties();
-			profile.load(is);
-			return profile;
+			Properties props = new Properties();
+			props.load(is);
+			return props;
 		} catch (IOException e) {
 			// nothing to do
 		} finally {

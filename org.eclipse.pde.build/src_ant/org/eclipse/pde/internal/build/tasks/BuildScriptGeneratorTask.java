@@ -92,12 +92,27 @@ public class BuildScriptGeneratorTask extends Task {
 		value = getProject().getProperty("individualSourceBundles"); //$NON-NLS-1$
 		if (Boolean.valueOf(value).booleanValue())
 			antProperties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		setEEProfileProperties(antProperties);
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();
 		BundleHelper.getDefault().setLog(null);
 	}
 
+	private void setEEProfileProperties(Properties antProperties) {
+		//TODO this relies on the formatting of the profile file names in osgi.
+		// More robust would be to load each profile and check its name directly.
+		String [] profiles = BundleHelper.getDefault().getRuntimeJavaProfiles();
+		for (int i = 0; i < profiles.length; i++) {
+			String profileName = profiles[i].substring(0, profiles[i].length() - 8); //strip .profile off the end
+			profileName = profileName.replace('_', '/');
+			String value = getProject().getProperty(profileName);
+			if (value != null) {
+				antProperties.put(profileName, value);
+			}
+		}
+	}
+	
 	/** 
 	 * Set the folder in which the build will occur.
 	 * @param buildDirectory the location where the build will occur.
