@@ -429,10 +429,17 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if(DEBUG) {
 				System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			//save the .api_filters file
+			IProject project = fProject.getProject();
+			// only write the file if the project has an API nature and is accessible
+			if(!project.isAccessible()) {
+				return;
+			}
+			if(!project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
+				return;
+			}
 			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
 			String xml = filters.getStoreAsXml();
-			IFile file = fProject.getProject().getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
+			IFile file = project.getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
 			if(xml == null) {
 				// no filters - delete the file if it exists
 				if (file.exists()) {
@@ -444,18 +451,11 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 			if(xstream == null) {
 				return;
 			}
-			IProject project = fProject.getProject();
-			if(!project.isAccessible()) {
-				return;
+			if(!file.exists()) {
+				file.create(xstream, true, new NullProgressMonitor());
 			}
-			// only write the file if the project has an API nature
-			if (project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
-				if(!file.exists()) {
-					file.create(xstream, true, new NullProgressMonitor());
-				}
-				else {
-					file.setContents(xstream, true, false, new NullProgressMonitor());
-				}
+			else {
+				file.setContents(xstream, true, false, new NullProgressMonitor());
 			}
 		}
 	}
