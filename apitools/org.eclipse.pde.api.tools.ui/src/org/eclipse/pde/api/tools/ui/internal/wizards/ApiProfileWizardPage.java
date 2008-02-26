@@ -36,12 +36,15 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.SystemLibraryApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.internal.core.PluginPathFinder;
@@ -160,7 +163,7 @@ public class ApiProfileWizardPage extends WizardPage {
 				throw new InvocationTargetException(e);
 			}
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 8);
-			subMonitor.beginTask("", urls.length); //$NON-NLS-1$
+			subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, urls.length); 
 			fEEset.clear();
 			fRecommendedEE = null;
 			List components = new ArrayList();
@@ -231,6 +234,7 @@ public class ApiProfileWizardPage extends WizardPage {
 				setPageComplete(pageValid());
 			}
 		});
+		
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		String[] items = new String[envs.length];
 		for(int i = 0; i < envs.length; i++) {
@@ -338,7 +342,7 @@ public class ApiProfileWizardPage extends WizardPage {
 				locationcombo.setItems((String[]) locations.toArray(new String[locations.size()]));
 				locationcombo.select(0);
 			}
-		}
+		}		
 	}
 	
 	/**
@@ -383,6 +387,11 @@ public class ApiProfileWizardPage extends WizardPage {
 		String text = nametext.getText().trim();
 		if(text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
+			return false;
+		}
+		if((fProfile != null && !text.equals(fProfile.getName())) && 
+				((ApiProfileManager)ApiPlugin.getDefault().getApiProfileManager()).isExistingProfileName(text)) {
+			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
 		}
 		text = locationcombo.getText().trim();

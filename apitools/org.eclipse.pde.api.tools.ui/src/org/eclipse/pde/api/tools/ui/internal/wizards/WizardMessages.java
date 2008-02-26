@@ -31,6 +31,7 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_8;
 	public static String ApiProfileWizardPage_9;
 	public static String ApiProfileWizardPage_ee_of_X_required;
+	public static String ApiProfileWizardPage_profile_with_that_name_exists;
 	public static String ApiToolingSetupWizardPage_0;
 	public static String ApiToolingSetupWizardPage_1;
 	public static String ApiToolingSetupWizardPage_2;
@@ -42,6 +43,7 @@ public class WizardMessages extends NLS {
 	public static String JavadocTagRefactoring_2;
 	public static String JavadocTagRefactoring_3;
 	public static String ProjectUpdateChange_add_nature_and_builder;
+	public static String ProjectUpdateChange_adding_nature_and_builder;
 	public static String ProjectUpdateChange_project_not_accessible;
 	public static String UpdateJavadocTagsWizard_0;
 	public static String UpdateJavadocTagsWizardPage_10;

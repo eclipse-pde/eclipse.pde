@@ -499,6 +499,18 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
+	 * Returns if the given name is an existing profile name
+	 * @param name
+	 * @return true if the given name is an existing profile name, false otherwise
+	 */
+	public boolean isExistingProfileName(String name) {
+		if(profilecache == null) {
+			return false;
+		}
+		return profilecache.keySet().contains(name);
+	}
+	
+	/**
 	 * Cleans up the manager and persists any unsaved API profiles
 	 */
 	public void stop() {
@@ -597,9 +609,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					ApiPlugin.log(e);
 				}
 			}
-			IApiComponent[] components = new IApiComponent[componentsList.size()];
-			componentsList.toArray(components);
-			profile.addApiComponents(components);
+			profile.addApiComponents((IApiComponent[]) componentsList.toArray(new IApiComponent[componentsList.size()]));
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		} catch(IOException e) {

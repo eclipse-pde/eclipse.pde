@@ -14,11 +14,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -66,13 +68,18 @@ public class ProjectUpdateChange extends Change {
 		if(fProject.isAccessible()) {
 			return RefactoringStatus.create(Status.OK_STATUS);
 		}
-		return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new String[] {fProject.getName()}));
+		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new String[] {fProject.getName()}));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		if(pm == null) {
+			pm = new NullProgressMonitor();
+		}
+		pm.beginTask(IApiToolsConstants.EMPTY_STRING, 1);
+		pm.setTaskName(WizardMessages.ProjectUpdateChange_adding_nature_and_builder);
 		IProjectDescription description = fProject.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];

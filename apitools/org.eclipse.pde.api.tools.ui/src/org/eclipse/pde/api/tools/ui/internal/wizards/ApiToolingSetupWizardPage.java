@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -84,7 +85,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	
 	private CheckboxTableViewer tableviewer = null;
 	private Button removecxml = null;
-	private boolean fDirty = true;
 	
 	/**
 	 * Constructor
@@ -131,7 +131,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(pageValid());
-				fDirty = true;
 			}
 		});
 		Composite bcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
@@ -140,7 +139,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(true);
 				setPageComplete(pageValid());
-				fDirty = true;
 			}
 		});
 		button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_11, null);
@@ -148,7 +146,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(false);
 				setPageComplete(pageValid());
-				fDirty = true;
 			}
 		});
 		tableviewer.setCheckedElements(getWorkbenchSelection());
@@ -271,7 +268,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Object[] projects = tableviewer.getCheckedElements();
 				IProject project = null;
-				monitor.beginTask(WizardMessages.ApiToolingSetupWizardPage_7, projects.length);
+				if(monitor == null) {
+					monitor = new NullProgressMonitor();
+				}
+				monitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
+				monitor.setTaskName(WizardMessages.ApiToolingSetupWizardPage_7);
 				ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
 				refactoring.resetRefactoring();
 				boolean remove = removecxml.getSelection();
@@ -289,14 +290,12 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 						if(remove) {
 							pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
 						}
-						if(monitor.isCanceled()) {
-							break;
-						}
-						monitor.worked(1);
 					}
-					
+					if(monitor.isCanceled()) {
+						break;
+					}
+					monitor.worked(1);
 				}
-				fDirty = false;
 			}
 		};
 		try {
@@ -312,9 +311,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
 	 */
 	protected boolean performFinish() {
-		if(fDirty) {
-			collectChanges();
-		}
+		collectChanges();
 		return super.performFinish();
 	}
 	
@@ -336,9 +333,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private void notifyNoDefaultProfile() {
 		if(ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile() == null) {
 			UIJob job = new UIJob("No default API profile detected")  { //$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 +
 					WizardMessages.ApiToolingSetupWizardPage_3);
