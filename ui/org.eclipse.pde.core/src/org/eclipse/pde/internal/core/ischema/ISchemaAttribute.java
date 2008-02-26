@@ -40,6 +40,7 @@ public interface ISchemaAttribute extends ISchemaObject, IMetaAttribute {
 	public static final int STR_IND = 1;
 	public static final int JAVA_IND = 2;
 	public static final int RES_IND = 3;
+	public static final int ID_IND = 4;
 	public static final String[] TYPES = {"boolean", //$NON-NLS-1$
 			"string", //$NON-NLS-1$
 			"java", //$NON-NLS-1$

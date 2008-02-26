@@ -67,7 +67,7 @@ public interface IMetaAttribute {
 	public boolean isDeprecated();
 
 	/**
-	 * Returns the kind of this attribute's value (STRING, JAVA or RESOURCE).
+	 * Returns the kind of this attribute's value (STRING, JAVA, RESOURCE or IDENTIFIER).
 	 */
 	public int getKind();
 }

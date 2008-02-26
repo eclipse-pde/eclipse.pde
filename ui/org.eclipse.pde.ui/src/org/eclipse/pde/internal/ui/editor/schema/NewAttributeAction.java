@@ -23,7 +23,7 @@ public class NewAttributeAction extends Action {
 
 	public NewAttributeAction() {
 		setText(PDEUIMessages.SchemaEditor_NewAttribute_label);
-		setImageDescriptor(PDEPluginImages.DESC_ATT_IMPL_OBJ);
+		setImageDescriptor(PDEPluginImages.DESC_ATTRIBUTE_OBJ);
 		setToolTipText(PDEUIMessages.SchemaEditor_NewAttribute_tooltip);
 	}
 

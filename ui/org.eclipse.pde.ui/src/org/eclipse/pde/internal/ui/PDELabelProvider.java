@@ -780,15 +780,22 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(ISchemaAttribute att) {
-		if (att.getKind() == IMetaAttribute.JAVA)
-			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
-		if (att.getKind() == IMetaAttribute.RESOURCE)
-			return get(PDEPluginImages.DESC_ATT_FILE_OBJ);
-		if (att.getKind() == IMetaAttribute.IDENTIFIER)
-			return get(PDEPluginImages.DESC_ATT_ID_OBJ);
-		if (att.getUse() == ISchemaAttribute.REQUIRED)
-			return get(PDEPluginImages.DESC_ATT_REQ_OBJ);
-		return get(PDEPluginImages.DESC_ATT_IMPL_OBJ);
+		int kind = att.getKind();
+		String type = att.getType().getName();
+		int use = att.getUse();
+		int flags = 0;
+		if (use == ISchemaAttribute.OPTIONAL)
+			flags = 0; //|= F_OPTIONAL;
+		if (kind == IMetaAttribute.JAVA)
+			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ, flags);
+		if (kind == IMetaAttribute.RESOURCE)
+			return get(PDEPluginImages.DESC_ATT_FILE_OBJ, flags);
+		if (kind == IMetaAttribute.IDENTIFIER)
+			return get(PDEPluginImages.DESC_ATT_ID_OBJ, flags);
+		if (type.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
+			return get(PDEPluginImages.DESC_ATT_BOOLEAN_OBJ, flags);
+
+		return get(PDEPluginImages.DESC_ATT_STRING_OBJ);
 	}
 
 	private Image getObjectImage(ISchemaCompositor compositor) {
