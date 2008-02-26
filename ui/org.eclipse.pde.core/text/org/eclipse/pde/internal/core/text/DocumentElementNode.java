@@ -248,8 +248,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			if (index < fChildren.size()) {
 				IDocumentElementNode prevSibling = index == 0 ? null : (IDocumentElementNode) fChildren.get(index - 1);
 				((IDocumentElementNode) fChildren.get(index)).setPreviousSibling(prevSibling);
-				return child;
 			}
+			return child;
 		}
 		return null;
 	}

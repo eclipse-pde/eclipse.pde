@@ -12,10 +12,7 @@ package org.eclipse.pde.ui.tests.model.xml;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class StructureXMLModelTestCase extends XMLModelTestCase {

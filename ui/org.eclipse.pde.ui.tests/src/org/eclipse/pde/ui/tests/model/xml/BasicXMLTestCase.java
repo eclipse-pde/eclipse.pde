@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,8 @@ package org.eclipse.pde.ui.tests.model.xml;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class BasicXMLTestCase extends XMLModelTestCase {
 
@@ -95,4 +93,24 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 0);
 	}
+	
+	// bug 220178
+	public void testRemoveChildNode() throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
+		sb.append("<extension id=\"org.eclipse.pde.ui.samples2\"><sample /></extension>");
+		setXMLContents(sb, LF);
+		load(true);
+
+		IDocumentElementNode parent = (IDocumentElementNode) fModel.getPluginBase();
+		IDocumentElementNode child1 = parent.getChildAt(0);
+		assertNotNull(child1);
+		IDocumentElementNode child2 = parent.getChildAt(1);
+		assertNotNull(child2);
+		
+		IDocumentElementNode result = parent.removeChildNode(child2);
+		assertNotNull(result);
+		assertEquals(child2, result);
+	}
+	
 }
