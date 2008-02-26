@@ -32,7 +32,7 @@ public class RestrictionModifiers {
 	/**
 	 * Restriction kind constant indicating a class cannot be instantiated.
 	 */
-	public static final int NO_INSTANTIATE = 0x0400;	
+	public static final int NO_INSTANTIATE = 0x0400;
 	/**
 	 * Restriction kind constant indicating a class cannot have a member referenced
 	 */
