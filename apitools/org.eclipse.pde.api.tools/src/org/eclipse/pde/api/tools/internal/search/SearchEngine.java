@@ -58,6 +58,11 @@ public class SearchEngine implements IApiSearchEngine {
 	}
 	
 	/**
+	 * Empty references collection.
+	 */
+	private static final IReference[] EMPTY_REF = new IReference[0];
+	
+	/**
 	 * Visits each class file, extracting references.
 	 */
 	class Visitor extends ClassFileContainerVisitor {
@@ -91,23 +96,25 @@ public class SearchEngine implements IApiSearchEngine {
 		 * @see org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor#visit(java.lang.String, org.eclipse.pde.api.tools.model.component.IClassFile)
 		 */
 		public void visit(String packageName, IClassFile classFile) {
-			try {
-				fScanner.scan(fCurrentComponent, classFile, fLocalRefs, fAllReferenceKinds);
-				List references = fScanner.getReferenceListing();
-				// keep potential matches
-				Iterator iterator = references.iterator();
-				while (iterator.hasNext()) {
-					IReference ref = (IReference) iterator.next();
-					for (int i = 0; i < fConditions.length; i++) {
-						if (fConditions[i].isPotentialMatch(ref)) {
-							fPotentialMatches[i].add(ref);
-							// TODO: check other conditions for multiple matches?
-							break;
+			if (!fMonitor.isCanceled()) {
+				try {
+					fScanner.scan(fCurrentComponent, classFile, fLocalRefs, fAllReferenceKinds);
+					List references = fScanner.getReferenceListing();
+					// keep potential matches
+					Iterator iterator = references.iterator();
+					while (iterator.hasNext()) {
+						IReference ref = (IReference) iterator.next();
+						for (int i = 0; i < fConditions.length; i++) {
+							if (fConditions[i].isPotentialMatch(ref)) {
+								fPotentialMatches[i].add(ref);
+								// TODO: check other conditions for multiple matches?
+								break;
+							}
 						}
 					}
+				} catch (CoreException e) {
+					fStatus.add(e.getStatus());
 				}
-			} catch (CoreException e) {
-				fStatus.add(e.getStatus());
 			}
 		}
 	}
@@ -244,13 +251,16 @@ public class SearchEngine implements IApiSearchEngine {
 				}
 			}
 		}
+		if (monitor.isCanceled()) {
+			return;
+		}
 		long end = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Search: split into " + methodDecls.size() + " method overrides and " + sigtoref.size() + " unique references (" + (end - start) + "ms)");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 		// resolve references
 		start = System.currentTimeMillis();
-		resolveReferenceSets(sigtoref);
+		resolveReferenceSets(sigtoref, monitor);
 		end = System.currentTimeMillis();
 		if (DEBUG) {
 			System.out.println("Search: resolved unique references in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
@@ -298,12 +308,15 @@ public class SearchEngine implements IApiSearchEngine {
 	 * @param map the mapping of keys to sets of {@link IReference}s
 	 * @throws CoreException if something bad happens
 	 */
-	private void resolveReferenceSets(Map map) throws CoreException {
+	private void resolveReferenceSets(Map map, IProgressMonitor monitor) throws CoreException {
 		Iterator types = map.keySet().iterator();
 		String key = null;
 		List refs = null;
 		IReference ref= null;
 		while (types.hasNext()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
 			key = (String) types.next();
 			refs = (List) map.get(key);
 			ref = (IReference) refs.get(0);
@@ -338,10 +351,16 @@ public class SearchEngine implements IApiSearchEngine {
 		localMonitor.subTask(SearchMessages.SearchEngine_3); 
 		extractReferences(sourceScope, localMonitor);
 		localMonitor.worked(1);
+		if (localMonitor.isCanceled()) {
+			return EMPTY_REF;
+		}
 		// 2. resolve the remaining references
 		localMonitor.subTask(SearchMessages.SearchEngine_4);
 		resolveReferences(fPotentialMatches, localMonitor);
 		localMonitor.worked(1);
+		if (localMonitor.isCanceled()) {
+			return EMPTY_REF;
+		}
 		// 3. filter based on search conditions
 		localMonitor.subTask(SearchMessages.SearchEngine_5);
 		for (int i = 0; i < fPotentialMatches.length; i++) {
@@ -349,6 +368,9 @@ public class SearchEngine implements IApiSearchEngine {
 			if (!references.isEmpty()) {
 				IApiSearchCriteria condition = fConditions[i];
 				applyConditions(references, condition);
+			}
+			if (localMonitor.isCanceled()) {
+				return EMPTY_REF;
 			}
 		}
 		int size = 0;
