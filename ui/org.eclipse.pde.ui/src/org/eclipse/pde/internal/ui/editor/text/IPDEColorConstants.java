@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 220641
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 public interface IPDEColorConstants {
 	RGB XML_COMMENT = new RGB(128, 0, 0);
 	RGB PROC_INSTR = new RGB(128, 128, 128);
 	RGB STRING = new RGB(0, 128, 0);
 	RGB EXTERNALIZED_STRING = new RGB(128, 0, 128);
-	RGB DEFAULT = new RGB(0, 0, 0);
+	RGB DEFAULT = Display.getDefault().getHighContrast() ? new RGB(255, 255, 255) : new RGB(0, 0, 0);
 	RGB TAG = new RGB(0, 0, 128);
 
 	RGB HEADER_KEY = new RGB(128, 0, 0);
-	RGB HEADER_VALUE = new RGB(0, 0, 0);
-	RGB HEADER_ASSIGNMENT = new RGB(0, 0, 0);
+	RGB HEADER_VALUE = Display.getDefault().getHighContrast() ? new RGB(255, 255, 255) : new RGB(0, 0, 0);
+	RGB HEADER_ASSIGNMENT = Display.getDefault().getHighContrast() ? new RGB(255, 255, 255) : new RGB(0, 0, 0);
 	RGB HEADER_OSGI = new RGB(128, 0, 0);
 	RGB HEADER_ATTRIBUTES = new RGB(128, 128, 0);
 
