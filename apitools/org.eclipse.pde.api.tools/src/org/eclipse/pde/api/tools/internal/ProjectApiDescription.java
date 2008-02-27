@@ -227,29 +227,27 @@ public class ProjectApiDescription extends ApiDescription {
 	public void accept(ApiDescriptionVisitor visitor) {
 		try {
 			IPackageFragment[] fragments = getLocalPackageFragments();
+			IJavaElement[] children = null;
+			IJavaElement child = null;
+			ICompilationUnit unit = null;
 			for (int j = 0; j < fragments.length; j++) {
-				IPackageFragment fragment = fragments[j];
 				if (DEBUG) {
-					System.out.println("\t" + fragment.getElementName().toString()); //$NON-NLS-1$
+					System.out.println("\t" + fragments[j].getElementName().toString()); //$NON-NLS-1$
 				}
-				IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragment.getElementName());
+				IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
 				// visit package
 				ManifestNode pkgNode = findNode(null, packageDescriptor, isInsertOnResolve(null, packageDescriptor));
 				if (pkgNode != null) {
 					IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
 					if (visitor.visitElement(packageDescriptor, null, annotations)) {
-						IJavaElement[] children = fragment.getChildren();
+						children = fragments[j].getChildren();
 						for (int k = 0; k < children.length; k++) {
-							IJavaElement child = children[k];
+							child = children[k];
 							if (child instanceof ICompilationUnit) {
-								ICompilationUnit unit = (ICompilationUnit) child;
+								unit = (ICompilationUnit) child;
 								String cuName = unit.getElementName(); 
-								String tName = cuName.substring(0, cuName.length() - ".java".length());
+								String tName = cuName.substring(0, cuName.length() - ".java".length()); //$NON-NLS-1$
 								visit(visitor, unit.getType(tName));
-//								IType[] allTypes = unit.getAllTypes();
-//								for (int l = 0; l < allTypes.length; l++) {
-//									visit(visitor, allTypes[l]);
-//								}
 							} else if (child instanceof IClassFile) {
 								visit(visitor, ((IClassFile)child).getType());
 							}
