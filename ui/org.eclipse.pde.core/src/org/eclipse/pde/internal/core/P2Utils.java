@@ -29,19 +29,19 @@ public class P2Utils {
 
 	private static final String SRC_BUNDLE_TXT_FOLDER = "org.eclipse.equinox.source"; //$NON-NLS-1$
 	private static final String BUNDLE_TXT_FOLDER = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
-	private static final String SRC_BUNDLE_TXT_PATH = SRC_BUNDLE_TXT_FOLDER + File.separator + "source.bundles.txt"; //$NON-NLS-1$
-	private static final String BUNDLE_TXT_PATH = BUNDLE_TXT_FOLDER + File.separator + "bundles.txt"; //$NON-NLS-1$
+	private static final String SRC_BUNDLE_TXT_PATH = SRC_BUNDLE_TXT_FOLDER + File.separator + "source.info"; //$NON-NLS-1$
+	private static final String BUNDLE_TXT_PATH = BUNDLE_TXT_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
 
 	/**
-	 * Returns bundles defined by the 'bundles.txt' file in the
-	 * specified location, or <code>null</code> if none. The "bundles.txt" file
+	 * Returns bundles defined by the 'bundles.info' file in the
+	 * specified location, or <code>null</code> if none. The "bundles.info" file
 	 * is assumed to be at a fixed relative location to the specified file.  This 
-	 * method will also look for a "source.bundles.txt".  If available, any source
+	 * method will also look for a "source.info".  If available, any source
 	 * bundles found will also be added to the returned list.
 	 * 
 	 * @param platformHome absolute path in the local file system to an installation
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
-	 * 	to locate a bundles.txt
+	 * 	to locate a bundles.info
 	 */
 	public static URL[] readBundlesTxt(String platformHome) {
 
@@ -162,19 +162,19 @@ public class P2Utils {
 	}
 
 	/**
-	 * Creates a bundles.txt file in the given directory containing the name,
+	 * Creates a bundles.info file in the given directory containing the name,
 	 * version, location, start level and expected state of the bundles in the
-	 * launch.  Will also create a source.bundles.txt containing all of the 
+	 * launch.  Will also create a source.info containing all of the 
 	 * source bundles in the launch. The map of bundles must be of the form 
 	 * IModelPluginBase to a String ("StartLevel:AutoStart").  Returns the 
 	 * URL location of the bundle.txt or <code>null</code> if there was a 
 	 * problem creating it.
 	 * 
-	 * @param bundles map containing all bundles to write to the bundles.txt, maps IPluginModelBase to String ("StartLevel:AutoStart")
+	 * @param bundles map containing all bundles to write to the bundles.info, maps IPluginModelBase to String ("StartLevel:AutoStart")
 	 * @param defaultStartLevel start level to use when "default" is the start level
 	 * @param defaultAutoStart auto start setting to use when "default" is the auto start setting
 	 * @param directory configuration directory to create the files in
-	 * @return URL location of the bundles.txt or <code>null</code>
+	 * @return URL location of the bundles.info or <code>null</code>
 	 */
 	public static URL writeBundlesTxt(Map bundles, int defaultStartLevel, boolean defaultAutoStart, File directory) {
 		if (bundles.size() == 0) {
@@ -209,7 +209,7 @@ public class P2Utils {
 							PDECore.log(e);
 						}
 					} else {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating source.bundles.txt, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating source.info, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
 					}
 					srcOut.write(",-1,false"); //$NON-NLS-1$
 					srcOut.newLine();
@@ -227,7 +227,7 @@ public class P2Utils {
 							PDECore.log(e);
 						}
 					} else {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating bundles.txt, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "While creating bundles.info, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
 					}
 					out.write(',');
 					String currentLevel = (String) bundles.get(currentModel);
@@ -277,17 +277,17 @@ public class P2Utils {
 	}
 
 	/**
-	 * Creates a bundles.txt file in the given directory containing the name,
+	 * Creates a bundles.info file in the given directory containing the name,
 	 * version, location, start level and expected state of every bundle in the
-	 * given collection.  Will also create a source.bundles.txt file containing
+	 * given collection.  Will also create a source.info file containing
 	 * a lsit of all source bundles found in the given collection. Uses special 
 	 * defaults for the start level and auto start settings. Returns the URL 
 	 * location of the bundle.txt or <code>null</code> if there was a problem 
 	 * creating it.
 	 * 
-	 * @param bundles collection of IPluginModelBase objects to write into the bundles.txt/source.bundles.txt
-	 * @param directory directory to create the bundles.txt and source.bundles.txt files in
-	 * @return URL location of the bundles.txt or <code>null</code>
+	 * @param bundles collection of IPluginModelBase objects to write into the bundles.info/source.info
+	 * @param directory directory to create the bundles.info and source.info files in
+	 * @return URL location of the bundles.info or <code>null</code>
 	 */
 	public static URL writeBundlesTxt(Collection bundles, File directory) {
 		String defaultAppend = "default:default"; //$NON-NLS-1$
