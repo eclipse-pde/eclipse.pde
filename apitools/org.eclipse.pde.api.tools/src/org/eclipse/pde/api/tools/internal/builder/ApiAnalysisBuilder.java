@@ -467,7 +467,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	private void buildAll(IProgressMonitor monitor) {
-		IProgressMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ApiToolBuilder_1, 3);
+		IProgressMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.ApiToolBuilder_1, new String[] {fCurrentProject.getName()}), 3);
 		IApiProfile profile = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if (profile == null) {
 			return;
