@@ -178,12 +178,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return;
 
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			Properties featureProperties = null;
-			try {
-				featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
-				Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
-			} catch (CoreException e) {
-				//do nothing
+			Object object = iter.next();
+			if (object instanceof BuildTimeFeature) {
+				Properties featureProperties = null;
+				try {
+					featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) object).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
+					Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
+				} catch (CoreException e) {
+					//do nothing
+				}
 			}
 		}
 
@@ -566,7 +569,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printTargetEnd();
 		}
 	}
-	
+
 	public boolean haveP2Bundles() {
 		if (p2Bundles != null)
 			return p2Bundles.booleanValue();
@@ -788,7 +791,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	public ProductFile getProductFile() {
 		return productFile;
 	}
-	
+
 	public void setArchiveFormat(String archiveFormat) {
 		this.archiveFormat = archiveFormat;
 	}

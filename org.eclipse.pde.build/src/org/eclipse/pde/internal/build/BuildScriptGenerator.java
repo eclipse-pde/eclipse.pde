@@ -52,7 +52,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
 	protected boolean generateFeatureVersionSuffix = false;
-	private String product;
+	protected String product;
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
 

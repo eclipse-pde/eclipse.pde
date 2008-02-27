@@ -86,6 +86,7 @@ public class PackagerTask extends Task {
 			String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
 			if (Boolean.valueOf(value).booleanValue())
 				antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+			generator.setProduct(getProject().getProperty("product")); //$NON-NLS-1$
 			BundleHelper.getDefault().setLog(this);
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);

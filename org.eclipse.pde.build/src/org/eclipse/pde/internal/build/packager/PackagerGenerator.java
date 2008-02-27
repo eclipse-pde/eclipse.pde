@@ -52,6 +52,7 @@ public class PackagerGenerator extends BuildScriptGenerator {
 		assembler.setPropertyFile(propertyFile);
 		assembler.setBackwardCompatibleName(true);
 		assembler.setBuildSiteFactory(factory);
+		assembler.setProduct(product);
 		assembler.generate();
 	}
 	
