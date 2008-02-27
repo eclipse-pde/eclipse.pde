@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,12 +42,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.handlers.HandlerService;
 
-/**
- * SimpleCSCommandDetailsSection
- *
- */
 public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	private ISimpleCSRun fRun;
@@ -517,31 +512,18 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private static ICommandService getCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		return (ICommandService) workbench.getAdapter(ICommandService.class);
 	}
 
-	/**
-	 * @return
-	 */
 	private static IHandlerService getGlobalHandlerService() {
 		return (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
 
-	/**
-	 * @return
-	 */
 	private static IEvaluationContext getSnapshotContext() {
 		IHandlerService service = getGlobalHandlerService();
-		// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
-		if (service instanceof HandlerService) {
-			return ((HandlerService) service).getContextSnapshot();
-		}
-		return null;
+		return service.createContextSnapshot(false);
 	}
 
 	/**

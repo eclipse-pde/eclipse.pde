@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.handlers.HandlerService;
 
 public class CommandDetails {
 
@@ -184,14 +183,7 @@ public class CommandDetails {
 				Object obj = null;
 				IHandlerService service = getGlobalHandlerService();
 				IEvaluationContext context = fCCP.getSnapshotContext();
-				// TODO: MP: SimpleCS:  Get rid of internal class use when context snapshots are made API
-				if ((service instanceof HandlerService) && (context != null)) {
-					obj = ((HandlerService) service).executeCommandInContext(pCommand, null, context);
-				} else {
-					// the default is just to execute within the global application
-					// context
-					obj = service.executeCommand(pCommand, null);
-				}
+				obj = service.executeCommandInContext(pCommand, null, context);
 				String resultString = null;
 				if (obj instanceof String) {
 					resultString = (String) obj;
