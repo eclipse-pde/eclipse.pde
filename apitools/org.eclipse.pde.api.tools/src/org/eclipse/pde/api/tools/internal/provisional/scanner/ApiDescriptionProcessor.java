@@ -736,6 +736,7 @@ public class ApiDescriptionProcessor {
 		NodeList filters = null;
 		int category = 0, kind = 0, flags = 0, severity = 0;
 		IResource resource = null;
+		ArrayList newfilters = new ArrayList();
 		for(int i = 0; i < resources.getLength(); i++) {
 			element = (Element) resources.item(i);
 			path = element.getAttribute(ATTR_PATH);
@@ -769,9 +770,11 @@ public class ApiDescriptionProcessor {
 				if(flags < 0) {
 					continue;
 				}
-				store.addFilter(Factory.newApiProblem(resource, element.getAttribute(ATTR_MESSAGE), severity, category, kind, flags));
+				newfilters.add(Factory.newApiProblem(resource, element.getAttribute(ATTR_MESSAGE), severity, category, kind, flags));
 			}
 		}
+		store.addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
+		newfilters.clear();
 	}
 	
 	/**

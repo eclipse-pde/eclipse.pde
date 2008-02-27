@@ -323,12 +323,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	 */
 	public boolean performOk() {
 		try {
-			IApiFilterStore store = getFilterStore();
-			IApiProblemFilter filter = null;
-			for(int i = 0; i < fChangeset.size(); i++) {
-				filter = (IApiProblemFilter) fChangeset.get(i);
-				store.removeFilter(filter);
-			}
+			getFilterStore().removeFilters((IApiProblemFilter[]) fChangeset.toArray(new IApiProblemFilter[fChangeset.size()]));
 			if(fChangeset.size() > 0) {
 				//TODO we need to incremental build to ensure new filter kinds are enacted and removed kinds show the markers
 				if(MessageDialog.openQuestion(getShell(), PropertiesMessages.ApiFiltersPropertyPage_58, 

@@ -185,7 +185,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
-			store.removeFilter(component.newProblemFilter(problem));
+			store.removeFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
 			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
 		} 
 		catch (CoreException e) {
@@ -206,9 +206,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
-			store.addFilter(component.newProblemFilter(problem));
+			store.addFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
 			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem));
-			store.removeFilter(component.newProblemFilter(problem));
+			store.removeFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
 			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
 		}
 		catch(CoreException ce) {
@@ -229,9 +229,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IApiProblem problem = Factory.newApiProblem(resource, "", IMarker.SEVERITY_ERROR, IApiProblem.CATEGORY_USAGE, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
-			store.addFilter(problem);
+			store.addFilters(new IApiProblem[] {problem});
 			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem));
-			store.removeFilter(component.newProblemFilter(problem));
+			store.removeFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
 			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));
 		}
 		catch(CoreException ce) {
@@ -267,9 +267,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			profile.addApiComponents(new IApiComponent[] { component });
 			assertNotNull("the new component cannot be null", component);
 			IApiFilterStore store = component.getFilterStore();
-			assertNotNull("the new filter store cannot be null", store);
-			IResource[] resources = store.getResources();
-			assertTrue("The filter store from a bundle should always be empty", resources.length == 0);
+			assertNull("the new filter store must be null", store);
 		}
 		catch(CoreException e) {
 			fail(e.getMessage());

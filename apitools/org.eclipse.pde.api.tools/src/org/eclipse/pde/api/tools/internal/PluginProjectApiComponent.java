@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,8 +22,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -58,7 +55,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
  * </p>
  * @since 1.0.0
  */
-public class PluginProjectApiComponent extends BundleApiComponent implements ISaveParticipant {
+public class PluginProjectApiComponent extends BundleApiComponent {
 	
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
@@ -71,12 +68,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	public static void setDebug(boolean debugValue) {
 		DEBUG = debugValue || Util.DEBUG;
 	}
-
-	/**
-	 * Boolean flag to prevent the filters from being loaded
-	 * during a saving cycle (if they have not already been loaded).
-	 */
-	private boolean fFiltersCreated = false;
 		
 	/**
 	 * Associated Java project
@@ -108,9 +99,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 		IProject project = ApiProfile.ROOT.getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
-		//TODO bad for performance?
-		//the lifecycle of the participant is the lifecycle of the component
-		ApiPlugin.getDefault().addSaveParticipant(this);
 	}
 
 	/* (non-Javadoc)
@@ -130,7 +118,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 					ApiPlugin.log(e.getStatus());
 				}
 			}
-			ApiPlugin.getDefault().removeSaveParticipant(this);
 		} finally {
 			super.dispose();
 		}
@@ -196,7 +183,7 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
-		ApiFilterStore store = new ApiFilterStore(getId());
+		ApiFilterStore store = new ApiFilterStore(getJavaProject());
 		try {
 			IPath path = getProjectSettingsPath(false);
 			if(path != null) {
@@ -210,7 +197,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 					}
 				}
 			}
-			fFiltersCreated = true;
 		} catch (IOException e) {
 			ApiPlugin.log(e);
 		}
@@ -386,78 +372,6 @@ public class PluginProjectApiComponent extends BundleApiComponent implements ISa
 	 */
 	public String getName() throws CoreException {
 		return fModel.getResourceString(super.getName());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void doneSaving(ISaveContext context) {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void prepareToSave(ISaveContext context) throws CoreException {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void rollback(ISaveContext context) {}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void saving(ISaveContext context) throws CoreException {
-		try {
-			if(DEBUG) {
-				System.out.println("starting save cycle for plugin project component: ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			if (fProject.exists()) {
-				persistApiFilters();
-			}
-		}
-		catch(IOException ioe) {
-			ApiPlugin.log(ioe);
-		}
-	}
-	
-	/**
-	 * Saves the .api_filters file for the component
-	 * @throws IOException 
-	 */
-	private void persistApiFilters() throws CoreException, IOException {
-		if(fFiltersCreated) {
-			if(DEBUG) {
-				System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			IProject project = fProject.getProject();
-			// only write the file if the project has an API nature and is accessible
-			if(!project.isAccessible()) {
-				return;
-			}
-			if(!project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
-				return;
-			}
-			ApiFilterStore filters = (ApiFilterStore) getFilterStore();
-			String xml = filters.getStoreAsXml();
-			IFile file = project.getFile(new Path(".settings").append(API_FILTERS_XML_NAME)); //$NON-NLS-1$
-			if(xml == null) {
-				// no filters - delete the file if it exists
-				if (file.exists()) {
-					file.delete(false, new NullProgressMonitor());
-				}
-				return;
-			}
-			InputStream xstream = Util.getInputStreamFromString(xml);
-			if(xstream == null) {
-				return;
-			}
-			if(!file.exists()) {
-				file.create(xstream, true, new NullProgressMonitor());
-			}
-			else {
-				file.setContents(xstream, true, false, new NullProgressMonitor());
-			}
-		}
 	}
 	
 	/**

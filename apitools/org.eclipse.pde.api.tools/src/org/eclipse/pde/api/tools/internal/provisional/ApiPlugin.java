@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
+import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
@@ -142,7 +143,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner" ; //$NON-NLS-1$
 	private static final String PLUGIN_WORKSPACE_COMPONENT_DEBUG = PLUGIN_ID + "/debug/pluginworkspacecomponent"; //$NON-NLS-1$
 	private static final String API_PROFILE_MANAGER_DEBUG = PLUGIN_ID + "/debug/profilemanager"; //$NON-NLS-1$
-	private static final String API_PROFILE_DEBUG = ApiPlugin.PLUGIN_ID + "/debug/apiprofile" ; //$NON-NLS-1$
+	private static final String API_PROFILE_DEBUG = PLUGIN_ID + "/debug/apiprofile" ; //$NON-NLS-1$
+	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
@@ -572,6 +574,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			option = Platform.getDebugOption(API_PROFILE_DEBUG);
 			if(option != null) {
 				ApiProfile.setDebug(option.equalsIgnoreCase(TRUE));
+			}
+			option = Platform.getDebugOption(API_FILTER_STORE_DEBUG);
+			if(option != null) {
+				ApiFilterStore.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 		}
 	}

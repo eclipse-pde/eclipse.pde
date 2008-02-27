@@ -24,9 +24,9 @@ public interface IApiFilterStore {
 	 * If the filter to add is <code>null</code> or already exists in the store
 	 * no work is done.
 	 * 
-	 * @param filter filter to add to this store
+	 * @param filters filters to add to this store
 	 */
-	public void addFilter(IApiProblemFilter filter);
+	public void addFilters(IApiProblemFilter[] filters);
 	
 	/**
 	 * Creates an {@link IApiProblemFilter} for the given {@link IApiProblem} and adds that 
@@ -34,9 +34,9 @@ public interface IApiFilterStore {
 	 * If the problem creates a filter that already exists in the store, or the problem is <code>null</code> 
 	 * no work is done.
 	 * 
-	 * @param problem problem to create a filter for and add to this store
+	 * @param problems problems to create a filter for and add to this store
 	 */
-	public void addFilter(IApiProblem problem);
+	public void addFilters(IApiProblem[] problems);
 	
 	/**
 	 * Returns all filters for the specified resource
@@ -60,10 +60,10 @@ public interface IApiFilterStore {
 	/**
 	 * Removes the specified filter from this filter store.
 	 * 
-	 * @param filter the filter to remove
-	 * @return true if the filter was removed, false otherwise
+	 * @param filters the filters to remove
+	 * @return true if all of the filters were removed, false otherwise
 	 */
-	public boolean removeFilter(IApiProblemFilter filter);
+	public boolean removeFilters(IApiProblemFilter[] filters);
 	
 	/**
 	 * Returns whether a problem contained in the specified element of the given type and

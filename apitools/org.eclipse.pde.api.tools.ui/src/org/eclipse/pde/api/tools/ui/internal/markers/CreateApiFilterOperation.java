@@ -68,12 +68,12 @@ public class CreateApiFilterOperation extends UIJob {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
-			store.addFilter(Factory.newApiProblem(resource, 
+			store.addFilters(new IApiProblem[] {Factory.newApiProblem(resource, 
 					fBackingMarker.getAttribute(IMarker.MESSAGE, IApiToolsConstants.EMPTY_STRING),
 					fBackingMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING),
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_CATEGORY, 0),
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0), 
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, 0)));
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, 0))});
 			cleanupMarkers(false);
 			return Status.OK_STATUS;
 		}

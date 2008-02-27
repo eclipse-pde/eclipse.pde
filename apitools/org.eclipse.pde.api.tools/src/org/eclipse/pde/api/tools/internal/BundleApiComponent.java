@@ -339,6 +339,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	protected static void annotateExportedPackages(IApiDescription apiDesc, ExportPackageDescription[] exportedPackages) {
 		for(int i = 0; i < exportedPackages.length; i++) {
 			ExportPackageDescription pkg = exportedPackages[i];
+			//TODO remove this? all pkg exports are roots according to the doc
 			if (pkg.isRoot()) {
 				boolean internal = ((Boolean) pkg.getDirective("x-internal")).booleanValue(); //$NON-NLS-1$
 				String[] friends = (String[]) pkg.getDirective("x-friends"); //$NON-NLS-1$
@@ -371,7 +372,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		//always return a new empty store since we do not support filtering from bundles
-		return new ApiFilterStore(getId());
+		return null;
 	}
 	
 	/* (non-Javadoc)
