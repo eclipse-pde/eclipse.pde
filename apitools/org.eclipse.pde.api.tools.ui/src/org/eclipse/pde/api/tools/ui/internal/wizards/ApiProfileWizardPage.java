@@ -309,6 +309,12 @@ public class ApiProfileWizardPage extends WizardPage {
 		});
 		treeviewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if(element instanceof IApiComponent) {
+					IApiComponent component = (IApiComponent) element;
+					if(component.isSourceComponent() || component.isSystemComponent()) {
+						return false;
+					}
+				}
 				return !(element instanceof SystemLibraryApiComponent);
 			}
 		});
