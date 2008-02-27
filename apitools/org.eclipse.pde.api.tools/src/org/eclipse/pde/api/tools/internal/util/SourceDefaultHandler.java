@@ -29,7 +29,8 @@ public class SourceDefaultHandler extends DefaultHandler {
 		if (this.isSource) return;
 		this.isSource = EXTENSION_NAME.equals(name)
 				&& attributes.getLength() == 1
-				&& ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getLocalName(0))
+				&& (ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getQName(0))
+						|| ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getLocalName(0)))
 				&& ORG_ECLIPSE_PDE_CORE_SOURCE_EXTENSION_POINT_NAME.equals(attributes.getValue(0));
 	}
 	public boolean isSource() {
