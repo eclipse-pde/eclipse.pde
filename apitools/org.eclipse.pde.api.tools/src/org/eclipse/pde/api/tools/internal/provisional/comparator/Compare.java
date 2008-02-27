@@ -103,14 +103,14 @@ public class Compare {
 					break;
 				case OPTION_BASELINE:
 					if (this.baseline != null) {
-						throw new IllegalArgumentException("Cannot set the baseline value more than once");
+						throw new IllegalArgumentException("Cannot set the baseline value more than once"); //$NON-NLS-1$
 					}
 					this.baseline = currentArg;
 					mode = OPTION_DEFAULT;
 					break;
 				case OPTION_PROFILE:
 					if (this.profile != null) {
-						throw new IllegalArgumentException("Cannot set the profile value more than once");
+						throw new IllegalArgumentException("Cannot set the profile value more than once"); //$NON-NLS-1$
 					}
 					this.profile = currentArg;
 					mode = OPTION_DEFAULT;
@@ -120,7 +120,7 @@ public class Compare {
 					break;
 				case OPTION_OUTPUT :
 					if (this.output != null) {
-						throw new IllegalArgumentException("Cannot set the output value more than once");
+						throw new IllegalArgumentException("Cannot set the output value more than once"); //$NON-NLS-1$
 					}
 					this.output = currentArg;
 					break;
@@ -128,12 +128,12 @@ public class Compare {
 		}
 		if (this.baseline == null || this.profile == null || this.output == null) {
 			printUsage();
-			throw new IllegalArgumentException("Missing arguments");
+			throw new IllegalArgumentException("Missing arguments"); //$NON-NLS-1$
 		}
 	}
 
 	private void printUsage() {
-		System.out.println("Usage: Compare -baseline <path> -profile <path> -output <path>");
+		System.out.println("Usage: Compare -baseline <path> -profile <path> -output <path to xml file>"); //$NON-NLS-1$
 	}
 	private boolean isVerbose() {
 		// this should be customized using options
@@ -178,38 +178,43 @@ public class Compare {
 				// ignore
 			}
 		}
-		File outputFolder = new File(this.output);
-		if (!outputFolder.exists()) {
-			if (!outputFolder.mkdirs()) {
-				System.out.println("Could not create the output folder: " + this.output);
+		File outputFile = new File(this.output);
+		if (!outputFile.exists()) {
+			File parentFile = outputFile.getParentFile();
+			if (parentFile != null) {
+				if (!parentFile.mkdirs()) {
+					System.err.println("Could not create the output folder for : " + this.output); //$NON-NLS-1$
+					return;
+				}
+			} else {
+				System.err.println("Could not retrieve the parent of the output file : " + this.output); //$NON-NLS-1$
 				return;
 			}
 		}
 		if (baseline == null) {
-			System.err.println("Could not setup the baseline profile : " + this.baseline);
+			System.err.println("Could not setup the baseline profile : " + this.baseline); //$NON-NLS-1$
 			return;
 		}
 		if (profile == null) {
-			System.err.println("Could not setup the profile to compare with the baseline profile : " + this.profile);
+			System.err.println("Could not setup the profile to compare with the baseline profile : " + this.profile); //$NON-NLS-1$
 			return;
 		}
 		IDelta delta = ApiComparator.compare(baseline, profile, VisibilityModifiers.API);
 		if (delta == null) {
 			// an error occured during the comparison
-			System.err.println("An error occured during the comparison");
+			System.err.println("An error occured during the comparison"); //$NON-NLS-1$
 			return;
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the resulting XML into the output folder
 			BufferedWriter writer = null;
 			try {
-				File file = new File(outputFolder, "delta.xml");
-				if (file.exists()) {
+				if (outputFile.exists()) {
 					// delete the file
 					// TODO we might want to customize it
-					file.delete();
+					outputFile.delete();
 				}
-				writer = new BufferedWriter(new FileWriter(file));
+				writer = new BufferedWriter(new FileWriter(outputFile));
 				DeltaXmlVisitor visitor = new DeltaXmlVisitor();
 				delta.accept(visitor);
 				writer.write(visitor.getXML());

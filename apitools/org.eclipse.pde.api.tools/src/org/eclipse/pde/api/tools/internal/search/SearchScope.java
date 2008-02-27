@@ -168,14 +168,14 @@ public class SearchScope extends AbstractClassFileContainer implements IApiSearc
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("*** Search Scope ***\n");
+		buffer.append("*** Search Scope ***\n"); //$NON-NLS-1$
 		IApiComponent key = null;
 		HashSet entry = null;
 		for(Iterator iter = fComponents.keySet().iterator(); iter.hasNext();){
 			key = (IApiComponent) iter.next();
 			entry = (HashSet) fComponents.get(key);
-			buffer.append("Component: ").append(key.getId()).append("\n");
-			buffer.append("Elements: ").append(entry.toString()).append("\n");
+			buffer.append("Component: ").append(key.getId()).append('\n'); //$NON-NLS-1$
+			buffer.append("Elements: ").append(entry.toString()).append('\n'); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
