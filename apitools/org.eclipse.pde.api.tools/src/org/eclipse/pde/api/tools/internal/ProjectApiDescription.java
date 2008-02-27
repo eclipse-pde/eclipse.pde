@@ -168,36 +168,28 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 			try {
 				fRefreshing = true;
-				if (fType.exists()) {
-					ICompilationUnit unit = fType.getCompilationUnit();
-					if (unit != null) {
-						IResource resource = unit.getCorrespondingResource();
-						if (resource != null) {
-							long stamp = resource.getModificationStamp();
-							if (stamp != fTimeStamp) {
-								modified();
-								children.clear();
-								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
-										getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
-								fTimeStamp = resource.getModificationStamp();
-							}
-						} else {
+				ICompilationUnit unit = fType.getCompilationUnit();
+				if (unit != null) {
+					IResource resource = unit.getUnderlyingResource();
+					if (resource != null) {
+						long stamp = resource.getModificationStamp();
+						if (stamp != fTimeStamp) {
 							modified();
-							// error - no associated file
-							return null;
+							children.clear();
+							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+							TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
+								getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
+							fTimeStamp = resource.getModificationStamp();
 						}
 					} else {
-						// TODO: binary type
+						modified();
+						parent.children.remove(getElement());
+						// error - no associated file
+						return null;
 					}
 				} else {
-					modified();
-					// no longer exists
-					parent.children.remove(getElement());
-					return null;
+					// TODO: binary type
 				}
-			} catch (JavaModelException e) {
-				ApiPlugin.log(e.getStatus());
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			} finally {
@@ -251,10 +243,13 @@ public class ProjectApiDescription extends ApiDescription {
 							IJavaElement child = children[k];
 							if (child instanceof ICompilationUnit) {
 								ICompilationUnit unit = (ICompilationUnit) child;
-								IType[] allTypes = unit.getAllTypes();
-								for (int l = 0; l < allTypes.length; l++) {
-									visit(visitor, allTypes[l]);
-								}
+								String cuName = unit.getElementName(); 
+								String tName = cuName.substring(0, cuName.length() - ".java".length());
+								visit(visitor, unit.getType(tName));
+//								IType[] allTypes = unit.getAllTypes();
+//								for (int l = 0; l < allTypes.length; l++) {
+//									visit(visitor, allTypes[l]);
+//								}
 							} else if (child instanceof IClassFile) {
 								visit(visitor, ((IClassFile)child).getType());
 							}
