@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -236,20 +237,20 @@ public class ApiProfileWizardPage extends WizardPage {
 		});
 		
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		String[] items = new String[envs.length];
+		ArrayList items = new ArrayList();
 		for(int i = 0; i < envs.length; i++) {
 			if(envs[i].getCompatibleVMs().length > 0) {
-				items[i] = envs[i].getId();
+				items.add(envs[i].getId());
 			}
 		}
-		Arrays.sort(items, new Comparator() {
+		Collections.sort(items, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((String)o1).compareTo(o2);
 			}
 		});		
 		
 		SWTFactory.createWrapLabel(ncomp, WizardMessages.ApiProfileWizardPage_8, 1, 100);
-		eecombo = SWTFactory.createCombo(ncomp, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE | SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, items);
+		eecombo = SWTFactory.createCombo(ncomp, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE | SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, (String[]) items.toArray(new String[items.size()]));
 		eecombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageValid();
