@@ -188,6 +188,15 @@ public abstract class AbstractApiComponent extends AbstractClassFileContainer im
 		return fApiDescription != null;
 	}
 
+	/**
+	 * Returns if this component has created an API filter store
+	 * 
+	 * @return true if a store has been created, false other wise
+	 */
+	protected synchronized boolean hasApiFilterStore() {
+		return fFilterStore != null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractClassFileContainer#getClassFileContainers()
 	 */

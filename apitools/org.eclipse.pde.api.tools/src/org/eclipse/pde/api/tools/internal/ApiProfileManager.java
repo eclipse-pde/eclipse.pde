@@ -75,8 +75,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 1.0.0
  */
-public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant,
-	IElementChangedListener, IPluginModelListener, IResourceChangeListener {
+public final class ApiProfileManager implements IApiProfileManager, ISaveParticipant, IElementChangedListener, IPluginModelListener, IResourceChangeListener {
 	
 	/**
 	 * Constant used for controlling tracing in the API tool builder

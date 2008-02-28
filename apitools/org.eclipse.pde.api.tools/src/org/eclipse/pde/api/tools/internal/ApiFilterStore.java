@@ -20,10 +20,19 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -39,7 +48,7 @@ import org.w3c.dom.Element;
  * 
  * @since 1.0.0
  */
-public class ApiFilterStore implements IApiFilterStore {
+public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
 	
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
@@ -61,7 +70,13 @@ public class ApiFilterStore implements IApiFilterStore {
 	 */
 	private HashMap fFilterMap = null;
 	
+	/**
+	 * The backing {@link IJavaProject}
+	 */
 	private IJavaProject fProject = null;
+	
+	private boolean fNeedsSaving = false;
+	private boolean fLoading = false;
 	
 	/**
 	 * Constructor
@@ -70,6 +85,7 @@ public class ApiFilterStore implements IApiFilterStore {
 	public ApiFilterStore(IJavaProject project) {
 		Assert.isNotNull(project);
 		fProject = project;
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
 	/**
@@ -77,40 +93,51 @@ public class ApiFilterStore implements IApiFilterStore {
 	 * @throws IOException 
 	 */
 	private void persistApiFilters() {
-		if(DEBUG) {
-			System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+		if(!fNeedsSaving || fLoading) {
+			return;
 		}
-		try {
-			IProject project = fProject.getProject();
-			if(!project.isAccessible()) {
+		WorkspaceJob job = new WorkspaceJob("") {
+			public IStatus runInWorkspace(IProgressMonitor monitor)	throws CoreException {
 				if(DEBUG) {
-					System.out.println("project ["+fProject.getElementName()+"] is not accessible, saving termainated"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				return;
-			}
-			String xml = getStoreAsXml();
-			IFile file = project.getFile(new Path(".settings").append(BundleApiComponent.API_FILTERS_XML_NAME)); //$NON-NLS-1$
-			if(xml == null) {
-				// no filters - delete the file if it exists
-				if (file.exists()) {
-					file.delete(false, new NullProgressMonitor());
+				try {
+					IProject project = fProject.getProject();
+					if(!project.isAccessible()) {
+						if(DEBUG) {
+							System.out.println("project ["+fProject.getElementName()+"] is not accessible, saving termainated"); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						return Status.CANCEL_STATUS;
+					}
+					String xml = getStoreAsXml();
+					IFile file = project.getFile(new Path(".settings").append(BundleApiComponent.API_FILTERS_XML_NAME)); //$NON-NLS-1$
+					if(xml == null) {
+						// no filters - delete the file if it exists
+						if (file.isAccessible()) {
+							file.delete(false, new NullProgressMonitor());
+						}
+						return Status.OK_STATUS;
+					}
+					InputStream xstream = Util.getInputStreamFromString(xml);
+					if(xstream == null) {
+						return Status.CANCEL_STATUS;
+					}
+					if(!file.exists()) {
+						file.create(xstream, true, new NullProgressMonitor());
+					}
+					else {
+						file.setContents(xstream, true, false, new NullProgressMonitor());
+					}
+					fNeedsSaving = false;
 				}
-				return;
+				catch(CoreException ce) {
+					ApiPlugin.log(ce);
+				}
+				return Status.OK_STATUS;
 			}
-			InputStream xstream = Util.getInputStreamFromString(xml);
-			if(xstream == null) {
-				return;
-			}
-			if(!file.exists()) {
-				file.create(xstream, true, new NullProgressMonitor());
-			}
-			else {
-				file.setContents(xstream, true, false, new NullProgressMonitor());
-			}
-		}
-		catch(CoreException ce) {
-			ApiPlugin.log(ce);
-		}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/* (non-Javadoc)
@@ -138,7 +165,7 @@ public class ApiFilterStore implements IApiFilterStore {
 				pfilters = new HashSet();
 				fFilterMap.put(res, pfilters);
 			}
-			pfilters.add(filters[i]);
+			fNeedsSaving |= pfilters.add(filters[i]);
 		}
 		persistApiFilters();
 	}
@@ -170,7 +197,7 @@ public class ApiFilterStore implements IApiFilterStore {
 				filters = new HashSet();
 				fFilterMap.put(res, filters);
 			}
-			filters.add(filter);
+			fNeedsSaving |= filters.add(filter);
 		}
 		persistApiFilters();
 	}
@@ -220,6 +247,17 @@ public class ApiFilterStore implements IApiFilterStore {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#dispose()
+	 */
+	public void dispose() {
+		if(fFilterMap != null) {
+			fFilterMap.clear();
+			fFilterMap = null;
+		}
+ 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getResources()
 	 */
 	public synchronized IResource[] getResources() {
@@ -259,6 +297,7 @@ public class ApiFilterStore implements IApiFilterStore {
 				if(DEBUG) {
 					System.out.println("removed filter: ["+filters[i]+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+				fNeedsSaving |= true;
 				success &= true;
 				if(pfilters.isEmpty()) {
 					success &= fFilterMap.remove(res) != null;
@@ -320,5 +359,57 @@ public class ApiFilterStore implements IApiFilterStore {
 	 */
 	public String toString() {
 		return "Api filter store for component: "+fProject.getElementName(); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
+			try {
+				if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
+					IPath path = fProject.getPath();
+					path = path.append(".settings").append(BundleApiComponent.API_FILTERS_XML_NAME); //$NON-NLS-1$
+					IResourceDelta leafdelta = event.getDelta().findMember(path);
+					if(leafdelta == null) {
+						return;
+					}
+					boolean needsbuild = false;
+					if(leafdelta.getKind() == IResourceDelta.REMOVED) {
+						fFilterMap.clear();
+						needsbuild = true;
+					}
+					else if(leafdelta.getKind() == IResourceDelta.ADDED || 
+							(leafdelta.getFlags() & IResourceDelta.CONTENT) != 0 || 
+							(leafdelta.getFlags() & IResourceDelta.REPLACED) != 0) {
+						IResource resource = leafdelta.getResource();
+						if(resource != null && resource.getType() == IResource.FILE) {
+							IFile file = (IFile) resource;
+							if(file.isAccessible()) {
+								try {
+									fLoading = true;
+									fFilterMap.clear();
+									String xml = new String(Util.getInputStreamAsCharArray(file.getContents(), -1, "UTF-8")); //$NON-NLS-1$
+									ApiDescriptionProcessor.annotateApiFilters(this, xml);
+								}
+								finally {
+									fLoading = false;
+									needsbuild = true;
+								}
+							}
+						}
+					}
+					if(needsbuild) {
+						Util.getBuildJob(fProject.getProject()).schedule();
+					}
+				}
+			}
+			catch(CoreException ce) {
+				ApiPlugin.log(ce);
+			}
+			catch(IOException ioe) {
+				ApiPlugin.log(ioe);
+			}
+		}
 	}
 }

@@ -73,4 +73,9 @@ public interface IApiFilterStore {
 	 * @return whether the problem is filtered
 	 */
 	public boolean isFiltered(IApiProblem problem);
+	
+	/**
+	 * Disposes the filter store.
+	 */
+	public void dispose();
 }

@@ -72,17 +72,17 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/**
 	 * Associated Java project
 	 */
-	private IJavaProject fProject;
+	private IJavaProject fProject = null;
 
 	/**
 	 * Associated IPluginModelBase object
 	 */
-	private IPluginModelBase fModel;
+	private IPluginModelBase fModel = null;
 	
 	/**
 	 * A cache of bundle class path entries to class file containers.
 	 */
-	private Map fPathToOutputContainers;
+	private Map fPathToOutputContainers = null;
 
 	/**
 	 * Constructs an API component for the given Java project in the specified profile.
@@ -118,7 +118,14 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 					ApiPlugin.log(e.getStatus());
 				}
 			}
-		} finally {
+			if(hasApiFilterStore()) {
+				getFilterStore().dispose();
+			}
+		} 
+		catch(CoreException ce) {
+			ApiPlugin.log(ce);
+		}
+		finally {
 			super.dispose();
 		}
 	}
@@ -183,7 +190,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
-		ApiFilterStore store = new ApiFilterStore(getJavaProject());
+		IApiFilterStore store = new ApiFilterStore(getJavaProject());
 		try {
 			IPath path = getProjectSettingsPath(false);
 			if(path != null) {
