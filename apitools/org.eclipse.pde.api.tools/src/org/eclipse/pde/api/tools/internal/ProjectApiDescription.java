@@ -89,6 +89,14 @@ public class ProjectApiDescription extends ApiDescription {
 	 * TODO: these could become out of date with class path changes.
 	 */
 	private Map fClassFileContainers;
+	
+	/**
+	 * Whether this API description is in synch with its project. Becomes
+	 * false if anything in a project changes. When true, visiting can
+	 * be performed by traversing the cached nodes, rather than traversing
+	 * the java model elements (effectively building the cache).
+	 */
+	private boolean fInSynch = false;
 			
 	/**
 	 * A node for a package.
@@ -170,28 +178,39 @@ public class ProjectApiDescription extends ApiDescription {
 				fRefreshing = true;
 				ICompilationUnit unit = fType.getCompilationUnit();
 				if (unit != null) {
-					IResource resource = unit.getUnderlyingResource();
-					if (resource != null) {
+					IResource resource = null;
+					try {
+						resource = unit.getUnderlyingResource();
+					} catch (JavaModelException e) {
+						// exception if the resource does not exist
+						if (!e.getJavaModelStatus().isDoesNotExist()) {
+							ApiPlugin.log(e.getStatus());
+							return this;
+						}
+					}
+					if (resource != null && resource.exists()) {
 						long stamp = resource.getModificationStamp();
 						if (stamp != fTimeStamp) {
 							modified();
 							children.clear();
 							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-							TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
-								getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
-							fTimeStamp = resource.getModificationStamp();
+							try {
+								TagScanner.newScanner().scan(new CompilationUnit(unit), ProjectApiDescription.this,
+									getClassFileContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
+								fTimeStamp = resource.getModificationStamp();
+							} catch (CoreException e) {
+								ApiPlugin.log(e.getStatus());
+							}
 						}
 					} else {
+						// element has been removed
 						modified();
 						parent.children.remove(getElement());
-						// error - no associated file
 						return null;
 					}
 				} else {
 					// TODO: binary type
 				}
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
 			} finally {
 				fRefreshing = false;
 			}
@@ -224,42 +243,54 @@ public class ProjectApiDescription extends ApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
 	 */
-	public void accept(ApiDescriptionVisitor visitor) {
-		try {
-			IPackageFragment[] fragments = getLocalPackageFragments();
-			IJavaElement[] children = null;
-			IJavaElement child = null;
-			ICompilationUnit unit = null;
-			for (int j = 0; j < fragments.length; j++) {
-				if (DEBUG) {
-					System.out.println("\t" + fragments[j].getElementName().toString()); //$NON-NLS-1$
-				}
-				IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
-				// visit package
-				ManifestNode pkgNode = findNode(null, packageDescriptor, isInsertOnResolve(null, packageDescriptor));
-				if (pkgNode != null) {
-					IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
-					if (visitor.visitElement(packageDescriptor, null, annotations)) {
-						children = fragments[j].getChildren();
-						for (int k = 0; k < children.length; k++) {
-							child = children[k];
-							if (child instanceof ICompilationUnit) {
-								unit = (ICompilationUnit) child;
-								String cuName = unit.getElementName(); 
-								String tName = cuName.substring(0, cuName.length() - ".java".length()); //$NON-NLS-1$
-								visit(visitor, unit.getType(tName));
-							} else if (child instanceof IClassFile) {
-								visit(visitor, ((IClassFile)child).getType());
-							}
-						}
+	public synchronized void accept(ApiDescriptionVisitor visitor) {
+		boolean completeVisit = true;
+		if (fInSynch) {
+			super.accept(visitor);
+		} else {
+			try {
+				IPackageFragment[] fragments = getLocalPackageFragments();
+				IJavaElement[] children = null;
+				IJavaElement child = null;
+				ICompilationUnit unit = null;
+				for (int j = 0; j < fragments.length; j++) {
+					if (DEBUG) {
+						System.out.println("\t" + fragments[j].getElementName().toString()); //$NON-NLS-1$
 					}
-					visitor.endVisitElement(packageDescriptor, null, annotations);
-					// visit component overrides
-					visitOverrides(visitor, pkgNode);
+					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
+					// visit package
+					ManifestNode pkgNode = findNode(null, packageDescriptor, isInsertOnResolve(null, packageDescriptor));
+					if (pkgNode != null) {
+						IApiAnnotations annotations = resolveAnnotations(pkgNode, packageDescriptor);
+						if (visitor.visitElement(packageDescriptor, null, annotations)) {
+							children = fragments[j].getChildren();
+							for (int k = 0; k < children.length; k++) {
+								child = children[k];
+								if (child instanceof ICompilationUnit) {
+									unit = (ICompilationUnit) child;
+									String cuName = unit.getElementName(); 
+									String tName = cuName.substring(0, cuName.length() - ".java".length()); //$NON-NLS-1$
+									visit(visitor, unit.getType(tName));
+								} else if (child instanceof IClassFile) {
+									visit(visitor, ((IClassFile)child).getType());
+								}
+							}
+						} else {
+							completeVisit = false;
+						}
+						visitor.endVisitElement(packageDescriptor, null, annotations);
+						// visit component overrides
+						visitOverrides(visitor, pkgNode);
+					}
+				}
+			} catch (JavaModelException e) {
+				completeVisit = false;
+				ApiPlugin.log(e.getStatus());
+			} finally {
+				if (completeVisit) {
+					fInSynch = true;
 				}
 			}
-		} catch (JavaModelException e) {
-			ApiPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -560,6 +591,15 @@ public class ProjectApiDescription extends ApiDescription {
 	synchronized void clean() {
 		fPackageMap.clear();
 		fPackageTimeStamp = -1L;
+		fInSynch = false;
 		modified();
+	}
+	
+	/**
+	 * Notes that the underlying project has changed in some way and that the
+	 * description cache is no longer in synch with the project.
+	 */
+	synchronized void projectChanged() {
+		fInSynch = false;
 	}
 }

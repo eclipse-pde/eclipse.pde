@@ -168,6 +168,18 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			}
 		}
 	}
+	
+	/**
+	 * Notifies the API description that the underlying project has changed.
+	 * 
+	 * @param project
+	 */
+	synchronized void projectChanged(IJavaProject project) {
+		ProjectApiDescription desc = (ProjectApiDescription) fDescriptions.get(project);
+		if (desc != null) {
+			desc.projectChanged();
+		}
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
@@ -194,6 +206,8 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
 								clean(proj, false, true);
+							} else {
+								projectChanged(proj);
 							}
 							break;
 						case IJavaElementDelta.REMOVED:
