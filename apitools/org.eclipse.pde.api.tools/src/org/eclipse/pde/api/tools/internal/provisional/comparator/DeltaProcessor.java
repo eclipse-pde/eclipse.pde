@@ -84,7 +84,6 @@ public class DeltaProcessor {
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
-							case IDelta.TYPE_MEMBER :
 								return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
 							case IDelta.TYPE_PARAMETER :
 							case IDelta.CLASS_BOUND :
@@ -126,7 +125,6 @@ public class DeltaProcessor {
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
-							case IDelta.TYPE_MEMBER :
 								return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
 							case IDelta.TYPE_PARAMETER :
 							case IDelta.CLASS_BOUND :
@@ -275,7 +273,6 @@ public class DeltaProcessor {
 			case IDelta.CLASS_ELEMENT_TYPE :
 				switch(delta.getKind()) {
 					case IDelta.ADDED:
-						// this means that TYPE_MEMBER are binary compatible
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 								if (Util.isVisible(delta)) {
@@ -337,7 +334,6 @@ public class DeltaProcessor {
 			case IDelta.ENUM_ELEMENT_TYPE :
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
-						// this means that TYPE_MEMBER are binary compatible
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
