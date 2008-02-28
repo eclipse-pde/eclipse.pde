@@ -136,18 +136,6 @@
       </markerTypeCategory>
    </extension>
    <extension
-         point="org.eclipse.search.searchPages">
-      <page
-            canSearchEnclosingProjects="false"
-            class="org.eclipse.pde.api.tools.ui.internal.search.ApiSearchPage"
-            icon="icons/full/obj16/extract_references.gif"
-            id="org.eclipse.pde.api.tools.ui.searchPage"
-            label="%ApiSearchPage.name"
-            searchViewHelpContextId="org.eclipse.pde.api.tools.ui.apitools_search_page"
-            showScopeSection="false">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"

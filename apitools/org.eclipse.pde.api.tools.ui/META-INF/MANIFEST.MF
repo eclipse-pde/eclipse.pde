@@ -30,7 +30,6 @@ Export-Package: org.eclipse.pde.api.tools.ui.internal;x-friends:="org.eclipse.pd
  org.eclipse.pde.api.tools.ui.internal.markers;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.preferences;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.properties;x-friends:="org.eclipse.pde.api.tools.tests",
- org.eclipse.pde.api.tools.ui.internal.search;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.stubs;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.wizards;x-friends:="org.eclipse.pde.api.tools.tests"
 Import-Package: com.ibm.icu.text;version="3.6.1"

@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiProfilesPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.properties.ApiFiltersPropertyPage;
-import org.eclipse.pde.api.tools.ui.internal.search.ApiSearchPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProfileWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;
 
@@ -54,11 +53,6 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link org.eclipse.pde.api.tools.ui.internal.preferences.ProjectSelectionDialog}
 	 */
 	public static final String APITOOLS_PROJECT_SPECIFIC_SETTINGS_SELECTION_DIALOG = PREFIX + "project_specific_settings_selection_dialog"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the help id for the {@link ApiSearchPage}
-	 */
-	public static final String APITOOLS_SEARCH_PAGE = PREFIX + "apitools_search_page"; //$NON-NLS-1$	
 	
 	/**
 	 * Constant representing the help id for the {@link ApiFiltersPropertyPage}
