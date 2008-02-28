@@ -102,7 +102,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return !Util.isVisible(delta);
+								return false;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -114,7 +114,7 @@ public class DeltaProcessor {
 							case IDelta.TO_CLASS :
 							case IDelta.TO_ENUM :
 							case IDelta.RESTRICTIONS :
-								return !Util.isVisible(delta);
+								return false;
 						}
 						break;
 				}
@@ -145,7 +145,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return !Util.isVisible(delta);
+								return false;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -181,7 +181,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
@@ -189,10 +189,11 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.VARARGS_TO_ARRAY :
-							case IDelta.DECREASE_ACCESS :
 							case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 							case IDelta.NON_STATIC_TO_STATIC :
 							case IDelta.STATIC_TO_NON_STATIC :
+								return !Util.isVisible(delta);
+							case IDelta.DECREASE_ACCESS :
 								return false;
 							case IDelta.NON_FINAL_TO_FINAL :
 								return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
@@ -209,7 +210,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.ADDED :
@@ -218,7 +219,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
@@ -226,10 +227,11 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.VARARGS_TO_ARRAY :
-							case IDelta.DECREASE_ACCESS :
 							case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 							case IDelta.NON_STATIC_TO_STATIC :
 							case IDelta.STATIC_TO_NON_STATIC :
+								return !Util.isVisible(delta);
+							case IDelta.DECREASE_ACCESS :
 								return false;
 							case IDelta.NON_FINAL_TO_FINAL :
 								return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
@@ -324,8 +326,9 @@ public class DeltaProcessor {
 							case IDelta.TO_ANNOTATION :
 							case IDelta.TO_ENUM :
 							case IDelta.TO_INTERFACE :
-							case IDelta.DECREASE_ACCESS :
 							case IDelta.RESTRICTIONS :
+								return !Util.isVisible(delta);
+							case IDelta.DECREASE_ACCESS :
 								return false;
 						}
 						break;
@@ -358,8 +361,9 @@ public class DeltaProcessor {
 							case IDelta.TO_CLASS :
 							case IDelta.TO_ENUM :
 							case IDelta.TO_INTERFACE :
-							case IDelta.DECREASE_ACCESS :
 							case IDelta.RESTRICTIONS :
+								return !Util.isVisible(delta);
+							case IDelta.DECREASE_ACCESS :
 								return false;
 						}
 						break;
