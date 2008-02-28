@@ -162,8 +162,21 @@ public class UpdateSinceTagOperation {
 								//we do not want to create a new empty Javadoc node in
 								//the AST if there are no missing tags
 								rewrite.set(node, node.getJavadocProperty(), docnode, null);
+							} else {
+								List tags = docnode.tags();
+								boolean found = false;
+								loop: for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+									TagElement element = (TagElement) iterator.next();
+									String tagName = element.getTagName();
+									if (TagElement.TAG_SINCE.equals(tagName)) {
+										found = true;
+										break loop;
+									}
+								}
+								if (found) return;
 							}
 							ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
+							// check the existing tags list
 							TagElement newtag = ast.newTagElement();
 							newtag.setTagName(TagElement.TAG_SINCE);
 							TextElement textElement = ast.newTextElement();
