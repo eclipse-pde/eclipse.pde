@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
@@ -33,7 +31,7 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 	public static IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new PDEDefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), EditorsUI.getTooltipAffordanceString());
+				return new PDEDefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 			}
 		};
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,19 +16,19 @@ import java.io.StringReader;
 import java.util.Iterator;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
-import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExtension;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.LineBreakingReader;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * InfoControlTextPresenter
  * Derived from org.eclipse.jdt.internal.ui.text.HTMLTextPresenter
  */
-public class InfoControlTextPresenter implements IInformationPresenter, IInformationPresenterExtension {
+public class InfoControlTextPresenter implements IInformationPresenter {
 
 	private static final String LINE_DELIM = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -80,25 +80,15 @@ public class InfoControlTextPresenter implements IInformationPresenter, IInforma
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter#updatePresentation(org.eclipse.swt.widgets.Display,
+	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExtension#updatePresentation(org.eclipse.swt.widgets.Display,
 	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
 	 */
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
-		return updatePresentation((Drawable) display, hoverInfo, presentation, maxWidth, maxHeight);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExtension#updatePresentation(org.eclipse.swt.graphics.Drawable,
-	 *      java.lang.String, org.eclipse.jface.text.TextPresentation, int, int)
-	 */
-	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 
 		if (hoverInfo == null)
 			return null;
 
-		GC gc = new GC(drawable);
+		GC gc = new GC(display);
 		Font font = null;
 
 		try {
@@ -149,7 +139,7 @@ public class InfoControlTextPresenter implements IInformationPresenter, IInforma
 				append(buffer, PDEUIMessages.InfoControlTextPresenter_ContinuationChars, presentation);
 			}
 			// Pad with a space because first line is not indented
-			return INDENT + buffer.toString(); //$NON-NLS-1$
+			return INDENT + buffer.toString();
 
 		} catch (IOException e) {
 			PDEPlugin.log(e);

@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
 import org.eclipse.pde.internal.ui.editor.outline.QuickOutlinePopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -91,10 +90,6 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		return fInfoPresenter;
 	}
 
-	/**
-	 * @param sourceViewer
-	 * @return
-	 */
 	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
 		// Ensure the source page is defined
 		if (fSourcePage == null) {
@@ -146,9 +141,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle = cutDown ? SWT.NONE : SWT.RESIZE;
-				int textWidgetStyle = cutDown ? SWT.NONE : SWT.V_SCROLL | SWT.H_SCROLL;
-				return new DefaultInformationControl(parent, shellStyle, textWidgetStyle, new HTMLTextPresenter(cutDown));
+				return new DefaultInformationControl(parent, !cutDown);
 			}
 		};
 	}

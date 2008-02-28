@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.ManifestContentAssistProcessor;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Constants;
 
@@ -255,7 +253,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
 					public IInformationControl createInformationControl(Shell parent) {
-						return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+						return new DefaultInformationControl(parent, false);
 					}
 				});
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
