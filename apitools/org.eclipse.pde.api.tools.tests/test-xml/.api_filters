@@ -23,8 +23,8 @@
 	  	Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY
 	  -->
 	  <resource path="src/x/C1.java">
-	  	<filter kind="2048" flags="17" severity="1" category="16777216" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
-	  	<filter kind="128" flags="54" severity="0" category="16777216" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
+	  	<filter kind="4" flags="17" severity="1" category="16777216" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
+	  	<filter kind="2" flags="55" severity="0" category="16777216" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
 	  </resource>
 	   
 	  <!--

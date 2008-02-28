@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -87,6 +88,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
@@ -1654,11 +1656,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 				System.out.println(deltaDetails + " is binary compatible"); //$NON-NLS-1$
 			}
-			switch(delta.getKind()) {
-				case IDelta.ADDED :
-				case IDelta.ADDED_EXTEND_RESTRICTION :
-				case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
-				case IDelta.ADDED_IMPLEMENT_RESTRICTION :
+			if ((delta.getKind() == IDelta.ADDED)
+					&& (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
+							|| RestrictionModifiers.isImplementRestriction(delta.getRestrictions())
+							|| (!RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
+									&& Flags.isStatic(delta.getModifiers())))
+					&& Util.isVisible(delta)) {
 					// check new APIs
 					this.bits |= CONTAINS_API_CHANGES;
 					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
@@ -1694,23 +1697,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 					|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
 				// ensure that there is a @since tag for the corresponding member
-				switch(delta.getKind()) {
-					case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
-					case IDelta.ADDED :
-						IMember member = Util.getIMember(delta, javaProject);
-						if (member != null) {
-							processMember(
-									javaProject,
-									compilationUnit,
-									member,
-									component,
-									missingTagSeverityLevel,
-									malformedTagSeverityLevel,
-									invalidTagVersionSeverityLevel);
-						}
-						
+				if (delta.getKind() == IDelta.ADDED
+						&& Util.isVisible(delta)) {
+					IMember member = Util.getIMember(delta, javaProject);
+					if (member != null) {
+						processMember(
+								javaProject,
+								compilationUnit,
+								member,
+								component,
+								missingTagSeverityLevel,
+								malformedTagSeverityLevel,
+								invalidTagVersionSeverityLevel);
+					}
 				}
 			}
 		}

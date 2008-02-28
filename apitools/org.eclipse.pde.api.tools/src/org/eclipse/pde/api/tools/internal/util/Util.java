@@ -708,10 +708,12 @@ public final class Util {
 			case IDelta.TO_INTERFACE : return "TO_INTERFACE"; //$NON-NLS-1$
 			case IDelta.TRANSIENT_TO_NON_TRANSIENT : return "TRANSIENT_TO_NON_TRANSIENT"; //$NON-NLS-1$
 			case IDelta.TYPE : return "TYPE"; //$NON-NLS-1$
+			case IDelta.TYPE_ARGUMENTS : return "TYPE_ARGUMENTS"; //$NON-NLS-1$
 			case IDelta.TYPE_MEMBER : return "TYPE_MEMBER"; //$NON-NLS-1$
 			case IDelta.TYPE_PARAMETER : return "TYPE_PARAMETER"; //$NON-NLS-1$
 			case IDelta.TYPE_PARAMETER_NAME : return "TYPE_PARAMETER_NAME"; //$NON-NLS-1$
 			case IDelta.TYPE_PARAMETERS : return "TYPE_PARAMETERS"; //$NON-NLS-1$
+			case IDelta.TYPE_VISIBILITY : return "TYPE_VISIBILITY"; //$NON-NLS-1$
 			case IDelta.UNCHECKED_EXCEPTION : return "UNCHECKED_EXCEPTION"; //$NON-NLS-1$
 			case IDelta.VALUE : return "VALUE"; //$NON-NLS-1$
 			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
@@ -743,32 +745,10 @@ public final class Util {
 		switch(kind) {
 			case IDelta.ADDED :
 				return "ADDED"; //$NON-NLS-1$
-			case IDelta.ADDED_EXTEND_RESTRICTION :
-				return "ADDED_EXTEND_RESTRICTION"; //$NON-NLS-1$
-			case IDelta.ADDED_IMPLEMENT_RESTRICTION :
-				return "ADDED_IMPLEMENT_RESTRICTION"; //$NON-NLS-1$
-			case IDelta.ADDED_NON_VISIBLE :
-				return "ADDED_NON_VISIBLE"; //$NON-NLS-1$
-			case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
-				return "ADDED_NOT_EXTEND_RESTRICTION"; //$NON-NLS-1$
-			case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
-				return "ADDED_NOT_EXTEND_RESTRICTION_STATIC"; //$NON-NLS-1$
-			case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
-				return "ADDED_NOT_IMPLEMENT_RESTRICTION"; //$NON-NLS-1$
 			case IDelta.CHANGED :
 				return "CHANGED"; //$NON-NLS-1$
-			case IDelta.CHANGED_NOT_EXTEND_RESTRICTION :
-				return "CHANGED_NOT_EXTEND_RESTRICTION"; //$NON-NLS-1$
-			case IDelta.CHANGED_NON_VISIBLE :
-				return "CHANGED_NON_VISIBLE"; //$NON-NLS-1$
-			case IDelta.CHANGED_VISIBILITY :
-				return "CHANGED_VISIBILITY"; //$NON-NLS-1$
 			case IDelta.REMOVED :
 				return "REMOVED"; //$NON-NLS-1$
-			case IDelta.REMOVED_EXTEND_RESTRICTION :
-				return "REMOVED_EXTEND_RESTRICTION"; //$NON-NLS-1$
-			case IDelta.REMOVED_NON_VISIBLE :
-				return "REMOVED_NON_VISIBLE"; //$NON-NLS-1$
 		}
 		return UNKNOWN_KIND;
 	}
@@ -832,44 +812,11 @@ public final class Util {
 			case IDelta.ADDED :
 				buffer.append("added"); //$NON-NLS-1$
 				break;
-			case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
-				buffer.append("added no implementation restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.ADDED_IMPLEMENT_RESTRICTION :
-				buffer.append("added implementation restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.ADDED_EXTEND_RESTRICTION :
-				buffer.append("added extend restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
-				buffer.append("added no extend restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.ADDED_NON_VISIBLE :
-				buffer.append("added non visible"); //$NON-NLS-1$
-				break;
-			case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
-				buffer.append("added no extend restriction static"); //$NON-NLS-1$
-				break;
 			case IDelta.REMOVED :
 				buffer.append("removed"); //$NON-NLS-1$
 				break;
-			case IDelta.REMOVED_EXTEND_RESTRICTION :
-				buffer.append("removed extend restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.REMOVED_NON_VISIBLE :
-				buffer.append("removed non visible"); //$NON-NLS-1$
-				break;
 			case IDelta.CHANGED :
 				buffer.append("changed"); //$NON-NLS-1$
-				break;
-			case IDelta.CHANGED_NOT_EXTEND_RESTRICTION :
-				buffer.append("changed no extend restriction"); //$NON-NLS-1$
-				break;
-			case IDelta.CHANGED_NON_VISIBLE :
-				buffer.append("changed non visible"); //$NON-NLS-1$
-				break;
-			case IDelta.CHANGED_VISIBILITY :
-				buffer.append("changed visibility"); //$NON-NLS-1$
 				break;
 			default:
 				buffer.append("unknown kind"); //$NON-NLS-1$
@@ -1030,12 +977,6 @@ public final class Util {
 				// we report the marker on the type
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
-					case IDelta.ADDED_EXTEND_RESTRICTION :
-					case IDelta.ADDED_IMPLEMENT_RESTRICTION :
-					case IDelta.ADDED_NON_VISIBLE :
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION_STATIC :
-					case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 								IField field = type.getField(key);
@@ -1759,6 +1700,11 @@ public final class Util {
 		return (accessFlags & Opcodes.ACC_VOLATILE) != 0;
 	}
 	
+	public static boolean isVisible(IDelta delta) {
+		int modifiers = delta.getModifiers();
+		return isProtected(modifiers) || isPublic(modifiers);
+	}
+
 	/**
 	 * Returns a new XML document.
 	 * 

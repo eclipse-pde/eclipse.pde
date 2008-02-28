@@ -33,12 +33,12 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
 	public static final String API_COMPONENT_REMOVED_DUPLICATED_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.DUPLICATED_TYPE);
-	public static final String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.TYPE_MEMBER);
-	public static final String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.FIELD);
-	public static final String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD =
-		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.METHOD);
+	public static final String ANNOTATION_ADDED_TYPE_MEMBER =
+		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
+	public static final String ANNOTATION_ADDED_FIELD =
+		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
+	public static final String ANNOTATION_ADDED_METHOD =
+		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String ANNOTATION_REMOVED_FIELD =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.REMOVED, IDelta.FIELD);
 	public static final String ANNOTATION_REMOVED_METHOD_DEFAULT_VALUE =
@@ -84,12 +84,12 @@ public interface IApiProblemTypes {
 	public static final String ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD_WITHOUT_DEFAULT_VALUE);
 	// interface key constant
-	public static final String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.FIELD);
-	public static final String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.METHOD);
-	public static final String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER =
-		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION, IDelta.TYPE_MEMBER);
+	public static final String INTERFACE_ADDED_FIELD =
+		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
+	public static final String INTERFACE_ADDED_METHOD =
+		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
+	public static final String INTERFACE_ADDED_TYPE_MEMBER =
+		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_MEMBER);
 	public static final String INTERFACE_ADDED_CLASS_BOUND =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.ADDED, IDelta.CLASS_BOUND);
 	public static final String INTERFACE_ADDED_INTERFACE_BOUND =
@@ -131,10 +131,10 @@ public interface IApiProblemTypes {
 	public static final String INTERFACE_CHANGED_RESTRICTIONS =
 		Util.getDeltaPrefererenceKey(IDelta.INTERFACE_ELEMENT_TYPE, IDelta.CHANGED, IDelta.RESTRICTIONS);
 	// enum key constant
-	public static final String ENUM_ADDED_FIELD_NOT_EXTEND_RESTRICTION =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.ADDED_NOT_EXTEND_RESTRICTION, IDelta.FIELD);
-	public static final String ENUM_ADDED_METHOD_NOT_EXTEND_RESTRICTION =
-		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.ADDED_NOT_EXTEND_RESTRICTION, IDelta.METHOD);
+	public static final String ENUM_ADDED_FIELD =
+		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
+	public static final String ENUM_ADDED_METHOD =
+		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET);
 	public static final String ENUM_CHANGED_TO_ANNOTATION =
@@ -156,10 +156,10 @@ public interface IApiProblemTypes {
 	public static final String ENUM_REMOVED_TYPE_MEMBER =
 		Util.getDeltaPrefererenceKey(IDelta.ENUM_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE_MEMBER);
 	// class key constant
-	public static final String CLASS_ADDED_NOT_EXTEND_RESTRICTION_FIELD =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED_NOT_EXTEND_RESTRICTION, IDelta.FIELD);
-	public static final String CLASS_ADDED_NOT_EXTEND_RESTRICTION_METHOD =
-		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED_NOT_EXTEND_RESTRICTION, IDelta.METHOD);
+	public static final String CLASS_ADDED_FIELD =
+		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
+	public static final String CLASS_ADDED_METHOD =
+		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
 	public static final String CLASS_ADDED_TYPE_PARAMETER =
 		Util.getDeltaPrefererenceKey(IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.TYPE_PARAMETER);
 	public static final String CLASS_ADDED_CLASS_BOUND =
@@ -256,8 +256,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_STATIC_TO_STATIC);
 	public static final String METHOD_CHANGED_STATIC_TO_NON_STATIC =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.STATIC_TO_NON_STATIC);
-	public static final String METHOD_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION =
-		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED_NOT_EXTEND_RESTRICTION, IDelta.NON_FINAL_TO_FINAL);
+	public static final String METHOD_CHANGED_NON_FINAL_TO_FINAL =
+		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_FINAL_TO_FINAL);
 	public static final String METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.METHOD_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE);
 	public static final String METHOD_REMOVED_TYPE_PARAMETERS =
@@ -295,8 +295,8 @@ public interface IApiProblemTypes {
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_STATIC_TO_STATIC);
 	public static final String CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.STATIC_TO_NON_STATIC);
-	public static final String CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION =
-		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED_NOT_EXTEND_RESTRICTION, IDelta.NON_FINAL_TO_FINAL);
+	public static final String CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL =
+		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.CHANGED, IDelta.NON_FINAL_TO_FINAL);
 	public static final String CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE =
 		Util.getDeltaPrefererenceKey(IDelta.CONSTRUCTOR_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ANNOTATION_DEFAULT_VALUE);
 	public static final String CONSTRUCTOR_REMOVED_TYPE_PARAMETERS =

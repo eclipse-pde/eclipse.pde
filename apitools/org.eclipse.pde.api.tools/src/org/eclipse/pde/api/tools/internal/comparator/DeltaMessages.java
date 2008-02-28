@@ -21,11 +21,13 @@ public class DeltaMessages extends NLS {
 
 	public static String UNKNOWN_MESSAGE;
 	public static String ADDED_ANNOTATION_DEFAULT_VALUE;
+	public static String ADDED_API_COMPONENT;
 	public static String ADDED_CHECKED_EXCEPTION;
 	public static String ADDED_CLASS_BOUND;
 	public static String ADDED_CLINIT;
 	public static String ADDED_CONSTRUCTOR;
 	public static String ADDED_ENUM_CONSTANT;
+	public static String ADDED_EXECUTION_ENVIRONMENT;
 	public static String ADDED_EXTEND_RESTRICTION_FIELD;
 	public static String ADDED_EXTEND_RESTRICTION_METHOD;
 	public static String ADDED_EXTEND_RESTRICTION_TYPE_MEMBER;
@@ -48,7 +50,9 @@ public class DeltaMessages extends NLS {
 	public static String ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD;
 	public static String ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD;
 	public static String ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER;
+	public static String ADDED_SUPERCLASS;
 	public static String ADDED_TYPE;
+	public static String ADDED_TYPE_ARGUMENTS;
 	public static String ADDED_TYPE_PARAMETER;
 	public static String ADDED_TYPE_PARAMETERS;
 	public static String ADDED_UNCHECKED_EXCEPTION;
@@ -79,6 +83,7 @@ public class DeltaMessages extends NLS {
 	public static String CHANGED_NON_VISIBLE_TYPE;
 	public static String CHANGED_NON_VISIBLE_VALUE;
 	public static String CHANGED_NOT_EXTEND_RESTRICTION_NON_FINAL_TO_FINAL;
+	public static String CHANGED_RESTRICTIONS;
 	public static String CHANGED_STATIC_TO_NON_STATIC;
 	public static String CHANGED_SUPERCLASS;
 	public static String CHANGED_SYNCHRONIZED_TO_NON_SYNCHRONIZED;
@@ -91,8 +96,9 @@ public class DeltaMessages extends NLS {
 	public static String CHANGED_TYPE_PARAMETER_NAME;
 	public static String CHANGED_VALUE;
 	public static String CHANGED_VARARGS_TO_ARRAY;
-	public static String CHANGED_VISIBILITY_TYPE;
+	public static String CHANGED_TYPE_VISIBILITY;
 	public static String REMOVED_ANNOTATION_DEFAULT_VALUE;
+	public static String REMOVED_API_COMPONENT;
 	public static String REMOVED_API_TYPE;
 	public static String REMOVED_CHECKED_EXCEPTION;
 	public static String REMOVED_CLASS_BOUND;
@@ -114,6 +120,7 @@ public class DeltaMessages extends NLS {
 	public static String REMOVED_NON_VISIBLE_TYPE_MEMBER;
 	public static String REMOVED_EXECUTION_ENVIRONMENT;
 	public static String REMOVED_TYPE;
+	public static String REMOVED_TYPE_ARGUMENTS;
 	public static String REMOVED_TYPE_MEMBER;
 	public static String REMOVED_TYPE_PARAMETER;
 	public static String REMOVED_TYPE_PARAMETERS;

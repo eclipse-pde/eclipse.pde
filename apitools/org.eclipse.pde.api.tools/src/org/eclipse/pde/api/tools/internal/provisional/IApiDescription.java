@@ -86,12 +86,4 @@ public interface IApiDescription {
 	 * @return true if the element was removed, false otherwise
 	 */
 	public boolean removeElement(IElementDescriptor element);
-	
-	/**
-	 * Returns true if this API description contains annotated elements, false otherwise.
-	 *
-	 * @return true if this API description contains annotated elements, false otherwise.
-	 * @deprecated this method will be removed
-	 */
-	public boolean containsAnnotatedElements();
 }

@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -55,10 +56,11 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED_EXTEND_RESTRICTION, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Extend restrictions", !RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());

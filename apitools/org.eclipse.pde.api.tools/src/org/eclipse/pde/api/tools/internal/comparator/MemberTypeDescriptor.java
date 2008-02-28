@@ -12,12 +12,14 @@ package org.eclipse.pde.api.tools.internal.comparator;
 
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 
 public class MemberTypeDescriptor extends ElementDescriptor {
 	public MemberTypeDescriptor(String name, int access) {
 		this.access = access;
-		this.name = name;
-		this.handle = Factory.typeDescriptor(this.name);
+		IReferenceTypeDescriptor typeDescriptor = Factory.typeDescriptor(name);
+		this.name = typeDescriptor.getName();
+		this.handle = typeDescriptor;
 	}
 
 	public boolean equals(Object obj) {

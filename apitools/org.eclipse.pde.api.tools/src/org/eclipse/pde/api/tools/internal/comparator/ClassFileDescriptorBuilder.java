@@ -77,7 +77,7 @@ class ClassFileDescriptorBuilder extends ClassAdapter {
 			}
 		} else if (outerName != null && innerName != null) {
 			// technically speaking innerName != null is not necessary, but this is a workaround for some
-			// boggus synthetic types created by javac
+			// boggus synthetic types created by another compiler
 			String currentOuterName = outerName.replace('/', '.');
 			if (currentOuterName.equals(this.descriptor.name)) {
 				// this is a real type member defined in the descriptor (not just a reference to a type member)

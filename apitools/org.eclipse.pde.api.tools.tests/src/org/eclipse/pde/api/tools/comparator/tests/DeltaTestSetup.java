@@ -168,11 +168,12 @@ public abstract class DeltaTestSetup extends TestCase {
 				return kind - kind2;
 			}
 		});
+		String unknownMessageStart = DeltaMessages.UNKNOWN_MESSAGE.substring(0, DeltaMessages.UNKNOWN_MESSAGE.lastIndexOf(' '));
 		for (int i = 0, max = result.length; i < max; i++) {
 			IDelta leafDelta = result[i];
 			String message = leafDelta.getMessage();
 			assertNotNull("No message", message);
-			assertFalse("Should not be an unknown message", message.startsWith(DeltaMessages.UNKNOWN_MESSAGE));
+			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart));
 		}
 		return result;
 	}

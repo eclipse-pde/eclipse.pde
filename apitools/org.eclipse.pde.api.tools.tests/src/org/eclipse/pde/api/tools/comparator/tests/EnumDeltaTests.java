@@ -18,6 +18,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Delta tests for enum
@@ -105,12 +106,14 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
@@ -132,12 +135,14 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertFalse("Is visible", Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
@@ -198,7 +203,8 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));
@@ -220,7 +226,8 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED_NON_VISIBLE, child.getKind());
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not binary compatible", DeltaProcessor.isBinaryCompatible(child));

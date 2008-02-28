@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.util.Util;
+
 
 /**
  * Class used to process the delta to find out if they are binary compatible or not.
@@ -77,11 +80,16 @@ public class DeltaProcessor {
 				break;
 			case IDelta.INTERFACE_ELEMENT_TYPE :
 				switch(delta.getKind()) {
-					case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
+					case IDelta.ADDED :
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
 							case IDelta.TYPE_MEMBER :
+								return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+							case IDelta.TYPE_PARAMETER :
+							case IDelta.CLASS_BOUND :
+							case IDelta.INTERFACE_BOUND :
+							case IDelta.INTERFACE_BOUNDS :
 								return false;
 						}
 						break;
@@ -95,7 +103,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
@@ -107,26 +115,24 @@ public class DeltaProcessor {
 							case IDelta.TO_CLASS :
 							case IDelta.TO_ENUM :
 							case IDelta.RESTRICTIONS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
-					case IDelta.ADDED :
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_PARAMETER :
-							case IDelta.CLASS_BOUND :
-							case IDelta.INTERFACE_BOUND :
-							case IDelta.INTERFACE_BOUNDS :
-								return false;
-						}
 				}
 				break;
 			case IDelta.ANNOTATION_ELEMENT_TYPE :
 				switch(delta.getKind()) {
-					case IDelta.ADDED_NOT_IMPLEMENT_RESTRICTION :
+					case IDelta.ADDED :
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
 							case IDelta.TYPE_MEMBER :
+								return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+							case IDelta.TYPE_PARAMETER :
+							case IDelta.CLASS_BOUND :
+							case IDelta.INTERFACE_BOUND :
+							case IDelta.INTERFACE_BOUNDS :
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 								return false;
 						}
 						break;
@@ -141,7 +147,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
@@ -156,15 +162,6 @@ public class DeltaProcessor {
 								return false;
 						}
 						break;
-					case IDelta.ADDED :
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_PARAMETER :
-							case IDelta.CLASS_BOUND :
-							case IDelta.INTERFACE_BOUND :
-							case IDelta.INTERFACE_BOUNDS :
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-								return false;
-						}
 				}
 				break;
 			case IDelta.METHOD_ELEMENT_TYPE :
@@ -177,7 +174,7 @@ public class DeltaProcessor {
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.ADDED :
@@ -199,13 +196,10 @@ public class DeltaProcessor {
 							case IDelta.NON_STATIC_TO_STATIC :
 							case IDelta.STATIC_TO_NON_STATIC :
 								return false;
+							case IDelta.NON_FINAL_TO_FINAL :
+								return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						break;
-					case IDelta.CHANGED_NOT_EXTEND_RESTRICTION :
-						switch(delta.getFlags()) {
-							case IDelta.NON_FINAL_TO_FINAL :
-								return false;
-						}
 				}
 				break;
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
@@ -239,13 +233,10 @@ public class DeltaProcessor {
 							case IDelta.NON_STATIC_TO_STATIC :
 							case IDelta.STATIC_TO_NON_STATIC :
 								return false;
+							case IDelta.NON_FINAL_TO_FINAL :
+								return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						break;
-					case IDelta.CHANGED_NOT_EXTEND_RESTRICTION :
-						switch(delta.getFlags()) {
-							case IDelta.NON_FINAL_TO_FINAL :
-								return false;
-						}
 				}
 				break;
 			case IDelta.FIELD_ELEMENT_TYPE :
@@ -254,36 +245,56 @@ public class DeltaProcessor {
 						switch(delta.getFlags()) {
 							case IDelta.VALUE :
 							case IDelta.TYPE_ARGUMENTS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
 						switch(delta.getFlags()) {
 							case IDelta.TYPE :
-							case IDelta.VALUE :
-							case IDelta.DECREASE_ACCESS :
 							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
 							case IDelta.NON_FINAL_TO_FINAL :
 							case IDelta.STATIC_TO_NON_STATIC :
 							case IDelta.NON_STATIC_TO_STATIC :
+								return !Util.isVisible(delta);
+							case IDelta.VALUE :
+								if (Util.isVisible(delta)) {
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+								}
+								return true;
+							case IDelta.DECREASE_ACCESS :
 								return false;
 						}
 						break;
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
 							case IDelta.VALUE :
-								return false;
+								return !Util.isVisible(delta);
 						}
 				}
 				break;
 			case IDelta.CLASS_ELEMENT_TYPE :
 				switch(delta.getKind()) {
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
+					case IDelta.ADDED:
 						// this means that TYPE_MEMBER are binary compatible
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
+								if (Util.isVisible(delta)) {
+									if (Util.isStatic(delta.getModifiers())) {
+										return true;
+									}
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+								}
+								return true; 
 							case IDelta.METHOD :
-								return false;
+								if (Util.isVisible(delta)) {
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || !Util.isAbstract(delta.getModifiers());
+								}
+								return true; 
+							case IDelta.TYPE_PARAMETER :
+							case IDelta.CLASS_BOUND :
+							case IDelta.INTERFACE_BOUND :
+							case IDelta.INTERFACE_BOUNDS :
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.REMOVED :
@@ -291,13 +302,17 @@ public class DeltaProcessor {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
+								if (Util.isVisible(delta)) {
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+								}
+								return true;
 							case IDelta.TYPE_MEMBER :
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
 							case IDelta.TYPE_PARAMETER :
 							case IDelta.TYPE_PARAMETERS :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :
@@ -317,24 +332,16 @@ public class DeltaProcessor {
 								return false;
 						}
 						break;
-					case IDelta.ADDED :
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_PARAMETER :
-							case IDelta.CLASS_BOUND :
-							case IDelta.INTERFACE_BOUND :
-							case IDelta.INTERFACE_BOUNDS :
-								return false;
-						}
 				}
 				break;
 			case IDelta.ENUM_ELEMENT_TYPE :
 				switch(delta.getKind()) {
-					case IDelta.ADDED_NOT_EXTEND_RESTRICTION :
+					case IDelta.ADDED :
 						// this means that TYPE_MEMBER are binary compatible
 						switch(delta.getFlags()) {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
-								return false;
+								return !Util.isVisible(delta) || RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						break;
 					case IDelta.REMOVED :
@@ -344,7 +351,7 @@ public class DeltaProcessor {
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
 							case IDelta.TYPE_MEMBER :
-								return false;
+								return !Util.isVisible(delta);
 						}
 						break;
 					case IDelta.CHANGED :

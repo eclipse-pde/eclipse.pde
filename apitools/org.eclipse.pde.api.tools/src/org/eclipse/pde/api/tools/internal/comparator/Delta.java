@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -70,6 +71,8 @@ public class Delta implements IDelta {
 	int elementType;
 	int flags;
 	String key;
+	int restrictions;
+	int modifiers;
 
 	int kind;
 	Object data;
@@ -79,10 +82,15 @@ public class Delta implements IDelta {
 	}
 
 	public Delta(int elementType, int kind, int flags, IClassFile classFile, String key, Object data) {
-		this.classFile = classFile;
+		this(elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, classFile, key, data);
+	}
+
+	public Delta(int elementType, int kind, int flags, int restrictions, int modifiers, IClassFile classFile, String key, Object data) {
+		this.elementType = elementType;
 		this.kind = kind;
 		this.flags = flags;
-		this.elementType = elementType;
+		this.restrictions = restrictions;
+		this.modifiers = modifiers;
 		this.classFile = classFile;
 		this.key = key;
 		this.data = data;
@@ -167,14 +175,99 @@ public class Delta implements IDelta {
 	
 	public String getMessage() {
 		StringBuffer buffer = new StringBuffer(Util.getDeltaKindName(this));
+		switch(this.getKind()) {
+			case IDelta.ADDED :
+				switch(this.getFlags()) {
+					case IDelta.METHOD :
+					case IDelta.TYPE_MEMBER :
+						if (!Util.isVisible(this)) {
+							buffer.append("_NON_VISIBLE"); //$NON-NLS-1$
+						} else {
+							switch(this.elementType) {
+								case IDelta.CLASS_ELEMENT_TYPE :
+								case IDelta.ENUM_ELEMENT_TYPE :
+									if (RestrictionModifiers.isExtendRestriction(this.getRestrictions())) {
+										buffer.append("_EXTEND_RESTRICTION"); //$NON-NLS-1$
+									} else {
+										buffer.append("_NOT_EXTEND_RESTRICTION"); //$NON-NLS-1$
+									}
+									break;
+								case IDelta.INTERFACE_ELEMENT_TYPE :
+								case IDelta.ANNOTATION_ELEMENT_TYPE :
+									if (RestrictionModifiers.isImplementRestriction(this.getRestrictions())) {
+										buffer.append("_IMPLEMENT_RESTRICTION"); //$NON-NLS-1$
+									} else {
+										buffer.append("_NOT_IMPLEMENT_RESTRICTION"); //$NON-NLS-1$
+									}
+							}
+						}
+						break;
+					case IDelta.FIELD :
+						if (!Util.isVisible(this)) {
+							buffer.append("_NON_VISIBLE"); //$NON-NLS-1$
+						} else {
+							switch(this.elementType) {
+								case IDelta.CLASS_ELEMENT_TYPE :
+								case IDelta.ENUM_ELEMENT_TYPE :
+									if (RestrictionModifiers.isExtendRestriction(this.getRestrictions())) {
+										buffer.append("_EXTEND_RESTRICTION"); //$NON-NLS-1$
+									} else {
+										buffer.append("_NOT_EXTEND_RESTRICTION"); //$NON-NLS-1$
+										if (Util.isStatic(this.getModifiers())) {
+											buffer.append("_STATIC"); //$NON-NLS-1$
+										}
+									}
+									break;
+								case IDelta.INTERFACE_ELEMENT_TYPE :
+								case IDelta.ANNOTATION_ELEMENT_TYPE :
+									if (RestrictionModifiers.isImplementRestriction(this.getRestrictions())) {
+										buffer.append("_IMPLEMENT_RESTRICTION"); //$NON-NLS-1$
+									} else {
+										buffer.append("_NOT_IMPLEMENT_RESTRICTION"); //$NON-NLS-1$
+									}
+							}
+						}
+						break;
+					case IDelta.CONSTRUCTOR :
+					case IDelta.CHECKED_EXCEPTION :
+						if (!Util.isVisible(this)) {
+							buffer.append("_NON_VISIBLE"); //$NON-NLS-1$
+						}
+				}
+				break;
+			case IDelta.CHANGED :
+				switch(this.getFlags()) {
+					case IDelta.NON_FINAL_TO_FINAL :
+						if (!RestrictionModifiers.isExtendRestriction(this.getRestrictions())) {
+							buffer.append("_NOT_EXTEND_RESTRICTION"); //$NON-NLS-1$
+						}
+						break;
+					case IDelta.TYPE :
+					case IDelta.VALUE :
+						if (!Util.isVisible(this)) {
+							buffer.append("_NON_VISIBLE"); //$NON-NLS-1$
+						}
+						break;
+				}
+				break;
+			case IDelta.REMOVED :
+				switch(this.flags) {
+					case IDelta.METHOD :
+					case IDelta.FIELD :
+					case IDelta.TYPE_MEMBER :
+					case IDelta.CONSTRUCTOR :
+						if (!Util.isVisible(this)) {
+							buffer.append("_NON_VISIBLE"); //$NON-NLS-1$
+						}
+				}
+		}
+
 		buffer.append('_').append(Util.getDeltaFlagsName(this));
 		String name = String.valueOf(buffer);
 		try {
 			Field field = DeltaMessages.class.getField(name);
 			switch(this.kind) {
 				case IDelta.REMOVED :
-				case IDelta.REMOVED_EXTEND_RESTRICTION :
-				case IDelta.REMOVED_NON_VISIBLE :
 					return NLS.bind((String) field.get(null), this.data);
 				default :
 					return (String) field.get(null);
@@ -189,5 +282,11 @@ public class Delta implements IDelta {
 			// ignore
 		}
 		return NLS.bind(DeltaMessages.UNKNOWN_MESSAGE, name);
+	}
+	public int getModifiers() {
+		return this.modifiers;
+	}
+	public int getRestrictions() {
+		return this.restrictions;
 	}
 }

@@ -56,9 +56,9 @@ public class PreferenceMessages extends NLS {
 	public static String API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT;
 	public static String API_COMPONENT_REMOVED_TYPE;
 	public static String API_COMPONENT_REMOVED_DUPLICATED_TYPE;
-	public static String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD;
-	public static String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD;
-	public static String ANNOTATION_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER;
+	public static String ANNOTATION_ADDED_FIELD;
+	public static String ANNOTATION_ADDED_METHOD;
+	public static String ANNOTATION_ADDED_TYPE_MEMBER;
 	public static String ANNOTATION_ADDED_TYPE_PARAMETER;
 	public static String ANNOTATION_ADDED_CLASS_BOUND;
 	public static String ANNOTATION_ADDED_INTERFACE_BOUND;
@@ -82,9 +82,9 @@ public class PreferenceMessages extends NLS {
 	public static String ANNOTATION_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ANNOTATION_CHANGED_RESTRICTIONS;
 	
-	public static String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_FIELD;
-	public static String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_METHOD;
-	public static String INTERFACE_ADDED_NOT_IMPLEMENT_RESTRICTION_TYPE_MEMBER;
+	public static String INTERFACE_ADDED_FIELD;
+	public static String INTERFACE_ADDED_METHOD;
+	public static String INTERFACE_ADDED_TYPE_MEMBER;
 	public static String INTERFACE_ADDED_CLASS_BOUND;
 	public static String INTERFACE_ADDED_INTERFACE_BOUND;
 	public static String INTERFACE_ADDED_INTERFACE_BOUNDS;
@@ -106,8 +106,8 @@ public class PreferenceMessages extends NLS {
 	public static String INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String INTERFACE_CHANGED_RESTRICTIONS;
 	
-	public static String ENUM_ADDED_FIELD_NOT_EXTEND_RESTRICTION;
-	public static String ENUM_ADDED_METHOD_NOT_EXTEND_RESTRICTION;
+	public static String ENUM_ADDED_FIELD;
+	public static String ENUM_ADDED_METHOD;
 	public static String ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET;
 	public static String ENUM_CHANGED_TO_ANNOTATION;
 	public static String ENUM_CHANGED_TO_CLASS;
@@ -119,8 +119,8 @@ public class PreferenceMessages extends NLS {
 	public static String ENUM_REMOVED_CONSTRUCTOR;
 	public static String ENUM_REMOVED_TYPE_MEMBER;
 	
-	public static String CLASS_ADDED_NOT_EXTEND_RESTRICTION_FIELD;
-	public static String CLASS_ADDED_NOT_EXTEND_RESTRICTION_METHOD;
+	public static String CLASS_ADDED_FIELD;
+	public static String CLASS_ADDED_METHOD;
 	public static String CLASS_ADDED_TYPE_PARAMETER;
 	public static String CLASS_ADDED_CLASS_BOUND;
 	public static String CLASS_ADDED_INTERFACE_BOUND;
@@ -170,7 +170,7 @@ public class PreferenceMessages extends NLS {
 	public static String METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String METHOD_CHANGED_NON_STATIC_TO_STATIC;
 	public static String METHOD_CHANGED_STATIC_TO_NON_STATIC;
-	public static String METHOD_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION;
+	public static String METHOD_CHANGED_NON_FINAL_TO_FINAL;
 	public static String METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE;
 	public static String METHOD_REMOVED_TYPE_PARAMETERS;
 	public static String METHOD_REMOVED_TYPE_PARAMETER;
@@ -190,7 +190,7 @@ public class PreferenceMessages extends NLS {
 	public static String CONSTRUCTOR_CHANGED_NON_ABSTRACT_TO_ABSTRACT;
 	public static String CONSTRUCTOR_CHANGED_NON_STATIC_TO_STATIC;
 	public static String CONSTRUCTOR_CHANGED_STATIC_TO_NON_STATIC;
-	public static String CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL_NOT_EXTEND_RESTRICTION;
+	public static String CONSTRUCTOR_CHANGED_NON_FINAL_TO_FINAL;
 	public static String CONSTRUCTOR_REMOVED_ANNOTATION_DEFAULT_VALUE;
 	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETERS;
 	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETER;

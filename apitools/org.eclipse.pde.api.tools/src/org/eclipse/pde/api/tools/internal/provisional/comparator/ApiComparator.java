@@ -115,7 +115,7 @@ public class ApiComparator {
 						return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, classFile2, typeName, typeName);
 					}
 					// no delta
-					return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED_VISIBILITY, IDelta.TYPE, classFile2, typeName, null);
+					return new Delta(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.CHANGED, IDelta.TYPE_VISIBILITY, classFile2, typeName, null);
 				}
 			}
 			ClassFileComparator comparator = new ClassFileComparator(classFile, classFile2, component, component2, referenceProfile, profile, visibilityModifiers);

@@ -18,89 +18,19 @@ public interface IDelta {
 	/**
 	 * Status constant indicating that the element has been added.
 	 */
-	public int ADDED = 0x0001;
-
-	/**
-	 * Status constant indicating that the element has been added with extend restriction.
-	 * extend = false
-	 */
-	public int ADDED_EXTEND_RESTRICTION = 0x0002;
-
-	/**
-	 * Status constant indicating that the element has been added without implement restriction.
-	 */
-	public int ADDED_IMPLEMENT_RESTRICTION = 0x0004;
-
-	/**
-	 * Status constant indicating that the element has been added, but it is not visible.
-	 */
-	public int ADDED_NON_VISIBLE = 0x0008;
-
-	/**
-	 * Status constant indicating that the element has been added without extend restriction.
-	 */
-	public int ADDED_NOT_EXTEND_RESTRICTION = 0x0010;
-
-	/**
-	 * Status constant indicating that the element has been added with extend restriction for a static member.
-	 */
-	public int ADDED_NOT_EXTEND_RESTRICTION_STATIC = 0x0020;
-
-	/**
-	 * Status constant indicating that the element has been added with implement restriction.
-	 */
-	public int ADDED_NOT_IMPLEMENT_RESTRICTION = 0x0040;
-
+	public int ADDED = 0x001;
 	/**
 	 * Status constant indicating that the element has been changed, as
 	 * described by the change flags.
 	 * 
 	 * @see #getFlags()
 	 */
-	public int CHANGED = 0x0080;
-	
-
-	/**
-	 * Status constant indicating that the element has been changed, as
-	 * described by the change flags without extend restriction.
-	 * 
-	 * @see #getFlags()
-	 */
-	public int CHANGED_NOT_EXTEND_RESTRICTION = 0x0100;
-
-	/**
-	 * Status constant indicating that the element has been changed but
-	 * it is not visible (package default or private), as
-	 * described by the change flags.
-	 * 
-	 * @see #getFlags()
-	 */
-	public int CHANGED_NON_VISIBLE = 0x0200;
-
-	/**
-	 * Status constant indicating that the element has changed`visibility, but
-	 * not in a breaking way.
-	 * 
-	 * @see #getFlags()
-	 */
-	public int CHANGED_VISIBILITY = 0x0400;
+	public int CHANGED = 0x002;
 
 	/**
 	 * Status constant indicating that the element has been removed.
 	 */
-	public int REMOVED = 0x0800;
-
-	/**
-	 * Status constant indicating that the element has been removed from a member with
-	 * extend restriction.
-	 */
-	public int REMOVED_EXTEND_RESTRICTION = 0x1000;
-
-	/**
-	 * Status constant indicating that the element has been removed, but it is
-	 * not visible.
-	 */
-	public int REMOVED_NON_VISIBLE = 0x2000;
+	public int REMOVED = 0x004;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an annotation type declaration.
@@ -225,9 +155,10 @@ public interface IDelta {
 	public static final int TYPE_PARAMETER = 49;
 	public static final int TYPE_PARAMETER_NAME = 50;
 	public static final int TYPE_PARAMETERS = 51;
-	public static final int UNCHECKED_EXCEPTION = 52;
-	public static final int VALUE = 53;
-	public static final int VARARGS_TO_ARRAY = 54;
+	public static final int TYPE_VISIBILITY = 52;
+	public static final int UNCHECKED_EXCEPTION = 53;
+	public static final int VALUE = 54;
+	public static final int VARARGS_TO_ARRAY = 55;
 
 	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
@@ -290,10 +221,25 @@ public interface IDelta {
 	public String getTypeName();
 
 	/**
-	 * Returns the delta description. This can be used as an error message. The message is returned
+	 * Returns the delta's description. This can be used as an error message. The message is returned
 	 * in the current locale.
 	 * 
-	 * @return the delta description
+	 * @return the delta's description
 	 */
 	public String getMessage();
+	
+	/**
+	 * Returns the delta's restrictions.
+	 * 
+	 * @return the delta's restrictions
+	 */
+	public int getRestrictions();
+
+	/**
+	 * Returns the delta's modifiers. This corresponds to the modifiers of the affected element.
+	 * by the delta.
+	 * 
+	 * @return the delta's modifiers
+	 */
+	public int getModifiers();
 }

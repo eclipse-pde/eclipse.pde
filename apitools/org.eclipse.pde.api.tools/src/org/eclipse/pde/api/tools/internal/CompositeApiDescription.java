@@ -47,18 +47,6 @@ public class CompositeApiDescription implements IApiDescription {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#containsAnnotatedElements()
-	 */
-	public boolean containsAnnotatedElements() {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			if (fDescriptions[i].containsAnnotatedElements()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#removeElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
 	public boolean removeElement(IElementDescriptor element) {
