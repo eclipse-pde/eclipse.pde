@@ -1065,7 +1065,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						true,
 						String.valueOf(newComponentVersion));
 				}
-			} else {
+			} else if ((this.bits & CONTAINS_API_CHANGES) != 0) {
 				// only new API have been added
 				if (componentVersion.getMajor() != referenceVersion.getMajor()) {
 					// major version should be identical
@@ -1229,7 +1229,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param project
 	 */
 	private void createMarkerFor(IDelta delta, ICompilationUnit compilationUnit, IJavaProject project, IApiComponent reference, IApiComponent component) {
-		this.bits |= CONTAINS_API_BREAKAGE;
 		try {
 			Version referenceVersion = new Version(reference.getVersion());
 			Version componentVersion = new Version(component.getVersion());
@@ -1265,6 +1264,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(isProblemFiltered(correspondingResource, message, severity, IApiProblem.CATEGORY_BINARY, delta.getKind(), delta.getFlags())) {
 				return;
 			}
+			this.bits |= CONTAINS_API_BREAKAGE;
 			IMarker marker = correspondingResource.createMarker(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER);
 			// retrieve line number, char start and char end
 			int lineNumber = 1;
@@ -1662,27 +1662,27 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							|| (!RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
 									&& Flags.isStatic(delta.getModifiers())))
 					&& Util.isVisible(delta)) {
-					// check new APIs
-					this.bits |= CONTAINS_API_CHANGES;
-					int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
-					int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
-					int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
-					if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-							|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
-							|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
-						// ensure that there is a @since tag for the corresponding member
-						IMember member = Util.getIMember(delta, javaProject);
-						if (member != null) {
-							processMember(
-								javaProject,
-								compilationUnit,
-								member,
-								component,
-								missingTagSeverityLevel,
-								malformedTagSeverityLevel,
-								invalidTagVersionSeverityLevel);
-						}
+				// check new APIs
+				this.bits |= CONTAINS_API_CHANGES;
+				int missingTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject);
+				int malformedTagSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject);
+				int invalidTagVersionSeverityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject);
+				if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
+						|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
+						|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
+					// ensure that there is a @since tag for the corresponding member
+					IMember member = Util.getIMember(delta, javaProject);
+					if (member != null) {
+						processMember(
+							javaProject,
+							compilationUnit,
+							member,
+							component,
+							missingTagSeverityLevel,
+							malformedTagSeverityLevel,
+							invalidTagVersionSeverityLevel);
 					}
+				}
 			}
 		} else {
 			if (DEBUG) {
