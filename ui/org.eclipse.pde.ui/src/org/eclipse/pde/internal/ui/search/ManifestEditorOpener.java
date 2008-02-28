@@ -130,9 +130,10 @@ public class ManifestEditorOpener {
 
 		// iterate through the UI text models to find a match for a Search object.
 		for (int i = 0; i < elements.length; i++) {
-			if (object.equals(elements[i])) {
-				int offset = ((PluginObjectNode) elements[i]).getOffset();
-				offset += ((PluginObjectNode) elements[i]).getLength();
+			IPluginObject element = elements[i];
+			if (element != null && object.equals(element)) {
+				int offset = ((PluginObjectNode) element).getOffset();
+				offset += ((PluginObjectNode) element).getLength();
 				String name = (object instanceof IPluginExtension) ? "point" : "id"; //$NON-NLS-1$ //$NON-NLS-2$
 				String value = (object instanceof IPluginExtension) ? ((IPluginExtension) object).getPoint() : ((IPluginExtensionPoint) object).getId();
 				return getAttributeRegion(document, name, value, offset);
@@ -140,5 +141,4 @@ public class ManifestEditorOpener {
 		}
 		return null;
 	}
-
 }
