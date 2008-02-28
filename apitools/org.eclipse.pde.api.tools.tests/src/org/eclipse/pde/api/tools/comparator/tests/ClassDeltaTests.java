@@ -35,7 +35,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		if (true) return new TestSuite(ClassDeltaTests.class);
 		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-		suite.addTest(new ClassDeltaTests("test109"));
+		suite.addTest(new ClassDeltaTests("test112"));
 		return suite;
 	}
 
@@ -1597,9 +1597,10 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child));
+		assertTrue("Not a protected field", Util.isProtected(child.getModifiers()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 
 	/**
@@ -1642,9 +1643,10 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child));
+		assertTrue("Not a protected field", Util.isProtected(child.getModifiers()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD_MOVED_UP, child.getFlags());
@@ -2570,5 +2572,75 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+	}
+
+	/**
+	 * Delete public field with extend restrictions
+	 */
+	public void test110() {
+		deployBundles("test110");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+	}
+
+	/**
+	 * Remove a method with multiple methods with the same selector
+	 * public method with extend restrictions
+	 */
+	public void test111() {
+		deployBundles("test111");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
+	}
+	/**
+	 * Remove a constructor with multiple methods with the same selector
+	 * public constructor with extend restrictions
+	 */
+	public void test112() {
+		deployBundles("test112");
+		IApiProfile before = getBeforeState();
+		IApiProfile after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is binary compatible", DeltaProcessor.isBinaryCompatible(child));
 	}
 }

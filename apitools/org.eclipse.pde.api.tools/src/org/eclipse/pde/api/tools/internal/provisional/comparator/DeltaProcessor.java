@@ -281,7 +281,7 @@ public class DeltaProcessor {
 									if (Util.isStatic(delta.getModifiers())) {
 										return true;
 									}
-									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions()) || Util.isProtected(delta.getModifiers());
 								}
 								return true; 
 							case IDelta.METHOD :
@@ -301,11 +301,12 @@ public class DeltaProcessor {
 							case IDelta.FIELD :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
+							case IDelta.TYPE_MEMBER :
 								if (Util.isVisible(delta)) {
-									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+									return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
+											&& Util.isProtected(delta.getModifiers());
 								}
 								return true;
-							case IDelta.TYPE_MEMBER :
 							case IDelta.CLASS_BOUND :
 							case IDelta.INTERFACE_BOUND :
 							case IDelta.INTERFACE_BOUNDS :
