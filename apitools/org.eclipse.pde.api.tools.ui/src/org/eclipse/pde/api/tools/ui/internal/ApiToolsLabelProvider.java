@@ -13,13 +13,21 @@ package org.eclipse.pde.api.tools.ui.internal;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.api.tools.internal.builder.ApiUseAnalyzer.CompatibilityResult;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.search.ILocation;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiProfileWizardPage.EEEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -76,6 +84,35 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
+		if (element instanceof CompatibilityResult) {
+			CompatibilityResult result = (CompatibilityResult) element;
+			IApiComponent component = result.getRequiredComponent();
+			String baseKey = null;
+			if (component.isFragment()) {
+				baseKey = IApiToolsConstants.IMG_OBJ_FRAGMENT;
+			} else if (component.isSystemComponent()) {
+				baseKey = IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY;
+			} else {
+				baseKey = IApiToolsConstants.IMG_OBJ_BUNDLE;
+			}
+			int flags = ApiImageDescriptor.SUCCESS;
+			if (result.getUnresolvedReferences().length > 0) {
+				flags = ApiImageDescriptor.ERROR;
+			}
+			return ApiUIPlugin.getImage(new ApiImageDescriptor(ApiUIPlugin.getImageDescriptor(baseKey), flags));
+		}
+		if (element instanceof ILocation) {
+			ILocation location = (ILocation) element;
+			IMemberDescriptor member = location.getMember();
+			switch (member.getElementType()) {
+				case IElementDescriptor.T_REFERENCE_TYPE:
+					// TODO: class verus interface
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				default:
+					// TODO: need visibility
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+			}
+		}
 		return null;
 	}
 
@@ -96,13 +133,31 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		}
 		if(element instanceof IApiProfile) {
 			IApiProfile profile  = (IApiProfile) element;
-			StringBuffer label = new StringBuffer();
-			label.append(profile.getName());
-			return label.toString();
+			return profile.getName();
 		}
 		if(element instanceof EEEntry) {
 			return ((EEEntry)element).toString();
 		}
+		if (element instanceof CompatibilityResult) {
+			return getText(((CompatibilityResult)element).getRequiredComponent());
+		}
+		if (element instanceof ILocation) {
+			ILocation location = (ILocation) element;
+			IMemberDescriptor member = location.getMember();
+			switch (member.getElementType()) {
+				case IElementDescriptor.T_REFERENCE_TYPE:
+					return ((IReferenceTypeDescriptor)member).getQualifiedName();
+				case IElementDescriptor.T_METHOD:
+					IMethodDescriptor method = (IMethodDescriptor) member;
+					StringBuffer buf = new StringBuffer();
+					buf.append(member.getEnclosingType().getQualifiedName());
+					buf.append('.');
+					buf.append(Signature.toString(method.getSignature(), method.getName(), null, false, false));
+					return buf.toString();
+				default:
+					return member.getName();
+			}
+		}		
 		return "<unknown>"; //$NON-NLS-1$
 	}
 
