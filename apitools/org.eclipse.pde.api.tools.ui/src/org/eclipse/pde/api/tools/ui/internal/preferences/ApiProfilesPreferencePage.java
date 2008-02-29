@@ -19,17 +19,20 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
+import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfileManager;
@@ -123,13 +126,12 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	private static final int ADD = 0;
 	private static final int REMOVE = 1;
 	private HashSet changes = new HashSet();
-	private TableViewer tableviewer = null;
+	private CheckboxTableViewer tableviewer = null;
 	private ArrayList backingcollection = new ArrayList();
 	private String newdefault = null;
 	private Button newbutton = null, 
 				   removebutton = null, 
-				   editbutton = null,
-				   defaultbutton = null;
+				   editbutton = null;
 	private int rebuildcount = 0;
 	
 	/* (non-Javadoc)
@@ -139,9 +141,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
-		Table table = new Table(comp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
+		Table table = new Table(comp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableviewer = new TableViewer(table);
+		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new ProfileLabelProvider());
 		tableviewer.setContentProvider(new ArrayContentProvider());
 		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -150,9 +152,18 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				doEdit((IApiProfile) ss.getFirstElement());
 			}
 		});
+		tableviewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				IApiProfile profile = (IApiProfile) event.getElement();
+				tableviewer.setCheckedElements(new Object[] {profile});
+				newdefault = profile.getName();
+				tableviewer.refresh(true);
+				rebuildcount = 0;
+			}
+		});
 		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
+				initialize();
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
@@ -200,18 +211,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				doEdit((IApiProfile)getCurrentSelection()[0]);
 			}
 		});
-		SWTFactory.createVerticalSpacer(bcomp, 1);
-		defaultbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_5, null);
-		defaultbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				IApiProfile[] profiles = getCurrentSelection();
-				newdefault = profiles[0].getName();
-				tableviewer.refresh();
-				defaultbutton.setEnabled(profiles.length == 1 && !isDefault(profiles[0]));
-				rebuildcount = 0;
-			}
-		});
-		updateButtons();
+		initialize();
 		originaldefault = manager.getDefaultApiProfile();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
 		return comp;
@@ -246,11 +246,14 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	/**
 	 * updates the buttons on the page
 	 */
-	protected void updateButtons() {
+	protected void initialize() {
 		IApiProfile[] state = getCurrentSelection();
 		removebutton.setEnabled(state.length > 0);
 		editbutton.setEnabled(state.length == 1);
-		defaultbutton.setEnabled(state.length == 1 && !isDefault(getCurrentSelection()[0]));
+		IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+		if(def != null) {
+			tableviewer.setCheckedElements(new Object[] {def});
+		}
 	}
 	
 	/**
@@ -330,8 +333,11 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		if(newdefault != null) {
-			manager.setDefaultApiProfile(newdefault);
-			build = true;
+			IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+			if(def != null && !def.getName().equals(newdefault)) {
+				manager.setDefaultApiProfile(newdefault);
+				build = true;
+			}
 		}
 		if(build) {
 			if(rebuildcount < 1) {
