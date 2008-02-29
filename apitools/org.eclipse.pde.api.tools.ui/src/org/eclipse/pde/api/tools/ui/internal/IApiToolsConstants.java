@@ -48,6 +48,11 @@ public interface IApiToolsConstants {
 	public static final String IMG_OBJ_FRAGMENT = "IMG_OBJ_FRAGMENT"; //$NON-NLS-1$		
 	
 	/**
+	 * Key for Eclipse SDK/API profile image
+	 */
+	public static final String IMG_OBJ_ECLIPSE_PROFILE = "IMG_OBJ_ECLIPSE_PROFILE"; //$NON-NLS-1$
+	
+	/**
 	 * Id for the Api profiles preference page.
 	 */
 	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
