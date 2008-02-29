@@ -12,10 +12,12 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -256,61 +258,58 @@ public class ApiUseAnalyzer {
 	 * @throws CoreException
 	 */
 	public CompatibilityResult[] analyzeCompatibility(IApiComponent component, IApiComponent[] requiredComponents, IProgressMonitor monitor) throws CoreException {
-		// group components by ID so we can re-use references between like components
-		Map components = new HashMap();
+		Set reqComponentIds = new HashSet();
 		for (int i = 0; i < requiredComponents.length; i++) {
-			IApiComponent reqComponent = requiredComponents[i];
-			List list = (List) components.get(reqComponent.getId());
-			if (list == null) {
-				list = new ArrayList();
-				components.put(reqComponent.getId(), list);
-			}
-			list.add(reqComponent);
+			reqComponentIds.add(requiredComponents[i].getId());
 		}
 		CompatibilityResult[] results = new CompatibilityResult[requiredComponents.length];
-		Iterator iterator = components.entrySet().iterator();
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ApiUseAnalyzer_0, requiredComponents.length + components.size());
-		while (iterator.hasNext()) {
+		//extracting references take half the time
+		int weight = requiredComponents.length / 2;
+		if (weight == 0) {
+			weight = 1;
+		}
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ApiUseAnalyzer_0, requiredComponents.length + weight);
+		// extract all references by component
+		Map referencesById = findAllReferences(component, (String[])reqComponentIds.toArray(new String[reqComponentIds.size()]), localMonitor.newChild(weight, SubMonitor.SUPPRESS_ALL_LABELS));
+		if (localMonitor.isCanceled()) {
+			return null;
+		}
+		for (int i = 0; i < requiredComponents.length; i++) {
 			if (localMonitor.isCanceled()) {
 				return null;
 			}
-			Entry entry = (Entry) iterator.next();
-			String id = (String) entry.getKey();
-			List reqComponents = (List) entry.getValue();
-			// extract references between component and required component original profile
-			IApiComponent baseComponent = component.getProfile().getApiComponent(id);
-			localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_1, new String[]{baseComponent.getId()}));
-			IReference[] references = findAllReferences(component, baseComponent, localMonitor.newChild(1, SubMonitor.SUPPRESS_ALL_LABELS));
-			//localMonitor.worked(1);
-			Iterator cIterator = reqComponents.iterator();
-			while (cIterator.hasNext()) {
-				if (localMonitor.isCanceled()) {
-					return null;
-				}
-				IApiComponent reqComponent = (IApiComponent) cIterator.next();
+			IApiComponent reqComponent = requiredComponents[i];
+			String id = reqComponent.getId();
+			localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_1, new String[]{id}));
+			List references = (List) referencesById.get(id);
+			if (references != null) { 
 				IApiComponent sourceComponent = reqComponent.getProfile().getApiComponent(component.getId());
 				// recreate unresolved references to re-resolve
-				IReference[] unresolved = new IReference[references.length];
-				for (int i = 0; i < references.length; i++) {
-					IReference reference = references[i];
+				IReference[] unresolved = new IReference[references.size()];
+				Iterator iterator = references.iterator();
+				int index = 0;
+				while (iterator.hasNext()) {
+					IReference reference = (IReference) iterator.next();
 					ILocation source = new Location(sourceComponent, reference.getSourceLocation().getMember());
 					source.setLineNumber(reference.getSourceLocation().getLineNumber());
 					ILocation target = new Location(reqComponent, reference.getReferencedLocation().getMember());
-					unresolved[i] = new Reference(source, target, reference.getReferenceKind());
+					unresolved[index++] = new Reference(source, target, reference.getReferenceKind());
 				}
 				localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_2, new String[]{	reqComponent.getId(), reqComponent.getVersion()}));
 				Factory.newSearchEngine().resolveReferences(unresolved, localMonitor.newChild(1, SubMonitor.SUPPRESS_ALL_LABELS));
 				// collect unresolved references
 				List missing = new ArrayList();
-				for (int i = 0; i < unresolved.length; i++) {
-					IReference reference = unresolved[i];
+				for (int j = 0; j < unresolved.length; j++) {
+					IReference reference = unresolved[j];
 					if (reference.getResolvedLocation() == null) {
 						missing.add(reference);
 					}
 				}
-				int index = indexOf(reqComponent, requiredComponents);
-				results[index] = new CompatibilityResult(reqComponent, (IReference[]) missing.toArray(new IReference[missing.size()]));
-				//localMonitor.worked(1);
+				results[i] = new CompatibilityResult(reqComponent, (IReference[]) missing.toArray(new IReference[missing.size()]));
+			} else {
+				// no references... compatible
+				results[i] = new CompatibilityResult(reqComponent, new IReference[0]);
+				localMonitor.worked(1);
 			}
 		}
 		localMonitor.done();
@@ -319,35 +318,36 @@ public class ApiUseAnalyzer {
 	}
 	
 	/**
-	 * Returns the index of the given object in the given array or -1 if not present.
-	 * 
-	 * @param object
-	 * @param array
-	 * @return index
-	 */
-	private int indexOf(Object object, Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(object)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	/**
-	 * Extracts and returns all references that 'from' makes to 'to'.
+	 * Extracts and returns all references that 'from' makes to 'IDs', in a map keyed by ID.
 	 * 
 	 * @param from component references are extracted from
-	 * @param to component references are to
-	 * @return all references
+	 * @param ids component IDs references are to
+	 * @return map of <String> -> <IReference[]>
 	 * @throws CoreException 
 	 */
-	private IReference[] findAllReferences(IApiComponent from, IApiComponent to, IProgressMonitor monitor) throws CoreException {
+	private Map findAllReferences(IApiComponent from, String[] ids, IProgressMonitor monitor) throws CoreException {
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
-		criteria.addComponentRestriction(to.getId());
+		for (int i = 0; i < ids.length; i++) {
+			criteria.addComponentRestriction(ids[i]);
+		}
 		criteria.setConsiderComponentLocalReferences(false);
 		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL, VisibilityModifiers.ALL_VISIBILITIES, RestrictionModifiers.ALL_RESTRICTIONS);
-		return engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor);
+		IReference[] all = engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor);
+		Map map = new HashMap(ids.length);
+		for (int i = 0; i < all.length; i++) {
+			IReference reference = all[i];
+			ILocation location = reference.getResolvedLocation();
+			if (location != null) {
+				IApiComponent component = location.getApiComponent();
+				List list = (List) map.get(component.getId());
+				if (list == null) {
+					list = new LinkedList();
+					map.put(component.getId(), list);
+				}
+				list.add(reference);
+			}
+		}
+		return map;
 	}
 }

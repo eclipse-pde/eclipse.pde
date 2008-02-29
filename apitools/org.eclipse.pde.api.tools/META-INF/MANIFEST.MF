@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.osgi,
  org.eclipse.ant.core;bundle-version="3.1.300",
  org.objectweb.asm;bundle-version="3.1.0"
 Export-Package: org.eclipse.pde.api.tools.internal;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
- org.eclipse.pde.api.tools.internal.builder;x-internal:=true,
+ org.eclipse.pde.api.tools.internal.builder;x-friends:="org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.comparator;x-internal:=true,
  org.eclipse.pde.api.tools.internal.descriptors;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.provisional;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
