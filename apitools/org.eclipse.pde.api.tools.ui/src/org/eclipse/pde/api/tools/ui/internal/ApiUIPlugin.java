@@ -11,6 +11,9 @@
 package org.eclipse.pde.api.tools.ui.internal;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +29,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * API tooling UI plug-in class.
@@ -58,6 +62,12 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 * Relative path to object model icons.
 	 */
 	private final static String OBJECT= ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String OVR= ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	
+	/**
+	 * Maps Image descriptors to images for composite images
+	 */
+	private static Map fCompositeImages = new HashMap();
 	
 	/**
 	 * Constructor
@@ -98,12 +108,16 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
 	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
+		// model objects
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY, OBJECT + "library_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE, OBJECT + "plugin_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse_profile.gif"); //$NON-NLS-1$
+		// overlays
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_ERROR, OVR+ "error_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_SUCCESS, OVR+ "success_ovr.gif"); //$NON-NLS-1$
 	}
 
 	/**
@@ -209,6 +223,27 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
+	 * Returns the image associated with the given image descriptor.
+	 * 
+	 * @param descriptor the image descriptor for which there is a managed image
+	 * @return the image associated with the image descriptor or <code>null</code>
+	 *  if the image descriptor can't create the requested image.
+	 */
+	public static Image getImage(ImageDescriptor descriptor) {
+		if (descriptor == null)
+			descriptor= ImageDescriptor.getMissingImageDescriptor();
+			
+		Image result= (Image)fCompositeImages.get(descriptor);
+		if (result != null)
+			return result;
+	 
+		result= descriptor.createImage();
+		if (result != null)
+			fCompositeImages.put(descriptor, result);
+		return result;
+	}
+	
+	/**
 	 * Returns an image descriptor from the registry with the given key or <code>null</code> if none.
 	 * 
 	 * @param key image key
@@ -217,4 +252,19 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getDefault().getImageRegistry().getDescriptor(key);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		// dispose composite images
+		for (Iterator iter= fCompositeImages.values().iterator(); iter.hasNext(); ) {
+			Image image= (Image)iter.next();
+			image.dispose();
+		}
+		fCompositeImages.clear();
+		super.stop(context);
+	}
+	
+	
 }

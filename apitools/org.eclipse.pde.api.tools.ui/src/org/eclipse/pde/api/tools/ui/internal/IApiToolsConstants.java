@@ -53,6 +53,16 @@ public interface IApiToolsConstants {
 	public static final String IMG_OBJ_ECLIPSE_PROFILE = "IMG_OBJ_ECLIPSE_PROFILE"; //$NON-NLS-1$
 	
 	/**
+	 * Error overlay.
+	 */
+	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR"; //$NON-NLS-1$
+	
+	/**
+	 * Success overlay
+	 */
+	public static final String IMG_OVR_SUCCESS = "IMG_OVR_SUCCESS"; //$NON-NLS-1$
+	
+	/**
 	 * Id for the Api profiles preference page.
 	 */
 	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
