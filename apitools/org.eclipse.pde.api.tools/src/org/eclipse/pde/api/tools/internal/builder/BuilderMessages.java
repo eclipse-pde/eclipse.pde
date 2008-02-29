@@ -36,7 +36,6 @@ public class BuilderMessages extends NLS {
 	
 	public static String ApiAnalyserTaskName;
 	public static String ApiUseAnalyzer_0;
-	public static String ApiUseAnalyzer_1;
 	public static String ApiUseAnalyzer_2;
 
 	static {

@@ -280,7 +280,7 @@ public class ApiUseAnalyzer {
 			}
 			IApiComponent reqComponent = requiredComponents[i];
 			String id = reqComponent.getId();
-			localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_1, new String[]{id}));
+			localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_2, new String[]{id, reqComponent.getVersion()}));
 			List references = (List) referencesById.get(id);
 			if (references != null) { 
 				IApiComponent sourceComponent = reqComponent.getProfile().getApiComponent(component.getId());
@@ -294,8 +294,7 @@ public class ApiUseAnalyzer {
 					source.setLineNumber(reference.getSourceLocation().getLineNumber());
 					ILocation target = new Location(reqComponent, reference.getReferencedLocation().getMember());
 					unresolved[index++] = new Reference(source, target, reference.getReferenceKind());
-				}
-				localMonitor.subTask(MessageFormat.format(BuilderMessages.ApiUseAnalyzer_2, new String[]{	reqComponent.getId(), reqComponent.getVersion()}));
+				}				
 				Factory.newSearchEngine().resolveReferences(unresolved, localMonitor.newChild(1, SubMonitor.SUPPRESS_ALL_LABELS));
 				// collect unresolved references
 				List missing = new ArrayList();
