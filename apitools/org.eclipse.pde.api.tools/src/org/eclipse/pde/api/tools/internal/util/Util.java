@@ -1623,6 +1623,31 @@ public final class Util {
 		}
 	}
 
+	public static final boolean isDifferentVersion(String versionToBeChecked, String referenceVersion) {
+		SinceTagVersion sinceTagVersion1 = null;
+		SinceTagVersion sinceTagVersion2 = null;
+		try {
+			sinceTagVersion1 = new SinceTagVersion(versionToBeChecked);
+			sinceTagVersion2 = new SinceTagVersion(referenceVersion);
+		} catch (IllegalArgumentException e) {
+			// We cannot compare the two versions as their format is unknown
+			// TODO (olivier) should we report these as malformed tags?
+			return false;
+		}
+		Version version1 = sinceTagVersion1.getVersion();
+		Version version2 = sinceTagVersion2.getVersion();
+		if (version1.getMajor() != version2.getMajor()) {
+			return true;
+		}
+		if (version1.getMinor() != version2.getMinor()) {
+			return true;
+		}
+		if (version1.getMicro() != version2.getMicro()) {
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean isInterface(int accessFlags) {
 		return (accessFlags & Opcodes.ACC_INTERFACE) != 0;
 	}

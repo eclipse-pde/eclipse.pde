@@ -295,12 +295,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
+	private static class DeltaInfo {
+		IDelta delta;
+		ICompilationUnit unit;
+		
+		public DeltaInfo(IDelta delta, ICompilationUnit unit) {
+			this.delta = delta;
+			this.unit = unit;
+		}
+	}
+
 	/**
 	 * Constants used with the <code>bits</code> field
 	 */
 	private static final int CONTAINS_API_BREAKAGE = 1;
 	private static final int CONTAINS_API_CHANGES = 2;
-
+	
 	/**
 	 * Constant representing the name of the 'source' attribute on API tooling markers.
 	 * Value is <code>Api Tooling</code>
@@ -348,6 +358,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private StringSet fPackages = new StringSet(3);
 	
+	/**
+	 * List of pending delta infos for which the @since tags should be checked
+	 */
+	private List pendingDeltaInfos = new ArrayList(3);
+
 	/**
 	 * Maps prereq projects to their output location(s)
 	 */
@@ -990,8 +1005,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if (DEBUG) {
 				System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
+			this.pendingDeltaInfos.clear();
 		}
-
 		if (delta == null) {
 			if (DEBUG) {
 				System.err.println("An error occured while comparing"); //$NON-NLS-1$
@@ -1003,6 +1018,24 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 				IDelta localDelta = (IDelta) iterator.next();
 				processDelta(javaProject, localDelta, compilationUnit, reference, component);
+			}
+			if (!this.pendingDeltaInfos.isEmpty()) {
+				// process the list
+				for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
+					DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
+					IMember member = Util.getIMember(deltaInfo.delta, javaProject);
+					if (member != null) {
+						processMember(
+							javaProject,
+							deltaInfo.unit,
+							member,
+							component,
+							reference,
+							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject),
+							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject),
+							ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject));
+					}
+				}
 			}
 			checkApiComponentVersion(reference, component);
 			if (DEBUG) {
@@ -1586,6 +1619,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (DEBUG) {
 					System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
+				this.pendingDeltaInfos.clear();
 			}
 		}
 		if (delta == null) {
@@ -1630,6 +1664,24 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							}
 					}
 				}
+				if (!this.pendingDeltaInfos.isEmpty()) {
+					// process the list
+					for (Iterator iterator = this.pendingDeltaInfos.iterator(); iterator.hasNext();) {
+						DeltaInfo deltaInfo = (DeltaInfo) iterator.next();
+						IMember member = Util.getIMember(deltaInfo.delta, javaProject);
+						if (member != null) {
+							processMember(
+								javaProject,
+								deltaInfo.unit,
+								member,
+								component,
+								reference,
+								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, fCurrentProject),
+								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, fCurrentProject),
+								ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, fCurrentProject));
+						}
+					}
+				}
 				if (reference != null && component != null) {
 					checkApiComponentVersion(reference, component);
 				}
@@ -1650,7 +1702,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param reference
 	 * @param component
 	 */
-	private void processDelta(IJavaProject javaProject, IDelta delta, ICompilationUnit compilationUnit, IApiComponent reference, IApiComponent component) {
+	private void processDelta(
+			IJavaProject javaProject,
+			IDelta delta,
+			ICompilationUnit compilationUnit,
+			IApiComponent reference,
+			IApiComponent component) {
 		if (DeltaProcessor.isBinaryCompatible(delta)) {
 			if (DEBUG) {
 				String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
@@ -1670,18 +1727,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (missingTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 						|| malformedTagSeverityLevel != ApiPlugin.SEVERITY_IGNORE
 						|| invalidTagVersionSeverityLevel != ApiPlugin.SEVERITY_IGNORE) {
-					// ensure that there is a @since tag for the corresponding member
-					IMember member = Util.getIMember(delta, javaProject);
-					if (member != null) {
-						processMember(
-							javaProject,
-							compilationUnit,
-							member,
-							component,
-							missingTagSeverityLevel,
-							malformedTagSeverityLevel,
-							invalidTagVersionSeverityLevel);
-					}
+					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
 				}
 			}
 		} else {
@@ -1699,17 +1745,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// ensure that there is a @since tag for the corresponding member
 				if (delta.getKind() == IDelta.ADDED
 						&& Util.isVisible(delta)) {
-					IMember member = Util.getIMember(delta, javaProject);
-					if (member != null) {
-						processMember(
-								javaProject,
-								compilationUnit,
-								member,
-								component,
-								missingTagSeverityLevel,
-								malformedTagSeverityLevel,
-								invalidTagVersionSeverityLevel);
-					}
+					this.pendingDeltaInfos.add(new DeltaInfo(delta, compilationUnit));
 				}
 			}
 		}
@@ -1726,7 +1762,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param malformedTagSeverityLevel
 	 * @param invalidTagVersionSeverityLevel
 	 */
-	private void processMember(final IJavaProject javaProject, final ICompilationUnit compilationUnit, final IMember member, final IApiComponent component,
+	private void processMember(
+			final IJavaProject javaProject,
+			final ICompilationUnit compilationUnit,
+			final IMember member,
+			final IApiComponent component,
+			final IApiComponent reference,
 			int missingTagSeverityLevel, int malformedTagSeverityLevel,	int invalidTagVersionSeverityLevel) {
 		if(compilationUnit != null) {
 			ASTParser parser = ASTParser.newParser(AST.JLS3);
@@ -1748,12 +1789,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			SinceTagChecker visitor = new SinceTagChecker(offset);
 			unit.accept(visitor);
+			String componentVersionString = component.getVersion();
 			if (visitor.hasNoComment() || visitor.isMissing()) {
 				StringBuffer buffer = new StringBuffer();
-				Version version = null;
+				Version componentVersion = null;
 				try {
-					version = new Version(component.getVersion());
-					buffer.append(version.getMajor()).append('.').append(version.getMinor());
+					// TODO check if reference version is lower than component version to set the appropriate 
+					// value for @since tag
+					if (reference != null) {
+						String referenceVersionString = reference.getVersion();
+						getAccurateVersion(componentVersionString, referenceVersionString, buffer);
+					} else {
+						componentVersion = new Version(componentVersionString);
+						buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
+					}
 					createSinceTagMarker(
 						IApiProblem.SINCE_TAG_MISSING,
 						BuilderMessages.VersionManagementMissingSinceTag,
@@ -1784,12 +1833,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							if (tagVersion.pluginName() != null) {
 								buffer.append(tagVersion.pluginName()).append(' ');
 							}
-							Version version = new Version(component.getVersion());
-							if (Util.isGreatherVersion(sinceVersion, component.getVersion())) {
-								// report invalid version number
-								buffer.append(version.getMajor()).append('.').append(version.getMinor());
+							if (reference != null) {
+								String referenceVersionString = reference.getVersion();
+								getAccurateVersion(componentVersionString, referenceVersionString, buffer);
 							} else {
-								buffer.append(version.getMajor()).append('.').append(version.getMinor());
+								Version componentVersion = new Version(componentVersionString);
+								buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 							}
 							createSinceTagMarker(
 									IApiProblem.SINCE_TAG_MALFORMED,
@@ -1803,34 +1852,82 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						} catch (IllegalArgumentException e) {
 							ApiPlugin.log(e);
 						}
-					} else if (Util.isGreatherVersion(sinceVersion, component.getVersion())) {
-						// report invalid version number
-						SinceTagVersion tagVersion = null;
-						try {
-							tagVersion = new SinceTagVersion(sinceVersion);
-							StringBuffer buffer = new StringBuffer();
-							buffer.append(' ');
-							if (tagVersion.pluginName() != null) {
-								buffer.append(tagVersion.pluginName()).append(' ');
+					} else {
+						StringBuffer accurateVersionBuffer = new StringBuffer();
+						if (reference != null) {
+							String referenceVersionString = reference.getVersion();
+							getAccurateVersion(componentVersionString, referenceVersionString, accurateVersionBuffer);
+						} else {
+							Version componentVersion = new Version(componentVersionString);
+							accurateVersionBuffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
+						}
+						String accurateVersion = String.valueOf(accurateVersionBuffer);
+						if (Util.isDifferentVersion(sinceVersion, accurateVersion)) {
+							// report invalid version number
+							SinceTagVersion tagVersion = null;
+							try {
+								tagVersion = new SinceTagVersion(sinceVersion);
+								StringBuffer buffer = new StringBuffer();
+								buffer.append(' ');
+								if (tagVersion.pluginName() != null) {
+									buffer.append(tagVersion.pluginName()).append(' ');
+								}
+								Version version = new Version(accurateVersion);
+								buffer.append(version.getMajor()).append('.').append(version.getMinor());
+								String accurateSinceTagValue = String.valueOf(buffer);
+								createSinceTagMarker(
+									IApiProblem.SINCE_TAG_INVALID,
+									NLS.bind(
+										BuilderMessages.VersionManagementSinceTagGreaterThanComponentVersion,
+										sinceVersion,
+										accurateSinceTagValue),
+									compilationUnit,
+									member,
+									invalidTagVersionSeverityLevel,
+									accurateSinceTagValue);
+							} catch (IllegalArgumentException e) {
+								ApiPlugin.log(e);
 							}
-							Version version = new Version(component.getVersion());
-							buffer.append(version.getMajor()).append('.').append(version.getMinor());
-							createSinceTagMarker(
-								IApiProblem.SINCE_TAG_INVALID,
-								NLS.bind(
-									BuilderMessages.VersionManagementSinceTagGreaterThanComponentVersion,
-									sinceVersion,
-									component.getVersion()),
-								compilationUnit,
-								member,
-								invalidTagVersionSeverityLevel,
-								String.valueOf(buffer));
-						} catch (IllegalArgumentException e) {
-							ApiPlugin.log(e);
 						}
 					}
 				}
 			}
+		}
+	}
+
+	private void getAccurateVersion(String componentVersionString, String referenceVersionString, StringBuffer buffer) {
+		Version componentVersion;
+		if (Util.isGreatherVersion(componentVersionString, referenceVersionString)) {
+			// check the validity of the component version vs the reference version
+			componentVersion = new Version(componentVersionString);
+			Version referenceVersion = new Version(referenceVersionString);
+			if ((this.bits & CONTAINS_API_BREAKAGE) != 0) {
+				if ((referenceVersion.getMajor() + 1) != componentVersion.getMajor()) {
+					buffer.append(referenceVersion.getMajor() + 1).append(".0"); //$NON-NLS-1$
+				} else {
+					buffer.append(componentVersion.getMajor()).append(".0"); //$NON-NLS-1$
+				}
+			} else {
+				if (referenceVersion.getMajor() != componentVersion.getMajor()) {
+					buffer.append(referenceVersion.getMajor());
+				} else {
+					buffer.append(componentVersion.getMajor());
+				}
+				buffer.append('.');
+				if ((referenceVersion.getMinor() + 1) != componentVersion.getMinor()) {
+					buffer.append(referenceVersion.getMinor() + 1);
+				} else {
+					buffer.append(componentVersion.getMinor());
+				}
+			}
+		} else if ((this.bits & CONTAINS_API_BREAKAGE) != 0) {
+			// API breakage
+			componentVersion = new Version(componentVersionString);
+			buffer.append(componentVersion.getMajor() + 1).append(".0"); //$NON-NLS-1$
+		} else {
+			// new API
+			componentVersion = new Version(componentVersionString);
+			buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor() + 1);
 		}
 	}
 
