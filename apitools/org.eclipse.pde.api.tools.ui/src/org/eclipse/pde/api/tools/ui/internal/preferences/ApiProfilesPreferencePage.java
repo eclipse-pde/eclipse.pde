@@ -163,7 +163,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		});
 		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				initialize();
+				IApiProfile[] state = getCurrentSelection();
+				removebutton.setEnabled(state.length > 0);
+				editbutton.setEnabled(state.length == 1);
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
@@ -247,9 +249,6 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * updates the buttons on the page
 	 */
 	protected void initialize() {
-		IApiProfile[] state = getCurrentSelection();
-		removebutton.setEnabled(state.length > 0);
-		editbutton.setEnabled(state.length == 1);
 		IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
 		if(def != null) {
 			tableviewer.setCheckedElements(new Object[] {def});
