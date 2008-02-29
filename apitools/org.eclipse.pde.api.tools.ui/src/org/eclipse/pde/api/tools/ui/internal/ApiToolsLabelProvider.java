@@ -98,9 +98,6 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			IApiProfile profile  = (IApiProfile) element;
 			StringBuffer label = new StringBuffer();
 			label.append(profile.getName());
-			if(isDefaultProfile(profile)) {
-				label.append("  [default profile]"); //$NON-NLS-1$
-			}
 			return label.toString();
 		}
 		if(element instanceof EEEntry) {
