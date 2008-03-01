@@ -316,6 +316,8 @@ public interface IApiProblemTypes {
 	public static final String INVALID_SINCE_TAG_VERSION = "invalid_since_tag_version"; //$NON-NLS-1$
 	public static final String INCOMPATIBLE_API_COMPONENT_VERSION = "incompatible_api_component_version"; //$NON-NLS-1$
 	
+	public static final String MISSING_DEFAULT_API_PROFILE = "missing_default_api_profile"; //$NON-NLS-1$
+	
 	// API usage problems
 	/**
 	 * Key for the severity of illegally implementing an interface marked as '@noimplement'.

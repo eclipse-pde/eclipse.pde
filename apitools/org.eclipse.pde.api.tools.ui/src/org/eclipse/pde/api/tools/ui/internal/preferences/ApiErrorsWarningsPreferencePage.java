@@ -149,7 +149,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		block.performDefault();
+		block.performDefaults();
 		super.performDefaults();
 	}
 	

@@ -21,9 +21,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
  * @since 1.0.0
  */
 public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitializer {
-
-	private String[] warnings = {ApiPlugin.VALUE_WARNING, ApiPlugin.VALUE_ERROR, ApiPlugin.VALUE_IGNORE};
-	
 	/**
 	 * Constructor
 	 */
@@ -37,14 +34,14 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		Preferences prefs = ApiPlugin.getDefault().getPluginPreferences();
 		
 		//restrictions
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_EXTEND, warnings[0]);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, warnings[0]);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, warnings[0]);
-		prefs.setDefault(IApiProblemTypes.ILLEGAL_REFERENCE, warnings[0]);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_WARNING);
+		prefs.setDefault(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_WARNING);
 		
 		//binary compatibilities
 		for (int i = 0, max = ApiPlugin.AllBinaryCompatibilityKeys.length; i < max; i++) {
-			prefs.setDefault(ApiPlugin.AllBinaryCompatibilityKeys[i], warnings[1]);
+			prefs.setDefault(ApiPlugin.AllBinaryCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
 		}
 
 		// version management
@@ -52,6 +49,8 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		prefs.setDefault(IApiProblemTypes.MALFORMED_SINCE_TAG, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, ApiPlugin.VALUE_ERROR);
 		prefs.setDefault(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
+		
+		prefs.setDefault(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE, ApiPlugin.VALUE_WARNING);
 	}
 
 }

@@ -461,13 +461,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				// first we clean up all existing API tooling markers for the current project
 				cleanupMarkers(this.fCurrentProject);
-				IMarker[] markers = this.fCurrentProject.findMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-				if (markers.length == 1) {
-					// marker already exists. So we can simply return
+				int sev = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_PROFILE, fCurrentProject);
+				if (sev == ApiPlugin.SEVERITY_IGNORE) {
+					// ignore
 					return;
 				}
+				int severity = IMarker.SEVERITY_ERROR;
+				if (sev == ApiPlugin.SEVERITY_WARNING) {
+					severity = IMarker.SEVERITY_WARNING;
+				}
 				IMarker marker = fCurrentProject.createMarker(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER);
-				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+				marker.setAttribute(IMarker.SEVERITY, new Integer(severity));
 				marker.setAttribute(IMarker.MESSAGE, BuilderMessages.ApiToolBuilder_10);
 			} else {
 				// we want to make sure that existing markers are removed
@@ -1192,6 +1196,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (resource.getType() == IResource.PROJECT) {
 					// on full builds
 					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 				}
 			}
 		} catch(CoreException e) {
@@ -1768,7 +1773,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			final IMember member,
 			final IApiComponent component,
 			final IApiComponent reference,
-			int missingTagSeverityLevel, int malformedTagSeverityLevel,	int invalidTagVersionSeverityLevel) {
+			int missingTagSeverityLevel,
+			int malformedTagSeverityLevel,
+			int invalidTagVersionSeverityLevel) {
 		if(compilationUnit != null) {
 			ASTParser parser = ASTParser.newParser(AST.JLS3);
 			parser.setSource(compilationUnit);

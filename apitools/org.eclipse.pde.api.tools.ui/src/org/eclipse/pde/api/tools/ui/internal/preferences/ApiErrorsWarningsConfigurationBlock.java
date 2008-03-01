@@ -1330,7 +1330,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	/**
 	 * Reverts all of the settings back to their defaults
 	 */
-	public void performDefault() {
+	public void performDefaults() {
 		String defval = null;
 		for(int i = 0; i < fgAllKeys.length; i++) {
 			defval = fgAllKeys[i].getStoredValue(fLookupOrder, true, fManager);

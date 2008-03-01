@@ -137,7 +137,7 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		block.performDefault();
+		block.performDefaults();
 		super.performDefaults();
 	}
 	

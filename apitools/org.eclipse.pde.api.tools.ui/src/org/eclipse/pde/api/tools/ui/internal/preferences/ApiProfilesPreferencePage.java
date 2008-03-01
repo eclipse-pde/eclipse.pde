@@ -50,17 +50,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * This preference page allows {@link IApiProfile}s to be created/removed/edited
  * @since 1.0.0
  */
 public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
 	/**
 	 * Override to tell the label provider about uncommitted {@link IApiProfile}s that might have been set to 
 	 * be the new default
@@ -134,14 +135,21 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				   editbutton = null;
 	private int rebuildcount = 0;
 	
+	/**
+	 * The main configuration block for the page
+	 */
+	private ApiProfilesConfigurationBlock block = null;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
-		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
-		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
-		Table table = new Table(comp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		Group profileGroup = SWTFactory.createGroup(comp, PreferenceMessages.ApiProfilesConfigurationBlock_profile_group_title, 2, 1, GridData.FILL_BOTH);
+
+		SWTFactory.createWrapLabel(profileGroup, PreferenceMessages.ApiProfilesPreferencePage_0, 2, 200);
+		SWTFactory.createWrapLabel(profileGroup, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
+		Table table = new Table(profileGroup, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new ProfileLabelProvider());
@@ -179,7 +187,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				tableviewer.setInput(backingcollection);
 			}
 		});
-		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
+		Composite bcomp = SWTFactory.createComposite(profileGroup, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		newbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_2, null);
 		newbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -196,7 +204,6 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		});
-		newbutton.setEnabled(false);
 		removebutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_3, null);
 		removebutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -208,6 +215,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				tableviewer.refresh();
 			}
 		});
+		removebutton.setEnabled(false);
 		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_4, null);
 		editbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -217,7 +225,10 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		editbutton.setEnabled(false);
 		initialize();
 		originaldefault = manager.getDefaultApiProfile();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(profileGroup, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
+
+		block = new ApiProfilesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
+		block.createControl(comp, this);
 		return comp;
 	}
 
@@ -310,7 +321,13 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
  			manager.setDefaultApiProfile(originaldefault.getName());
  		}
 		changes.clear();
+		this.block.performCancel();
 		return super.performCancel();
+	}
+	
+	protected void performDefaults() {
+		this.block.performDefaults();
+		super.performDefaults();
 	}
 
 	/**
@@ -355,6 +372,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		this.block.performOK();
 		applyChanges();
 		return true;
 	}
@@ -363,6 +381,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
 	protected void performApply() {
+		this.block.performApply();
 		applyChanges();
 	}
 }

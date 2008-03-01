@@ -51,6 +51,14 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_warning;
 	public static String ApiErrorsWarningsConfigurationBlock_ignore;
 	
+	public static String ProjectSelectionDialog_title;
+	public static String ProjectSelectionDialog_message;
+	public static String ProjectSelectionDialog_checkbox_text;
+	
+	public static String ApiProfilesConfigurationBlock_profile_group_title;
+	public static String ApiProfilesConfigurationBlock_options_group_title;
+	public static String ApiProfilesConfigurationBlock_missing_default_api_profile_message;
+
 	public static String API_PROFILE_REMOVED_API_COMPONENT;
 	public static String API_COMPONENT_CHANGED_EXECUTION_ENVIRONMENT;
 	public static String API_COMPONENT_REMOVED_EXECUTION_ENVIRONMENT;
