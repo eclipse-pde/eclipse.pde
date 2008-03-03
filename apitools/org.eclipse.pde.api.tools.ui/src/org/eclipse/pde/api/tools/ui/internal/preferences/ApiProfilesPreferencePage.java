@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
@@ -76,57 +75,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		}
 	}
 	
-	/**
-	 * Wrapper for changes to the page that may (or may not) be
-	 * reflected in the manager, depending if the page is cancelled or not
-	 */
-	class StateChange {
-		int kind = -1;
-		IApiProfile profile = null;
-		
-		/**
-		 * Constructor
-		 * @param profile
-		 * @param kind
-		 */
-		public StateChange(IApiProfile profile, int kind) {
-			this.profile = profile;
-			this.kind = kind;
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return profile.getName().hashCode() + profile.getExecutionEnvironment().hashCode();
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			IApiProfile comparator = null;
-			if(obj instanceof StateChange) {
-				comparator = ((StateChange)obj).profile;
-			}
-			if(obj instanceof IApiProfile) {
-				comparator = (IApiProfile) obj;
-			}
-			if(comparator != null) {
-				return (comparator.getName().equals(profile.getName()) &&
-						comparator.getExecutionEnvironment().equals(profile.getExecutionEnvironment()));
-			}
-			return super.equals(obj);
-		}
-	}
-	
-	private IApiProfile originaldefault = null;
 	private IApiProfileManager manager = ApiPlugin.getDefault().getApiProfileManager();
-	
-	
-	private static final int ADD = 0;
-	private static final int REMOVE = 1;
-	private HashSet changes = new HashSet();
+
+	private HashSet removed = new HashSet();
 	private CheckboxTableViewer tableviewer = null;
 	private ArrayList backingcollection = new ArrayList();
 	private String newdefault = null;
@@ -134,6 +85,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				   removebutton = null, 
 				   editbutton = null;
 	private int rebuildcount = 0;
+	private String origdefault = null;
 	
 	/**
 	 * The main configuration block for the page
@@ -163,10 +115,16 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IApiProfile profile = (IApiProfile) event.getElement();
-				tableviewer.setCheckedElements(new Object[] {profile});
-				newdefault = profile.getName();
-				tableviewer.refresh(true);
+				if(event.getChecked()) {
+					tableviewer.setCheckedElements(new Object[] {profile});
+					newdefault = profile.getName();
+				}
+				else {
+					newdefault = null;
+					manager.setDefaultApiProfile(null);
+				}
 				rebuildcount = 0;
+				tableviewer.refresh(true);
 			}
 		});
 		tableviewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -196,7 +154,6 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				if(dialog.open() == IDialogConstants.OK_ID) {
 					IApiProfile profile = wizard.getProfile();
 					if(profile != null) {
-						changes.add(new StateChange(profile, ADD));
 						backingcollection.add(profile);
 						tableviewer.refresh();
 						tableviewer.setSelection(new StructuredSelection(profile), true);
@@ -209,7 +166,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			public void widgetSelected(SelectionEvent e) {
 				IApiProfile[] states = getCurrentSelection();
 				for(int i = 0; i < states.length; i++) {
-					changes.add(new StateChange(states[i], REMOVE));
+					removed.add(states[i].getName());
 				}
 				backingcollection.removeAll(Arrays.asList(states));
 				tableviewer.refresh();
@@ -223,38 +180,39 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		editbutton.setEnabled(false);
+		IApiProfile profile = manager.getDefaultApiProfile();
+		origdefault = newdefault = (profile == null ? null : profile.getName());
 		initialize();
-		originaldefault = manager.getDefaultApiProfile();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(profileGroup, IApiToolsHelpContextIds.APIPROFILES_PREF_PAGE);
 
 		block = new ApiProfilesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp, this);
 		return comp;
 	}
-
+	
 	/**
 	 * Performs the edit operation for the edit button and the double click listener for the table
 	 * @param profile
 	 */
-	protected void doEdit(IApiProfile profile) {
-		try {
-			IApiProfile clone = (IApiProfile) ((ApiProfile)profile).clone();
-			ApiProfileWizard wizard = new ApiProfileWizard(clone);
-			WizardDialog dialog = new WizardDialog(ApiUIPlugin.getShell(), wizard);
-			if(dialog.open() == IDialogConstants.OK_ID) {
-				clone = wizard.getProfile();
-				if(profile != null) {
-					//clear any pending edit updates
-					changes.remove(profile);
-					changes.add(new StateChange(clone, ADD));
-					tableviewer.remove(profile);
-					tableviewer.add(clone);
-					tableviewer.setSelection(new StructuredSelection(clone), true);
+	protected void doEdit(final IApiProfile profile) {
+		ApiProfileWizard wizard = new ApiProfileWizard(profile);
+		WizardDialog dialog = new WizardDialog(ApiUIPlugin.getShell(), wizard);
+		if(dialog.open() == IDialogConstants.OK_ID) {
+			IApiProfile newprofile = wizard.getProfile();
+			if(newprofile != null) {
+				//clear any pending edit updates
+				removed.add(profile.getName());
+				backingcollection.remove(profile);
+				backingcollection.add(newprofile);
+				tableviewer.refresh();
+				if(isDefault(profile)) {
+					tableviewer.setCheckedElements(new Object[] {newprofile});
+					tableviewer.setSelection(new StructuredSelection(newprofile), true);
+					newdefault = newprofile.getName();
+					rebuildcount = 0;
+					tableviewer.refresh(true);
 				}
 			}
-		}
-		catch(CloneNotSupportedException cnse) {
-			ApiUIPlugin.log(cnse);
 		}
 	}
 	
@@ -309,29 +267,13 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
 	public boolean performCancel() {
-		StateChange change = null;
-		for(Iterator iter = changes.iterator(); iter.hasNext();) {
-			change = (StateChange) iter.next();
-			if(change.kind == REMOVE) {
-				//undo a removing change
-				manager.addApiProfile(change.profile);
-			}
-		}
-		if(originaldefault != null) {
- 			manager.setDefaultApiProfile(originaldefault.getName());
- 		}
-		changes.clear();
-		if (this.block != null) {
+		manager.setDefaultApiProfile(origdefault);
+		backingcollection.clear();
+		removed.clear();
+		if(this.block != null) {
 			this.block.performCancel();
 		}
 		return super.performCancel();
-	}
-	
-	protected void performDefaults() {
-		if (this.block != null) {
-			this.block.performDefaults();
-		}
-		super.performDefaults();
 	}
 
 	/**
@@ -339,27 +281,23 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * the current change set is cleared.
 	 */
 	protected void applyChanges() {
-		StateChange change = null;
 		boolean build = false;
-		for(Iterator iter = changes.iterator(); iter.hasNext();) {
-			change = (StateChange) iter.next();
-			switch(change.kind) {
-				case REMOVE :
-					manager.removeApiProfile(change.profile.getName());
-					if(isDefault(change.profile)) {
-						build = true;
-					}
-					break;
-				case ADD :
-					manager.addApiProfile(change.profile);
-			}
+		//remove 
+		for(Iterator iter = removed.iterator(); iter.hasNext();) {
+			manager.removeApiProfile((String) iter.next());
 		}
-		if(newdefault != null) {
-			IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
-			if(def != null && !def.getName().equals(newdefault)) {
-				manager.setDefaultApiProfile(newdefault);
-				build = true;
-			}
+		//add the new / changed ones
+		for(Iterator iter = backingcollection.iterator(); iter.hasNext();) {
+			manager.addApiProfile((IApiProfile) iter.next());
+		}
+		IApiProfile def = ApiPlugin.getDefault().getApiProfileManager().getDefaultApiProfile();
+		if(def != null && !def.getName().equals(newdefault)) {
+			manager.setDefaultApiProfile(newdefault);
+			build = true;
+		}
+		else if(def == null) {
+			manager.setDefaultApiProfile(newdefault);
+			build = true;
 		}
 		if(build) {
 			if(rebuildcount < 1) {
@@ -369,16 +307,15 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		}
-		changes.clear();
+		origdefault = newdefault;
+		removed.clear();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		if (this.block != null) {
-			this.block.performOK();
-		}
+		this.block.performOK();
 		applyChanges();
 		return true;
 	}
@@ -387,9 +324,7 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
 	protected void performApply() {
-		if (this.block != null) {
-			this.block.performApply();
-		}
+		this.block.performApply();
 		applyChanges();
 	}
 }

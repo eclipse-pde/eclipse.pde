@@ -70,35 +70,6 @@ public class Factory {
 	 * Creates a new empty API profile with the given name, id, and version
 	 * that resolves in the specified execution environment profile and description.
 	 * <p>
-	 * The execution environment profile is specified as a properties file with the following
-	 * properties:
-	 * <ul>
-	 * <li>org.osgi.framework.system.packages - packages provided by the profile</li>
-	 * <li>org.osgi.framework.executionenvironment - list of symbolic names the profile
-	 * 		is compatible with</li>
-	 * <li>osgi.java.profile.name - symbolic name for this profile, such as <code>J2SE-1.4</code> or
-	 * 		<code>CDC-1.0/Foundation-1.0</code>.</li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * The execution environment description describes a how a profile is provided by or mapped
-	 * to a specific JRE. The format for this file is described here
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
-	 * </p>
-	 * @param name profile name
-	 * @param profile execution environment profile
-	 * @param description execution environment description 
-	 * @return API profile
-	 * @throws CoreException if unable to create a new profile with the specified attributes 
-	 */
-	public static IApiProfile newApiProfile(String name, File profile, File description) throws CoreException {
-		return new ApiProfile(name, profile, description);
-	}	
-	
-	/**
-	 * Creates a new empty API profile with the given name, id, and version
-	 * that resolves in the specified execution environment profile and description.
-	 * <p>
 	 * The execution environment profile is specified as properties including:
 	 * <ul>
 	 * <li>org.osgi.framework.system.packages - packages provided by the profile</li>

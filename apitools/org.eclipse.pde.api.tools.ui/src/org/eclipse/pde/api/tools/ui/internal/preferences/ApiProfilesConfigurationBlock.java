@@ -283,7 +283,7 @@ public class ApiProfilesConfigurationBlock {
 	 */
 	public Control createControl(Composite parent, final ApiProfilesPreferencePage page) {
 		fParent = parent;
-		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);
 		this.fCombo = createComboControl(optionsProfileGroup, PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message, KEY_MISSING_DEFAULT_API_PROFILE);
 		return fMainComp;

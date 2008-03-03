@@ -66,7 +66,7 @@ import org.w3c.dom.Element;
  * 
  * @since 1.0.0
  */
-public class ApiProfile implements IApiProfile, Cloneable {
+public class ApiProfile implements IApiProfile {
 	/**
 	 * Constant used for controlling tracing in the example class
 	 */
@@ -198,21 +198,6 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		this(name);
 		initialize(profile, description);
 	}	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	public Object clone() throws CloneNotSupportedException {
-		ApiProfile clone = new ApiProfile();
-		clone.fName = fName;
-		clone.fNextId = fNextId;
-		clone.fState = fState.getFactory().createState(fState);
-		clone.fSystemLibraryComponent = fSystemLibraryComponent;
-		clone.fComponents = new HashMap(fComponents);
-		clone.fComponentsById = new HashMap(fComponentsById);
-		clone.fExecutionEnvironment = fExecutionEnvironment;
-		return clone;
-	}
 	
 	/**
 	 * Initializes this profile to resolve in the execution environment

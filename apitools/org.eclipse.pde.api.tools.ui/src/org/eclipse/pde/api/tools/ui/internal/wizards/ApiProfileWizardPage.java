@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -45,6 +46,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
+import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -72,6 +74,9 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiProfileWizardPage extends WizardPage {
 	
+	/**
+	 * an EE entry (child of an api component in the viewer)
+	 */
 	public class EEEntry {
 		String name = null;
 		/**
@@ -88,6 +93,9 @@ public class ApiProfileWizardPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * Content provider for the viewer
+	 */
 	class ContentProvider implements ITreeContentProvider {
 
 		/* (non-Javadoc)
@@ -189,6 +197,57 @@ public class ApiProfileWizardPage extends WizardPage {
 			fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 			monitor.worked(1);
 			monitor.done();
+		}
+	}
+	
+	/**
+	 * Operation that creates a new working copy for an {@link IApiProfile} that is being edited
+	 */
+	class WorkingCopyOperation implements IRunnableWithProgress {
+		
+		IApiProfile original = null, 
+					workingcopy = null;
+		
+		/**
+		 * Constructor
+		 * @param original
+		 */
+		public WorkingCopyOperation(IApiProfile original) {
+			this.original = original;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			try {
+				IApiComponent[] components = original.getApiComponents();
+				IProgressMonitor localmonitor = SubMonitor.convert(monitor, "Creating profile working copy", components.length + 1);
+				localmonitor.subTask("copying profile attributes...");
+				workingcopy = Factory.newApiProfile(original.getName(), Util.createEEFile(original.getExecutionEnvironment()));
+				localmonitor.worked(1);
+				localmonitor.subTask("copying api components...");
+				IApiComponent[] comps = new IApiComponent[components.length];
+				for(int i = 0; i < components.length; i++) {
+					comps[i] = workingcopy.newApiComponent(components[i].getLocation());
+					localmonitor.worked(1);
+				}
+				workingcopy.addApiComponents(comps);
+			}
+			catch(CoreException ce) {
+				ApiUIPlugin.log(ce);
+			}
+			catch(IOException ioe) {
+				ApiUIPlugin.log(ioe);
+			}
+		}
+		
+		/**
+		 * Returns the newly created {@link IApiProfile} working copy or <code>null</code>
+		 * @return the working copy or <code>null</code>
+		 */
+		public IApiProfile getWorkingCopy() {
+			return workingcopy;
 		}
 	}
 	
@@ -331,6 +390,15 @@ public class ApiProfileWizardPage extends WizardPage {
 	 */
 	protected void initialize() {
 		if(fProfile != null) {
+			WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
+			try {
+				getContainer().run(false, false, op);
+			} catch (InvocationTargetException e) {
+				ApiUIPlugin.log(e);
+			} catch (InterruptedException e) {
+				ApiUIPlugin.log(e);
+			}
+			fProfile = op.getWorkingCopy();
 			nametext.setText(fProfile.getName());
 			fRecommendedEE = fProfile.getExecutionEnvironment();
 			eecombo.setText(fRecommendedEE);
