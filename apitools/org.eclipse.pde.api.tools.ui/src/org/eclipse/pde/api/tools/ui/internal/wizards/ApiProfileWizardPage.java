@@ -222,17 +222,21 @@ public class ApiProfileWizardPage extends WizardPage {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			try {
 				IApiComponent[] components = original.getApiComponents();
-				IProgressMonitor localmonitor = SubMonitor.convert(monitor, "Creating profile working copy", components.length + 1);
-				localmonitor.subTask("copying profile attributes...");
+				IProgressMonitor localmonitor = SubMonitor.convert(monitor, WizardMessages.ApiProfileWizardPage_create_working_copy, components.length + 1);
+				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_profile_attribs);
 				workingcopy = Factory.newApiProfile(original.getName(), Util.createEEFile(original.getExecutionEnvironment()));
 				localmonitor.worked(1);
-				localmonitor.subTask("copying api components...");
-				IApiComponent[] comps = new IApiComponent[components.length];
+				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
+				ArrayList comps = new ArrayList();
+				IApiComponent comp = null;
 				for(int i = 0; i < components.length; i++) {
-					comps[i] = workingcopy.newApiComponent(components[i].getLocation());
+					comp = workingcopy.newApiComponent(components[i].getLocation());
+					if(comp != null) {
+						comps.add(comp);
+					}
 					localmonitor.worked(1);
 				}
-				workingcopy.addApiComponents(comps);
+				workingcopy.addApiComponents((IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]));
 			}
 			catch(CoreException ce) {
 				ApiUIPlugin.log(ce);
