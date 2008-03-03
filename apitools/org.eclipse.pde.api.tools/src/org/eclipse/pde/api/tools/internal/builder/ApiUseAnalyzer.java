@@ -288,6 +288,10 @@ public class ApiUseAnalyzer {
 				IReference[] unresolved = new IReference[references.size()];
 				Iterator iterator = references.iterator();
 				int index = 0;
+				// TODO: there is an issue when a new required plug-in is introduced, as references won't be resolved
+				// in the "old profile" that does not have the required plug-in
+				// TODO: there is an issue with new packages introduced in the base plug-in, as they cannot be resolved
+				// in the "old profile"
 				while (iterator.hasNext()) {
 					IReference reference = (IReference) iterator.next();
 					ILocation source = new Location(sourceComponent, reference.getSourceLocation().getMember());
