@@ -161,6 +161,13 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		});
+		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_4, null);
+		editbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doEdit((IApiProfile)getCurrentSelection()[0]);
+			}
+		});
+		editbutton.setEnabled(false);
 		removebutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_3, null);
 		removebutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -173,13 +180,6 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			}
 		});
 		removebutton.setEnabled(false);
-		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiProfilesPreferencePage_4, null);
-		editbutton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doEdit((IApiProfile)getCurrentSelection()[0]);
-			}
-		});
-		editbutton.setEnabled(false);
 		IApiProfile profile = manager.getDefaultApiProfile();
 		origdefault = newdefault = (profile == null ? null : profile.getName());
 		initialize();
