@@ -48,6 +48,7 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -283,7 +284,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					refactoring.addChange(pchange);
 					pchange.add(new ProjectUpdateChange(project));
 					monitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new String[] {project.getName()}));
-					IResource cxml = project.findMember(ApiDescriptionProcessor.COMPONENT_XML_NAME);
+					IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
 					if(cxml != null) {
 						//collect the changes for doc
 						createTagChanges(pchange, JavaCore.create(project), new File(cxml.getLocationURI()));
