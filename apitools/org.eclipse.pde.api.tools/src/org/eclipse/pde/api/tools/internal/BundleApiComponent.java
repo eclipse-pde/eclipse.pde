@@ -919,7 +919,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			
 			// add component.xml
 			String xml = Util.getApiDescriptionXML(this);
-			writeZipFileEntry(outputStream, IApiCoreConstants.COMPONENT_XML_NAME, xml.getBytes(IApiCoreConstants.UTF_8), compress);  //$NON-NLS-1$
+			writeZipFileEntry(outputStream, IApiCoreConstants.COMPONENT_XML_NAME, xml.getBytes(IApiCoreConstants.UTF_8), compress);
 			
 			// add required files:
 			exportFileFromBundle(outputStream, IApiCoreConstants.PLUGIN_XML_NAME, compress, true);
