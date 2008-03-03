@@ -432,4 +432,15 @@ public class ScriptGenerationTests extends PDETestCase {
 		
 		assertResourceFile(buildFolder, "features/featureA/build.xml");
 	}
+	
+	public void testBug212920() throws Exception {
+		IFolder buildFolder = newTest("212920");
+		
+		Properties properties = new Properties();
+		properties.put("qualifier", "none");
+		Utils.generatePluginBuildProperties(buildFolder, properties);
+		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0.qualifier", null);
+		
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
+	}
 }

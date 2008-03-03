@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
 import com.ibm.icu.util.Calendar;
@@ -19,9 +17,9 @@ import org.osgi.framework.Version;
 public class QualifierReplacer implements IBuildPropertiesConstants {
 	//	private static final String DOT_QUALIFIER = '.' + PROPERTY_QUALIFIER;
 	private static String globalQualifier = null;
-	
+
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
-		if (! AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
+		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
 			return version;
 		if (!version.endsWith(PROPERTY_QUALIFIER))
 			return version;
@@ -40,15 +38,16 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 			}
 			if (newQualifier == null)
 				newQualifier = getDate();
-
-			//			newQualifier = '.' + newQualifier;
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
 			newQualifier = ""; //$NON-NLS-1$
 		} else {
 			newQualifier = replaceTag;
 		}
 
-		return version.replaceFirst(PROPERTY_QUALIFIER, newQualifier);
+		version = version.replaceFirst(PROPERTY_QUALIFIER, newQualifier);
+		if (version.endsWith(".")) //$NON-NLS-1$
+			version = version.substring(0, version.length() - 1);
+		return version;
 	}
 
 	private static String getDate() {
