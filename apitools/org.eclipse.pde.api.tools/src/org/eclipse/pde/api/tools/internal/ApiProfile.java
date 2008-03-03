@@ -789,6 +789,7 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
 		root.setAttribute(IApiXmlConstants.ELEMENT_EE, profile.getExecutionEnvironment());
+		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROFILE_CURRENT_VERSION);
 		// dump component pools
 		Element subroot = null;
 		File dir = null;

@@ -14,6 +14,7 @@
       </xsd:sequence>
       <xsd:attribute name="name" type="xsd:string" use="required"/>
       <xsd:attribute name="ee" type="xsd:string" use="required"/>
+      <xsd:attribute name="version" type="xsd:integer" use="required"/>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="pool">

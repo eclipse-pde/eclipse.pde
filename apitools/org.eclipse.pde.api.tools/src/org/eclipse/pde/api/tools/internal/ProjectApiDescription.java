@@ -554,6 +554,7 @@ public class ProjectApiDescription extends ApiDescription {
 		Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		component.setAttribute(IApiXmlConstants.ATTR_ID, getJavaProject().getElementName());
 		component.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fPackageTimeStamp));
+		component.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION);
 		document.appendChild(component);
 		persistChildren(document, component, fPackageMap);
 		return Util.serializeDocument(document);

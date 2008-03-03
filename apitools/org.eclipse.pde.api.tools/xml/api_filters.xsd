@@ -12,6 +12,7 @@
         <xsd:element minOccurs="0" maxOccurs="unbounded" ref="resource"/>
       </xsd:sequence>
       <xsd:attribute name="id" type="xsd:string" use="required"/>
+      <xsd:attribute name="version" type="xsd:integer" use="required"/>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="resource">

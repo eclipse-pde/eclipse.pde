@@ -180,5 +180,16 @@ public interface IApiXmlConstants {
 	 * Value is <code>restrictions</code>
 	 */
 	public static final String ATTR_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
-
+	/**
+	 * Constant representing the current version for api filter store files
+	 */
+	public static final String API_FILTER_STORE_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	/**
+	 * Constant representing the current version for api description files
+	 */
+	public static final String API_DESCRIPTION_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	/**
+	 * Constant representing the current version for api profile files
+	 */
+	public static final String API_PROFILE_CURRENT_VERSION = "1"; //$NON-NLS-1$
 }

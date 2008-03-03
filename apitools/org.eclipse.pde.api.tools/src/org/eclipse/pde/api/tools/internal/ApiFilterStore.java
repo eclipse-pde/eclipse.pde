@@ -327,6 +327,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		Element root = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
+		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
 		HashSet filters = null;
 		IResource resource = null;
 		IApiProblem problem = null;
