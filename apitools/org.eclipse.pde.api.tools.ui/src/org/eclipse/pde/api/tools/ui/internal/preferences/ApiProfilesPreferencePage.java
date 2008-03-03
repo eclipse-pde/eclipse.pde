@@ -321,12 +321,16 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
  			manager.setDefaultApiProfile(originaldefault.getName());
  		}
 		changes.clear();
-		this.block.performCancel();
+		if (this.block != null) {
+			this.block.performCancel();
+		}
 		return super.performCancel();
 	}
 	
 	protected void performDefaults() {
-		this.block.performDefaults();
+		if (this.block != null) {
+			this.block.performDefaults();
+		}
 		super.performDefaults();
 	}
 
@@ -372,7 +376,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		this.block.performOK();
+		if (this.block != null) {
+			this.block.performOK();
+		}
 		applyChanges();
 		return true;
 	}
@@ -381,7 +387,9 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
 	protected void performApply() {
-		this.block.performApply();
+		if (this.block != null) {
+			this.block.performApply();
+		}
 		applyChanges();
 	}
 }
