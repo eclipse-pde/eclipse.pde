@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -303,7 +306,25 @@ public class ApiProfilesPreferencePage extends PreferencePage implements IWorkbe
 			if(rebuildcount < 1) {
 				rebuildcount++;
 				if(MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiProfilesPreferencePage_6, PreferenceMessages.ApiProfilesPreferencePage_7)) {
-					Util.getBuildJob(null).schedule();
+					IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+					ArrayList temp = new ArrayList();
+					IProject project = null;
+					for (int i = 0, max = allProjects.length; i < max; i++) {
+						project = allProjects[i];
+						if (project.isAccessible()) {
+							try {
+								if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
+									temp.add(project);
+								}
+							} 
+							catch (CoreException e) {}
+						}
+					}
+					if (temp.size() != 0) {
+						IProject[] projectsToBuild = new IProject[temp.size()];
+						temp.toArray(projectsToBuild);
+						Util.getBuildJob(projectsToBuild).schedule();
+					}
 				}
 			}
 		}

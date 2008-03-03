@@ -89,6 +89,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -121,15 +122,24 @@ public final class Util {
 	 * Class that runs a build in the workspace or the given project
 	 */
 	private static final class BuildJob extends Job {
-		private final IProject fProject;
+		private final IProject[] fProjects;
 		/**
 		 * Constructor
 		 * @param name
 		 * @param project
 		 */
 		private BuildJob(String name, IProject project) {
+			this(name, new IProject[] { project });
+		}
+
+		/**
+		 * Constructor
+		 * @param name
+		 * @param project
+		 */
+		private BuildJob(String name, IProject[] projects) {
 			super(name);
-			fProject = project;
+			fProjects = projects;
 		}
 		
 		public boolean belongsTo(Object family) {
@@ -142,10 +152,28 @@ public final class Util {
 		 * @return true if covered by another build job, false otherwise
 		 */
 		public boolean isCoveredBy(BuildJob other) {
-			if (other.fProject == null) {
+			if (other.fProjects == null) {
 				return true;
 			}
-			return fProject != null && fProject.equals(other.fProject);
+			if (this.fProjects != null) {
+				for (int i = 0, max = this.fProjects.length; i < max; i++) {
+					if (!other.contains(this.fProjects[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+		
+		public boolean contains(IProject project) {
+			if (project == null) return false;
+			for (int i = 0, max = this.fProjects.length; i < max; i++) {
+				if (project.equals(this.fProjects[i])) {
+					return true;
+				}
+			}
+			return false;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -167,10 +195,15 @@ public final class Util {
 				}
 			}
 			try {
-				if (fProject != null) {
-					monitor.beginTask(UtilMessages.Util_0+fProject.getName(), 2); 
-					fProject.build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor,1));
-					//ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor,1));
+				if (fProjects != null) {
+					int length = fProjects.length;
+					monitor.beginTask(UtilMessages.Util_0, length);
+					for (int i = 0; i < length; i++) {
+						IProject project = fProjects[i];
+						monitor.subTask(NLS.bind(UtilMessages.Util_5, project.getName())); 
+						project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, new SubProgressMonitor(monitor,1));
+						monitor.worked(1);
+					}
 				} else {
 					monitor.beginTask(UtilMessages.Util_1, 2); 
 					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor, 2));
@@ -527,6 +560,18 @@ public final class Util {
 		return buildJob;
 	}
 	
+	/**
+	 * Returns a build job
+	 * @param projects The projects to build or <code>null</code> to build the workspace.
+	 * @return the build job
+	 */
+	public static Job getBuildJob(final IProject[] projects) {
+		Job buildJob = new BuildJob(UtilMessages.Util_4, projects);
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.setUser(true);
+		return buildJob;
+	}
+
 	public static IClassFile getClassFile(IApiComponent[] components, String typeName) {
 		if (components == null) return null;
 		for (int i = 0, max = components.length; i < max; i++) {
