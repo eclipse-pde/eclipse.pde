@@ -42,7 +42,6 @@ import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Element;
@@ -59,21 +58,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiDescriptionManager implements IElementChangedListener, ISaveParticipant {
 	
-	/**
-	 * XML attribute for resource modification stamp
-	 */
-	public static final String ATTR_MODIFICATION_STAMP = "modificationStamp"; //$NON-NLS-1$
-
-	/**
-	 * XML attribute for Java element handle
-	 */
-	public static final String ATTR_HANDLE = "handle"; //$NON-NLS-1$
-
-	/**
-	 * XML attribute for API restrictions mask.
-	 */
-	public static final String ATTR_RESTRICTIONS = "restrictions"; //$NON-NLS-1$
-
 	/**
 	 * Singleton
 	 */
@@ -162,7 +146,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 		}
 		if (delete) {
 			File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName())
-				.append(BundleApiComponent.API_DESCRIPTION_XML_NAME).toFile();
+				.append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 			if (file.exists()) {
 				file.delete();
 			}
@@ -252,7 +236,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 				dir.mkdirs();
 				String xml = desc.getXML();
 				try {
-					Util.saveFile(new File(dir,  BundleApiComponent.API_DESCRIPTION_XML_NAME), xml);
+					Util.saveFile(new File(dir,  IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
 				} catch (IOException e) {
 					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new String[]{project.getElementName()}), e);
 				}
@@ -271,16 +255,16 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	 */
 	private boolean restoreDescription(IJavaProject project, ProjectApiDescription description) throws CoreException {
 		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).
-			append(BundleApiComponent.API_DESCRIPTION_XML_NAME).toFile();
+			append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 		if (file.exists()) {
 			try {
 				String xml = new String(Util.getInputStreamAsCharArray(
-					new BufferedInputStream(new FileInputStream(file)), -1, ApiDescriptionProcessor.UTF_8));
+					new BufferedInputStream(new FileInputStream(file)), -1, IApiCoreConstants.UTF_8));
 				Element root = Util.parseDocument(xml);
-				if (!root.getNodeName().equals(ApiDescriptionProcessor.ELEMENT_COMPONENT)) {
+				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 					abort(ScannerMessages.ComponentXMLScanner_0, null); 
 				}
-				long timestamp = getLong(root, ATTR_MODIFICATION_STAMP);
+				long timestamp = getLong(root, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
 				description.fPackageTimeStamp = timestamp;
 				description.fManifestFile = project.getProject().getFile(JarFile.MANIFEST_NAME);
 				restoreChildren(description, root, null, description.fPackageMap);
@@ -305,10 +289,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 	private void restoreNode(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map childrenMap) throws CoreException {
 		ManifestNode node = null;
 		IElementDescriptor elementDesc = null;
-		if (element.getTagName().equals(ApiDescriptionProcessor.ELEMENT_PACKAGE)) {
-			String handle = element.getAttribute(ATTR_HANDLE);
-			int vis = getInt(element, ApiDescriptionProcessor.ATTR_VISIBILITY);
-			int res = getInt(element, ATTR_RESTRICTIONS);
+		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
+			String handle = element.getAttribute(IApiXmlConstants.ATTR_HANDLE);
+			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			IJavaElement je = JavaCore.create(handle);
 			if (je.getElementType() != IJavaElement.PACKAGE_FRAGMENT) {
 				abort(ScannerMessages.ApiDescriptionManager_2 + handle, null);
@@ -316,10 +300,10 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			IPackageFragment fragment = (IPackageFragment) je;
 			elementDesc = Factory.packageDescriptor(fragment.getElementName());
 			node = apiDesc.newPackageNode(fragment, parentNode, elementDesc, vis, res);
-		} else if (element.getTagName().equals(ApiDescriptionProcessor.ELEMENT_TYPE)) {
-			String handle = element.getAttribute(ATTR_HANDLE);
-			int vis = getInt(element, ApiDescriptionProcessor.ATTR_VISIBILITY);
-			int res = getInt(element, ATTR_RESTRICTIONS);
+		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_TYPE)) {
+			String handle = element.getAttribute(IApiXmlConstants.ATTR_HANDLE);
+			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			IJavaElement je = JavaCore.create(handle);
 			if (je.getElementType() != IJavaElement.TYPE) {
 				abort(ScannerMessages.ApiDescriptionManager_3 + handle, null);
@@ -328,27 +312,27 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			elementDesc = Factory.typeDescriptor(type.getFullyQualifiedName('$'));
 			TypeNode tn = apiDesc.newTypeNode(type, parentNode, elementDesc, vis, res);
 			node = tn;
-			tn.fTimeStamp = getLong(element, ATTR_MODIFICATION_STAMP);
-		} else if (element.getTagName().equals(ApiDescriptionProcessor.ELEMENT_FIELD)) {
+			tn.fTimeStamp = getLong(element, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
+		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_FIELD)) {
 			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.getElement();
-			int vis = getInt(element, ApiDescriptionProcessor.ATTR_VISIBILITY);
-			int res = getInt(element, ATTR_RESTRICTIONS);
-			String name = element.getAttribute(ApiDescriptionProcessor.ATTR_NAME);
+			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
+			String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
 			elementDesc = type.getField(name);
 			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
-		} else if (element.getTagName().equals(ApiDescriptionProcessor.ELEMENT_METHOD)) {
+		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_METHOD)) {
 			IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.getElement();
-			int vis = getInt(element, ApiDescriptionProcessor.ATTR_VISIBILITY);
-			int res = getInt(element, ATTR_RESTRICTIONS);
-			String name = element.getAttribute(ApiDescriptionProcessor.ATTR_NAME);
-			String sig = element.getAttribute(ApiDescriptionProcessor.ATTR_SIGNATURE);
+			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
+			String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
+			String sig = element.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
 			elementDesc = type.getMethod(name,sig,false);
 			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 		}
 		if (node == null) {
 			abort(ScannerMessages.ApiDescriptionManager_4, null);
 		}
-		String component = element.getAttribute(ApiDescriptionProcessor.ATTR_CONTEXT);
+		String component = element.getAttribute(IApiXmlConstants.ATTR_CONTEXT);
 		if (component == null || component.length() == 0) {
 			childrenMap.put(elementDesc, node);
 		} else {

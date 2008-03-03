@@ -43,7 +43,6 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
@@ -134,8 +133,8 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
 		void persistXML(Document document, Element parent, String component) {
-			Element pkg = document.createElement(ApiDescriptionProcessor.ELEMENT_PACKAGE);
-			pkg.setAttribute(ApiDescriptionManager.ATTR_HANDLE, fFragment.getHandleIdentifier());
+			Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
+			pkg.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragment.getHandleIdentifier());
 			persistAnnotations(pkg, component);
 			persistChildren(document, pkg, children);
 			parent.appendChild(pkg);
@@ -221,10 +220,10 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
 		void persistXML(Document document, Element parent, String component) {
-			Element type = document.createElement(ApiDescriptionProcessor.ELEMENT_TYPE);
-			type.setAttribute(ApiDescriptionManager.ATTR_HANDLE, fType.getHandleIdentifier());
+			Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
+			type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
 			persistAnnotations(type, component);
-			type.setAttribute(ApiDescriptionManager.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
+			type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
 			persistChildren(document, type, children);
 			parent.appendChild(type);
 		}		
@@ -552,9 +551,9 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	synchronized String getXML() throws CoreException {
 		Document document = Util.newDocument();	
-		Element component = document.createElement(ApiDescriptionProcessor.ELEMENT_COMPONENT);
-		component.setAttribute(ApiDescriptionProcessor.ATTR_ID, getJavaProject().getElementName());
-		component.setAttribute(ApiDescriptionManager.ATTR_MODIFICATION_STAMP, Long.toString(fPackageTimeStamp));
+		Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
+		component.setAttribute(IApiXmlConstants.ATTR_ID, getJavaProject().getElementName());
+		component.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fPackageTimeStamp));
 		document.appendChild(component);
 		persistChildren(document, component, fPackageMap);
 		return Util.serializeDocument(document);

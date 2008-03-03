@@ -61,6 +61,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -414,156 +416,6 @@ public class ApiDescriptionProcessor {
 	}
 	
 	/**
-	 * Constant representing the value for UTF-8 encoding.
-	 * Value is: <code>UTF-8</code>
-	 */
-	public  static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the name of a component XML file.
-	 * Value is: <code>component.xml</code>
-	 */
-	public static final String COMPONENT_XML_NAME = "component.xml"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a component element node in xml.
-	 * Value is: <code>component</code> 
-	 */
-	public static final String ELEMENT_COMPONENT = "component"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a plugin element node in xml.
-	 * Value is: <code>plugin</code>
-	 */
-	public static final String ELEMENT_PLUGIN = "plugin"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a package element node in xml.
-	 * Value is: <code>package</code>
-	 */
-	public static final String ELEMENT_PACKAGE = "package"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a type element node in xml.
-	 * Value is: <code>type</code>
-	 */
-	public static final String ELEMENT_TYPE = "type"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a method element node in xml.
-	 * Value is: <code>method</code>
-	 */
-	public static final String ELEMENT_METHOD = "method"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a field element node in xml.
-	 * Value is: <code>field</code>
-	 */
-	public static final String ELEMENT_FIELD = "field"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a resource element node in xml.
-	 * Value is: <code>resource</code>
-	 */
-	public static final String ELEMENT_RESOURCE = "resource"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing a api filter element node in xml.
-	 * Value is: <code>filter</code>
-	 */
-	public static final String ELEMENT_FILTER = "filter"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the id attribute for plug-in xml node.
-	 * Value is: <code>id</code>
-	 */
-	public static final String ATTR_ID = "id"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the name attribute for component, package, type, method and field xml nodes.
-	 * Value is: <code>name</code>
-	 */
-	public static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the context attribute for rules xml nodes specific to a component.
-	 * Value is: <code>context</code>
-	 */
-	public static final String ATTR_CONTEXT = "context"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the path attribute of a resource in xml.
-	 * Value is: <code>path</code>
-	 */
-	public static final String ATTR_PATH = "path"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the category attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>category</code>
-	 */
-	public static final String ATTR_CATEGORY = "category"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the severity attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>severity</code>
-	 */
-	public static final String ATTR_SEVERITY = "severity"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the kind attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>kind</code>
-	 */
-	public static final String ATTR_KIND = "kind"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the flags attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>flags</code>
-	 */
-	public static final String ATTR_FLAGS = "flags"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the message attribute of an {@link IApiProblem} in xml.
-	 * Value is: <code>message</code>
-	 */
-	public static final String ATTR_MESSAGE = "message"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the extend attribute for a type xml node.
-	 * Value is: <code>extend</code>
-	 */
-	public static final String ATTR_EXTEND = "extend"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the instantiate attribute for a type xml node.
-	 * Value is: <code>instantiate</code>
-	 */
-	public static final String ATTR_INSTANTIATE = "instantiate";	 //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the implement attribute for a type xml node.
-	 * Value is: <code>implement</code>
-	 */
-	public static final String ATTR_IMPLEMENT = "implement"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the reference attribute for a type xml node.
-	 * Value is: <code>reference</code>
-	 */
-	public static final String ATTR_REFERENCE = "reference";	 //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the signature attribute for a method xml node.
-	 * Value is: <code>signature</code> 
-	 */
-	public static final String ATTR_SIGNATURE = "signature"; //$NON-NLS-1$
-	
-	/**
-	 * Constant representing the visibility attribute for component, package, type, method and field xml nodes.
-	 * Will be one of: "API", "private", "private_permissable", or "SPI"
-	 */
-	public static final String ATTR_VISIBILITY = "visibility"; //$NON-NLS-1$
-		
-	/**
 	 * Constructor
 	 * can not be instantiated directly
 	 */
@@ -585,23 +437,23 @@ public class ApiDescriptionProcessor {
 				String extension = new Path(location.getName()).getFileExtension();
 				if (extension != null && extension.equals("jar") && location.isFile()) { //$NON-NLS-1$
 					jarFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry manifestEntry = jarFile.getEntry(COMPONENT_XML_NAME);
+					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.COMPONENT_XML_NAME);
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 					}
 				} else if(location.isDirectory()) {
-					File file = new File(location, COMPONENT_XML_NAME);
+					File file = new File(location, IApiCoreConstants.COMPONENT_XML_NAME);
 					if (file.exists()) {
 						stream = new FileInputStream(file);
 					}
 				}
 				else if(location.isFile()) {
-					if(location.getName().equals(COMPONENT_XML_NAME)) {
+					if(location.getName().equals(IApiCoreConstants.COMPONENT_XML_NAME)) {
 						stream = new FileInputStream(location);
 					}
 				}
 				if(stream != null) {
-						return new String(Util.getInputStreamAsCharArray(stream, -1, UTF_8));
+						return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 				}
 			} catch(IOException e) {
 				ApiPlugin.log(e);
@@ -723,14 +575,14 @@ public class ApiDescriptionProcessor {
 		catch(CoreException ce) {
 			abort("Failed to parse API filters xml file", ce); //$NON-NLS-1$
 		}
-		if (!root.getNodeName().equals(ELEMENT_COMPONENT)) {
+		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 			abort(ScannerMessages.ComponentXMLScanner_0, null); 
 		}
-		String component = root.getAttribute(ATTR_ID);
+		String component = root.getAttribute(IApiXmlConstants.ATTR_ID);
 		if(component.length() == 0) {
 			abort("Missing component id", null); //$NON-NLS-1$
 		}
-		NodeList resources = root.getElementsByTagName(ELEMENT_RESOURCE);
+		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
 		Element element = null;
 		String path = null;
 		NodeList filters = null;
@@ -739,7 +591,7 @@ public class ApiDescriptionProcessor {
 		ArrayList newfilters = new ArrayList();
 		for(int i = 0; i < resources.getLength(); i++) {
 			element = (Element) resources.item(i);
-			path = element.getAttribute(ATTR_PATH);
+			path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
 			if(path.length() == 0) {
 				continue;
 			}
@@ -751,26 +603,26 @@ public class ApiDescriptionProcessor {
 			if(resource == null) {
 				continue;
 			}
-			filters = element.getElementsByTagName(ELEMENT_FILTER);
+			filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
 			for(int j = 0; j < filters.getLength(); j++) {
 				element = (Element) filters.item(j);
-				category = loadIntegerAttribute(element, ATTR_CATEGORY);
+				category = loadIntegerAttribute(element, IApiXmlConstants.ATTR_CATEGORY);
 				if(category <= 0) {
 					continue;
 				}
-				severity = loadIntegerAttribute(element, ATTR_SEVERITY);
+				severity = loadIntegerAttribute(element, IApiXmlConstants.ATTR_SEVERITY);
 				if(severity < 0) {
 					continue;
 				}
-				kind = loadIntegerAttribute(element, ATTR_KIND);
+				kind = loadIntegerAttribute(element, IApiXmlConstants.ATTR_KIND);
 				if(kind < 0){
 					continue;
 				}
-				flags = loadIntegerAttribute(element, ATTR_FLAGS);
+				flags = loadIntegerAttribute(element, IApiXmlConstants.ATTR_FLAGS);
 				if(flags < 0) {
 					continue;
 				}
-				newfilters.add(Factory.newApiProblem(resource, element.getAttribute(ATTR_MESSAGE), severity, category, kind, flags));
+				newfilters.add(Factory.newApiProblem(resource, element.getAttribute(IApiXmlConstants.ATTR_MESSAGE), severity, category, kind, flags));
 			}
 		}
 		store.addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
@@ -813,22 +665,22 @@ public class ApiDescriptionProcessor {
 		catch(CoreException ce) {
 			abort("Failed to parse API description xml file", ce); //$NON-NLS-1$
 		}
-		if (!root.getNodeName().equals(ELEMENT_COMPONENT)) {
+		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 			abort(ScannerMessages.ComponentXMLScanner_0, null); 
 		}
-		NodeList packages = root.getElementsByTagName(ELEMENT_PACKAGE);
+		NodeList packages = root.getElementsByTagName(IApiXmlConstants.ELEMENT_PACKAGE);
 		NodeList types = null;
 		IPackageDescriptor packdesc = null;
 		Element type = null;
 		for (int i = 0; i < packages.getLength(); i++) {
 			Element pkg = (Element) packages.item(i);
 			// package visibility comes from the MANIFEST.MF
-			String pkgName = pkg.getAttribute(ATTR_NAME);
+			String pkgName = pkg.getAttribute(IApiXmlConstants.ATTR_NAME);
 			packdesc = Factory.packageDescriptor(pkgName);
-			types = pkg.getElementsByTagName(ELEMENT_TYPE);
+			types = pkg.getElementsByTagName(IApiXmlConstants.ELEMENT_TYPE);
 			for (int j = 0; j < types.getLength(); j++) {
 				type = (Element) types.item(j);
-				String name = type.getAttribute(ATTR_NAME);
+				String name = type.getAttribute(IApiXmlConstants.ATTR_NAME);
 				if (name.length() == 0) {
 					abort("Missing type name", null); //$NON-NLS-1$
 				}
@@ -849,7 +701,7 @@ public class ApiDescriptionProcessor {
 	 * @param element the current element to annotate from
 	 */
 	private static void annotateDescriptor(IJavaProject project, IApiDescription settings, IElementDescriptor descriptor, Element element) {
-		String component = element.getAttribute(ATTR_CONTEXT);
+		String component = element.getAttribute(IApiXmlConstants.ATTR_CONTEXT);
 		if (component.length() == 0) {
 			component = null;
 		}
@@ -899,11 +751,11 @@ public class ApiDescriptionProcessor {
 	 * @return restriction settings
 	 */
 	private static int getRestrictions(Element element) {
-		int res = annotateRestriction(element, ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, RestrictionModifiers.NO_RESTRICTIONS);
-		res = annotateRestriction(element, ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
+		int res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, RestrictionModifiers.NO_RESTRICTIONS);
+		res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
 		res = annotateRestriction(element, "subclass", RestrictionModifiers.NO_EXTEND, res); //$NON-NLS-1$
-		res = annotateRestriction(element, ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
-		res = annotateRestriction(element, ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+		res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
+		res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
 		return res;
 	}
 	
@@ -935,7 +787,7 @@ public class ApiDescriptionProcessor {
 	 * @return visibility settings or -1 if none
 	 */
 	private static int getVisibility(Element element) {
-		String attribute = element.getAttribute(ATTR_VISIBILITY);
+		String attribute = element.getAttribute(IApiXmlConstants.ATTR_VISIBILITY);
 		if (ApiSettingsXmlVisitor.VALUE_API.equals(attribute)) {
 			return VisibilityModifiers.API;
 		}
@@ -962,13 +814,13 @@ public class ApiDescriptionProcessor {
 	 * @throws CoreException
 	 */
 	private static void annotateFieldSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
-		NodeList fields = type.getElementsByTagName(ELEMENT_FIELD);
+		NodeList fields = type.getElementsByTagName(IApiXmlConstants.ELEMENT_FIELD);
 		Element field = null;
 		IFieldDescriptor fielddesc = null;
 		String name = null;
 		for(int i = 0; i < fields.getLength(); i++) {
 			field = (Element) fields.item(i);
-			name = field.getAttribute(ATTR_NAME);
+			name = field.getAttribute(IApiXmlConstants.ATTR_NAME);
 			if(name == null) {
 				abort(ScannerMessages.ComponentXMLScanner_1, null); 
 			}
@@ -988,17 +840,17 @@ public class ApiDescriptionProcessor {
 	 * @throws CoreException
 	 */
 	private static void annotateMethodSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
-		NodeList methods = type.getElementsByTagName(ELEMENT_METHOD);
+		NodeList methods = type.getElementsByTagName(IApiXmlConstants.ELEMENT_METHOD);
 		Element method = null;
 		IMethodDescriptor methoddesc = null;
 		String name, signature;
 		for(int i = 0; i < methods.getLength(); i++) {
 			method = (Element) methods.item(i);
-			name = method.getAttribute(ATTR_NAME);
+			name = method.getAttribute(IApiXmlConstants.ATTR_NAME);
 			if(name == null) {
 				abort(ScannerMessages.ComponentXMLScanner_2, null); 
 			}
-			signature = method.getAttribute(ATTR_SIGNATURE);
+			signature = method.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
 			if(signature == null) {
 				abort(ScannerMessages.ComponentXMLScanner_3, null); 
 			}

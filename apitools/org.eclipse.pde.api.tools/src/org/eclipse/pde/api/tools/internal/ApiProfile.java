@@ -26,6 +26,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,6 +58,8 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Implementation of an API profile.
@@ -739,9 +742,9 @@ public class ApiProfile implements IApiProfile, Cloneable {
 	 * @see org.eclipse.pde.api.tools.IApiProfile#writeProfileDescription(java.io.OutputStream)
 	 */
 	public void writeProfileDescription(OutputStream stream) throws CoreException {
-		String xml = ApiProfileManager.getProfileXML(this);
+		String xml = getProfileXML(this);
 		try {
-			stream.write(xml.getBytes("UTF-8")); //$NON-NLS-1$
+			stream.write(xml.getBytes(IApiCoreConstants.UTF_8));
 		} catch (UnsupportedEncodingException e) {
 			abort("Error writing pofile descrition", e); //$NON-NLS-1$
 		} catch (IOException e) {
@@ -749,6 +752,75 @@ public class ApiProfile implements IApiProfile, Cloneable {
 		}
 	}
 
+	/**
+	 * Returns an XML description of the given profile.
+	 * 
+	 * @param profile API profile
+	 * @return XML
+	 * @throws CoreException
+	 */
+	private String getProfileXML(IApiProfile profile) throws CoreException {
+		// pool bundles by location
+		Map pools = new HashMap();
+		List unRooted = new ArrayList();
+		IApiComponent[] components = profile.getApiComponents();
+		for(int i = 0; i < components.length; i++) {
+			if(!components[i].isSystemComponent()) {
+				String location = components[i].getLocation();
+				File file = new File(location);
+				if (file.exists()) {
+					File dir = file.getParentFile();
+					if (dir != null) {
+						List pool = (List) pools.get(dir);
+						if (pool == null) {
+							pool = new ArrayList();
+							pools.put(dir, pool);
+						}
+						pool.add(components[i]);
+					} else {
+						unRooted.add(components[i]);
+					}
+				}
+				
+			}
+		}
+		Document document = Util.newDocument();
+		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
+		document.appendChild(root);
+		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
+		root.setAttribute(IApiXmlConstants.ELEMENT_EE, profile.getExecutionEnvironment());
+		// dump component pools
+		Element subroot = null;
+		File dir = null;
+		List comps = null;
+		IApiComponent comp = null;
+		Element celement = null;
+		for(Iterator iter = pools.keySet().iterator(); iter.hasNext();) {
+			dir = (File) iter.next();
+			subroot = document.createElement(IApiXmlConstants.ELEMENT_POOL);
+			root.appendChild(subroot);
+			subroot.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(dir.getAbsolutePath()).toPortableString());
+			comps = (List) pools.get(dir);
+			for(Iterator iter2 = comps.iterator(); iter2.hasNext();) {
+				comp = (IApiComponent) iter2.next();
+				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
+				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
+				celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
+				subroot.appendChild(celement);
+			}
+		}
+		// dump un-pooled components
+		for(Iterator iter = unRooted.iterator(); iter.hasNext();) {
+			comp = (IApiComponent) iter.next();
+			celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
+			celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
+			celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
+			celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
+			root.appendChild(celement);
+		}
+		return Util.serializeDocument(document);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProfile#getDependentComponents(org.eclipse.pde.api.tools.IApiComponent[])
 	 */

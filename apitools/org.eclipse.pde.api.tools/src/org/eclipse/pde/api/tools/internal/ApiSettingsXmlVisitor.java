@@ -25,7 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,11 +96,11 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 */
 	public ApiSettingsXmlVisitor(String componentName, String componentId) throws CoreException {
 		fDoc = Util.newDocument();	
-		fComponent = fDoc.createElement(ApiDescriptionProcessor.ELEMENT_COMPONENT);
-		fComponent.setAttribute(ApiDescriptionProcessor.ATTR_NAME, componentName);
+		fComponent = fDoc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
+		fComponent.setAttribute(IApiXmlConstants.ATTR_NAME, componentName);
 		fDoc.appendChild(fComponent);
-		Element plugin = fDoc.createElement(ApiDescriptionProcessor.ELEMENT_PLUGIN);
-		plugin.setAttribute(ApiDescriptionProcessor.ATTR_ID, componentId);
+		Element plugin = fDoc.createElement(IApiXmlConstants.ELEMENT_PLUGIN);
+		plugin.setAttribute(IApiXmlConstants.ATTR_ID, componentId);
 		fComponent.appendChild(plugin);
 		fVisitedPackages = new HashSet();
 		fTypeStack = new Stack();
@@ -138,7 +137,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 			}
 		}
 		if (value != null) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_VISIBILITY, value);
+			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, value);
 		}
 	}
 	
@@ -152,19 +151,19 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	private void annotateElementAttributes(String componentContext, IApiAnnotations description, Element element) {
 		int restrictions = description.getRestrictions();
 		if (RestrictionModifiers.isImplementRestriction(restrictions)) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_IMPLEMENT, VALUE_FALSE);
+			element.setAttribute(IApiXmlConstants.ATTR_IMPLEMENT, VALUE_FALSE);
 		}
 		if (RestrictionModifiers.isExtendRestriction(restrictions)) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_EXTEND, VALUE_FALSE);
+			element.setAttribute(IApiXmlConstants.ATTR_EXTEND, VALUE_FALSE);
 		}
 		if (RestrictionModifiers.isInstantiateRestriction(restrictions)) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_INSTANTIATE, VALUE_FALSE);
+			element.setAttribute(IApiXmlConstants.ATTR_INSTANTIATE, VALUE_FALSE);
 		}
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_REFERENCE, VALUE_FALSE);
+			element.setAttribute(IApiXmlConstants.ATTR_REFERENCE, VALUE_FALSE);
 		}
 		if (componentContext != null) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_CONTEXT, componentContext);
+			element.setAttribute(IApiXmlConstants.ATTR_CONTEXT, componentContext);
 		}
 		int visibility = description.getVisibility();
 		if (visibility != fPackageVisibility) {
@@ -213,8 +212,8 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				IPackageDescriptor pkg = (IPackageDescriptor) element;
 				String pkgName = pkg.getName();
 				if (fVisitedPackages.add(pkgName)) {
-					fPackage = fDoc.createElement(ApiDescriptionProcessor.ELEMENT_PACKAGE);
-					fPackage.setAttribute(ApiDescriptionProcessor.ATTR_NAME, pkgName);
+					fPackage = fDoc.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
+					fPackage.setAttribute(IApiXmlConstants.ATTR_NAME, pkgName);
 					// package visibility settings are stored in MANIFEST.MF, so omit them here.
 					// still keep track of the visibility to know if children should override
 					fPackageVisibility = description.getVisibility();
@@ -224,37 +223,37 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 			}
 			case IElementDescriptor.T_REFERENCE_TYPE: {
 				IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) element;
-				fTypeStack.push(fDoc.createElement(ApiDescriptionProcessor.ELEMENT_TYPE));
+				fTypeStack.push(fDoc.createElement(IApiXmlConstants.ELEMENT_TYPE));
 				Element type = (Element) fTypeStack.peek();
 				annotateElementAttributes(componentContext, description, type);
 				fPackage.appendChild(type);
-				type.setAttribute(ApiDescriptionProcessor.ATTR_NAME, Util.getTypeName(typeDesc.getQualifiedName()));
+				type.setAttribute(IApiXmlConstants.ATTR_NAME, Util.getTypeName(typeDesc.getQualifiedName()));
 				break;
 			}
 			case IElementDescriptor.T_METHOD: {
 				IMethodDescriptor desc = (IMethodDescriptor) element;
-				Element method = fDoc.createElement(ApiDescriptionProcessor.ELEMENT_METHOD);
+				Element method = fDoc.createElement(IApiXmlConstants.ELEMENT_METHOD);
 				Element type = (Element) fTypeStack.peek();
 				//add standard attributes
 				annotateElementAttributes(componentContext, description, method);
 				if (method.hasAttributes()) {
 					type.appendChild(method);
 					//add specific method attributes
-					method.setAttribute(ApiDescriptionProcessor.ATTR_SIGNATURE, desc.getSignature());
-					method.setAttribute(ApiDescriptionProcessor.ATTR_NAME, desc.getName());
+					method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, desc.getSignature());
+					method.setAttribute(IApiXmlConstants.ATTR_NAME, desc.getName());
 				}
 				break;
 			}
 			case IElementDescriptor.T_FIELD: {
 				IFieldDescriptor desc = (IFieldDescriptor) element;
-				Element field = fDoc.createElement(ApiDescriptionProcessor.ELEMENT_FIELD);
+				Element field = fDoc.createElement(IApiXmlConstants.ELEMENT_FIELD);
 				Element type = (Element) fTypeStack.peek();
 				annotateElementAttributes(componentContext, description, field);
 				if (field.hasAttributes()) {
 					type.appendChild(field);
 					//add standard attributes
 					//add specific field attributes
-					field.setAttribute(ApiDescriptionProcessor.ATTR_NAME, desc.getName());
+					field.setAttribute(IApiXmlConstants.ATTR_NAME, desc.getName());
 				}
 				break;
 			}

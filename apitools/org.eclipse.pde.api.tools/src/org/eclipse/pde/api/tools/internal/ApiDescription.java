@@ -31,7 +31,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -185,16 +184,16 @@ public class ApiDescription implements IApiDescription {
 			switch (element.getElementType()) {
 			case IElementDescriptor.T_METHOD:
 				IMethodDescriptor md = (IMethodDescriptor) element;
-				Element method = document.createElement(ApiDescriptionProcessor.ELEMENT_METHOD);
-				method.setAttribute(ApiDescriptionProcessor.ATTR_NAME, md.getName());
-				method.setAttribute(ApiDescriptionProcessor.ATTR_SIGNATURE, md.getSignature());
+				Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
+				method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
+				method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, md.getSignature());
 				persistAnnotations(method, component);
 				parent.appendChild(method);
 				break;
 			case IElementDescriptor.T_FIELD:
 				IFieldDescriptor fd = (IFieldDescriptor) element;
-				Element field = document.createElement(ApiDescriptionProcessor.ELEMENT_FIELD);
-				field.setAttribute(ApiDescriptionProcessor.ATTR_NAME, fd.getName());
+				Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
+				field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
 				persistAnnotations(field, component);
 				parent.appendChild(field);
 				break;
@@ -208,10 +207,10 @@ public class ApiDescription implements IApiDescription {
 		 * @param component the component the description is for or <code>null</code>
 		 */
 		void persistAnnotations(Element element, String component) {
-			element.setAttribute(ApiDescriptionProcessor.ATTR_VISIBILITY, Integer.toString(visibility));
-			element.setAttribute(ApiDescriptionManager.ATTR_RESTRICTIONS, Integer.toString(restrictions));
+			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
+			element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(restrictions));
 			if (component != null) {
-				element.setAttribute(ApiDescriptionProcessor.ATTR_CONTEXT, component);
+				element.setAttribute(IApiXmlConstants.ATTR_CONTEXT, component);
 			}
 		}
 	}

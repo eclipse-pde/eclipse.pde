@@ -80,11 +80,6 @@ import org.xml.sax.SAXException;
  */
 public class BundleApiComponent extends AbstractApiComponent {
 	
-	private static final String PLUGIN_XML_NAME = "plugin.xml"; //$NON-NLS-1$
-	private static final String FRAGMENT_XML_NAME = "fragment.xml"; //$NON-NLS-1$
-
-	private static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
-
 	/**
 	 * Dictionary parsed from MANIFEST.MF
 	 */
@@ -110,23 +105,6 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * Maps class file container to its relative path in its bundle.
 	 */
 	private Map fContainerToPath;
-		
-	/**
-	 * Name of component XML file.
-	 */
-	public static final String COMPONENT_XML_NAME = "component.xml"; //$NON-NLS-1$
-
-	/**
-	 * Name of API description XML file.
-	 * Value is <code>.api_description</code>
-	 */
-	public static final String API_DESCRIPTION_XML_NAME = ".api_description"; //$NON-NLS-1$
-	
-	/**
-	 * Name of the API filters XML file.
-	 * Value is <code>.api_filters</code>
-	 */
-	public static final String API_FILTERS_XML_NAME = ".api_filters"; //$NON-NLS-1$
 
 	/**
 	 * Constructs a new API component from the specified location in the file system
@@ -656,7 +634,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			if (stream == null) {
 				return null;
 			}
-			return new String(Util.getInputStreamAsCharArray(stream, -1, "UTF-8")); //$NON-NLS-1$
+			return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 		} catch(IOException e) {
 			ApiPlugin.log(e);
 		} finally {
@@ -684,26 +662,26 @@ public class BundleApiComponent extends AbstractApiComponent {
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				isJar = true;
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(API_DESCRIPTION_XML_NAME);
+				ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 				if (manifestEntry != null) {
 					// new file is present
 					stream = jarFile.getInputStream(manifestEntry);
 					supportNewFormat = true;
 				} else {
 					// fall back to old name
-					manifestEntry = jarFile.getEntry(COMPONENT_XML_NAME);
+					manifestEntry = jarFile.getEntry(IApiCoreConstants.COMPONENT_XML_NAME);
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 					}
 				}
 			} else {
-				File file = new File(bundleLocation, API_DESCRIPTION_XML_NAME);
+				File file = new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 				if (file.exists()) {
 					// use new file
 					stream = new FileInputStream(file);
 					supportNewFormat = true;
 				} else {
-					file = new File(bundleLocation, COMPONENT_XML_NAME);
+					file = new File(bundleLocation, IApiCoreConstants.COMPONENT_XML_NAME);
 					if (file.exists()) {
 						// fall back to old name
 						stream = new FileInputStream(file);
@@ -713,19 +691,19 @@ public class BundleApiComponent extends AbstractApiComponent {
 			if (stream == null) {
 				return null;
 			}
-			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, "UTF-8"); //$NON-NLS-1$
+			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
 			contents = new String(charArray);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
 		}
 		if (!supportNewFormat && !isJar) {
 			// delete the old file and create the new file
-			File file = new File(bundleLocation, COMPONENT_XML_NAME);
+			File file = new File(bundleLocation, IApiCoreConstants.COMPONENT_XML_NAME);
 			if (file.delete()) {
 				if (!bundleLocation.exists()) {
 					bundleLocation.mkdirs();
 				}
-				Util.saveFile(new File(bundleLocation, API_DESCRIPTION_XML_NAME), contents);
+				Util.saveFile(new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME), contents);
 			}
 		}
 		return contents;
@@ -744,12 +722,12 @@ public class BundleApiComponent extends AbstractApiComponent {
 			String extension = new Path(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry entry = jarFile.getEntry(".settings/"+API_FILTERS_XML_NAME); //$NON-NLS-1$
+				ZipEntry entry = jarFile.getEntry(".settings/"+IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
 				if (entry != null) {
 					stream = jarFile.getInputStream(entry);
 				} 
 			} else {
-				File file = new File(bundleLocation, API_FILTERS_XML_NAME);
+				File file = new File(bundleLocation, IApiCoreConstants.API_FILTERS_XML_NAME);
 				if (file.exists()) {
 					stream = new FileInputStream(file);
 				} 
@@ -757,7 +735,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			if (stream == null) {
 				return null;
 			}
-			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, "UTF-8"); //$NON-NLS-1$
+			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
 			contents = new String(charArray);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
@@ -941,10 +919,10 @@ public class BundleApiComponent extends AbstractApiComponent {
 			
 			// add component.xml
 			String xml = Util.getApiDescriptionXML(this);
-			writeZipFileEntry(outputStream, "component.xml", xml.getBytes("UTF-8"), compress);  //$NON-NLS-1$//$NON-NLS-2$ 
+			writeZipFileEntry(outputStream, IApiCoreConstants.COMPONENT_XML_NAME, xml.getBytes(IApiCoreConstants.UTF_8), compress);  //$NON-NLS-1$
 			
 			// add required files:
-			exportFileFromBundle(outputStream, PLUGIN_XML_NAME, compress, true);
+			exportFileFromBundle(outputStream, IApiCoreConstants.PLUGIN_XML_NAME, compress, true);
 			exportFileFromBundle(outputStream, "plugin.properties", compress, true); //$NON-NLS-1$
 			exportFileFromBundle(outputStream, "about.html", compress, true); //$NON-NLS-1$
 			// TODO: about_files
@@ -1053,7 +1031,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	public boolean isSourceComponent() {
 		ManifestElement[] sourceBundle = null;
 		try {
-			sourceBundle = ManifestElement.parseHeader(ECLIPSE_SOURCE_BUNDLE, (String) fManifest.get(ECLIPSE_SOURCE_BUNDLE));
+			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) fManifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
 		} catch (BundleException e) {
 			// ignore
 		}
@@ -1062,14 +1040,14 @@ public class BundleApiComponent extends AbstractApiComponent {
 			return true;
 		}
 		// check for the old format
-		String pluginXMLContents = readFileContents(PLUGIN_XML_NAME,new File(getLocation()));
+		String pluginXMLContents = readFileContents(IApiCoreConstants.PLUGIN_XML_NAME,new File(getLocation()));
 		if (pluginXMLContents != null) {
 			if (containsSourceExtensionPoint(pluginXMLContents)) {
 				return true;
 			}
 		}
 		// check if it contains a fragment.xml with the appropriate extension point
-		pluginXMLContents = readFileContents(FRAGMENT_XML_NAME,new File(getLocation()));
+		pluginXMLContents = readFileContents(IApiCoreConstants.FRAGMENT_XML_NAME,new File(getLocation()));
 		if (pluginXMLContents != null) {
 			if (containsSourceExtensionPoint(pluginXMLContents)) {
 				return true;

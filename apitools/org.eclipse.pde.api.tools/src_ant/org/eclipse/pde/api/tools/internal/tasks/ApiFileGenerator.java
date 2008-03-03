@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
-import org.eclipse.pde.api.tools.internal.BundleApiComponent;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.DirectoryClassFileContainer;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -89,11 +89,11 @@ public class ApiFileGenerator extends Task {
 			return;
 		}
 		// check if the .api_description file exists in source
-		File apiDescriptionFile = new File(root, BundleApiComponent.API_DESCRIPTION_XML_NAME);
+		File apiDescriptionFile = new File(root, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		File targetProjectFolder = new File(this.targetFolder, this.projectName); 
 		if (apiDescriptionFile.exists()) {
 			// copy to the target folder + project name
-			Util.copy(apiDescriptionFile, new File(targetProjectFolder, BundleApiComponent.API_DESCRIPTION_XML_NAME));
+			Util.copy(apiDescriptionFile, new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME));
 			return;
 		}
 		File[] allFiles = Util.getAllFiles(root, new FileFilter() {
@@ -195,7 +195,7 @@ public class ApiFileGenerator extends Task {
 			apiDescription.accept(xmlVisitor);
 			String xml = xmlVisitor.getXML();
 			Util.saveFile(apiDescriptionFile, xml);
-			Util.copy(apiDescriptionFile, new File(targetProjectFolder, BundleApiComponent.API_DESCRIPTION_XML_NAME));
+			Util.copy(apiDescriptionFile, new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME));
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		} catch (IOException e) {

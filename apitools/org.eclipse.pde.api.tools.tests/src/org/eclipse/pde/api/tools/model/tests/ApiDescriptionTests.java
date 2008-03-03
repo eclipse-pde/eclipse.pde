@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
-import org.eclipse.pde.api.tools.internal.BundleApiComponent;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ClassFileContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -405,13 +405,13 @@ public class ApiDescriptionTests extends TestCase {
 		path = path.append("test-xml");
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists());
-		File descfile = new File(file, BundleApiComponent.API_DESCRIPTION_XML_NAME);
+		File descfile = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		String readXML = null;
 		if (descfile.exists()) {
 			FileInputStream stream = null;
 			try {
 				 stream = new FileInputStream(descfile);
-				 char[] charArray = Util.getInputStreamAsCharArray(stream, -1, "UTF-8"); //$NON-NLS-1$
+				 char[] charArray = Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
 				 readXML = new String(charArray);
 			}
 			finally {

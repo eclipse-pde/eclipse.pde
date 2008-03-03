@@ -28,13 +28,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 
 
 public class SDKTesterCreator {
 	private static final String DEBUG_PROPERTY = "DEBUG"; //$NON-NLS-1$
-
-	private static final String COMPONENT_XML = "component.xml"; //$NON-NLS-1$
 
 	private static final String OVERRIDE = "-o"; //$NON-NLS-1$
 	private static boolean DEBUG = false;
@@ -61,7 +60,7 @@ public class SDKTesterCreator {
 		}
 		File[] allComponentXmlFiles = Util.getAllFiles(componentXmlRoot, new FileFilter() {
 			public boolean accept(File path) {
-				return (path.isFile() && path.getName().equals(COMPONENT_XML)) || path.isDirectory();
+				return (path.isFile() && path.getName().equals(IApiCoreConstants.COMPONENT_XML_NAME)) || path.isDirectory();
 			}
 		});
 		if (allComponentXmlFiles == null) {
@@ -168,7 +167,7 @@ public class SDKTesterCreator {
 	}
 
 	private static void processDirectoryEntry(File file, File componentXmlFile) {
-		File currentComponentXmlFile = new File(file, COMPONENT_XML);
+		File currentComponentXmlFile = new File(file, IApiCoreConstants.COMPONENT_XML_NAME);
 		if (currentComponentXmlFile.exists()) {
 			// there is a component.xml file in this plugin
 			System.out.println("component.xml already exists"); //$NON-NLS-1$
@@ -190,7 +189,7 @@ public class SDKTesterCreator {
 		try {
 			inputStream = new BufferedInputStream(new FileInputStream(componentXmlFile));
 			byte[] bytes = Util.getInputStreamAsByteArray(inputStream, -1);
-			outputStream = new BufferedOutputStream(new FileOutputStream(new File(file, COMPONENT_XML)));
+			outputStream = new BufferedOutputStream(new FileOutputStream(new File(file, IApiCoreConstants.COMPONENT_XML_NAME)));
 			outputStream.write(bytes);
 			outputStream.flush();
 		} catch (FileNotFoundException e) {
@@ -261,7 +260,7 @@ public class SDKTesterCreator {
 		while (zipEntry != null) {
 			String name = zipEntry.getName();
 			bytes = Util.getInputStreamAsByteArray(inputStream, (int) zipEntry.getSize());
-			if (name.equals(COMPONENT_XML)) {
+			if (name.equals(IApiCoreConstants.COMPONENT_XML_NAME)) {
 				containsComponentXML = true;
 				if (override) {
 					bytes = null;
@@ -280,7 +279,7 @@ public class SDKTesterCreator {
 			bytes = Util.getInputStreamAsByteArray(bufferedInputStream, -1);
 			bufferedInputStream.close();
 			if (bytes != null) {
-				writeZipFileEntry(zipOutputStream, COMPONENT_XML, bytes, CRC32);
+				writeZipFileEntry(zipOutputStream, IApiCoreConstants.COMPONENT_XML_NAME, bytes, CRC32);
 				return true;
 			} else {
 				System.err.println("Could not retrieve the contents of " + componentXmlFile); //$NON-NLS-1$
@@ -308,7 +307,7 @@ public class SDKTesterCreator {
 	private static int getComponentXmlIndex(String[] allComponentXmlFileNames, File file) {
 		String fileName = file.getName();
 		int index = fileName.indexOf('_');
-		String key = (index == -1 ? fileName : fileName.substring(0, index)) + File.separator + COMPONENT_XML;
+		String key = (index == -1 ? fileName : fileName.substring(0, index)) + File.separator + IApiCoreConstants.COMPONENT_XML_NAME;
 		int result = Arrays.binarySearch(allComponentXmlFileNames, key);
 		return result;
 	}

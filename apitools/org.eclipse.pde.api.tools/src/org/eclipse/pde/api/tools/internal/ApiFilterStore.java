@@ -96,7 +96,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(!fNeedsSaving || fLoading) {
 			return;
 		}
-		WorkspaceJob job = new WorkspaceJob("") {
+		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
 			public IStatus runInWorkspace(IProgressMonitor monitor)	throws CoreException {
 				if(DEBUG) {
 					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -110,7 +110,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						return Status.CANCEL_STATUS;
 					}
 					String xml = getStoreAsXml();
-					IFile file = project.getFile(new Path(".settings").append(BundleApiComponent.API_FILTERS_XML_NAME)); //$NON-NLS-1$
+					IFile file = project.getFile(new Path(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME)); //$NON-NLS-1$
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
@@ -324,17 +324,17 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return null;
 		}
 		Document document = Util.newDocument();
-		Element root = document.createElement(ApiDescriptionProcessor.ELEMENT_COMPONENT);
+		Element root = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		document.appendChild(root);
-		root.setAttribute(ApiDescriptionProcessor.ATTR_ID, fProject.getElementName());
+		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
 		HashSet filters = null;
 		IResource resource = null;
 		IApiProblem problem = null;
 		Element relement = null, felement = null;
 		for(Iterator iter = fFilterMap.keySet().iterator(); iter.hasNext();) {
 			resource = (IResource) iter.next();
-			relement = document.createElement(ApiDescriptionProcessor.ELEMENT_RESOURCE);
-			relement.setAttribute(ApiDescriptionProcessor.ATTR_PATH, resource.getProjectRelativePath().toPortableString());
+			relement = document.createElement(IApiXmlConstants.ELEMENT_RESOURCE);
+			relement.setAttribute(IApiXmlConstants.ATTR_PATH, resource.getProjectRelativePath().toPortableString());
 			root.appendChild(relement);
 			filters = (HashSet) fFilterMap.get(resource);
 			if(filters.isEmpty()) {
@@ -342,12 +342,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			for(Iterator iter2 = filters.iterator(); iter2.hasNext();) {
 				problem = ((IApiProblemFilter) iter2.next()).getUnderlyingProblem();
-				felement = document.createElement(ApiDescriptionProcessor.ELEMENT_FILTER);
-				felement.setAttribute(ApiDescriptionProcessor.ATTR_CATEGORY, Integer.toString(problem.getCategory()));
-				felement.setAttribute(ApiDescriptionProcessor.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
-				felement.setAttribute(ApiDescriptionProcessor.ATTR_KIND, Integer.toString(problem.getKind()));
-				felement.setAttribute(ApiDescriptionProcessor.ATTR_FLAGS, Integer.toString(problem.getFlags()));
-				felement.setAttribute(ApiDescriptionProcessor.ATTR_MESSAGE, problem.getMessage());
+				felement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
+				felement.setAttribute(IApiXmlConstants.ATTR_CATEGORY, Integer.toString(problem.getCategory()));
+				felement.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(problem.getSeverity()));
+				felement.setAttribute(IApiXmlConstants.ATTR_KIND, Integer.toString(problem.getKind()));
+				felement.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(problem.getFlags()));
+				felement.setAttribute(IApiXmlConstants.ATTR_MESSAGE, problem.getMessage());
 				relement.appendChild(felement);
 			}
 		}
@@ -369,7 +369,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			try {
 				if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
 					IPath path = fProject.getPath();
-					path = path.append(".settings").append(BundleApiComponent.API_FILTERS_XML_NAME); //$NON-NLS-1$
+					path = path.append(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
 					IResourceDelta leafdelta = event.getDelta().findMember(path);
 					if(leafdelta == null) {
 						return;
@@ -389,7 +389,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 								try {
 									fLoading = true;
 									fFilterMap.clear();
-									String xml = new String(Util.getInputStreamAsCharArray(file.getContents(), -1, "UTF-8")); //$NON-NLS-1$
+									String xml = new String(Util.getInputStreamAsCharArray(file.getContents(), -1, IApiCoreConstants.UTF_8)); 
 									ApiDescriptionProcessor.annotateApiFilters(this, xml);
 								}
 								finally {

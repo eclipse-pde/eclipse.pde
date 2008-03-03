@@ -69,7 +69,8 @@ public interface IApiProfileManager {
 	
 	/**
 	 * Returns the {@link IApiProfile} that is the current default, or <code>null</code>
-	 * if one has not been set.
+	 * if one has not been set, or the currently specified id for the default profile no longer exists.
+	 * 
 	 * @return the default {@link IApiProfile} or <code>null</code>
 	 */
 	public IApiProfile getDefaultApiProfile();

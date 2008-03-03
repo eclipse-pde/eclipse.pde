@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -90,47 +88,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	}
 	
 	/**
-	 * Constant representing the API profile node name for an API profile xml file.
-	 * Value is <code>apiprofile</code>
-	 */
-	private static final String ELEMENT_APIPROFILE = "apiprofile";  //$NON-NLS-1$
-	/**
-	 * Constant representing the API component node name for an API profile xml file.
-	 * Value is <code>apicomponent</code>
-	 */
-	private static final String ELEMENT_APICOMPONENT = "apicomponent";  //$NON-NLS-1$
-	/**
-	 * Constant representing the API component pool node name for an API profile xml file.
-	 * Value is <code>pool</code>
-	 */
-	private static final String ELEMENT_POOL = "pool";  //$NON-NLS-1$	
-	/**
-	 * Constant representing the id attribute name for an API profile xml file.
-	 * Value is <code>id</code>
-	 */
-	private static final String ATTR_ID = "id"; //$NON-NLS-1$
-	/**
-	 * Constant representing the version attribute name for an API profile xml file.
-	 * Value is <code>version</code>
-	 */
-	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
-	/**
-	 * Constant representing the name attribute name for an API profile xml file.
-	 * Value is <code>name</code>
-	 */
-	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	/**
-	 * Constant representing the location attribute name for an API profile xml file.
-	 * Value is <code>location</code>
-	 */
-	private static final String ATTR_LOCATION = "location"; //$NON-NLS-1$
-	/**
-	 * Constant representing the ee attribute name for an API profile xml file.
-	 * Value is <code>ee</code>
-	 */
-	private static final String ELEMENT_EE = "ee"; //$NON-NLS-1$
-	
-	/**
 	 * Constant for the default API profile.
 	 * Value is: <code>default_api_profile</code>
 	 */
@@ -159,6 +116,11 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * The default save location for persisting the cache from this manager.
 	 */
 	private IPath savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
+	
+	/**
+	 * If the cache of profiles needs to be saved or not.
+	 */
+	private boolean fNeedsSaving = false;
 	
 	/**
 	 * Constructor
@@ -193,6 +155,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		if(newprofile != null) {
 			initializeStateCache();
 			profilecache.put(newprofile.getName(), newprofile);
+			fNeedsSaving = true;
 		}
 	}
 	
@@ -211,6 +174,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				if(file.exists()) {
 					success &= file.delete();
 				}
+				fNeedsSaving = true;
 				return success;
 			}
 		}
@@ -275,20 +239,20 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			if(!dir.exists()) {
 				dir.mkdirs();
 			}
-			String xml = null;
 			String id = null;
 			File file = null;
 			FileOutputStream fout = null;
+			IApiProfile profile = null;
 			for(Iterator iter = profilecache.keySet().iterator(); iter.hasNext();) {
 				id = (String) iter.next();
-				xml = getStateAsXML(id);
+				profile = (IApiProfile) profilecache.get(id);
 				file = savelocation.append(id+".profile").toFile(); //$NON-NLS-1$
 				if(!file.exists()) {
 					file.createNewFile();
 				}
 				try {
 					fout = new FileOutputStream(file);
-					fout.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+					profile.writeProfileDescription(fout);
 					fout.flush();
 				}
 				finally {
@@ -296,92 +260,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Returns a UTF-8 string representing the contents of a profile xml file or <code>null</code>
-	 * if the corresponding profile for the given name does not exist or there was an error 
-	 * serializing the document
-	 * @param id
-	 * @return a UTF-8 xml string of the contents of a profile xml file, or <code>null</code>
-	 * @throws CoreException
-	 */
-	private synchronized String getStateAsXML(String name) throws CoreException {
-		if(profilecache != null) {
-			IApiProfile profile = (IApiProfile) profilecache.get(name);
-			if(profile != null) {
-				return getProfileXML(profile);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns an XML description of the given profile.
-	 * 
-	 * @param profile API profile
-	 * @return XML
-	 * @throws CoreException
-	 */
-	public static String getProfileXML(IApiProfile profile) throws CoreException {
-		Document document = Util.newDocument();
-		Element root = document.createElement(ELEMENT_APIPROFILE);
-		document.appendChild(root);
-		root.setAttribute(ATTR_NAME, profile.getName());
-		root.setAttribute(ELEMENT_EE, profile.getExecutionEnvironment());
-		// pool bundles by location
-		Map pools = new HashMap();
-		List unRooted = new ArrayList();
-		IApiComponent[] components = profile.getApiComponents();
-		for(int i = 0; i < components.length; i++) {
-			if(!components[i].isSystemComponent()) {
-				String location = components[i].getLocation();
-				File file = new File(location);
-				if (file.exists()) {
-					File dir = file.getParentFile();
-					if (dir != null) {
-						List pool = (List) pools.get(dir);
-						if (pool == null) {
-							pool = new ArrayList();
-							pools.put(dir, pool);
-						}
-						pool.add(components[i]);
-					} else {
-						unRooted.add(components[i]);
-					}
-				}
-			}
-		}
-		Iterator iterator = pools.entrySet().iterator();
-		// dump component pools
-		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
-			File pool = (File) entry.getKey();
-			Element poolElement = document.createElement(ELEMENT_POOL);
-			root.appendChild(poolElement);
-			poolElement.setAttribute(ATTR_LOCATION, new Path(pool.getAbsolutePath()).toPortableString());
-			List comps = (List) entry.getValue();
-			Iterator poolIterator = comps.iterator();
-			while (poolIterator.hasNext()) {
-				IApiComponent component = (IApiComponent) poolIterator.next();
-				Element compElement = document.createElement(ELEMENT_APICOMPONENT);
-				compElement.setAttribute(ATTR_ID, component.getId());
-				compElement.setAttribute(ATTR_VERSION, component.getVersion());
-				poolElement.appendChild(compElement);
-			}
-		}
-		// dump un-pooled components
-		iterator = unRooted.iterator();
-		while (iterator.hasNext()) {
-			IApiComponent component = (IApiComponent) iterator.next();
-			Element compElement = document.createElement(ELEMENT_APICOMPONENT);
-			compElement.setAttribute(ATTR_ID, component.getId());
-			compElement.setAttribute(ATTR_VERSION, component.getVersion());
-			compElement.setAttribute(ATTR_LOCATION, new Path(component.getLocation()).toPortableString());
-			root.appendChild(compElement);
-		}
-		return Util.serializeDocument(document);
-	}
+	}	
 	
 	/**
 	 * Throws a core exception with the given message and underlying exception,
@@ -417,17 +296,17 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		try {
 			Document document = parser.parse(stream);
 			Element root = document.getDocumentElement();
-			if(root.getNodeName().equals(ELEMENT_APIPROFILE)) {
-				profile = new ApiProfile(root.getAttribute(ATTR_NAME),
-						Util.createEEFile(root.getAttribute(ELEMENT_EE)));
+			if(root.getNodeName().equals(IApiXmlConstants.ELEMENT_APIPROFILE)) {
+				profile = new ApiProfile(root.getAttribute(IApiXmlConstants.ATTR_NAME),
+						Util.createEEFile(root.getAttribute(IApiXmlConstants.ELEMENT_EE)));
 				// un-pooled components
-				NodeList children = root.getElementsByTagName(ELEMENT_APICOMPONENT);
+				NodeList children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
 				List components = new ArrayList();
 				for(int j = 0; j < children.getLength(); j++) {
 					Element componentNode = (Element) children.item(j);
 					// this also contains components in pools, so don't process them
 					if (componentNode.getParentNode().equals(root)) {
-						String location = componentNode.getAttribute(ATTR_LOCATION);
+						String location = componentNode.getAttribute(IApiXmlConstants.ATTR_LOCATION);
 						IApiComponent component = profile.newApiComponent(Path.fromPortableString(location).toOSString());
 						if(component != null) {
 							components.add(component);
@@ -435,15 +314,15 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 					}
 				}
 				// pooled components
-				children = root.getElementsByTagName(ELEMENT_POOL);
+				children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_POOL);
 				for(int j = 0; j < children.getLength(); j++) {
-					String location = ((Element) children.item(j)).getAttribute(ATTR_LOCATION);
+					String location = ((Element) children.item(j)).getAttribute(IApiXmlConstants.ATTR_LOCATION);
 					IPath poolPath = Path.fromPortableString(location);
-					NodeList componentNodes = root.getElementsByTagName(ELEMENT_APICOMPONENT);
+					NodeList componentNodes = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
 					for (int i = 0; i < componentNodes.getLength(); i++) {
 						Element compElement = (Element) componentNodes.item(i);
-						String id = compElement.getAttribute(ATTR_ID);
-						String ver = compElement.getAttribute(ATTR_VERSION);
+						String id = compElement.getAttribute(IApiXmlConstants.ATTR_ID);
+						String ver = compElement.getAttribute(IApiXmlConstants.ATTR_VERSION);
 						StringBuffer name = new StringBuffer();
 						name.append(id);
 						name.append('_');
@@ -486,8 +365,12 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void saving(ISaveContext context) throws CoreException {
+		if(!fNeedsSaving) {
+			return;
+		}
 		try {
 			persistStateCache();
+			fNeedsSaving = false;
 		} catch (IOException e) {
 			ApiPlugin.log(e);
 		}
@@ -521,6 +404,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			}
 		}
 		finally {
+			ApiPlugin.getDefault().removeSaveParticipant(this);
 			JavaCore.removeElementChangedListener(this);
 			PDECore.getDefault().getModelManager().removePluginModelListener(this);
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -554,6 +438,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 	 * @see org.eclipse.pde.api.tools.IApiProfileManager#setDefaultApiProfile(java.lang.String)
 	 */
 	public void setDefaultApiProfile(String name) {
+		fNeedsSaving = true;
 		defaultprofile = name;
 	}
 	

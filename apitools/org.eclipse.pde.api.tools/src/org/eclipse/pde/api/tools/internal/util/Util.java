@@ -90,6 +90,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -431,7 +432,7 @@ public final class Util {
 			File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 			eeFile.deleteOnExit();
 			FileOutputStream outputStream = new FileOutputStream(eeFile);
-			outputStream.write(string.getBytes("UTF-8")); //$NON-NLS-1$
+			outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
 			outputStream.close();
 			return eeFile;
 		} else {
@@ -1815,7 +1816,7 @@ public final class Util {
 	 */
 	public static InputStream getInputStreamFromString(String string) {
 		try {
-			return new ByteArrayInputStream(string.getBytes("UTF-8")); //$NON-NLS-1$
+			return new ByteArrayInputStream(string.getBytes(IApiCoreConstants.UTF_8));
 		}
 		catch(UnsupportedEncodingException uee) {
 			ApiPlugin.log(uee);
@@ -1841,7 +1842,7 @@ public final class Util {
 			DOMSource source = new DOMSource(document);
 			StreamResult outputTarget = new StreamResult(s);
 			transformer.transform(source, outputTarget);
-			return s.toString("UTF8"); //$NON-NLS-1$	
+			return s.toString(IApiCoreConstants.UTF_8);	
 		} catch (TransformerException e) {
 			abort("Unable to serialize XML document.", e);   //$NON-NLS-1$
 		} catch (IOException e) {

@@ -52,6 +52,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.tests.util.Util;
 
@@ -116,7 +117,7 @@ public class TestingEnvironment {
 		checkAssertion("a workspace must be open", fIsOpen); //$NON-NLS-1$
 		IPath classPath = packagePath.append(className + ".java"); //$NON-NLS-1$
 		try {
-			createFile(classPath, contents.getBytes("UTF8")); //$NON-NLS-1$
+			createFile(classPath, contents.getBytes(IApiCoreConstants.UTF_8));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			checkAssertion("e1", false); //$NON-NLS-1$
