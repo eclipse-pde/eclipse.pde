@@ -350,7 +350,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 						unRooted.add(components[i]);
 					}
 				}
-				
 			}
 		}
 		Iterator iterator = pools.entrySet().iterator();
