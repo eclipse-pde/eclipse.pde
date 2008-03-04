@@ -242,10 +242,6 @@ public class ApiDescription implements IApiDescription {
 	public void accept(ApiDescriptionVisitor visitor) {
 		visitChildren(visitor, fPackageMap);
 	}
-	
-	public boolean containsAnnotatedElements() {
-		return this.fContainsAnnotatedElements;
-	}
 	/**
 	 * Visits all children nodes in the given children map.
 	 * 
