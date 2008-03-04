@@ -76,7 +76,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		else
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
@@ -89,9 +89,15 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ProductFile product = configScriptGenerator.getProductFile();
-			if (product != null)
+			if (product != null) {
 				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
-			else {
+				if (versionsList) {
+					if (product.useFeatures())
+						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+					else
+						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+				}
+			} else {
 				script.printAttribute("root", "name", true); //$NON-NLS-1$ //$NON-NLS-2$
 				script.printAttribute("rootVersion", "1.0.0", true); //$NON-NLS-1$ //$NON-NLS-2$
 			}

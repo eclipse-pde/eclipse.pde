@@ -87,6 +87,7 @@ public class PackagerTask extends Task {
 			if (Boolean.valueOf(value).booleanValue())
 				antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
 			generator.setProduct(getProject().getProperty("product")); //$NON-NLS-1$
+			generator.setGenerateVersionsList(Boolean.valueOf(getProject().getProperty("generateVersionsList")).booleanValue()); //$NON-NLS-1$
 			BundleHelper.getDefault().setLog(this);
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);

@@ -67,7 +67,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	private boolean ignoreMissingPropertiesFile = true;
 
 	/** flag indicating if we should generate the plugin & feature versions lists */
-	private boolean generateVersionsList = false;
+	protected boolean generateVersionsList = false;
 
 	private Properties antProperties = null;
 	private BundleDescription[] bundlesToBuild;
@@ -355,6 +355,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setProduct(product);
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
+		assembler.setVersionsList(generateVersionsList);
 		assembler.generate();
 	}
 
@@ -366,6 +367,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setProduct(product);
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
+		assembler.setVersionsList(generateVersionsList);
 		assembler.generate();
 	}
 

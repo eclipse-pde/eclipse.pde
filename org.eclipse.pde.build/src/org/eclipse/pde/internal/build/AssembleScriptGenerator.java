@@ -17,6 +17,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String featureId;
 	protected HashMap archivesFormat;
 	protected boolean groupConfigs = false;
+	protected boolean versionsList = false;
 
 	protected AssembleConfigScriptGenerator configScriptGenerator;
 
@@ -136,9 +137,15 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ProductFile product = configScriptGenerator.getProductFile();
-			if (product != null)
+			if (product != null) {
 				script.printAttribute("productFile", product.getLocation(), true); //$NON-NLS-1$
-			else {
+				if (versionsList) {
+					if (product.useFeatures())
+						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+					else
+						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+				}
+			} else {
 				script.printAttribute("root", "name", true); //$NON-NLS-1$ //$NON-NLS-2$
 				script.printAttribute("rootVersion", "1.0.0", true); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -166,5 +173,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	public void setGroupConfigs(boolean group) {
 		groupConfigs = group;
+	}
+
+	public void setVersionsList(boolean versionsList) {
+		this.versionsList = versionsList;
 	}
 }
