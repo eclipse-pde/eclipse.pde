@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -41,7 +42,13 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public static void initializeDefaults(IPreferenceStore store) {
-		PreferenceConverter.setDefault(store, P_DEFAULT, DEFAULT);
+		boolean highContrast = false;
+		try {
+			highContrast = Display.getDefault().getHighContrast();
+		} catch (SWTException e) { // keep highContrast = false
+		}
+
+		PreferenceConverter.setDefault(store, P_DEFAULT, highContrast ? DEFAULT_HIGH_CONTRAST : DEFAULT);
 		PreferenceConverter.setDefault(store, P_PROC_INSTR, PROC_INSTR);
 		PreferenceConverter.setDefault(store, P_STRING, STRING);
 		PreferenceConverter.setDefault(store, P_EXTERNALIZED_STRING, EXTERNALIZED_STRING);
@@ -50,8 +57,8 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_HEADER_KEY, HEADER_KEY);
 		PreferenceConverter.setDefault(store, P_HEADER_OSGI, HEADER_OSGI);
 		store.setDefault(P_HEADER_OSGI + IPDEColorConstants.P_BOLD_SUFFIX, true);
-		PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
-		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
+		PreferenceConverter.setDefault(store, P_HEADER_VALUE, highContrast ? HEADER_VALUE_HIGH_CONTRAST : HEADER_VALUE);
+		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, highContrast ? HEADER_ASSIGNMENT_HIGH_CONTRAST : HEADER_ATTRIBUTES);
 		store.setDefault(P_HEADER_ATTRIBUTES + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
 	}
