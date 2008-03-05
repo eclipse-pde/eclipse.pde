@@ -69,7 +69,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	protected void openReference() {
 		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		String id = text.getText();
-		// TODO why is this hard?
+		// TODO this is hackish
 		IConfigurationElement element = (IConfigurationElement) attributeMap.get(id);
 		if (element != null) {
 			String pluginId = element.getContributor().getName();

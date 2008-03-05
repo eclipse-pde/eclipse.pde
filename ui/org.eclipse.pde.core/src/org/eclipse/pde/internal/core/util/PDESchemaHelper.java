@@ -23,13 +23,14 @@ public class PDESchemaHelper {
 	 * Returns valid attributes given a schema attribute
 	 * 
 	 * @param attribute 
-	 * 		a schema attribute (e.g., org.eclipse.ui.perspectives/perspective/@id)
+	 * 		a schema identifier attribute (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 * @return A map with the ids as keys and respective {@link IConfigurationElement} as pairs
 	 */
 	public static Map getValidAttributes(ISchemaAttribute attribute) {
 		Map attributeMap = new HashMap();
-		gatherInfo(attributeMap, attribute.getBasedOn());
+		gatherAttributes(attributeMap, attribute.getBasedOn());
 
+		// this adds the restrictions on top of the referenced identifiers
 		ISchemaRestriction restriction = attribute.getType().getRestriction();
 		if (restriction != null) {
 			Object[] children = restriction.getChildren();
@@ -61,13 +62,21 @@ public class PDESchemaHelper {
 		return rootId + refId;
 	}
 
-	private static void gatherInfo(Map attributesInfo, String basedOn) {
+	// TODO can we do this any faster?
+	private static void gatherAttributes(Map attributesInfo, String basedOn) {
 		if (basedOn == null) // check for null
 			return;
 		String[] path = basedOn.split("/"); //$NON-NLS-1$
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(path[0], true);
+
 		List members = new ArrayList();
 		for (int i = 0; i < extensions.length; i++) {
+			// handle the core style identifier case
+			if (path.length == 2) {
+				attributesInfo.put(extensions[i].getUniqueIdentifier(), null);
+				continue;
+			}
+
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
 				if (elements[j].getName().equals(path[1])) {

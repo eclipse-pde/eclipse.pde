@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -27,9 +27,47 @@ import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 
 public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelectionDialog {
 
-	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.SchemaAttributeFilteredItemsSelectionDialog"; //$NON-NLS-1$
+	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FilteredSchemaAttributeSelectionDialog"; //$NON-NLS-1$
+	private static final String S_OPTIONAL_ATTRIBUTES = "showOptionalAttributes"; //$NON-NLS-1$
+
+	private Action optionalAttributesAction = new ShowOptionalAttributesAction();
+	private OptionalAttributesFilter optionalAttributesFilter = new OptionalAttributesFilter();
 	private final SchemaListLabelProvider listLabelProvider = new SchemaListLabelProvider();
 	private final SchemaDetailsLabelProvider detailsLabelProvider = new SchemaDetailsLabelProvider();
+
+	private class ShowOptionalAttributesAction extends Action {
+
+		public ShowOptionalAttributesAction() {
+			super(PDEUIMessages.FilteredSchemaAttributeSelectionDialog_showOptionalAttributes, IAction.AS_CHECK_BOX);
+			setChecked(true);
+		}
+
+		public void run() {
+			optionalAttributesFilter.setEnabled(isChecked());
+			scheduleRefresh();
+		}
+
+	}
+
+	private class OptionalAttributesFilter extends ViewerFilter {
+
+		private boolean enabled = true;
+
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (enabled) // select everything
+				return true;
+
+			if (element instanceof ISchemaAttribute) {
+				ISchemaAttribute attribute = (ISchemaAttribute) element;
+				return attribute.getUse() != ISchemaAttribute.OPTIONAL;
+			}
+			return true;
+		}
+
+		public void setEnabled(boolean value) {
+			this.enabled = value;
+		}
+	}
 
 	public FilteredSchemaAttributeSelectionDialog(Shell shell) {
 		super(shell, false);
@@ -101,8 +139,11 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		public boolean matchItem(Object item) {
 			if (item instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) item;
+				ISchemaObject object = attribute.getParent();
+				ISchema schema = attribute.getSchema();
 				String id = getQualifiedName(attribute);
-				return matches(id);
+				// match the attribute name, element name, qualified id or schema name
+				return matches(attribute.getName()) || matches(object.getName()) || matches(id) || matches(schema.getName());
 			}
 			return false;
 		}
@@ -144,8 +185,8 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 					for (int l = 0; l < attributes.length; l++) {
 						ISchemaAttribute attribute = attributes[l];
-						// only add attributes of the string kind, isn't translatable and is required
-						if (attribute.getKind() == IMetaAttribute.STRING && !attribute.isTranslatable() && attribute.getUse() == ISchemaAttribute.REQUIRED)
+						// only add attributes of the string kind and isn't translatable
+						if (attribute.getKind() == IMetaAttribute.STRING && ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND].equals(attribute.getType().getName()) && !attribute.isTranslatable())
 							contentProvider.add(attribute, itemsFilter);
 					}
 				}
@@ -173,12 +214,35 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		return null;
 	}
 
+	protected void fillViewMenu(IMenuManager menuManager) {
+		super.fillViewMenu(menuManager);
+		menuManager.add(new Separator());
+		menuManager.add(optionalAttributesAction);
+	}
+
 	protected Comparator getItemsComparator() {
 		return new SchemaComparator();
 	}
 
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, "org.eclipse.pde.ui", 0, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	protected void restoreDialog(IDialogSettings settings) {
+		super.restoreDialog(settings);
+
+		if (settings.get(S_OPTIONAL_ATTRIBUTES) != null) {
+			boolean state = settings.getBoolean(S_OPTIONAL_ATTRIBUTES);
+			optionalAttributesAction.setChecked(state);
+		}
+
+		addListFilter(optionalAttributesFilter);
+		applyFilter();
+	}
+
+	protected void storeDialog(IDialogSettings settings) {
+		super.storeDialog(settings);
+		settings.put(S_OPTIONAL_ATTRIBUTES, optionalAttributesAction.isChecked());
 	}
 
 	public boolean close() {
