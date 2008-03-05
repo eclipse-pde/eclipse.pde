@@ -7,17 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Charlie Fats <charlie.fats@gmail.com> - bug 219848
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.util.TreeSet;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -30,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.osgi.framework.Version;
 
 public class FragmentContentPage extends ContentPage {
@@ -44,6 +51,10 @@ public class FragmentContentPage extends ContentPage {
 	private Composite fOldComp;
 	private Composite fNewComp;
 	private PluginVersionPart fVersionPart;
+	private Label fEELabel;
+	private Button fExeEnvButton;
+	private Combo fEEChoice;
+	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
 
 	protected ModifyListener listener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -76,27 +87,29 @@ public class FragmentContentPage extends ContentPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
 	}
 
-	public void createFragmentPropertiesGroup(Composite container) {
+	private void createFragmentPropertiesGroup(Composite container) {
 		Group propertiesGroup = new Group(container, SWT.NONE);
-		propertiesGroup.setLayout(new GridLayout(2, false));
+		propertiesGroup.setLayout(new GridLayout(3, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		propertiesGroup.setText(PDEUIMessages.ContentPage_fGroup);
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_fid);
-		fIdText = createText(propertiesGroup, propertiesListener);
+		fIdText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_fversion);
-		fVersionText = createText(propertiesGroup, propertiesListener);
+		fVersionText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_fname);
-		fNameText = createText(propertiesGroup, propertiesListener);
+		fNameText = createText(propertiesGroup, propertiesListener, 2);
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_fprovider);
-		fProviderText = createText(propertiesGroup, propertiesListener);
+		fProviderText = createText(propertiesGroup, propertiesListener, 2);
+
+		createExecutionEnvironmentControls(propertiesGroup);
 	}
 
 	private void createParentPluginGroup(Composite container) {
@@ -165,6 +178,55 @@ public class FragmentContentPage extends ContentPage {
 		return comp;
 	}
 
+	private void createExecutionEnvironmentControls(Composite container) {
+		// Create label
+		fEELabel = new Label(container, SWT.NONE);
+		fEELabel.setText(PDEUIMessages.NewProjectCreationPage_executionEnvironments_label);
+
+		// Create combo
+		fEEChoice = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Gather EEs 
+		IExecutionEnvironment[] exeEnvs = VMHelper.getExecutionEnvironments();
+		TreeSet availableEEs = new TreeSet();
+		for (int i = 0; i < exeEnvs.length; i++) {
+			availableEEs.add(exeEnvs[i].getId());
+		}
+		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
+
+		// Set data 
+		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
+		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				validatePage();
+			}
+		});
+
+		// Set default EE based on strict match to default VM
+		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		String[] EEChoices = fEEChoice.getItems();
+		for (int i = 0; i < EEChoices.length; i++) {
+			if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
+				if (VMHelper.getExecutionEnvironment(EEChoices[i]).isStrictlyCompatible(defaultVM)) {
+					fEEChoice.select(i);
+					break;
+				}
+			}
+		}
+
+		// Create button
+		fExeEnvButton = new Button(container, SWT.PUSH);
+		fExeEnvButton.setLayoutData(new GridData());
+		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
+		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
+			}
+		});
+	}
+
 	private Text createPluginIdContainer(Composite parent, final boolean validateRange, int span) {
 		final Text pluginText = createText(parent, listener);
 
@@ -218,6 +280,13 @@ public class FragmentContentPage extends ContentPage {
 			((FragmentFieldData) fData).setPluginId(fPluginIdText_oldV.getText().trim());
 			((FragmentFieldData) fData).setMatch(fMatchCombo.getSelectionIndex());
 		}
+
+		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
+			fData.setExecutionEnvironment(fEEChoice.getText().trim());
+		} else {
+			fData.setExecutionEnvironment(null);
+		}
+
 		((FragmentFieldData) fData).setPluginVersion(version);
 	}
 
@@ -241,6 +310,15 @@ public class FragmentContentPage extends ContentPage {
 					}
 				} else {
 					errorMessage = validateVersion(fPluginVersion);
+				}
+			}
+		}
+		if (errorMessage == null) {
+			String eeid = fEEChoice.getText();
+			if (fEEChoice.isEnabled()) {
+				IExecutionEnvironment ee = VMHelper.getExecutionEnvironment(eeid);
+				if (ee != null && ee.getCompatibleVMs().length == 0) {
+					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
 				}
 			}
 		}
