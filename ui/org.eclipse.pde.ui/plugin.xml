@@ -1851,7 +1851,14 @@
                    icon="$nl$/icons/obj16/open_artifact_obj.gif"
                    label="%pluginsearch.action.menu.name">
                 <visibleWhen>
-                   <with
+                <or>
+               		<with
+                    	 variable="activeWorkbenchWindow.currentPerspective">
+                  		<equals
+                        	value="org.eclipse.pde.ui.PDEPerspective">
+                  		</equals>
+               		</with>
+               		<with
                          variable="activeContexts">
                       <iterate
                             operator="or">
@@ -1860,6 +1867,7 @@
                          </equals>
                       </iterate>
                    </with>
+               </or>
                 </visibleWhen>
              </command>
           </menuContribution>
