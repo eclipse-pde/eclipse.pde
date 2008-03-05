@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +53,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -79,6 +85,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -107,6 +114,7 @@ import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 import com.ibm.icu.text.MessageFormat;
@@ -473,8 +481,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					severity = IMarker.SEVERITY_WARNING;
 				}
 				IMarker marker = fCurrentProject.createMarker(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER);
-				marker.setAttribute(IMarker.SEVERITY, new Integer(severity));
-				marker.setAttribute(IMarker.MESSAGE, BuilderMessages.ApiToolBuilder_10);
+				marker.setAttributes(
+					new String[] {
+						IMarker.SEVERITY,
+						IMarker.MESSAGE,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
+					},
+					new Object[] {
+						new Integer(severity),
+						BuilderMessages.ApiToolBuilder_10,
+						new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID),
+					});
 			} else {
 				// we want to make sure that existing markers are removed
 				this.fCurrentProject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
@@ -1345,7 +1362,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_FLAGS,
-						IApiMarkerConstants.MARKER_ATT_HANDLE_ID
+						IApiMarkerConstants.MARKER_ATT_HANDLE_ID,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
 				},
 				new Object[] {
 						message,
@@ -1358,7 +1376,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						new Integer(delta.getElementType()),
 						new Integer(delta.getKind()),
 						new Integer(delta.getFlags()),
-						element.getHandleIdentifier()
+						element.getHandleIdentifier(),
+						new Integer(IApiMarkerConstants.BINARY_COMPATIBILITY_MARKER_ID),
 				}
 			);
 		} catch (CoreException e) {
@@ -1585,7 +1604,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_FLAGS,
-						IApiMarkerConstants.MARKER_ATT_HANDLE_ID
+						IApiMarkerConstants.MARKER_ATT_HANDLE_ID,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
 				},
 				new Object[] {
 						message,
@@ -1598,7 +1618,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						new Integer(member.getElementType()),
 						new Integer(reference.getReferenceKind()),
 						new Integer(REF_TYPE_FLAG),
-						(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier())
+						(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
+						new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID),
 				}
 			);
 		} catch (CoreException e) {
@@ -1960,6 +1981,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_VERSION,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
 				},
 				new Object[] {
 						message,
@@ -1971,7 +1993,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						new Integer(IApiProblem.CATEGORY_SINCETAGS),
 						new Integer(info.delta.getElementType()),
 						new Integer(kind),
-						version
+						version,
+						new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
 				}
 			);
 		} catch (CoreException e) {
@@ -2032,24 +2055,96 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				return;
 			}
 			IMarker marker = manifestFile.createMarker(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER);
+			int lineNumber= -1;
+			int charStart = 0;
+			int charEnd = 1;
+			char[] contents = null;
+			if (manifestFile.getType() == IResource.FILE) {
+				IFile file = (IFile) manifestFile;
+				InputStream inputStream = null;
+				LineNumberReader reader = null;
+				try {
+					inputStream = file.getContents(true);
+					contents = Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8);
+					reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
+					int lineCounter = 0;
+					String line = null;
+					loop: while ((line = reader.readLine()) != null) {
+						lineCounter++;
+						if (line.startsWith(Constants.BUNDLE_VERSION)) {
+							lineNumber = lineCounter;
+							break loop;
+						}
+					}
+				} catch (CoreException e) {
+					// ignore
+				} catch (IOException e) {
+					// ignore
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch (IOException e) {
+							// ignore
+						}
+					}
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException e) {
+							// ignore
+						}
+					}
+				}
+			}
+			if (lineNumber != -1 && contents != null) {
+				// initialize char start, char end
+				int index = CharOperation.indexOf(Constants.BUNDLE_VERSION.toCharArray(), contents, true);
+				loop: for (int i = index + Constants.BUNDLE_VERSION.length() + 1, max = contents.length; i < max; i++) {
+					char currentCharacter = contents[i];
+					if (CharOperation.isWhitespace(currentCharacter)) {
+						continue;
+					}
+					charStart = i;
+					break loop;
+				}
+				loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
+					switch(contents[i]) {
+						case '\r' :
+						case '\n' :
+							charEnd = i;
+							break loop;
+					}
+				}
+			} else {
+				lineNumber = 1;
+			}
 			marker.setAttributes(
 				new String[] {
 						IMarker.MESSAGE,
 						IMarker.SEVERITY,
 						IMarker.SOURCE_ID,
+						IMarker.LINE_NUMBER,
+						IMarker.CHAR_START,
+						IMarker.CHAR_END,
 						IApiMarkerConstants.MARKER_ATTR_CATEGORY,
 						IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND,
 						IApiMarkerConstants.MARKER_ATTR_KIND,
 						IApiMarkerConstants.MARKER_ATTR_VERSION,
+						IApiMarkerConstants.API_MARKER_ATTR_ID,
 				},
 				new Object[] {
 						message,
 						new Integer(severity),
 						SOURCE,
+						new Integer(lineNumber),
+						new Integer(charStart),
+						new Integer(charEnd),
 						new Integer(IApiProblem.CATEGORY_VERSION),
 						new Integer(IElementDescriptor.T_RESOURCE),
 						new Integer(kind),
-						version
+						version,
+						new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
 				}
 			);
 		} catch (CoreException e) {

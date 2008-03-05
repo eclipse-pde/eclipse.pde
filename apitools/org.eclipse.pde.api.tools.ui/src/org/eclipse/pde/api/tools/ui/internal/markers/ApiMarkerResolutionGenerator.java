@@ -11,17 +11,15 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IMarkerResolutionGenerator;
+import org.eclipse.ui.IMarkerResolutionGenerator2;
 
 /**
  * Returns the listing of applicable {@link IMarkerResolution}s given a certain kind of marker.
  * @since 1.0.0
  */
-public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator {
+public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	/**
 	 * Default empty listing of {@link IMarkerResolution}s
@@ -32,28 +30,27 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator 
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		try {
-			String type = marker.getType();
-			if(type.equals(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER)) {
+		if (!hasResolutions(marker)) {
+			return NO_RESOLUTIONS;
+		}
+		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
+			case IApiMarkerConstants.API_USAGE_MARKER_ID :
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			}
-			else if(type.equals(IApiMarkerConstants.BINARY_COMPATIBILITY_PROBLEM_MARKER)) {
+			case IApiMarkerConstants.BINARY_COMPATIBILITY_MARKER_ID :
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			}
-			else if(type.equals(IApiMarkerConstants.DEFAULT_API_PROFILE_PROBLEM_MARKER)) {
+			case IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID :
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
-			}
-			else if(type.equals(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER)) {
-				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
-			}
-			else if(type.equals(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER)) {
+			case IApiMarkerConstants.SINCE_TAG_MARKER_ID :
 				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker)};
-			}
+			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID :
+				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
+			default :
+				return NO_RESOLUTIONS;
 		}
-		catch(CoreException e) {
-			ApiUIPlugin.log(e);
-		}
-		return NO_RESOLUTIONS;
+	}
+
+	public boolean hasResolutions(IMarker marker) {
+		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
 	}
 
 }

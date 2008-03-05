@@ -20,85 +20,52 @@
 	<!-- Extension: API Problem Markers                                                      -->
 	<!-- =================================================================================== -->
 <extension id="org.eclipse.pde.api.tools.binary_compatibility" point="org.eclipse.core.resources.markers" name="%markerBinaryCompatibility.name">
-  <super
-        type="org.eclipse.core.resources.problemmarker">
-  </super>
-  <super
-        type="org.eclipse.core.resources.textmarker">
-  </super>
-  <persistent
-        value="true">
-  </persistent>
+  <super  type="org.eclipse.core.resources.problemmarker"/>
+  <super type="org.eclipse.core.resources.textmarker"/>
+  <persistent value="true"/>
   <attribute name="flags"/>
   <attribute name="kind"/>
+  <attribute name="apiMarkerID"/>
 </extension>
  <extension
        id="org.eclipse.pde.api.tools.api_usage"
        name="%markerApiUsage.name"
        point="org.eclipse.core.resources.markers">
-    <super
-          type="org.eclipse.core.resources.problemmarker">
-    </super>
-    <super
-          type="org.eclipse.core.resources.textmarker">
-    </super>
-    <persistent
-          value="true">
-    </persistent>
-    <attribute
-          name="kind">
-    </attribute>
+    <super type="org.eclipse.core.resources.problemmarker"/>
+    <super type="org.eclipse.core.resources.textmarker"/>
+    <persistent value="true"/>
+    <attribute name="kind"/>
+    <attribute name="apiMarkerID"/>
  </extension>
  <extension
        id="org.eclipse.pde.api.tools.version_numbering"
        name="%markerVersionNumbering.name"
        point="org.eclipse.core.resources.markers">
-    <super
-          type="org.eclipse.core.resources.problemmarker">
-    </super>
-    <super
-          type="org.eclipse.core.resources.textmarker">
-    </super>
-    <persistent
-          value="true">
-    </persistent>
-    <attribute
-          name="kind">
-    </attribute>
-    <attribute
-          name="version">
-    </attribute>
+    <super type="org.eclipse.core.resources.problemmarker"/>
+    <super type="org.eclipse.core.resources.textmarker"/>
+    <persistent value="true"/>
+    <attribute name="kind"/>
+    <attribute name="version"/>
+    <attribute name="apiMarkerID"/>
  </extension>
  <extension
        id="org.eclipse.pde.api.tools.api_profile"
        name="%markerApiProfile.name"
        point="org.eclipse.core.resources.markers">
-    <super
-          type="org.eclipse.core.resources.problemmarker">
-    </super>
-    <persistent
-          value="true">
-    </persistent>
+    <super type="org.eclipse.core.resources.problemmarker"/>
+    <persistent value="true"/>
+    <attribute name="apiMarkerID"/>
  </extension>
  <extension
        id="org.eclipse.pde.api.tools.marker.sincetags"
        name="%markerSinceTags.name"
        point="org.eclipse.core.resources.markers">
-  <super
-        type="org.eclipse.core.resources.problemmarker">
-  </super>
-  <super
-        type="org.eclipse.core.resources.textmarker">
-  </super>
-  <persistent
-        value="true">
-  </persistent>
-  <attribute
-        name="version">
-  </attribute>
-  <attribute
-        name="kind">
-  </attribute>
+  <super type="org.eclipse.core.resources.problemmarker"/>
+  <super type="org.eclipse.core.resources.textmarker"/>
+  <persistent value="true"/>
+  <attribute name="version"/>
+  <attribute name="kind"/>
+  <attribute name="apiMarkerID"/>
  </extension>
 	<!-- ================================================================== -->
 	<!-- Extension: API nature                                              -->

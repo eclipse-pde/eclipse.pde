@@ -75,4 +75,34 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>org.eclipse.pde.api.tools.marker.sincetags</code> 
 	 */
 	public static final String SINCE_TAGS_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".marker.sincetags"; //$NON-NLS-1$
+	/**
+	 * Constant representing the name of the 'apiMarkerID' attribute on API tooling markers.
+	 * Value is: <code>apiMarkerID</code>
+	 */
+	public static final String API_MARKER_ATTR_ID = "apiMarkerID"; //$NON-NLS-1$
+	/**
+	 * Constant representing the apiMarkerID value for default api profile markers.
+	 * Value is: <code>1</code>
+	 */
+	public static final int DEFAULT_API_PROFILE_MARKER_ID = 1;
+	/**
+	 * Constant representing the apiMarkerID value for binary compatibility markers.
+	 * Value is: <code>2</code>
+	 */
+	public static final int BINARY_COMPATIBILITY_MARKER_ID = 2;
+	/**
+	 * Constant representing the apiMarkerID value for api usage markers.
+	 * Value is: <code>3</code>
+	 */
+	public static final int API_USAGE_MARKER_ID = 3;
+	/**
+	 * Constant representing the apiMarkerID value for version numbering markers.
+	 * Value is: <code>4</code>
+	 */
+	public static final int VERSION_NUMBERING_MARKER_ID = 4;
+	/**
+	 * Constant representing the apiMarkerID value for since tags markers.
+	 * Value is: <code>5</code>
+	 */
+	public static final int SINCE_TAG_MARKER_ID = 5;
 }
