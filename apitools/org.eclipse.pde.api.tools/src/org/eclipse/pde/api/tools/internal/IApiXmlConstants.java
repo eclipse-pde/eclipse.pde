@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Interface containing all of the constants used in XML documents
@@ -125,6 +125,11 @@ public interface IApiXmlConstants {
 	 * Value is: <code>message</code>
 	 */
 	public static final String ATTR_MESSAGE = "message"; //$NON-NLS-1$
+	/**
+	 * Constant representing the element kind attribute of an {@link IApiProblem} in xml.
+	 * Value is: <code>elementkind</code>
+	 */
+	public static final String ATTR_ELEMENT_KIND = "elementkind"; //$NON-NLS-1$
 	/**
 	 * Constant representing the extend attribute for a type xml node.
 	 * Value is: <code>extend</code>

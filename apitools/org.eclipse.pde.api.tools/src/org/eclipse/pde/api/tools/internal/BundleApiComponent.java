@@ -708,40 +708,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 		}
 		return contents;
 	}
-	/**
-	 * Loads the contents of the .api_filters file from the given file or bundle.
-	 * @param file
-	 * @return the contents of the .api_filters file if it exists, or <code>null</code>
-	 * @throws IOException 
-	 */
-	protected String loadApiFilters(File bundleLocation) throws IOException {
-		String contents = null;
-		ZipFile jarFile = null;
-		InputStream stream = null;
-		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry entry = jarFile.getEntry(".settings/"+IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
-				if (entry != null) {
-					stream = jarFile.getInputStream(entry);
-				} 
-			} else {
-				File file = new File(bundleLocation, IApiCoreConstants.API_FILTERS_XML_NAME);
-				if (file.exists()) {
-					stream = new FileInputStream(file);
-				} 
-			}
-			if (stream == null) {
-				return null;
-			}
-			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
-			contents = new String(charArray);
-		} finally {
-			closingZipFileAndStream(stream, jarFile);
-		}
-		return contents;
-	}
+	
 	
 	/**
 	 * Returns a URL describing a file inside a bundle.

@@ -19,14 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -40,7 +38,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiProfile;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFileContainer;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
@@ -191,46 +188,10 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
 		IApiFilterStore store = new ApiFilterStore(getJavaProject());
-		try {
-			IPath path = getProjectSettingsPath(false);
-			if(path != null) {
-				String xml = loadApiFilters(path.toFile());
-				if(xml != null) {
-					try {
-						ApiDescriptionProcessor.annotateApiFilters(store, xml);
-					}
-					catch(CoreException e) {
-						abort("unable to load api filters", e); //$NON-NLS-1$
-					}
-				}
-			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		}
 		if (DEBUG) {
 			System.out.println("Time to create api filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return store;
-	}
-	
-	/**
-	 * @return the path to the .settings folder for the backing project, or <code>null</code>
-	 * if there is no .settings folder
-	 */
-	private IPath getProjectSettingsPath(boolean create) throws CoreException {
-		IPath path = null;
-		IProject project  = fProject.getProject();
-		if(project.isAccessible()) {
-			IFolder folder = project.getFolder(".settings"); //$NON-NLS-1$
-			if(folder.exists()) {
-				 return folder.getLocation();
-			}
-			else if(create) {
-				folder.create(true, true, new NullProgressMonitor());
-				return folder.getLocation();
-			}
-		}
-		return path;
 	}
 	
 	/* (non-Javadoc)

@@ -35,6 +35,11 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_FLAGS = "flags"; //$NON-NLS-1$
 	/**
+	 * Constant representing the name of the 'elementkind' attribute on API tooling markers
+	 * Value is: <code>elementkind</code>
+	 */
+	public static final String MARKER_ATTR_ELEMENT_KIND = "elementkind"; //$NON-NLS-1$
+	/**
 	 * Constant representing the handle id attribute of a java element.
 	 * Value is: <code>org.eclipse.jdt.internal.core.JavaModelManager.handleId</code>
 	 */

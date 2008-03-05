@@ -13,11 +13,9 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.io.File;
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.pde.api.tools.internal.ApiProblem;
 import org.eclipse.pde.api.tools.internal.ApiProfile;
 import org.eclipse.pde.api.tools.internal.ApiProfileManager;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
@@ -284,20 +282,6 @@ public class Factory {
 	 */
 	public static IApiSearchCriteria newSearchCriteria() {
 		return new SearchCriteria();
-	}
-	
-	/**
-	 * Creates a new {@link IApiProblem}
-	 * @param resource the resource this problem is on / in
-	 * @param message the human readable message for the problem
-	 * @param severity the severity of the problem. See {@link IMarker} for severity values.
-	 * @param category the category of the problem. See {@link IApiProblem} for categories
-	 * @param kind the kind of the problem
-	 * @param flags any additional flags for the kind
-	 * @return a new api problem
-	 */
-	public static IApiProblem newApiProblem(IResource resource, String message, int severity, int category, int kind, int flags) {
-		return new ApiProblem(resource, message, severity, category, kind, flags);
 	}
 }
 

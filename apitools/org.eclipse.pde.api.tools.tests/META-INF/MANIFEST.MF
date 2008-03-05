@@ -19,6 +19,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filebuffers;bundle-version="3.3.100",
  org.eclipse.ltk.core.refactoring;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.pde.api.tools.comparator.tests,
+Export-Package: org.eclipse.pde.api.tools.builder.tests,
+ org.eclipse.pde.api.tools.comparator.tests,
  org.eclipse.pde.api.tools.model.tests;uses:="junit.framework,org.eclipse.pde.api.tools.model.component",
+ org.eclipse.pde.api.tools.reference.tests,
+ org.eclipse.pde.api.tools.tests,
+ org.eclipse.pde.api.tools.tests.util,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"

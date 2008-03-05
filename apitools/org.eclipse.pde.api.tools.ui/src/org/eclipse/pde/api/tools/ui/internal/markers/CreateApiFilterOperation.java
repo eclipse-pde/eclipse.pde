@@ -17,13 +17,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.ui.progress.UIJob;
@@ -68,10 +68,11 @@ public class CreateApiFilterOperation extends UIJob {
 				return Status.CANCEL_STATUS;
 			}
 			IApiFilterStore store = component.getFilterStore();
-			store.addFilters(new IApiProblem[] {Factory.newApiProblem(resource, 
+			store.addFilters(new IApiProblem[] {ApiProblemFactory.newApiProblem(resource, 
 					fBackingMarker.getAttribute(IMarker.MESSAGE, IApiToolsConstants.EMPTY_STRING),
 					fBackingMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING),
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_CATEGORY, 0),
+					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_ELEMENT_KIND, 0),
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_KIND, 0), 
 					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FLAGS, 0))});
 			cleanupMarkers(false);

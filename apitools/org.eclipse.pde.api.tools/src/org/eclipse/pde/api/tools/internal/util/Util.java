@@ -95,7 +95,6 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.IClassFile;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -103,6 +102,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
@@ -813,7 +813,9 @@ public final class Util {
 	public static String getDeltaPrefererenceKey(int elementType, int kind, int flags) {
 		StringBuffer buffer = new StringBuffer(Util.getDeltaElementType(elementType));
 		buffer.append('_').append(Util.getDeltaKindName(kind));
-		if (flags != -1) buffer.append('_').append(Util.getDeltaFlagsName(flags));
+		if (flags != -1) {
+			buffer.append('_').append(Util.getDeltaFlagsName(flags));
+		}
 		return String.valueOf(buffer);
 	}
 
@@ -1268,7 +1270,7 @@ public final class Util {
 	 * @param category
 	 * @return the string of the api problem category
 	 */
-	public static String getProblemCategory(long category) {
+	public static String getProblemCategory(int category) {
 		if(category == IApiProblem.CATEGORY_BINARY) {
 			return "BINARY"; //$NON-NLS-1$
 		}
@@ -1282,6 +1284,118 @@ public final class Util {
 			return "VERSION"; //$NON-NLS-1$
 		}
 		return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string representation of the element kind of an
+	 * {@link IApiProblem}, given its category
+	 * @param category
+	 * @param kind
+	 * @return the string of the {@link IApiProblem} element kind 
+	 */
+	public static String getProblemElementKind(int category, int kind) {
+		switch(category) {
+		case IApiProblem.CATEGORY_BINARY: {
+			return getDeltaElementType(kind);
+		}
+		case IApiProblem.CATEGORY_SINCETAGS: {
+			return getDeltaElementType(kind);
+		}
+		case IApiProblem.CATEGORY_USAGE: {
+			return getDescriptorKind(kind);
+		}
+		case IApiProblem.CATEGORY_VERSION: {
+			return getDescriptorKind(kind);
+		}
+	}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string representation of the kind of an
+	 * {@link IApiProblem}, given its category
+	 * @param category
+	 * @param kind
+	 * @return the string of the {@link IApiProblem} kind
+	 */
+	public static String getProblemKind(int category, int kind) {
+		switch(category) {
+			case IApiProblem.CATEGORY_BINARY: {
+				return getDeltaKindName(kind);
+			}
+			case IApiProblem.CATEGORY_SINCETAGS: {
+				return getTagsProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_USAGE: {
+				return getUsageProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_VERSION: {
+				return getVersionProblemKindName(kind);
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string representation of the version problem kind.
+	 * @param kind
+	 * @return the string of the version api problem kind
+	 */
+	public static String getVersionProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.MINOR_VERSION_CHANGE: {
+				return "MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+			}
+			case IApiProblem.MAJOR_VERSION_CHANGE: {
+				return "MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+ 	
+	/**
+	 * Returns the string representation of the kind of usage problem for 
+	 * an {@link IApiProblem} kind
+	 * @param kind
+	 * @return the string for the usage api problem kind
+	 */
+	public static String getUsageProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.ILLEGAL_EXTEND: {
+				return "ILLEGAL_EXTEND"; //$NON-NLS-1$
+			}
+			case IApiProblem.ILLEGAL_IMPLEMENT: {
+				return "ILLEGAL_IMPLEMENT"; //$NON-NLS-1$
+			}
+			case IApiProblem.ILLEGAL_INSTANTIATE: {
+				return "ILLEGAL_INSTANTIATE"; //$NON-NLS-1$
+			}
+			case IApiProblem.ILLEGAL_REFERENCE: {
+				return "ILLEGAL_REFERENCE"; //$NON-NLS-1$
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the string representation of the kind of since tab
+	 * api problem
+	 * @param kind
+	 * @return the string for the since tag api problem kind
+	 */
+	public static String getTagsProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.SINCE_TAG_INVALID: {
+				return "INVALID_SINCE_TAGS"; //$NON-NLS-1$
+			}
+			case IApiProblem.SINCE_TAG_MALFORMED: {
+				return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
+			}
+			case IApiProblem.SINCE_TAG_MISSING: {
+				return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
+			}
+		}
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -1333,24 +1447,27 @@ public final class Util {
 	 */
 	public static String getDescriptorKind(int kind) {
 		switch(kind) {
-		case IElementDescriptor.T_PACKAGE: {
-			return "PACKAGE";	 //$NON-NLS-1$
-		}
-		case IElementDescriptor.T_ARRAY_TYPE: {
-			return "ARRAY_TYPE"; //$NON-NLS-1$
-		}
-		case IElementDescriptor.T_FIELD: {
-			return "FIELD"; //$NON-NLS-1$
-		}
-		case IElementDescriptor.T_METHOD: {
-			return "METHOD"; //$NON-NLS-1$
-		}
-		case IElementDescriptor.T_PRIMITIVE_TYPE: {
-			return "PRIMITIVE_TYPE"; //$NON-NLS-1$
-		}
-		case IElementDescriptor.T_REFERENCE_TYPE: {
-			return "REFERENCE_TYPE"; //$NON-NLS-1$
-		}
+			case IElementDescriptor.T_PACKAGE: {
+				return "PACKAGE";	 //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_ARRAY_TYPE: {
+				return "ARRAY_TYPE"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_FIELD: {
+				return "FIELD"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_METHOD: {
+				return "METHOD"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_PRIMITIVE_TYPE: {
+				return "PRIMITIVE_TYPE"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_REFERENCE_TYPE: {
+				return "REFERENCE_TYPE"; //$NON-NLS-1$
+			}
+			case IElementDescriptor.T_RESOURCE: {
+				return "RESOURCE"; //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -1409,7 +1526,7 @@ public final class Util {
 				return "NO_RESTRICTIONS"; //$NON-NLS-1$
 			}
 		}
-		return null;
+		return "UNKNOWN_KIND"; //$NON-NLS-1$
 	}
 	
 	/**

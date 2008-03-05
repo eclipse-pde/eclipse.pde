@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
 /**
  * Initializes all of the core preferences for the {@link ApiPlugin}

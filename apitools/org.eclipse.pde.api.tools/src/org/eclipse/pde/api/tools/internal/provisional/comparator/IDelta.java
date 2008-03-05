@@ -18,61 +18,61 @@ public interface IDelta {
 	/**
 	 * Status constant indicating that the element has been added.
 	 */
-	public int ADDED = 0x001;
+	public int ADDED = 1;
 	/**
 	 * Status constant indicating that the element has been changed, as
 	 * described by the change flags.
 	 * 
 	 * @see #getFlags()
 	 */
-	public int CHANGED = 0x002;
+	public int CHANGED = 2;
 
 	/**
 	 * Status constant indicating that the element has been removed.
 	 */
-	public int REMOVED = 0x004;
+	public int REMOVED = 3;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an annotation type declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int ANNOTATION_ELEMENT_TYPE = 0x001;
+	public static final int ANNOTATION_ELEMENT_TYPE = 1;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an API component.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int API_COMPONENT_ELEMENT_TYPE = 0x002;
+	public static final int API_COMPONENT_ELEMENT_TYPE = 2;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an API profile.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int API_PROFILE_ELEMENT_TYPE = 0x004;
+	public static final int API_PROFILE_ELEMENT_TYPE = 3;
 
 	/**
 	 * Element type constant indicating that the delta is reported against a class type declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int CLASS_ELEMENT_TYPE = 0x008;
+	public static final int CLASS_ELEMENT_TYPE = 4;
 
 	/**
 	 * Element type constant indicating that the delta is reported against a constructor declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int CONSTRUCTOR_ELEMENT_TYPE = 0x010;
+	public static final int CONSTRUCTOR_ELEMENT_TYPE = 5;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an enum type declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int ENUM_ELEMENT_TYPE = 0x020;
+	public static final int ENUM_ELEMENT_TYPE = 6;
 
 
 	/**
@@ -80,28 +80,28 @@ public interface IDelta {
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int FIELD_ELEMENT_TYPE = 0x040;
+	public static final int FIELD_ELEMENT_TYPE = 7;
 
 	/**
 	 * Element type constant indicating that the delta is reported against an interface type declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int INTERFACE_ELEMENT_TYPE = 0x080;
+	public static final int INTERFACE_ELEMENT_TYPE = 8;
 
 	/**
 	 * Element type constant indicating that the delta is reported against a member type.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int MEMBER_ELEMENT_TYPE = 0x100;
+	public static final int MEMBER_ELEMENT_TYPE = 9;
 
 	/**
 	 * Element type constant indicating that the delta is reported against a method declaration.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int METHOD_ELEMENT_TYPE = 0x200;
+	public static final int METHOD_ELEMENT_TYPE = 10;
 
 
 	public static final int ABSTRACT_TO_NON_ABSTRACT = 1;

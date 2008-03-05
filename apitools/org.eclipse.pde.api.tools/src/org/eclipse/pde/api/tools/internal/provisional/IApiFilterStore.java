@@ -11,6 +11,8 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
 /**
  * Stores API problem filters for an API component.

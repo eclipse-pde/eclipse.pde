@@ -8,14 +8,9 @@
   <component id="APIPluginTests">
 	  <!--
 	  	Test the kind for RestrictionModifiers#NO_IMPLEMENT
-	  	Also tests that broken filters (wrong text entered) do not break loading / using filters
 	  -->
 	  <resource path="src/x/y/z/C4.java">
-	  	<filter kind="256" flags="0" severity="2" category="33554432" message="Test the kind for RestrictionModifiers#NO_IMPLEMENT"/>
-	  	<filter kind="a" flags="0" severity="2" category="33554432" message=""/>
-	  	<filter kind="1" flags="a" severity="2" category="33554432" message=""/>
-	  	<filter kind ="1" flags="0" severity="a" category="33554432" message=""/>
-	  	<filter kind ="1" flags="0" severity="2" category="a" message=""/>
+	  	<filter severity="2" id="33686528" message="Test the kind for RestrictionModifiers#NO_IMPLEMENT"/>
 	  </resource>
 	  
 	  <!--
@@ -23,8 +18,8 @@
 	  	Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY
 	  -->
 	  <resource path="src/x/C1.java">
-	  	<filter kind="4" flags="17" severity="1" category="16777216" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
-	  	<filter kind="2" flags="55" severity="0" category="16777216" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
+	  	<filter severity="1" id="17040145" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
+	  	<filter severity="0" id="17039927" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
 	  </resource>
 	   
 	  <!--
@@ -32,8 +27,8 @@
 	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE
 	  -->
 	  <resource path="src/x/y/C3.java">
-	  	<filter kind="1" flags="0" severity="2" category="67108864" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE"/>
-	  	<filter kind="2" flags="0" severity="2" category="67108864" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE"/>
+	  	<filter severity="2" id="67567872" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE"/>
+	  	<filter severity="2" id="67568128" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE"/>
 	  </resource>
 	  
 	  <!--
@@ -42,8 +37,8 @@
 	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID
 	  -->
 	  <resource path="META-INF/MANIFEST.MF">
-	  	<filter kind="1" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING"/>
-	  	<filter kind="2" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED"/>
-	  	<filter kind="4" flags="0" severity="1" category="134217728" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID"/>
+	  	<filter severity="1" id="134677248" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING"/>
+	  	<filter severity="1" id="134676992" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED"/>
+	  	<filter severity="1" id="134676736" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID"/>
 	  </resource>
   </component>

@@ -28,9 +28,6 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -69,9 +66,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
-import org.eclipse.pde.api.tools.internal.provisional.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -555,99 +550,7 @@ public class ApiDescriptionProcessor {
 		IStatus status = new Status(IStatus.ERROR, ApiPlugin.getPluginIdentifier(), message, exception);
 		throw new CoreException(status);
 	}
-	
-	/**
-	 * Annotates the given {@link IApiFilterStore} with information loaded from the specified.
-	 * Loading filters is a fail-fast operation, where an error is found we simply continue processing
-	 * the next element an ignore corrupt entries.
-	 * 
-	 * The whole load operation should not fail if attributes are invalid or resources no longer exist.
-	 * 
-	 * @param store
-	 * @param xml
-	 * @throws CoreException
-	 */
-	public static void annotateApiFilters(IApiFilterStore store, String xml) throws CoreException {
-		Element root = null;
-		try {
-			root = Util.parseDocument(xml);
-		}
-		catch(CoreException ce) {
-			abort("Failed to parse API filters xml file", ce); //$NON-NLS-1$
-		}
-		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
-			abort(ScannerMessages.ComponentXMLScanner_0, null); 
-		}
-		String component = root.getAttribute(IApiXmlConstants.ATTR_ID);
-		if(component.length() == 0) {
-			abort("Missing component id", null); //$NON-NLS-1$
-		}
-		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
-		Element element = null;
-		String path = null;
-		NodeList filters = null;
-		int category = 0, kind = 0, flags = 0, severity = 0;
-		IResource resource = null;
-		ArrayList newfilters = new ArrayList();
-		for(int i = 0; i < resources.getLength(); i++) {
-			element = (Element) resources.item(i);
-			path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
-			if(path.length() == 0) {
-				continue;
-			}
-			IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
-			if(project == null) {
-				continue;
-			}
-			resource = project.findMember(new Path(path));
-			if(resource == null) {
-				continue;
-			}
-			filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
-			for(int j = 0; j < filters.getLength(); j++) {
-				element = (Element) filters.item(j);
-				category = loadIntegerAttribute(element, IApiXmlConstants.ATTR_CATEGORY);
-				if(category <= 0) {
-					continue;
-				}
-				severity = loadIntegerAttribute(element, IApiXmlConstants.ATTR_SEVERITY);
-				if(severity < 0) {
-					continue;
-				}
-				kind = loadIntegerAttribute(element, IApiXmlConstants.ATTR_KIND);
-				if(kind < 0){
-					continue;
-				}
-				flags = loadIntegerAttribute(element, IApiXmlConstants.ATTR_FLAGS);
-				if(flags < 0) {
-					continue;
-				}
-				newfilters.add(Factory.newApiProblem(resource, element.getAttribute(IApiXmlConstants.ATTR_MESSAGE), severity, category, kind, flags));
-			}
-		}
-		store.addFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
-		newfilters.clear();
-	}
-	
-	/**
-	 * Loads the specified integer attribute from the given xml element
-	 * @param element
-	 * @param name
-	 * @return
-	 */
-	private static int loadIntegerAttribute(Element element, String name) {
-		String value = element.getAttribute(name);
-		if(value.length() == 0) {
-			return -1;
-		}
-		try {
-			int number = Integer.parseInt(value);
-			return number;
-		}
-		catch(NumberFormatException nfe) {}
-		return -1;
-	}
-	
+
 	/**
 	 * Parses the given xml document (in string format), and annotates the specified 
 	 * {@link IApiDescription} with {@link IPackageDescriptor}s, {@link IReferenceTypeDescriptor}s, {@link IMethodDescriptor}s
