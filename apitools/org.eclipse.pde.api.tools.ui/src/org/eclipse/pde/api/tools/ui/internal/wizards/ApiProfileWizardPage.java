@@ -427,10 +427,12 @@ public class ApiProfileWizardPage extends WizardPage {
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		IStatus status = fProfile.getExecutionEnvironmentStatus();
-		if (status.getSeverity() == IStatus.ERROR) {
-			setErrorMessage(status.getMessage());
-			return false;
+		if (fProfile != null) {
+			IStatus status = fProfile.getExecutionEnvironmentStatus();
+			if (status.getSeverity() == IStatus.ERROR) {
+				setErrorMessage(status.getMessage());
+				return false;
+			}
 		}
 		return true;
 	}
