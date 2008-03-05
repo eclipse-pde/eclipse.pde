@@ -44,7 +44,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 		}
 
-		String custom = findConfigFile();
 		String location = null, fileList = null;
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
@@ -63,6 +62,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 
 			//configuration/config.ini
+			String custom = findConfigFile(config.getOs());
 			if (custom != null) {
 				copyFile(custom, rootLocation + "/configuration/config.ini"); //$NON-NLS-1$
 			} else {
@@ -82,8 +82,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	}
 
-	private String findConfigFile() {
-		String path = productFile.getConfigIniPath();
+	private String findConfigFile(String os) {
+		String path = productFile.getConfigIniPath(os);
 		if (path == null)
 			return null;
 

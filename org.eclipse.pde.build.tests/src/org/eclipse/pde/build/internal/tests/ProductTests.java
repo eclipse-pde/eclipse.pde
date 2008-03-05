@@ -13,6 +13,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.BuildConfiguration;
@@ -39,11 +40,11 @@ public class ProductTests extends PDETestCase {
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/allElements.xml"), null);
-		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());		
+		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		runBuild(buildFolder);
-		
+
 		Set entries = new HashSet();
 		entries.add("eclipse/.eclipseproduct");
 		entries.add("eclipse/configuration/config.ini");
@@ -57,5 +58,34 @@ public class ProductTests extends PDETestCase {
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.carbon.x86.zip", entries, false);
 		assertTrue(entries.contains("eclipse/Eclipse.app/"));
 		assertTrue(entries.size() == 1);
+	}
+
+	public void test218878() throws Exception {
+		//platform specific config.ini files
+		//files copied from resources folder
+		IFolder buildFolder = newTest("218878");
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "acme.product");
+		properties.put("configs", "win32,win32,x86 & linux, gtk, x86");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		Set entries = new HashSet();
+		entries.add("eclipse/pablo.exe");
+		entries.add("eclipse/configuration/config.ini");
+
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries, false);
+
+		IFile win32Config = buildFolder.getFile("win32.config.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", "eclipse/configuration/config.ini", win32Config);
+		Properties props = Utils.loadProperties(win32Config);
+		assertEquals("win32", props.getProperty("os"));
+
+		IFile linuxConfig = buildFolder.getFile("linux.config.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-linux.gtk.x86.zip", "eclipse/configuration/config.ini", linuxConfig);
+		props = Utils.loadProperties(linuxConfig);
+		assertEquals("linux", props.getProperty("os"));
 	}
 }

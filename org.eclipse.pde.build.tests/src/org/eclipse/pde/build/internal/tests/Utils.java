@@ -17,6 +17,8 @@ import java.util.jar.Attributes.Name;
 
 import org.apache.tools.ant.filters.ReplaceTokens;
 import org.apache.tools.ant.util.ReaderInputStream;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.Activator;
@@ -181,7 +183,7 @@ public class Utils {
 		}
 		return null;
 	}
-	
+
 	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException {
 		FileOutputStream stream = null;
 		try {
@@ -190,6 +192,81 @@ public class Utils {
 		} finally {
 			if (stream != null)
 				stream.close();
+		}
+	}
+
+	public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
+		source = new BufferedInputStream(source);
+		destination = new BufferedOutputStream(destination);
+		try {
+			byte[] buffer = new byte[8192];
+			while (true) {
+				int bytesRead = -1;
+				if ((bytesRead = source.read(buffer)) == -1)
+					break;
+				destination.write(buffer, 0, bytesRead);
+			}
+		} finally {
+			try {
+				source.close();
+			} catch (IOException e) {
+				// ignore
+			}
+			try {
+				destination.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+	}
+
+	public static void extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) {
+		File folder = new File(buildFolder.getLocation().toOSString());
+		File archiveFile = new File(folder, zipFile);
+		if (!archiveFile.exists())
+			return;
+
+		ZipFile zip = null;
+		try {
+			zip = new ZipFile(archiveFile);
+			ZipEntry entry = zip.getEntry(zipEntry);
+			if (entry == null)
+				return;
+			InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile.getLocation().toFile()));
+			transferStreams(stream, out);
+		} catch (Exception e) {
+			return;
+		} finally {
+			try {
+				if (zip != null)
+					zip.close();
+			} catch (IOException e) {
+				return;
+			}
+		}
+	}
+
+	public static Properties loadProperties(IFile propertiesFile) throws CoreException {
+		propertiesFile.refreshLocal(IResource.DEPTH_INFINITE, null);
+		if (!propertiesFile.exists())
+			return null;
+
+		InputStream stream = null;
+		try {
+			Properties props = new Properties();
+			stream = propertiesFile.getContents(true);
+			props.load(stream);
+			return props;
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (stream != null)
+				try {
+					stream.close();
+				} catch (IOException e) {
+					return null;
+				}
 		}
 	}
 }

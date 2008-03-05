@@ -85,6 +85,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String launcherName = null;
 	private String icons[] = null;
 	private String configPath = null;
+	private final Map platformSpecificConfigPaths = new HashMap();
 	private String id = null;
 	private boolean useFeatures = false;
 	private List plugins = null;
@@ -193,6 +194,11 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 
 	public String getConfigIniPath() {
 		return configPath;
+	}
+	
+	public String getConfigIniPath(String os) {
+		String specific = (String) platformSpecificConfigPaths.get(os);
+		return specific == null ? configPath : specific;
 	}
 
 	public String getId() {
@@ -454,10 +460,19 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		version = attributes.getValue("version"); //$NON-NLS-1$
 	}
 
-	private void processConfigIni(Attributes attributes) {
-		if (attributes.getValue("use").equals("custom")) { //$NON-NLS-1$//$NON-NLS-2$
-			configPath = attributes.getValue("path"); //$NON-NLS-1$
+	private void processConfigIni(Attributes attributes) {		
+		String path = null;
+		if ("custom".equals(attributes.getValue("use"))) { //$NON-NLS-1$//$NON-NLS-2$
+			path = attributes.getValue("path"); //$NON-NLS-1$
 		}
+		String os = attributes.getValue("os"); //$NON-NLS-1$
+		if (os != null && os.length() > 0) {
+			// TODO should we allow a platform-specific default to over-ride a custom generic path?
+			if (path != null)
+				platformSpecificConfigPaths.put(os, path);
+		} else {
+			configPath = path;
+ 		}
 	}
 
 	private void processLauncher(Attributes attributes) {
