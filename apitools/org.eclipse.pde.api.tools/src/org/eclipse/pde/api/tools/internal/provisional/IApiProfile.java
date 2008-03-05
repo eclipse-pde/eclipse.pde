@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-import java.io.File;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
@@ -108,22 +108,26 @@ public interface IApiProfile {
 	public IApiComponent getApiComponent(String id);
 	
 	/**
-	 * Returns the execution environment this profile will be resolved in.
+	 * Returns the execution environment this profile is resolved with, or
+	 * <code>null</code> if none (not yet determined or unable to bind to an
+	 * execution environment). A profile can be created with a specific execution
+	 * environment, or be created to automatically resolve an execution environment
+	 * as components are added to it.
+	 * <p> 
 	 * An execution environment is represented by a unique identifier
 	 * as defined by OSGi - for example "J2SE-1.4" or "CDC-1.0/Foundation-1.0".
-	 * 
-	 * @return execution environment identifier
+	 * </p>
+	 * @return execution environment identifier or <code>null</code>
 	 */
 	public String getExecutionEnvironment();
 	
 	/**
-	 * Allows the current execution environment file to be replaced with the new file.
-	 * If the new file is <code>null</code>, or an error is encountered that would prevent
-	 * the state of the profile from being recalculated, no changes are made.
-	 * @param eefile the new execution environment file
-	 * @throws CoreException
+	 * Returns a status describing how the execution environment bound to this API
+	 * profile satisfies the requirements of the components in this profile.
+	 * 
+	 * @return status describing execution environment bound to this profile
 	 */
-	public void setExecutionEnvironment(File eefile) throws CoreException;	
+	public IStatus getExecutionEnvironmentStatus();
 	
 	/**
 	 * Disposes this API profile. Clients must call this method when done

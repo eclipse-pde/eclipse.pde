@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -41,10 +42,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.launching.EEVMType;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -61,10 +67,12 @@ import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Implementation of an API profile.
  * 
- * @since 1.0.0
+ * @since 1.0
  */
 public class ApiProfile implements IApiProfile {
 	/**
@@ -126,6 +134,17 @@ public class ApiProfile implements IApiProfile {
 	 * Component representing the system library
 	 */
 	private IApiComponent fSystemLibraryComponent;
+	
+	/**
+	 * Whether an execution environment should be automatically resolved 
+	 * as API components are added.
+	 */
+	private boolean fAutoResolve = false;
+	
+	/**
+	 * Execution environment status
+	 */
+	private IStatus fEEStatus = null;
 
 	/**
 	 * Constant to match any value for ws, os, arch.
@@ -145,20 +164,17 @@ public class ApiProfile implements IApiProfile {
 	private Set fSystemPackageNames = null;
 
 	/**
-	 * Constructs a new API profile with the given attributes.
+	 * Constructs a new API profile with the given name.
 	 * 
 	 * @param name profile name
 	 */
-	ApiProfile(String name) {
+	public ApiProfile(String name) {
 		fName = name;
+		fAutoResolve = true;
+		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_0);
 		fState = StateObjectFactory.defaultFactory.createState(true);
 	}	
-	
-	/**
-	 * Constructor for cloning, not to be used externally
-	 */
-	private ApiProfile() {}
-	
+		
 	/**
 	 * Constructs a new API profile with the given attributes.
 	 * 
@@ -168,36 +184,13 @@ public class ApiProfile implements IApiProfile {
 	 */
 	public ApiProfile(String name, File eeDescription) throws CoreException {
 		this(name);
+		fAutoResolve = false;
 		EEVMType.clearProperties(eeDescription);
 		String profile = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeDescription);
 		initialize(profile, eeDescription);
+		fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
+				MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{profile}));
 	}
-	
-	/**
-	 * Constructs a new API profile with the given attributes.
-	 * 
-	 * @param name profile name
-	 * @param profile execution environment profile
-	 * @param description execution environment description file
-	 * @throws CoreException if unable to create a profile with the given attributes
-	 */
-	public ApiProfile(String name, Properties profile, File description) throws CoreException {
-		this(name);
-		initialize(profile, description);
-	}	
-	
-	/**
-	 * Constructs a new API profile with the given attributes.
-	 * 
-	 * @param name profile name
-	 * @param profile execution environment profile file
-	 * @param description execution environment description file
-	 * @throws CoreException if unable to create a profile with the given attributes
-	 */
-	public ApiProfile(String name, File profile, File description) throws CoreException {
-		this(name);
-		initialize(profile, description);
-	}	
 	
 	/**
 	 * Initializes this profile to resolve in the execution environment
@@ -272,35 +265,6 @@ public class ApiProfile implements IApiProfile {
 	}		
 	
 	/**
-	 * Initializes this profile to resolve in the execution environment
-	 * associated with the given properties file.
-	 * 
-	 * @param profileFile properties file describing an execution environment profile
-	 * @param description execution environment description file
-	 * @throws CoreException if unable to initialize based on the given path
-	 */
-	private void initialize(File profileFile, File description) throws CoreException {
-		InputStream is = null;
-		Properties profile = null;
-		try {
-			is = new FileInputStream(profileFile);
-			profile = new Properties();
-			profile.load(is);
-		} catch (IOException e) {
-			abort("Unable to read profile: " + profileFile.getAbsolutePath(), e); //$NON-NLS-1$
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			}
-		}
-		initialize(profile, description);
-	}	
-	
-	/**
 	 * Initializes this profile from the given properties.
 	 * 
 	 * @param profile OGSi profile properties
@@ -328,6 +292,13 @@ public class ApiProfile implements IApiProfile {
 		dictionary.put("osgi.ws", ANY_VALUE); //$NON-NLS-1$
 		dictionary.put("osgi.nl", ANY_VALUE); //$NON-NLS-1$
 		fState.setPlatformProperties(dictionary);
+		// clean up previous system library
+		if (fSystemLibraryComponent != null) {
+			fComponentsById.remove(fSystemLibraryComponent.getId());
+		}
+		fSystemPackageNames = null;
+		fComponentsCache.clear();
+		// set new system library
 		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
 		fComponentsById.put(fSystemLibraryComponent.getId(), fSystemLibraryComponent);
 	}
@@ -346,6 +317,7 @@ public class ApiProfile implements IApiProfile {
 			this.storeBundleDescription(description, component);
 			fComponentsById.put(component.getId(), component);
 		}
+		resolveSystemLibrary();
 		fState.resolve();
 		if (DEBUG) {
 			ResolverError[] errors = getErrors();
@@ -387,6 +359,108 @@ public class ApiProfile implements IApiProfile {
 				}
 			} else {
 				System.out.println("No errors found during state resolution"); //$NON-NLS-1$
+			}
+		}
+	}
+
+	/**
+	 * Resolves and initializes the system library to use based on API component requirements.
+	 * Only works when running in the framework. Has no effect if not running in the framework.
+	 */
+	private void resolveSystemLibrary() {
+		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
+			IStatus error = null;
+			IApiComponent[] components = getApiComponents();
+			Set requiredEnvironments = new HashSet();
+			for (int i = 0; i < components.length; i++) {
+				IApiComponent component = components[i];
+				String[] environments = component.getExecutionEnvironments();
+				for (int j = 0; j < environments.length; j++) {
+					requiredEnvironments.add(environments[j]);
+				}
+			}
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			Iterator iterator = requiredEnvironments.iterator();
+			Map VMsToEEs = new HashMap();
+			while (iterator.hasNext()) {
+				String ee = (String) iterator.next();
+				IExecutionEnvironment environment = manager.getEnvironment(ee);
+				if (environment != null) {
+					IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
+					for (int i = 0; i < compatibleVMs.length; i++) {
+						IVMInstall vm = compatibleVMs[i];
+						Set EEs = (Set) VMsToEEs.get(vm);
+						if (EEs == null) {
+							EEs = new HashSet();
+							VMsToEEs.put(vm, EEs);
+						}
+						EEs.add(ee);
+					}
+				}
+			}
+			// select VM that is compatible with most required environments
+			iterator = VMsToEEs.entrySet().iterator();
+			IVMInstall bestFit = null;
+			int bestCount = 0;
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				Set EEs = (Set)entry.getValue();
+				if (EEs.size() > bestCount) {
+					bestCount = EEs.size();
+					bestFit = (IVMInstall)entry.getKey();
+				}
+			}
+			String systemEE = null;
+			if (bestFit != null) {
+				// find the EE this VM is strictly compatible with
+				IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+				for (int i = 0; i < environments.length; i++) {
+					IExecutionEnvironment environment = environments[i];
+					if (environment.isStrictlyCompatible(bestFit)) {
+						systemEE = environment.getId();
+						break;
+					}
+				}
+				if (systemEE != null) {
+					// only update if different from current
+					if (!systemEE.equals(getExecutionEnvironment())) {
+						try {
+							File file = Util.createEEFile(systemEE);
+							initialize(systemEE, file);
+						} catch (CoreException e) {
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
+						} catch (IOException e) {
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
+						}
+					}
+				} else {
+					// VM is not strictly compatible with any EE
+					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_4);
+				}
+			} else {
+				// no VMs match any required EE
+				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_4);
+			}
+			if (error == null) {
+				// build status for unbound required EE's
+				Set missing = new HashSet(requiredEnvironments);
+				Set covered = new HashSet((Set)VMsToEEs.get(bestFit));
+				missing.removeAll(covered);
+				if (missing.isEmpty()) {
+					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
+							MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{systemEE}));
+				} else {
+					iterator = missing.iterator();
+					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiProfile_7, null);
+					while (iterator.hasNext()) {
+						String id = (String) iterator.next();
+						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID,
+								MessageFormat.format(CoreMessages.ApiProfile_8, new String[]{id})));
+					}
+					fEEStatus = multi;
+				}
+			} else {
+				fEEStatus = error;
 			}
 		}
 	}
@@ -436,7 +510,11 @@ public class ApiProfile implements IApiProfile {
 		}
 		// check system packages first
 		if (isSystemPackage(packageName)) {
-			cachedComponents = new IApiComponent[] { fSystemLibraryComponent };
+			if (fSystemLibraryComponent != null) {
+				cachedComponents = new IApiComponent[] { fSystemLibraryComponent };
+			} else {
+				return EMPTY_COMPONENTS;
+			}
 		} else {
 			if (sourceComponent != null) {
 				List componentsList = new ArrayList();
@@ -606,17 +684,6 @@ public class ApiProfile implements IApiProfile {
 	}
 
 	/* (non-Javadoc)
-	 * @see IApiProfile#setExecutionEnvironment(java.io.File)
-	 */
-	public void setExecutionEnvironment(File eefile) throws CoreException {
-		Properties profile = Util.getEEProfile(eefile);
-		if (profile == null) {
-			abort("Could not set up the Execution Environment", null); //$NON-NLS-1$
-		}
-		initialize(profile, eefile);
-	}
-
-	/* (non-Javadoc)
 	 * @see IApiProfile#setName(java.lang.String)
 	 */
 	public void setName(String name) {
@@ -773,7 +840,6 @@ public class ApiProfile implements IApiProfile {
 		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
-		root.setAttribute(IApiXmlConstants.ELEMENT_EE, profile.getExecutionEnvironment());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROFILE_CURRENT_VERSION);
 		// dump component pools
 		Element subroot = null;
@@ -899,5 +965,12 @@ public class ApiProfile implements IApiProfile {
 	 */
 	public String toString() {
 		return getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProfile#getExecutionEnvironmentStatus()
+	 */
+	public IStatus getExecutionEnvironmentStatus() {
+		return fEEStatus;
 	}
 }

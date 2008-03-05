@@ -63,6 +63,11 @@ public interface IApiToolsConstants {
 	public static final String IMG_OVR_SUCCESS = "IMG_OVR_SUCCESS"; //$NON-NLS-1$
 	
 	/**
+	 * Wizard banner for editing an API profile
+	 */
+	public static final String IMG_WIZBAN_PROFILE = "IMG_WIZBAN_PROFILE"; //$NON-NLS-1$
+	
+	/**
 	 * Id for the Api profiles preference page.
 	 */
 	public static final String ID_PROFILES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$

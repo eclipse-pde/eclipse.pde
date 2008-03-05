@@ -297,8 +297,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 			Document document = parser.parse(stream);
 			Element root = document.getDocumentElement();
 			if(root.getNodeName().equals(IApiXmlConstants.ELEMENT_APIPROFILE)) {
-				profile = new ApiProfile(root.getAttribute(IApiXmlConstants.ATTR_NAME),
-						Util.createEEFile(root.getAttribute(IApiXmlConstants.ELEMENT_EE)));
+				profile = new ApiProfile(root.getAttribute(IApiXmlConstants.ATTR_NAME));
 				// un-pooled components
 				NodeList children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
 				List components = new ArrayList();
@@ -474,7 +473,7 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 		long time = System.currentTimeMillis();
 		IApiProfile profile = null; 
 		try {
-			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID, Util.createDefaultEEFile());
+			profile = Factory.newApiProfile(ApiPlugin.WORKSPACE_API_PROFILE_ID);
 			// populate it with only projects that are API aware
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			List componentsList = new ArrayList(models.length);
@@ -490,10 +489,6 @@ public final class ApiProfileManager implements IApiProfileManager, ISavePartici
 				}
 			}
 			profile.addApiComponents((IApiComponent[]) componentsList.toArray(new IApiComponent[componentsList.size()]));
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		} catch(IOException e) {
-			ApiPlugin.log(e);
 		} finally {
 			if (DEBUG) {
 				System.out.println("Time to create a workspace profile : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

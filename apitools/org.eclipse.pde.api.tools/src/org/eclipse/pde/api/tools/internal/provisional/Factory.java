@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -44,13 +43,29 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 /**
  * Factory to create API model objects.
  * 
- * @since 1.0.0
+ * @since 1.0
  */
 public class Factory {
 
 	/**
-	 * Creates a new empty API profile with the given name, id, and version
-	 * that resolves in the specified execution environment.
+	 * Creates a new empty API profile with the given name. Its execution
+	 * environment will be automatically resolved when components are added
+	 * to it.
+	 * <p>
+	 * Note, a profile can only automatically resolve an execution environment
+	 * when it is created within an Eclipse SDK. A profile created in a non-OSGi
+	 * environment must have its execution environment specified at creation
+	 * time.
+	 * </p>
+	 *
+	 * @param name profile name
+	 */
+	public static IApiProfile newApiProfile(String name) {
+		return new ApiProfile(name);
+	}
+	
+	/**
+	 * Creates a new empty API profile with the specified execution environment.
 	 * <p>
 	 * The execution environment description file describes how an execution 
 	 * environment profile is provided by or mapped to a specific JRE. The format for
@@ -65,34 +80,6 @@ public class Factory {
 	public static IApiProfile newApiProfile(String name, File eeDescription) throws CoreException {
 		return new ApiProfile(name, eeDescription);
 	}
-	
-	/**
-	 * Creates a new empty API profile with the given name, id, and version
-	 * that resolves in the specified execution environment profile and description.
-	 * <p>
-	 * The execution environment profile is specified as properties including:
-	 * <ul>
-	 * <li>org.osgi.framework.system.packages - packages provided by the profile</li>
-	 * <li>org.osgi.framework.executionenvironment - list of symbolic names the profile
-	 * 		is compatible with</li>
-	 * <li>osgi.java.profile.name - symbolic name of this profile, such as <code>J2SE-1.4</code> or
-	 * 		<code>CDC-1.0/Foundation-1.0</code>.</li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * The execution environment description describes a how a profile is provided by or mapped
-	 * to a specific JRE. The format for this file is described here
-	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
-	 * </p>
-	 * @param name profile name
-	 * @param profile execution environment profile
-	 * @param description execution environment description 
-	 * @return API profile
-	 * @throws CoreException if unable to create a new profile with the specified attributes 
-	 */
-	public static IApiProfile newApiProfile(String name, Properties profile, File description) throws CoreException {
-		return new ApiProfile(name, profile, description);
-	}	
 
 	/**
 	 * Returns a type descriptor for the primitive boolean type.

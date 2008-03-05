@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -39,7 +38,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
-import org.eclipse.jdt.internal.launching.EEVMType;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiComponent;
@@ -152,19 +150,7 @@ public class TestSuiteHelper {
 	 * @exception CoreException if unable to create a baseline
 	 */
 	public static IApiProfile newApiProfile(String name, File eeFile) throws CoreException {
-		if (ApiPlugin.isRunningInFramework()) {
-			return Factory.newApiProfile(name, eeFile);
-		} else {
-			String ee = EEVMType.getProperty(EEVMType.PROP_CLASS_LIB_LEVEL, eeFile);
-			Properties properties = Util.getEEProfile(ee);
-			if (properties == null) {
-				throw new CoreException(new Status(IStatus.ERROR,
-						"org.eclipse.pde.api.tools.tests",
-						"Unable to locate OSGi profile: " + ee));
-			} else {
-				return Factory.newApiProfile(name,properties, eeFile);
-			}
-		}
+		return Factory.newApiProfile(name, eeFile);
 	}
 
 	/**

@@ -614,10 +614,13 @@ public final class Util {
 	 */
 	public static String getDefaultEEId() {
 		String eeid = "JavaSE-1.6"; //$NON-NLS-1$
-		if(ApiPlugin.isRunningInFramework()) {
-			eeid = JavaRuntime.getExecutionEnvironmentId(JavaRuntime.newDefaultJREContainerPath());
-			if(eeid == null) {
-				eeid = "JavaSE-1.6"; //$NON-NLS-1$
+		IVMInstall install = JavaRuntime.getDefaultVMInstall();
+		if (install != null) {
+			IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+			for (int i = 0; i < environments.length; i++) {
+				if (environments[i].isStrictlyCompatible(install)) {
+					return environments[i].getId();
+				}
 			}
 		}
 		return eeid;

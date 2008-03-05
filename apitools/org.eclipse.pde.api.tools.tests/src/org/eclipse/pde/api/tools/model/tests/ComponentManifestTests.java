@@ -62,7 +62,7 @@ public class ComponentManifestTests extends TestCase {
 		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 		assertEquals("Wrong number of required components", 11, requiredComponents.length);
 		
-		List reqs = new ArrayList();
+		List<RequiredComponentDescription> reqs = new ArrayList<RequiredComponentDescription>();
 		reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)")));
 		reqs.add(new RequiredComponentDescription("org.eclipse.core.variables", new BundleVersionRange("[3.2.0,4.0.0]")));
 		reqs.add(new RequiredComponentDescription("org.eclipse.ui", new BundleVersionRange("[3.3.0,4.0.0]")));

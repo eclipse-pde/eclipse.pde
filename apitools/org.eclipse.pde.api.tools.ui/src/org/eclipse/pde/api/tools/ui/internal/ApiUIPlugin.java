@@ -63,6 +63,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 */
 	private final static String OBJECT= ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	private final static String WIZBAN= ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	
 	/**
 	 * Maps Image descriptors to images for composite images
@@ -118,6 +119,8 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		// overlays
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_ERROR, OVR+ "error_ovr.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_SUCCESS, OVR+ "success_ovr.gif"); //$NON-NLS-1$
+		// wizards
+		declareRegistryImage(reg, IApiToolsConstants.IMG_WIZBAN_PROFILE, WIZBAN+ "profile_wiz.png"); //$NON-NLS-1$
 	}
 
 	/**
