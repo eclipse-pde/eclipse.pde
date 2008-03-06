@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -65,8 +66,7 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 			return;
 		}
 
-		// TODO Add Help context
-		//		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TOC_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CTX_HELP_EDITOR);
 
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
@@ -149,6 +149,6 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 	 */
 	protected String getHelpResource() {
 		// TODO Fix help
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/toc_editor/page_toc.htm"; //$NON-NLS-1$
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/ctx_help_editor/page_ctx_help.htm"; //$NON-NLS-1$
 	}
 }
