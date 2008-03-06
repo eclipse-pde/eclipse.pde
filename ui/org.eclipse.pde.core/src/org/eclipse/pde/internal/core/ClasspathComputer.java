@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.plugin;
+package org.eclipse.pde.internal.core;
 
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -22,7 +22,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
