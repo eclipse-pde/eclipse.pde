@@ -43,7 +43,10 @@ public class PDEJavaHelper {
 
 		// just grab the package
 		int dot = fullyQualifiedName.lastIndexOf('.');
-		fullyQualifiedName = fullyQualifiedName.substring(0, dot);
+		if (dot != -1) // check for the default package case
+			fullyQualifiedName = fullyQualifiedName.substring(0, dot);
+		else
+			fullyQualifiedName = "."; //$NON-NLS-1$
 
 		State state = desc.getContainingState();
 		StateHelper helper = state.getStateHelper();
