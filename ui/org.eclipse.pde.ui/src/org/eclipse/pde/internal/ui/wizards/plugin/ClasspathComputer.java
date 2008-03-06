@@ -29,17 +29,17 @@ import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
 
-	private static Hashtable fSeverityTable = null;
+	private static Map fSeverityTable = null;
 	private static final int SEVERITY_ERROR = 3;
 	private static final int SEVERITY_WARNING = 2;
 	private static final int SEVERITY_IGNORE = 1;
 
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
-		IClasspathEntry[] entries = getClasspath(project, model, false);
+		IClasspathEntry[] entries = getClasspath(project, model, false, true);
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
 
-	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear) throws CoreException {
+	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
 		ArrayList result = new ArrayList();
 		IBuild build = getBuild(project);
@@ -47,7 +47,7 @@ public class ClasspathComputer {
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.JRE_CONTAINER_PATH));
-		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
+		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee), overrideCompliance);
 
 		// add pde container
 		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
@@ -202,74 +202,87 @@ public class ClasspathComputer {
 	}
 
 	public static void setComplianceOptions(IJavaProject project, String compliance) {
-		Map map = project.getOptions(false);
+		setComplianceOptions(project, compliance, true);
+	}
+
+	public static void setComplianceOptions(IJavaProject project, String compliance, boolean overrideExisting) {
+		Map projectMap = project.getOptions(false);
 		if (compliance == null) {
-			if (map.size() > 0) {
-				map.remove(JavaCore.COMPILER_COMPLIANCE);
-				map.remove(JavaCore.COMPILER_SOURCE);
-				map.remove(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
-				map.remove(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
-				map.remove(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
+			if (overrideExisting && projectMap.size() > 0) {
+				projectMap.remove(JavaCore.COMPILER_COMPLIANCE);
+				projectMap.remove(JavaCore.COMPILER_SOURCE);
+				projectMap.remove(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
+				projectMap.remove(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
+				projectMap.remove(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
 			} else {
 				return;
 			}
 		} else if (JavaCore.VERSION_1_6.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_6);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_6);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_6, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_6, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR, overrideExisting);
 		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR, overrideExisting);
 		} else if (JavaCore.VERSION_1_4.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2, overrideExisting);
+			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING, overrideExisting);
+			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING, overrideExisting);
 		} else if (JavaCore.VERSION_1_3.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1);
-			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
-			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
+			setCompliance(projectMap, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3, overrideExisting);
+			setCompliance(projectMap, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1, overrideExisting);
+			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE, overrideExisting);
+			setMinimumCompliance(projectMap, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE, overrideExisting);
 		}
-		project.setOptions(map);
+		project.setOptions(projectMap);
+
 	}
 
-	private static void updateSeverityComplianceOption(Map map, String key, String value) {
-		Integer current_value = null;
-		Integer new_value = null;
-		String current_string_value = null;
-		int current_int_value = 0;
-		int new_int_value = 0;
-		// Initialize the severity table (only once)
-		if (fSeverityTable == null) {
-			fSeverityTable = new Hashtable(SEVERITY_ERROR);
-			fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
-			fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
-			fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
-		}
-		// Get the current severity
-		current_string_value = (String) map.get(key);
-		if (current_string_value != null) {
-			current_value = (Integer) fSeverityTable.get(current_string_value);
-			if (current_value != null) {
-				current_int_value = current_value.intValue();
-			}
-		}
-		// Get the new severity
-		new_value = (Integer) fSeverityTable.get(value);
-		if (new_value != null) {
-			new_int_value = new_value.intValue();
-		}
-		// If the current severity is not higher than the new severity, replace it
-		if (new_int_value > current_int_value) {
+	/**
+	 * Puts the key/value pair into the map if the map can be overridden or the map doesn't
+	 * already contain the key.
+	 * @param map map to put the value in
+	 * @param key key for the value
+	 * @param value value to put in the map
+	 * @param override whether existing map entries should be replaced with the value
+	 */
+	private static void setCompliance(Map map, String key, String value, boolean override) {
+		if (override || !map.containsKey(key)) {
 			map.put(key, value);
+		}
+	}
+
+	/**
+	 * Checks if the current value stored in the map is less severe than the given minimum value. If
+	 * the minimum value is higher, the map will be updated with the minimum.
+	 * 
+	 * @param map the map to check the value in
+	 * @param key the key to get the current value out of the map
+	 * @param minimumValue the minimum value allowed
+	 * @param override whether an existing value in the map should be replaced
+	 */
+	private static void setMinimumCompliance(Map map, String key, String minimumValue, boolean override) {
+		if (override || !map.containsKey(key)) {
+			if (fSeverityTable == null) {
+				fSeverityTable = new HashMap(3);
+				fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
+				fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
+				fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
+			}
+			String currentValue = (String) map.get(key);
+			int current = currentValue != null && fSeverityTable.containsKey(currentValue) ? ((Integer) fSeverityTable.get(currentValue)).intValue() : 0;
+			int minimum = minimumValue != null && fSeverityTable.containsKey(minimumValue) ? ((Integer) fSeverityTable.get(minimumValue)).intValue() : 0;
+			if (current < minimum) {
+				map.put(key, minimumValue);
+			}
 		}
 	}
 

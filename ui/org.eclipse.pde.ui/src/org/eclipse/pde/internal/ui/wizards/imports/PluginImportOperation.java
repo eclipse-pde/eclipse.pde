@@ -264,7 +264,7 @@ public class PluginImportOperation extends JarImportOperation {
 			setProjectDescription(project, model);
 
 			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
-				fProjectClasspaths.put(project, ClasspathComputer.getClasspath(project, model, true));
+				fProjectClasspaths.put(project, ClasspathComputer.getClasspath(project, model, true, false));
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		} finally {
