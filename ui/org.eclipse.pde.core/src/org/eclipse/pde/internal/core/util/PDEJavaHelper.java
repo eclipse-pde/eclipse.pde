@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,34 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.ListIterator;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 
 public class PDEJavaHelper {
 
@@ -53,6 +36,30 @@ public class PDEJavaHelper {
 			return count > 0;
 		}
 	}*/
+
+	public static boolean isDiscouraged(String fullyQualifiedName, IJavaProject project, BundleDescription desc) {
+		if (fullyQualifiedName.indexOf('$') != -1)
+			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
+
+		// just grab the package
+		int dot = fullyQualifiedName.lastIndexOf('.');
+		fullyQualifiedName = fullyQualifiedName.substring(0, dot);
+
+		State state = desc.getContainingState();
+		StateHelper helper = state.getStateHelper();
+		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
+		for (int i = 0; i < exports.length; i++) {
+			BundleDescription exporter = exports[i].getExporter();
+			if (exporter == null)
+				continue;
+
+			if (fullyQualifiedName.equals(exports[i].getName()) && helper.getAccessCode(desc, exports[i]) == StateHelper.ACCESS_DISCOURAGED)
+				return true;
+
+		}
+
+		return false;
+	}
 
 	public static boolean isOnClasspath(String fullyQualifiedName, IJavaProject project) {
 		if (fullyQualifiedName.indexOf('$') != -1)

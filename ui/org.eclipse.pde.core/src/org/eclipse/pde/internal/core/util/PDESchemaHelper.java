@@ -28,6 +28,9 @@ public class PDESchemaHelper {
 	 */
 	public static Map getValidAttributes(ISchemaAttribute attribute) {
 		Map attributeMap = new HashMap();
+
+		// TODO support multiple 
+
 		gatherAttributes(attributeMap, attribute.getBasedOn());
 
 		// this adds the restrictions on top of the referenced identifiers

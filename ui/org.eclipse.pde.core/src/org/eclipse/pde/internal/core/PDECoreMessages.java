@@ -142,6 +142,7 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Manifest_deprecated_3_0;
 	public static String Builders_Manifest_key_not_found;
 	public static String Builders_Manifest_useless_file;
+	public static String Builders_Manifest_discouragedClass;
 
 	public static String Builders_Convert_missingAttribute;
 	public static String Builders_Convert_illegalValue;
@@ -175,6 +176,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_NotExistInProject;
 	public static String BundleErrorReporter_BundleRangeInvalidInBundleVersion;
+
 	public static String BundleErrorReporter_invalidVersionRangeFormat;
 	public static String BundleErrorReporter_NotExistPDE;
 	public static String BundleErrorReporter_HostNotExistPDE;

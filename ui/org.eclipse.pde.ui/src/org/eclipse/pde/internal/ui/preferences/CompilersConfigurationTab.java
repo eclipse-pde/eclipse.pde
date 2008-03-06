@@ -48,8 +48,8 @@ public class CompilersConfigurationTab {
 	private Shell fShell;
 
 	// The size of label array must match CompilerFlag.fFlags
-	private static final String[][] fLabels = { {PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.CompilersConfigurationTab_incompatEnv, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_no_required_att, PDEUIMessages.compilers_p_unknown_element, PDEUIMessages.compilers_p_unknown_attribute, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_unknown_class, PDEUIMessages.compilers_p_unknown_resource, PDEUIMessages.compilers_p_not_externalized_att, PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors, PDEUIMessages.compilers_p_exported_pkgs, PDEUIMessages.CompilersConfigurationTab_missingBundleClasspathEntries}, {PDEUIMessages.compilers_s_create_docs, PDEUIMessages.compilers_s_doc_folder, PDEUIMessages.compilers_s_open_tags},
-			{PDEUIMessages.compilers_f_unresolved_plugins, PDEUIMessages.compilers_f_unresolved_features}, {}};
+	private static final String[][] fLabels = { {PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.CompilersConfigurationTab_incompatEnv, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_no_required_att, PDEUIMessages.compilers_p_unknown_element, PDEUIMessages.compilers_p_unknown_attribute, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_unknown_class, PDEUIMessages.compilers_p_discouraged_class, PDEUIMessages.compilers_p_unknown_resource, PDEUIMessages.compilers_p_not_externalized_att, PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors, PDEUIMessages.compilers_p_exported_pkgs, PDEUIMessages.CompilersConfigurationTab_missingBundleClasspathEntries},
+			{PDEUIMessages.compilers_s_create_docs, PDEUIMessages.compilers_s_doc_folder, PDEUIMessages.compilers_s_open_tags}, {PDEUIMessages.compilers_f_unresolved_plugins, PDEUIMessages.compilers_f_unresolved_features}, {}};
 
 	/**
 	 * The backing project may be <code>null</code>

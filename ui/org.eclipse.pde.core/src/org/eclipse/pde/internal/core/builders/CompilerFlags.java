@@ -53,6 +53,8 @@ public class CompilerFlags {
 
 	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class"; //$NON-NLS-1$
 
+	public static final String P_DISCOURAGED_CLASS = "compilers.p.discouraged-class"; //$NON-NLS-1$
+
 	public static final String P_UNKNOWN_RESOURCE = "compilers.p.unknown-resource"; //$NON-NLS-1$
 
 	public static final String P_UNKNOWN_IDENTIFIER = "compilers.p.unknown-identifier"; //$NON-NLS-1$
@@ -81,7 +83,7 @@ public class CompilerFlags {
 
 	public static final String F_UNRESOLVED_FEATURES = "compilers.f.unresolved-features"; //$NON-NLS-1$
 
-	private static final String[][] fFlags = { {P_UNRESOLVED_IMPORTS, P_INCOMPATIBLE_ENV, P_UNRESOLVED_EX_POINTS, P_NO_REQUIRED_ATT, P_UNKNOWN_ELEMENT, P_UNKNOWN_ATTRIBUTE, P_DEPRECATED, P_UNKNOWN_CLASS, P_UNKNOWN_RESOURCE, P_NOT_EXTERNALIZED, P_BUILD, P_MISSING_EXPORT_PKGS, P_MISSING_BUNDLE_CLASSPATH_ENTRIES}, {S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS}, {F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES}};
+	private static final String[][] fFlags = { {P_UNRESOLVED_IMPORTS, P_INCOMPATIBLE_ENV, P_UNRESOLVED_EX_POINTS, P_NO_REQUIRED_ATT, P_UNKNOWN_ELEMENT, P_UNKNOWN_ATTRIBUTE, P_DEPRECATED, P_UNKNOWN_CLASS, P_DISCOURAGED_CLASS, P_UNKNOWN_RESOURCE, P_NOT_EXTERNALIZED, P_BUILD, P_MISSING_EXPORT_PKGS, P_MISSING_BUNDLE_CLASSPATH_ENTRIES}, {S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS}, {F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES}};
 
 	public static int getFlagType(String flagId) {
 		if (flagId.equals(S_CREATE_DOCS))
@@ -203,6 +205,7 @@ public class CompilerFlags {
 		node.putInt(P_UNKNOWN_ATTRIBUTE, WARNING);
 		node.putInt(P_DEPRECATED, WARNING);
 		node.putInt(P_UNKNOWN_CLASS, WARNING);
+		node.putInt(P_DISCOURAGED_CLASS, WARNING);
 		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
 		node.putInt(P_UNKNOWN_IDENTIFIER, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);

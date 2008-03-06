@@ -1906,6 +1906,7 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_p_unknown_element;
 	public static String compilers_p_unknown_attribute;
 	public static String compilers_p_unknown_class;
+	public static String compilers_p_discouraged_class;
 	public static String compilers_p_unknown_resource;
 	public static String compilers_p_no_required_att;
 	public static String compilers_p_not_externalized_att;

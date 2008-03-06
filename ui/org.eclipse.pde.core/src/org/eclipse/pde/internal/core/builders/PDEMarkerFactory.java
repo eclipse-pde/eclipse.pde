@@ -46,6 +46,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_EXECUTION_ENVIRONMENT_NOT_SET = 0x1020; // other problem
 	public static final int M_MISSING_BUNDLE_CLASSPATH_ENTRY = 0x1021; // fatal problem
 	public static final int M_LAZYLOADING_HAS_NO_EFFECT = 0x1022; //other problem
+	public static final int M_DISCOURAGED_CLASS = 0x1023; //other problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

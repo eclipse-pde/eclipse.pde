@@ -41,8 +41,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.builders.XMLErrorReporter#characters(char[], int, int)
+	/**
+	 * @throws SAXException  
 	 */
 	public void characters(char[] characters, int start, int length) throws SAXException {
 	}
@@ -504,10 +504,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	protected void validateJavaAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_CLASS);
-		if (severity == CompilerFlags.IGNORE)
-			return;
-
 		String value = attr.getValue();
 		IJavaProject javaProject = JavaCore.create(fFile.getProject());
 
@@ -517,8 +513,22 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (index != -1)
 			value = value.substring(0, index);
 
-		if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
+		// assume we're on the classpath already
+		boolean onClasspath = true;
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_CLASS);
+		if (severity != CompilerFlags.IGNORE) {
+			onClasspath = PDEJavaHelper.isOnClasspath(value, javaProject);
+			if (!onClasspath) {
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
+			}
+		}
+
+		severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DISCOURAGED_CLASS);
+		if (severity != CompilerFlags.IGNORE) {
+			// only check if we're discouraged if there is something on the classpath
+			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, fModel.getBundleDescription())) {
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 	}
 
