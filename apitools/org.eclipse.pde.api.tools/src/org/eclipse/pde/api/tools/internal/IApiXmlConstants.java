@@ -36,11 +36,6 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ELEMENT_POOL = "pool";  //$NON-NLS-1$	
 	/**
-	 * Constant representing the ee attribute name for an API profile xml file.
-	 * Value is <code>ee</code>
-	 */
-	public static final String ELEMENT_EE = "ee"; //$NON-NLS-1$
-	/**
 	 * Constant representing a component element node in xml.
 	 * Value is: <code>component</code> 
 	 */
