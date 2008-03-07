@@ -142,8 +142,9 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
+	 * disabled for now. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=221877
 	 */
-	public void testAnnotateStoreFromLocalFile() {
+	public void _testAnnotateStoreFromLocalFile() {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component);
 		try {
