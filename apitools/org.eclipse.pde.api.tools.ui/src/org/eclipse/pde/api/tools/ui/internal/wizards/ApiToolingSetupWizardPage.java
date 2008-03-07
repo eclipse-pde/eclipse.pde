@@ -94,7 +94,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	protected ApiToolingSetupWizardPage() {
 		super(WizardMessages.UpdateJavadocTagsWizardPage_4);
 		setTitle(WizardMessages.UpdateJavadocTagsWizardPage_4);
-		setMessage(WizardMessages.UpdateJavadocTagsWizardPage_6);
+		setMessage(WizardMessages.UpdateJavadocTagsWizardPage_7);
 	}
 
 	/* (non-Javadoc)
@@ -104,7 +104,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_TOOLING_SETUP_WIZARD_PAGE);
-		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_7, 1, 100);
+		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_6, 1, 100);
 		SWTFactory.createVerticalSpacer(comp, 1);
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
 		Table table = new Table(comp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
