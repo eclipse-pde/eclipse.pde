@@ -7,25 +7,25 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 217908
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
 import com.ibm.icu.text.MessageFormat;
-import java.util.ArrayList;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
-import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ui.parts.ComboViewerPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -42,13 +42,39 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class JRESection extends PDESection {
 
+	private final class EELabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			if (!(element instanceof IExecutionEnvironment))
+				return ""; //$NON-NLS-1$
+			IExecutionEnvironment env = (IExecutionEnvironment) element;
+			IPath path = JavaRuntime.newJREContainerPath(env);
+			IVMInstall install = JavaRuntime.getVMInstall(path);
+			String eeItem;
+			if (install != null) {
+				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeBoundJRE, new String[] {env.getId(), install.getName()});
+			} else {
+				eeItem = MessageFormat.format(PDEUIMessages.JRESection_eeUnboundJRE, new String[] {env.getId()});
+			}
+			return eeItem;
+		}
+	}
+
+	private final class JRELabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			if (!(element instanceof IVMInstall))
+				return ""; //$NON-NLS-1$
+			IVMInstall vm = (IVMInstall) element;
+			return vm.getName();
+		}
+	}
+
+	private Button fNoneRadioButton;
 	private Button fJRERadioButton;
 	private Button fEERadioButton;
 	private Button fInstalledJREsButton;
 	private Button fExecutionEnvironmentsButton;
-	private ComboPart fJREsCombo;
-	private ComboPart fEEsCombo;
-	private ArrayList fEEChoices;
+	private ComboViewerPart fJREsCombo;
+	private ComboViewerPart fEEsCombo;
 	private boolean fBlockChanges;
 
 	private static final String[] TAB_LABELS = {"linux", "macosx", "solaris", "win32"}; //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -94,24 +120,40 @@ public class JRESection extends PDESection {
 		});
 		fTabFolder.setUnselectedImageVisible(false);
 
+		fNoneRadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_none, SWT.RADIO);
+		fNoneRadioButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fNoneRadioButton.getSelection()) {
+					updateWidgets();
+					setJRE(null);
+				}
+			}
+		});
+		GridDataFactory.fillDefaults().span(3, 1).applyTo(fNoneRadioButton);
+
 		fJRERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_jreName, SWT.RADIO);
 		fJRERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateWidgets();
-				setJRE(fJREsCombo.getSelection());
+				if (fJRERadioButton.getSelection()) {
+					updateWidgets();
+					if (fJREsCombo.getSelection() == null)
+						fJREsCombo.select(0);
+					else
+						setJRE((IVMInstall) fJREsCombo.getSelection());
+				}
 			}
 		});
 
-		fJREsCombo = new ComboPart();
+		fJREsCombo = new ComboViewerPart();
 		fJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		String[] installs = VMHelper.getVMInstallNames();
-		fJREsCombo.setItems(installs);
-		fJREsCombo.add("", 0); //$NON-NLS-1$
-		fJREsCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockChanges)
-					setJRE(fJREsCombo.getSelection());
+		fJREsCombo.setItems(VMHelper.getAllVMInstances());
+		fJREsCombo.setLabelProvider(new JRELabelProvider());
+		fJREsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (!fBlockChanges) {
+					setJRE(fJREsCombo.getSelection() == ComboViewerPart.NULL_OBJECT ? null : (IVMInstall) fJREsCombo.getSelection());
+				}
 			}
 		});
 
@@ -127,19 +169,27 @@ public class JRESection extends PDESection {
 		fEERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_eeName, SWT.RADIO);
 		fEERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateWidgets();
-				setEE(fEEsCombo.getSelectionIndex());
+				if (fEERadioButton.getSelection()) {
+					updateWidgets();
+					if (fEEsCombo.getSelection() == null)
+						fEEsCombo.select(0);
+					else
+						setEE((IExecutionEnvironment) fEEsCombo.getSelection());
+				}
 			}
 		});
 
-		fEEsCombo = new ComboPart();
+		fEEsCombo = new ComboViewerPart();
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		initializeExecutionEnvironments();
-		fEEsCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!fBlockChanges)
-					setEE(fEEsCombo.getSelectionIndex());
+		fEEsCombo.setLabelProvider(new EELabelProvider());
+		fEEsCombo.setComparator(new ViewerComparator());
+		fEEsCombo.setItems(VMHelper.getExecutionEnvironments());
+		fEEsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (!fBlockChanges) {
+					setEE((IExecutionEnvironment) ((IStructuredSelection) event.getSelection()).getFirstElement());
+				}
 			}
 		});
 
@@ -159,48 +209,19 @@ public class JRESection extends PDESection {
 		getProductModel().addModelChangedListener(this);
 	}
 
-	private void setEE(int selectionIndex) {
-		if (selectionIndex >= 0 && selectionIndex < fEEChoices.size()) {
-			IExecutionEnvironment ee = (IExecutionEnvironment) fEEChoices.get(selectionIndex);
-			if (ee != null) {
-				IPath eePath = JavaRuntime.newJREContainerPath(ee);
-				getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
-			}
-		}
+	private void setEE(IExecutionEnvironment ee) {
+		IPath eePath = null;
+		if (ee != null)
+			eePath = JavaRuntime.newJREContainerPath(ee);
+		getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
+
 	}
 
-	private void setJRE(String vmName) {
-		IVMInstall install = VMHelper.getVMInstall(vmName);
-		if (install != null) {
-			IPath jrePath = JavaRuntime.newJREContainerPath(install);
-			getJVMLocations().setJREContainerPath(getOS(fLastTab), jrePath);
-		}
-	}
-
-	private void initializeExecutionEnvironments() {
-		fEEChoices = new ArrayList();
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (int i = 0; i < envs.length; i++) {
-			addToEECombo(envs[i]);
-		}
-	}
-
-	/**
-	 * Adds the given execution environment to the list of known EEs and
-	 * adds an entry to the combo box "EE_ID (Associated_VM)".  The entries
-	 * will always be added to the end of the list/combo.
-	 * @param env environment to add
-	 */
-	private void addToEECombo(IExecutionEnvironment env) {
-		IPath path = JavaRuntime.newJREContainerPath(env);
-		IVMInstall install = JavaRuntime.getVMInstall(path);
-		fEEChoices.add(env);
-		if (install != null) {
-			fEEsCombo.add(MessageFormat.format(PDEUIMessages.JRESection_eeBoundJRE, new String[] {env.getId(), install.getName()}));
-		} else {
-			fEEsCombo.add(MessageFormat.format(PDEUIMessages.JRESection_eeUnboundJRE, new String[] {env.getId()}));
-		}
+	private void setJRE(IVMInstall install) {
+		IPath jrePath = null;
+		if (install != null)
+			jrePath = JavaRuntime.newJREContainerPath(install);
+		getJVMLocations().setJREContainerPath(getOS(fLastTab), jrePath);
 	}
 
 	private IProductModel getProductModel() {
@@ -246,21 +267,31 @@ public class JRESection extends PDESection {
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
 			IExecutionEnvironment env = VMHelper.getExecutionEnvironment(eeID);
 			if (env != null) {
-				if (!fEEChoices.contains(env))
-					addToEECombo(env);
-				fEEsCombo.select(fEEsCombo.getItemCount() - 1);
+				if (!fEEsCombo.getItems().contains(env))
+					fEEsCombo.addItem(env);
+				fEEsCombo.select(env);
+				fNoneRadioButton.setSelection(false);
 				fEERadioButton.setSelection(true);
 				fJRERadioButton.setSelection(false);
+				fJREsCombo.select(null);
 			} else {
 				IVMInstall install = JavaRuntime.getVMInstall(jrePath);
 				if (install != null) {
-					if (fJREsCombo.indexOf(install.getName()) < 0)
-						fJREsCombo.add(install.getName());
-					fJREsCombo.setText(install.getName());
+					if (!fJREsCombo.getItems().contains(install))
+						fJREsCombo.addItem(install);
+					fJREsCombo.select(install);
+					fNoneRadioButton.setSelection(false);
 					fJRERadioButton.setSelection(true);
 					fEERadioButton.setSelection(false);
+					fEEsCombo.select(null);
 				}
 			}
+		} else {
+			fNoneRadioButton.setSelection(true);
+			fJRERadioButton.setSelection(false);
+			fJREsCombo.select(null);
+			fEERadioButton.setSelection(false);
+			fEEsCombo.select(null);
 		}
 		updateWidgets();
 		super.refresh();
