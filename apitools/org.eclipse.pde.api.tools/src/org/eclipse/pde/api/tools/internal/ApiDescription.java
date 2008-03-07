@@ -222,8 +222,6 @@ public class ApiDescription implements IApiDescription {
 	 * </pre>
 	 */
 	protected HashMap fPackageMap = new HashMap();
-	
-	private boolean fContainsAnnotatedElements = true;
 
 	/**
 	 * Constructs an API description owned by the specified component.
@@ -233,7 +231,6 @@ public class ApiDescription implements IApiDescription {
 	 */
 	public ApiDescription(String owningComponentId) {
 		fOwningComponentId = owningComponentId;
-		this.fContainsAnnotatedElements = false;
 	}
 
 	/* (non-Javadoc)
@@ -436,7 +433,6 @@ public class ApiDescription implements IApiDescription {
 		if(node != null) {
 			modified();
 			node.restrictions = restrictions;
-			this.fContainsAnnotatedElements = true;
 			return Status.OK_STATUS;
 		}
 		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND,
