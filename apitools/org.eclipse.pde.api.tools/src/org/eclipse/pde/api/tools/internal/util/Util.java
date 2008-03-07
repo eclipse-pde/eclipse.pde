@@ -69,6 +69,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
@@ -1661,7 +1662,22 @@ public final class Util {
 		String pkg = index == -1 ? DEFAULT_PACKAGE_NAME : fullyQualifiedName.substring(0, index);
 		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
 		return Factory.packageDescriptor(pkg).getType(type);
-	}	
+	}
+	
+	/**
+	 * Returns a reference type for the given fully qualified type name with the
+	 * given modifiers
+	 * 
+	 * @param fullyQualifiedName type name
+	 * @param modifiers access flags as defined by {@link Flags}
+	 * @return reference type
+	 */
+	public static IReferenceTypeDescriptor getType(String fullyQualifiedName, int modifiers) {
+		int index = fullyQualifiedName.lastIndexOf('.');
+		String pkg = index == -1 ? DEFAULT_PACKAGE_NAME : fullyQualifiedName.substring(0, index);
+		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
+		return Factory.packageDescriptor(pkg).getType(type, modifiers);
+	}		
 	
 	/**
 	 * Returns the simple name of the type, by stripping off the last '.' segment and returning it.

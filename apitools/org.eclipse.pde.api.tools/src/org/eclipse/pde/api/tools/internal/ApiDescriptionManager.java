@@ -326,7 +326,7 @@ public class ApiDescriptionManager implements IElementChangedListener, ISavePart
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
 			String sig = element.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
-			elementDesc = type.getMethod(name,sig,false);
+			elementDesc = type.getMethod(name,sig,0);
 			node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 		}
 		if (node == null) {

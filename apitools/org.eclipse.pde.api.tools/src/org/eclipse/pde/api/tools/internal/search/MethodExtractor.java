@@ -18,7 +18,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.util.ClassVisitorAdapter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * Extracts method declarations from a class file.
@@ -73,7 +72,7 @@ public class MethodExtractor extends ClassVisitorAdapter {
 	 * @see org.eclipse.pde.api.tools.internal.util.ClassVisitorAdapter#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
 	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		fMethods.add(fType.getMethod(name, desc, (access & Opcodes.ACC_SYNTHETIC) > 0));
+		fMethods.add(fType.getMethod(name, desc, access));
 		return null;
 	}
 	

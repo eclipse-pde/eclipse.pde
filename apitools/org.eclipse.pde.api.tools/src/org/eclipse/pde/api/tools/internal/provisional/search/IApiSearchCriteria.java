@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
@@ -78,7 +81,7 @@ public interface IApiSearchCriteria {
 	 *  
 	 * @param componentId API component identifier
 	 */
-	public void addComponentRestriction(String componentId);
+	public void addReferencedComponentRestriction(String componentId);
 	
 	/**
 	 * Restricts matching to references referring to or contained within the
@@ -87,7 +90,7 @@ public interface IApiSearchCriteria {
 	 * @param componentId API component identifier
 	 * @param elements elements within the component
 	 */
-	public void addElementRestriction(String componentId, IElementDescriptor[] elements);
+	public void addReferencedElementRestriction(String componentId, IElementDescriptor[] elements);
 	
 	/**
 	 * Restricts matching to references that have a name matching the given
@@ -96,18 +99,34 @@ public interface IApiSearchCriteria {
 	 * @param regEx regular expression
 	 * @param elementType element type defined by {@link IElementDescriptor}
 	 */
-	public void addPatternRestriction(String regEx, int elementType);
+	public void addReferencedPatternRestriction(String regEx, int elementType);
 
 	/**
-	 * Sets the kinds of references and corresponding visibility restriction and
-	 * API usage restrictions to consider.
+	 * Sets the kinds of references to consider. By default all reference kinds are
+	 * considered.
 	 * 
-	 * @param referenceMask bit mask of the kinds of references to consider
-	 *  as specified by {@link ReferenceModifiers}	
-	 * @param visibilityMask bit mask of the visibilities to consider 
-	 *  as specified by {@link VisibilityModifiers}
-	 * @param restrictionMask bit mask of the API restrictions to consider
-	 *  as specified by {@link RestrictionModifiers}
+	 * @param referenceMask bit mask of the kinds of references from the original referencing
+	 *  location to consider as specified by {@link ReferenceModifiers}	
 	 */
-	public void setReferenceKinds(int referenceMask, int visibilityMask, int restrictionMask);
+	public void setReferenceKinds(int referenceMask);
+	
+	/**
+	 * Sets the visibility and API use restrictions to consider on referenced elements.
+	 * By default, all visibilities and restrictions are considered.
+	 * 
+	 * @param visibilityMask bit mask of the visibilities of the referenced location
+	 * 	to consider as specified by {@link VisibilityModifiers}
+	 * @param restrictionMask bit mask of the API restrictions of the referenced location
+	 * 	to consider as specified by {@link RestrictionModifiers}
+	 */
+	public void setReferencedRestrictions(int visibilityMask, int restrictionMask);	
+	
+	/**
+	 * Sets the Java visibility (access modifiers) of referencing locations to consider.
+	 * For example, only consider references that stem from public or protected members/types.
+	 * By default, all visibilities are considered.
+	 * 
+	 * @param modifiers modifiers as defined by {@link Flags}
+	 */
+	public void setSourceModifiers(int modifiers);
 }

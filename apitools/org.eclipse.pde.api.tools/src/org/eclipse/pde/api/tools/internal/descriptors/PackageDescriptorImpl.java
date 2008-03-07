@@ -33,12 +33,7 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 	 * @see org.eclipse.pde.api.tools.model.component.IPackageDescriptor#getType(java.lang.String)
 	 */
 	public IReferenceTypeDescriptor getType(String typeQualifiedName) {
-		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
-		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this);
-		for (int i = 1; i < names.length; i++) {
-			typeDescriptor = typeDescriptor.getType(names[i]);
-		}
-		return typeDescriptor;
+		return getType(typeQualifiedName, 0);
 	}
 	
 	/* (non-Javadoc)
@@ -77,9 +72,20 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 	 */
 	public IReferenceTypeDescriptor getType(String typeQualifiedName, String signature) {
 		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
-		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this, signature);
+		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this, signature, 0);
 		for (int i = 1; i < names.length; i++) {
 			typeDescriptor = typeDescriptor.getType(names[i]);
+		}
+		return typeDescriptor;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor#getType(java.lang.String, int)
+	 */
+	public IReferenceTypeDescriptor getType(String typeQualifiedName, int modifiers) {
+		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
+		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this, modifiers);
+		for (int i = 1; i < names.length; i++) {
+			typeDescriptor = typeDescriptor.getType(names[i], modifiers);
 		}
 		return typeDescriptor;
 	}	

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.descriptors;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -26,37 +27,20 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 * Method signature
 	 */
 	private String fSignature;
-	
-	/** 
-	 * Whether the method is synthetic
-	 */
-	private boolean fSynthetic = false;
-	
+		
 	/**
 	 * Constructs a method descriptor.
 	 * 
 	 * @param name method name
 	 * @param enclosingType enclosing type
 	 * @param signature method signature
-	 * @param synthetic whether the method is synthetic
+	 * @param modifiers modifiers
 	 */
-	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature, boolean synthetic) {
-		super(name, enclosingType);
+	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature, int modifiers) {
+		super(name, enclosingType, modifiers);
 		fSignature = signature;
-		fSynthetic = synthetic;
 	}
 	
-	/**
-	 * Constructs a method descriptor.
-	 * 
-	 * @param name method name
-	 * @param enclosingType enclosing type
-	 * @param signature method signature
-	 */
-	MethodDescriptorImpl(String name, IReferenceTypeDescriptor enclosingType, String signature) {
-		this(name, enclosingType, signature, false);
-	}	
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -106,6 +90,6 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	 * @see org.eclipse.pde.api.tools.descriptors.IMethodDescriptor#isSynthetic()
 	 */
 	public boolean isSynthetic() {
-		return fSynthetic;
+		return Flags.isSynthetic(getModifiers());
 	}	
 }

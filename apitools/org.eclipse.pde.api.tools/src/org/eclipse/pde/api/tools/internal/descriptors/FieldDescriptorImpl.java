@@ -26,9 +26,10 @@ public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldD
 	 * 
 	 * @param name field name
 	 * @param parent type containing the field declaration
+	 * @param modifiers modifiers
 	 */
-	FieldDescriptorImpl(String name, IReferenceTypeDescriptor parent) {
-		super(name, parent);
+	FieldDescriptorImpl(String name, IReferenceTypeDescriptor parent, int modifiers) {
+		super(name, parent, modifiers);
 	}
 
 	/* (non-Javadoc)

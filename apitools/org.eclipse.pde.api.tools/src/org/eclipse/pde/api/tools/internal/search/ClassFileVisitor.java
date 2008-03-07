@@ -981,7 +981,7 @@ public class ClassFileVisitor extends ClassAdapter {
 	 */
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.classname = this.processName(name);
-		this.fType = Util.getType(this.classname);
+		this.fType = Util.getType(this.classname, access);
 		if(DEBUG) {
 			System.out.println("Starting visit of type: ["+this.fType.getQualifiedName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -1039,7 +1039,7 @@ public class ClassFileVisitor extends ClassAdapter {
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		if (fIsVisitMembers) {
 			IReferenceTypeDescriptor owner = (IReferenceTypeDescriptor) this.getMember();
-			IFieldDescriptor field = owner.getField(name);
+			IFieldDescriptor field = owner.getField(name, access);
 			this.enterMember(field);
 			if((access & Opcodes.ACC_SYNTHETIC) == 0) {
 				if(signature != null) {
@@ -1065,13 +1065,13 @@ public class ClassFileVisitor extends ClassAdapter {
 			} else {
 				owner = member.getEnclosingType();
 			}
-			IMethodDescriptor method = owner.getMethod(name, desc);
+			IMethodDescriptor method = owner.getMethod(name, desc, access);
 			this.enterMember(method);
 			// record potential method override reference
 			if ((access & (Opcodes.ACC_PROTECTED | Opcodes.ACC_PUBLIC)) > 0) {
 				if (!this.fSuperStack.isEmpty()) {
 					IReferenceTypeDescriptor superType = (IReferenceTypeDescriptor) this.fSuperStack.peek();
-					this.addMethodDeclaration(superType.getMethod(method.getName(), method.getSignature()));
+					this.addMethodDeclaration(superType.getMethod(method.getName(), method.getSignature(), method.getModifiers()));
 				}
 			}
 			if((access & Opcodes.ACC_SYNTHETIC) == 0 && !"<clinit>".equals(name)) { //$NON-NLS-1$

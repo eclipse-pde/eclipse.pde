@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -125,8 +126,9 @@ public class ApiUseAnalyzer {
 		
 		private void add(int refKind, int restriction, IElementDescriptor[] elements) {
 			IApiSearchCriteria condition = Factory.newSearchCriteria();
-			condition.addElementRestriction(fOwningComponentId, elements);
-			condition.setReferenceKinds(refKind, VisibilityModifiers.ALL_VISIBILITIES, restriction);
+			condition.addReferencedElementRestriction(fOwningComponentId, elements);
+			condition.setReferenceKinds(refKind);
+			condition.setReferencedRestrictions(VisibilityModifiers.ALL_VISIBILITIES, restriction);
 			fConditions.add(condition);
 		}
 		
@@ -332,10 +334,11 @@ public class ApiUseAnalyzer {
 		IApiSearchEngine engine = Factory.newSearchEngine();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		for (int i = 0; i < ids.length; i++) {
-			criteria.addComponentRestriction(ids[i]);
+			criteria.addReferencedComponentRestriction(ids[i]);
 		}
 		criteria.setConsiderComponentLocalReferences(false);
-		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL, VisibilityModifiers.ALL_VISIBILITIES, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
+		criteria.setReferencedRestrictions(VisibilityModifiers.ALL_VISIBILITIES, RestrictionModifiers.ALL_RESTRICTIONS);
 		IReference[] all = engine.search(Factory.newScope(new IApiComponent[]{from}), new IApiSearchCriteria[]{criteria}, monitor);
 		Map map = new HashMap(ids.length);
 		for (int i = 0; i < all.length; i++) {
@@ -353,4 +356,32 @@ public class ApiUseAnalyzer {
 		}
 		return map;
 	}
+	
+	/**
+	 * Searches the specified scope within the the specified component and returns
+	 * reference objects identify API leaks.
+	 * 
+	 * @param profile profile being analyzed
+	 * @param component component being analyzed
+	 * @param scope scope within the component to analyze
+	 * @param monitor progress monitor
+	 * @exception CoreException if something goes wrong
+	 */
+	public IReference[] findApiLeaks(IApiProfile profile, IApiComponent component, IApiSearchScope scope, IProgressMonitor monitor)  throws CoreException {
+		IApiSearchCriteria[] conditions = new IApiSearchCriteria[1];
+		IApiSearchCriteria criteria = Factory.newSearchCriteria();
+		criteria.setConsiderComponentLocalReferences(true);
+		criteria.setReferenceKinds(
+			ReferenceModifiers.REF_FIELDDECL |
+			ReferenceModifiers.REF_PARAMETER |
+			ReferenceModifiers.REF_RETURNTYPE );
+		criteria.setReferencedRestrictions(VisibilityModifiers.PRIVATE, RestrictionModifiers.ALL_RESTRICTIONS);
+		criteria.setSourceModifiers(Flags.AccPublic | Flags.AccProtected);
+		conditions[0] = criteria;
+		if (conditions.length > 0) {
+			IApiSearchEngine engine = Factory.newSearchEngine();
+			return engine.search(scope, conditions, monitor);
+		}
+		return EMPTY;
+	}	
 }

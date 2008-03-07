@@ -404,12 +404,14 @@ public class SearchEngine implements IApiSearchEngine {
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
 			IReference ref = (IReference) iterator.next();
-			ILocation location = ref.getReferencedLocation();
+			ILocation location = ref.getResolvedLocation();
 			boolean consider = true;
-			if (!fLocalRefs) {
-				if (ref.getSourceLocation().getApiComponent().equals(location.getApiComponent())) {
-					consider = false;
-				}		
+			if (location != null) {
+				if (!fLocalRefs) {
+					if (ref.getSourceLocation().getApiComponent().equals(location.getApiComponent())) {
+						consider = false;
+					}		
+				}
 			}
 			boolean match = false;
 			if (consider) {

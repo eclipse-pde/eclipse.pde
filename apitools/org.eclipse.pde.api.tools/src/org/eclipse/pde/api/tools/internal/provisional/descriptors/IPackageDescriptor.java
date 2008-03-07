@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
+import org.eclipse.jdt.core.Flags;
+
 
 /**
  * Description of a package.
@@ -35,6 +37,17 @@ public interface IPackageDescriptor extends IElementDescriptor {
 	 * @return type descriptor
 	 */
 	public IReferenceTypeDescriptor getType(String typeQualifiedName);
+	
+	/**
+	 * Returns a descriptor for a type in this package with the given name and
+	 * access modifiers. The given name is not package qualified. Inner types are
+	 * '$'-separated.
+	 * 
+	 * @param typeQualifiedName type qualified name
+	 * @param modifiers access modifiers as defined by {@link Flags}
+	 * @return type descriptor
+	 */
+	public IReferenceTypeDescriptor getType(String typeQualifiedName, int modifiers);	
 	
 	/**
 	 * Returns a descriptor for a type in this package with the given name. The given

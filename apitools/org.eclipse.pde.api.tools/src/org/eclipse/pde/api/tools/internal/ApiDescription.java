@@ -364,11 +364,6 @@ public class ApiDescription implements IApiDescription {
 	 * @see org.eclipse.pde.api.tools.model.component.IApiDescription#resolveAPIDescription(java.lang.String, org.eclipse.pde.api.tools.model.component.IElementDescriptor)
 	 */
 	public IApiAnnotations resolveAnnotations(String component, IElementDescriptor element) {
-		if (component != null && fOwningComponentId != null) {
-			if (fOwningComponentId.equals(component)) {
-				return new ApiAnnotations(VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			}
-		}
 		ManifestNode node = findNode(component, element, isInsertOnResolve(component, element));
 		if (node != null) {
 			return resolveAnnotations(node, element);

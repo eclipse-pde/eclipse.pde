@@ -107,7 +107,8 @@ public class ClassFileStubTests extends TestCase {
 			IApiSearchEngine engine = Factory.newSearchEngine();
 			IApiSearchCriteria criteria = Factory.newSearchCriteria();
 			criteria.setConsiderComponentLocalReferences(true);
-			criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL,
+			criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
+			criteria.setReferencedRestrictions(
 					VisibilityModifiers.ALL_VISIBILITIES,
 					RestrictionModifiers.ALL_RESTRICTIONS);
 			IReference[] refs = engine.search(Factory.newScope(

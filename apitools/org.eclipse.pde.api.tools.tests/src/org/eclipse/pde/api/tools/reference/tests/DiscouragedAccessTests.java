@@ -61,7 +61,8 @@ public class DiscouragedAccessTests extends TestCase {
 		long start = System.currentTimeMillis();
 		IApiSearchCriteria criteria = Factory.newSearchCriteria();
 		criteria.setConsiderComponentLocalReferences(false);
-		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL,
+		criteria.setReferenceKinds(ReferenceModifiers.MASK_REF_ALL);
+		criteria.setReferencedRestrictions(
 				VisibilityModifiers.ALL_VISIBILITIES,
 				RestrictionModifiers.ALL_RESTRICTIONS);
 		IReference[] references = engine.search(scope, new IApiSearchCriteria[]{criteria}, null);

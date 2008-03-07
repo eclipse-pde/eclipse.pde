@@ -55,11 +55,16 @@ public class SearchCriteria implements IApiSearchCriteria {
 	
 	/**
 	 * References kinds with corresponding visibility and usage
-	 * restrictions.
+	 * restrictions on the referenced location
 	 */
 	private int fReferenceKinds = ReferenceModifiers.MASK_REF_ALL;
 	private int fVisibilityKinds = VisibilityModifiers.ALL_VISIBILITIES;
 	private int fRestrictionKinds = RestrictionModifiers.NO_RESTRICTIONS;
+	
+	/**
+	 * Java visibility to consider at the source or -1 if not considered
+	 */
+	private int fSourceModifiers = -1;
 
 	/**
 	 * Used for pattern matching.
@@ -268,7 +273,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#addComponentRestriction(java.lang.String)
 	 */
-	public void addComponentRestriction(String componentId) {
+	public void addReferencedComponentRestriction(String componentId) {
 		Set components = (Set)fComponentIds.get(componentId);
 		if (components == null) {
 			components = new HashSet();
@@ -279,7 +284,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#addElementRestriction(java.lang.String, org.eclipse.pde.api.tools.descriptors.IElementDescriptor[])
 	 */
-	public void addElementRestriction(String componentId, IElementDescriptor[] elements) {
+	public void addReferencedElementRestriction(String componentId, IElementDescriptor[] elements) {
 		if (fPotentialElements == null) {
 			fPotentialElements = new ArrayList(elements.length);
 		}
@@ -289,7 +294,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 			Set parents = getParents(element);
 			Set leaves = (Set) fComponentIds.get(componentId);
 			if (leaves == null) {
-				addComponentRestriction(componentId);
+				addReferencedComponentRestriction(componentId);
 				leaves = (Set) fComponentIds.get(componentId);
 			}
 			// first check if a parent is already in the scope (i.e already contained)
@@ -317,7 +322,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#addPatternRestriction(java.lang.String, int)
 	 */
-	public void addPatternRestriction(String regEx, int elementType) {
+	public void addReferencedPatternRestriction(String regEx, int elementType) {
 		if (fPatterns == null) {
 			fPatterns = new ArrayList();
 		}
@@ -402,7 +407,7 @@ public class SearchCriteria implements IApiSearchCriteria {
 	 * is looking for
 	 */
 	private boolean matchesReferenceKinds(IReference reference) {
-		return (reference.getReferenceKind() & fReferenceKinds) > 0;
+		return (reference.getReferenceKind() & (fReferenceKinds)) > 0;
 	}	
 	
 	/**
@@ -428,12 +433,18 @@ public class SearchCriteria implements IApiSearchCriteria {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.search.IApiSearchCriteria#setReferenceKinds(int, int, int)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setReferencedRestrictions(int, int)
 	 */
-	public void setReferenceKinds(int referenceKinds, int visibilityKinds, int restrictionKinds) {
-		fReferenceKinds = referenceKinds;
-		fVisibilityKinds = visibilityKinds;
-		fRestrictionKinds = restrictionKinds;
+	public void setReferencedRestrictions(int visibilityMask, int restrictionMask) {
+		fVisibilityKinds = visibilityMask;
+		fRestrictionKinds = restrictionMask;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setReferenceKinds(int)
+	 */
+	public void setReferenceKinds(int referenceMask) {
+		fReferenceKinds = referenceMask;
 	}
 	
 	/* (non-Javadoc)
@@ -442,8 +453,32 @@ public class SearchCriteria implements IApiSearchCriteria {
 	public boolean isPotentialMatch(IReference reference) {
 		return
 			matchesReferenceKinds(reference) &&
+			matchesSourceModifiers(reference.getSourceLocation()) &&
 			matchesPatternRestrictions(reference.getReferencedLocation()) &&
 			isPotentialElementMatch(reference.getReferencedLocation());
+	}
+	
+	/**
+	 * Returns whether the Java visibility of the given source location matches
+	 * the restrictions of this criteria.
+	 * 
+	 * @param location source/referencing location
+	 * @return whether it matches Java visibility modifiers
+	 */
+	private boolean matchesSourceModifiers(ILocation location) {
+		if (fSourceModifiers == -1) {
+			return true;
+		}
+		IMemberDescriptor member = location.getMember();
+		while (member != null) {
+			int modifiers = member.getModifiers();
+			if ((fSourceModifiers & modifiers) > 0 || fSourceModifiers == modifiers) { // in case of Acc.Default (0)
+				member = member.getEnclosingType();
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean isPotentialElementMatch(ILocation location) {
@@ -478,4 +513,13 @@ public class SearchCriteria implements IApiSearchCriteria {
 		}
 		return buffer.toString();
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchCriteria#setSourceModifiers(int)
+	 */
+	public void setSourceModifiers(int modifiers) {
+		fSourceModifiers = modifiers;
+	}
+
 }
