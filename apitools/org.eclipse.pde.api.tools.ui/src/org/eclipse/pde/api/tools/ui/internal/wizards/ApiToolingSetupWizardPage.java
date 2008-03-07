@@ -217,7 +217,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		//always have to collect changes again in the event the user goes back and forth, 
 		//as a change cannot ever have more than one parent - EVER
 		collectChanges();
-		return super.getNextPage();
+		IWizardPage page = super.getNextPage();
+		if (page != null) {
+			page.setDescription(WizardMessages.ApiToolingSetupWizardPage_5);
+		}
+		return page;
 	}
 	
 	/**

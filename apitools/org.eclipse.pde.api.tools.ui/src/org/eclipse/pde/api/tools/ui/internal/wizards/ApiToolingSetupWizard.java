@@ -28,6 +28,7 @@ public class ApiToolingSetupWizard extends RefactoringWizard {
 		setWindowTitle(WizardMessages.UpdateJavadocTagsWizard_0);
 		setNeedsProgressMonitor(true);
 		setChangeCreationCancelable(false);
+		setDefaultPageTitle(WizardMessages.ApiToolingSetupWizard_0);
 	}
 	
 	/* (non-Javadoc)
