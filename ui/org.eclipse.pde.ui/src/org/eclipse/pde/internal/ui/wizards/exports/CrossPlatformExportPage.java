@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -37,6 +38,15 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		public String toString() {
 			return os + " (" + ws + "/" + arch + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+
+		public boolean equals(Object obj) {
+			if (obj instanceof Configuration) {
+				Configuration config = (Configuration) obj;
+				return os.equals(config.os) && ws.equals(config.ws) && arch.equals(config.arch);
+			}
+			return super.equals(obj);
+		}
+
 	}
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
@@ -111,6 +121,20 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 				}
 			}
 			fPlatformPart.setSelection(selected.toArray());
+		} else { // we should select at least one, which is the current default
+			// TODO clean this horrible mess of a class up
+			Configuration config = new Configuration();
+			config.ws = TargetPlatform.getWS();
+			config.os = TargetPlatform.getOS();
+			config.arch = TargetPlatform.getOSArch();
+			TableItem[] items = fPlatformPart.getTableViewer().getTable().getItems();
+			for (int i = 0; i < items.length; i++) {
+				Configuration c = (Configuration) items[i].getData();
+				if (c.equals(config)) {
+					fPlatformPart.getTableViewer().setChecked(c, true);
+					fPlatformPart.updateCounter(1);
+				}
+			}
 		}
 		pageChanged();
 	}
