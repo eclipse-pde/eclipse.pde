@@ -393,7 +393,7 @@ public class ApiProfileWizardPage extends WizardPage {
 	protected void doReload() {
 		ReloadOperation op = new ReloadOperation(nametext.getText().trim(), locationcombo.getText().trim());
 		try {
-			getContainer().run(false, true, op);
+			getContainer().run(true, true, op);
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
 		} 
