@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.comparator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -24,15 +25,6 @@ import org.w3c.dom.Element;
  * @since 1.0.0
  */
 public class DeltaXmlVisitor extends DeltaVisitor {
-	public static final String DELTAS_ELEMENT_NAME = "deltas"; //$NON-NLS-1$
-	public static final String DELTA_ELEMENT_NAME = "delta"; //$NON-NLS-1$
-	public static final String ATTR_NAME_FLAGS = "flags"; //$NON-NLS-1$
-	public static final String ATTR_NAME_KIND = "kind"; //$NON-NLS-1$
-	public static final String ATTR_NAME_ELEMENT_TYPE = "element_type"; //$NON-NLS-1$
-	public static final String ATTR_NAME_KEY = "key"; //$NON-NLS-1$
-	public static final String ATTR_NAME_TYPE_NAME = "type_name"; //$NON-NLS-1$
-	public static final String ATTR_NAME_BINARY_COMPATIBLE = "binary_compatible"; //$NON-NLS-1$
-
 	/**
 	 * XML doc being generated
 	 */
@@ -52,19 +44,21 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	 */
 	public DeltaXmlVisitor() throws CoreException {
 		fDoc = Util.newDocument();
-		fDeltas = fDoc.createElement(DELTAS_ELEMENT_NAME);
+		fDeltas = fDoc.createElement(IApiXmlConstants.DELTAS_ELEMENT_NAME);
 		fDoc.appendChild(fDeltas);
 	}
 	
 	public boolean visit(IDelta delta) {
 		if (delta.getChildren().length == 0) {
-			Element deltaElement = fDoc.createElement(DELTA_ELEMENT_NAME);
-			deltaElement.setAttribute(ATTR_NAME_FLAGS, Integer.toString(delta.getFlags()));
-			deltaElement.setAttribute(ATTR_NAME_KIND, Util.getDeltaKindName(delta));
-			deltaElement.setAttribute(ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
-			deltaElement.setAttribute(ATTR_NAME_KEY, delta.getKey());
-			deltaElement.setAttribute(ATTR_NAME_TYPE_NAME, delta.getTypeName());
-			deltaElement.setAttribute(ATTR_NAME_BINARY_COMPATIBLE, Boolean.toString(DeltaProcessor.isBinaryCompatible(delta)));
+			Element deltaElement = fDoc.createElement(IApiXmlConstants.DELTA_ELEMENT_NAME);
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_FLAGS, Integer.toString(delta.getFlags()));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KIND, Util.getDeltaKindName(delta));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE, Util.getDeltaElementType(delta));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_KEY, delta.getKey());
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_TYPE_NAME, delta.getTypeName());
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_BINARY_COMPATIBLE, Boolean.toString(DeltaProcessor.isBinaryCompatible(delta)));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
+			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_MODIFIERS, Integer.toString(delta.getModifiers()));
 			fDeltas.appendChild(deltaElement);
 		}
 		return true;
